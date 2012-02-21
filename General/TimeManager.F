@@ -402,7 +402,7 @@
          call TimeExtension(datestring,TC_TIN)
          call TimeExtension(datestring,TC_ATM)
          call TimeExtension(datestring,TC_GIB)
-
+         call TimeExtension(datestring,TC_LEX)
       endif
       END SUBROUTINE YEARLY
 

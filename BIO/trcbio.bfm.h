@@ -77,6 +77,7 @@ CC ==================
 
       INTEGER ji,jj,jk,jn
       INTEGER jtr,jtrmax
+      REAL(8):: opa_den, opa_ice, opa_co2
 ! omp variables
             INTEGER :: mytid, ntids, itid
 
@@ -120,13 +121,16 @@ C
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 
+          opa_den=1024
+          opa_ice=0
+          opa_co2=365.0
       jtrmax=jptra
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
 !$omp   parallel default(none) private(jk,ji,mytid,sur,bot,jtr,a,b)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
-!$omp&             sediPI,tra_pp,tra)
+!$omp&             sediPI,tra_pp,tra,opa_den,opa_ice,opa_co2)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -150,7 +154,8 @@ C
                           END DO
 
                           call OPA_Input_EcologyDynamics(a,jtrmax,
-     &                      tn(ji,jj+mytid,jk), sn(ji,jj+mytid,jk), xpar(ji,jj+mytid,jk),
+     &                      tn(ji,jj+mytid,jk), sn(ji,jj+mytid,jk),
+     &                      opa_den, opa_ice, opa_co2, xpar(ji,jj+mytid,jk),
      &                      e3t(jk), sur, vatm(ji,jj+mytid) * surf_mask(jk),bot )
 
                           call OPA_reset()

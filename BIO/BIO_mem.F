@@ -28,7 +28,7 @@ CC----------------------------------------------------------------------
 !$omp end parallel
        allocate(surf_mask(jpk))
        allocate(sediPI(jpi,jpj,jpk,4))
-       sediPI = 0 ! altrimenti la biologia non dà valori sui punti di terra
+       sediPI = 0 ! la biologia non assegna valori sui punti di terra
        mem_all= rea_len*(2*jptra+jpk+ jpi*jpj*jpk*4)
 
       END subroutine myalloc_BIO

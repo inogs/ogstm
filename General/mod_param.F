@@ -204,8 +204,16 @@ CCC  --------------
 CC
 CC       jptra  : number of tracers
 CC
+#    if defined key_INCLUDE_BFM_PELCO2
+
+      INTEGER, parameter :: jptra = 51
+      INTEGER, parameter :: jptra_dia = 10
+
+#    else
+
       INTEGER, parameter :: jptra = 49
-CC      PARAMETER (jptra = 49)
+      INTEGER, parameter :: jptra_dia = 3
+#    endif
 CC
 CC productive layer depth
 CC ----------------------
@@ -264,7 +272,16 @@ C    &     ppR6n=48, ppR6p=49, ppR6s=50, ppR7c=51
      &     ppZ5c=34, ppZ5n=35, ppZ5p=36, ppZ6c=37, ppZ6n=38, ppZ6p=39, ppR1c=40,
      &     ppR1n=41, ppR1p=42, ppR1s=43, ppR2c=44, ppR6c=45, ppR6n=46, ppR6p=47,
      &     ppR6s=48, ppR7c=49
+C       diagnostic indexes
+        integer,parameter :: ppPPG=1, ppNPP=2, ppBPP=3
+#    if defined key_INCLUDE_BFM_PELCO2
 
+        integer,parameter :: ppO3c=50, ppO3h=51
+C       diagnostic indexes
+        integer,parameter :: ppDIC=4, ppAC=5,  ppPH=6, ppCO2=7, ppHCO3=8,
+     &                       ppCO3=9, pppCO2=10
+
+#    endif
 
 #    elif defined key_test00
 CC    test CASE : nutrient adv-dif without reaction

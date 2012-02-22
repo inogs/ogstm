@@ -57,6 +57,8 @@
    ctrcnm(47)='R6p',
    ctrcnm(48)='R6s',
    ctrcnm(49)='R7c',
+   ctrcnm(50)='O3c',
+   ctrcnm(51)='O3h',
    ctrcun(1)='pl',
    ctrcun(2)='pl',
    ctrcun(3)='pl',
@@ -106,6 +108,8 @@
    ctrcun(47)='pl',
    ctrcun(48)='pl',
    ctrcun(49)='pl',
+   ctrcun(50)='pl',
+   ctrcun(51)='pl',
 /
 &NATADD
    nwriteadd = 73,

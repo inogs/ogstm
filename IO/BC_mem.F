@@ -14,6 +14,7 @@
       INTEGER(4) Gsizeglo, Rsizeglo, Asizeglo
       INTEGER(4) Gsize, Rsize, Asize
 
+      INTEGER(4), allocatable, DIMENSION(:) ::  tra_matrix_gib, tra_matrix_riv, tra_matrix_atm
 
       REAL(4), allocatable,DIMENSION(:,:,:)   :: ztra_nudg00_f
       REAL(4), allocatable,DIMENSION(:,:,:,:) :: ztra_nudg01_f
@@ -68,29 +69,48 @@
 !     N5s jn = 4 Silicates        (seasonal)
       
       jn_nudg = 4
-      jn_gib  = 4
-      jn_riv  = 4
-      jn_atm  = 4
+      jn_gib  = 6
+      jn_riv  = 5
+      jn_atm  = 2
 
        allocate(ztra_nudg00_f(jpiglo,jpjglo,jpk        ))
        allocate(ztra_nudg01_f(jpiglo,jpjglo,jpk,jn_nudg)) 
        
        IF (Gsizeglo .NE. 0) THEN
+           allocate(tra_matrix_gib(jn_gib))
            allocate(gib_aux(       Gsizeglo))
            allocate(gib_idxtglo(   Gsizeglo))
-           mem_all = 4*2*Gsizeglo
+           mem_all = jn_gib*2*Gsizeglo
+
+          tra_matrix_gib(1) = ppO2o ! dissolved Oxygen
+          tra_matrix_gib(2) = ppN1p ! phosphates
+          tra_matrix_gib(3) = ppN3n ! nitrates
+          tra_matrix_gib(4) = ppN5s ! silicates
+          tra_matrix_gib(5) = ppO3c ! Dic
+          tra_matrix_gib(6) = ppO3h ! Alk
        ENDIF
        
        IF (Rsizeglo .NE. 0) THEN
+           allocate(tra_matrix_riv(jn_riv))
            allocate(riv_aux(       Rsizeglo))
            allocate(riv_idxtglo(   Rsizeglo))
-           mem_all = 4*2*Rsizeglo
+           mem_all = jn_riv*2*Rsizeglo
+
+          tra_matrix_riv(1) = ppN1p ! phosphates
+          tra_matrix_riv(2) = ppN3n ! nitrates
+          tra_matrix_riv(3) = ppN5s ! silicates
+          tra_matrix_riv(4) = ppO3c ! Dic
+          tra_matrix_riv(5) = ppO3h ! Alk
        ENDIF
        
        IF (Asizeglo .NE. 0) THEN
+           allocate(tra_matrix_atm(jn_atm))
            allocate(atm_aux(       Asizeglo))
            allocate(atm_idxtglo(   Asizeglo))
-           mem_all = 4*2*Asizeglo
+           mem_all = jn_atm*2*Asizeglo
+
+          tra_matrix_atm(1) = ppN1p ! phosphates
+          tra_matrix_atm(2) = ppN3n ! nitrates
        ENDIF
 
       END SUBROUTINE alloc_DTATRC

@@ -98,7 +98,6 @@
 !         local
           character*8  nomevar
           character*28 nomefile
-          INTEGER tra_matrix(51)
           INTEGER(4) jn,jv
 
           nomevar= '123456789'
@@ -115,14 +114,10 @@
 
 
 
-          tra_matrix(1) = ppO2o
-          tra_matrix(2) = ppN1p
-          tra_matrix(3) = ppN3n
-          tra_matrix(4) = ppN5s
 
-          DO jn = 1, jn_atm ! 4
+          DO jn = 1, jn_atm
 
-              nomevar(1:7) = 'atm_'//ctrcnm(tra_matrix(jn))(1:3)
+              nomevar(1:7) = 'atm_'//ctrcnm(tra_matrix_atm(jn))(1:3)
               CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
               DO jv=1,Asize
                  atm_dtatrc(jv,2,jn) = atm_aux(atm_ridxt(jv,1))

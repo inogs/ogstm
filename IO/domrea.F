@@ -382,7 +382,7 @@
            enddo
 
 
-!       RIVRE_Indexing = .true.
+      RIVRE_Indexing = .true.
       END FUNCTION RIVRE_Indexing
 
       LOGICAL FUNCTION GIBRE_Indexing()

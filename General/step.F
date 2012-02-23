@@ -103,7 +103,7 @@
       CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
       CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
-
+      CALL eos          ()               ! Water density
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp(TAU) ! se commento questo non fa calcoli
         call trcave

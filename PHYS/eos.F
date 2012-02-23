@@ -1,6 +1,6 @@
 CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/eos.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
 
-      SUBROUTINE eos ( ktask, kt )
+      SUBROUTINE eos ()
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE eos
@@ -63,8 +63,6 @@ CC
 CC   Input :
 CC   ------
 CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
 CC      common
 CC            /comcoo/          : scale factors
 CC            /comnow/		: present fields (now)
@@ -97,7 +95,6 @@ CC----------------------------------------------------------------------
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER ktask, kt
       INTEGER ji, jj, jk
       REAL(8) zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw
       REAL(8) zb, zd, zc, zaw, za, zb1, za1, zkw, zk0
@@ -110,7 +107,7 @@ CC ===================
 C Horizontal slab
 C ===============
 C
-      DO jk = ktask, jpkm1
+      DO jk = 1, jpkm1
 
         IF ( neos.EQ.0 ) THEN
 C

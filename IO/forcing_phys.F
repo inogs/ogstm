@@ -438,7 +438,7 @@
 #    if defined key_off_degrad
           CALL slprea(iper)
 #    else
-          CALL eos(   1,kt)
+          CALL eos()
           CALL bn2(   1,kt)
           CALL hdfslp(1,kt)
 #    endif

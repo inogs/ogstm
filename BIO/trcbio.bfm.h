@@ -121,7 +121,7 @@ C
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 
-          opa_den=1024
+          opa_den=1029
           opa_ice=0
           opa_co2=365.0
       jtrmax=jptra
@@ -130,7 +130,7 @@ C
 
 !$omp   parallel default(none) private(jk,ji,mytid,sur,bot,jtr,a,b)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
-!$omp&             sediPI,tra_pp,tra,opa_den,opa_ice,opa_co2)
+!$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -155,7 +155,7 @@ C
 
                           call OPA_Input_EcologyDynamics(a,jtrmax,
      &                      tn(ji,jj+mytid,jk), sn(ji,jj+mytid,jk),
-     &                      opa_den, opa_ice, opa_co2, xpar(ji,jj+mytid,jk),
+     &                      rhopn(ji,jj+mytid,jk), opa_ice, opa_co2, xpar(ji,jj+mytid,jk),
      &                      e3t(jk), sur, vatm(ji,jj+mytid) * surf_mask(jk),bot )
 
                           call OPA_reset()

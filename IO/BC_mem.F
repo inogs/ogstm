@@ -16,8 +16,6 @@
 
       INTEGER(4), allocatable, DIMENSION(:) ::  tra_matrix_gib, tra_matrix_riv, tra_matrix_atm
 
-      REAL(4), allocatable,DIMENSION(:,:,:)   :: ztra_nudg00_f
-      REAL(4), allocatable,DIMENSION(:,:,:,:) :: ztra_nudg01_f
 
       INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxtglo, riv_idxtglo, atm_idxtglo ! <--domrea
 !     INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxt   , riv_idxt   , atm_idxt
@@ -25,10 +23,10 @@
 !     queste matrici ridotte hanno nel primo indice l'indice globale, negli altri 3 il corrispondente indice i,j,k locale (per cpu)
 
 
-      REAL(8), allocatable, DIMENSION(:)     :: gib_aux,riv_aux,atm_aux
-      REAL(8), allocatable, DIMENSION(:,:)   :: gib,riv, atm
-      REAL(8), allocatable, DIMENSION(:,:,:) :: gib_dtatrc,riv_dtatrc,atm_dtatrc       ! <--bc_gib.load_gib(), bc_tin.
-
+      REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux,atm_aux
+      REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv, atm
+      REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm_dtatrc       ! <--bc_gib.load_gib(), bc_tin.
+      REAL(8), allocatable, DIMENSION(:,:,:,:) :: restotr(:,:,:,:)
 ! ----------------------------------------------------------------------
       CONTAINS
 !     *******************************************************************
@@ -68,14 +66,13 @@
 !     N3n jn = 3 nitrates         (climatological)
 !     N5s jn = 4 Silicates        (seasonal)
       
-      jn_nudg = 4
       jn_gib  = 6
       jn_riv  = 5
       jn_atm  = 2
 
-       allocate(ztra_nudg00_f(jpiglo,jpjglo,jpk        ))
-       allocate(ztra_nudg01_f(jpiglo,jpjglo,jpk,jn_nudg)) 
-       
+
+       allocate(restotr(jpi,jpj,jpk,jptra))
+
        IF (Gsizeglo .NE. 0) THEN
            allocate(tra_matrix_gib(jn_gib))
            allocate(gib_aux(       Gsizeglo))
@@ -88,6 +85,7 @@
           tra_matrix_gib(4) = ppN5s ! silicates
           tra_matrix_gib(5) = ppO3c ! Dic
           tra_matrix_gib(6) = ppO3h ! Alk
+
        ENDIF
        
        IF (Rsizeglo .NE. 0) THEN

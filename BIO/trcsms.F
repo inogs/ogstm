@@ -103,8 +103,6 @@ C
 C tracers: sedimentation model
 C ----------------------------
 C
-CCC Paolo 28/4/2004 0D model
-CCC Paolo 30/4/2004 Warning 
 CCC trcsed-trexp no updated for time step advancing 
 #if  defined key_trc_sed
        CALL trcsed(ktask,kt)

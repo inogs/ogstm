@@ -223,7 +223,6 @@ CC      trcdat()  : passive tracers DATA array for two value
 CC                  needed for time interpolation
 CC
 CC      trdta()   : passive tracers DATA at given time-step
-CC      restotr() : array of restoring coeff. for passive tracers
 CC
       INTEGER nclimr,ncontr,numtr1,numtr2,nlectr,ninttr,nmldmptr
 CC
@@ -231,7 +230,6 @@ CC
 #    if defined key_trc_dmp 
 
       REAL(8), allocatable ::  trdta(:,:,:,:),trcdat(:,:,:,:,:)
-      REAL(8), allocatable ::  restotr(:,:,:,:)
 CC
 #    else
 CC      no passive tracers DATA at given time step

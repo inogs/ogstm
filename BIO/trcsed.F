@@ -45,12 +45,6 @@ CC            /comtsk/          : multitasking
 CC
 CC   OUTPUT :
 CC   ------
-CC      COMMON
-CC            /cottrp/tra       : general tracer trend increased by the
-CC				  now vertical tracer advection trend
-CC            /cottbd/ trbio    : now vertical passive tracer advection
-CC                                trend
-CC                                (IF 'key_trc_diabio' key is activated)
 CC
 CC   WORKSPACE :
 CC   ---------
@@ -164,22 +158,22 @@ C                Particulate
 
 C                Diatoms
                  DO js =5,9
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk,1) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,1) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
 C                Flagellates
                  DO js =10,13
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk,2) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,2) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
 C                Picophytoplankton
                  DO js =14,17
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk,3) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,3) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
 C                Dinoflagellates
                  DO js =18,21
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk,4) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,4) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
               END DO

@@ -166,7 +166,14 @@ C
      &                          sediPI(ji,jj+mytid,jk,2), sediPI(ji,jj+mytid,jk,3),
      &                          sediPI(ji,jj+mytid,jk,4),tra_pp(ji,jj+mytid,jk,1),
      &                          tra_pp(ji,jj+mytid,jk,2),tra_pp(ji,jj+mytid,jk,3))
-       
+
+C                           write(*,*) 'sediPI -->ji',ji,'sediPI -->jj' ,jj+mytid
+C                           write(*,*) 'sediPI -->jk',jk
+C                           write(*,*) 'sediPI(ji,jj+mytid,jk,1) -->', sediPI(ji,jj+mytid,jk,1)
+C                           write(*,*) 'sediPI(ji,jj+mytid,jk,2) -->', sediPI(ji,jj+mytid,jk,2)
+C                           write(*,*) 'sediPI(ji,jj+mytid,jk,3) -->', sediPI(ji,jj+mytid,jk,3)
+C                           write(*,*) 'sediPI(ji,jj+mytid,jk,4) -->', sediPI(ji,jj+mytid,jk,4)
+
                           DO jtr=1, jtrmax
                              tra(ji,jj+mytid,jk,jtr) =tra(ji,jj+mytid,jk,jtr) +b(jtr)
                           END DO

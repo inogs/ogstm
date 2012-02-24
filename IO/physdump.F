@@ -261,12 +261,12 @@
 
            d2f3d= REAL(totppnIO,4)    !   conversion from double to float
            var(1:3) = 'ppn'
-           CALL IOOGSNC_AVE_3D2(ppg_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+           CALL IOOGSNC_AVE_3D2(ppn_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
 !********************* output Bacterial  PRODUCTION *********************
            d2f3d= REAL(totppbIO,4)    !   conversion from double to float
            var(1:3) = 'ppb'
-           CALL IOOGSNC_AVE_3D2(ppg_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+           CALL IOOGSNC_AVE_3D2(ppb_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
             close(4446)
             close(4447)

@@ -56,12 +56,11 @@ C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
 ! ==================
 
       INTEGER ji, jj, jk, jn
-!      INTEGER jn_nudg
       INTEGER tra_idx
       INTEGER nmldmp_gib,nmldmp_riv,nmldmp_atm
       INTEGER(4) jv
       REAL(8)  ztra
-!      REAL(8) cvmgm, cvmgp, ztest
+
 !----------------------------------------------------------------------
 ! statement functions
 ! ===================
@@ -75,7 +74,7 @@ C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
        trcdmpparttime = MPI_WTIME() ! F79 cronometer-start
 
 
-!      jn_nudg = 4
+
 !      tra_matrix(1) = ppO2o
 !      tra_matrix(2) = ppN1p
 !      tra_matrix(3) = ppN3n
@@ -96,7 +95,7 @@ C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
              jk = gib_ridxt(jv,4) 
            ztra = 0
            IF ( nmldmp_gib.EQ.0 ) THEN
-             ztra = restotr(ji,jj,jk,tra_idx) * ( gib(jv,jn)-trb(ji,jj,jk,tra_idx) )
+             ztra = restotr(ji,jj,jk,jn) * ( gib(jv,jn)-trb(ji,jj,jk,tra_idx) )
            ENDIF
            IF ( nmldmp_gib.EQ.1 ) THEN
              ztra = gib(jv,jn)

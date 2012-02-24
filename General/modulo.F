@@ -780,7 +780,6 @@ CC
 #    if defined key_trc_dmp 
 
       REAL(8), allocatable ::  trdta(:,:,:,:),trcdat(:,:,:,:,:)
-      REAL(8), allocatable ::  restotr(:,:,:,:)
       REAL(8), allocatable ::  resto(:,:,:)
       REAL(8), allocatable ::  restoglo(:,:,:)
       INTEGER(4), allocatable ::  idxt(:,:,:)
@@ -1695,7 +1694,6 @@ CC
 
       allocate(trdta(jpi,jpj,jpk,jptra))
       allocate(trcdat(jpi,jpj,jpk,2,jptra))
-      allocate(restotr(jpi,jpj,jpk,jptra))
       allocate(resto(jpi,jpj,jpk))
       allocate(restoglo(jpiglo,jpjglo,jpk))
       allocate(idxt(jpi,jpj,jpk))

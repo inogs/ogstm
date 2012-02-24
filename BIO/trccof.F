@@ -38,24 +38,18 @@ CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
        USE myalloc_mpp
+       USE BC_mem
 
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+       IMPLICIT NONE
 
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER kkflag
 C
 #if defined key_trc_dmp && defined key_passivetrc
-       INTEGER jn, jk, jj, ji, jpp, irest
-       INTEGER jn_nudg,tra_matrix(51)
-       REAL(8) rs_ts(13), fact, fact1, tmaxt
+       INTEGER jn, jk, jj, ji, tra_idx
 
 C
 CC----------------------------------------------------------------------
@@ -63,18 +57,6 @@ CC statement functions
 CC ===================
 
 #include "stafun.h"
-
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-      jn_nudg = 4
-C
-      tra_matrix(1) = ppO2o
-      tra_matrix(2) = ppN1p
-      tra_matrix(3) = ppN3n
-      tra_matrix(4) = ppN5s
-C
-C
 
 C
 C===================================================
@@ -91,11 +73,12 @@ C
       END DO
 
 
-      DO jn=1,jn_nudg
+      DO jn=1,jn_gib
+        tra_idx=tra_matrix_gib(jn)
         DO jk=1,jpk
           DO jj=1,jpj
             DO ji=1,jpi
-              restotr(ji,jj,jk,tra_matrix(jn))=resto(ji,jj,jk)
+              restotr(ji,jj,jk,tra_idx)=resto(ji,jj,jk)
             END DO
           END DO
         END DO

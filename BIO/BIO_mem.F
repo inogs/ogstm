@@ -7,11 +7,6 @@
 
        public
 
-CC----------------------------------------------------------------------
-CC Common/comcoh/  : BIO aux matrix matrix
-CC ---------------------------------------------------------------------
-C
-C
       REAL(8), allocatable :: bfm_trn(:), bfm_tra(:)
 !$omp  threadprivate(bfm_trn,bfm_tra)
       REAL(8), allocatable :: surf_mask(:)
@@ -28,7 +23,9 @@ CC----------------------------------------------------------------------
 !$omp end parallel
        allocate(surf_mask(jpk))
        allocate(sediPI(jpi,jpj,jpk,4))
-       sediPI = 0 ! la biologia non assegna valori sui punti di terra
+!       sediPI = 0 ! la biologia non assegna valori sui punti di terra
+       sediPI = 1000000 ! la biologia non assegna valori sui punti di terra
+!       write(*,*) 'sediPI =', sediPI
        mem_all= rea_len*(2*jptra+jpk+ jpi*jpj*jpk*4)
 
       END subroutine myalloc_BIO

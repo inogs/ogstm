@@ -95,7 +95,7 @@ C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
              jk = gib_ridxt(jv,4) 
            ztra = 0
            IF ( nmldmp_gib.EQ.0 ) THEN
-             ztra = restotr(ji,jj,jk,jn) * ( gib(jv,jn)-trb(ji,jj,jk,tra_idx) )
+             ztra = restotr(ji,jj,jk,tra_idx) * ( gib(jv,jn)-trb(ji,jj,jk,tra_idx) )
            ENDIF
            IF ( nmldmp_gib.EQ.1 ) THEN
              ztra = gib(jv,jn)

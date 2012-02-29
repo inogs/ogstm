@@ -24,9 +24,10 @@
 
 
       REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux,atm_aux
+      REAL(8), allocatable, DIMENSION(:)       :: restocorr
       REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv, atm
       REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm_dtatrc       ! <--bc_gib.load_gib(), bc_tin.
-      REAL(8), allocatable, DIMENSION(:,:,:,:) :: restotr(:,:,:,:)
+      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr
 ! ----------------------------------------------------------------------
       CONTAINS
 !     *******************************************************************
@@ -70,21 +71,22 @@
       jn_riv  = 5
       jn_atm  = 2
 
-
+       allocate(resto(jpi,jpj,jpk,jn_gib))
        allocate(restotr(jpi,jpj,jpk,jptra))
 
        IF (Gsizeglo .NE. 0) THEN
            allocate(tra_matrix_gib(jn_gib))
+           allocate(restocorr(jn_gib))        !Correction to restoration for O3c and O3h
            allocate(gib_aux(       Gsizeglo))
            allocate(gib_idxtglo(   Gsizeglo))
            mem_all = jn_gib*2*Gsizeglo
 
-          tra_matrix_gib(1) = ppO2o ! dissolved Oxygen
-          tra_matrix_gib(2) = ppN1p ! phosphates
-          tra_matrix_gib(3) = ppN3n ! nitrates
-          tra_matrix_gib(4) = ppN5s ! silicates
-          tra_matrix_gib(5) = ppO3c ! Dic
-          tra_matrix_gib(6) = ppO3h ! Alk
+          tra_matrix_gib(1) = ppO2o; restocorr(1)=1. ! dissolved Oxygen
+          tra_matrix_gib(2) = ppN1p; restocorr(2)=1. ! phosphates
+          tra_matrix_gib(3) = ppN3n; restocorr(3)=1. ! nitrates
+          tra_matrix_gib(4) = ppN5s; restocorr(4)=1. ! silicates
+          tra_matrix_gib(5) = ppO3c; restocorr(5)=2. ! Dic
+          tra_matrix_gib(6) = ppO3h; restocorr(6)=2. ! Alk
 
        ENDIF
        

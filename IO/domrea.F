@@ -216,19 +216,20 @@
 !  Restoration Mask !!!!
       nomefile = 'bounmask.nc'
       nomefile(12:12) = CHAR(0)
+      do jn=1,jn_gib
+         nomevar01(1:5)='re'//ctrcnm(tra_matrix_gib(jn))(1:3)
+         CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,restoglo)
 
-      nomevar01(1:5)='resto'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,restoglo)
-
-      do kk=1, jpk
-         do jj=jjsta, jjend
-            do ii=iista, iiend
-               iinew = ii - nimpp + 1
-               jjnew = jj - njmpp + 1
-               resto(iinew, jjnew, kk) = restoglo(ii, jj, kk)
+         do kk=1, jpk
+            do jj=jjsta, jjend
+               do ii=iista, iiend
+                  iinew = ii - nimpp + 1
+                  jjnew = jj - njmpp + 1
+                  resto(iinew, jjnew, kk,jn) = restoglo(ii, jj, kk)
+               enddo
             enddo
          enddo
       enddo
-
       nomevar01(1:5)='index'; CALL ioogsnc_idx_3d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,idxtglo)
 
       do kk=1, jpk

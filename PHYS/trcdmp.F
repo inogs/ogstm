@@ -22,29 +22,6 @@ C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
 !	   The trend is computed either throughout the water column
 !	   (nlmdmptrc=0) or in area of weak vertical mixing (nlmdmptrc=1) or
 !	   below the well mixed layer (nlmdmptrc=2)
-!
-!      'key_diatrdtrc' defined: the tracers damping trends are saved.
-!
-!      Macro-tasked on tracer (jn-loop)
-!
-!   Input :
-!   ------
-
-!      common
-!            /cottrc/          : passive tracers fields (before,now,after)
-!            /cotrda/          : passive tracers DATA READ and at given time_step
-!            /comtsk/          : multitasking
-!
-!   Output :
-!   -------
-!      common
-!	      /comaft/ ta,sa	: general tracer trend increased by
-!				  the tracer newtonian damping trends
-!	      /comtra/ ttrd,strd  tracers damping trends
-!                                (IF 'key-diatrdtra' is defined)
-!
-
-
 
        USE myalloc
        USE myalloc_mpp

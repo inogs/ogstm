@@ -32,16 +32,6 @@ CC
 CC	multitasked on vertical slab (jj-loop)
 CC
 CC
-CC   INPUT :
-CC   -----
-CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
-CC      COMMON
-CC            /comcoo/          : orthogonal curvilinear coordinates
-CC                                and scale factors
-CC            /cottrp/          : passive tracer fields
-CC            /comtsk/          : multitasking
 CC
 CC   OUTPUT :
 CC   ------
@@ -72,8 +62,9 @@ CC ==================
 #if defined key_passivetrc  
 #   if defined key_trc_bfm
 
-      INTEGER ji,jj,jk,jv,js
-      REAL(8) ze3tr,d2s
+      INTEGER :: ji,jj,jk,jv,js
+      INTEGER :: bottom
+      REAL(8) :: ze3tr,d2s
 ! omp variables
       INTEGER :: mytid, ntids
 
@@ -177,6 +168,9 @@ C                Dinoflagellates
                  END DO
 
               END DO
+
+              bottom = mbathy(ji,jj) + 1
+!              zwork(:,bottom,mytid+1) = 0 ! no flux in the sea floor
 
 C 1.3 tracer flux divergence at t-point added to the general trend
 

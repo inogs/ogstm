@@ -780,7 +780,6 @@ CC
 #    if defined key_trc_dmp 
 
       REAL(8), allocatable ::  trdta(:,:,:,:),trcdat(:,:,:,:,:)
-      REAL(8), allocatable ::  resto(:,:,:)
       REAL(8), allocatable ::  restoglo(:,:,:)
       INTEGER(4), allocatable ::  idxt(:,:,:)
       INTEGER(4), allocatable ::  idxtglo(:,:,:)

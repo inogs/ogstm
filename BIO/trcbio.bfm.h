@@ -1,82 +1,21 @@
-c $Id: trcbio.bfm.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
-CCC      trcbio.npzd.h
-CCC      *****************
-CCC
-CC   defined key : key_trc_npzd
-CC   ===========
-CC
-CC
-CC   INPUT :
-CC   -----
-CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
-CC      COMMON
-CC            /comcoo/          : orthogonal curvilinear coordinates
-CC                                and scale factors
-CC                                depths
-CC            /cottrp/          : present and next fields for passive
-CC                              : tracers
-CC            /comtsk/          : multitasking
-CC            /cotbio/          : biological parameters
-CC
-CC   OUTPUT :
-CC   ------
-CC      COMMON
-CC            /cottrp/ tra      : general tracer trend increased by the
-CC                                now horizontal tracer advection trend
-CC            /cottbd/ trbio    : now horizontal tracer advection trend
-CC                                (IF 'key_trc_diabio' is activated)
-CC
-CC   WORKSPACE :
-CC   ---------
-CC      local
-CC               zdet,zzoo,zphy,znut              : now concentrations
-CC               zlt,zlnut,zlpe                   : limitation terms for phyto
-CC                                                 
-CC               zflxnp,zflxpn,zflxpz,zflxdz      : fluxes between bio
-CC                                                  boxes
-CC               zflxpd,zflxzd,zflxdn
-CC               zphya,zzooa,znuta,zdeta          : after bio trends
-CC               zphimp, zmp, zphimz, zmz         : mortality terms
-CC               zppz, zpdz, zpppz, zppdz, zfood  : preferences terms
-CC               zfilpz, zfilpd                   : filtration terms
-CC
-CC   EXTERNAL :                   no
-CC   --------
-CC
-CC   REFERENCES :                 no
-CC   ----------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-CC       original : 95-02 (M. Levy)
-CC                  99-07 (M. Levy) version .h
-CC                  99-09 (M. Levy) version with no deep mixing limitation
-CC       adaptations : 00-12 (E. Kestenare) 
-CC                     assign a parameter to name individual tracers
-CC                     01-02 (E. Kestenare)
-CC                     introduce jpno3 instead of jpnut 
-CC                     01-02 (E. Kestenare) add sediments 
-CC----------------------------------------------------------------------
+
        USE myalloc
        USE myalloc_mpp
        USE BIO_mem
+       USE BC_mem
 
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+       IMPLICIT NONE
+
 
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER kt,ktask
-      LOGICAL sur,bot
+      LOGICAL sur,bot,isT,isBIO
       REAL(8) a(jptra),b(jptra)
 
       INTEGER ji,jj,jk,jn
-      INTEGER jtr,jtrmax
+      INTEGER jtr,jtrmax,tra_idx
       REAL(8):: opa_den, opa_ice, opa_co2
 ! omp variables
             INTEGER :: mytid, ntids, itid
@@ -104,9 +43,6 @@ CC ===================
          end subroutine
       END INTERFACE
 
-ccC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
 C   | --------------|
 C   | BFM MODEL CALL|
 C   | --------------|
@@ -124,12 +60,14 @@ C
           opa_den=1029
           opa_ice=0
           opa_co2=365.0
-      jtrmax=jptra
+          tra_idx = tra_matrix_gib(1)
+          jtrmax=jptra
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,sur,bot,jtr,a,b)
-!$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
+!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b)
+!$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
+!$omp&		       restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
 !$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2)
 
 #ifdef __OPENMP
@@ -144,7 +82,10 @@ C
                  DO jk=1,jpkbm1
                     DO ji = 2,jpim1
 
-                       IF(Tmask(ji,jj+mytid,jk) .eq. 1) THEN
+                       isT     = Tmask(ji,jj+mytid,jk) .eq. 1
+                       isBIO   = restotr(ji,jj+mytid,jk,tra_idx) .eq. 0 ! no nudging points are considered
+
+                       IF( isT .and. isBIO) THEN
 
                           IF(jk .eq. 1) sur = .TRUE.
                           bot = .FALSE.
@@ -178,6 +119,9 @@ C                           write(*,*) 'sediPI(ji,jj+mytid,jk,4) -->', sediPI(ji
                              tra(ji,jj+mytid,jk,jtr) =tra(ji,jj+mytid,jk,jtr) +b(jtr)
                           END DO
 
+                       ELSE
+                          sediPI(ji,jj+mytid,jk,:)=0
+                          tra_pp(ji,jj+mytid,jk,:)=0
                        ENDIF
 
                     END DO

@@ -30,13 +30,6 @@ CC            /cotdmp/          : passive tracer damping
 CC
 CC   External :
 CC   --------- 
-CC
-CC   Modifications :
-CC   --------------
-CC      original  : 99-10 (H. Loukos) dtacof.F adapted for passive tracers
-CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
 
        USE myalloc
        USE myalloc_mpp
@@ -78,7 +71,7 @@ C
         DO jk=1,jpk
           DO jj=1,jpj
             DO ji=1,jpi
-              restotr(ji,jj,jk,tra_idx)=resto(ji,jj,jk)
+              restotr(ji,jj,jk,tra_idx)=restocorr(jn)*resto(ji,jj,jk,jn)
             END DO
           END DO
         END DO

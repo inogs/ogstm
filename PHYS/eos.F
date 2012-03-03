@@ -169,6 +169,9 @@ C   ... masked in situ density anomaly
             rdn(ji,jj,jk) = ( zrhop 
      $          / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) 
      $          - rau0 ) / rau0 * tmask(ji,jj,jk)
+C   ... masked in situ density
+            rho(ji,jj,jk)=zrhop / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) * tmask(ji,jj,jk)
+
           END DO
         END DO
 C

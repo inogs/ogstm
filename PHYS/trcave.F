@@ -113,14 +113,14 @@
         END DO
       END DO
 
-      DO jn=1, 3,ntids
+      DO jn=1, jptra_dia,ntids
 !$omp parallel default(none) private(jk,jj,ji,mytid) shared(jpk,jpj,jpi,jn,tmask,tra_ppIO,Realcounter,tra_pp,
 !$omp&   Realcounterp1,Miss_val)
 
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-      IF( mytid + jn <= 3 ) then
+      IF( mytid + jn <= jptra_dia ) then
          DO jk=1, jpk
             DO jj=1, jpj
                DO ji=1, jpi

@@ -169,7 +169,7 @@ C                Dinoflagellates
 
               END DO
 
-              bottom = mbathy(ji,jj) + 1
+!              bottom = mbathy(ji,jj) + 1
 !              zwork(:,bottom,mytid+1) = 0 ! no flux in the sea floor
 
 C 1.3 tracer flux divergence at t-point added to the general trend

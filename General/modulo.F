@@ -231,7 +231,7 @@ CC	    rhopn          : potential volumic mass (kg m-3)
 CC      bn2n           : brunt-vaisala frequency (s-2)
 CC
       REAL(8), allocatable, dimension(:,:,:) :: un, vn, wn, hdivn
-      REAL(8), allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,bn2n
+      REAL(8), allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho,bn2n
 
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -610,9 +610,7 @@ CC
       REAL(8), allocatable ::  totwnIO(:,:,:) 
       REAL(8), allocatable ::  totavtIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
-      REAL(8), allocatable ::  totppgIO(:,:,:) 
-      REAL(8), allocatable ::  totppnIO(:,:,:) 
-      REAL(8), allocatable ::  totppbIO(:,:,:) 
+      REAL(8), allocatable ::  totdiaIO(:,:,:,:)
       REAL(8), allocatable ::  rsttrn(:,:,:)
       REAL(8), allocatable ::  rsttrb(:,:,:)
 
@@ -1102,6 +1100,7 @@ CC
        allocate(sn(jpi,jpj,jpk))
        allocate(rdn(jpi,jpj,jpk))
        allocate(rhopn(jpi,jpj,jpk))
+       allocate(rho(jpi,jpj,jpk))
        allocate(bn2n(jpi,jpj,jpk))
        mem_all = mem_all +  rea_len*9*jpi*jpj*jpk  
 C     write(*,*) 'Mem_allocated:', mem_all
@@ -1482,7 +1481,7 @@ CC
 CCC Paolo 30/4/2004 Flag time advance SMS or Dyn  
        allocate(trn(jpi,jpj,jpk,jptra))
        allocate(tra(jpi,jpj,jpk,jptra))
-       allocate(tra_pp(jpi,jpj,jpk,3))
+       allocate(tra_pp(jpi,jpj,jpk,jptra_dia))
        allocate(tottrn(jpiglo, jpjglo, jpk))
        allocate(tottrb(jpiglo, jpjglo, jpk))
        allocate(traIO(jpi,jpj,jpk,jptra)) 
@@ -1497,7 +1496,7 @@ CCC Paolo 30/4/2004 Flag time advance SMS or Dyn
        allocate(bblyIO(jpi,jpj)) 
        allocate(wnIO(jpi,jpj,jpk)) 
        allocate(avtIO(jpi,jpj,jpk)) 
-       allocate(tra_ppIO(jpi,jpj,jpk,3)) 
+       allocate(tra_ppIO(jpi,jpj,jpk,jptra_dia))
        mem_all = mem_all +  rea_len*(3*jpi*jpj*jpk*jptra 
      .          + 12*jpi*jpj*jpk+2*jpiglo* jpjglo* jpk
      .          + 5*jpi*jpj)
@@ -1518,9 +1517,7 @@ CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
        allocate(totwnIO(jpiglo,jpjglo,jpk)) 
        allocate(totavtIO(jpiglo,jpjglo,jpk)) 
        allocate(tottmaIO(jpiglo,jpjglo,jpk)) 
-       allocate(totppgIO(jpiglo,jpjglo,jpk)) 
-       allocate(totppnIO(jpiglo,jpjglo,jpk)) 
-       allocate(totppbIO(jpiglo,jpjglo,jpk)) 
+       allocate(totdiaIO(jpiglo,jpjglo,jpk,jptra_dia))
        allocate(rsttrn(jpiglo,jpjglo,jpk))
        allocate(rsttrb(jpiglo,jpjglo,jpk))
        mem_all = mem_all +  rea_len*(15*jpiglo*jpjglo*jpk 
@@ -1693,7 +1690,6 @@ CC
 
       allocate(trdta(jpi,jpj,jpk,jptra))
       allocate(trcdat(jpi,jpj,jpk,2,jptra))
-      allocate(resto(jpi,jpj,jpk))
       allocate(restoglo(jpiglo,jpjglo,jpk))
       allocate(idxt(jpi,jpj,jpk))
       allocate(idxtglo(jpiglo,jpjglo,jpk))

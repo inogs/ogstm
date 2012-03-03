@@ -28,15 +28,16 @@
 ! local declarations
 ! ==================
 
-      INTEGER ii, jj, kk, iinew, jjnew, iista, iiend, jjsta, jjend
+      INTEGER ii, jj, kk, jn, iinew, jjnew, iista, iiend, jjsta, jjend
 
       CHARACTER*12 nomefile
       CHARACTER*50 filename
-
+      CHARACTER*4 var_nc(7)
       CHARACTER*6 nomevar01
       CHARACTER*4 nomevar02
       CHARACTER*3 nomevar03
       CHARACTER*9 nomevar04
+      CHARACTER*13 nomevar05
       LOGICAL B
       
 !----------------------------------------------------------------------
@@ -216,8 +217,19 @@
 !  Restoration Mask !!!!
       nomefile = 'bounmask.nc'
       nomefile(12:12) = CHAR(0)
+
+      var_nc(1)(1:3) = 'O2o'
+      var_nc(2)(1:3) = 'N1p'
+      var_nc(3)(1:3) = 'N3n'
+      var_nc(4)(1:3) = 'N5s'
+      var_nc(5)(1:3) = 'O3c'
+      var_nc(6)(1:3) = 'O3h'
+      var_nc(7)(1:3) = 'N6r'
+
       do jn=1,jn_gib
-         nomevar01(1:5)='re'//ctrcnm(tra_matrix_gib(jn))(1:3)
+
+         nomevar01(1:5)='re'//var_nc(jn)(1:3)
+
          CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,restoglo)
 
          do kk=1, jpk
@@ -247,12 +259,12 @@
 
 ! *********************************   Gibraltar area
       filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'//char(0);
-      nomevar04 = 'gib_idxt'//CHAR(0);
+      nomevar05 = 'gib_idxt_N1p'//CHAR(0);
 
        if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
 
 
-      CALL ioogsnc_idx_1d2(filename, nomevar04,Gsizeglo, gib_idxtglo)
+      CALL ioogsnc_idx_1d2(filename, nomevar05,Gsizeglo, gib_idxtglo)
 
       if (lwp) write(*,*) 'domrea->ioogsnc_idx_1d  finita'
       if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
@@ -306,11 +318,6 @@
        call flush_()
       CONTAINS
 
-
-
-
-
-
 ! *****************************************************************
 !     FUNCTION COUNT_InSubDomain
 !     RETURNS the number of points of a specific boundary condition
@@ -344,13 +351,6 @@
           COUNT_InSubDomain = counter
 
       END FUNCTION COUNT_InSubDomain
-
-
-
-
-
-
-
 
 
       LOGICAL FUNCTION RIVRE_Indexing()
@@ -457,13 +457,6 @@
 
 
       END SUBROUTINE domrea
-
-
-
-
-
-
-
 
 ! ************************************************************
 !      SUBROUTINE RE_Indexing

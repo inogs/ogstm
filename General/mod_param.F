@@ -278,8 +278,8 @@ C       diagnostic indexes
 
         integer,parameter :: ppO3c=50, ppO3h=51
 C       diagnostic indexes
-        integer,parameter :: ppDIC=4, ppAC=5,  ppPH=6, ppCO2=7, ppHCO3=8,
-     &                       ppCO3=9, pppCO2=10
+        integer,parameter :: ppDIC=4, ppCO2=5,  ppHCO3=6, ppCO3=7, ppAc=8,
+     &                       pppH=9, pppCO2=10
 
 #    endif
 

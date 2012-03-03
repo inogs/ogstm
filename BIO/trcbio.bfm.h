@@ -12,7 +12,7 @@ CC local declarations
 CC ==================
       INTEGER kt,ktask
       LOGICAL sur,bot,isT,isBIO
-      REAL(8) a(jptra),b(jptra)
+      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia)
 
       INTEGER ji,jj,jk,jn
       INTEGER jtr,jtrmax,tra_idx
@@ -33,13 +33,13 @@ CC ===================
 
       INTERFACE OPA_Output_EcologyDynamics
          subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI_P1, 
-     &       sediPI_P2, sediPI_P3,  sediPI_P4, local_opa_ppg, local_opa_ppn, local_opa_ppb)
+     &       sediPI_P2, sediPI_P3,  sediPI_P4, local_opa_dia)
 !            use global_mem, ONLY:RLEN
             IMPLICIT NONE
             integer dim_opa_tra
             real(8):: sediPI_P1, sediPI_P2, sediPI_P3, sediPI_P4
             real(8):: opa_tra(dim_opa_tra)
-            real(8):: local_opa_ppg, local_opa_ppn, local_opa_ppb
+            real(8):: local_opa_dia(10)
          end subroutine
       END INTERFACE
 
@@ -65,7 +65,7 @@ C
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b)
+!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,d)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
 !$omp&		       restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
 !$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2)
@@ -105,8 +105,7 @@ C
 
                           call OPA_Output_EcologyDynamics(b, jtrmax, sediPI(ji,jj+mytid,jk,1),
      &                          sediPI(ji,jj+mytid,jk,2), sediPI(ji,jj+mytid,jk,3),
-     &                          sediPI(ji,jj+mytid,jk,4),tra_pp(ji,jj+mytid,jk,1),
-     &                          tra_pp(ji,jj+mytid,jk,2),tra_pp(ji,jj+mytid,jk,3))
+     &                          sediPI(ji,jj+mytid,jk,4),d)
 
 C                           write(*,*) 'sediPI -->ji',ji,'sediPI -->jj' ,jj+mytid
 C                           write(*,*) 'sediPI -->jk',jk
@@ -116,7 +115,11 @@ C                           write(*,*) 'sediPI(ji,jj+mytid,jk,3) -->', sediPI(ji
 C                           write(*,*) 'sediPI(ji,jj+mytid,jk,4) -->', sediPI(ji,jj+mytid,jk,4)
 
                           DO jtr=1, jtrmax
-                             tra(ji,jj+mytid,jk,jtr) =tra(ji,jj+mytid,jk,jtr) +b(jtr)
+                             tra(ji,jj+mytid,jk,jtr) =tra(ji,jj+mytid,jk,jtr) +b(jtr) ! trend
+                          END DO
+
+                          DO jtr=1,jptra_dia
+                             tra_pp(ji,jj+mytid,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
                        ELSE

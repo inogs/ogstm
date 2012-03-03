@@ -16,13 +16,15 @@
 
       REAL(4) lon(jpiglo), lat(jpjglo), dep(jpk)
 
-      INTEGER ji, jj, jk ,jn_nudg, jl
+      INTEGER ji, jj, jk, jn ,jn_nudg, jl
       INTEGER ind
 
       CHARACTER*32 forcing2d_file, forcing3d_file
 
 
       CHARACTER*29 ppg_file_nc, ppn_file_nc,ppb_file_nc! ave.20091231-12:00:00.P1n.nc
+      CHARACTER*29 dia1_file_nc, dia2_file_nc, dia3_file_nc, dia4_file_nc, dia5_file_nc
+      CHARACTER*29 dia6_file_nc, dia7_file_nc, dia8_file_nc, dia9_file_nc, dia10_file_nc
       CHARACTER*4  var, var_nc
 
       INTEGER :: ir, ir2d, ir3d
@@ -41,9 +43,16 @@
       forcing3D_file = 'ave.'//datemean//'.grid3D.dat'
       forcing2D_file = 'ave.'//datemean//'.grid2D.dat'
 
-      ppg_file_nc    = 'ave.'//datemean//'.ppg.nc'//CHAR(0)
-      ppn_file_nc    = 'ave.'//datemean//'.ppn.nc'//CHAR(0)
-      ppb_file_nc    = 'ave.'//datemean//'.ppb.nc'//CHAR(0)
+      dia1_file_nc    = 'ave.'//datemean//'.ppg.nc'//CHAR(0)
+      dia2_file_nc    = 'ave.'//datemean//'.ppn.nc'//CHAR(0)
+      dia3_file_nc    = 'ave.'//datemean//'.ppb.nc'//CHAR(0)
+      dia4_file_nc    = 'ave.'//datemean//'.DIC.nc'//CHAR(0)
+      dia5_file_nc    = 'ave.'//datemean//'.CO2.nc'//CHAR(0)
+      dia6_file_nc    = 'ave.'//datemean//'.HCO.nc'//CHAR(0)
+      dia7_file_nc    = 'ave.'//datemean//'.CO3.nc'//CHAR(0)
+      dia8_file_nc    = 'ave.'//datemean//'.AC_.nc'//CHAR(0)
+      dia9_file_nc    = 'ave.'//datemean//'.PH_.nc'//CHAR(0)
+      dia10_file_nc   = 'ave.'//datemean//'.pCO.nc'//CHAR(0)
 
       var   (4:4)    = CHAR(0)
       var_nc(4:4)    = CHAR(0)
@@ -90,9 +99,7 @@
           totbblyIO(totistart:totiend, totjstart:totjend)   = bblyIO  (relistart:reliend, reljstart:reljend)
           totwnIO  (totistart:totiend, totjstart:totjend,:) = wnIO    (relistart:reliend, reljstart:reljend, :)
           totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
-          totppgIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,1)
-          totppnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,2)
-          totppbIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,3)
+          totdiaIO (totistart:totiend, totjstart:totjend,:,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,:) ! diagnostic from reaction model
 
           do idrank = 1, size-1
 ! **************  rank 0 is receiving from the others their buffer  ****
@@ -107,18 +114,18 @@
               call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
 
 
-      call MPI_RECV(buffsn  ,jpi_rec*jpj_rec*jpk  ,mpi_real8,idrank, 11,mpi_comm_world, status, ierr); write(*,*)'sn'
-      call MPI_RECV(bufftn  ,jpi_rec*jpj_rec*jpk  ,mpi_real8,idrank, 12,mpi_comm_world, status, ierr); write(*,*)'tn'
-      call MPI_RECV(buffvatm,jpi_rec*jpj_rec      ,mpi_real8,idrank, 13,mpi_comm_world, status, ierr); write(*,*)'vatm'
-      call MPI_RECV(buffemp ,jpi_rec*jpj_rec      ,mpi_real8,idrank, 14,mpi_comm_world, status, ierr); write(*,*)'emp'
-      call MPI_RECV(buffqsr ,jpi_rec*jpj_rec      ,mpi_real8,idrank, 15,mpi_comm_world, status, ierr); write(*,*)'qsr'
-      call MPI_RECV(buffun  ,jpi_rec*jpj_rec*jpk  ,mpi_real8,idrank, 16,mpi_comm_world, status, ierr); write(*,*)'un'
-      call MPI_RECV(buffbblx,jpi_rec*jpj_rec      ,mpi_real8,idrank, 17,mpi_comm_world, status, ierr); write(*,*)'bblx'
-      call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk  ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr); write(*,*)'vn'
-      call MPI_RECV(buffbbly,jpi_rec*jpj_rec      ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr); write(*,*)'bbly'
-      call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk  ,mpi_real8,idrank, 20,mpi_comm_world, status, ierr); write(*,*)'wn'
-      call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk  ,mpi_real8,idrank, 21,mpi_comm_world, status, ierr); write(*,*)'avt'
-      call MPI_RECV(buffpp  ,jpi_rec*jpj_rec*jpk*3,mpi_real8,idrank, 22,mpi_comm_world, status, ierr); write(*,*)'fpp'
+      call MPI_RECV(buffsn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 11,mpi_comm_world, status, ierr)
+      call MPI_RECV(bufftn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 12,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffvatm,jpi_rec*jpj_rec              ,mpi_real8,idrank, 13,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffemp ,jpi_rec*jpj_rec              ,mpi_real8,idrank, 14,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffqsr ,jpi_rec*jpj_rec              ,mpi_real8,idrank, 15,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffun  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 16,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffbblx,jpi_rec*jpj_rec              ,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffbbly,jpi_rec*jpj_rec              ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 20,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 21,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffpp  ,jpi_rec*jpj_rec*jpk*jptra_dia,mpi_real8,idrank, 22,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
@@ -142,12 +149,21 @@
                      totvnIO (ji,jj,jk)= buffvn (ind)
                      totwnIO (ji,jj,jk)= buffwn (ind)
                      totavtIO(ji,jj,jk)= buffavt(ind)
-                     totppgIO(ji,jj,jk)= buffpp (ind)
-                     totppnIO(ji,jj,jk)= buffpp (ind+ 1*jpk*jpj_rec*jpi_rec)
-                     totppbIO(ji,jj,jk)= buffpp (ind+ 2*jpk*jpj_rec*jpi_rec)
                  enddo
                 enddo
                enddo
+               do jn=1, jptra_dia
+                  do jk =1 , jpk ! 3d vars
+                     do jj =totjstart,totjend
+                        do ji =totistart,totiend
+                           ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
+     &                           +(jn-1)*jpk*jpj_rec*jpi_rec
+                           totdiaIO(ji,jj,jk,jn)= buffpp (ind)
+                        enddo
+                     enddo
+                  enddo
+               enddo
+
 
                do jj =totjstart,totjend ! and 2d vars
                  do ji =totistart,totiend
@@ -166,12 +182,12 @@
       else  ! IF LABEL 1,  if(rank == 0)
 
 
-           do jn_nudg =1 , 3
+           do jn =1 , jptra_dia
             do jk =1, jpk
              do jj =1 , jpj
               do ji =1 , jpi
-                  ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1) + jpi*jpj*jpk *(jn_nudg-1)
-                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn_nudg)
+                  ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1) + jpi*jpj*jpk *(jn-1)
+                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn)
               enddo
              enddo
             enddo
@@ -223,7 +239,7 @@
            call MPI_SEND(buffbbly, jpi*jpj      ,mpi_real8, 0, 19, mpi_comm_world,ierr)
            call MPI_SEND(buffwn  , jpi*jpj*jpk  ,mpi_real8, 0, 20, mpi_comm_world,ierr)
            call MPI_SEND(buffavt , jpi*jpj*jpk  ,mpi_real8, 0, 21, mpi_comm_world,ierr)
-           call MPI_SEND(buffpp  , jpi*jpj*jpk*3,mpi_real8, 0, 22, mpi_comm_world,ierr)
+           call MPI_SEND(buffpp  , jpi*jpj*jpk*jptra_dia,mpi_real8, 0, 22, mpi_comm_world,ierr)
 
 
 
@@ -253,20 +269,62 @@
 
 ! ******************  output GROSS  PRIMARY  PRODUCTION *******************
 
-           d2f3d= REAL(totppgIO,4)     !   conversion from double to float
+           d2f3d= REAL(totdiaIO(:,:,:,1),4)     !   conversion from double to float
            var(1:3) = 'ppg'
-           CALL IOOGSNC_AVE_3D2(ppg_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+           CALL IOOGSNC_AVE_3D2(dia1_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
 ! *****************  output NET  PRIMARY  PRODUCTION ********************
 
-           d2f3d= REAL(totppnIO,4)    !   conversion from double to float
+           d2f3d= REAL(totdiaIO(:,:,:,2),4)    !   conversion from double to float
            var(1:3) = 'ppn'
-           CALL IOOGSNC_AVE_3D2(ppn_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+           CALL IOOGSNC_AVE_3D2(dia2_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
 !********************* output Bacterial  PRODUCTION *********************
-           d2f3d= REAL(totppbIO,4)    !   conversion from double to float
+           d2f3d= REAL(totdiaIO(:,:,:,3),4)    !   conversion from double to float
            var(1:3) = 'ppb'
-           CALL IOOGSNC_AVE_3D2(ppb_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+           CALL IOOGSNC_AVE_3D2(dia3_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+! ******************  output DIC *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,4),4)     !   conversion from double to float
+           var(1:3) = 'DIC'
+           CALL IOOGSNC_AVE_3D2(dia4_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************  output CO2 ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,5),4)    !   conversion from double to float
+           var(1:3) = 'CO2'
+           CALL IOOGSNC_AVE_3D2(dia5_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!********************* output HCO3 *********************
+           d2f3d= REAL(totdiaIO(:,:,:,6),4)    !   conversion from double to float
+           var(1:3) = 'HCO'
+           CALL IOOGSNC_AVE_3D2(dia6_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! ******************  output CO3 *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,7),4)     !   conversion from double to float
+           var(1:3) = 'CO3'
+           CALL IOOGSNC_AVE_3D2(dia7_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************  output AC ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,8),4)    !   conversion from double to float
+           var(1:3) = 'AC_'
+           CALL IOOGSNC_AVE_3D2(dia8_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!********************* output Bacterial  HCO3 *********************
+           d2f3d= REAL(totdiaIO(:,:,:,9),4)    !   conversion from double to float
+           var(1:3) = 'PH_'
+           CALL IOOGSNC_AVE_3D2(dia9_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!********************* pCO2 *********************
+           d2f3d= REAL(totdiaIO(:,:,:,10),4)    !   conversion from double to float
+           var(1:3) = 'pCO'
+           CALL IOOGSNC_AVE_3D2(dia10_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+
+
+
 
             close(4446)
             close(4447)

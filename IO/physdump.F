@@ -25,6 +25,11 @@
       CHARACTER*29 ppg_file_nc, ppn_file_nc,ppb_file_nc! ave.20091231-12:00:00.P1n.nc
       CHARACTER*29 dia1_file_nc, dia2_file_nc, dia3_file_nc, dia4_file_nc, dia5_file_nc
       CHARACTER*29 dia6_file_nc, dia7_file_nc, dia8_file_nc, dia9_file_nc, dia10_file_nc
+      CHARACTER*29 dia11_file_nc, dia12_file_nc, dia13_file_nc, dia14_file_nc, dia15_file_nc
+      CHARACTER*29 dia16_file_nc, dia17_file_nc, dia18_file_nc, dia19_file_nc, dia20_file_nc
+      CHARACTER*29 dia21_file_nc, dia22_file_nc, dia23_file_nc, dia24_file_nc, dia25_file_nc
+      CHARACTER*29 dia26_file_nc, dia27_file_nc, dia28_file_nc, dia29_file_nc, dia30_file_nc
+      CHARACTER*29 dia31_file_nc, dia32_file_nc, dia33_file_nc
       CHARACTER*4  var, var_nc
 
       INTEGER :: ir, ir2d, ir3d
@@ -53,6 +58,32 @@
       dia8_file_nc    = 'ave.'//datemean//'.AC_.nc'//CHAR(0)
       dia9_file_nc    = 'ave.'//datemean//'.PH_.nc'//CHAR(0)
       dia10_file_nc   = 'ave.'//datemean//'.pCO.nc'//CHAR(0)
+
+      dia11_file_nc   = 'ave.'//datemean//'.F01.nc'//CHAR(0)
+      dia12_file_nc   = 'ave.'//datemean//'.F02.nc'//CHAR(0)
+      dia13_file_nc   = 'ave.'//datemean//'.F03.nc'//CHAR(0)
+      dia14_file_nc   = 'ave.'//datemean//'.F04.nc'//CHAR(0)
+      dia15_file_nc   = 'ave.'//datemean//'.F05.nc'//CHAR(0)
+      dia16_file_nc   = 'ave.'//datemean//'.F06.nc'//CHAR(0)
+      dia17_file_nc   = 'ave.'//datemean//'.F07.nc'//CHAR(0)
+      dia18_file_nc   = 'ave.'//datemean//'.F08.nc'//CHAR(0)
+      dia19_file_nc   = 'ave.'//datemean//'.F09.nc'//CHAR(0)
+      dia20_file_nc   = 'ave.'//datemean//'.F10.nc'//CHAR(0)
+
+      dia21_file_nc   = 'ave.'//datemean//'.F11.nc'//CHAR(0)
+      dia22_file_nc   = 'ave.'//datemean//'.F12.nc'//CHAR(0)
+      dia23_file_nc   = 'ave.'//datemean//'.F13.nc'//CHAR(0)
+      dia24_file_nc   = 'ave.'//datemean//'.F14.nc'//CHAR(0)
+      dia25_file_nc   = 'ave.'//datemean//'.F15.nc'//CHAR(0)
+      dia26_file_nc   = 'ave.'//datemean//'.F16.nc'//CHAR(0)
+      dia27_file_nc   = 'ave.'//datemean//'.F17.nc'//CHAR(0)
+      dia28_file_nc   = 'ave.'//datemean//'.F18.nc'//CHAR(0)
+      dia29_file_nc   = 'ave.'//datemean//'.F19.nc'//CHAR(0)
+      dia30_file_nc   = 'ave.'//datemean//'.F20.nc'//CHAR(0)
+
+      dia31_file_nc   = 'ave.'//datemean//'.F21.nc'//CHAR(0)
+      dia32_file_nc   = 'ave.'//datemean//'.F22.nc'//CHAR(0)
+      dia33_file_nc   = 'ave.'//datemean//'.F23.nc'//CHAR(0)
 
       var   (4:4)    = CHAR(0)
       var_nc(4:4)    = CHAR(0)
@@ -318,12 +349,138 @@
            CALL IOOGSNC_AVE_3D2(dia9_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
 !********************* pCO2 *********************
+
            d2f3d= REAL(totdiaIO(:,:,:,10),4)    !   conversion from double to float
            var(1:3) = 'pCO'
            CALL IOOGSNC_AVE_3D2(dia10_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
 
+! ******************  output F01 *******************
 
+           d2f3d= REAL(totdiaIO(:,:,:,11),4)     !   conversion from double to float
+           var(1:3) = 'F01'
+           CALL IOOGSNC_AVE_3D2(dia11_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************  ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,12),4)    !   conversion from double to float
+           var(1:3) = 'F02'
+           CALL IOOGSNC_AVE_3D2(dia12_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,13),4)    !   conversion from double to float
+           var(1:3) = 'F03'
+           CALL IOOGSNC_AVE_3D2(dia13_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+! ******************   *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,14),4)     !   conversion from double to float
+           var(1:3) = 'F04'
+           CALL IOOGSNC_AVE_3D2(dia14_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************   ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,15),4)    !   conversion from double to float
+           var(1:3) = 'F05'
+           CALL IOOGSNC_AVE_3D2(dia15_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,16),4)    !   conversion from double to float
+           var(1:3) = 'F06'
+           CALL IOOGSNC_AVE_3D2(dia16_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! ******************   *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,17),4)     !   conversion from double to float
+           var(1:3) = 'F07'
+           CALL IOOGSNC_AVE_3D2(dia17_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************   ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,18),4)    !   conversion from double to float
+           var(1:3) = 'F08'
+           CALL IOOGSNC_AVE_3D2(dia18_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,19),4)    !   conversion from double to float
+           var(1:3) = 'F09'
+           CALL IOOGSNC_AVE_3D2(dia19_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,20),4)    !   conversion from double to float
+           var(1:3) = 'F10'
+           CALL IOOGSNC_AVE_3D2(dia20_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! ******************  output F21 *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,21),4)     !   conversion from double to float
+           var(1:3) = 'F11'
+           CALL IOOGSNC_AVE_3D2(dia21_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************  ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,22),4)    !   conversion from double to float
+           var(1:3) = 'F12'
+           CALL IOOGSNC_AVE_3D2(dia22_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,23),4)    !   conversion from double to float
+           var(1:3) = 'F13'
+           CALL IOOGSNC_AVE_3D2(dia23_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+! ******************   *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,24),4)     !   conversion from double to float
+           var(1:3) = 'F14'
+           CALL IOOGSNC_AVE_3D2(dia24_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************   ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,25),4)    !   conversion from double to float
+           var(1:3) = 'F15'
+           CALL IOOGSNC_AVE_3D2(dia25_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,26),4)    !   conversion from double to float
+           var(1:3) = 'F16'
+           CALL IOOGSNC_AVE_3D2(dia26_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! ******************   *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,27),4)     !   conversion from double to float
+           var(1:3) = 'F17'
+           CALL IOOGSNC_AVE_3D2(dia27_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************   ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,28),4)    !   conversion from double to float
+           var(1:3) = 'F18'
+           CALL IOOGSNC_AVE_3D2(dia28_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,29),4)    !   conversion from double to float
+           var(1:3) = 'F19'
+           CALL IOOGSNC_AVE_3D2(dia29_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,30),4)    !   conversion from double to float
+           var(1:3) = 'F20'
+           CALL IOOGSNC_AVE_3D2(dia30_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! ******************  output F21 *******************
+
+           d2f3d= REAL(totdiaIO(:,:,:,31),4)     !   conversion from double to float
+           var(1:3) = 'F21'
+           CALL IOOGSNC_AVE_3D2(dia31_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+! *****************  ********************
+
+           d2f3d= REAL(totdiaIO(:,:,:,32),4)    !   conversion from double to float
+           var(1:3) = 'F22'
+           CALL IOOGSNC_AVE_3D2(dia32_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
+!*********************  *********************
+           d2f3d= REAL(totdiaIO(:,:,:,33),4)    !   conversion from double to float
+           var(1:3) = 'F23'
+           CALL IOOGSNC_AVE_3D2(dia33_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
 
             close(4446)

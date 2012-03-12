@@ -207,8 +207,8 @@ CC
 #    if defined key_INCLUDE_BFM_PELCO2
 
       INTEGER, parameter :: jptra = 51
-      INTEGER, parameter :: jptra_dia = 10
-
+C      INTEGER, parameter :: jptra_dia = 10
+      INTEGER, parameter :: jptra_dia = 33
 #    else
 
       INTEGER, parameter :: jptra = 49
@@ -278,8 +278,12 @@ C       diagnostic indexes
 
         integer,parameter :: ppO3c=50, ppO3h=51
 C       diagnostic indexes
-        integer,parameter :: ppDIC=4, ppCO2=5,  ppHCO3=6, ppCO3=7, ppAc=8,
-     &                       pppH=9, pppCO2=10
+        integer,parameter :: ppDIC=4, ppCO2=5,  ppHCO3=6,  ppCO3=7,   ppAc=8,
+     &                       pppH =9, pppCO2=10, ppF01 =11, ppF02=12, ppF03=13,
+     &                       ppF04=14, ppF05=15, ppF06 =16, ppF07=17, ppF08=18,
+     &                       ppF09=19, ppF10=20, ppF11 =21, ppF12=22, ppF13=23,
+     &                       ppF14=24, ppF15=25, ppF16 =26, ppF17=27, ppF18=28,
+     &                       ppF19=29, ppF20=30, ppF21 =31, ppF22=32, ppF23=33
 
 #    endif
 

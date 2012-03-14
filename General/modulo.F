@@ -547,6 +547,7 @@ CCC          CHARACTER*80, allocatable ::  ctrcnl(:)
           CHARACTER*8 :: ctrcnm(jptra),ctrcun(jptra)
           CHARACTER*6 :: mycln
           CHARACTER*80 ::  ctrcnl(jptra)
+          CHARACTER*3 :: dia(jptra_dia)
 
 CC
 CC

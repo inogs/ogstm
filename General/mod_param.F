@@ -265,7 +265,7 @@ C    &     ppZ6p=41, ppR1c=42, ppR1n=43, ppR1p=44, ppR1s=45, ppR2c=46, ppR6c=47,
 C    &     ppR6n=48, ppR6p=49, ppR6s=50, ppR7c=51
 
         integer,parameter :: ppO2o=1, ppN1p=2, ppN3n=3, ppN4n=4, ppO4n=5,
-     &     ppN5s=6, ppN6r=7, ppB1c=8, ppB1n=9, ppB1p=10, ppP1c=11, ppP1n=12,
+     &     ppN5s=6,  ppN6r=7,  ppB1c=8,  ppB1n=9,  ppB1p=10, ppP1c=11, ppP1n=12,
      &     ppP1p=13, ppP1i=14, ppP1s=15, ppP2c=16, ppP2n=17, ppP2p=18, ppP2i=19,
      &     ppP3c=20, ppP3n=21, ppP3p=22, ppP3i=23, ppP4c=24, ppP4n=25, ppP4p=26,
      &     ppP4i=27, ppZ3c=28, ppZ3n=29, ppZ3p=30, ppZ4c=31, ppZ4n=32, ppZ4p=33,

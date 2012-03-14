@@ -244,6 +244,6 @@ C 0. initializations
 
 ! 1.4 namelist natdmp : passive tracers dumping
 
-      CALL trclsm
+!      CALL trclsm
 
       END SUBROUTINE trclec

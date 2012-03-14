@@ -267,6 +267,7 @@
 !    Run parameters
 !    --------------
       CALL parcst;  CALL parlec ; CALL parctl ! CALL inipar
+      CALL dialec
 
 
 ! ... Large domain

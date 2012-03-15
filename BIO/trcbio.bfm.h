@@ -17,7 +17,7 @@ CC ==================
 
       INTEGER ji,jj,jk,jn
       INTEGER gji,gjj,gjk
-      INTEGER CSi,CS(9,3)
+      INTEGER CSi,CS(10,3)
       INTEGER jtr,jtrmax,tra_idx
       REAL(8):: opa_ice, opa_co2
 ! omp variables
@@ -123,6 +123,7 @@ C
 
 ! Diagnostic
                           IF (isDumpAscii) THEN
+
 ! From local to global indexing
 
                              gji = idxt2glo(ji, jj, jk,1)
@@ -149,7 +150,9 @@ C
 
                              CS(9,1)=266; CS(9,2)=78    ! North Aegean
 
-                             DO CSi=1,9
+                             CS(10,1)=278; CS(10,2)=81  ! North Aegean Critical
+
+                             DO CSi=1,10
                                 IF ( (gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) ) THEN
                                    CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring) ! BFM routine that dump all key fluxes
                                 ENDIF

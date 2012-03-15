@@ -121,32 +121,37 @@ C
                              tra_pp(ji,jj+mytid,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
+! Diagnostic
+                          IF (isDumpAscii) THEN
 ! From local to global indexing
 
-                          gji = idxt2glo(ji, jj, jk,1)
-                          gjj = idxt2glo(ji, jj, jk,2)
-                          gjk = idxt2glo(ji, jj, jk,3)
+                             gji = idxt2glo(ji, jj, jk,1)
+                             gjj = idxt2glo(ji, jj, jk,2)
+                             gjk = idxt2glo(ji, jj, jk,3)
 
 ! CheckSites (CS) localization --- CS(8,3)
 
-                          CS(1,1)=120; CS(1,2)=80 ; CS(1,3)=1   ! West Med
-                          CS(2,1)=120; CS(2,2)=80 ; CS(2,3)=2   !
+                             CS(1,1)=36;  CS(1,2)=46    ! Alboran Sea
 
-                          CS(3,1)=310; CS(3,2)=30 ; CS(3,3)=1   ! East Med
-                          CS(4,1)=310; CS(4,2)=30 ; CS(4,3)=2   !
+                             CS(1,1)=120; CS(1,2)=80    ! West Med
 
-                          CS(5,1)=172; CS(5,2)=122; CS(5,3)=1   ! North Adriatic
-                          CS(6,1)=172; CS(6,2)=122; CS(6,3)=2   !
+                             CS(1,1)=170; CS(1,2)=80    ! Tyrrhenian
 
-                          CS(7,1)=266; CS(7,2)=78 ; CS(7,3)=1   ! North Aegean
-                          CS(8,1)=266; CS(8,2)=78 ; CS(8,3)=2   !
+                             CS(1,1)=131; CS(1,2)=105   ! DYFAMED
 
+                             CS(1,1)=220; CS(1,2)=45    ! Ionian
 
-                          IF (isDumpAscii) THEN
+                             CS(3,1)=310; CS(3,2)=30    ! East Med
+
+                             CS(5,1)=172; CS(5,2)=122   ! North Adriatic
+
+                             CS(5,1)=212; CS(5,2)=93    ! South Adriatic
+
+                             CS(7,1)=266; CS(7,2)=78    ! North Aegean
 
                              DO CSi=1,8
-                                IF ((gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) .AND. (gjk .EQ. CS(CSi,3))) THEN
-                                   CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring)
+                                IF ( (gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) ) THEN
+                                   CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring) ! BFM routine that dump all key fluxes
                                 ENDIF
                              ENDDO
 

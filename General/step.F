@@ -83,7 +83,11 @@
       DO TAU = TimeStepStart, TimeStep__End
 
          call tau2datestring(TAU, DATEstring)
+
+         NOW_datestring = DATEstring ! update time manager module
+
          sec=datestring2sec(DATEstring)
+
          call yearly(DATEstring)
 
          stpparttime = MPI_WTIME()  ! stop cronomether
@@ -91,6 +95,10 @@
 
 
         if (IsaRestart(DATEstring)) CALL trcwri(DATEstring) ! writes the restart files
+
+
+
+
 
 
 

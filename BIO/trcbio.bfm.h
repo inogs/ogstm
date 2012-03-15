@@ -1,6 +1,7 @@
 
        USE myalloc
        USE myalloc_mpp
+       USE TIME_MANAGER
        USE BIO_mem
        USE BC_mem
 
@@ -11,10 +12,12 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER kt,ktask
-      LOGICAL sur,bot,isT,isBIO
+      LOGICAL isDumpAscii,sur,bot,isT,isBIO
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia)
 
       INTEGER ji,jj,jk,jn
+      INTEGER gji,gjj,gjk
+      INTEGER CSi,CS(8,3)
       INTEGER jtr,jtrmax,tra_idx
       REAL(8):: opa_den, opa_ice, opa_co2
 ! omp variables
@@ -63,12 +66,14 @@ C
           tra_idx = tra_matrix_gib(1)
           jtrmax=jptra
 
+          isDumpAscii=IsAnAveDump(NOW_datestring)
+
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,d)
+!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,d,gji,gjj,gjk,CSi,CS)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
 !$omp&		       restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
-!$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2)
+!$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -87,7 +92,8 @@ C
 
                        IF( isT .and. isBIO) THEN
 
-                          IF(jk .eq. 1) sur = .TRUE.
+                          sur = (jk .eq. 1)
+
                           bot = .FALSE.
 
                           DO jtr=1, jtrmax
@@ -103,16 +109,9 @@ C
 
                           call EcologyDynamics()
 
-                          call OPA_Output_EcologyDynamics(b, jtrmax, sediPI(ji,jj+mytid,jk,1),
+                          call OPA_Output_EcologyDynamics(b, jtrmax, sediPI(ji,jj+mytid,jk,1), ! mettere c
      &                          sediPI(ji,jj+mytid,jk,2), sediPI(ji,jj+mytid,jk,3),
      &                          sediPI(ji,jj+mytid,jk,4),d)
-
-C                           write(*,*) 'sediPI -->ji',ji,'sediPI -->jj' ,jj+mytid
-C                           write(*,*) 'sediPI -->jk',jk
-C                           write(*,*) 'sediPI(ji,jj+mytid,jk,1) -->', sediPI(ji,jj+mytid,jk,1)
-C                           write(*,*) 'sediPI(ji,jj+mytid,jk,2) -->', sediPI(ji,jj+mytid,jk,2)
-C                           write(*,*) 'sediPI(ji,jj+mytid,jk,3) -->', sediPI(ji,jj+mytid,jk,3)
-C                           write(*,*) 'sediPI(ji,jj+mytid,jk,4) -->', sediPI(ji,jj+mytid,jk,4)
 
                           DO jtr=1, jtrmax
                              tra(ji,jj+mytid,jk,jtr) =tra(ji,jj+mytid,jk,jtr) +b(jtr) ! trend
@@ -121,6 +120,38 @@ C                           write(*,*) 'sediPI(ji,jj+mytid,jk,4) -->', sediPI(ji
                           DO jtr=1,jptra_dia
                              tra_pp(ji,jj+mytid,jk,jtr) = d(jtr) ! diagnostic
                           END DO
+
+! From local to global indexing
+
+                          gji = idxt2glo(ji, jj, jk,1)
+                          gjj = idxt2glo(ji, jj, jk,2)
+                          gjk = idxt2glo(ji, jj, jk,3)
+
+! CheckSites (CS) localization --- CS(8,3)
+
+                          CS(1,1)=120; CS(1,2)=80 ; CS(1,3)=1   ! West Med
+                          CS(2,1)=120; CS(2,2)=80 ; CS(2,3)=2   !
+
+                          CS(3,1)=310; CS(3,2)=30 ; CS(3,3)=1   ! East Med
+                          CS(4,1)=310; CS(4,2)=30 ; CS(4,3)=2   !
+
+                          CS(5,1)=172; CS(5,2)=122; CS(5,3)=1   ! North Adriatic
+                          CS(6,1)=172; CS(6,2)=122; CS(6,3)=2   !
+
+                          CS(7,1)=266; CS(7,2)=78 ; CS(7,3)=1   ! North Aegean
+                          CS(8,1)=266; CS(8,2)=78 ; CS(8,3)=2   !
+
+
+                          IF (isDumpAscii) THEN
+
+                             DO CSi=1,8
+                                IF ((gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) .AND. (gjk .EQ. CS(CSi,3))) THEN
+                                   CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring)
+                                ENDIF
+                             ENDDO
+
+                          ENDIF
+
 
                        ELSE
                           sediPI(ji,jj+mytid,jk,:)=0

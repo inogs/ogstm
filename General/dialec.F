@@ -46,6 +46,8 @@
       cldir = 'DIRECT'
       ilseq = 1 ! ... Sequential value
 
+      ilu=0
+
       DO ji = 1, 100
         iused(1,ji) = 0
       END DO
@@ -66,7 +68,7 @@
       ENDIF
 
       numnam = 2004
-!      REWIND( numnam )
+      REWIND( numnam )
       clname = 'namelist.diagnostics'
       CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
 
@@ -75,15 +77,18 @@
 ! ---------------------
 
       DO ji=1,jptra_dia
-        WRITE (dia(ji),'("TR",I1)') ji
+        WRITE (dia(ji),1414) ji ! initalize diagnostic names for each slot
       END DO
 
 
-         REWIND(numnat)
-         READ(numnat,dia)
+      REWIND(numnam)
+      READ(numnam,DIAGNOSTICS)
 
 
 
       CLOSE( numnam )
       CALL FLUSH_(numout)
+
+1414  FORMAT('D',I2.2)
+
       END SUBROUTINE dialec

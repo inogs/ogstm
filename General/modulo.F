@@ -780,7 +780,7 @@ CC
 
       REAL(8), allocatable ::  trdta(:,:,:,:),trcdat(:,:,:,:,:)
       REAL(8), allocatable ::  restoglo(:,:,:)
-      INTEGER(4), allocatable ::  idxt(:,:,:)
+      INTEGER(4), allocatable ::  idxt(:,:,:),idxt2glo(:,:,:,:)
       INTEGER(4), allocatable ::  idxtglo(:,:,:)
 CC
 #    else
@@ -1693,6 +1693,7 @@ CC
       allocate(trcdat(jpi,jpj,jpk,2,jptra))
       allocate(restoglo(jpiglo,jpjglo,jpk))
       allocate(idxt(jpi,jpj,jpk))
+      allocate(idxt2glo(jpi,jpj,jpk,4))
       allocate(idxtglo(jpiglo,jpjglo,jpk))
       mem_all = mem_all +  rea_len*(4*jpi*jpj*jpk*jptra
      &                  + 2*jpi*jpj*jpk + 2*jpiglo*jpjglo*jpk)

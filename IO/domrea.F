@@ -55,13 +55,25 @@
       jjsta = njmpp
       jjend = MIN(jpj+njmpp-1, jpjglo)
 
-      nomefile = 'meshmask.nc'
-      nomefile(12:12) = CHAR(0)
-      nomevar01(1:5) = 'abdce'
-      nomevar01(6:6) = CHAR(0)
-      nomevar02(1:3) = 'abc'
-      nomevar02(4:4) = CHAR(0)
+      nomefile(1:12)  = 'meshmask.nc'//CHAR(0)
+      nomevar01(1:6)  = '12345'//CHAR(0)
+      nomevar02(1:4)  = '123'//CHAR(0)
+      nomevar03(1:3)  = '12'//CHAR(0)
+      nomevar04(1:9)  = '12345678'//CHAR(0)
+      nomevar05(1:13) = '123456789012'//CHAR(0)
       filename='BC/TI_yyyy0215-00:00:00.nc' ! 26 chars
+
+      do kk=1, jpk
+         do jj=jjsta, jjend
+            do ii=iista, iiend
+               iinew = ii - nimpp + 1
+               jjnew = jj - njmpp + 1
+               idxt2glo(iinew, jjnew, kk,1)=ii !
+               idxt2glo(iinew, jjnew, kk,2)=jj ! matrix to go from local to global
+               idxt2glo(iinew, jjnew, kk,3)=kk !
+            enddo
+         enddo
+      enddo
 
 ! 1. Horzontal grid-point position
 ! --------------------------------

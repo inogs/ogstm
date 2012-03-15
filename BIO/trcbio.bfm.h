@@ -17,9 +17,9 @@ CC ==================
 
       INTEGER ji,jj,jk,jn
       INTEGER gji,gjj,gjk
-      INTEGER CSi,CS(8,3)
+      INTEGER CSi,CS(9,3)
       INTEGER jtr,jtrmax,tra_idx
-      REAL(8):: opa_den, opa_ice, opa_co2
+      REAL(8):: opa_ice, opa_co2
 ! omp variables
             INTEGER :: mytid, ntids, itid
 
@@ -35,14 +35,13 @@ CC ===================
 #include "stafun.h"
 
       INTERFACE OPA_Output_EcologyDynamics
-         subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI_P1, 
-     &       sediPI_P2, sediPI_P3,  sediPI_P4, local_opa_dia)
+         subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI, local_opa_dia)
 !            use global_mem, ONLY:RLEN
             IMPLICIT NONE
             integer dim_opa_tra
-            real(8):: sediPI_P1, sediPI_P2, sediPI_P3, sediPI_P4
+            real(8):: sediPI(4)
             real(8):: opa_tra(dim_opa_tra)
-            real(8):: local_opa_dia(10)
+            real(8):: local_opa_dia(33)
          end subroutine
       END INTERFACE
 
@@ -60,7 +59,6 @@ C
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 
-          opa_den=1029
           opa_ice=0
           opa_co2=365.0
           tra_idx = tra_matrix_gib(1)
@@ -70,7 +68,7 @@ C
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,d,gji,gjj,gjk,CSi,CS)
+!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,gji,gjj,gjk,CSi,CS)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
 !$omp&		       restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
 !$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
@@ -109,12 +107,14 @@ C
 
                           call EcologyDynamics()
 
-                          call OPA_Output_EcologyDynamics(b, jtrmax, sediPI(ji,jj+mytid,jk,1), ! mettere c
-     &                          sediPI(ji,jj+mytid,jk,2), sediPI(ji,jj+mytid,jk,3),
-     &                          sediPI(ji,jj+mytid,jk,4),d)
+                          call OPA_Output_EcologyDynamics(b, jtrmax, c, d)
 
                           DO jtr=1, jtrmax
                              tra(ji,jj+mytid,jk,jtr) =tra(ji,jj+mytid,jk,jtr) +b(jtr) ! trend
+                          END DO
+
+                          DO jtr=1,4
+                             sediPI(ji,jj+mytid,jk,jtr) = c(jtr) ! sedimentation velocities
                           END DO
 
                           DO jtr=1,jptra_dia
@@ -133,30 +133,30 @@ C
 
                              CS(1,1)=36;  CS(1,2)=46    ! Alboran Sea
 
-                             CS(1,1)=120; CS(1,2)=80    ! West Med
+                             CS(2,1)=120; CS(2,2)=80    ! West Med
 
-                             CS(1,1)=170; CS(1,2)=80    ! Tyrrhenian
+                             CS(3,1)=170; CS(3,2)=80    ! Tyrrhenian
 
-                             CS(1,1)=131; CS(1,2)=105   ! DYFAMED
+                             CS(4,1)=131; CS(4,2)=105   ! DYFAMED
 
-                             CS(1,1)=220; CS(1,2)=45    ! Ionian
+                             CS(5,1)=220; CS(5,2)=45    ! Ionian
 
-                             CS(3,1)=310; CS(3,2)=30    ! East Med
+                             CS(6,1)=310; CS(6,2)=30    ! East Med
 
-                             CS(5,1)=172; CS(5,2)=122   ! North Adriatic
+                             CS(7,1)=172; CS(7,2)=122   ! North Adriatic
 
-                             CS(5,1)=212; CS(5,2)=93    ! South Adriatic
+                             CS(8,1)=212; CS(8,2)=93    ! South Adriatic
 
-                             CS(7,1)=266; CS(7,2)=78    ! North Aegean
+                             CS(9,1)=266; CS(9,2)=78    ! North Aegean
 
-                             DO CSi=1,8
+                             DO CSi=1,9
                                 IF ( (gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) ) THEN
                                    CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring) ! BFM routine that dump all key fluxes
                                 ENDIF
                              ENDDO
 
                           ENDIF
-
+! End Diagnostic
 
                        ELSE
                           sediPI(ji,jj+mytid,jk,:)=0

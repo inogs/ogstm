@@ -304,7 +304,7 @@
 ! ******************  output GROSS  PRIMARY  PRODUCTION *******************
            do jn =1 , jptra_dia
               d2f3d= REAL(totdiaIO(:,:,:,jn),4)     !   conversion from double to float
-              dia_file_nc ='ave.'//datemean//'.'//dia(jn)//'nc'//CHAR(0)
+              dia_file_nc ='ave.'//datemean//'.'//dia(jn)//'.nc'//CHAR(0)
               var(1:3) = dia(jn) ;
               CALL IOOGSNC_AVE_3D2(dia_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
            enddo

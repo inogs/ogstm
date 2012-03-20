@@ -56,6 +56,8 @@
       CHARACTER(LEN=17) :: NOW_datestring
       INTEGER           :: NOW_timestep
       REAL(8)           :: NOW_sec
+      CHARACTER(LEN=17) :: BKPdatefrom
+      LOGICAL           :: IsStartBackup = .false.
 
 
 
@@ -465,6 +467,29 @@
 
 
       END SUBROUTINE getTimesteps
+
+       INTEGER FUNCTION datestringToTAU(datestring)
+       use calendar
+       IMPLICIT NONE
+       character(LEN=17), INTENT(IN) :: datestring
+
+       !local
+       integer year, year0
+       integer month, month0
+       integer day, day0
+       real(8) sec, sec0, sec_diff
+
+       datestringToTAU = -500
+
+       call read_date_string(datestring, year, month, day, sec)
+       call ju2ymds(TIME_0/86400.0, year0, month0, day0, sec0)
+       call time_diff(year0, month0, day0, sec0, year, month,day,sec, sec_diff)
+
+
+       datestringToTAU = NINT(sec_diff/deltaT);
+
+
+       END FUNCTION datestringToTAU
 
 
       SUBROUTINE MIDDLEDATE(Tau1, Tau2, datestring)

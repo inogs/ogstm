@@ -33,7 +33,7 @@
 #include<netcdf.h>
 #include<mpi.h>
 /* Auxiliary function for Error Diagnostic */
-void handle_error(char * ,int status);
+void handle_error(char* nomevar ,int status);
 
 /* ------------------------------------------------- */
 /* function to inquire BC size */
@@ -1037,7 +1037,7 @@ int ioogsnc(char *nomefile, char *nomevar, int *iipao, int *jjpao, int *kkpao, d
       int  varidp,varidp1;
       size_t lengthp[4];
       nc_type xtypep;
-      int check = 0;      
+      int check = 0;
       int rank;
       
       MPI_Comm_rank(MPI_COMM_WORLD, &rank);
@@ -1942,6 +1942,177 @@ int ioogsnc_ave_3d2(char *nomefile, char *nmvar, int *iipao, int *jjpao, int *kk
 return 0 ;
 }
 
+/* writes ave backup files, temporary averages of variables */
+int ioogsnc_ave_bkp(char *nomefile, char *nmvar, int *iipao, int *jjpao, int *kkpao, float *tem_lon_f, float *tem_lat_f,  float *tem_lev_f,   char *datestart, char* date__end, double *tem_f, int *avecounter)
+{
+      int i;
+      int status, ncid, dimidp[7];
+      static char convenctions[] = "COARDS";
+      static float depth_range[] = {4.9991,4450.068};
+      static float lat_range[] = {30.5,44.5};
+      static float lon_range[] = {-9.25,36};
+      static float miss_val_f[] = {1.e20};
+      int  varidp[8],varidp1;
+      int dimlst1[1], dimlst2[2],dimlst3[3],dimlst4[4];
+      size_t lengthp[4];
+      size_t lat;
+      size_t lon;
+      size_t dep;
+      size_t tim;
+      size_t tstp;
+      size_t vardim[8];
+      static size_t start1[] = {0};
+      static size_t start2[] = {0,0};
+      static size_t start3[] = {0,0,0};
+      static size_t start4[] = {0,0,0,0};
+      size_t count1[] = {0};
+      size_t count2[] = {0,0};
+      size_t count3[] = {0,0,0};
+      size_t count4[] = {0,0,0,0};
+      nc_type xtypep;
+
+      int check = 0;
+
+/*=Open a NETcdf Dataset for Create: nc_create =======*/
+       if (check) printf("stage--->1");
+       status=nc_create(nomefile,0,&ncid);
+       handle_error(nmvar,status);
+       if (check) printf("IOOGS: rstfile= %s \n",nomefile);
+       if (check) printf("IOOGS: variabile= %s \n",nmvar);
+/*=Dimension Definition=*/
+       lengthp[0] = 1;
+       status=nc_def_dim(ncid, "time", NC_UNLIMITED, &dimidp[0]); handle_error(nmvar,status);
+       if (check) printf("TimeID=%d \n",dimidp[0]);
+/*============================*/
+
+       lengthp[1] = *kkpao;
+       status=nc_def_dim(ncid, "z", lengthp[1], &dimidp[1]); handle_error(nmvar,status);
+       if (check) printf("DepthID=%d \n",dimidp[1]);
+/*============================*/
+
+       lengthp[2] = *jjpao;
+       status=nc_def_dim(ncid, "y" ,lengthp[2], &dimidp[2]); handle_error(nmvar,status);
+       if (check) printf("YID=%d \n",dimidp[2]);
+/*============================*/
+
+       lengthp[3] = *iipao;
+       status=nc_def_dim(ncid, "x", lengthp[3], &dimidp[3]); handle_error(nmvar,status);
+       if (check) printf("XID=%d \n",dimidp[3]);
+/*============================*/
+
+       lengthp[0] = 1;
+    for(i=1;i<4;i++)
+     {
+       status=nc_inq_dimlen(ncid,dimidp[i],&lengthp[i]);handle_error(nmvar,status);
+       if (check) printf("Dimension lenght[%d]=%d \n",dimidp[i],lengthp[i]);
+     }
+/*============================*/
+
+
+/*==Define  Variables : nc_def_dim */
+/* Tracer field*/
+/*============================*/
+
+       xtypep = NC_DOUBLE;
+       vardim[3]=1;
+       dimlst1[0]=dimidp[0];
+       status=nc_def_var     (ncid,"time", xtypep ,vardim[3], dimlst1 ,&varidp[3]);handle_error(nmvar,status);
+       status=nc_put_att_text(ncid, varidp[3] , "units",7 ,"seconds");             handle_error(nmvar,status);
+       if (check) printf("variable Id=%d \n",varidp[3]);
+/*============================*/
+
+       xtypep = NC_FLOAT;
+       vardim[2]=1 ;
+       dimlst1[0]=dimidp[1];
+       status=nc_def_var(ncid,"depth", xtypep, vardim[2], dimlst1, &varidp[2]);handle_error(nmvar,status);
+       status=nc_put_att_text (ncid, varidp[2] , "units",5 ,"meter"); handle_error(nmvar,status);
+       status=nc_put_att_text (ncid, varidp[2] , "positive",2 ,"up");handle_error(nmvar,status);
+       status=nc_put_att_float(ncid, varidp[2] , "actual_range", xtypep, 2 ,depth_range); handle_error(nmvar,status);
+
+       if (check) printf("variable Id=%d \n",varidp[2]);
+
+/*============================*/
+
+       xtypep = NC_FLOAT;
+       vardim[1]=1;
+       dimlst1[0]=dimidp[2];
+       status=nc_def_var(ncid,"lat", xtypep ,vardim[1],dimlst1 ,&varidp[1]); handle_error(nmvar,status);
+       status=nc_put_att_text (ncid,varidp[1], "units",13 ,"degrees_north"); handle_error(nmvar,status);
+       status=nc_put_att_float(ncid,varidp[1], "actual_range", xtypep, 2, lat_range); handle_error(nmvar,status);
+       status=nc_put_att_text( ncid,varidp[1], "long_name",8 ,"Latitude"); handle_error(nmvar,status);
+
+       if (check) printf("variable Id=%d \n",varidp[1]);
+
+/*============================*/
+
+       xtypep = NC_FLOAT;
+       vardim[0]=1;
+       dimlst1[0]=dimidp[3];
+       status=nc_def_var(ncid,"lon",xtypep,vardim[0],dimlst1,&varidp[0]); handle_error(nmvar,status);
+       status=nc_put_att_text (ncid,varidp[0] , "units",12 ,"degrees_east"); handle_error(nmvar,status);
+       status=nc_put_att_float(ncid,varidp[0] , "actual_range", xtypep, 2, lon_range); handle_error(nmvar,status);
+       status=nc_put_att_text (ncid,varidp[0] , "long_name",9 ,"Longitude"); handle_error(nmvar,status);
+
+       if (check) printf("variable Id=%d \n",varidp[0]);
+
+/*============================*/
+
+       xtypep = NC_DOUBLE;
+       vardim[4]=4;
+       dimlst4[0]=dimidp[0];
+       dimlst4[1]=dimidp[1];
+       dimlst4[2]=dimidp[2];
+       dimlst4[3]=dimidp[3];
+       status=nc_def_var(ncid, nmvar, xtypep ,vardim[4],dimlst4 , &varidp[4]); handle_error(nmvar,status);
+       status=nc_put_att_text (ncid,varidp[4] , "long_name",3 ,nmvar); handle_error(nmvar,status);
+       status=nc_put_att_float(ncid,varidp[4] , "missing_value", xtypep, 1, miss_val_f); handle_error(nmvar,status);
+       if (check) printf("variable Id=%d \n",varidp[6]);
+
+/*== Global Attribute ========*/
+       status=nc_put_att_text(ncid,NC_GLOBAL, "Convenctions",strlen(convenctions) ,convenctions); handle_error(nmvar,status);
+       status=nc_put_att_text(ncid,NC_GLOBAL, "Time_Start", 17 ,datestart ); handle_error(nmvar,status);
+       status=nc_put_att_text(ncid,NC_GLOBAL, "Time___End", 17 ,date__end ); handle_error(nmvar,status);
+       status=nc_put_att_int (ncid,NC_GLOBAL, "Ave_counter", NC_INT, 1 ,avecounter); handle_error(nmvar,status);
+       nc_enddef(ncid);
+
+
+
+/*== Longitude ===============*/
+
+       count1[0]=lengthp[3];
+       status=nc_put_vara_float(ncid, varidp[0],start1,count1,tem_lon_f);
+
+/*== Latitude ===============*/
+       count1[0]=lengthp[2];
+       status=nc_put_vara_float(ncid, varidp[1],start1,count1,tem_lat_f);
+
+/*== Level =================*/
+       count1[0]=lengthp[1];
+       status=nc_put_vara_float(ncid, varidp[2],start1,count1,tem_lev_f);
+
+/*== Time ================= count1[0]=lengthp[0]; status=nc_put_vara_double(ncid, varidp[3],start1,count1,tem_tim);
+*/
+
+
+/*== Trc ===============*/
+       count4[0]=lengthp[0];
+       count4[1]=lengthp[1];
+       count4[2]=lengthp[2];
+       count4[3]=lengthp[3];
+
+       status=nc_put_vara_double(ncid, varidp[4],start4,count4,tem_f);
+
+    if(tem_f == NULL) printf("IOOGS:Error");
+
+/*=Close a NETcdf Dataset for Access: ncclose =======*/
+
+       ncclose(ncid);
+
+/*============================*/
+return 0 ;
+}
+
+
 
 
 /* function for 1d meshmask float variables */
@@ -2418,9 +2589,24 @@ return 0 ;
 }
 
 
+int get_att_int(char *nomefile,char*attname, int* res) {
 
+    int status, ncid;
+     status=nc_open(nomefile,0,&ncid); 	handle_error(nomefile,status);
+     /*status=nc_get_att_text(ncid,NC_GLOBAL, "TimeString", 17 ,theTime); handle_error(nomefile,status);*/
+     status=nc_get_att_int(ncid,NC_GLOBAL, attname, res); handle_error(nomefile,status);
+     status=ncclose(ncid);handle_error(nomefile,status);
+return 0 ;
+}
 
+int get_att_char(char *nomefile,char*attname, char* res) {
 
+    int status, ncid;
+     status=nc_open(nomefile,0,&ncid); 	handle_error(nomefile,status);
+     status=nc_get_att_text(ncid,NC_GLOBAL, attname, res); handle_error(nomefile,status);
+     status=ncclose(ncid);handle_error(nomefile,status);
+return 0 ;
+}
 
 
 

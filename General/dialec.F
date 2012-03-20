@@ -45,7 +45,7 @@
       clseq = 'SEQUENTIAL'
       cldir = 'DIRECT'
       ilseq = 1 ! ... Sequential value
-
+      ilu = 0
       ilu=0
 
       DO ji = 1, 100

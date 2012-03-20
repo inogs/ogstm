@@ -78,7 +78,13 @@
 
 	  indic=1  ! 1 for indic to initialize output files (first call)
 
-      TauAVEfrom = TimeStepStart -1
+      if (IsStartBackup) then
+         TauAVEfrom = datestringToTAU(BKPdatefrom)
+      else
+         TauAVEfrom = TimeStepStart -1
+      endif
+
+
 
       DO TAU = TimeStepStart, TimeStep__End
 
@@ -94,7 +100,17 @@
          if(lwp) write(*,*) "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
 
 
-        if (IsaRestart(DATEstring)) CALL trcwri(DATEstring) ! writes the restart files
+        if (IsaRestart(DATEstring)) then
+            CALL trcwri(DATEstring) ! writes the restart files
+
+         if(lwp) write(*,*) 'step backup = ', (.not.IsAnAveDump(DATEstring))
+
+            if (.not.IsAnAveDump(DATEstring)) then ! backup conditions
+               call tau2datestring(TauAVEfrom+1, datefrom)
+               CALL trcdia(datestring, datefrom, datestring)
+            endif
+
+         endif
 
 
 
@@ -120,10 +136,18 @@
 
       if (IsAnAveDump(DATEstring)) then
          call MIDDLEDATE(TauAVEfrom, TAU, datemean)
+
          call tau2datestring(TauAVEfrom+1, datefrom)
+         if (IsStartBackup) datefrom = BKPdatefrom ! overwrite
+
          CALL trcdia(datemean, datefrom, datestring)
          TauAVEfrom=TAU
+
+         IsStartBackup = .false.
       endif
+
+
+
 
 
 

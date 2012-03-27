@@ -7,25 +7,25 @@
       MODULE TIME_MANAGER
       use calendar
       IMPLICIT NONE
-
+      integer, parameter :: Time_Max = 5000
 
       TYPE TIME_CONTAINER
           CHARACTER(LEN=50)          :: NAME
           INTEGER                    :: N
           CHARACTER(LEN=1024)        :: Filename
-          CHARACTER(LEN=17), DIMENSION(:), ALLOCATABLE :: TimeStrings
-          CHARACTER(LEN=17), DIMENSION(:), ALLOCATABLE :: TimeStringsExtended
-          real(8),           DIMENSION(:), ALLOCATABLE :: Times
-          INTEGER                                      :: Before
-          INTEGER                                      :: After
-          LOGICAL                                      :: Periodic
+          CHARACTER(LEN=17), DIMENSION(Time_Max) :: TimeStrings
+          CHARACTER(LEN=17), DIMENSION(Time_Max) :: TimeStringsExtended
+          real(8),           DIMENSION(Time_Max) :: Times
+          INTEGER                                :: Before
+          INTEGER                                :: After
+          LOGICAL                                :: Periodic
       END TYPE TIME_CONTAINER
 
       TYPE DUMP_CONTAINER
-          CHARACTER(LEN=50)                            :: NAME
-          INTEGER                                      :: N
-          CHARACTER(LEN=1024)                          :: Filename
-          CHARACTER(LEN=17), DIMENSION(:), ALLOCATABLE :: TimeStrings
+          CHARACTER(LEN=50)                      :: NAME
+          INTEGER                                :: N
+          CHARACTER(LEN=1024)                    :: Filename
+          CHARACTER(LEN=17), DIMENSION(Time_Max) :: TimeStrings
       END TYPE DUMP_CONTAINER
 
 
@@ -191,12 +191,17 @@
 
           TheUnit = 326
           call countline(STRUCT%Filename,N)
+          if ((N+2).gt.Time_Max) then
+             write(*,*) 'Increase Time_Max, please'
+             STOP
+          endif
           STRUCT%N = N
-          ALLOCATE(STRUCT%Timestrings(N))
+
+!          ALLOCATE(STRUCT%Timestrings(N))
 
           OPEN(UNIT=TheUnit,file=STRUCT%Filename,status='old')
           DO I=1,N
-        read(TheUnit,'(A)') STRUCT%TimeStrings(I)
+            read(TheUnit,'(A)') STRUCT%TimeStrings(I)
           ENDDO
           CLOSE(TheUnit)
 
@@ -211,8 +216,14 @@
 
       TheUnit = 326
       call countline(STRUCT%Filename,N)
+
+      if ((N+2).gt.Time_Max) then
+         write(*,*) 'Increase Time_Max, please'
+         STOP
+      endif
+
       STRUCT%N = N
-      ALLOCATE(STRUCT%Timestrings(N))
+!      ALLOCATE(STRUCT%Timestrings(N))
 
 
       OPEN(UNIT=TheUnit,file=STRUCT%Filename,status='old')
@@ -224,13 +235,13 @@
        ! Periodicità ( mensile, stagionale, ... )
       if (STRUCT%TimeStrings(1)(1:4).eq.'yyyy') then
           STRUCT%Periodic = .true.
-          ALLOCATE(STRUCT%Times        (1:N+2))
-          ALLOCATE(STRUCT%TimeStringsExtended(1:N+2))
+!          ALLOCATE(STRUCT%Times        (1:N+2))
+!          ALLOCATE(STRUCT%TimeStringsExtended(1:N+2))
       else
           STRUCT%Periodic = .false.
-          ALLOCATE(STRUCT%Times(1:N))
+!          ALLOCATE(STRUCT%Times(1:N))
           DO I=1,N
-       STRUCT%Times(I)= datestring2sec(STRUCT%TimeStrings(I))
+              STRUCT%Times(I)= datestring2sec(STRUCT%TimeStrings(I))
           ENDDO
       endif
 

@@ -234,5 +234,5 @@
 
 
       CLOSE( numnam)
-      CALL FLUSH_(numout)
+      CALL FLUSH(numout)
       END SUBROUTINE parlec

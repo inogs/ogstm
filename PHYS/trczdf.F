@@ -189,7 +189,7 @@ C --------------------------------
 C
 !$omp    parallel default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2)
 !$omp&                           shared(jn,dimen_jvzdf,jarr_zdf,ndttrc,rdttra,jpk,jpkm1,avt,zwi,
-!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask)
+!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e3t,e3w)
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID

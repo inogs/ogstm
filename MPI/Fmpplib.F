@@ -726,7 +726,7 @@ C
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP1: END DO
+      END DO PACK_LOOP1
 #endif
 C 
 C 
@@ -760,7 +760,7 @@ C
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP2: END DO
+      END DO PACK_LOOP2
 #endif
 
 C        trcadvparttime = MPI_WTIME() - trcadvparttime
@@ -883,7 +883,7 @@ C
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP3: END DO
+      END DO PACK_LOOP3
 #endif
 
 C        trcadvparttime = MPI_WTIME() - trcadvparttime
@@ -924,7 +924,7 @@ C
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP4: END DO
+      END DO PACK_LOOP4
 #endif
 C       trcadvparttime = MPI_WTIME() - trcadvparttime
 C       trcadvtottime = trcadvtottime + trcadvparttime
@@ -1048,7 +1048,7 @@ C
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP5: END DO
+      END DO PACK_LOOP5
 #endif
 
 C        trcadvparttime = MPI_WTIME() - trcadvparttime
@@ -1119,7 +1119,7 @@ C      trcadvparttime = MPI_WTIME()
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP6: END DO
+      END DO PACK_LOOP6
 #endif
 
 C        trcadvparttime = MPI_WTIME() - trcadvparttime
@@ -1218,7 +1218,7 @@ CCC                  t3p2(ji,1,jk,1) = ptab(iju,nlcj-3,jk)
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP7: END DO
+      END DO PACK_LOOP7
 #endif
 
 C        trcadvparttime = MPI_WTIME() - trcadvparttime
@@ -1339,7 +1339,7 @@ C
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP8: END DO
+      END DO PACK_LOOP8
 #endif
 
 C        trcadvparttime = MPI_WTIME() - trcadvparttime
@@ -1382,7 +1382,7 @@ C Check the following
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP9: END DO
+      END DO PACK_LOOP9
 #endif
 C        trcadvparttime = MPI_WTIME() - trcadvparttime
 C        trcadvtottime = trcadvtottime + trcadvparttime
@@ -1510,7 +1510,7 @@ C
       END IF
 !$omp    end parallel
 #else
-      PACK_LOOP10: END DO
+      END DO PACK_LOOP10
 #endif
 
 C        trcadvparttime = MPI_WTIME() - trcadvparttime

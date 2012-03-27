@@ -232,7 +232,7 @@ C
 C ... First derivative (gradient)
 !$omp  parallel default(none) private(mytid,jv,jk,jj,ji)
 !$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
-!$omp&                               dimen_jvhdf3,zlt,zbtr)
+!$omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
 #endif

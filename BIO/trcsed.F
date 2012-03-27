@@ -113,7 +113,7 @@ C
 !$omp    parallel default(none) private(ji,jj,jk,js,mytid)
 !$omp&                           shared(jv,dimen_jvsed,jarr_sed,
 !$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
-!$omp&                                  trn,sed_idx,ze3tr,ztra,
+!$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
 !$omp&                                  tra,d2s)
 
 #ifdef __OPENMP

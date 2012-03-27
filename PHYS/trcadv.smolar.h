@@ -467,7 +467,7 @@ C ... Lateral boundary conditions on zk[xy]
 C
 C   ... Mpp : export boundary values to neighboring processors
 C
-        IF(MPI_CHECK) CALL mt_trace_start()
+
 CCCCCCCCC        trcadvparttime = MPI_WTIME()
 
 C       DO itid = 1, ntids
@@ -491,7 +491,7 @@ C       END DO
         CALL mpplnk_my(zkx(:,:,:,:), pack_size,1,1)
         CALL mpplnk_my(zky(:,:,:,:), pack_size,1,1)
 
-        IF(MPI_CHECK) CALL mt_trace_stop()
+
 CCCCCCCCC        trcadvparttime = MPI_WTIME() - trcadvparttime
 CCCCCCCCC        trcadvtottime = trcadvtottime + trcadvparttime
 
@@ -619,7 +619,7 @@ C
 C
 C   ... Mpp : export boundary values to neighboring processors
 C
-        IF(MPI_CHECK) CALL mt_trace_start()
+
 CCCCCCCCC        trcadvparttime = MPI_WTIME()
 
 C        DO itid = 1, ntids
@@ -637,7 +637,6 @@ C         END DO
         CALL mpplnk_my(zti(:,:,:,:), pack_size,1,1)
 
 
-        IF(MPI_CHECK) CALL mt_trace_stop()
 CCCCCCCCC        trcadvparttime = MPI_WTIME() - trcadvparttime
 CCCCCCCCC        trcadvtottime = trcadvtottime + trcadvparttime
 
@@ -850,7 +849,7 @@ C ... Lateral boundary conditions on z[xyz]
 C
 C   ... Mpp : export boundary values to neighboring processors
 C
-        IF(MPI_CHECK) CALL mt_trace_start()
+
 CCCCCCCCC        trcadvparttime = MPI_WTIME()
 
 C         DO itid = 1, ntids
@@ -871,7 +870,6 @@ C  END DO
         CALL mpplnk_my(zy(:,:,:,:), pack_size,1,1)
         CALL mpplnk_my(zz(:,:,:,:), pack_size,1,1)
 
-        IF(MPI_CHECK) CALL mt_trace_stop()
 CCCCCCCCC        trcadvparttime = MPI_WTIME() - trcadvparttime
 CCCCCCCCC        trcadvtottime = trcadvtottime + trcadvparttime
 
@@ -975,7 +973,7 @@ C ... Lateral boundary conditions on zk[xy]
 C
 C   ... Mpp : export boundary values to neighboring processors
 C
-        IF(MPI_CHECK) CALL mt_trace_start()
+
 CCCCCCCCC        trcadvparttime = MPI_WTIME()
 
 C        DO itid = 1, ntids
@@ -995,7 +993,6 @@ C END DO
         CALL mpplnk_my(zky(:,:,:,:), pack_size,1,1)
 
 
-        IF(MPI_CHECK) CALL mt_trace_stop()
 CCCCCCCCC        trcadvparttime = MPI_WTIME() - trcadvparttime
 CCCCCCCCC        trcadvtottime = trcadvtottime + trcadvparttime
 
@@ -1155,14 +1152,14 @@ CCC              zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk))
 
 C Lateral boundary conditions on trtrd:
 #   ifdef key_mpp
-        IF(MPI_CHECK) CALL mt_trace_start()
+
 CCCCCCCCC        trcadvparttime = MPI_WTIME()
 
         CALL mpplnk( trtrd(1,1,1,jn+mytid,1), 1, 1 )
         CALL mpplnk( trtrd(1,1,1,jn+mytid,2), 1, 1 )
         CALL mpplnk( trtrd(1,1,1,jn+mytid,3), 1, 1 )
 
-        IF(MPI_CHECK) CALL mt_trace_stop()
+
 CCCCCCCCC        trcadvparttime = MPI_WTIME() - trcadvparttime
 CCCCCCCCC        trcadvtottime = trcadvtottime + trcadvparttime
 

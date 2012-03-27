@@ -39,21 +39,22 @@
 
       IMPLICIT NONE
       CHARACTER*50 atmfile, rivfile, gibfile
-      CHARACTER*9 nomedim
+      CHARACTER*9  nomedim0
+      CHARACTER*13 nomedim1
 
       INTEGER jn_nudg
 
-        nomedim='12345678'
-        nomedim(9:9) = CHAR(0)
+        nomedim0='riv_idxt'//CHAR(0)
+        nomedim1 = 'gib_idxt_N1p'//CHAR(0)
 
         atmfile='BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'//char(0);
         gibfile='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'//char(0);
         rivfile='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'//char(0);
 
 
-           nomedim(1:8)='gib_idxt'; CALL ioogsnc_idx(gibfile,nomedim,Gsizeglo)
-           nomedim(1:8)='riv_idxt'; CALL ioogsnc_idx(rivfile,nomedim,Rsizeglo)
-           nomedim(1:8)='atm_idxt'; CALL ioogsnc_idx(atmfile,nomedim,Asizeglo)
+           nomedim1(1:12)='gib_idxt_N1p'; CALL ioogsnc_idx(gibfile,nomedim1,Gsizeglo)
+           nomedim0(1:8)='riv_idxt'; CALL ioogsnc_idx(rivfile,nomedim0,Rsizeglo)
+           nomedim0(1:8)='atm_idxt'; CALL ioogsnc_idx(atmfile,nomedim0,Asizeglo)
 
            if (lwp) then
                write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo

@@ -150,7 +150,7 @@ C
 
                              CS(9,1)=266; CS(9,2)=78    ! North Aegean
 
-                             CS(10,1)=278; CS(10,2)=81  ! North Aegean Critical
+                             CS(10,1)=279; CS(10,2)=81  ! North Aegean Critical
 
                              DO CSi=1,10
                                 IF ( (gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) ) THEN

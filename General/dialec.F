@@ -87,7 +87,7 @@
 
 
       CLOSE( numnam )
-      CALL FLUSH_(numout)
+      CALL FLUSH(numout)
 
 1414  FORMAT('D',I2.2)
 

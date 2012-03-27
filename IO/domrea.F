@@ -327,7 +327,7 @@
 #endif
 
        if(lwp) write(*,*) 'DOMREA finita, wait for flushing...'
-       call flush_()
+       call flush()
       CONTAINS
 
 ! *****************************************************************

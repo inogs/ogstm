@@ -1,5 +1,3 @@
-C $Id: trccof.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trccof 
 CCC---------------------------------------------------------------------
 CCC
@@ -44,12 +42,6 @@ C
 #if defined key_trc_dmp && defined key_passivetrc
        INTEGER jn, jk, jj, ji, tra_idx
 
-C
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
-
-#include "stafun.h"
 
 C
 C===================================================
@@ -81,7 +73,5 @@ C
 C     No evaluation of restoring coefficients 
 C
 #endif
-C
-C
-      RETURN
-      END
+
+      END SUBROUTINE trccof

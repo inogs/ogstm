@@ -107,11 +107,6 @@
       INTEGER jtask, ME
       INTEGER mynode
 
-!----------------------------------------------------------------------
-! statement functions
-! ===================
-#include "stafun.h"
-
 ! 0. Initializations
 ! ==================
 
@@ -282,7 +277,7 @@
       ENDIF
 
 
-
+      write(*,*) 'Startting domrea '
       CALL domrea   !   Domain
       CALL domstp   !   Time Step for each level for tracer
       CALL inihdf   !   diffusion horizontal coefficient
@@ -330,7 +325,6 @@
       USE myalloc, ONLY: lwp, calendarType, rdt
 
       IMPLICIT NONE
-      character*17 DATEstring
       real(8) sec, t_interp
 
       DELTAT = rdt ! importing namelist value

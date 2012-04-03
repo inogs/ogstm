@@ -1,5 +1,3 @@
-! $Id: trclec.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trclec
 !---------------------------------------------------------------------
 !
@@ -49,8 +47,6 @@
 ! statement functions
 ! ===================
 
-#include "stafun.h"
-#include "stafun.passivetrc.h"
 
 
 C 0. initializations

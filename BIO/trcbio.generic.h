@@ -62,14 +62,10 @@ CC                     01-02 (E. Kestenare) add sediments
 CC----------------------------------------------------------------------
 
 
-c#include "parameter.h"
-c#include "common.h"
       USE myalloc
 #include <mpif.h>
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
 CC----------------------------------------------------------------------
 CC local declarations
@@ -90,11 +86,8 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+!                                 #include "stafun.h"
 
-ccC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
 C   | --------------|
 C   | Generic  MODEL| 
 C   | --------------|

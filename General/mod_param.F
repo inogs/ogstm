@@ -3,9 +3,6 @@
       IMPLICIT NONE
 
       public
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
 CC
 CC Several domain sizes are parameterized
 CC                                  global      domain   (jpiglo,jpjglo)
@@ -37,9 +34,9 @@ CC-CC     &                     jprecj=1
      &           jprecj
            
 CC
-CC	jpiglo  : first  dimension of global domain --> i	 
-CC	jpjglo  : second dimension of global domain --> j
-CC	jpk	: number of vertical levels
+CC    jpiglo  : first  dimension of global domain --> i
+CC    jpjglo  : second dimension of global domain --> j
+CC    jpk    : number of vertical levels
 CC
 CC Original data size
 CC ------------------
@@ -65,8 +62,8 @@ CC-CC      INTEGER,parameter :: jpkmod=(1+(jpk-1)/jpnij)
 
 CC Matrix size
 CC -----------
-CC	jpi     : first  dimension of grid --> i	 
-CC	jpi     : first  dimension of grid --> i	 
+CC    jpi     : first  dimension of grid --> i
+CC    jpi     : first  dimension of grid --> i
 CC
 CC-CC      INTEGER,parameter :: jpi=(jpiglo-2*jpreci + (jpni-1))/jpni + 2*jpreci
 CC-CC      INTEGER,parameter :: jpj=(jpjglo-2*jprecj + (jpnj-1))/jpnj + 2*jprecj
@@ -95,10 +92,10 @@ CC
 CC
 CC Domain characteristics
 CC ----------------------
-CC	jperio	: lateral cond. type for the global domain (4, 3, 2, 1
+CC    jperio    : lateral cond. type for the global domain (4, 3, 2, 1
 CC                or 0)  
-CC	jpisl	: number of islands
-CC	jpnisl	: maximum number of points per island 
+CC    jpisl    : number of islands
+CC    jpnisl    : maximum number of points per island
 CC
 CC
 CC
@@ -110,7 +107,7 @@ CC
 CC
 CC Multitasking parameter
 CC ----------------------
-CC	jpcpu	: maximum number of tasks
+CC    jpcpu    : maximum number of tasks
 CC      jpbyt   : number of bytes for floating  4 or 8 
 CC      jpbytda : number of bytes for floating in data files 4 or 8
 CC
@@ -178,7 +175,7 @@ CCC     Include parameter FILE for passive tracer
 CCC
 CC   MODIFICATIONS :
 CC   -------------
-CC	original : 96 (M. Levy)
+CC    original : 96 (M. Levy)
 CC                 07/99 (M. Levy for NNPZDDOM or NPZD model)
 CC                 04/00 (O. Aumont, M.A. Foujols) HAMOCC3 and P3ZD
 CC

@@ -36,33 +36,16 @@ CC   MODIFICATIONS:
 CC   --------------
 CC                 04/00 (O. Aumont, M.A. Foujols) HAMOCC3 and P3ZD
 CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
+       IMPLICIT NONE
 
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-
-CC----------------------------------------------------------------------
-CC local declarations
-CC ==================
 
 #if defined key_passivetrc
 
       INTEGER ji,jj,jk,jn,jl
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
 
-#include "stafun.h"
 
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
 #    if defined key_trc_npzd
 #    include "trcini.npzd.h"
 #    elif defined key_trc_bfm
@@ -149,7 +132,5 @@ C
 C no passive trnacers
 C
 #endif
-C
 
-      RETURN
-      END
+      END SUBROUTINE trcini

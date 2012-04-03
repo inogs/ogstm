@@ -1,5 +1,3 @@
-C $Id: trcctl.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trcctl
 CCC---------------------------------------------------------------------
 CCC
@@ -42,47 +40,30 @@ CC      additions : 00/06 (A. Estublier) MUSCL Scheme
 CC      additions : 00/11 (MA Foujols, E Kestenare) Lateral diffusion option
 CC      additions : 00/12  ( E Kestenare): improve controls of defined keys
 CC 
-CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
-
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
-CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
 
 #if defined key_passivetrc
       CHARACTER*32 clname,clold,clfor,clseq,clnew,cldir,clunf,clunk
-      CHARACTER*32 cltemp
       INTEGER iused(1,100),ilu
       INTEGER iadv,ildta,ilglo,ibloc,ilseq,ioptio,istop
       INTEGER jn
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
-#include "stafun.h"
-#include "stafun.passivetrc.h"
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
-C
+
+!                       #include "stafun.h"
+!                       #include "stafun.passivetrc.h"
+
 C 1. initialization
 C -----------------
 C
 C 0. Parameter
-C
+
       istop = 0
-C
+
 C 1. OPEN specifier
-C
+
       clold='OLD'
       clnew='NEW'
       clunk='UNKNOWN'
@@ -90,18 +71,16 @@ C
       clunf='UNFORMATTED'
       clseq='SEQUENTIAL'
       cldir='DIRECT'
-C
+
 C 2. SEQUENTIAL value
-C
+
       ilseq=1
-C
-C
-C
+
       ilu=0
-C
+
 C computation of the record length for direct access FILE
 C this length depend of 512 for the t3d machine
-C
+
       ibloc=512
       ildta=ibloc*((jpidta*jpjdta)/ibloc+1)*jpbyt
       ilglo=ibloc*((jpiglo*jpjglo)/ibloc+1)*jpbyt
@@ -128,23 +107,22 @@ CCC     $    ilglo,ilu,iused,numout,lwp,1)
 C
 C 5. restart for passive tracer (input)
 C -----------------------------
-C
+
       IF(lwp) THEN
           WRITE(numout,*) ' '
           WRITE(numout,*) ' *** restart option for passive tracer'
           WRITE(numout,*) ' '
       ENDIF
-C
+
       IF(lrsttr) THEN
           IF(lwp) THEN
               WRITE(numout,*) ' READ a restart FILE for passive tracer'
               WRITE(numout,*) ' '
           ENDIF
-C
+
           clname='trc.restart'
-          CALL ctlopn(nutrst,clname,clunk,clunf,cldir,
-     $        ilglo,ilu,iused,numout,lwp,1)
-C
+          CALL ctlopn(nutrst,clname,clunk,clunf,cldir,ilglo,ilu,iused,numout,lwp,1)
+
           IF(lwp) THEN
               IF(nrsttr.eq.0) THEN
                   WRITE(numout,*) ' nrsttr = 0 we dont control the date'
@@ -188,10 +166,8 @@ C
                     IF (lwp) THEN 
                         WRITE (numout,*) ' ===>>>> : w a r n i n g '
                         WRITE (numout,*) ' =======   ============= '
-                        WRITE (numout,*)
-     $                      ' STOP, change FORMAT statement to accept '
-                        WRITE (numout,*) ' more than ',jn
-     $                      ,' tracer. jptra = ',jptra
+                        WRITE (numout,*)' STOP, change FORMAT statement to accept '
+                        WRITE (numout,*) ' more than ',jn,' tracer. jptra = ',jptra
                     END IF 
                     istop = istop + 1
                 END IF 
@@ -199,13 +175,10 @@ C
 C prepare input FILE name and OPEN
 C                        
                 IF (jn.LE.9) WRITE (clname,'("trc.ini.",i1)') jn
-                CALL ctlopn(nutini(jn),clname,clunk,clunf,cldir,
-     $              ilglo,ilu,iused,numout,lwp,1)
+                CALL ctlopn(nutini(jn),clname,clunk,clunf,cldir,ilglo,ilu,iused,numout,lwp,1)
                 IF (lwp) THEN 
-                    WRITE(numout,*)
-     $                  ' READ an initial FILE :',clname,' UNIT : '
-     $                  ,nutini(jn),' for passive tracer number :',jn
-     $                  ,' traceur : ',ctrcnm(jn) 
+                    WRITE(numout,*)' READ an initial FILE :',clname,' UNIT : '
+     $                  ,nutini(jn),' for passive tracer number :',jn,' traceur : ',ctrcnm(jn)
                     WRITE(numout,*) ' '
                 END IF 
             END IF 
@@ -291,8 +264,7 @@ C 9. Lateral diffusion option
 C ---------------------------
 C
       IF(lwp) THEN
-          WRITE(numout,*)
-     $        ' *** Lateral diffusion option for passive tracer' 
+          WRITE(numout,*)' *** Lateral diffusion option for passive tracer'
           WRITE(numout,*)
       ENDIF
 C
@@ -352,10 +324,10 @@ C
       istop = istop + 1
 #  endif
 #endif
-C
+
 9000  FORMAT( /,' ===>>>> : E R R O R',/,'          ===========',/ )
-C
-C
+
+
 C 10. tracer damping option
 C ---------------------------------------------
 C
@@ -387,8 +359,7 @@ C
       IF (lwp) THEN 
           WRITE (numout,*) ' ===>>>> : w a r n i n g '
           WRITE (numout,*) ' =======   ============= '
-          WRITE (numout,*)
-     $         ' STOP, only one model can be specified '
+          WRITE (numout,*)' STOP, only one model can be specified '
       END IF 
       istop = istop + 1
 #    endif
@@ -396,8 +367,7 @@ C
       IF (lwp) THEN 
           WRITE (numout,*) ' ===>>>> : w a r n i n g '
           WRITE (numout,*) ' =======   ============= '
-          WRITE (numout,*)
-     $         ' STOP, only one model can be specified '
+          WRITE (numout,*)' STOP, only one model can be specified '
       END IF 
       istop = istop + 1
 #    endif
@@ -405,8 +375,7 @@ C
       IF (lwp) THEN 
           WRITE (numout,*) ' ===>>>> : w a r n i n g '
           WRITE (numout,*) ' =======   ============= '
-          WRITE (numout,*)
-     $         ' STOP, only one model can be specified '
+          WRITE (numout,*)' STOP, only one model can be specified '
       END IF 
       istop = istop + 1
 #    endif
@@ -451,6 +420,5 @@ C
 C no passive tracers
 C
 #endif
-C
-      RETURN
-      END
+
+      END SUBROUTINE TRCCTL

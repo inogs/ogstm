@@ -1,4 +1,3 @@
-C $Id: h3cexp.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
       SUBROUTINE h3cexp
 #if defined key_passivetrc && defined key_trc_hamocc3
 CCC---------------------------------------------------------------------
@@ -52,10 +51,9 @@ c ------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
+
        USE myalloc
-#include "stafun.h"
+       USE stafun
 
 CC----------------------------------------------------------------------
 CC local declarations

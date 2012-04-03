@@ -35,19 +35,13 @@
        USE TIME_MANAGER
        IMPLICIT NONE
 
-! #include <mpif.h>
-!----------------------------------------------------------------------
+
 ! local declarations
 ! ==================
       INTEGER TAU, indic
       REAL(8) stpparttime,stptottime
       character(LEN=17)  datestring, datemean, datefrom
       REAL(8) sec
-!----------------------------------------------------------------------
-! statement functions
-! ===================
-
-#include "stafun.h"
 
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c

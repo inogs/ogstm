@@ -31,15 +31,14 @@ CC      orders                   : sorting routine
        IMPLICIT NONE
 CC local declarations
 CC ==================
-      INTEGER ji, jj, jk, iimlu, ijmlu, ikmlu, ilu, ioptio, iopt00
-      INTEGER imulti, iost, iost2, imode, idmp, istop, iwarn
+      INTEGER ji, jj,  ilu, ioptio
+      INTEGER imulti,  imode, istop, iwarn
       INTEGER iused(1,100), iwork(257), indx(100)
       INTEGER ildta, ilglo, ibloc, ilseq, ilindta
 
       CHARACTER*32 clname
       CHARACTER*21 clold, clfor, clseq, clnew
       CHARACTER*21 cldir, clunf, clunk
-#include "stafun.h"
 
       IF(lwp) THEN
       WRITE(numout,*) ' '

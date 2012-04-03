@@ -1,4 +1,3 @@
-C $Id: 
       SUBROUTINE h3cadj
 #if defined key_passivetrc 
 #if defined key_trc_hamocc3
@@ -27,17 +26,10 @@ CC     MODIFICATIONS:
 CC     --------------
 CC      original      : 2001    O. Aumont (& EK)
 CC
-CC ---------------------------------------------------------------------
-CC parameters and commons
-CC ======================
-
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
+       USE stafun
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
 CC----------------------------------------------------------------------
 CC local declarations
@@ -45,11 +37,6 @@ CC ==================
 C
       INTEGER ji, jj, jk
       REAL(8) ztal, zsil, zpo4, zvol, alka0, silic1, po4
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
-
-#include "stafun.h"
 
 C
 C     Total mass of tracers that are sequestered in the sediment
@@ -111,4 +98,4 @@ C
 #endif
 #endif
       RETURN
-      END
+      END SUBROUTINE h3cadj

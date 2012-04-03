@@ -26,8 +26,6 @@
       CHARACTER*7 varB,varN
       CHARACTER*3 varname
 
-#include "stafun.h"
-
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
       INTEGER totistart, totiend, relistart, reliend

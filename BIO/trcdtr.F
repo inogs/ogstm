@@ -40,13 +40,10 @@ CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
+       USE stafun
+       IMPLICIT NONE
 
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
 #if defined key_passivetrc
 CC----------------------------------------------------------------------
@@ -57,13 +54,7 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
 
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
-C
 C 0. initialisations
 C ------------------
 C
@@ -75,36 +66,58 @@ C
       ENDIF
 
 #if defined key_trc_generic
-#include "trcdtr.generic.h"
+
+        DO jk = 1,jpk
+          DO jj = 1,jpj
+            DO ji = 1,jpi
+              trn(ji,jj,jk,1)= 0.
+              trn(ji,jj,jk,2)= 0.
+              trn(ji,jj,jk,3)= 0.
+              trn(ji,jj,jk,4)= 0.
+              trn(ji,jj,jk,5)= 0.
+            ENDDO
+          ENDDO
+        ENDDO
+
 #elif defined key_trc_npzd
-#include "trcdtr.npzd.h"
+
+        DO jk = 1,jpk
+          DO jj = 1,jpj
+            DO ji = 1,jpi
+              trn(ji,jj,jk,1)= 1.
+              trn(ji,jj,jk,2)= 0.1
+              trn(ji,jj,jk,3)= 1.
+              trn(ji,jj,jk,4)= 2.
+            ENDDO
+          ENDDO
+        ENDDO
+
 #elif defined key_trc_npzdb
 da inserire       
 #elif key_trc_bfm
 # include "trcdtr.bfm.h"
 
 #endif
-C
-C before field :
-C
+
+
+
        DO jn=1,jptra 
          DO  jk=1,jpk
            DO  jj=1,jpj
              DO  ji=1,jpi
-               trb(ji,jj,jk,jn)=trn(ji,jj,jk,jn)
+               trb(ji,jj,jk,jn)=trn(ji,jj,jk,jn)!  before field :
              END DO
            END DO
          END DO
        END DO
 
-C
+
 
 #else
-C
+
 C     no passive tracers
-C
+
 #endif
-C
-      RETURN
-      END
+
+      END SUBROUTINE trcdtr
 

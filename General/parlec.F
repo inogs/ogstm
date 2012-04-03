@@ -65,12 +65,6 @@
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta, rcp
 
 
-
-!----------------------------------------------------------------------
-! statement functions
-! ===================
-
-#include "stafun.h"
 ! ... Open specifier
       clold = 'OLD'
       clnew = 'NEW'

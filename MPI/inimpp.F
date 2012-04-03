@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/inimpp.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE inimpp
 CCC---------------------------------------------------------------------
 CCC
@@ -58,38 +56,25 @@ CC       additions : 98-02 (M. Guyon) FETI method
 CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 CC----------------------------------------------------------------------
-CCC      USE calendarmpp
+
       USE calendar
-
-c#include  "parameter.h"
-c#include  "common.h"
       USE myalloc
-
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
-CC----------------------------------------------------------------------
-C
-CCC 20/06/2003 Cristiano
+
       INTEGER nbne, nbnw, nbse, nbsw, npne, npnw, npse, npsw
-CCC 20/06/2003 Cristiano - Initialization = ????
       INTEGER, PARAMETER :: nsolv = 3
 
 #ifdef key_mpp
       INTEGER ji,jj,jn,jproc
-      INTEGER ii,ij,ifreq,il1,il2
+      INTEGER ii,ij!,ifreq,il1,il2
       INTEGER iresti,irestj,ijm1,imil
       INTEGER iimppt(jpni,jpnj),ijmppt(jpni,jpnj)
 CC-CC      INTEGER ilcit (jpni,jpnj),ilcjt (jpni,jpnj)
       INTEGER ibonit(jpnij),ibonjt(jpnij)
       INTEGER iglo(4),iloc(4),iabsf(4),iabsl(4),ihals(4),ihale(4)
       REAL(8)    zidom ,zjdom
-C
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
+
 #ifdef key_mpp_shmem
 C
 C  0. Initialisation of shmem array

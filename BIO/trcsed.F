@@ -1,5 +1,3 @@
-C $Id: trcsed.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trcsed(ktask,kt)
 CCC---------------------------------------------------------------------
 CCC
@@ -20,16 +18,16 @@ CC      using an upstream scheme
 CC
 CC	the now vertical advection of tracers is given by:
 CC
-CC      	dz(trn wn) = 1/bt dk+1( e1t e2t vsed (trn) )
+CC          dz(trn wn) = 1/bt dk+1( e1t e2t vsed (trn) )
 CC
-CC	add this trend now to the general trend of tracer (ta,sa,tra):
+CC    add this trend now to the general trend of tracer (ta,sa,tra):
 CC
 CC                     tra = tra + dz(trn wn)
 CC
 CC      IF 'key_trc_diabio' key is activated, the now vertical advection
 CC      trend of passive tracers is saved for futher diagnostics.
 CC
-CC	multitasked on vertical slab (jj-loop)
+CC    multitasked on vertical slab (jj-loop)
 CC
 CC
 CC
@@ -38,8 +36,8 @@ CC   ------
 CC
 CC   WORKSPACE :
 CC   ---------
-CC	local
-CC		ze1e2w, ze3tr, ztra
+CC    local
+CC    ze1e2w, ze3tr, ztra
 CC      COMMON
 CC
 CC   EXTERNAL :                   no
@@ -51,6 +49,7 @@ CC   ----------
        USE myalloc
        USE BIO_mem
        USE SED_mem
+       USE stafun
        IMPLICIT NONE
 
 
@@ -63,7 +62,7 @@ CC ==================
 #   if defined key_trc_bfm
 
       INTEGER :: ji,jj,jk,jv,js
-      INTEGER :: bottom
+!      INTEGER :: bottom
       REAL(8) :: ze3tr,d2s
 ! omp variables
       INTEGER :: mytid, ntids
@@ -76,11 +75,10 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
 
 
-CCC  speed from (m/day) to  (m/s)
-      d2s=1./3600./24.
+
+      d2s=1./3600./24.  ! speed from (m/day) to  (m/s)
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
@@ -208,6 +206,5 @@ C       no Sedimentation
 C       no passive tracer
 
 #endif
-C
-      RETURN
-      END
+
+      END SUBROUTINE trcsed

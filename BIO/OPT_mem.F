@@ -17,7 +17,7 @@
       REAL(8), allocatable :: zpar0m(:),zpar100(:) 
       REAL(8), allocatable :: kef(:,:)
       REAL(8), allocatable :: kextIO(:,:,:)
-      REAL(4), allocatable :: zkef_f (:,:)
+!      REAL(4), allocatable :: zkef_f (:,:)
 !----------------------------------------------------------------------
       CONTAINS
 
@@ -31,7 +31,7 @@
        allocate(zpar100(jpi))
        allocate(kef(jpi,jpj))
        allocate(kextIO(jpi,jpj,2))
-       allocate(zkef_f(jpiglo,jpjglo))
+!       allocate(zkef_f(jpiglo,jpjglo))
 
        mem_all = rea_len*(4*jpi*jpk+ 2*jpi+jpi + 2*jpi*jpj)
 #if ! defined  key_kef

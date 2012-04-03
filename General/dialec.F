@@ -36,7 +36,6 @@
 ! statement functions
 ! ===================
 
-#include "stafun.h"
 ! ... Open specifier
       clold = 'OLD'
       clnew = 'NEW'
@@ -87,7 +86,9 @@
 
 
       CLOSE( numnam )
+
       CALL FLUSH(numout)
+
 
 1414  FORMAT('D',I2.2)
 

@@ -35,17 +35,11 @@ CC      modifications : 1999    C. Le Quere
 CC      additions   : 01-05 (O. Aumont, E. Kestenare):
 CC                           add sediment computations
 CC ---------------------------------------------------------------------
-c ------
-CC parameters and commons
-CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
+       USE stafun
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CC----------------------------------------------------------------------
 CC local declarations
@@ -53,11 +47,7 @@ CC ==================
 C
       INTEGER ji, jj, jk, zkbot(jpi,jpj)
       REAL(8) zwork(jpi,jpj), zgeolpoc
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
 
-#include "stafun.h"
 
 C
 C VERTICAL DISTRIBUTION OF NEWLY PRODUCED BIOGENIC
@@ -196,5 +186,5 @@ C              trc2d(ji,jj,5) = fbod(ji,jj)
 C
 #endif
 #endif
-      RETURN
-      END
+
+      END SUBROUTINE trcexp

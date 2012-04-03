@@ -98,10 +98,10 @@ CC -----------------------------------
 CC----------------------------------------------------------------------
 CC       ocean physical parameters (equation of state, ...)
 CC ------------------------------------------
-CC	    neos		 : flag of the type of equation of state used
+CC        neos         : flag of the type of equation of state used
 CC      rau0             : reference volumic mass of the ocean (kg/m3)
 CC      ralpha, rbeta    : thermique and haline expension coef. used
-CC			   for linear equation of state (neos=1 or 2)
+CC               for linear equation of state (neos=1 or 2)
 CC      rcp              : ocean specific heat
 CC      ro0cpr           : = 1. / ( rau0 * rcp )
 
@@ -145,7 +145,7 @@ CC      e1t,e2t        : horizontal scale factors at t-point (m)
 CC      e1u,e2u        : horizontal scale factors at u-point (m)
 CC      e1v,e2v        : horizontal scale factors at v-point (m)
 CC      e1f,e2f        : horizontal scale factors at f-point (m)
-CC	    ff             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
+CC        ff             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
 
       INTEGER nummsh, ngrid, nmsh, njpi, njpj
 
@@ -222,12 +222,12 @@ CC -----------------------------------------
 CC----------------------------------------------------------------------
 CC      present fields (now)
 CC -------------------------------------
-CC   	un, vn(), wn() : horizontal and vertical velocity (m s-1)
-CC	    hdivn          : horizontal divergence
-CC	    tn,   sn()     : pot. temperature (celsius), salinity (psu)
+CC       un, vn(), wn() : horizontal and vertical velocity (m s-1)
+CC        hdivn          : horizontal divergence
+CC        tn,   sn()     : pot. temperature (celsius), salinity (psu)
 CC      rdn            : in situ density anomalie rdn=(rho-rau0)/rau0
 CC                         (no units)
-CC	    rhopn          : potential volumic mass (kg m-3)
+CC        rhopn          : potential volumic mass (kg m-3)
 CC      bn2n           : brunt-vaisala frequency (s-2)
 CC
       REAL(8), allocatable, dimension(:,:,:) :: un, vn, wn, hdivn
@@ -284,8 +284,8 @@ CC -----------------------------------------------
 CC      Slopes ('key_trahdfiso' or 'key_s_coord' defined)
 CC      uslp, wslpi()  : i-direction slope at u-, w-points
 CC      vslp, wslpj()  : j-direction slope at v-, w-points
-CC      	wk1, wk2()	 : work array used in rotated biharmonic ope-
-CC	     wk3, wk4()	   rator on momentum and/or tracers
+CC          wk1, wk2()     : work array used in rotated biharmonic ope-
+CC         wk3, wk4()       rator on momentum and/or tracers
 C
 #if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
       REAL(8), allocatable :: uslp (:,:,:), vslp (:,:,:)
@@ -342,11 +342,11 @@ CC
 CC----------------------------------------------------------------------
 CC         vertical diffusion
 CC -----------------------------------
-CC	 avt0            : vertical viscosity and diff. coef. (namelist)
-CC      ntrbbl		 : bottom boundary layer (namelist)
-CC      atrbbl		 : bottom boundary layer diffusivity (namelist)
-CC	 avt	         : vertical diffusivity coeff. at w-point
-CC	  avtb           : background profile of avm and avt
+CC     avt0            : vertical viscosity and diff. coef. (namelist)
+CC      ntrbbl         : bottom boundary layer (namelist)
+CC      atrbbl         : bottom boundary layer diffusivity (namelist)
+CC     avt             : vertical diffusivity coeff. at w-point
+CC      avtb           : background profile of avm and avt
 C
 C
       INTEGER ntrbbl
@@ -365,9 +365,9 @@ CC
 CC----------------------------------------------------------------------
 CC  surface wind stress at givem time_step
 CC -------------------------------------------------------
-CC	taux, tauy()   : wind stress components in (i,j) referential
-CC	tauxg, tauyg() : zonal and meridian wind stress component used
-CC	                   in output (geographical referential)
+CC    taux, tauy()   : wind stress components in (i,j) referential
+CC    tauxg, tauyg() : zonal and meridian wind stress component used
+CC                       in output (geographical referential)
 
       REAL(8), allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
 
@@ -542,9 +542,9 @@ CC ----------------------
 CC
 #if defined key_passivetrc
 CCC F79 Namelist does not accept allocatable
-CCC          CHARACTER*8, allocatable :: ctrcnm(:),ctrcun(:)
-CCC          CHARACTER*80, allocatable ::  ctrcnl(:)
-          CHARACTER*8 :: ctrcnm(jptra),ctrcun(jptra)
+
+          CHARACTER(LEN=3) :: ctrcnm(jptra)
+          CHARACTER(LEN=8) :: ctrcun(jptra)
           CHARACTER*6 :: mycln
           CHARACTER*80 ::  ctrcnl(jptra)
           CHARACTER*3 :: dia(jptra_dia)
@@ -559,9 +559,7 @@ CC      lutini    : initialisation from FILE or not (NAMELIST)
 CC      nutini    : FORTRAN LOGICAL UNIT for initialisation file
 CC
       INTEGER numnat
-CCC F79 Namelist does not accept allocatable
-CCC      LOGICAL, allocatable ::  lutini(:)
-CCC      INTEGER, allocatable ::  nutini(:)
+
       LOGICAL ::  lutini(jptra)
       INTEGER ::  nutini(jptra)
 CC
@@ -612,11 +610,13 @@ CC
       REAL(8), allocatable ::  totavtIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
       REAL(8), allocatable ::  totdiaIO(:,:,:,:)
-      REAL(8), allocatable ::  rsttrn(:,:,:)
-      REAL(8), allocatable ::  rsttrb(:,:,:)
+!      REAL(8), allocatable ::  rsttrn(:,:,:)
+!      REAL(8), allocatable ::  rsttrb(:,:,:)
 
 
       REAL(8), allocatable ::  trb(:,:,:,:)
+      REAL(8), allocatable ::  buf(:,:,:)
+      REAL(8), allocatable ::  buf2(:,:)
 
 CC----------------------------------------------------------------------
 CC
@@ -663,7 +663,7 @@ CC                  for passive tracer
 CC      trcrat    : ratio between passive and active tracer coeff
 CC                  for diffusion
 CC      ahtrc0    : horizontal eddy diffusivity for passive tracers (m2/s)
-CC	aeivtr0   : eddy induced velocity coefficient (m2/s)
+CC    aeivtr0   : eddy induced velocity coefficient (m2/s)
 
       REAL(8) ahtrb0,trcrat,ahtrc0,aeivtr0
 
@@ -733,7 +733,7 @@ CC
 CC
 CC    dynamical trends
 CC
-CC	trtrd()   : trends of the tracer equations
+CC    trtrd()   : trends of the tracer equations
 CC           1 : X advection
 CC           2 : Y advection
 CC           3 : Z advection
@@ -779,9 +779,9 @@ CC
 #    if defined key_trc_dmp 
 
       REAL(8), allocatable ::  trdta(:,:,:,:),trcdat(:,:,:,:,:)
-      REAL(8), allocatable ::  restoglo(:,:,:)
+!      REAL(8), allocatable ::  restoglo(:,:,:), idxtglo(:,:,:)
       INTEGER(4), allocatable ::  idxt(:,:,:),idxt2glo(:,:,:,:)
-      INTEGER(4), allocatable ::  idxtglo(:,:,:)
+
 CC
 #    else
 CC      no passive tracers DATA at given time step
@@ -929,10 +929,10 @@ CC -----------------------------------
 CC----------------------------------------------------------------------
 CC Common/comeos/ : ocean physical parameters (equation of state, ...)
 CC ------------------------------------------
-CC	neos		 : flag of the type of equation of state used
+CC    neos         : flag of the type of equation of state used
 CC      rau0             : reference volumic mass of the ocean (kg/m3)
 CC      ralpha, rbeta    : thermique and haline expension coef. used
-CC			   for linear equation of state (neos=1 or 2)
+CC               for linear equation of state (neos=1 or 2)
 CC      rcp              : ocean specific heat
 CC      ro0cpr           : = 1. / ( rau0 * rcp )
 C
@@ -963,7 +963,7 @@ CC      e1t,e2t()        : horizontal scale factors at t-point (m)
 CC      e1u,e2u()        : horizontal scale factors at u-point (m)
 CC      e1v,e2v()        : horizontal scale factors at v-point (m)
 CC      e1f,e2f()        : horizontal scale factors at f-point (m)
-CC	ff()             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
+CC    ff()             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
 C
 CC      REAL(8) glamt(jpi,jpj), glamu(jpi,jpj), glamv(jpi,jpj),glamf(jpi,jpj)
 CC      REAL(8) gphit(jpi,jpj), gphiu(jpi,jpj), gphiv(jpi,jpj),gphif(jpi,jpj)
@@ -988,7 +988,7 @@ CC      REAL(8) ff(jpi,jpj)
         allocate(e2u(jpi,jpj)) 
         allocate(e2v(jpi,jpj)) 
         allocate(e2f(jpi,jpj))
-        allocate(ff(jpi,jpj))
+        allocate(ff (jpi,jpj))
         mem_all = mem_all + rea_len*(2*jpiglo*jpjglo+17*jpi*jpj) 
 C     write(*,*) 'Mem_allocated:', mem_all
 
@@ -1037,8 +1037,8 @@ CC      e3t(), e3w()     : vertical scale factors at t- and w-points (m)
 CC
       allocate(gdept(jpk)) 
       allocate(gdepw(jpk))
-      allocate(e3t(jpk))
-      allocate(e3w(jpk))
+      allocate(  e3t(jpk))
+      allocate(  e3w(jpk))
        mem_all = mem_all + rea_len*(4*jpk) 
 C     write(*,*) 'Mem_allocated:', mem_all
 C
@@ -1074,7 +1074,7 @@ CC
 CC----------------------------------------------------------------------
 CC Common/combef/  : previous fields (before)
 CC -----------------------------------------
-CC	ub(), vb()       : horizontal velocity (m s-1)
+CC    ub(), vb()       : horizontal velocity (m s-1)
 C
       allocate(ub(jpi,jpj,jpk)) 
       allocate(vb(jpi,jpj,jpk))
@@ -1085,12 +1085,12 @@ CC
 CC----------------------------------------------------------------------
 CC Common/comnow/  : present fields (now)
 CC -------------------------------------
-CC	un(), vn(), wn() : horizontal and vertical velocity (m s-1)
-CC	hdivn()          : horizontal divergence
-CC	tn(),   sn()     : pot. temperature (celsius), salinity (psu)
+CC    un(), vn(), wn() : horizontal and vertical velocity (m s-1)
+CC    hdivn()          : horizontal divergence
+CC    tn(),   sn()     : pot. temperature (celsius), salinity (psu)
 CC      rdn()            : in situ density anomalie rdn=(rho-rau0)/rau0
 CC                         (no units)
-CC	rhopn()          : potential volumic mass (kg m-3)
+CC    rhopn()          : potential volumic mass (kg m-3)
 CC      bn2n()           : brunt-vaisala frequency (s-2)
 CC
        allocate(un(jpi,jpj,jpk))
@@ -1165,8 +1165,8 @@ CC -----------------------------------------------
 CC Slopes ('key_trahdfiso' or 'key_s_coord' defined)
 CC      uslp(), wslpi()  : i-direction slope at u-, w-points
 CC      vslp(), wslpj()  : j-direction slope at v-, w-points
-CC	wk1(), wk2()	 : work array used in rotated biharmonic ope-
-CC	wk3(), wk4()	   rator on momentum and/or tracers
+CC    wk1(), wk2()     : work array used in rotated biharmonic ope-
+CC    wk3(), wk4()       rator on momentum and/or tracers
 C
 #if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
       allocate(uslp(jpi,jpj,jpk)) 
@@ -1247,11 +1247,11 @@ CC
 CC----------------------------------------------------------------------
 CC Common/comzdf/ : vertical diffusion
 CC -----------------------------------
-CC	avt0             : vertical viscosity and diff. coef. (namelist)
-CC      ntrbbl		 : bottom boundary layer (namelist)
-CC      atrbbl		 : bottom boundary layer diffusivity (namelist)
-CC	avt()	         : vertical diffusivity coeff. at w-point
-CC	avtb()           : background profile of avm and avt
+CC    avt0             : vertical viscosity and diff. coef. (namelist)
+CC      ntrbbl         : bottom boundary layer (namelist)
+CC      atrbbl         : bottom boundary layer diffusivity (namelist)
+CC    avt()             : vertical diffusivity coeff. at w-point
+CC    avtb()           : background profile of avm and avt
 C
 C
        allocate(avt (jpi,jpj,jpk))
@@ -1273,9 +1273,9 @@ CC
 CC----------------------------------------------------------------------
 CC Common/comtau/ : surface wind stress at givem time_step
 CC -------------------------------------------------------
-CC	taux(), tauy()   : wind stress components in (i,j) referential
-CC	tauxg(), tauyg() : zonal and meridian wind stress component used
-CC	                   in output (geographical referential)
+CC    taux(), tauy()   : wind stress components in (i,j) referential
+CC    tauxg(), tauyg() : zonal and meridian wind stress component used
+CC                       in output (geographical referential)
 C
        allocate(taux  (jpi,jpj))
        allocate(tauy  (jpi,jpj))
@@ -1479,7 +1479,8 @@ CC      trn()     : traceur concentration for actual time step
 CC      tra()     : traceur concentration for next time step
 CC      trb()     : traceur concentration for before time step
 CC
-CCC Paolo 30/4/2004 Flag time advance SMS or Dyn  
+CCC Paolo 30/4/2004 Flag time advance SMS or Dyn
+
        allocate(trn(jpi,jpj,jpk,jptra))
        allocate(tra(jpi,jpj,jpk,jptra))
        allocate(tra_pp(jpi,jpj,jpk,jptra_dia))
@@ -1491,15 +1492,17 @@ CCC Paolo 30/4/2004 Flag time advance SMS or Dyn
        allocate(vatmIO(jpi,jpj)) 
        allocate(empIO(jpi,jpj)) 
        allocate(qsrIO(jpi,jpj)) 
-       allocate(unIO(jpi,jpj,jpk)) 
+       allocate(unIO  (jpi,jpj,jpk))
        allocate(bblxIO(jpi,jpj)) 
-       allocate(vnIO(jpi,jpj,jpk)) 
+       allocate(vnIO  (jpi,jpj,jpk))
        allocate(bblyIO(jpi,jpj)) 
-       allocate(wnIO(jpi,jpj,jpk)) 
-       allocate(avtIO(jpi,jpj,jpk)) 
+       allocate(wnIO  (jpi,jpj,jpk))
+       allocate(avtIO (jpi,jpj,jpk))
+       allocate(buf   (jpi,jpj,jpk))
+       allocate(buf2   (jpi,jpj))
        allocate(tra_ppIO(jpi,jpj,jpk,jptra_dia))
        mem_all = mem_all +  rea_len*(3*jpi*jpj*jpk*jptra 
-     .          + 12*jpi*jpj*jpk+2*jpiglo* jpjglo* jpk
+     .          + 13*jpi*jpj*jpk+2*jpiglo* jpjglo* jpk
      .          + 5*jpi*jpj)
 C     write(*,*) 'Mem_allocated:', mem_all
 CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
@@ -1519,9 +1522,9 @@ CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
        allocate(totavtIO(jpiglo,jpjglo,jpk)) 
        allocate(tottmaIO(jpiglo,jpjglo,jpk)) 
        allocate(totdiaIO(jpiglo,jpjglo,jpk,jptra_dia))
-       allocate(rsttrn(jpiglo,jpjglo,jpk))
-       allocate(rsttrb(jpiglo,jpjglo,jpk))
-       mem_all = mem_all +  rea_len*(15*jpiglo*jpjglo*jpk 
+!       allocate(rsttrn(jpiglo,jpjglo,jpk))
+!       allocate(rsttrb(jpiglo,jpjglo,jpk))
+       mem_all = mem_all +  rea_len*(13*jpiglo*jpjglo*jpk
      .          + 5*jpiglo*jpjglo)
 C     write(*,*) 'Mem_allocated:', mem_all
 
@@ -1572,7 +1575,7 @@ CC                  for passive tracer
 CC      trcrat    : ratio between passive and active tracer coeff
 CC                  for diffusion
 CC      ahtrc0    : horizontal eddy diffusivity for passive tracers (m2/s)
-CC	aeivtr0   : eddy induced velocity coefficient (m2/s)
+CC    aeivtr0   : eddy induced velocity coefficient (m2/s)
 CC
 CC
 CC----------------------------------------------------------------------
@@ -1643,7 +1646,7 @@ C     write(*,*) 'Mem_allocated:', mem_all
 CC
 CC    dynamical trends
 CC
-CC	trtrd()   : trends of the tracer equations
+CC    trtrd()   : trends of the tracer equations
 CC           1 : X advection
 CC           2 : Y advection
 CC           3 : Z advection
@@ -1691,12 +1694,12 @@ CC
 
       allocate(trdta(jpi,jpj,jpk,jptra))
       allocate(trcdat(jpi,jpj,jpk,2,jptra))
-      allocate(restoglo(jpiglo,jpjglo,jpk))
+!      allocate(restoglo(jpiglo,jpjglo,jpk))
       allocate(idxt(jpi,jpj,jpk))
       allocate(idxt2glo(jpi,jpj,jpk,4))
-      allocate(idxtglo(jpiglo,jpjglo,jpk))
+!      allocate(idxtglo(jpiglo,jpjglo,jpk))
       mem_all = mem_all +  rea_len*(4*jpi*jpj*jpk*jptra
-     &                  + 2*jpi*jpj*jpk + 2*jpiglo*jpjglo*jpk)
+     &                  + 2*jpi*jpj*jpk + 0*jpiglo*jpjglo*jpk)
 C     write(*,*) 'Mem_allocated:', mem_all
 CC
 #    else

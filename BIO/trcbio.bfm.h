@@ -32,7 +32,7 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+!                                  #include "stafun.h"
 
       INTERFACE OPA_Output_EcologyDynamics
          subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI, local_opa_dia)

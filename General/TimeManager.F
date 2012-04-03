@@ -116,8 +116,6 @@
       ! LOCAL
       real(8) t1,t2
       LOGICAL B
-      INTEGER I
-      character*150 subject
 
 
       t1= datestring2sec(DATESTART)
@@ -260,8 +258,6 @@
       IMPLICIT NONE
 
       character*1024 FileName
-      character(LEN=17) Timestring
-      integer I
       integer TheUnit
 
       TheUnit = 326
@@ -378,7 +374,7 @@
 
 
       ! LOCAL
-      integer year, I, N
+      integer I, N
 
       N=STRUCT%N
 
@@ -408,7 +404,6 @@
       SUBROUTINE YEARLY(datestring)
       IMPLICIT NONE
       CHARACTER(LEN=17),INTENT( IN) :: datestring
-      integer I
 
       if (datestring(5:17).eq.'0101-00:00:00') then
          call TimeExtension(datestring,TC_FOR)

@@ -1,5 +1,3 @@
-C $Id: trcsbc.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trcsbc ( ktask, kt )
 CCC---------------------------------------------------------------------
 CCC
@@ -44,99 +42,66 @@ CC   ------
 CC      argument
 CC              ktask           : task identificator
 CC              kt              : time step
-CC      common
-CC            /comcoo/          : orthogonal curvilinear coordinates
-CC                                and scale factors
-CC            /comaft/          : next fields (after)
-CC            /comflx/          : surface heat flux and evaporation
-CC            /comtsk/          : multitasking
 CC
 CC   Output :
 CC   -------
 CC      common
 CC            /comaft/ tra      : general temperature trend increased
 CC                                by surface boundary condition trend
-CC
-CC   Modifications :
-CC   --------------
-CC      original  :  99-09 (M.A. Foujols & M. Levy)
-CC      additions : 
-CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-
-CC----------------------------------------------------------------------
+       USE stafun
+       IMPLICIT NONE
 CC local declarations
 CC ==================
       INTEGER ktask, kt
 #if defined key_passivetrc
       INTEGER ji, jj
-C
       REAL(8) zta, zsa, zqfh, zsrau, zse3t
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
 
-#include "stafun.h"
-
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
-C
 #    if !defined key_trc_npzd && !defined key_trc_nnpzddom
 C default CASE : temperature and salinity as passive tracers
 
-C
+
 C Vertical slab
 C =============
-C
+
       zsrau=1. / rauw
       DO 1000 jj = ktask+1, jpjm1, ncpu
-C
-C
+
+
 C 1. Concentration dillution effect on (t,s)
 C -------------------------------------------
-C
+
         DO ji = 2, jpim1
           zse3t=1./fse3t(ji,jj,1)
-C
+
           zqfh = ro0cpr * qt(ji,jj)
-C
+
 C ... rigid lid
 C   ... temperature : heat flux 
           zta = zqfh * zse3t
 C   ... salinity :  concent./dilut. effect
           zsa = emp(ji,jj) * zsrau * trn(ji,jj,1,2) * zse3t
-C
+
 C   ... add the trend to the general tracer trend
           tra(ji,jj,1,1) = tra(ji,jj,1,1) + zta
           tra(ji,jj,1,2) = tra(ji,jj,1,2) + zsa
 
         END DO
-C
+
 C End of slab
 C ===========
-C
+
  1000 CONTINUE
-C
-C
 #    endif
-C
+
 C Surface boundary conditions must be implemented here
-C
+
 #else
-C
+
 C     no passive tracer
-C
+
 #endif
-C
-      RETURN
-      END
+
+      END SUBROUTINE trcsbc

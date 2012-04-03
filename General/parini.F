@@ -1,4 +1,3 @@
-
       SUBROUTINE parini(ME)
 CCC---------------------------------------------------------------------
 CCC
@@ -8,9 +7,6 @@ CCC
 CCC  Purpose :
 CCC  --------
 CCC     Read and print options for the run (namelist)
-CCC
-CC   Method :                   : no
-CC   -------
 CC
 CC   Input : 
 CC   ------
@@ -35,18 +31,11 @@ CC ==================
 
       NAMELIST/Dom_Size/ jpni, jpnj, jpnij, jpreci, jprecj
 
-      NAMELIST/Dimension_Med_Grid/ jpiglo, jpjglo, jpk, jpidta,
-     &                             jpjdta, jpkdta, jpkb
+      NAMELIST/Dimension_Med_Grid/ jpiglo, jpjglo, jpk, jpidta,jpjdta, jpkdta, jpkb
       NAMELIST/Domain_Characteristic/  jperio, jpisl, jpnisl
       NAMELIST/Number_Fluxes/ jpflx, jptaux, jptauy, jpwind, jpemp,
-     &                        jpkef, jpice, jpqsr, jpilec, jpjlec,
-     &                        jpklec
+     &                        jpkef, jpice, jpqsr, jpilec, jpjlec,jpklec
 CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
-
-#include "stafun.h"
-
 
 C 0. Initializations
 C ------------------
@@ -90,19 +79,17 @@ C     this length depend of 512 for the t3d machine
       numnam = 1004
       REWIND( numnam )
       clname = 'namelist.init'
-      CALL ctlopn( numnam, clname, clold, clfor, clseq,
-     $                  ilseq, ilu, iused, numout, lwp, 1)
-C
-C
+      CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
+
 C 1. Read namlist files
 C ---------------------
-C
+
 C ... Namelist Dom_Size :
-C
-C
+
+
       REWIND( numnam )
       READ  ( numnam, Dom_Size )
-C
+
       IF(lwp) THEN
       WRITE(numout,*) ' '
       WRITE(numout,*) 'Dom_Size'
@@ -118,11 +105,11 @@ C
       ENDIF
 C
 C ... Namelist :Dimension_Med_Grid
-C
-C
+
+
       REWIND( numnam )
       READ  ( numnam, Dimension_Med_Grid )
-C
+
       IF(lwp) THEN
       WRITE(numout,*) 'Dimension_Med_Grid'
       WRITE(numout,*) ' '
@@ -214,5 +201,5 @@ C
       WRITE(numout,*) ' '
       ENDIF
 
-      RETURN
-      END
+
+      END SUBROUTINE PARINI

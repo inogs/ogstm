@@ -16,7 +16,7 @@
 
       REAL(4) lon(jpiglo), lat(jpjglo), dep(jpk)
 
-      INTEGER ji, jj, jk, jn ,jn_nudg, jl
+      INTEGER ji, jj, jk, jn
       INTEGER ind, AC
 
       CHARACTER*32 forcing2d_file, forcing3d_file
@@ -27,7 +27,7 @@
       CHARACTER*29 dia_file_nc
       CHARACTER*4  var ! , var_nc
 
-      INTEGER :: ir, ir2d, ir3d
+      INTEGER :: ir2d, ir3d
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
       INTEGER totistart, totiend, relistart, reliend

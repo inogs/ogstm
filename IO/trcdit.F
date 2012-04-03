@@ -1,5 +1,3 @@
-
-
       SUBROUTINE trcdit(datemean,datefrom,dateTo)
 !---------------------------------------------------------------------
 !
@@ -29,7 +27,7 @@
 
       REAL(4) lon(jpiglo), lat(jpjglo), dep(jpk)
 
-      INTEGER ji, jj, jk, jn,jn_nudg, jl
+      INTEGER ji, jj, jk, jn
       INTEGER ind
 
 
@@ -43,7 +41,6 @@
 ! statement functions
 ! ===================
 
-#include "stafun.h"
 
       INTEGER :: ir, ir2d, ir3d
 
@@ -70,7 +67,7 @@
 
       DO jn=1,jptra ! DO LABEL 5
 
-      var_nc(1:3)    = ctrcnm(jn)(1:3)
+      var_nc(1:3)    = ctrcnm(jn)
       output_file_nc = 'ave.'//datemean//'.'//var_nc(1:3)//'.nc'//CHAR(0)
       output_file_FN = 'fne.'//datemean//'.'//var_nc(1:3)//'.dat'
 

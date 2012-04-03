@@ -43,7 +43,7 @@
          CHARACTER(LEN=*),INTENT(in) :: c_r
          INTEGER,INTENT(IN) :: l_r
       !-
-         INTEGER :: ipos,indx,ires
+         INTEGER :: ipos,indx
       !---------------------------------------------------------------------
          cntpos = 0
          ipos   = 1

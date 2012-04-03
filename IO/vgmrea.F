@@ -1,4 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/vgmrea.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
       SUBROUTINE vgmrea(kenr)
 CCC---------------------------------------------------------------------
 CCC
@@ -22,60 +21,15 @@ CC   -----
 CC      argument
 CC              kt              : time step
 CC		kindic		: indicator of abnormal termination
-CC      common
-CC
-CC   OUTPUT :
-CC   ------
-CC      file
-CC            /COMDYN/          : dynamic fields 
-CC
-CC
-CC   WORKSPACE :
-CC   ---------
-CC      local
-CC              ji,jj,jk, jrec, jfic, junit
-CC
-CC   EXTERNAL :
-CC   --------
-CC
-CC   REFERENCES :                 no
-CC   ----------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-CC      original  : 
-CC      additions : 
-CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
+
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-
-CC----------------------------------------------------------------------
-CC Local declarations
-CC ==================
+       IMPLICIT NONE
 
       INTEGER kenr
 
-      INTEGER ji, jj, jk, jrec, junit
+      INTEGER jrec, junit
 
-
-
-CC----------------------------------------------------------------------
-CC Statement functions
-CC ===================
-
-#include "stafun.h"
-
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
 
 
 

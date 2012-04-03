@@ -1,4 +1,3 @@
-C $Id: trcopt.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
 
       SUBROUTINE trcopt(ktask,kt)
 CCC---------------------------------------------------------------------
@@ -56,76 +55,42 @@ CC      COMMON
 CC
 CC   EXTERNAL :                   no
 CC   --------
-CC
-CC   REFERENCES :                 no
-CC   ----------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-CC       original : 95-05 (M. Levy)
-CC                  99-09 (J-M Andre & M. Levy)
-CC       modifications : 99-11 (C. Menkes M.A. Foujols) itabe initial. 
-CC       modifications : 00-02 (M.A. Foujols) change x**y par exp(y*log(x))
-CC----------------------------------------------------------------------
 
-
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc        
        USE OPT_mem
-
-CC+CC  Implicit typing is never allowed
              IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 #include <mpif.h>
 
 
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (11/96)
-CCC---------------------------------------------------------------------
-CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER kt,ktask
 
 #if defined key_passivetrc
 #    if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm 
-C
+
       INTEGER ji,jj,jk,jn,in
 
-      REAL(8) zpig,zkr,zkg
       REAL(8) p_eps0
       REAL(8) p_epsChla01,p_epsChla02,p_epsChla03,p_epsChla04
-      REAL(8) p_epsR6 
-CC+CC My Forcing Toy model implementation
-      REAL(8) rkt, ye, da, Ib, I0, Wa, Wd, pi, HF, LF,myaa 
-CC+CC      REAL(8) zpar(jpi,jpk)
+
+CC+CC      REAL(8) zpar(jpi,jpk), p_par,p_epsR6
 CC+CC      REAL(8) xEPS(jpi,jpk)
 CC+CC      REAL(8) zpar0m(jpi),zpar100(jpi)
-      REAL(8) p_par
+
 #if defined key_trc_bfm
       REAL(8) redf,rcchl
 #endif 
-CC+CC      INTEGER itabe(jpi),imaske(jpi,jpk)
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
 
-#include "stafun.h"
 
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
 CCC        DO ji = 1,jpi
 CCC           WRITE(*,*) 'trcopt.F',ji,jj,kef(ji,jj)
 CCC        ENDDO
 CCC 10 11 2004  F79 cronometer-start
        trcoptparttime = MPI_WTIME()
-CCC
-C
 C find Phytoplancton index - test CTRCNM
-C
+
       in=0
       DO jn = 1,jptra
         IF ((ctrcnm(jn) .EQ. 'PHY') .OR.
@@ -133,13 +98,7 @@ C
             in = jn
         END IF
       END DO
-      IF (in.eq.0) THEN 
-          IF (lwp) THEN 
-CCC              WRITE (numout,*)
-CCC     $            ' Problem trcopt : PHY or PHYTO not found '
-CCC              CALL FLUSH_(numout)
-          ENDIF 
-      ENDIF 
+
 #if defined key_trc_bfm
 CCC Paolo 15 10 2004 provisory value for the shadow effect
             redf  = 7.
@@ -261,11 +220,11 @@ CCC            IF (Tmask(ji,jj,jk) .EQ. 1) THEN
 CCC            ENDIF
           END DO
         END DO
-C
+
         DO ji = 1,jpi
           itabe(ji) = 0
         END DO
-C
+
         DO jk = 1,jpk
           DO ji = 1,jpi
             itabe(ji) = itabe(ji) + imaske(ji,jk)
@@ -277,34 +236,25 @@ C
 CCC          write(*,*) 'xze',xze(ji,jj),ji,jj
 CCC          xze(ji,jj) = fsdepw(ji,jj,itabe(ji) + 1)
         END DO 
-C
-C
+
+
 C END of slab
 C ===========
-C
- 1000 CONTINUE
-C
-CCC 10 11 2004  F79 cronometer-stop
 
-       trcoptparttime = MPI_WTIME() - trcoptparttime
+ 1000 CONTINUE
+
+       trcoptparttime = MPI_WTIME() - trcoptparttime !F79 cronometer-stop
        trcopttottime = trcopttottime + trcoptparttime
 
-CC-CC       write(*,*) "F79T:trcoptparttime", trcoptparttime
-CC-CC       write(*,*) "F79T:trcopttottime", trcopttottime
-
-CCC
-
-
 #    else
-C
+
 C    No optical model
-C
+
 #    endif
 #else
-C
+
 C no passive tracers
-C
+
 #endif
-C
-      RETURN
-      END
+
+      END SUBROUTINE trcopt

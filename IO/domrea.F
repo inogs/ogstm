@@ -1,4 +1,3 @@
-! $Header: /cvsroot/opatm-bfm/opa_model/OPA/domrea.F,v 1.7 2010-05-26 10:38:12 cvsogs01 Exp $
       SUBROUTINE domrea
 !---------------------------------------------------------------------
 
@@ -28,44 +27,27 @@
 ! local declarations
 ! ==================
 
-      INTEGER ii, jj, kk, jn, iinew, jjnew, iista, iiend, jjsta, jjend
+      INTEGER ii, jj, kk, jn, iinew, jjnew, iiend, jjend
 
-      CHARACTER*12 nomefile
+
+      CHARACTER*11 maskfile
       CHARACTER*50 filename
-      CHARACTER*4 var_nc(7)
-      CHARACTER*6 nomevar01
-      CHARACTER*4 nomevar02
-      CHARACTER*3 nomevar03
-      CHARACTER*9 nomevar04
-      CHARACTER*13 nomevar05
+      CHARACTER(LEN=3), DIMENSION(7) :: var_nc
+      CHARACTER*5 nomevar01
       LOGICAL B
       
-!----------------------------------------------------------------------
-! statement functions
-! ===================
-
-#include "stafun.h"
-
-
-! 0. FILE definitions
 ! -------------------
 ! To read only one meshmask.nc
-      iista = nimpp
-      iiend = MIN(jpi+nimpp-1, jpiglo)
-      jjsta = njmpp
-      jjend = MIN(jpj+njmpp-1, jpjglo)
 
-      nomefile(1:12)  = 'meshmask.nc'//CHAR(0)
-      nomevar01(1:6)  = '12345'//CHAR(0)
-      nomevar02(1:4)  = '123'//CHAR(0)
-      nomevar03(1:3)  = '12'//CHAR(0)
-      nomevar04(1:9)  = '12345678'//CHAR(0)
-      nomevar05(1:13) = '123456789012'//CHAR(0)
+      maskfile        = 'meshmask.nc'
       filename='BC/TI_yyyy0215-00:00:00.nc' ! 26 chars
 
+
+      iiend = MIN(jpi+nimpp-1, jpiglo)
+      jjend = MIN(jpj+njmpp-1, jpjglo)
       do kk=1, jpk
-         do jj=jjsta, jjend
-            do ii=iista, iiend
+         do jj=njmpp, jjend
+            do ii=nimpp, iiend
                iinew = ii - nimpp + 1
                jjnew = jj - njmpp + 1
                idxt2glo(iinew, jjnew, kk,1)=ii !
@@ -78,93 +60,120 @@
 ! 1. Horzontal grid-point position
 ! --------------------------------
 
-      nomevar01(1:5)='glamt'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamtglo)
-      nomevar01(1:5)='glamu'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamuglo)
-      nomevar01(1:5)='glamv'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamvglo)
-      nomevar01(1:5)='glamf'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamfglo)
+      call readnc_slice_double_2d(maskfile,'glamt', glamt)
+      call readnc_slice_double_2d(maskfile,'glamu', glamu)
+      call readnc_slice_double_2d(maskfile,'glamv', glamv)
+      call readnc_slice_double_2d(maskfile,'glamf', glamf)
 
-      do jj=jjsta, jjend
-         do ii=iista, iiend
-            iinew = ii - nimpp + 1
-            jjnew = jj - njmpp + 1
-            glamt(iinew, jjnew) = glamtglo(ii, jj)
-            glamu(iinew, jjnew) = glamuglo(ii, jj)
-            glamv(iinew, jjnew) = glamvglo(ii, jj)
-            glamf(iinew, jjnew) = glamfglo(ii, jj)
-         enddo
-      enddo
+!      nomevar01(1:5)='glamt'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamtglo)
+!      nomevar01(1:5)='glamu'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamuglo)
+!      nomevar01(1:5)='glamv'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamvglo)
+!      nomevar01(1:5)='glamf'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamfglo)
+!
+!      do jj=jjsta, jjend
+!         do ii=iista, iiend
+!            iinew = ii - nimpp + 1
+!            jjnew = jj - njmpp + 1
+!            glamt(iinew, jjnew) = glamtglo(ii, jj)
+!            glamu(iinew, jjnew) = glamuglo(ii, jj)
+!            glamv(iinew, jjnew) = glamvglo(ii, jj)
+!            glamf(iinew, jjnew) = glamfglo(ii, jj)
+!         enddo
+!      enddo
 
 
-      nomevar01(1:5) = 'gphit'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphitglo)
-      nomevar01(1:5) = 'gphiu'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphiuglo)
-      nomevar01(1:5) = 'gphiv'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphivglo)
-      nomevar01(1:5) = 'gphif'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphifglo)
+      call readnc_slice_double_2d(maskfile,'gphit', gphit)
+      call readnc_slice_double_2d(maskfile,'gphiu', gphiu)
+      call readnc_slice_double_2d(maskfile,'gphiv', gphiv)
+      call readnc_slice_double_2d(maskfile,'gphif', gphif)
 
-      do jj=jjsta, jjend
-         do ii=iista, iiend
-            iinew = ii - nimpp + 1
-            jjnew = jj - njmpp + 1                                                                              
-            gphit(iinew, jjnew) = gphitglo(ii, jj)
-            gphiu(iinew, jjnew) = gphiuglo(ii, jj)
-            gphiv(iinew, jjnew) = gphivglo(ii, jj)
-            gphif(iinew, jjnew) = gphifglo(ii, jj)
-         enddo
-      enddo
+!      nomevar01(1:5) = 'gphit'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphitglo)
+!      nomevar01(1:5) = 'gphiu'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphiuglo)
+!      nomevar01(1:5) = 'gphiv'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphivglo)
+!      nomevar01(1:5) = 'gphif'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphifglo)
+!
+!      do jj=jjsta, jjend
+!         do ii=iista, iiend
+!            iinew = ii - nimpp + 1
+!            jjnew = jj - njmpp + 1
+!            gphit(iinew, jjnew) = gphitglo(ii, jj)
+!            gphiu(iinew, jjnew) = gphiuglo(ii, jj)
+!            gphiv(iinew, jjnew) = gphivglo(ii, jj)
+!            gphif(iinew, jjnew) = gphifglo(ii, jj)
+!         enddo
+!      enddo
 
 ! 2. Horizontal scale factors
 ! ---------------------------
+      call readnc_slice_double_2d(maskfile,'e1t', e1t)
+      call readnc_slice_double_2d(maskfile,'e1u', e1u)
+      call readnc_slice_double_2d(maskfile,'e1v', e1v)
+      call readnc_slice_double_2d(maskfile,'e1f', e1f)
 
-      nomevar02(1:3)='e1t'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1tglo)
-      nomevar02(1:3)='e1u'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1uglo)
-      nomevar02(1:3)='e1v'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1vglo)
-      nomevar02(1:3)='e1f'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1fglo)
+      call readnc_slice_double_2d(maskfile,'e2t', e2t)
+      call readnc_slice_double_2d(maskfile,'e2u', e2u)
+      call readnc_slice_double_2d(maskfile,'e2v', e2v)
+      call readnc_slice_double_2d(maskfile,'e2f', e2f)
 
-      do jj=jjsta, jjend
-         do ii=iista, iiend
-            iinew = ii - nimpp + 1
-            jjnew = jj - njmpp + 1                                                                              
-            e1t(iinew, jjnew) = e1tglo(ii, jj)
-            e1u(iinew, jjnew) = e1uglo(ii, jj)
-            e1v(iinew, jjnew) = e1vglo(ii, jj)
-            e1f(iinew, jjnew) = e1fglo(ii, jj)
-         enddo
-      enddo
 
-      nomevar02(1:3)='e2t'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2tglo)
-      nomevar02(1:3)='e2u'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2uglo)
-      nomevar02(1:3)='e2v'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2vglo)
-      nomevar02(1:3)='e2f'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2fglo)
+!      nomevar02(1:3)='e1t'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1tglo)
+!      nomevar02(1:3)='e1u'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1uglo)
+!      nomevar02(1:3)='e1v'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1vglo)
+!      nomevar02(1:3)='e1f'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1fglo)
+!
+!      do jj=jjsta, jjend
+!         do ii=iista, iiend
+!            iinew = ii - nimpp + 1
+!            jjnew = jj - njmpp + 1
+!            e1t(iinew, jjnew) = e1tglo(ii, jj)
+!            e1u(iinew, jjnew) = e1uglo(ii, jj)
+!            e1v(iinew, jjnew) = e1vglo(ii, jj)
+!            e1f(iinew, jjnew) = e1fglo(ii, jj)
+!         enddo
+!      enddo
 
-      do jj=jjsta, jjend
-         do ii=iista, iiend
-            iinew = ii - nimpp + 1
-            jjnew = jj - njmpp + 1                                                                              
-            e2t(iinew, jjnew) = e2tglo(ii, jj)                                                                  
-            e2u(iinew, jjnew) = e2uglo(ii, jj)
-            e2v(iinew, jjnew) = e2vglo(ii, jj)
-            e2f(iinew, jjnew) = e2fglo(ii, jj)
-         enddo
-      enddo
+!      nomevar02(1:3)='e2t'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2tglo)
+!      nomevar02(1:3)='e2u'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2uglo)
+!      nomevar02(1:3)='e2v'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2vglo)
+!      nomevar02(1:3)='e2f'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2fglo)
+!
+!      do jj=jjsta, jjend
+!         do ii=iista, iiend
+!            iinew = ii - nimpp + 1
+!            jjnew = jj - njmpp + 1
+!            e2t(iinew, jjnew) = e2tglo(ii, jj)
+!            e2u(iinew, jjnew) = e2uglo(ii, jj)
+!            e2v(iinew, jjnew) = e2vglo(ii, jj)
+!            e2f(iinew, jjnew) = e2fglo(ii, jj)
+!         enddo
+!      enddo
 
 ! 3. masks
 ! --------
-      nomevar01(1:5) = 'tmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,tmaskglo)
-      nomevar01(1:5) = 'umask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,umaskglo)
-      nomevar01(1:5) = 'vmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,vmaskglo)
-      nomevar01(1:5) = 'fmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,fmaskglo)
+      write(*,*) 'reading 3D'
 
-      do kk=1, jpk
-         do jj=jjsta, jjend
-            do ii=iista, iiend
-               iinew = ii - nimpp + 1
-               jjnew = jj - njmpp + 1   
-               tmask(iinew, jjnew, kk) = tmaskglo(ii, jj, kk)
-               umask(iinew, jjnew, kk) = umaskglo(ii, jj, kk)  
-               vmask(iinew, jjnew, kk) = vmaskglo(ii, jj, kk)  
-               fmask(iinew, jjnew, kk) = fmaskglo(ii, jj, kk)
-            enddo
-         enddo
-      enddo
+      CALL readnc_slice_double (maskfile,'umask', umask )
+      CALL readnc_slice_double (maskfile,'vmask', vmask )
+      CALL readnc_slice_double (maskfile,'fmask', fmask )
+      CALL readnc_slice_double (maskfile,'tmask', tmask )
+      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
+!      nomevar01(1:5) = 'tmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,tmaskglo)
+!      nomevar01(1:5) = 'umask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,umaskglo)
+!      nomevar01(1:5) = 'vmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,vmaskglo)
+!      nomevar01(1:5) = 'fmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,fmaskglo)
+
+!      do kk=1, jpk
+!         do jj=jjsta, jjend
+!            do ii=iista, iiend
+!               iinew = ii - nimpp + 1
+!               jjnew = jj - njmpp + 1
+!               tmask(iinew, jjnew, kk) = tmaskglo(ii, jj, kk)
+!               umask(iinew, jjnew, kk) = umaskglo(ii, jj, kk)
+!               vmask(iinew, jjnew, kk) = vmaskglo(ii, jj, kk)
+!               fmask(iinew, jjnew, kk) = fmaskglo(ii, jj, kk)
+!            enddo
+!         enddo
+!      enddo
 
 ! F79 Initialization of mbathy
       mbathy(:,:) = 0
@@ -178,16 +187,17 @@
        enddo
       enddo
 
-      nomevar03 = 'ff' ; nomevar03(3:3) = CHAR(0)
-      CALL ioogsnc_mesh_2d_d(nomefile, nomevar03,1,jpjglo,jpiglo,ffglo)
-
-      do jj=jjsta, jjend
-         do ii=iista, iiend
-            iinew = ii - nimpp + 1
-            jjnew = jj - njmpp + 1                                                                              
-            ff(iinew, jjnew) = ffglo(ii, jj) 
-         enddo
-      enddo
+      CALL readnc_slice_double_2d(maskfile,'ff', ff )
+!      nomevar03 = 'ff' ; nomevar03(3:3) = CHAR(0)
+!      CALL ioogsnc_mesh_2d_d(nomefile, nomevar03,1,jpjglo,jpiglo,ffglo)
+!
+!      do jj=jjsta, jjend
+!         do ii=iista, iiend
+!            iinew = ii - nimpp + 1
+!            jjnew = jj - njmpp + 1
+!            ff(iinew, jjnew) = ffglo(ii, jj)
+!         enddo
+!      enddo
 
 
 ! 4. depth and vertical scale factors
@@ -219,64 +229,74 @@
 #  else
 
 
-      nomevar01(1:5)='gdept'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar01,1,jpk,gdept)
-      nomevar01(1:5)='gdepw'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar01,1,jpk,gdepw)
-      nomevar02(1:3) = 'e3t'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar02,1,jpk,e3t)
-      nomevar02(1:3) = 'e3w'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar02,1,jpk,e3w)
+!      nomevar01(1:5)='gdept'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar01,1,jpk,gdept)
+!      nomevar01(1:5)='gdepw'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar01,1,jpk,gdepw)
+!      nomevar02(1:3) = 'e3t'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar02,1,jpk,e3t)
+!      nomevar02(1:3) = 'e3w'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar02,1,jpk,e3w)
+       CALL readmask_double_1d(maskfile,'gdept',gdept)
+       CALL readmask_double_1d(maskfile,'gdepw',gdepw)
+       CALL readmask_double_1d(maskfile,'e3t',    e3t)
+       CALL readmask_double_1d(maskfile,'e3w',    e3w)
+
+
 
 #endif
 #ifdef key_trc_dmp
-!  Restoration Mask !!!!
-      nomefile = 'bounmask.nc'
-      nomefile(12:12) = CHAR(0)
 
-      var_nc(1)(1:3) = 'O2o'
-      var_nc(2)(1:3) = 'N1p'
-      var_nc(3)(1:3) = 'N3n'
-      var_nc(4)(1:3) = 'N5s'
-      var_nc(5)(1:3) = 'O3c'
-      var_nc(6)(1:3) = 'O3h'
-      var_nc(7)(1:3) = 'N6r'
+
+!       Restoration Mask ****************
+
+
+      var_nc(1) = 'O2o'
+      var_nc(2) = 'N1p'
+      var_nc(3) = 'N3n'
+      var_nc(4) = 'N5s'
+      var_nc(5) = 'O3c'
+      var_nc(6) = 'O3h'
+      var_nc(7) = 'N6r'
 
       do jn=1,jn_gib
 
-         nomevar01(1:5)='re'//var_nc(jn)(1:3)
+         nomevar01='re'//var_nc(jn)
+         call readnc_slice_double('bounmask.nc',nomevar01,resto(:,:,:,jn));
 
-         CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,restoglo)
-
-         do kk=1, jpk
-            do jj=jjsta, jjend
-               do ii=iista, iiend
-                  iinew = ii - nimpp + 1
-                  jjnew = jj - njmpp + 1
-                  resto(iinew, jjnew, kk,jn) = restoglo(ii, jj, kk)
-               enddo
-            enddo
-         enddo
+!         CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,restoglo)
+!
+!         do kk=1, jpk
+!            do jj=jjsta, jjend
+!               do ii=iista, iiend
+!                  iinew = ii - nimpp + 1
+!                  jjnew = jj - njmpp + 1
+!                  resto(iinew, jjnew, kk,jn) = restoglo(ii, jj, kk)
+!               enddo
+!            enddo
+!         enddo
       enddo
-      nomevar01(1:5)='index'; CALL ioogsnc_idx_3d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,idxtglo)
-
-      do kk=1, jpk
-         do jj=jjsta, jjend
-            do ii=iista, iiend
-               iinew = ii - nimpp + 1
-               jjnew = jj - njmpp + 1
-               idxt(iinew, jjnew, kk) = idxtglo(ii, jj, kk)
-            enddo
-         enddo
-      enddo
+      call readnc_slice_int   ('bounmask.nc','index',idxt);
+!      nomevar01(1:5)='index'; CALL ioogsnc_idx_3d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,idxtglo)
+!
+!      do kk=1, jpk
+!         do jj=jjsta, jjend
+!            do ii=iista, iiend
+!               iinew = ii - nimpp + 1
+!               jjnew = jj - njmpp + 1
+!               idxt(iinew, jjnew, kk) = idxtglo(ii, jj, kk)
+!            enddo
+!         enddo
+!      enddo
 
 
 
 
 ! *********************************   Gibraltar area
-      filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'//char(0);
-      nomevar05 = 'gib_idxt_N1p'//CHAR(0);
+      filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
+
 
        if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
 
 
-      CALL ioogsnc_idx_1d2(filename, nomevar05,Gsizeglo, gib_idxtglo)
+      !CALL ioogsnc_idx_1d2(filename, nomevar05,Gsizeglo, gib_idxtglo)
+      CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
 
       if (lwp) write(*,*) 'domrea->ioogsnc_idx_1d  finita'
       if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
@@ -296,9 +316,9 @@
       endif
 
 ! ********************************  Rivers ******
-      filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'//char(0);
-      nomevar04(1:8) = 'riv_idxt'
-      CALL ioogsnc_idx_1d2(filename,nomevar04, Rsizeglo,riv_idxtglo)
+      filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc';
+      CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
+      !CALL ioogsnc_idx_1d2(filename,nomevar04, Rsizeglo,riv_idxtglo)
       Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
 
       if (Rsize.NE. 0) then
@@ -312,9 +332,9 @@
        if(lwp) write(*,*) 'RIV finiti'
 
 ! ******************************************* Atmospherical inputs
-      filename       = 'BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'//char(0);
-      nomevar04(1:8) = 'atm_idxt'
-      CALL ioogsnc_idx_1d2(filename, nomevar04,Asizeglo,atm_idxtglo)
+      filename       = 'BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'
+      CALL readnc_int_1d(filename, 'atm_idxt',Asizeglo,atm_idxtglo)
+!      CALL ioogsnc_idx_1d2(filename, nomevar04,Asizeglo,atm_idxtglo)
       Asize = COUNT_InSubDomain(Asizeglo,atm_idxtglo)
 
       if (Asize.NE. 0) then
@@ -327,7 +347,9 @@
 #endif
 
        if(lwp) write(*,*) 'DOMREA finita, wait for flushing...'
+
        call flush()
+
       CONTAINS
 
 ! *****************************************************************

@@ -1,4 +1,3 @@
-C $Id: trcbio.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
 
       SUBROUTINE trcbio(ktask,kt)
 CCC---------------------------------------------------------------------
@@ -39,9 +38,9 @@ CCC   MODIFICATIONS:
 CC   --------------
 CC       original : 95-02 (M. Levy, NPZD model)
 CC                  99-07 (M. Levy, NNPZDDOM model)
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
+
+      USE STAFUN
+
 #if defined key_passivetrc 
 #  if defined key_trc_npzd 
 #    include "trcbio.npzd.h"
@@ -57,7 +56,5 @@ C    no biological model
 C
 #  endif
 #endif
-C
-C
-      RETURN
-      END
+
+      END SUBROUTINE trcbio

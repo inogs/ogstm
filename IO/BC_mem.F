@@ -42,8 +42,6 @@
       CHARACTER*9  nomedim0
       CHARACTER*13 nomedim1
 
-      INTEGER jn_nudg
-
         nomedim0='riv_idxt'//CHAR(0)
         nomedim1 = 'gib_idxt_N1p'//CHAR(0)
 

@@ -42,7 +42,7 @@ CC statement functions
 CC ===================
 
 CCC 18 11 2004 F79 already included in trclsm.opt.h
-C#include "stafun.h"
+!                          #include "stafun.h"
 
 CC
 CCC---------------------------------------------------------------------

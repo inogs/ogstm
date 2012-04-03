@@ -55,6 +55,7 @@
 !----------------------------------------------------------------------
 
        USE myalloc
+       USE stafun
        IMPLICIT NONE
 
 !    local declarations
@@ -62,7 +63,7 @@
 
 ! statement functions
 ! ===================
-#include "stafun.h"
+
 
 
 ! 0. Asselin Time filter

@@ -22,16 +22,6 @@
 !   -----
 !      argument
 !              kt              : time step
-!      COMMON
-!		all the COMMON defined in opa
-!
-!
-!   OUTPUT :			: no
-!   ------
-!
-!   WORKSPACE :
-!   ---------
-!
 !   EXTERNAL :
 !   --------
 !      trc3ad, trcsbc, trczdf, trchdf, trcnxt, trcsms
@@ -48,7 +38,7 @@
 !     local declarations
       INTEGER kt
       INTEGER ktask
-#include "stafun.h"
+
 
       ktask = 1
       trcstpparttime = MPI_WTIME() !  F79 cronometer-start
@@ -107,7 +97,7 @@
       USE myalloc
       IMPLICIT NONE
       REAL(8) zmasspoc,zmasssil,zmasscal
-      INTEGER ji,jj,jk
+      INTEGER ji,jj
 
       real(8) sedpoc(2,2), sedcal(2,2), sedsil(2,2) ! *** shoud be defined elsewhere !!!! ***
 

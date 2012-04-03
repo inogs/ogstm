@@ -1,4 +1,3 @@
-c $Id: 
       SUBROUTINE trcrad
 #if defined key_passivetrc && key_trc_hamocc3
 #if defined key_trahdfiso 
@@ -30,18 +29,9 @@ CC   MODIFICATIONS:
 CC   --------------
 CC      original      : 2001    O. Aumont (& EK)
 CC ---------------------------------------------------------------------
-c ------
-CC parameters and commons
-CC ======================
-
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
+       USE stafun
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
@@ -52,7 +42,7 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+
 
 C
         DO jn = 1, jptra

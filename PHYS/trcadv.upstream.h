@@ -89,7 +89,7 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+!                                   #include "stafun.h"
 
 CCC 13012004 Opt new AIX52
 CC-CC      integer goodpoints, allpoints, tpoints

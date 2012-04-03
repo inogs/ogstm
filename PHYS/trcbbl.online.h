@@ -82,7 +82,7 @@ C
 ! statement functions
 ! ===================
 
-#include "stafun.h"
+!                            #include "stafun.h"
 
 C
 C ratio alpha/beta

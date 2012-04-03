@@ -12,7 +12,7 @@
       REAL(8) ::  Miss_val =1.e20
       real(8) Realcounter, Realcounterp1
 ! omp variables
-      INTEGER :: mytid, ntids, itid
+      INTEGER :: mytid, ntids!, itid
 
 #ifdef __OPENMP
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads

@@ -72,14 +72,10 @@ CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
+
       USE myalloc
 #include <mpif.h>
-
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
 CC----------------------------------------------------------------------
 CC local declarations
@@ -93,16 +89,11 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
-#include "stafun.passivetrc.h"
+!                              #include "stafun.h"
+!                              #include "stafun.passivetrc.h"
 
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
-CCC 10 11 2004  F79 cronometer-start
 
-       trclaphdfparttime = MPI_WTIME()
+       trclaphdfparttime = MPI_WTIME() ! F79 cronometer-start
 
 CCC
 

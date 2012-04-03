@@ -1,5 +1,3 @@
-! $Header: /cvsroot/opatm-bfm/opa_model/OPA/bn2.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
-
       SUBROUTINE bn2 ( ktask, kt )
 !---------------------------------------------------------------------
 !
@@ -32,15 +30,6 @@
 !      N.B. N^2 is set to zero at the first level (JK=1) in inidtr
 !      and is never used at this level.
 !
-!   Input :
-!   ------
-!      argument
-!              ktask           : task identificator
-!              kt              : time step
-!      common
-!            /comcoh/          : scale factors
-!            /comnow/		: present fields (now)
-!
 !   Output :
 !   -------
 !	common
@@ -49,30 +38,17 @@
 !   References :
 !   -----------
 !	McDougall, T. J., J. Phys. Oceanogr., 17, 1950-1964, 1987.
-!
-!   Modifications :
-!   --------------
-!      Original  : 94-07 (G. Madec, M. Imbard)
-!      Additions : 97-07 (G. Madec) introduction of statement functions
-!----------------------------------------------------------------------
-! parameters and commons
-! ======================
 
-!#include "parameter.h"
-!#include "common.h"
-               USE myalloc
 
-!+!  Implicit typing is never allowed
+        USE myalloc
+        USE stafun
         IMPLICIT NONE
-!+!  Implicit typing is never allowed
-
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
       INTEGER ktask, kt
       INTEGER ji, jj, jk
 
-      REAL(8) zgalph
       REAL(8) zgde3w, zt, zs, zh, zalbet, zbeta
       REAL(8) fsalbt, fsbeta
       REAL(8) pft, pfh
@@ -80,55 +56,7 @@
 ! statement functions
 ! ===================
 
-#include "stafun.h"
 
-
-! ratio alpha/beta
-! ================
-!
-!  fsalbt: ratio of thermal over saline expension coefficients
-!       pft :  potential temperature in degrees celcius
-!       pfs :  salinity anomaly (s-35) in psu
-!       pfh :  depth in meters
-
-      fsalbt( pft, pfs, pfh ) =
-     $  ( ( ( -0.255019e-07 * pft + 0.298357e-05 ) * pft
-     $                            - 0.203814e-03 ) * pft
-     $                            + 0.170907e-01 ) * pft
-     $                            + 0.665157e-01
-     $ +(-0.678662e-05 * pfs - 0.846960e-04 * pft + 0.378110e-02 ) * pfs
-     $ +  ( ( - 0.302285e-13 * pfh
-     $        - 0.251520e-11 * pfs
-     $        + 0.512857e-12 * pft * pft          ) * pfh
-     $                             - 0.164759e-06   * pfs
-     $     +(   0.791325e-08 * pft - 0.933746e-06 ) * pft
-     $                             + 0.380374e-04 ) * pfh
-
-
-! beta
-! ====
-!
-!  fsbeta: saline expension coefficients
-!       pft :  potential temperature in degrees celcius
-!       pfs :  salinity anomaly (s-35) in psu
-!       pfh :  depth in meters
-!
-      fsbeta( pft, pfs, pfh ) =
-     $  ( ( -0.415613e-09 * pft + 0.555579e-07 ) * pft
-     *                          - 0.301985e-05 ) * pft
-     $                          + 0.785567e-03
-     $ +( 0.515032e-08 * pfs + 0.788212e-08 * pft - 0.356603e-06 ) * pfs
-     $ +(  (   0.121551e-17 * pfh
-     $       - 0.602281e-15 * pfs
-     $       - 0.175379e-14 * pft + 0.176621e-12 ) * pfh
-     $                            + 0.408195e-10   * pfs
-     $    +( - 0.213127e-11 * pft + 0.192867e-09 ) * pft
-     $                            - 0.121555e-07 ) * pfh
-
-!---------------------------------------------------------------------
-!  OPA8, LODYC (1997)
-!---------------------------------------------------------------------
-!
 ! Horizontal slab
 ! ===============
 !
@@ -190,15 +118,64 @@
      $                  - rbeta  * ( sn(ji,jj,jk-1) - sn(ji,jj,jk) )  )
               END DO
             END DO
-!
+
         ENDIF
-!
-!
+
 ! End of slab
 ! ===========
 !
  1000 continue
+
+      END SUBROUTINE bn2
+
+      ! ratio alpha/beta
+! ================
 !
+!  fsalbt: ratio of thermal over saline expension coefficients
+!       pft :  potential temperature in degrees celcius
+!       pfs :  salinity anomaly (s-35) in psu
+!       pfh :  depth in meters
+
+      REAL(8) FUNCTION fsalbt( pft, pfs, pfh )
+      IMPLICIT NONE
+      REAL(8), INTENT(IN) ::  pft, pfs, pfh
+      fsalbt =
+     $  ( ( ( -0.255019e-07 * pft + 0.298357e-05 ) * pft
+     $                            - 0.203814e-03 ) * pft
+     $                            + 0.170907e-01 ) * pft
+     $                            + 0.665157e-01
+     $ +(-0.678662e-05 * pfs - 0.846960e-04 * pft + 0.378110e-02 ) * pfs
+     $ +  ( ( - 0.302285e-13 * pfh
+     $        - 0.251520e-11 * pfs
+     $        + 0.512857e-12 * pft * pft          ) * pfh
+     $                             - 0.164759e-06   * pfs
+     $     +(   0.791325e-08 * pft - 0.933746e-06 ) * pft
+     $                             + 0.380374e-04 ) * pfh
+
+      END FUNCTION fsalbt
+
+
+! beta
+! ====
 !
-      RETURN
-      END
+!  fsbeta: saline expension coefficients
+!       pft :  potential temperature in degrees celcius
+!       pfs :  salinity anomaly (s-35) in psu
+!       pfh :  depth in meters
+!
+      REAL(8) FUNCTION fsbeta( pft, pfs, pfh )
+      IMPLICIT NONE
+      REAL(8), INTENT(IN) ::  pft, pfs, pfh
+      fsbeta =
+     $  ( ( -0.415613e-09 * pft + 0.555579e-07 ) * pft
+     *                          - 0.301985e-05 ) * pft
+     $                          + 0.785567e-03
+     $ +( 0.515032e-08 * pfs + 0.788212e-08 * pft - 0.356603e-06 ) * pfs
+     $ +(  (   0.121551e-17 * pfh
+     $       - 0.602281e-15 * pfs
+     $       - 0.175379e-14 * pft + 0.176621e-12 ) * pfh
+     $                            + 0.408195e-10   * pfs
+     $    +( - 0.213127e-11 * pft + 0.192867e-09 ) * pft
+     $                            - 0.121555e-07 ) * pfh
+
+      END FUNCTION fsbeta

@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/div.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
-
       SUBROUTINE div ( ktask, kt )
 CCC---------------------------------------------------------------------
 CCC
@@ -41,11 +39,12 @@ CC
 CC   External : mpplnk or lbc
 
       USE myalloc
+      USE stafun
       IMPLICIT NONE
 CC    local declarations
 
       INTEGER ktask, kt
-      INTEGER ji, jj, jk, ijt
+      INTEGER ji, jj, jk
 
       REAL(8) zbt
       REAL(8) zwu(jpi,jpj), zwv(jpi,jpj)
@@ -53,7 +52,7 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+!                                          #include "stafun.h"
 
 C Horizontal slab
 C ===============

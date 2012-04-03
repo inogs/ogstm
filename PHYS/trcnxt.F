@@ -64,7 +64,7 @@ CC local declarations
 CC ==================
       INTEGER ktask,kt,pack_size
 ! omp variables
-      INTEGER :: mytid, ntids, itid
+      INTEGER :: mytid, ntids
 
 #ifdef __OPENMP
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
@@ -72,10 +72,6 @@ CC ==================
 #endif
 
       INTEGER ji,jj,jk,jn
-      REAL(8) zfact,zdt
-
-
-#include "stafun.h"
 
 
 #ifdef __OPENMP

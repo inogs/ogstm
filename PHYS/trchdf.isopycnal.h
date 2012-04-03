@@ -64,13 +64,10 @@ CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
       USE myalloc
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CC----------------------------------------------------------------------
 CC local declarations
@@ -90,8 +87,8 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
-#include "stafun.passivetrc.h"
+!                          #include "stafun.h"
+!                          #include "stafun.passivetrc.h"
 
 CCC---------------------------------------------------------------------
 CCC  OPA8.1, LODYC (1998)

@@ -38,11 +38,6 @@ C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
       INTEGER(4) jv
       REAL(8)  ztra
 
-!----------------------------------------------------------------------
-! statement functions
-! ===================
-
-#include "stafun.h"
 
 ! tracer loop parallelized (macrotasking)
 ! =======================================

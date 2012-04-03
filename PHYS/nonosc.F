@@ -42,31 +42,14 @@ CC              zkx(),zky(),zkz(),zbetup(),zbetdo()
 CC      COMMON
 CC
 CC   EXTERNAL :   bord3
-CC   --------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-CC      original : 97-04 (l. mortier)
-CC      addition : 00-02 (h. loukos) rewritting for opa8
-CC      addition : 00-10 (M.A Foujols, E. Kestenare) 
-CC                       mpplnk and lbc instead of bord3
-CC      addition : 01-03 (E. Kestenare) add key_passivetrc
-CC
-CC----------------------------------------------------------------------
-CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
+
+
+
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
+       USE stafun
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
-CC----------------------------------------------------------------------
-CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       REAL(8) prdt
@@ -77,19 +60,14 @@ CC ==================
       INTEGER ikm1
       REAL(8) zbetup(jpi,jpj,jpk),zbetdo(jpi,jpj,jpk)
       REAL(8) zpos, zneg, zbt, za, zb, zc, zbig
+
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+            zbig = 1.e+20
 
-CCC---------------------------------------------------------------------
-CCC  opa8, LODYC (february 2000)
-CCC---------------------------------------------------------------------
-C
-      zbig = 1.e+20
-C
-C
+
 C 1. Search local extrema
 C -----------------------
 C to account for boundaries which are coded with tmask=0

@@ -87,21 +87,11 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+!                              #include "stafun.h"
 
-C
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
-C
-CCC 10 11 2004  F79 cronometer-start
-
-       trcbblparttime = MPI_WTIME()
-
-CCC
+       trcbblparttime = MPI_WTIME() !F79 cronometer-start
 
 
-C
 C 0. 2D fields of bottom temperature and salinity, and bottom slope
 C -----------------------------------------------------------------
 C mbathy= number of w-level, minimum value=1 (cf dommsk.F)

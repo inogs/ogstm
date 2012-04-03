@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/hdfslp.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE hdfslp ( ktask, kt )
 CCC---------------------------------------------------------------------
 CCC
@@ -53,6 +51,7 @@ CC
 CC   External :       mpplnk, mpplnk2  or  lbc
 
        USE myalloc
+       USE stafun
         IMPLICIT NONE
 
 
@@ -73,7 +72,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
 
 CCC---------------------------------------------------------------------
 CCC  OPA8, LODYC (1997)
@@ -452,5 +450,5 @@ C No isopycnal diffusion used
 
 #endif
 
-      RETURN
-      END
+
+      END SUBROUTINE hdfslp

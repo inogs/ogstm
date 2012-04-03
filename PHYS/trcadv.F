@@ -19,11 +19,7 @@ CCC     'key_trc_tvd'
 CCC     'key_trc_muscl'
 CCC     'key_trc_ppm'
 CCC
-CCC
-CCC
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (2000)
-CCC---------------------------------------------------------------------
+
 CC   MODIFICATIONS:
 CC   --------------
 CC      original  : 00-10 M.A. Foujols and E. Kestenare
@@ -31,21 +27,18 @@ CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
        USE myalloc_mpp
        USE ADV_mem
+       USE stafun
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-C#include <mpif.h>
 
-CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER ktask,kt
+
+
 #if defined key_passivetrc
 #    if defined key_trc_arakawa
 #       include "trcadv.arakawa.h"

@@ -1,7 +1,5 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/lbc.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
 
-      SUBROUTINE lbc ( ptab, ktype, ksgn,
-     $                       kdoloop, kjstart, kjpend, kstep )
+      SUBROUTINE lbc ( ptab, ktype, ksgn,kdoloop, kjstart, kjpend, kstep )
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE lbc
@@ -44,40 +42,29 @@ CC   -------
 CC      argument
 CC              ptab            : variable array with disired lateral
 CC				  boundary conditions
-CC
-CC   Modifications :
-CC   --------------
-CC       original  : 97-06 (G. Madec)
-CC       additions : 
-CC----------------------------------------------------------------------
 
-c#include  "parameter.h"
-c#include  "common.h"
       USE myalloc
+      IMPLICIT NONE
 
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-
-CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
+
       INTEGER ktype, ksgn, kdoloop, kjstart, kjpend, kstep
-      INTEGER ji, jj, jk
-      INTEGER ijt, iju
-C
       REAL(8) ptab(jpi,jpj,jpk)
-      REAL(8) zsgn
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
-C
 #if ! defined key_mpp
-C
+
+
+
+
+
+      REAL(8) zsgn
+
+
+      INTEGER ijt, iju
+      INTEGER ji, jj, jk
 C 0. Sign setting
 C ---------------
-C
-C ... 
+
       IF (ksgn.EQ.0) THEN
           zsgn = -1.
         ELSE
@@ -236,8 +223,7 @@ C ... south symmetric
                         ptab(ji,jpj,jk) = 0.e0
                       END DO
                     END DO
-                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4
-     $                                .AND. jj.EQ.2 ) THEN
+                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4.AND. jj.EQ.2 ) THEN
                     DO jk = 1, jpk
                       DO ji = 1, jpi
                         ptab(ji, 1 ,jk) = zsgn * ptab(ji,2,jk)
@@ -365,8 +351,7 @@ C ... south symmetric
                       ptab(ji, 1 ,1) = ptab(ji,3,1)
                       ptab(ji,jpj,1) = 0.e0
                     END DO
-                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4
-     $                                .AND. jj.EQ.2 ) THEN
+                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4.AND. jj.EQ.2 ) THEN
                     DO ji = 1, jpi
                       ptab(ji, 1 ,1) = zsgn * ptab(ji,2,1)
                       ptab(ji,jpj,1) = 0.e0

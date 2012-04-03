@@ -1,8 +1,4 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/lbc2.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC $Header: /cvsroot/opatm-bfm/opa_model/OPA/lbc2.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
-      SUBROUTINE lbc2 ( ptab, ktype, ksgn,
-     $                       kdoloop, kjstart, kjpend, kstep )
+      SUBROUTINE lbc2 ( ptab, ktype, ksgn,kdoloop, kjstart, kjpend, kstep )
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE lbc
@@ -45,35 +41,22 @@ CC   -------
 CC      argument
 CC              ptab            : variable array with disired lateral
 CC				  boundary conditions
-CC
-CC   Modifications :
-CC   --------------
-CC       original  : 97-06 (G. Madec)
-CC       additions : 
-CC----------------------------------------------------------------------
 
-c#include  "parameter.h"
-c#include  "common.h"
       USE myalloc
-
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-
-CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER ktype, ksgn, kdoloop, kjstart, kjpend, kstep
+
+      REAL(8) ptab(jpi,jpj)
+
+
+#if ! defined key_mpp
       INTEGER ji, jj, jk
       INTEGER ijt, iju
-C
-      REAL(8) ptab(jpi,jpj)
       REAL(8) zsgn
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
-C
-#if ! defined key_mpp
+
+
 C
 C 0. Sign setting
 C ---------------

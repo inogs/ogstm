@@ -1,5 +1,3 @@
-C $Id: trchdf.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trchdf(ktask,kt)
 CCC---------------------------------------------------------------------
 CCC
@@ -47,9 +45,10 @@ CCC
 CCC     MODIFICATION : 00-11 (M.A.Foujols E. Kestenare)
 CCC              differents keys for passive tracer
 CCC
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
+
+       USE stafun
+       USE stafun_passtrc
+
 #ifdef key_trc_hdfbilap
 #    if defined key_trc_hdfgeop
 #        include "trchdf.bilapgeopot.h"
@@ -79,7 +78,6 @@ CCC---------------------------------------------------------------------
 #        endif
 #    endif
 #endif
-C
-C
-      RETURN
-      END
+
+
+      END SUBROUTINE trchdf

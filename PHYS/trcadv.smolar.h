@@ -85,7 +85,7 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+!                        #include "stafun.h"
 
 
 ! omp variables

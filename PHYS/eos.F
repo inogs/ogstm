@@ -89,6 +89,7 @@ CC                : 99-02 (G. Madec, N. Grima) 'key_hdfimplicit'
 CC----------------------------------------------------------------------
 
        USE myalloc
+       USE stafun
         IMPLICIT NONE
 
 
@@ -102,11 +103,10 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
 
 C Horizontal slab
 C ===============
-C
+
       DO jk = 1, jpkm1
 
         IF ( neos.EQ.0 ) THEN

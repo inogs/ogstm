@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/inihdf.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE inihdf
 CCC---------------------------------------------------------------------
 CCC
@@ -36,13 +34,6 @@ CC	are set to a constant value given in the namelist and the 1d
 CC	coefficients are initialized to a hyperbolic tangent vertical
 CC	profile.
 CC
-CC   Input :
-CC   ------
-CC      common
-CC            /comask/          : masks, bathymetry
-CC            /comcoh/          : scale factors
-CC            /comhdt/          : lateral eddy diffusivity
-CC
 CC   Output :
 CC   -------
 CC      common
@@ -60,26 +51,9 @@ CC   Reference :
 CC   ----------
 CC      Madec, G. and M. Imbard, 1996, A global ocean mesh to overcome
 CC      the North Pole singularity, Climate Dynamics, 12, 381-388.
-CC
-CC   Modifications :
-CC   --------------
-CC      original :  90-10 (C. Levy - G. Madec)
-CC      additions : 96-01 (MA Foujols) adaptation of inimix for offline
-CC      additions : 98-04 (L. Bopp MA Foujols) multi dimensional coeff
-CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
-
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
+       USE stafun
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
-
-CC----------------------------------------------------------------------
-CC local declarations
 CC ==================
       INTEGER ji, jj, jk
 C
@@ -92,18 +66,9 @@ C    local definition for 1d coefficients
       REAL(8) zkah, zahr, za00, za01, zahf, zahs
       REAL(8) zahtf, zahts
 #endif
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
 
-#include "stafun.h"
 
-CCC---------------------------------------------------------------------
-CCC  OPA8.1, LODYC (1998)
-CCC---------------------------------------------------------------------
-C
-C    
-C
+
 C 1. Lateral eddy diffusivity and eddy induced velocity coefficients
 C ==================================================================
 C     user: modify the 'inihdf.tra.coef_d.h' include files following
@@ -137,8 +102,7 @@ C ----------------------
       IF(lwp)WRITE(numout,*) '        aht0 = ',aht0
 #    ifdef key_trahdfeiv
       IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' inihdf: constant eddy induced velocity',
-     $                       ' coef.'
+      IF(lwp)WRITE(numout,*) ' inihdf: constant eddy induced velocity coef.'
       IF(lwp)WRITE(numout,*) ' ======  '
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,*) '         aeiv0 = ',aeiv0
@@ -184,14 +148,10 @@ C    ( c a u t i o n : minus sign as fsdep has positive value )
       DO jk = 1, jpk
         DO jj = 2, jpjm1
           DO ji = 2, jpim1
-            uslp(ji,jj,jk) =-1. / e1u(ji,jj) * umask(ji,jj,jk)
-     $                     * ( fsdept(ji+1,jj,jk) - fsdept(ji,jj,jk) )
-            vslp(ji,jj,jk) =-1. / e2v(ji,jj) * vmask(ji,jj,jk)
-     $                     * ( fsdept(ji,jj+1,jk) - fsdept(ji,jj,jk) )
-            wslpi(ji,jj,jk)=-1. / e1t(ji,jj) * tmask(ji,jj,jk)
-     $                     * ( fsdepuw(ji+1,jj,jk) - fsdepuw(ji,jj,jk) )
-            wslpj(ji,jj,jk)=-1. / e2t(ji,jj) * tmask(ji,jj,jk)
-     $                     * ( fsdepvw(ji,jj+1,jk) - fsdepvw(ji,jj,jk) )
+            uslp(ji,jj,jk) =-1./e1u(ji,jj)* umask(ji,jj,jk)* (fsdept (ji+1,jj,jk) - fsdept (ji,jj,jk))
+            vslp(ji,jj,jk) =-1./e2v(ji,jj)* vmask(ji,jj,jk)* (fsdept (ji,jj+1,jk) - fsdept (ji,jj,jk))
+            wslpi(ji,jj,jk)=-1./e1t(ji,jj)* tmask(ji,jj,jk)* (fsdepuw(ji+1,jj,jk) - fsdepuw(ji,jj,jk))
+            wslpj(ji,jj,jk)=-1./e2t(ji,jj)* tmask(ji,jj,jk)* (fsdepvw(ji,jj+1,jk) - fsdepvw(ji,jj,jk))
           END DO
         END DO
       END DO
@@ -238,6 +198,5 @@ C        No use of wk1, wk2, wk3 and wk4 arrays: no rotation required
 #    endif 
 C
 #endif 
-C
-      RETURN
-      END
+
+      END SUBROUTINE inihdf

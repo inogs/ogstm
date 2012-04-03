@@ -1,4 +1,3 @@
-CCC $Header: /cvsroot/opatm-bfm/opa_model/OPA/trcbbl.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
       SUBROUTINE trcbbl( ktask, kt )
 CCC---------------------------------------------------------------------
 CCC
@@ -65,22 +64,11 @@ CC
 CC   References :                 NO
 CC   -----------
 CC	Beckmann, A., and R. Doscher, 1997, J. Phys.Oceanogr., 581-591.
-CC
-CC   Modifications :
-CC   --------------
-CC      original :  96-06 (L. Mortier)
-CC      addition :  97-11 (G. Madec)
-CC      addition :  01-05 (O. Aumont, E. Kestenare)
-CC      additions : 01-06 add key_off_tra for trcbbl routine (ED,EK)
-CC----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
+       USE stafun
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 #include <mpif.h>
 
       INTEGER ktask, kt
@@ -92,7 +80,7 @@ CC+CC  Implicit typing is never allowed
 #     else
 #     include "trcbbl.online.h"
 #     endif
-C
+
 #endif
-      RETURN
-      END
+
+      END SUBROUTINE trcbbl

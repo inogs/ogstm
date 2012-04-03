@@ -1,5 +1,3 @@
-C $Id: trczdf.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trczdf ( ktask, kt )
 CCC---------------------------------------------------------------------
 CCC
@@ -90,7 +88,7 @@ CC ======================
        USE myalloc
        USE myalloc_mpp
        USE ZDF_mem
-
+       USE stafun
         IMPLICIT NONE
 
 CC---------------------------------------------------------------------
@@ -116,7 +114,7 @@ C
 C
 C only IMPLICIT scheme
 C
-      REAL(8) z2dtt, z2dtf, ztra, zcoef
+      REAL(8) z2dtt
 #if ! defined key_trahdfbilap
 #    if defined key_trahdfiso || defined key_trahdfgeop
       REAL(8) zcoef0, zcoef3, zcoef4, zcoeg3
@@ -129,7 +127,7 @@ CC---------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+
 
 
       trczdfparttime = MPI_WTIME()
@@ -423,27 +421,23 @@ C
               END DO 
             END DO 
           END DO 
-C
+
 
 
 #        endif
 #    endif
-C
-C
-CCC 10 11 2004  F79 cronometer-stop
 
-       trczdfparttime = MPI_WTIME() - trczdfparttime
+
+
+       trczdfparttime = MPI_WTIME() - trczdfparttime ! F79 cronometer-stop
        trczdftottime = trczdftottime + trczdfparttime
 
-CC-CC       write(*,*) "F79T:trczdfparttime", trczdfparttime
-CC-CC       write(*,*) "F79T:trczdftottime", trczdftottime
-CCC
-C
+
 #else
-C
+
 C no passive tracers
-C
+
 #endif
-C
-      RETURN
-      END
+
+
+      END SUBROUTINE trczdf

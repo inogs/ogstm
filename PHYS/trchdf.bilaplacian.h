@@ -87,9 +87,9 @@ CC----------------------------------------------------------------------
       USE myalloc
       USE myalloc_mpp
       USE HDF_mem
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 
 CC----------------------------------------------------------------------
@@ -108,8 +108,8 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
-#include "stafun.passivetrc.h"
+!                       #include "stafun.h"
+!                       #include "stafun.passivetrc.h"
 
 CCC---------------------------------------------------------------------
 CCC  OPA8, LODYC (15/11/96)

@@ -60,7 +60,7 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
+!                                   #include "stafun.h"
 
       IF ((neuler.eq.0).and.(kt.eq.TimeStepStart)) THEN
            z2=1.

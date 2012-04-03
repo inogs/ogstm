@@ -1,5 +1,3 @@
-! $Header: /cvsroot/opatm-bfm/opa_model/OPA/wzv.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE wzv ( ktask, kt )
 !---------------------------------------------------------------------
 !
@@ -36,6 +34,7 @@
 ! ======================
 
        USE myalloc
+       USE stafun
        IMPLICIT NONE
 
 !----------------------------------------------------------------------
@@ -43,7 +42,7 @@
 ! ==================
       INTEGER ktask, kt
       INTEGER ji, jj, jk
-#include "stafun.h"
+
 
 ! Vertical slab
 ! =============

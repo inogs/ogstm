@@ -1,5 +1,3 @@
-C $Id: trclsm.npzd.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC                       trclsm.npzd.h
 CCC                       *************
 CCC
@@ -37,17 +35,9 @@ CC ==================
 #if defined key_passivetrc && defined key_trc_npzd
       INTEGER ji
       INTEGER ilu,iused(1,100),ilseq
-      CHARACTER*21 clold,clfor,clseq,clnew,cldir,clunf
-      CHARACTER*32 clname
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
-!                             #include "stafun.h"
-CC
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
+      CHARACTER(LEN=21) clold,clfor,clseq,clnew,cldir,clunf
+      CHARACTER(LEN=32) clname
+
 C 0. initializations
 C ------------------
 C

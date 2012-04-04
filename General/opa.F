@@ -17,35 +17,35 @@
 !
 !*********************************************************************
 !
-!  opa 				main program
+!  opa                 main program
 !  **first part : initialization
-!	      inipar  			initialization parameters
-!	      parcst			constants
-!           parlec			namelist read
-!	      parctl			control options
+!          inipar              initialization parameters
+!          parcst            constants
+!           parlec            namelist read
+!          parctl            control options
 !                 ctlopn              open file and check
 !     inimpp                          Initialisation for large domain
 !     inimpp2                         Initialisation with land elimination
-!     domrea                 		read a meshmask file
-!     domstp                 		prepares diferent time step for
+!     domrea                         read a meshmask file
+!     domstp                         prepares diferent time step for
 !                                     each level
-!     initrc	                        initialization passive tracers
-!	      ......			passive tracers model package
+!     initrc                            initialization passive tracers
+!          ......            passive tracers model package
 !     inihdf                          horizontal diffusion coefficient
 !     dtadyn                          dynamique and physique
-!	mlbxinit			task initialization
+!    mlbxinit            task initialization
 !     **second part : time step loop
-!	step			 	time step routine
-!           dtadyn			dynamique and physique
-!                 div            	horizontal divergence
-!                 wzv		        vertical velocity
-!                 eos			equation of state
-!                 bn2			Brunt-Vaisala frequency
-!                 hdfslp            	isopycnal slope computation
-!           stpctl			control step execution
+!    step                 time step routine
+!           dtadyn            dynamique and physique
+!                 div                horizontal divergence
+!                 wzv                vertical velocity
+!                 eos            equation of state
+!                 bn2            Brunt-Vaisala frequency
+!                 hdfslp                isopycnal slope computation
+!           stpctl            control step execution
 !                 mpprisl             mpp real(8) no zero value
-!           trcwri                 	write restart FILE for tracer
-!           trcdia			write standard output
+!           trcwri                     write restart FILE for tracer
+!           trcdia            write standard output
 !     **end of time loop
 !
 !*********************************************************************
@@ -62,22 +62,22 @@
 !  Purpose :
 !  --------
 !     opa solves the primitive equations with rigid lid assumption
-!	on any orthogonal curvilinear mesh on the sphere which vertical
-!	direction is the geographical one.
+!    on any orthogonal curvilinear mesh on the sphere which vertical
+!    direction is the geographical one.
 !
 !   Method :
 !   -------
-!	model general initialization
+!    model general initialization
 !
-!	execution of time loop by calling the routine step
+!    execution of time loop by calling the routine step
 !
-!   Input :		: no
+!   Input :        : no
 !   ------
 !
 !   External :
 !   --------
 !      inipar, inidta, inidtr,
-!	step.
+!    step.
 
 !
 ! parameters and commons
@@ -100,11 +100,11 @@
 !----------------------------------------------------------------------
 ! externals
 ! =========
-      EXTERNAL step
+!      EXTERNAL step
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      INTEGER jtask, ME
+      INTEGER ME
       INTEGER mynode
 
 ! 0. Initializations
@@ -166,6 +166,7 @@
           WRITE(numout,*) ' '
           WRITE(numout,*) ' '
       ENDIF
+
 
 
 
@@ -275,6 +276,7 @@
 !         CALL inimpp2 ! to be tested
          STOP
       ENDIF
+
 
 
       write(*,*) 'Startting domrea '

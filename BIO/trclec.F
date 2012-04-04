@@ -41,8 +41,8 @@
 
       INTEGER ji
       INTEGER ilu,iused(1,100),ilseq
-      CHARACTER*21 clold,clfor,clseq,clnew,cldir,clunf
-      CHARACTER*32 clname
+      CHARACTER(LEN=21) clold,clfor,clseq,clnew,cldir,clunf
+      CHARACTER(LEN=32) clname
 !----------------------------------------------------------------------
 ! statement functions
 ! ===================
@@ -110,7 +110,8 @@ C 0. initializations
       nrsttr    = 0
 
       DO ji=1,jptra
-        WRITE (ctrcnm(ji),'("TR_",I1)') ji
+
+!        WRITE (ctrcnm(ji),'("TR_",I1)') ji
         WRITE (ctrcnl(ji),'("TRACER NUMBER ",I1)') ji
         ctrcun(ji)='mmole/m3'
         lutini(ji)=.FALSE. 

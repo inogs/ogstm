@@ -2,7 +2,7 @@
 
        USE modul_param 
        USE myalloc
-
+       USE myalloc_mpp
        IMPLICIT NONE
 
        public
@@ -36,11 +36,12 @@
 !     *******************************************************************
       SUBROUTINE alloc_DTATRC
       USE TIME_MANAGER
+      USE myalloc_mpp
 
       IMPLICIT NONE
-      CHARACTER*50 atmfile, rivfile, gibfile
-      CHARACTER*9  nomedim0
-      CHARACTER*13 nomedim1
+      CHARACTER(LEN=50) atmfile, rivfile, gibfile
+      CHARACTER(LEN=9)  nomedim0
+      CHARACTER(LEN=13) nomedim1
 
         nomedim0='riv_idxt'//CHAR(0)
         nomedim1 = 'gib_idxt_N1p'//CHAR(0)
@@ -54,8 +55,9 @@
            nomedim0(1:8)='riv_idxt'; CALL ioogsnc_idx(rivfile,nomedim0,Rsizeglo)
            nomedim0(1:8)='atm_idxt'; CALL ioogsnc_idx(atmfile,nomedim0,Asizeglo)
 
+
+               write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' rank = ',rank
            if (lwp) then
-               write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo
                write(*,*) 'Size of vector Riv to allocate -->', Rsizeglo
                write(*,*) 'Size of vector Atm to allocate -->', Asizeglo
            endif

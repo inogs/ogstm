@@ -26,8 +26,8 @@ CC ==================
       INTEGER ilu, iused(1,100)
       INTEGER ilglo, ildta, ibloc, ilseq
 
-      CHARACTER*32 clname
-      CHARACTER*21 clold, clfor, clseq, clnew, cldir, clunf
+      CHARACTER(LEN=32) clname
+      CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
 
       NAMELIST/Dom_Size/ jpni, jpnj, jpnij, jpreci, jprecj
 

@@ -581,7 +581,7 @@
               next_check_itau = itau + (itau - last_check)
               !
               ! We are dealing with frequencies in seconds and thus operation can be done
-              ! on the time steps.	
+              ! on the time steps.
               !
               IF ( freq .GT. 0) THEN
                   IF ( ABS(dt_action - freq) .LE. ABS(dt_action +
@@ -1036,12 +1036,12 @@
       REAL(8)            :: seconds
       CHARACTER(LEN=17), INTENT(OUT) :: datestring
 
-	  INTEGER           :: hr, minutes,sec
-	  CHARACTER(LEN=8)  :: thedate, ora
-!		! ********* scamuffo per evitare di avere 20100102-24:00:00 ***
-!		! ********* e avere piuttosto             20100103-00:00:00 ***
+      INTEGER           :: hr, minutes,sec
+      CHARACTER(LEN=8)  :: thedate, ora
+!        ! ********* scamuffo per evitare di avere 20100102-24:00:00 ***
+!        ! ********* e avere piuttosto             20100103-00:00:00 ***
        REAL(8) endofday, julian
-	   endofday=3600.*24 - 1.0
+       endofday=3600.*24 - 1.0
        IF (seconds.gt.endofday) THEN
           CALL ymds2ju(year,  month, day, seconds,julian)
           CALL ju2ymds(julian, year, month,day,seconds)
@@ -1070,7 +1070,7 @@
 
        call read_date_string(datestring, year, month, day, sec)
        CALL ymds2ju(year,month,day,sec,julian)
-	   datestring2sec = julian*86400.0
+       datestring2sec = julian*86400.0
 
        END FUNCTION datestring2sec
 

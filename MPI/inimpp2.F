@@ -69,7 +69,7 @@ CC----------------------------------------------------------------------
       INTEGER, PARAMETER :: nsolv = 3
 
 #ifdef key_mpp
-      CHARACTER*25 clexp
+      CHARACTER(LEN=25) clexp
 C
       INTEGER ji,jj,jn,jproc,jarea
       INTEGER ii,ij,ifreq,il1,il2,iim,ijm,icont,ili,ilj

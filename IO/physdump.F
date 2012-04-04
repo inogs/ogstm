@@ -19,13 +19,13 @@
       INTEGER ji, jj, jk, jn
       INTEGER ind, AC
 
-      CHARACTER*32 forcing2d_file, forcing3d_file
-      CHARACTER*33 bkpname
+      CHARACTER(LEN=32) forcing2d_file, forcing3d_file
+      CHARACTER(LEN=33) bkpname
       logical IsBackup
 
 
-      CHARACTER*29 dia_file_nc
-      CHARACTER*4  var ! , var_nc
+      CHARACTER(LEN=29) dia_file_nc
+      CHARACTER(LEN=4)  var ! , var_nc
 
       INTEGER :: ir2d, ir3d
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)

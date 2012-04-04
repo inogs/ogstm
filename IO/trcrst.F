@@ -23,9 +23,9 @@
 ! local declarations
 ! ==================
       INTEGER jn! ,ii, jj, kk,  iinew, jjnew, iista, iiend, jjsta, jjend
-      CHARACTER*28 filename
-      CHARACTER*6  varname
-      CHARACTER*33 bkpname, attname
+      CHARACTER(LEN=28) filename
+      CHARACTER(LEN=6)  varname
+      CHARACTER(LEN=33) bkpname, attname
       logical existFile
 
 

@@ -17,31 +17,31 @@ CC   ------
 CC      argument
 CC              ptab            : variable array
 CC              ktype           : define the nature of the grid-point
-CC				  at which ptab is defined
-CC				  = 1 ,  T- and W-points
-CC				  = 2 ,  U-point
-CC				  = 3 ,  V-point
-CC				  = 4 ,  F-point
-CC		ksgn		: control of the sign change
-CC				  = 0 , the sign is modified following
-CC				  the type of b.c. used
-CC				  = 1 , the sign of the field is un-
-CC				  changed at the boundaries
+CC                  at which ptab is defined
+CC                  = 1 ,  T- and W-points
+CC                  = 2 ,  U-point
+CC                  = 3 ,  V-point
+CC                  = 4 ,  F-point
+CC        ksgn        : control of the sign change
+CC                  = 0 , the sign is modified following
+CC                  the type of b.c. used
+CC                  = 1 , the sign of the field is un-
+CC                  changed at the boundaries
 CC              kdoloop         : = 1  macrostaked on jk-slabs for
-CC				       2D or 3D arrays
+CC                       2D or 3D arrays
 CC                                = 2  macrostaked on jj-slabs for
-CC				       a 3D array (jpi,jpj,jpk)
+CC                       a 3D array (jpi,jpj,jpk)
 CC                                = 3  macrostaked on jj-slabs for
-CC				       a 2D array (jpi,jpj)
-CC		kjstart		: starting index of multitasked do-loop
-CC		kjpend 		: ending index of multitasked do-loop
-CC		kstep  		: step of multitasked do-loop
+CC                       a 2D array (jpi,jpj)
+CC        kjstart        : starting index of multitasked do-loop
+CC        kjpend         : ending index of multitasked do-loop
+CC        kstep          : step of multitasked do-loop
 CC
 CC   Output :
 CC   -------
 CC      argument
 CC              ptab            : variable array with disired lateral
-CC				  boundary conditions
+CC                  boundary conditions
 
       USE myalloc
       IMPLICIT NONE

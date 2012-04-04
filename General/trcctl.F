@@ -47,7 +47,7 @@ CC local declarations
 CC ==================
 
 #if defined key_passivetrc
-      CHARACTER*32 clname,clold,clfor,clseq,clnew,cldir,clunf,clunk
+      CHARACTER(LEN=32) clname,clold,clfor,clseq,clnew,cldir,clunf,clunk
       INTEGER iused(1,100),ilu
       INTEGER iadv,ildta,ilglo,ibloc,ilseq,ioptio,istop
       INTEGER jn

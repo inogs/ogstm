@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/eos.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE eos ()
 CCC---------------------------------------------------------------------
 CCC
@@ -8,25 +6,25 @@ CCC                     ***************
 CCC
 CCC  Purpose :
 CCC  --------
-CCC	Compute the in situ density (ratio rho/rau0) and the potential
-CCC	volumic mass (Kg/m3) from potential temperature and salinity
-CCC	fields after the array swap using an equation of state defined
-CCC	through the namelist parameter neos.
-CCC	C a u t i o n : here time filtering technique apply to double
-CCC	the stability limit associated with internal gravity waves
-CCC	(brown & campana 1978).
+CCC    Compute the in situ density (ratio rho/rau0) and the potential
+CCC    volumic mass (Kg/m3) from potential temperature and salinity
+CCC    fields after the array swap using an equation of state defined
+CCC    through the namelist parameter neos.
+CCC    C a u t i o n : here time filtering technique apply to double
+CCC    the stability limit associated with internal gravity waves
+CCC    (brown & campana 1978).
 CC
 CC   Method :
 CC   -------
-CC	default option : use of (tn,sn) after the array swap, eos. is
-CC	   called at the end of step routine, after the call of dynhpg.
+CC    default option : use of (tn,sn) after the array swap, eos. is
+CC       called at the end of step routine, after the call of dynhpg.
 CC
-CC	'key_hpgimplicit' defined : use of (ta,sa) after the array swap,
-CC	   which contain an average over three time levels (before, now
-CC	   and after) and reset (ta,sa) to zero. eos is called in step
-CC	   before the call of dynhpg.
+CC    'key_hpgimplicit' defined : use of (ta,sa) after the array swap,
+CC       which contain an average over three time levels (before, now
+CC       and after) and reset (ta,sa) to zero. eos is called in step
+CC       before the call of dynhpg.
 CC
-CC	neos = 0 : Jackett and McDougall (1994) equation of state.
+CC    neos = 0 : Jackett and McDougall (1994) equation of state.
 CC         the in situ density is computed directly as a function of
 CC         potential temperature relative to the surface (the opa t
 CC         variable), salt and pressure (assuming no pressure variation
@@ -49,9 +47,9 @@ CC              rdn(t) = ( rho(t) - rau0 ) / rau0 = 0.028 - ralpha * t
 CC              rhop(t,s)  = rho(t,s)
 CC
 CC      neos = 2 : linear equation of state function of temperature and
-CC		   salinity
+CC           salinity
 CC              rdn(t,s) = ( rho(t,s) - rau0 ) / rau0 
-CC		         = rbeta * s - ralpha * tn - 1.
+CC                 = rbeta * s - ralpha * tn - 1.
 CC              rhop(t,s)  = rho(t,s)
 CC
 CC      macro-tasked on horizontal slab (jk-loop)
@@ -65,26 +63,26 @@ CC   ------
 CC      argument
 CC      common
 CC            /comcoo/          : scale factors
-CC            /comnow/		: present fields (now)
+CC            /comnow/        : present fields (now)
 CC
 CC   Output :
 CC   -------
-CC	common
+CC    common
 CC            /comnow/ rdn()    : now in situ density (no units)
-CC		       rhop()	: now potential volumic mass (Kg/m3)
+CC               rhop()    : now potential volumic mass (Kg/m3)
 CC
 CC   References :
 CC   -----------
 CC      Jackett, D.R., and T.J. McDougall. J. Atmos. Ocean. Tech., 1994
-CC	Brown, J. A. and K. A. Campana. Mon. Weather Rev., 1978
+CC    Brown, J. A. and K. A. Campana. Mon. Weather Rev., 1978
 CC
 CC   Modifications :
 CC   --------------
 CC      original :  89-03 (o. Marti)
 CC      additions : 94-08 (G. Madec)
 CC                : 96-01 (G. Madec) statement function for e3
-CC		  : 97-07 (G. Madec) introduction of neos, OPA8.1
-CC		  : 97-07 (G. Madec) density instead of volumic mass
+CC          : 97-07 (G. Madec) introduction of neos, OPA8.1
+CC          : 97-07 (G. Madec) density instead of volumic mass
 CC                : 99-02 (G. Madec, N. Grima) 'key_hdfimplicit'
 CC----------------------------------------------------------------------
 

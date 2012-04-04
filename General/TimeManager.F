@@ -257,7 +257,7 @@
       USE calendar
       IMPLICIT NONE
 
-      character*1024 FileName
+      character(LEN=1024) FileName
       integer TheUnit
 
       TheUnit = 326
@@ -334,7 +334,7 @@
       IMPLICIT NONE
       CHARACTER(LEN=17),INTENT( IN) :: datestring
       TYPE (TIME_CONTAINER) STRUCT
-      character*4 yyyy
+      character(LEN=4) yyyy
       integer year,I, LAST,N
 
       N   = STRUCT%N

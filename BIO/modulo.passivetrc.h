@@ -1,11 +1,11 @@
 C $Id: modulo.passivetrc.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
 #if defined key_passivetrc
 CCC F79 Namelist does not accept allocatable
-CCC          CHARACTER*8, allocatable :: ctrcnm(:),ctrcun(:)
-CCC          CHARACTER*80, allocatable ::  ctrcnl(:)
-          CHARACTER*8 :: ctrcnm(jptra),ctrcun(jptra)
-          CHARACTER*6 :: mycln
-          CHARACTER*80 ::  ctrcnl(jptra)
+CCC          CHARACTER(LEN=8), allocatable :: ctrcnm(:),ctrcun(:)
+CCC          CHARACTER(LEN=80), allocatable ::  ctrcnl(:)
+          CHARACTER(LEN=8) :: ctrcnm(jptra),ctrcun(jptra)
+          CHARACTER(LEN=6) :: mycln
+          CHARACTER(LEN=80) ::  ctrcnl(jptra)
 
 CC
 CC
@@ -159,9 +159,9 @@ CC      ctrc2u    : 2d output field unit (NAMELIST)
 CC      trc3d     : additional 3d outputs
 CC      trc2d     : additional 2d outputs
 CC
-      CHARACTER*8, allocatable :: ctrc3d(:),ctrc2d(:)
-      CHARACTER*8, allocatable :: ctrc3u(:),ctrc2u(:)
-      CHARACTER*80, allocatable :: ctrc3l(:),ctrc2l(:)
+      CHARACTER(LEN=8), allocatable :: ctrc3d(:),ctrc2d(:)
+      CHARACTER(LEN=8), allocatable :: ctrc3u(:),ctrc2u(:)
+      CHARACTER(LEN=80), allocatable :: ctrc3l(:),ctrc2l(:)
       REAL(8), allocatable :: trc3d(:,:,:,:), trc2d(:,:,:)
 
 CC

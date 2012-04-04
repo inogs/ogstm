@@ -10,7 +10,7 @@ CCC	compute the now horizontal divergence of the velocity field.
 CCC
 CC   Method :
 CC   -------
-CC	The now divergence is given by :
+CC    The now divergence is given by :
 CC       * s-coordinate ('key_s_coord' defined)
 CC         hdivn = 1/(e1t*e2t*e3t) ( di[e2u*e3u un] + dj[e1v*e3v vn] )
 CC       * z-coordinate (default key)
@@ -27,14 +27,14 @@ CC      argument
 CC              ktask           : task identificator
 CC              kt              : time step
 CC      common
-CC            /comcoh/   	: scale factors
-CC            /comtsk/   	: multitasking
-CC            /comnow/		: present fields (now)
+CC            /comcoh/       : scale factors
+CC            /comtsk/       : multitasking
+CC            /comnow/        : present fields (now)
 CC
 CC   Output :
 CC   -------
 CC      common
-CC	      /comnow/ hdivn	: now horizontal divergence
+CC          /comnow/ hdivn    : now horizontal divergence
 CC
 CC   External : mpplnk or lbc
 

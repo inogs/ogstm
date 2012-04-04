@@ -1,5 +1,3 @@
-C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
-
       SUBROUTINE trcdmp
 !---------------------------------------------------------------------
 !
@@ -8,20 +6,20 @@ C $Id: trcdmp.F,v 1.6 2010-05-26 10:38:12 cvsogs01 Exp $
 !
 !  Purpose :
 !  --------
-!	Compute (if asked) the passive tracer trend due to a newtonian
-!	damping of the tracer field towards given data field and add it
-!	to the general tracer trends.
+!    Compute (if asked) the passive tracer trend due to a newtonian
+!    damping of the tracer field towards given data field and add it
+!    to the general tracer trends.
 !
 !   Method :
 !   --------
-!	Default key          : empty routine, no damping trend
-!	'key_trc_dmp' defined :
-!	   Newtonian damping towards tdta and sdta computed and add to
-!	   the general tracer trends:
+!    Default key          : empty routine, no damping trend
+!    'key_trc_dmp' defined :
+!       Newtonian damping towards tdta and sdta computed and add to
+!       the general tracer trends:
 !                     trc = ta + restotrc * (trcdta - trcb)
-!	   The trend is computed either throughout the water column
-!	   (nlmdmptrc=0) or in area of weak vertical mixing (nlmdmptrc=1) or
-!	   below the well mixed layer (nlmdmptrc=2)
+!       The trend is computed either throughout the water column
+!       (nlmdmptrc=0) or in area of weak vertical mixing (nlmdmptrc=1) or
+!       below the well mixed layer (nlmdmptrc=2)
 
        USE myalloc
        USE myalloc_mpp

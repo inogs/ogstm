@@ -43,7 +43,7 @@
       integer mycount
       integer thecount(4), start(4)
       real(8) M(jpi,jpj,jpk)
-      real    F(jpi,jpj,jpk)
+      real(4) F(jpi,jpj,jpk)
 
       mycount = 0;
       start    = (/nimpp, njmpp,  1,  1/)
@@ -139,7 +139,7 @@
       integer mycount
       integer thecount(3), start(3)
       real(8) M(jpi,jpj)
-      real    F(jpi,jpj)
+      real(4) F(jpi,jpj)
 
       mycount = 0;
       start    = (/nimpp, njmpp,  1/)

@@ -1,5 +1,3 @@
-C $Id: trclsm.sed.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC                       trclsm.sed.h
 CCC                       *************
 CCC
@@ -35,20 +33,9 @@ CC ==================
 CCC 17 11 2004 F79 already declared in trclsm.opt.h
 CC    INTEGER ji
 CC    INTEGER ilu,iused(1,100),ilseq
-CC    CHARACTER*21 clold,clfor,clseq,clnew,cldir,clunf
-CC    CHARACTER*32 clname
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
+CC    CHARACTER(LEN=21) clold,clfor,clseq,clnew,cldir,clunf
+CC    CHARACTER(LEN=32) clname
 
-CCC 18 11 2004 F79 already included in trclsm.opt.h
-!                          #include "stafun.h"
-
-CC
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
 C 0. initializations
 C ------------------
 C

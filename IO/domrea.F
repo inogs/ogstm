@@ -30,10 +30,10 @@
       INTEGER ii, jj, kk, jn, iinew, jjnew, iiend, jjend
 
 
-      CHARACTER*11 maskfile
-      CHARACTER*50 filename
+      CHARACTER(LEN=11) maskfile
+      CHARACTER(LEN=50) filename
       CHARACTER(LEN=3), DIMENSION(7) :: var_nc
-      CHARACTER*5 nomevar01
+      CHARACTER(LEN=5) nomevar01
       LOGICAL B
       
 ! -------------------
@@ -65,43 +65,12 @@
       call readnc_slice_double_2d(maskfile,'glamv', glamv)
       call readnc_slice_double_2d(maskfile,'glamf', glamf)
 
-!      nomevar01(1:5)='glamt'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamtglo)
-!      nomevar01(1:5)='glamu'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamuglo)
-!      nomevar01(1:5)='glamv'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamvglo)
-!      nomevar01(1:5)='glamf'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,glamfglo)
-!
-!      do jj=jjsta, jjend
-!         do ii=iista, iiend
-!            iinew = ii - nimpp + 1
-!            jjnew = jj - njmpp + 1
-!            glamt(iinew, jjnew) = glamtglo(ii, jj)
-!            glamu(iinew, jjnew) = glamuglo(ii, jj)
-!            glamv(iinew, jjnew) = glamvglo(ii, jj)
-!            glamf(iinew, jjnew) = glamfglo(ii, jj)
-!         enddo
-!      enddo
-
 
       call readnc_slice_double_2d(maskfile,'gphit', gphit)
       call readnc_slice_double_2d(maskfile,'gphiu', gphiu)
       call readnc_slice_double_2d(maskfile,'gphiv', gphiv)
       call readnc_slice_double_2d(maskfile,'gphif', gphif)
 
-!      nomevar01(1:5) = 'gphit'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphitglo)
-!      nomevar01(1:5) = 'gphiu'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphiuglo)
-!      nomevar01(1:5) = 'gphiv'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphivglo)
-!      nomevar01(1:5) = 'gphif'; CALL ioogsnc_mesh_2d_d(nomefile,nomevar01,1,jpjglo,jpiglo,gphifglo)
-!
-!      do jj=jjsta, jjend
-!         do ii=iista, iiend
-!            iinew = ii - nimpp + 1
-!            jjnew = jj - njmpp + 1
-!            gphit(iinew, jjnew) = gphitglo(ii, jj)
-!            gphiu(iinew, jjnew) = gphiuglo(ii, jj)
-!            gphiv(iinew, jjnew) = gphivglo(ii, jj)
-!            gphif(iinew, jjnew) = gphifglo(ii, jj)
-!         enddo
-!      enddo
 
 ! 2. Horizontal scale factors
 ! ---------------------------
@@ -116,37 +85,6 @@
       call readnc_slice_double_2d(maskfile,'e2f', e2f)
 
 
-!      nomevar02(1:3)='e1t'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1tglo)
-!      nomevar02(1:3)='e1u'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1uglo)
-!      nomevar02(1:3)='e1v'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1vglo)
-!      nomevar02(1:3)='e1f'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e1fglo)
-!
-!      do jj=jjsta, jjend
-!         do ii=iista, iiend
-!            iinew = ii - nimpp + 1
-!            jjnew = jj - njmpp + 1
-!            e1t(iinew, jjnew) = e1tglo(ii, jj)
-!            e1u(iinew, jjnew) = e1uglo(ii, jj)
-!            e1v(iinew, jjnew) = e1vglo(ii, jj)
-!            e1f(iinew, jjnew) = e1fglo(ii, jj)
-!         enddo
-!      enddo
-
-!      nomevar02(1:3)='e2t'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2tglo)
-!      nomevar02(1:3)='e2u'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2uglo)
-!      nomevar02(1:3)='e2v'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2vglo)
-!      nomevar02(1:3)='e2f'; CALL ioogsnc_mesh_2d_d(nomefile, nomevar02,1,jpjglo,jpiglo,e2fglo)
-!
-!      do jj=jjsta, jjend
-!         do ii=iista, iiend
-!            iinew = ii - nimpp + 1
-!            jjnew = jj - njmpp + 1
-!            e2t(iinew, jjnew) = e2tglo(ii, jj)
-!            e2u(iinew, jjnew) = e2uglo(ii, jj)
-!            e2v(iinew, jjnew) = e2vglo(ii, jj)
-!            e2f(iinew, jjnew) = e2fglo(ii, jj)
-!         enddo
-!      enddo
 
 ! 3. masks
 ! --------
@@ -157,23 +95,7 @@
       CALL readnc_slice_double (maskfile,'fmask', fmask )
       CALL readnc_slice_double (maskfile,'tmask', tmask )
       CALL readnc_global_double(maskfile,'tmask', tmaskglo)
-!      nomevar01(1:5) = 'tmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,tmaskglo)
-!      nomevar01(1:5) = 'umask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,umaskglo)
-!      nomevar01(1:5) = 'vmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,vmaskglo)
-!      nomevar01(1:5) = 'fmask'; CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,fmaskglo)
 
-!      do kk=1, jpk
-!         do jj=jjsta, jjend
-!            do ii=iista, iiend
-!               iinew = ii - nimpp + 1
-!               jjnew = jj - njmpp + 1
-!               tmask(iinew, jjnew, kk) = tmaskglo(ii, jj, kk)
-!               umask(iinew, jjnew, kk) = umaskglo(ii, jj, kk)
-!               vmask(iinew, jjnew, kk) = vmaskglo(ii, jj, kk)
-!               fmask(iinew, jjnew, kk) = fmaskglo(ii, jj, kk)
-!            enddo
-!         enddo
-!      enddo
 
 ! F79 Initialization of mbathy
       mbathy(:,:) = 0
@@ -188,16 +110,6 @@
       enddo
 
       CALL readnc_slice_double_2d(maskfile,'ff', ff )
-!      nomevar03 = 'ff' ; nomevar03(3:3) = CHAR(0)
-!      CALL ioogsnc_mesh_2d_d(nomefile, nomevar03,1,jpjglo,jpiglo,ffglo)
-!
-!      do jj=jjsta, jjend
-!         do ii=iista, iiend
-!            iinew = ii - nimpp + 1
-!            jjnew = jj - njmpp + 1
-!            ff(iinew, jjnew) = ffglo(ii, jj)
-!         enddo
-!      enddo
 
 
 ! 4. depth and vertical scale factors
@@ -229,10 +141,6 @@
 #  else
 
 
-!      nomevar01(1:5)='gdept'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar01,1,jpk,gdept)
-!      nomevar01(1:5)='gdepw'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar01,1,jpk,gdepw)
-!      nomevar02(1:3) = 'e3t'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar02,1,jpk,e3t)
-!      nomevar02(1:3) = 'e3w'; CALL ioogsnc_mesh_1d_d(nomefile, nomevar02,1,jpk,e3w)
        CALL readmask_double_1d(maskfile,'gdept',gdept)
        CALL readmask_double_1d(maskfile,'gdepw',gdepw)
        CALL readmask_double_1d(maskfile,'e3t',    e3t)
@@ -260,30 +168,9 @@
          nomevar01='re'//var_nc(jn)
          call readnc_slice_double('bounmask.nc',nomevar01,resto(:,:,:,jn));
 
-!         CALL ioogsnc_mesh_3d_d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,restoglo)
-!
-!         do kk=1, jpk
-!            do jj=jjsta, jjend
-!               do ii=iista, iiend
-!                  iinew = ii - nimpp + 1
-!                  jjnew = jj - njmpp + 1
-!                  resto(iinew, jjnew, kk,jn) = restoglo(ii, jj, kk)
-!               enddo
-!            enddo
-!         enddo
       enddo
       call readnc_slice_int   ('bounmask.nc','index',idxt);
-!      nomevar01(1:5)='index'; CALL ioogsnc_idx_3d(nomefile, nomevar01,1,jpk,jpjglo,jpiglo,idxtglo)
-!
-!      do kk=1, jpk
-!         do jj=jjsta, jjend
-!            do ii=iista, iiend
-!               iinew = ii - nimpp + 1
-!               jjnew = jj - njmpp + 1
-!               idxt(iinew, jjnew, kk) = idxtglo(ii, jj, kk)
-!            enddo
-!         enddo
-!      enddo
+
 
 
 
@@ -294,8 +181,6 @@
 
        if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
 
-
-      !CALL ioogsnc_idx_1d2(filename, nomevar05,Gsizeglo, gib_idxtglo)
       CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
 
       if (lwp) write(*,*) 'domrea->ioogsnc_idx_1d  finita'
@@ -388,10 +273,6 @@
 
 
       LOGICAL FUNCTION RIVRE_Indexing()
-!          USE modul_param , ONLY: jpi, jpj, jpk
-!          USE myalloc     , ONLY: idxt
-!          USE myalloc_mpp , ONLY: rank
-!          USE BC_mem      , ONLY: Rsizeglo,riv_idxtglo,riv_ridxt
           IMPLICIT NONE
           ! local
           INTEGER ii,jj,kk,jv
@@ -421,10 +302,6 @@
       END FUNCTION RIVRE_Indexing
 
       LOGICAL FUNCTION GIBRE_Indexing()
-!          USE modul_param , ONLY: jpi, jpj, jpk
-!          USE myalloc     , ONLY: idxt
-!          USE myalloc_mpp , ONLY: rank
-!          USE BC_mem      , ONLY: Gsizeglo,gib_idxtglo,gib_ridxt
           IMPLICIT NONE
 
           ! local
@@ -457,10 +334,7 @@
 
 
           LOGICAL FUNCTION  ATMRE_Indexing()
-!          USE modul_param , ONLY: jpi, jpj, jpk
-!          USE myalloc     , ONLY: idxt
-!          USE myalloc_mpp , ONLY: rank
-!          USE BC_mem      , ONLY: Asizeglo,atm_idxtglo,atm_ridxt
+
           IMPLICIT NONE
 
           ! local
@@ -491,44 +365,3 @@
 
 
       END SUBROUTINE domrea
-
-! ************************************************************
-!      SUBROUTINE RE_Indexing
-!      global indexes ---> local (processor subdomain) indexes
-! ************************************************************
-      SUBROUTINE RE_Indexing(sizeGLO, idxtGLOBAL, N, ridxt)
-          USE modul_param , ONLY: jpi, jpj, jpk
-          USE myalloc     , ONLY: idxt
-          USE myalloc_mpp , ONLY: rank
-          IMPLICIT NONE
-
-          INTEGER, INTENT(IN) :: sizeGLO
-          INTEGER, INTENT(IN) :: idxtGLOBAL(sizeGLO)
-          INTEGER, INTENT(IN) :: N
-          INTEGER, INTENT(OUT):: ridxt(N,4)
-          ! local
-          INTEGER ii,jj,kk,jv
-          INTEGER counter,junk
-
-
-          counter=0
-           do kk =1, jpk
-            do jj =1, jpj
-             do ii =1, jpi
-                junk = idxt(ii,jj,kk)
-                do jv =1, sizeGLO
-                   if ( junk.EQ.idxtGLOBAL(jv) )  then
-                      counter = counter + 1
-                      ridxt(counter,1) = jv
-                      ridxt(counter,2) = ii
-                      ridxt(counter,3) = jj
-                      ridxt(counter,4) = kk
-                   endif
-              enddo
-             enddo
-            enddo
-           enddo
-
-
-      END SUBROUTINE RE_Indexing
-

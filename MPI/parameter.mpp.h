@@ -44,9 +44,9 @@ CC      executable    : executable name
 CC      opaall        : group name 
 CC      simfile       : file name 
 CC
-      CHARACTER*47 executable
+      CHARACTER(LEN=47) executable
       CHARACTER opaall*(*)
-      CHARACTER*80 simfile
+      CHARACTER(LEN=80) simfile
       PARAMETER(executable='opa')
       PARAMETER(simfile='pvm3_ndim')
 #ifdef key_mpp_shmem

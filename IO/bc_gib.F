@@ -97,8 +97,8 @@
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 !         local
-          character*8  nomevar
-          character*28 nomefile
+          character(LEN=8)  nomevar
+          character(LEN=28) nomefile
           INTEGER(4) jn,jv
 
           nomevar= '12345678'
@@ -115,10 +115,10 @@
 
 
 
-
+          write(*,*) 'bc_gib: tra_matrix_gib ', tra_matrix_gib
           DO jn = 1, jn_gib
-
-              nomevar(1:7) = 'gib_'//ctrcnm(tra_matrix_gib(jn))(1:3)
+              write(*,*) jn, 'tra_matrix_gib(jn)', tra_matrix_gib(jn)
+              nomevar(1:7) = 'gib_'//ctrcnm(tra_matrix_gib(jn))
               if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
               CALL ioogsnc_bc_1d2(nomefile,nomevar, Gsizeglo,gib_aux)
 

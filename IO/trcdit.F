@@ -31,10 +31,9 @@
       INTEGER ind
 
 
-      CHARACTER*29  output_file_FN
-      CHARACTER*29 output_file_nc  ! ave.20091231-12:00:00.P1n.nc
-      CHARACTER*4  var, var_nc
-      CHARACTER*33 bkpname
+      CHARACTER(LEN=29)  output_file_FN,output_file_nc  ! ave.20091231-12:00:00.P1n.nc
+      CHARACTER(LEN=4)  var, var_nc
+      CHARACTER(LEN=33) bkpname
       logical IsBackup
 
 !----------------------------------------------------------------------

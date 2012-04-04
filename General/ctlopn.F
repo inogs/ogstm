@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/ctlopn.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
-
       SUBROUTINE ctlopn ( knum, cdfile, cdstat, cdform, cdacce,
      $                    klengh, klu, kused, kout, ldwp, krequ )
 CCC---------------------------------------------------------------------
@@ -45,14 +43,10 @@ C
       INTEGER knum, klu, krequ, kout, klengh, iost
       INTEGER kused(1,100)
 C
-      CHARACTER*21 cdacce, cdform, cdstat
-      CHARACTER*32 cdfile
+      CHARACTER(LEN=21) cdacce, cdform, cdstat
+      CHARACTER(LEN=32) cdfile
 C
       LOGICAL ldwp
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
-C
 C
 C 1. Required file
 C ----------------

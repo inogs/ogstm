@@ -1,5 +1,3 @@
-! $Header: /cvsroot/opatm-bfm/opa_model/OPA/allcray.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
-
 !  Cray subroutines or functions used by OPA model and possibly
 !  not found on other platforms.
 
@@ -162,7 +160,7 @@
         END
 !---------------------------------------------------------
         SUBROUTINE ISHELL (CL)
-        CHARACTER*80 CL
+        CHARACTER(LEN=80) CL
         RETURN
         END
 !---------------------------------------------------------

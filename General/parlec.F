@@ -1,5 +1,3 @@
-! $Header: /cvsroot/opatm-bfm/opa_model/OPA/parlec.F,v 1.3 2010-03-05 09:56:44 cvsogs01 Exp $
-
       SUBROUTINE parlec
 !---------------------------------------------------------------------
 !
@@ -53,8 +51,8 @@
       INTEGER ilu, iused(1,100)
       INTEGER ilglo, ildta, ibloc, ilseq
 
-      CHARACTER*32 clname
-      CHARACTER*21 clold, clfor, clseq, clnew, cldir, clunf
+      CHARACTER(LEN=32) clname
+      CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
 
 
       NAMELIST/namrun/ lrstar, calendarType, nsptint

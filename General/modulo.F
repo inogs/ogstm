@@ -545,9 +545,9 @@ CCC F79 Namelist does not accept allocatable
 
           CHARACTER(LEN=3) :: ctrcnm(jptra)
           CHARACTER(LEN=8) :: ctrcun(jptra)
-          CHARACTER*6 :: mycln
-          CHARACTER*80 ::  ctrcnl(jptra)
-          CHARACTER*3 :: dia(jptra_dia)
+          CHARACTER(LEN=6) :: mycln
+          CHARACTER(LEN=80) ::  ctrcnl(jptra)
+          CHARACTER(LEN=3) :: dia(jptra_dia)
 
 CC
 CC
@@ -705,9 +705,9 @@ CC      ctrc2u    : 2d output field unit (NAMELIST)
 CC      trc3d     : additional 3d outputs
 CC      trc2d     : additional 2d outputs
 CC
-      CHARACTER*8, allocatable :: ctrc3d(:),ctrc2d(:)
-      CHARACTER*8, allocatable :: ctrc3u(:),ctrc2u(:)
-      CHARACTER*80, allocatable :: ctrc3l(:),ctrc2l(:)
+      CHARACTER(LEN=8), allocatable :: ctrc3d(:),ctrc2d(:)
+      CHARACTER(LEN=8), allocatable :: ctrc3u(:),ctrc2u(:)
+      CHARACTER(LEN=80), allocatable :: ctrc3l(:),ctrc2l(:)
       REAL(8), allocatable :: trc3d(:,:,:,:), trc2d(:,:,:)
 
 CC

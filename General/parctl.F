@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/parctl.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE parctl 
 CCC---------------------------------------------------------------------
 CCC
@@ -36,9 +34,8 @@ CC ==================
       INTEGER iused(1,100), iwork(257), indx(100)
       INTEGER ildta, ilglo, ibloc, ilseq, ilindta
 
-      CHARACTER*32 clname
-      CHARACTER*21 clold, clfor, clseq, clnew
-      CHARACTER*21 cldir, clunf, clunk
+      CHARACTER(LEN=32) clname
+      CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf, clunk
 
       IF(lwp) THEN
       WRITE(numout,*) ' '

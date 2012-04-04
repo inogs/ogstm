@@ -1,9 +1,5 @@
-! SUBROUTINE forcings_KEXT(datestring)
-! si può copiare un header da dtadyn
-
       SUBROUTINE forcings_KEXT(datestring)
 !---------------------------------------------------------------------
-
 
 
        USE myalloc
@@ -18,8 +14,9 @@
 ! ==================
       REAL(8) sec,zweigh
       integer Before, After
-      INTEGER iper,iperm1,iswap
-      INTEGER jtask,kt
+      INTEGER iswap
+!      INTEGER iper,iperm1,
+!      INTEGER jtask,kt
 
 
 
@@ -111,47 +108,24 @@
       USE myalloc_mpp
       USE OPT_mem
       USE TIME_MANAGER
+      USE BC_mem
 
       IMPLICIT NONE
 
       CHARACTER(LEN=17), INTENT(IN) :: datestring
 
-!      character*9  nomevar
-      character*35 nomefile
-!      INTEGER jinew, jjnew, jista, jiend, jjsta, jjend
-!      INTEGER ji, jj, jk, ik
+      character(LEN=35) nomefile
 
-!      nomevar= '123456789'
       nomefile='FORCINGS/KextF_yyyy0107-00:00:00.nc'
-
-!      nomevar(9:9)    = CHAR(0) ! once and for all
-!      nomefile(36:36) = CHAR(0)
 
 
 !     Starting I/O
 !    **********************************************************
-      nomefile(1:35) = 'FORCINGS/KextF_'//datestring//'.nc'
+      nomefile = 'FORCINGS/KextF_'//datestring//'.nc'
 
-      if(lwp) write(*,*) "LOAD_KEXT --> I am ", rank, " starting reading forcing fields from ", nomefile(1:35)
+      if(lwp) write(*,*) "LOAD_KEXT --> I am ", rank, " starting reading forcing fields from ", nomefile
 
-      call readnc_slice_float(nomefile,'kextfact',buf2); kextIO(:,:,2) = buf2*tmask(:,:,1);
-!      nomevar(1:8)='kextfact'; CALL ioogsnc_2dt2(nomefile,nomevar,jpiglo,jpjglo, zkef_f)
-!     In this way only one file has to be read, also with more than a cpu
-!      jista = nimpp
-!      jiend = MIN(jpi+nimpp-1, jpiglo)
-!      jjsta = njmpp
-!      jjend = MIN(jpj+njmpp-1, jpjglo)
-!
-!
-!
-!      DO jj=jjsta, jjend
-!         DO ji=jista, jiend
-!            jinew = ji - nimpp + 1
-!            jjnew = jj - njmpp + 1
-!            kextIO(jinew,jjnew,2)=REAL(zkef_f(ji,jj),8)*tmask(jinew,jjnew,1)
-!          END DO
-!        END DO
-
+      call readnc_slice_float_2d(nomefile,'kextfact',buf2); kextIO(:,:,2) = buf2*tmask(:,:,1);
 
       END SUBROUTINE LOAD_KEXT
 

@@ -1,4 +1,3 @@
-
       SUBROUTINE forcings_PHYS(datestring)
 !---------------------------------------------------------------------
 !
@@ -39,9 +38,9 @@
       REAL(8) sec,zweigh
       integer Before, After
       INTEGER iper,iperm1,iswap
-      INTEGER jtask
-      INTEGER kt   ! serve alla eos
+!      INTEGER kt   ! serve alla eos
 
+!     INTEGER jtask
 !     iper   : INTEGER for the period modulo ndtadyn
 !     iperm1 : INTEGER for the precedent period  modulo ndtadyn
 !     iswap  : indicator of swap of dynamic DATA array
@@ -153,146 +152,47 @@
 
 
       ! LOCAL
-      character*9  nomevar
-      character*31 nomefile
-      INTEGER jinew, jjnew, jista, jiend, jjsta, jjend
-      INTEGER ji, jj, jk, ik
-      REAL(8) zavmx
-      LOGICAL condition
-
-      nomevar= '123456789'
+      character(LEN=30) nomefile
       nomefile='FORCINGS/U19951206-12:00:00.nc'
-
-      nomevar(9:9)    = CHAR(0) ! once and for all
-      nomefile(31:31) = CHAR(0)
-
 
 ! Starting I/O
 ! U  *********************************************************
-      nomefile(1:30) = 'FORCINGS/U'//datestring//'.nc'
+      nomefile = 'FORCINGS/U'//datestring//'.nc'
       if(lwp) write(*,*) "LOAD_PHYS --> I am ", rank, " starting reading forcing fields from ", nomefile(1:30)
-
-
       call readnc_slice_float(nomefile,'vozocrtx',buf); udta(:,:,:,2) = buf*umask;
-!      nomevar(1:8)='vozocrtx'; CALL ioogsnc_3du(nomefile,nomevar,1,jpiglo,jpjglo,jpk, zu_f)
-!     nomevar(1:8)='sobblcox'; CALL ioogsnc_2du(nomefile,nomevar,1,jpiglo,jpjglo,  zbblx_f)
-      zbblx_f=0.
 
 ! V *********************************************************
-      nomefile(1:30) = 'FORCINGS/V'//datestring//'.nc'
+      nomefile = 'FORCINGS/V'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf); vdta(:,:,:,2) = buf*vmask;
-!      nomevar(1:8)='vomecrty'; CALL ioogsnc_3dv(nomefile,nomevar,1,jpiglo,jpjglo,jpk, zv_f)
-!     nomevar(1:8)='sobblcoy'; CALL ioogsnc_2dv(nomefile,nomevar,1,jpiglo,jpjglo,zbbly)
-      zbbly_f=0.
+
 
 ! W *********************************************************
-      nomefile(1:30) = 'FORCINGS/W'//datestring//'.nc'
-
+      nomefile = 'FORCINGS/W'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vovecrtz',buf);   wdta(:,:,:,2) = buf*tmask;
       call readnc_slice_float(nomefile,'votkeavt',buf); avtdta(:,:,:,2) = buf*tmask;
-!      nomevar(1:8)='vovecrtz';CALL ioogsnc_3dw(nomefile,nomevar,1,jpiglo,jpjglo,jpk,   zw_f)
-!      nomevar(1:8)='votkeavt';CALL ioogsnc_3dw(nomefile,nomevar,1,jpiglo,jpjglo,jpk, zavt_f)
 
 ! T *********************************************************
-      nomefile(1:30) = 'FORCINGS/T'//datestring//'.nc'
+      nomefile = 'FORCINGS/T'//datestring//'.nc'
       call readnc_slice_float(nomefile,'votemper',buf);   tdta(:,:,:,2) = buf*tmask;
       call readnc_slice_float(nomefile,'vosaline',buf);   sdta(:,:,:,2) = buf*tmask;
 
       call readnc_slice_float_2d(nomefile,'sowindsp',buf2); flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1);
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
+                                                            flxdta(:,:,jpice ,2) = 0.
+                                                            flxdta(:,:,jpemp ,2) = 0.
 
-!     nomevar(1:8)='votemper'; CALL ioogsnc_3dt(nomefile,nomevar,1,jpiglo,jpjglo,jpk, zt_f)
-!     nomevar(1:8)='vosaline'; CALL ioogsnc_3dt(nomefile,nomevar,1,jpiglo,jpjglo,jpk, zs_f)
-!     nomevar(1:8)='sowindsp'; CALL ioogsnc_2dt(nomefile,nomevar,1,jpiglo,jpjglo,  zwind_f)
-!     nomevar(1:8)='sowaflup'; CALL ioogsnc_2dt(nomefile,nomevar,1,jpiglo,jpjglo,   zemp_f)
-!     nomevar(1:8) = 'soshfldo'; CALL ioogsnc_2dt(nomefile,nomevar,1,jpiglo,jpjglo, zqsr_f)
-       zemp_f = 0.
-       zice_f = 0.
+
+      bblxdta = 0.
+      bblydta = 0.
 
 
 
-
-! In this way only one file has to be read, also with more than a cpu
-      jista = nimpp
-      jiend = MIN(jpi+nimpp-1, jpiglo)
-      jjsta = njmpp
-      jjend = MIN(jpj+njmpp-1, jpjglo)
-
-! I change all the indexes of the loops
-!      DO jk=1,jpk
-!        DO jj=1,jpj
-!          DO ji=1,jpi
-
-
-
-!      DO jk=1,jpk
-!        DO jj=jjsta, jjend
-!          DO ji=jista, jiend
-!            jinew = ji - nimpp + 1
-!            jjnew = jj - njmpp + 1
-!            udta(jinew,jjnew,jk,2)=REAL(zu_f(ji,jj,jk),8)*umask(jinew,jjnew,jk)
-!            vdta(jinew,jjnew,jk,2)=REAL(zv_f(ji,jj,jk),8)*vmask(jinew,jjnew,jk)
-!            wdta(jinew,jjnew,jk,2)=REAL(zw_f(ji,jj,jk),8)*tmask(jinew,jjnew,jk)
-!
-!#ifdef key_trahdfeiv
-!             udta(jinew,jjnew,jk,2) = udta(jinew,jjnew,jk,2)+zaeiu(ji,jj,jk)*umask(jinew,jjnew,jk)
-!             vdta(jinew,jjnew,jk,2) = vdta(jinew,jjnew,jk,2)+zaeiv(ji,jj,jk)*vmask(jinew,jjnew,jk)
-!             wdta(jinew,jjnew,jk,2) = wdta(jinew,jjnew,jk,2)+zaeiw(ji,jj,jk)*tmask(jinew,jjnew,jk)
-!#endif
-!
-!              tdta(jinew,jjnew,jk,2)=REAL(zt_f(  ji,jj,jk),8)*tmask(jinew,jjnew,jk)
-!              sdta(jinew,jjnew,jk,2)=REAL(zs_f(  ji,jj,jk),8)*tmask(jinew,jjnew,jk)
-!            avtdta(jinew,jjnew,jk,2)=REAL(zavt_f(ji,jj,jk),8)*tmask(jinew,jjnew,jk)
-!          END DO
-!        END DO
-!      END DO
 
 #ifdef key_trahdfeiv
              udta(:,:,:,2) = udta(:,:,:,2) +zaeiu*umask
              vdta(:,:,:,2) = vdta(:,:,:,2) +zaeiv*vmask
              wdta(:,:,:,2) = wdta(:,:,:,2) +zaeiw*tmask
 #endif
-
-
-
-      DO jj=jjsta, jjend
-         DO ji=jista, jiend
-            jinew = ji - nimpp + 1
-            jjnew = jj - njmpp + 1
-!            flxdta(jinew,jjnew,jpwind,2)=REAL(zwind_f(ji,jj),8)*tmask(jinew,jjnew,1)
-            flxdta(jinew,jjnew,jpice ,2)=min(1.D0,REAL(zice_f(ji,jj),8))*tmask(jinew,jjnew,1)
-            flxdta(jinew,jjnew,jpemp, 2)=REAL(zemp_f(ji,jj),8)*tmask(jinew,jjnew,1)
-!            flxdta(jinew,jjnew,jpqsr, 2)=REAL(zqsr_f(ji,jj),8)*tmask(jinew,jjnew,1)
-            ik = max( 31, 1 )
-            bblxdta(jinew,jjnew,2)=max(0.D0,REAL(zbblx_f(ji,jj),8))*umask(jinew,jjnew,ik)
-            bblydta(jinew,jjnew,2)=max(0.D0,REAL(zbbly_f(ji,jj),8))*vmask(jinew,jjnew,ik)
-            if (bblxdta(jinew,jjnew,2).gt.2.) bblxdta(jinew,jjnew,2)=0.
-            if (bblydta(jinew,jjnew,2).gt.2.) bblydta(jinew,jjnew,2)=0.
-
-         END DO
-      END DO
-
-
-!  ---------------------------------------------------------
-!  calcul de la profondeur de la couche de melange
-!  en metre utile pour la formulation de la biologie de hamocc3
-!      zavmx = 5.0e-4
-!      imel=0
-!      DO jk=2,jpkm1
-!           DO jj=jjsta, jjend
-!             DO ji=jista, jiend
-!              jinew = ji - nimpp + 1
-!              jjnew = jj - njmpp + 1
-!              condition = avtdta(jinew, jjnew, jk,2) .LE. zavmx.AND. imel(ji,jj) .EQ. 0
-!              condition = zavt_f ( ji, jj, jk) .LE. zavmx.AND. imel(ji,jj) .EQ. 0
-!            IF (condition) THEN
-!                zmxldta (jinew,jjnew,2) = gdepw (jk+1)*tmask (jinew,jjnew,1)
-!                imel(ji,jj) = 1
-!            ENDIF
-!          END DO
-!        END DO
-!      END DO
-
 
 
 
@@ -439,7 +339,6 @@
          IMPLICIT NONE
          INTEGER iper
          INTEGER ji,jj,jk
-         INTEGER jtask
 
 
 #if defined key_off_tra

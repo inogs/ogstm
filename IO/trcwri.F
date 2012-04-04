@@ -22,9 +22,10 @@
       INTEGER ji,jj,jk,jn
       REAL(8) julian
 
-      CHARACTER*29 filename
-      CHARACTER*7 varB,varN
-      CHARACTER*3 varname
+
+      CHARACTER(LEN=29) filename
+      CHARACTER(LEN=7) varB,varN
+      CHARACTER(LEN=3) varname
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange

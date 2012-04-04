@@ -36,10 +36,10 @@ C       units : salinity        pfs       (ipss-78)
 C               pressure        pfp      decibars
 C               temperature     fszfpt   degrees celsius
 C               freezing pt
-C	reference : unesco tech. papers in the marine science no 28 1978
+C    reference : unesco tech. papers in the marine science no 28 1978
 C               eigth report jpots
 C               annex 6 freezing point of seawater F.J.Millero pp.29-35
-C	checkvalue: fsfzpt=-2.588567 deg.c,for s=40.0,p=500 decibars
+C    checkvalue: fsfzpt=-2.588567 deg.c,for s=40.0,p=500 decibars
 C
 
       USE myalloc
@@ -106,7 +106,7 @@ C =============
 C  z-coordinates (default option) depth and vertical scale factors are
 C                defined from 1d fields;
 C  s-coordinates (key_s_coord defined) depth and vertical scale factors
-C		 are the product of a bathymetry field by a 1d coef.
+C         are the product of a bathymetry field by a 1d coef.
 C  fsdept, fsdepw  : depth of model level at t- and w-points
 C  fse3t, fse3u,   : factors at t-, u-, v-, f-, w-,  uw-, vw-points
 C  fse3v, fse3f,     z-coordinates (default option) 

@@ -6,7 +6,7 @@
 !
 !  PURPOSE :
 !  ---------
-!	Time loop of OPA
+!    Time loop of OPA
 !
 !   METHOD :
 !   -------
@@ -21,7 +21,7 @@
 !   -----
 !
 !
-!   OUTPUT :			: no
+!   OUTPUT :            : no
 !   ------
 !
 !   EXTERNAL :
@@ -33,6 +33,7 @@
        USE myalloc
        USE myalloc_mpp
        USE TIME_MANAGER
+       USE BC_mem
        IMPLICIT NONE
 
 
@@ -47,6 +48,7 @@
 !         Time  loop           c
 !++++++++++++++++++++++++++++++c
 
+      write(*,*) 'STEP_START: tra_matrix_gib ', tra_matrix_gib, 'rank=', rank
 
         daytottime = 0.     !  Reset of the cronometer
         dtadyntottime = 0.
@@ -70,7 +72,7 @@
 
 
 
-	  indic=1  ! 1 for indic to initialize output files (first call)
+      indic=1  ! 1 for indic to initialize output files (first call)
 
       if (IsStartBackup) then
          TauAVEfrom = datestringToTAU(BKPdatefrom)
@@ -112,12 +114,17 @@
 
 
 
+
+
 ! For offline simulation READ DATA or precalculalted dynamics fields
 ! ------------------------------------------------------------------
 
 
       CALL forcings_PHYS(DATEstring)     ! dtadyn
       CALL forcings_KEXT(datestring)
+      write(*,*) 'STEP_OUTKEXT : tra_matrix_gib ', tra_matrix_gib, 'rank=', rank
+
+
       CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
       CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)

@@ -96,8 +96,8 @@
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 !         local
-          character*8  nomevar
-          character*28 nomefile
+          character(LEN=8)  nomevar
+          character(LEN=28) nomefile
           INTEGER(4) jn,jv
 
           nomevar= '123456789'

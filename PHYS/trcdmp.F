@@ -65,6 +65,10 @@
              jk = gib_ridxt(jv,4) 
            ztra = 0
            IF ( nmldmp_gib.EQ.0 ) THEN
+!             write(*,*) 'tra_idx  -->', tra_idx
+!             write(*,*) 'restotr --> ',restotr(ji,jj,jk,tra_idx)
+!             write(*,*) 'gib(jv,jn) -->', gib(jv,jn)
+!             write(*,*) 'trb(ji,jj,jk,tra_idx) -->', trb(ji,jj,jk,tra_idx)
              ztra = restotr(ji,jj,jk,tra_idx) * ( gib(jv,jn)-trb(ji,jj,jk,tra_idx) )
            ENDIF
            IF ( nmldmp_gib.EQ.1 ) THEN

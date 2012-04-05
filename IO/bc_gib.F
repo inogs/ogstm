@@ -113,8 +113,6 @@
           if(lwp) write(*,*) "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
 
 
-
-
           write(*,*) 'bc_gib: tra_matrix_gib ', tra_matrix_gib
           DO jn = 1, jn_gib
               write(*,*) jn, 'tra_matrix_gib(jn)', tra_matrix_gib(jn)

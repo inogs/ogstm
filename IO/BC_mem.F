@@ -88,7 +88,7 @@
           tra_matrix_gib(4) = ppN5s; restocorr(4)=1. ! silicates
           tra_matrix_gib(5) = ppO3c; restocorr(5)=2. ! Dic
           tra_matrix_gib(6) = ppO3h; restocorr(6)=2. ! Alk
-          tra_matrix_gib(7) = ppN6r; restocorr(6)=2. ! N6r
+          tra_matrix_gib(7) = ppN6r; restocorr(7)=2. ! N6r
        ENDIF
        
        IF (Rsizeglo .NE. 0) THEN

@@ -230,9 +230,9 @@
 
 #endif
 
-       if(lwp) write(*,*) 'DOMREA finita, wait for flushing...'
+!       if(lwp) write(*,*) 'DOMREA finita, wait for flushing...'
 
-       call flush()
+!       call flush()
 
       CONTAINS
 

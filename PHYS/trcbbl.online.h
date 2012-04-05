@@ -7,34 +7,34 @@
 !  Purpose :
 !  --------
 !     Compute the before tracer (t & s) trend associated with the
-!	bottom boundary layer and add it to the general trend of tracer
-!	equations. The bottom boundary layer is supposed to be a purely
+!    bottom boundary layer and add it to the general trend of tracer
+!    equations. The bottom boundary layer is supposed to be a purely
 !     diffusive bottom boundary layer.
 !
 !
 !
 !   Method :
 !   -------
-!	When the product grad( rho) * grad(h) < 0 (where grad is a
-!	along bottom slope gradient) an additional lateral 2nd order
-!	diffusion along the bottom slope is added to the general
-!	tracer trend, otherwise the additional trend is set to 0.
+!    When the product grad( rho) * grad(h) < 0 (where grad is a
+!    along bottom slope gradient) an additional lateral 2nd order
+!    diffusion along the bottom slope is added to the general
+!    tracer trend, otherwise the additional trend is set to 0.
 !      Second order operator (laplacian type) with variable coefficient
 !      computed as follow for temperature (idem on s):
 !         difft = 1/(e1t*e2t*e3t) { di-1[ ahbt e2u*e3u/e1u di[ztb] ]
 !                                 + dj-1[ ahbt e1v*e3v/e2v dj[ztb] ] }
-!	where ztb is a 2D array: the bottom ocean te;perature and ahtb
-!	is a time and space varying diffusive coefficient defined by:
-!	   ahbt = zahbp    if grad(rho).grad(h) < 0
-!	        = 0.       otherwise.
-!	Note that grad(.) is the along bottom slope gradient. grad(rho)
-!	is evaluated using the local density (i.e. referenced at the
-!	local depth). Typical value of ahbt is 2000 m2/s (equivalent to
-!	a downslope velocity of 20 cm/s if the condition for slope
-!	convection is satified)
+!    where ztb is a 2D array: the bottom ocean te;perature and ahtb
+!    is a time and space varying diffusive coefficient defined by:
+!       ahbt = zahbp    if grad(rho).grad(h) < 0
+!            = 0.       otherwise.
+!    Note that grad(.) is the along bottom slope gradient. grad(rho)
+!    is evaluated using the local density (i.e. referenced at the
+!    local depth). Typical value of ahbt is 2000 m2/s (equivalent to
+!    a downslope velocity of 20 cm/s if the condition for slope
+!    convection is satified)
 !
 !      Add this before trend to the general trend (ta,sa) of the
-!	botton ocean tracer point:
+!    botton ocean tracer point:
 !              ta = ta + difft
 !
 !      'key_diatrends' defined, the trends are saved for diagnostics.
@@ -63,7 +63,7 @@
 !
 !   References :                 NO
 !   -----------
-!	Beckmann, A., and R. Doscher, 1997, J. Phys.Oceanogr., 581-591.
+!    Beckmann, A., and R. Doscher, 1997, J. Phys.Oceanogr., 581-591.
 ! */
 
       USE TIME_MANAGER

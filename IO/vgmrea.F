@@ -25,15 +25,11 @@ CC		kindic		: indicator of abnormal termination
 
        USE myalloc
        IMPLICIT NONE
-
-      INTEGER kenr
+       INTEGER kenr
+#if defined key_trahdfeiv && defined key_off_degrad
 
       INTEGER jrec, junit
 
-
-
-
-#if defined key_trahdfeiv && defined key_off_degrad
         junit=numvgm
 
 C go to the begining of FILE

@@ -79,13 +79,7 @@ CC----------------------------------------------------------------------
       INTEGER ji,jj,jk,jt,jn
       INTEGER pack_size
       REAL(8) zbtr,zdt
-      REAL(8) zgm,zgz
-
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
-
-!                        #include "stafun.h"
+!      REAL(8) zgm,zgz
 
 
 ! omp variables
@@ -96,10 +90,7 @@ CC ===================
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (11/96)
-CCC---------------------------------------------------------------------
+!-------------------------------------------------------------------
 
       MPI_CHECK = .FALSE.
 
@@ -353,7 +344,7 @@ C
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-	 if( mytid + jn <= jptra ) then
+      if( mytid + jn <= jptra ) then
 
            DO jk = 1,jpk
              DO jj = 1,jpj
@@ -365,7 +356,7 @@ C
              END DO
            END DO
 
-	 end if
+      end if
 
 !$omp    end parallel
 
@@ -384,7 +375,7 @@ C
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-	if( mytid + jn <= jptra ) then
+      if( mytid + jn <= jptra ) then
 
            DO jk = 1,jpk
              DO jj=1,jpj
@@ -457,7 +448,7 @@ C
 
            END DO
 
-	end if
+      end if
 
 !$omp end parallel
 
@@ -482,11 +473,11 @@ C  END IF
 
 C       END DO
 
-	IF( ntids - 1 + jn <= jptra ) THEN
-	   pack_size = ntids
+      IF( ntids - 1 + jn <= jptra ) THEN
+       pack_size = ntids
         ELSE
            pack_size = ntids - (ntids - 1 + jn - jptra)
-	END IF
+      END IF
 
         CALL mpplnk_my(zkx(:,:,:,:), pack_size,1,1)
         CALL mpplnk_my(zky(:,:,:,:), pack_size,1,1)
@@ -503,12 +494,12 @@ C
 C
         DO itid = 1, ntids
 
-	   IF( itid - 1 + jn <= jptra ) THEN
+       IF( itid - 1 + jn <= jptra ) THEN
 
               CALL lbc( zkx(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
               CALL lbc( zky(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
 
-	   END IF
+       END IF
 
         END DO
 C
@@ -526,7 +517,7 @@ C
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-	IF( mytid + jn <= jptra ) THEN
+      IF( mytid + jn <= jptra ) THEN
 
            DO ju=1, dimen_jarr3
 
@@ -550,7 +541,7 @@ C
 
            END DO
 
-	END IF
+      END IF
 
 !$omp end parallel 
 
@@ -569,7 +560,7 @@ C
           mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-	  IF( mytid + jn <= jptra ) THEN
+      IF( mytid + jn <= jptra ) THEN
 
              if(jt .EQ. 1) then
 
@@ -606,7 +597,7 @@ CCC                         zbuf(ji,jj,jk) = 0. + ztj(ji,jj,jk,mytid+1)
 
              endif
 
-	  END IF
+      END IF
 
 !$omp     end parallel
 
@@ -646,9 +637,9 @@ C
 C   ... T-point, 3D array, full local array zti is initialised
 C       
           DO itid = 1, ntids
-	     IF( itid - 1 + jn <= jptra ) THEN
+         IF( itid - 1 + jn <= jptra ) THEN
                 CALL lbc( zti(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
-	     END IF
+         END IF
           END DO
 C
 #endif
@@ -664,7 +655,7 @@ C
           mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-	  IF( mytid + jn <= jptra ) THEN
+      IF( mytid + jn <= jptra ) THEN
 
             jk = 1
 CCC          DO jk = 1,jpkm1
@@ -860,11 +851,11 @@ C               CALL mpplnk( zz(:,:,:,itid), 1, 1 )
 C     END IF
 C  END DO
 
-	IF( ntids - 1 + jn <= jptra ) THEN
-	   pack_size = ntids
+      IF( ntids - 1 + jn <= jptra ) THEN
+       pack_size = ntids
         ELSE
            pack_size = ntids - (ntids - 1 + jn - jptra)
-	END IF
+      END IF
 
         CALL mpplnk_my(zx(:,:,:,:), pack_size,1,1)
         CALL mpplnk_my(zy(:,:,:,:), pack_size,1,1)
@@ -879,12 +870,12 @@ C   ... T-point, 3D array, full local array z[xyz] are initialised
 C       
 C
           DO itid = 1, ntids
-	     IF( itid - 1 + jn <= jptra ) THEN
+         IF( itid - 1 + jn <= jptra ) THEN
                 CALL lbc( zx(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
                 CALL lbc( zy(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
                 CALL lbc( zz(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
-	     END IF
-	  END DO
+         END IF
+      END DO
 C
 #endif
 C
@@ -899,7 +890,7 @@ C
           mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-	  IF( mytid + jn <= jptra ) THEN
+      IF( mytid + jn <= jptra ) THEN
 
 C
 C            2.5 calcul of the final field:
@@ -962,7 +953,7 @@ CCC     $              zti(ji,jj,jk,mytid+1),zti(ji,jj,jk - 1,mytid+1),zcc(ji,jj
              
              END DO
 
-	  END IF
+      END IF
 
 !$omp end parallel
 
@@ -1002,11 +993,11 @@ C   ... T-point, 3D array, full local array zk[xy] are initialised
 C       
 C
          DO itid = 1, ntids
-	    IF( itid - 1 + jn <= jptra ) THEN
+        IF( itid - 1 + jn <= jptra ) THEN
                CALL lbc( zkx(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
                CALL lbc( zky(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
-	    END IF
-	 END DO
+        END IF
+     END DO
 C
 #endif
 
@@ -1074,7 +1065,7 @@ CCC                zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk))
               END DO
            endif
 
-	END IF
+      END IF
 
 !$omp end parallel
 
@@ -1115,10 +1106,11 @@ CCC     $             + (zbuf(ji,jj,jk) + ztj(ji,jj,jk,mytid+1))
               END DO
            endif
 
-	END IF
+      END IF
 
 !$omp end parallel
  
+
 
 C
 C

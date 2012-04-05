@@ -6,17 +6,17 @@
 !
 !  Purpose :
 !  ---------
-!	Compute the now vertical velocity after the array swap.
+!    Compute the now vertical velocity after the array swap.
 !
 !   Method :
 !   -------
-!	Using the incompressibility hypothesis, the vertical velocity
-!	is computed by integrating the horizontal divergence from the
-!	bottom to the surface.
-!	The boundary conditions are w=0 at the bottom (no flux) and
-!	w=0 at the sea surface (rigid lid).
+!    Using the incompressibility hypothesis, the vertical velocity
+!    is computed by integrating the horizontal divergence from the
+!    bottom to the surface.
+!    The boundary conditions are w=0 at the bottom (no flux) and
+!    w=0 at the sea surface (rigid lid).
 !
-!	macro-tasked on vertical slab (jj-loop)
+!    macro-tasked on vertical slab (jj-loop)
 !
 !   Input :
 !   ------
@@ -25,7 +25,7 @@
 !              kt          : time step
 !      common
 !              /comcoh/    : scale factors
-!		/comtsk/    : multitasking
+!        /comtsk/    : multitasking
 !              /comnow/    : present fields (now)
 !
 !   Output :

@@ -21,8 +21,8 @@ CC   -------
 
 CC local declarations
 CC ==================
-      INTEGER ji,jj,jk,nn,ME
-      INTEGER iost, ivide1, ivide2
+      INTEGER ji,jj,nn,ME!,jk
+!      INTEGER iost, ivide1, ivide2
       INTEGER ilu, iused(1,100)
       INTEGER ilglo, ildta, ibloc, ilseq
 

@@ -9,8 +9,8 @@ CCC  ---------
 CCC	compute the passive tracers fields at the next time
 CCC	step from their temporal trends
 CCC
-CC   METHOD :
-CC   -------
+CC    METHOD :
+CC
 CC
 CC      Apply lateral boundary conditions (nperio=0,closed ; nperio=1,
 CC      east-west cyclic ; nperio=2, symmetric round the equator)

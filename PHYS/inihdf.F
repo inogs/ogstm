@@ -11,7 +11,7 @@ CCC
 CC   Method :
 CC   -------
 CC
-CC	Eddy diffusivity and eddy induced velocity cefficients:
+CC    Eddy diffusivity and eddy induced velocity cefficients:
 CC         default option   : constant coef. aht0, aeiv0 (namelist)
 CC        'key_trahdfcoef1d': depth dependent coef. defined in 
 CC                            in 'inihdf.tra.coef3d.h' file
@@ -20,29 +20,29 @@ CC                            defined in 'inihdf.tra.coef3d.h' file
 CC        'key_trahdfcoef3d': latitude, longitude, depth dependent coef.
 CC                            defined in 'inihdf.tra.coef3d.h' file
 CC
-CC	Direction of lateral diffusion (tracers and/or momentum)
-CC	  'key_trahdfiso'   : initialize the slope arrays to zero
-CC	  'key_trahdfgeop'  : initialise the slope arrays to the i- and
+CC    Direction of lateral diffusion (tracers and/or momentum)
+CC      'key_trahdfiso'   : initialize the slope arrays to zero
+CC      'key_trahdfgeop'  : initialise the slope arrays to the i- and
 CC                            j-slopes of s-surfaces
-CC	   
-CC	Biharmonic operator:
-CC	  'key_trahdfbilap' and 'key_trahdfgeop' or 'key_trahdfiso'
-CC	                    : initialise working arrays to zero
 CC
-CC	N.B. User defined include files.  By default, 3d and 2d coef.
-CC	are set to a constant value given in the namelist and the 1d
-CC	coefficients are initialized to a hyperbolic tangent vertical
-CC	profile.
+CC    Biharmonic operator:
+CC      'key_trahdfbilap' and 'key_trahdfgeop' or 'key_trahdfiso'
+CC                        : initialise working arrays to zero
+CC
+CC    N.B. User defined include files.  By default, 3d and 2d coef.
+CC    are set to a constant value given in the namelist and the 1d
+CC    coefficients are initialized to a hyperbolic tangent vertical
+CC    profile.
 CC
 CC   Output :
 CC   -------
 CC      common
 CC            /comhdt/ ahtt,ahtu, : lateral eddy diffusivity coef.
 CC                     ahtv,ahtw
-CC	      /comdhd/ uslp ,vslp : i- and j- direction of isopycnal or
-CC		       wslpi,wslpj  s-surfaces
-CC		       wk1, wk2,  : work arrays used in rotated bihar-
-CC		       wk3, wk4     monic momentum or tracer operator
+CC          /comdhd/ uslp ,vslp : i- and j- direction of isopycnal or
+CC               wslpi,wslpj  s-surfaces
+CC               wk1, wk2,  : work arrays used in rotated bihar-
+CC               wk3, wk4     monic momentum or tracer operator
 CC
 CC   External :        prihre, mpplnk or lbc
 CC   ---------

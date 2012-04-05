@@ -10,18 +10,18 @@
 !
 !   Method :
 !   -------
-!	neos = 0  : UNESCO sea water properties
-!	   The brunt-vaisala frequency is computed using the polynomial
-!	polynomial expression of McDougall (1987):
-!		N^2 = g * beta * ( alpha/beta*dk[ tn ] - dk[ sn ] )/e3w
+!    neos = 0  : UNESCO sea water properties
+!       The brunt-vaisala frequency is computed using the polynomial
+!    polynomial expression of McDougall (1987):
+!        N^2 = g * beta * ( alpha/beta*dk[ tn ] - dk[ sn ] )/e3w
 !
-!	neos = 1  : linear equation of state (temperature only)
-!		N^2 = g * ralpha * dk[ tn ]/e3w
+!    neos = 1  : linear equation of state (temperature only)
+!        N^2 = g * ralpha * dk[ tn ]/e3w
 !
-!	neos = 2  : linear equation of state (temperature & salinity)
-!		N^2 = g * (ralpha * dk[ tn ] - rbeta * dk[ sn ] ) / e3w
+!    neos = 2  : linear equation of state (temperature & salinity)
+!        N^2 = g * (ralpha * dk[ tn ] - rbeta * dk[ sn ] ) / e3w
 !
-!	The use of potential density to compute N^2 introduces e r r o r
+!    The use of potential density to compute N^2 introduces e r r o r
 !      in the sign of N^2 at great depths. We recommand the use of
 !      neos = 0, except for academical studies.
 !
@@ -32,12 +32,12 @@
 !
 !   Output :
 !   -------
-!	common
-!	      /comnow/ bn2n 	: now brunt-vaisala frequency
+!    common
+!          /comnow/ bn2n     : now brunt-vaisala frequency
 !
 !   References :
 !   -----------
-!	McDougall, T. J., J. Phys. Oceanogr., 17, 1950-1964, 1987.
+!    McDougall, T. J., J. Phys. Oceanogr., 17, 1950-1964, 1987.
 
 
         USE myalloc

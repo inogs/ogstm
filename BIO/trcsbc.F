@@ -12,28 +12,28 @@ CCC     in the minimum configuration
 CCC
 CC   Method :
 CC   -------
-CC	* flux through the air-sea interface:
+CC    * flux through the air-sea interface:
 CC            - temperature : heat flux q (w/m2).
-CC		tra(..1) = tra(..1) + q /(rau0 rcp e3t)  for k=1
+CC        tra(..1) = tra(..1) + q /(rau0 rcp e3t)  for k=1
 CC            - salinity    : no salt flux
 CC
-CC	* concentration/dilution effect:
-CC	      - temperature : we assume that the temperature of both
-CC	   precipitations and runoffs is equal to the SST, thus there
-CC	   is no additional flux since in this case, the concentration
-CC	   dilution effect is balanced by the net heat flux associated
-CC	   to the freshwater exchange:
-CC		(Tp P - Te E) + STT (P-E) = 0 when Tp=Te=SST
-CC	      - salinity    : evaporation, precipitation and runoff
-CC	   water has a zero salinity, thus
-CC		sa = sa + emp * sn / e3t   for k=1
-CC	   where emp, the surface freshwater budget (evaporation minus
-CC	   precipitation minus runoff) given in kg/m2/s is divided
-CC	   by 1000 kg/m3 (density of plain water) to obtain m/s.
+CC    * concentration/dilution effect:
+CC          - temperature : we assume that the temperature of both
+CC       precipitations and runoffs is equal to the SST, thus there
+CC       is no additional flux since in this case, the concentration
+CC       dilution effect is balanced by the net heat flux associated
+CC       to the freshwater exchange:
+CC        (Tp P - Te E) + STT (P-E) = 0 when Tp=Te=SST
+CC          - salinity    : evaporation, precipitation and runoff
+CC       water has a zero salinity, thus
+CC        sa = sa + emp * sn / e3t   for k=1
+CC       where emp, the surface freshwater budget (evaporation minus
+CC       precipitation minus runoff) given in kg/m2/s is divided
+CC       by 1000 kg/m3 (density of plain water) to obtain m/s.
 CC
-CC	* vertical advective flux:
-CC		The surface vertical advective flux applied in trazad.F
-CC	   is zero. 
+CC    * vertical advective flux:
+CC        The surface vertical advective flux applied in trazad.F
+CC       is zero.
 CC
 CC      macro-tasked on vertical slab (jj-loop)
 CC

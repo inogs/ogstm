@@ -46,8 +46,8 @@
 
 ! local declarations
 ! ==================
-      INTEGER ji,jj,jk
-      INTEGER iost, ivide1, ivide2
+      INTEGER ji!,jj,jk
+!      INTEGER iost, ivide1, ivide2
       INTEGER ilu, iused(1,100)
       INTEGER ilglo, ildta, ibloc, ilseq
 

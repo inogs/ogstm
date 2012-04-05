@@ -1,4 +1,3 @@
-
       SUBROUTINE domstp
 !---------------------------------------------------------------------
 !
@@ -11,17 +10,17 @@
 !
 !   Method :
 !   -------
-!	Initialization of a coef. use in the Asselin time filter
-!		atfp1 = 1 - 2 * atfp
-!	where atfp is the Asselin time filter parameter read in namelist
+!    Initialization of a coef. use in the Asselin time filter
+!        atfp1 = 1 - 2 * atfp
+!    where atfp is the Asselin time filter parameter read in namelist
 !
-!	Model time step:
+!    Model time step:
 !         nacc = 0 : synchronous time intergration.
-!	There is one time step only, defined by: rdt, rdttra(k)=rdt
+!    There is one time step only, defined by: rdt, rdttra(k)=rdt
 !         If nacc = 1 accelerating the convergence. There is 2
 !      different time steps for dynamics and tracers:
-!             		rdt      : dynamical part
-!             		rdttra(k): temperature and salinity
+!                     rdt      : dynamical part
+!                     rdttra(k): temperature and salinity
 !      The tracer time step is a function of vertical level. the model
 !      reference time step ( i.e. for wind stress, surface heat and
 !      salt fluxes) is the surface tracer time step is rdttra(1).
@@ -42,11 +41,11 @@
 !   -------
 !      common
 !            /comstp/ rdttra   : vertical profile of tracer time step
-!		       atfp1    : = 1 - 2*atfp
+!               atfp1    : = 1 - 2*atfp
 !
 !   References :
 !   -----------
-!	Bryan, K., 1984, J. Phys. Oceanogr., 14, 666-673.
+!    Bryan, K., 1984, J. Phys. Oceanogr., 14, 666-673.
 !
 !   Modifications :
 !   --------------

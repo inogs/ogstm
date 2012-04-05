@@ -7,27 +7,27 @@ CCC
 CCC  Purpose :
 CCC  --------
 CCC     Compute the slopes of neutral surface (slope of isopycnal sur-
-CCC	faces referenced locally) ('key_trahdfiso' defined).
+CCC    faces referenced locally) ('key_trahdfiso' defined).
 CCC
 CC   Method :
 CC   -------
 CC      The slope in the i-direction is computed at u- and w-points
-CC	(uslp, wslpi) and the slope in the j-direction is computed at 
-CC	v- and w-points (vslp, wslpj).
-CC	They are bounded by 1/100 over the whole ocean, and within the
-CC	surface layer they are bounded by the distance to the surface
-CC	( slope<= depth/l  where l is the length scale of horizontal
-CC	diffusion (here, aht=2000m2/s ==> l=20km with a typical velocity
-CC	of 10cm/s)
+CC    (uslp, wslpi) and the slope in the j-direction is computed at
+CC    v- and w-points (vslp, wslpj).
+CC    They are bounded by 1/100 over the whole ocean, and within the
+CC    surface layer they are bounded by the distance to the surface
+CC    ( slope<= depth/l  where l is the length scale of horizontal
+CC    diffusion (here, aht=2000m2/s ==> l=20km with a typical velocity
+CC    of 10cm/s)
 CC
 CC      A horizontal shapiro filter is applied to the slopes
 CC
-CC	'key_s_coord' defined: add to the previously computed slopes
-CC	the slope of the model level surface.
+CC    'key_s_coord' defined: add to the previously computed slopes
+CC    the slope of the model level surface.
 CC
 CC      macro-tasked on horizontal slab (jk-loop)  (2, jpk-1)
-CC	[slopes already set to zero at level 1, and to zero or the ocean
-CC	bottom slope ('key_s_coord' defined) at level jpk in inihdf]
+CC    [slopes already set to zero at level 1, and to zero or the ocean
+CC    bottom slope ('key_s_coord' defined) at level jpk in inihdf]
 CC
 CC   Input :
 CC   ------
@@ -45,8 +45,8 @@ CC   -------
 CC      common
 CC            /comiso/uslp(),   : i- and j-slopes of neutral surfaces
 CC                    vslp()      at u- and v-points, resp.
-CC		      wslpi(),  : i- and j-slopes of neutral surfaces
-CC		      wslpj()     at w-points. 
+CC              wslpi(),  : i- and j-slopes of neutral surfaces
+CC              wslpj()     at w-points.
 CC
 CC   External :       mpplnk, mpplnk2  or  lbc
 
@@ -421,7 +421,7 @@ C
 C
 C
 C III Lateral boundary conditions on all slopes (uslp, vslp,
-C -------------------------------		 wslpi,wslpj )
+C -------------------------------         wslpi,wslpj )
 #ifdef key_mpp
 C
 C ... Mpp: export boundary values to neighbouring processors

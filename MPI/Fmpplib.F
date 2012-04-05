@@ -522,19 +522,19 @@ CC   -----
 CC      argument
 CC              ptab            : variable array
 CC              ktype           : define the nature of the grid-point
-CC				  at which ptab is defined for 0 
+CC                  at which ptab is defined for 0
 CC                                initialization
-CC				  = 1 ,  T- and W-points
-CC				  = 2 ,  U-point
-CC				  = 3 ,  V-point
-CC				  = 4 ,  F-point
+CC                  = 1 ,  T- and W-points
+CC                  = 2 ,  U-point
+CC                  = 3 ,  V-point
+CC                  = 4 ,  F-point
 CC                                = 11,  T-point only fold treatment
 CC                                = 14,  F-point only fold treatment
-CC		ksgn		: control of the sign change
-CC				  = 0 , the sign is modified following
-CC				  the type of b.c. used
-CC				  = 1 , the sign of the field is un-
-CC				  changed at the boundaries
+CC        ksgn        : control of the sign change
+CC                  = 0 , the sign is modified following
+CC                  the type of b.c. used
+CC                  = 1 , the sign of the field is un-
+CC                  changed at the boundaries
 CC      common
 CC            /COMDOM/ : domain parameters
 CC                    nlci   : first dimension of the local subdomain
@@ -1546,19 +1546,19 @@ CC   -----
 CC      argument
 CC              ptab            : variable array
 CC              ktype           : define the nature of the grid-point
-CC				  at which ptab is defined for 0 
+CC                  at which ptab is defined for 0
 CC                                initialization
-CC				  = 1 ,  T- and W-points
-CC				  = 2 ,  U-point
-CC				  = 3 ,  V-point
-CC				  = 4 ,  F-point
+CC                  = 1 ,  T- and W-points
+CC                  = 2 ,  U-point
+CC                  = 3 ,  V-point
+CC                  = 4 ,  F-point
 CC                                = 11,  T-point only fold treatment
 CC                                = 14,  F-point only fold treatment
-CC		ksgn		: control of the sign change
-CC				  = 0 , the sign is modified following
-CC				  the type of b.c. used
-CC				  = 1 , the sign of the field is un-
-CC				  changed at the boundaries
+CC        ksgn        : control of the sign change
+CC                  = 0 , the sign is modified following
+CC                  the type of b.c. used
+CC                  = 1 , the sign of the field is un-
+CC                  changed at the boundaries
 CC      common
 CC            /COMDOM/ : domain parameters
 CC                    nlci   : first dimension of the local subdomain
@@ -2327,20 +2327,20 @@ CC   -----
 CC      argument
 CC              ptab            : variable array
 CC              ktype           : define the nature of the grid-point
-CC				  at which ptab is defined for 0 
+CC                  at which ptab is defined for 0
 CC                                initialization
 CC                                initialization
-CC				  = 1 ,  T- and W-points
-CC				  = 2 ,  U-point
-CC				  = 3 ,  V-point
-CC				  = 4 ,  F-point
+CC                  = 1 ,  T- and W-points
+CC                  = 2 ,  U-point
+CC                  = 3 ,  V-point
+CC                  = 4 ,  F-point
 CC                                = 11,  T-point only fold treatment
 CC                                = 14,  F-point only fold treatment
-CC		ksgn		: control of the sign change
-CC				  = 0 , the sign is modified following
-CC				  the type of b.c. used
-CC				  = 1 , the sign of the field is un-
-CC				  changed at the boundaries
+CC        ksgn        : control of the sign change
+CC                  = 0 , the sign is modified following
+CC                  the type of b.c. used
+CC                  = 1 , the sign of the field is un-
+CC                  changed at the boundaries
 CC      common
 CC            /COMDOM/ : domain parameters
 CC                    nlci   : first dimension of the local subdomain
@@ -3462,7 +3462,7 @@ C PVM VERSION
 C
       INTEGER iflag
       INTEGER itid_dest,info
-C		
+C
       itid_dest = npvm_tids(kdest)
       IF(mppsend_print .NE. 0) THEN
           WRITE(nummpp,*) 'mytid=',npvm_mytid,

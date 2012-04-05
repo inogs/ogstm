@@ -3,7 +3,7 @@
 
       USE myalloc
       USE IO_mem
-      USE DR_mem, ONLY : tmaskglo
+!      USE DR_mem, ONLY : tmaskglo
       USE calendar
       USE TIME_MANAGER
 #ifdef key_mpp
@@ -135,8 +135,14 @@
             do jj =1 , jpj
             do ji =1 , jpi
                ind1 = ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-               bufftrn(ind1)= trn(ji,jj, jk, jn)
-               bufftrb(ind1)= trb(ji,jj, jk, jn)
+               if (tmask(ji,jj,jk).eq.1.0) then
+                  bufftrn(ind1)= trn(ji,jj, jk, jn)
+                  bufftrb(ind1)= trb(ji,jj, jk, jn)
+               else
+                  bufftrn(ind1) = Miss_Val;
+                  bufftrb(ind1) = Miss_Val;
+               endif
+
             enddo
             enddo
             enddo
@@ -166,16 +172,16 @@
             varN ='TRN'//varname//CHAR(0)
             varB ='TRB'//varname//CHAR(0)
 
-            do jk=1,jpk
-            do jj=1,jpjglo
-            do ji=1,jpiglo
-               if (tmaskglo(ji,jj,jk).eq.0) then
-                   tottrb(ji,jj,jk) = Miss_val
-                   tottrn(ji,jj,jk) = Miss_val
-                end if
-            enddo
-            enddo
-            enddo
+!            do jk=1,jpk
+!            do jj=1,jpjglo
+!            do ji=1,jpiglo
+!               if (tmaskglo(ji,jj,jk).eq.0) then
+!                   tottrb(ji,jj,jk) = Miss_val
+!                   tottrn(ji,jj,jk) = Miss_val
+!                end if
+!            enddo
+!            enddo
+!            enddo
 
 
 

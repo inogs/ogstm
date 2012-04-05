@@ -20,11 +20,12 @@
 !      REAL(8), allocatable ::  e2tglo(:,:)    ,   e2uglo(:,:)
 !      REAL(8), allocatable ::  e2vglo(:,:)    ,   e2fglo(:,:)
 !      REAL(8), allocatable ::   ffglo(:,:)
-      REAL(8), allocatable ::tmaskglo(:,:,:)
+      !REAL(8), allocatable ::tmaskglo(:,:,:)
 !      REAL(8), allocatable ::umaskglo(:,:,:), vmaskglo(:,:,:), fmaskglo(:,:,:)
+#ifdef key_s_coord
       REAL(8), allocatable ::hbattglo(:,:)    , hbatuglo(:,:)
       REAL(8), allocatable ::hbatvglo(:,:)    , hbatfglo(:,:)
-
+#endif
 
 !----------------------------------------------------------------------
       CONTAINS
@@ -47,77 +48,23 @@
 !      allocate(e2vglo(jpiglo,jpjglo))
 !      allocate(e2fglo(jpiglo,jpjglo))
 !      allocate(ffglo(jpiglo,jpjglo))
-      allocate(tmaskglo(jpiglo,jpjglo,jpk))
+!      allocate(tmaskglo(jpiglo,jpjglo,jpk))
 !      allocate(fmaskglo(jpiglo,jpjglo,jpk))
 !      allocate(umaskglo(jpiglo,jpjglo,jpk))
 !      allocate(vmaskglo(jpiglo,jpjglo,jpk))
+#ifdef key_s_coord
       allocate(hbattglo(jpiglo,jpjglo))    
       allocate(hbatuglo(jpiglo,jpjglo))
       allocate(hbatvglo(jpiglo,jpjglo))
       allocate(hbatfglo(jpiglo,jpjglo))
-      mem_all = rea_len*(4*jpiglo*jpjglo+ 1*jpiglo*jpjglo*jpk)
+#endif
+      mem_all = rea_len*(1*jpiglo*jpjglo*jpk)
+#ifdef key_s_coord
+     & + rea_len*4*jpiglo*jpjglo
+#endif
       
       END subroutine myalloc_DR
 
-      subroutine mydealloc_DR()
 
-      INTEGER :: I,error
-      error = 0
-!      deallocate(glamtglo,STAT=I)
-!      error = error + I
-!      deallocate(glamuglo,STAT=I)
-!      error = error + I
-!      deallocate(glamvglo,STAT=I)
-!      error = error + I
-!      deallocate(glamfglo,STAT=I)
-!      error = error + I
-!      deallocate(gphitglo,STAT=I)
-!      error = error + I
-!      deallocate(gphiuglo,STAT=I)
-!      error = error + I
-!      deallocate(gphivglo,STAT=I)
-!      error = error + I
-!      deallocate(gphifglo,STAT=I)
-!      error = error + I
-!      deallocate(e1tglo,STAT=I)
-!      error = error + I
-!      deallocate(e1uglo,STAT=I)
-!      error = error + I
-!      deallocate(e1vglo,STAT=I)
-!      error = error + I
-!      deallocate(e1fglo,STAT=I)
-!      error = error + I
-!      deallocate(e2tglo,STAT=I)
-!      error = error + I
-!      deallocate(e2uglo,STAT=I)
-!      error = error + I
-!      deallocate(e2vglo,STAT=I)
-!      error = error + I
-!      deallocate(e2fglo,STAT=I)
-!      error = error + I
-!      deallocate(ffglo,STAT=I)
-!      error = error + I
-      deallocate(tmaskglo,STAT=I)
-      error = error + I
-!      deallocate(fmaskglo,STAT=I)
-!      error = error + I
-!      deallocate(umaskglo,STAT=I)
-!      error = error + I
-!      deallocate(vmaskglo,STAT=I)
-!      error = error + I
-      deallocate(hbattglo,STAT=I)
-      error = error + I
-      deallocate(hbatuglo,STAT=I)
-      error = error + I
-      deallocate(hbatvglo,STAT=I)
-      error = error + I
-      deallocate(hbatfglo,STAT=I)
-      error = error + I
-
-       IF(error .NE. 0) THEN
-           write(*,*) 'DR_mem.F:Error in deallocate_DR buffers'
-           STOP
-       ENDIF 
-      END subroutine mydealloc_DR
 
       END MODULE 

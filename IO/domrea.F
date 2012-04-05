@@ -88,13 +88,12 @@
 
 ! 3. masks
 ! --------
-      write(*,*) 'reading 3D'
 
       CALL readnc_slice_double (maskfile,'umask', umask )
       CALL readnc_slice_double (maskfile,'vmask', vmask )
       CALL readnc_slice_double (maskfile,'fmask', fmask )
       CALL readnc_slice_double (maskfile,'tmask', tmask )
-      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
+!      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
 
 
 ! F79 Initialization of mbathy

@@ -14,9 +14,7 @@
 #ifdef key_trahdfeiv
       REAL(8), allocatable, dimension(:,:,:) :: zaeiu,zaeiv, zaeiw
 #endif
-#ifdef key_oper
-      INTEGER dynrea_flag, kenr_oper 
-#endif
+
 
 !----------------------------------------------------------------------
       CONTAINS
@@ -28,9 +26,7 @@
        allocate(zaeiv   (jpiglo,jpjglo,jpk))
        allocate(zaeiw   (jpiglo,jpjglo,jpk))
 #endif
-#ifdef key_oper
-      dynrea_flag = 1
-#endif
+
       mem_all = 0
 
 #ifdef key_trahdfeiv

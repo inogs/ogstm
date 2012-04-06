@@ -41,7 +41,7 @@ CC      additions : 00/11 (MA Foujols, E Kestenare) Lateral diffusion option
 CC      additions : 00/12  ( E Kestenare): improve controls of defined keys
 CC 
        USE myalloc
-        IMPLICIT NONE
+       IMPLICIT NONE
 
 CC local declarations
 CC ==================
@@ -52,8 +52,6 @@ CC ==================
       INTEGER iadv,ildta,ilglo,ibloc,ilseq,ioptio,istop
       INTEGER jn
 
-!                       #include "stafun.h"
-!                       #include "stafun.passivetrc.h"
 
 C 1. initialization
 C -----------------

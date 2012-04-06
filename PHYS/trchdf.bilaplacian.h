@@ -1,5 +1,3 @@
-C $Id: trchdf.bilaplacian.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC        TRCHDF.BILAPLACIAN
 CCC      **********************
 CCC
@@ -10,17 +8,17 @@ CC
 CC   METHOD :
 CC   -------
 CC      4th order diffusive operator along model level surfaces evalu-
-CC	ated using before fields (forward time scheme). The horizontal
-CC	diffusive trends of passive tracer is given by:
+CC    ated using before fields (forward time scheme). The horizontal
+CC    diffusive trends of passive tracer is given by:
 CC
 CC       * s-coordinate ('key_s_coord' defined), the vertical scale 
-CC	factors e3. are inside the derivatives:
+CC    factors e3. are inside the derivatives:
 CC      Laplacian of trb:
 CC         zlt   = 1/(e1t*e2t*e3t) {  di-1[ e2u*e3u/e1u di(trb) ]
 CC                                  + dj-1[ e1v*e3v/e2v dj(trb) ]  }
-CC	Multiply by the eddy diffusivity coef. and insure lateral bc:
-CC	   zlt   = fsahtt * zlt
-CC	   call to lbc or mpplnk2
+CC    Multiply by the eddy diffusivity coef. and insure lateral bc:
+CC       zlt   = fsahtt * zlt
+CC       call to lbc or mpplnk2
 CC      Bilaplacian (laplacian of zlt):
 CC         difft = 1/(e1t*e2t*e3t) {  di-1[ e2u*e3u/e1u di(zlt) ]
 CC                                  + dj-1[ e1v*e3v/e2v dj(zlt) ]  }
@@ -29,9 +27,9 @@ CC       * z-coordinate (default key), e3t=e3u=e3v, the trend becomes:
 CC      Laplacian of trb:
 CC         zlt   = 1/(e1t*e2t) {  di-1[ e2u/e1u di(trb) ]
 CC                              + dj-1[ e1v/e2v dj(trb) ] }
-CC	Multiply by the eddy diffusivity coef. and insure lateral bc:
-CC	   zlt   = fsahtt * zlt
-CC	   call to lbc or mpplnk2
+CC    Multiply by the eddy diffusivity coef. and insure lateral bc:
+CC       zlt   = fsahtt * zlt
+CC       call to lbc or mpplnk2
 CC      Bilaplacian (laplacian of zlt):
 CC         difft = 1/(e1t*e2t) {  di-1[ e2u/e1u di(zlt) ]
 CC                              + dj-1[ e1v/e2v dj(zlt) ]  }
@@ -97,7 +95,7 @@ CC local declarations
 CC ==================
       INTEGER ktask,kt
 #if defined key_passivetrc 
-      INTEGER ji,jj,jk,jn,jv,itid,mytid,ntids,pack_size
+      INTEGER ji,jj,jk,jn,jv,mytid,ntids,pack_size!,itid
       INTEGER myji,myjj
       INTEGER locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
 #ifdef __OPENMP
@@ -108,13 +106,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                       #include "stafun.h"
-!                       #include "stafun.passivetrc.h"
-
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
        trcbilaphdfparttime = MPI_WTIME()
 CCC OpenMP
 #ifdef __OPENMP
@@ -236,7 +227,7 @@ C ... First derivative (gradient)
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-  	   IF( mytid + jn <= jptra ) THEN
+         IF( mytid + jn <= jptra ) THEN
 
           DO jv=1, dimen_jvhdf2
 
@@ -278,10 +269,10 @@ C
 C   ... Mpp : export boundary values to neighboring processors
 C
        IF( ntids - 1 + jn <= jptra ) THEN
-	      pack_size = ntids
+          pack_size = ntids
        ELSE
           pack_size = ntids - (ntids - 1 + jn - jptra)
-	   END IF
+       END IF
 
        CALL mpplnk_my(zlt(:,:,:,:), pack_size,1,1)
 
@@ -289,11 +280,11 @@ C
 
         DO itid = 1, ntids
 
-	       IF( itid - 1 + jn <= jptra ) THEN
+           IF( itid - 1 + jn <= jptra ) THEN
 
               CALL lbc( zlt(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
 
-	       END IF
+           END IF
 
         END DO
 C
@@ -367,14 +358,14 @@ C
 C End of slab
 C ===========
 
-	    END DO TRACER_LOOP
+        END DO TRACER_LOOP
 
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime
 
 #  else
-C
+
 C       no passive tracers
-C
+
 #endif
-C
+

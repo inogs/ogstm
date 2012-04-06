@@ -71,13 +71,9 @@ CC ---------------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
 CC----------------------------------------------------------------------
 CC local declarations

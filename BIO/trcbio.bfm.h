@@ -15,13 +15,13 @@ CC ==================
       LOGICAL isDumpAscii,sur,bot,isT,isBIO
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia)
 
-      INTEGER ji,jj,jk,jn
+      INTEGER ji,jj,jk!,jn
       INTEGER gji,gjj,gjk
       INTEGER CSi,CS(10,3)
       INTEGER jtr,jtrmax,tra_idx
       REAL(8):: opa_ice, opa_co2
 ! omp variables
-            INTEGER :: mytid, ntids, itid
+            INTEGER :: mytid, ntids!, itid
 
 #ifdef __OPENMP
             INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
@@ -32,7 +32,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                                  #include "stafun.h"
 
       INTERFACE OPA_Output_EcologyDynamics
          subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI, local_opa_dia)
@@ -70,14 +69,14 @@ C
 
 !$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,gji,gjj,gjk,CSi,CS)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
-!$omp&		       restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
+!$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
 !$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-	             IF( mytid + jj <= jpjm1 ) THEN
+                 IF( mytid + jj <= jpjm1 ) THEN
 C
 C 1. biological level
 C ===================

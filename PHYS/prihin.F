@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/prihin.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE prihin(ktab,ki,kj,kideb,kifin,kind,kjdeb,
      $    kjfin,kjnd,kscale,kumout)
 CCC---------------------------------------------------------------------
@@ -38,7 +36,7 @@ CC   ------
 CC
 CC   WORKSPACE : 
 CC   ---------
-CC	ji,jj,jn,isca,il1,il2
+CC    ji,jj,jn,isca,il1,il2
 CC
 CC   MODIFICATIONS:
 CC   --------------

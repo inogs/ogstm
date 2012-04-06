@@ -1,5 +1,3 @@
-C $Id: h3copt.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE h3copt
 #if defined key_passivetrc && defined key_trc_hamocc3
 CCC---------------------------------------------------------------------
@@ -41,13 +39,8 @@ CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+       IMPLICIT NONE
 
 CC----------------------------------------------------------------------
 CC local declarations

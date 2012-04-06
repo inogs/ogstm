@@ -1,5 +1,3 @@
-C $Id: h3cice.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE h3cice
 #if defined key_passivetrc && defined key_trc_hamocc3
 c -------------------------------------------------------------------
@@ -14,13 +12,8 @@ c
 c -------------------------------------------------------------------
 c
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+       IMPLICIT NONE
 
       INTEGER ji, jj, jk,mo
       INTEGER nvg,ios

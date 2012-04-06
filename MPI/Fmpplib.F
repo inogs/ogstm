@@ -49,21 +49,16 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
        USE myalloc
        USE myalloc_mpp
 
 C-----------------------------------------------------------------------
-C
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 #ifdef key_mpp
-
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
 
 C
 #ifdef key_mpp_mpi
@@ -266,13 +261,13 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versionsC
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 
 C-----------------------------------------------------------------------
@@ -281,8 +276,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 #ifdef key_mpp_pvm
 C
@@ -398,14 +393,14 @@ CC
 C
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -414,8 +409,6 @@ C
 CC
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
 
 C
 #ifdef key_mpp_pvm
@@ -460,20 +453,17 @@ CCC
 CC
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
 
 C
 #ifdef key_mpp_shmem
@@ -580,30 +570,24 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 CC----------------------------------------------------------------------
 
-c#include  "parameter.h"
-c#include  "common.h"
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CC----------------------------------------------------------------------
 C
       INTEGER ktype, ksgn
       INTEGER packsize
       REAL(8) ptab(jpi,jpj,jpk,packsize)
-CCC 20/06/2003 Cristiano - Otherwise it does not work
-      REAL(8) t3p1(jpi,1,jpk,2)
-      REAL(8) t3p2(jpi,1,jpk,2)
+
+      !REAL(8) t3p1(jpi,1,jpk,2)
+      !REAL(8) t3p2(jpi,1,jpk,2)
       REAL(8) t3p1_my1(jpi,1,jpk,packsize,2)
       REAL(8) t3p2_my1(jpi,1,jpk,packsize,2)
 
 #ifdef key_mpp
-
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
 
       INTEGER ji,jj,jk,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
@@ -611,18 +595,14 @@ c#include "common.mpp.h"
       INTEGER reqs1, reqs2, reqr1, reqr2
       INTEGER jn
 ! omp variables
-      INTEGER :: mytid, ntids, itid
+      INTEGER :: mytid, ntids!, itid
 
 #ifdef __OPENMP
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-C
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
+
 C
 C 0. Initialization
 C -----------------
@@ -1604,38 +1584,28 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 CC----------------------------------------------------------------------
 
-c#include  "parameter.h"
-c#include  "common.h"
+
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
 CC----------------------------------------------------------------------
 C
       INTEGER ktype, ksgn
       REAL(8) ptab(jpi,jpj,jpk)
-CCC 20/06/2003 Cristiano - Otherwise it does not work
+
       REAL(8) t3p1(jpi,1,jpk,2)
       REAL(8) t3p2(jpi,1,jpk,2)
 
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
-
       INTEGER ji,jj,jk,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
       REAL(8) zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
-      INTEGER jn
-C
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
+!      INTEGER jn
+
 C
 C 0. Initialization
 C -----------------
@@ -2386,36 +2356,28 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 CC----------------------------------------------------------------------
 
-c#include  "parameter.h"
-c#include  "common.h"
+
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CC----------------------------------------------------------------------
 C
       INTEGER ktype, ksgn
       REAL(8) ptab(jpi,jpj)
-CCC 20/06/2003 Cristiano - Otherwise it does not work
       REAL(8) t2p1(jpi,1,2)
       REAL(8) t2p2(jpi,1,2)
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
 
       INTEGER ji,jj,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
       REAL(8) zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
-C
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
+
 C 0. Initialization
 C -----------------
 C
@@ -3075,36 +3037,26 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 CC----------------------------------------------------------------------
 
-c#include  "parameter.h"
-c#include  "common.h"
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CC----------------------------------------------------------------------
 C
       REAL(8) ptab(jpi,jpj)
-CCC 20/06/2003 Cristiano - Otherwise it does not work
       REAL(8) t2p1(jpi,1,2)
-      REAL(8) t2p2(jpi,1,2)
+!      REAL(8) t2p2(jpi,1,2)
 
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
 
       INTEGER ji,jj,jl
       INTEGER imigr,iihom,ijhom
       INTEGER reqs1, reqs2, reqr1, reqr2
-C
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
-C
+
 C 1. north fold treatment
 C -----------------------
 C
@@ -3419,14 +3371,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -3435,8 +3387,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -3450,7 +3402,7 @@ C
 C MPI VERSION
 C
       INTEGER iflag
-      INTEGER itid_dest,info
+!      INTEGER itid_dest,info
 C
 C      write(*,*)  "#### kbytes = ", kbytes
       CALL mpi_isend(pmess,kbytes,mpi_real8,kdest,ktyp,
@@ -3512,14 +3464,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -3528,8 +3480,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -3542,11 +3494,10 @@ C
 C
 C MPI VERSION
 C
-      INTEGER istatus(mpi_status_size)
+!      INTEGER istatus(mpi_status_size)
       INTEGER iflag
 C
-      CALL mpi_irecv(pmess,kbytes,mpi_real8,mpi_any_source,ktyp
-     $    ,mpi_comm_world,ireqrecv,iflag)
+      CALL mpi_irecv(pmess,kbytes,mpi_real8,mpi_any_source,ktyp,mpi_comm_world,ireqrecv,iflag)
 c
 #  else
 C
@@ -3556,15 +3507,12 @@ C
 C
       itid_kexp = -1
       IF(mpprecv_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,
-     $        ' ============= mpprecv.f ============'
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,
-     $        ' mpprecv, pvmfrecv, itid_kexp=',itid_kexp
+          WRITE(nummpp,*) 'mytid=',npvm_mytid,' ============= mpprecv.f ============'
+          WRITE(nummpp,*) 'mytid=',npvm_mytid,' mpprecv, pvmfrecv, itid_kexp=',itid_kexp
       END IF
       CALL pvmfrecv  ( itid_kexp , ktyp , ibufid )
       IF(mpprecv_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,' mpprecv,END pvmfrecv'
-     $        ,'ibufid=',ibufid,' npvm_me=',npvm_me
+          WRITE(nummpp,*) 'mytid=',npvm_mytid,' mpprecv,END pvmfrecv','ibufid=',ibufid,' npvm_me=',npvm_me
       END IF
       CALL pvmfunpack( byte1, pmess, kbytes, 1, info )
       IF(info .LT. 0) kbytes = info
@@ -3588,20 +3536,16 @@ CC   -----
 CC      argument                
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
       USE myalloc
       USE myalloc_mpp
-
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 #endif
 
       integer req
@@ -3662,14 +3606,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 CC----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CCC--------------------------------------------------------------------
 CCC  OPA8, IDRIS-LODYC (15/11/96)
@@ -3680,8 +3624,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -3794,14 +3738,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 CC----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CCC--------------------------------------------------------------------
 CCC  OPA8, IDRIS-LODYC (15/11/96)
@@ -3812,8 +3756,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -3892,14 +3836,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -3908,8 +3852,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -4048,14 +3992,14 @@ CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CC----------------------------------------------------------------------
 CC local declarations
@@ -4065,8 +4009,8 @@ CC ==================
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -4187,14 +4131,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -4203,8 +4147,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 #ifdef key_mpp_shmem
 C
@@ -4318,14 +4262,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -4334,8 +4278,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -4480,14 +4424,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -4496,8 +4440,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -4612,14 +4556,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -4628,8 +4572,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -4745,14 +4689,14 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
@@ -4761,8 +4705,8 @@ C
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem
@@ -4869,21 +4813,21 @@ CC       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 CC                          SHMEM and MPI versions
 C-----------------------------------------------------------------------
 
-c#include "parameter.h"
-c#include "common.h"
+
+c
       USE myalloc
       USE myalloc_mpp
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 C-----------------------------------------------------------------------
 C
 #ifdef key_mpp
 
-c#include "parameter.mpp.h"
-c#include "common.mpp.h"
+
+
 
 C
 #ifdef key_mpp_shmem

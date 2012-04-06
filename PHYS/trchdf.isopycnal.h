@@ -1,5 +1,3 @@
-C $Id: trchdf.isopycnal.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC        trchdf.isopycnal.h
 CCC      **********************
 CCC
@@ -9,20 +7,20 @@ CC
 CC   Method :
 CC   -------
 CC         The horizontal component of the lateral diffusive trends is
-CC	provided by a 2nd order operator rotated along neural or geopo-
-CC	tential surfaces to which an eddy induced advection can be added
-CC	It is computed using before fields (forward in time) and isopyc-
-CC	nal or geopotential slopes computed in routine hdfslp.
+CC    provided by a 2nd order operator rotated along neural or geopo-
+CC    tential surfaces to which an eddy induced advection can be added
+CC    It is computed using before fields (forward in time) and isopyc-
+CC    nal or geopotential slopes computed in routine hdfslp.
 CC
-CC	horizontal fluxes associated with the rotated lateral mixing:
+CC    horizontal fluxes associated with the rotated lateral mixing:
 CC         zftu = (ahtt+ahtrb0) e2u*e3u/e1u di[ trb ]
-CC	         - ahtt       e2u*uslp    dk[ mi(mk(trb)) ]
+CC             - ahtt       e2u*uslp    dk[ mi(mk(trb)) ]
 CC         zftv = (ahtt+ahtrb0) e1v*e3v/e2v dj[ trb ]
-CC		 - ahtt       e2u*vslp    dk[ mj(mk(trb)) ]
-CC	add horizontal Eddy Induced advective fluxes ('key_trahdfeiv'):
+CC         - ahtt       e2u*vslp    dk[ mj(mk(trb)) ]
+CC    add horizontal Eddy Induced advective fluxes ('key_trahdfeiv'):
 CC         zftu = zftu - dk-1[ ahtt e2u mi(wslpi) ] mi( trb ) 
 CC         zftv = zftv - dk-1[ ahtt e1v mj(wslpj) ] mj( trb ) 
-CC	take the horizontal divergence of the fluxes:
+CC    take the horizontal divergence of the fluxes:
 CC         difftr = 1/(e1t*e2t*e3t) {  di-1[ zftu ] +  dj-1[ zftv ]  }
 CC      Add this trend to the general trend (tra):
 CC         tra = tra + difftr
@@ -49,7 +47,7 @@ CC   -------
 CC      common
 CC            /cottrc/ tra      : passive tracer trend increased by the
 CC                                before horizontal component of the
-CC				  lateral diffusive trend 
+CC                  lateral diffusive trend
 CC            /cottrd/ trtrd    : now horizontal tracer diffusive trend
 CC                                ('key_trc_diatrd' defined)
 CC
@@ -65,8 +63,7 @@ CC parameters and commons
 CC ======================
 
       USE myalloc
-
-        IMPLICIT NONE
+      IMPLICIT NONE
 
 
 CC----------------------------------------------------------------------
@@ -87,13 +84,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                          #include "stafun.h"
-!                          #include "stafun.passivetrc.h"
-
-CCC---------------------------------------------------------------------
-CCC  OPA8.1, LODYC (1998)
-CCC---------------------------------------------------------------------
-C
       ztagu = 0.e0
       ztagv = 0.e0
 C

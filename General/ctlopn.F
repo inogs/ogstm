@@ -44,7 +44,7 @@ C
       INTEGER kused(1,100)
 C
       CHARACTER(LEN=21) cdacce, cdform, cdstat
-      CHARACTER(LEN=32) cdfile
+      CHARACTER cdfile*(*)
 C
       LOGICAL ldwp
 C

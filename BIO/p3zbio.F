@@ -1,4 +1,3 @@
-C $Id: p3zbio.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
       SUBROUTINE p3zbio
 #if defined key_passivetrc && defined key_trc_p3zd
 CCC   ------------------------------------------------------------------
@@ -58,14 +57,8 @@ CC      modifications : 2001    O. Aumont
 CC ----------------------------------------------------------------
 CC parameters and commons
 CC ======================
-C     DIR$ NOLIST
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-C     DIR$ LIST
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+       IMPLICIT NONE
 
 CC-----------------------------------------------------------------
 c -----

@@ -6,8 +6,8 @@ CCC                     *******************
 CCC
 CCC  PURPOSE :
 CCC  ---------
-CCC	compute the passive tracers fields at the next time
-CCC	step from their temporal trends
+CCC    compute the passive tracers fields at the next time
+CCC    step from their temporal trends
 CCC
 CC    METHOD :
 CC

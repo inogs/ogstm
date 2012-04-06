@@ -34,7 +34,6 @@ CC ==================
       INTEGER iused(1,100), iwork(257), indx(100)
       INTEGER ildta, ilglo, ibloc, ilseq, ilindta
 
-      CHARACTER(LEN=32) clname
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf, clunk
 
       IF(lwp) THEN
@@ -252,8 +251,8 @@ C
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,*) ' *** slope file'
 
-      clname='slp.dta'
-      CALL ctlopn(numslp,clname,clold,clunf,clseq,ilindta,ilu,iused,numout,lwp,1)
+
+      CALL ctlopn(numslp,'slp.dta',clold,clunf,clseq,ilindta,ilu,iused,numout,lwp,1)
 
 #endif
 #if defined key_off_degrad && defined key_trahdfeiv

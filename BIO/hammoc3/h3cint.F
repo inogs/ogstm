@@ -1,17 +1,8 @@
-C $Id: h3cint.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE h3cint(kt)
-C
 #if defined key_trc_hamocc3
-C
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
-
-CC+CC  Implicit typing is never allowed
-        IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+       IMPLICIT NONE
 
       INTEGER kt
       INTEGER ji, jj, jk, l, imel(jpi,jpj)

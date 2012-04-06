@@ -1,6 +1,3 @@
-C $Id: trcini.bfm.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC---------------------------------------------------------------------
-CCC
 CCC                        trcini.bfm.h
 CCC                       ***************
 CCC
@@ -12,12 +9,8 @@ CCC  modifications :
 CC   -------------
 CC      original    : 99-09 (M. Levy) 
 CC      additions   : 00-12 (E. Kestenare) add sediment computations
-CCC
-CCC---------------------------------------------------------------------
-CCC  opa8, ipsl (11/96)
-CCC---------------------------------------------------------------------
-CCC local variables
-      REAL(8) ztest
+
+!      REAL(8) ztest
 C
 C 2. initialization of field for optical model
 C --------------------------------------------

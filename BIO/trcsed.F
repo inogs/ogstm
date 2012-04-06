@@ -16,7 +16,7 @@ CC      this ROUTINE compute not exactly the advection but the
 CC      transport term, i.e.  dz(wt) and dz(ws)., dz(wtr)
 CC      using an upstream scheme
 CC
-CC	the now vertical advection of tracers is given by:
+CC    the now vertical advection of tracers is given by:
 CC
 CC          dz(trn wn) = 1/bt dk+1( e1t e2t vsed (trn) )
 CC

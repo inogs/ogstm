@@ -61,15 +61,12 @@ CC                     introduce jpno3 instead of jpnut
 CC                     01-02 (E. Kestenare) add sediments 
 CC----------------------------------------------------------------------
 
-
-c#include "parameter.h"
-c#include "common.h"
       USE myalloc
 #include <mpif.h>
 
-CC+CC  Implicit typing is never allowed
+
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
+
 
 CC----------------------------------------------------------------------
 CC local declarations
@@ -84,13 +81,11 @@ CCC      REAL(8) ztot(jpir)
      $    zppdz,zfood,zfilpz,zfildz,zflxpz,zflxdz,zflxzl,zflxzn,zflxpd,
      $    zflxzd,zflxdn,zphya,zzooa,znuta,zdeta,ztra
       REAL(8) zle,zlt,zlnut
-CCC 28/4/2004 Paolo aux variables
       REAL(8) db,zb,pb
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                                           #include "stafun.h"
 
 C   | --------------|
 C   | NPZD MODEL| 

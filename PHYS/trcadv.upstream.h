@@ -1,5 +1,3 @@
-CCC $Id: trcadv.upstream.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC                      trcadv.smolar.h
 CCC                     ******************
 CCC
@@ -89,7 +87,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                                   #include "stafun.h"
 
 CCC 13012004 Opt new AIX52
 CC-CC      integer goodpoints, allpoints, tpoints

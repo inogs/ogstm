@@ -6,7 +6,7 @@ CCC                     *****************
 CCC
 CCC  PURPOSE :
 CCC  ---------
-CCC	time loop of opa for passive tracer
+CCC    time loop of opa for passive tracer
 CCC
 CC   METHOD :
 CC   -------

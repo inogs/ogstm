@@ -33,7 +33,7 @@ CC-CC     &                     jprecj=1
      &           jpreci,
      &           jprecj
            
-CC
+
 CC    jpiglo  : first  dimension of global domain --> i
 CC    jpjglo  : second dimension of global domain --> j
 CC    jpk    : number of vertical levels

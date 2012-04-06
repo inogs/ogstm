@@ -1,6 +1,3 @@
-! $Header: /cvsroot/opatm-bfm/opa_model/OPA/trcbbl.online.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-!---------------------------------------------------------------------
-!
 !                       ROUTINE trcbbl
 !                     ******************
 ! /*
@@ -82,9 +79,6 @@ C
 ! statement functions
 ! ===================
 
-!                            #include "stafun.h"
-
-C
 C ratio alpha/beta
 C ================
 C

@@ -62,9 +62,6 @@ CC                     01-02 (E. Kestenare) add sediments
 CC----------------------------------------------------------------------
 
 
-#include "parameter.h"
-#include "common.h"
-
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
@@ -72,17 +69,15 @@ CC ==================
 
       INTEGER ji,jj,jk,jn
       REAL(8) ztot(jpi)
-      REAL(8) zdet,zzoo,zphy,znut,zflxnp,zflxpn,zppz,zpdz,zpppz,
-     $    zppdz,zfood,zfilpz,zfildz,zflxpz,zflxdz,zflxzl,zflxzn,zflxpd,
-     $    zflxzd,zflxdn,zphya,zzooa,znuta,zdeta,ztra
+      REAL(8) zdet,zzoo,zphy,znut,zflxnp,zflxpn,zppz,zpdz,zpppz
+      REAL(8) zppdz,zfood,zfilpz,zfildz,zflxpz,zflxdz,zflxzl,zflxzn,zflxpd
+      REAL(8) zflxzd,zflxdn,zphya,zzooa,znuta,zdeta,ztra
       REAL(8) zle,zlt,zlnut
-CCC 28/4/2004 Paolo aux variables
       REAL(8) db,zb,pb
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                             #include "stafun.h"
 
 C   | --------------|
 C   | NPZD MODEL| 

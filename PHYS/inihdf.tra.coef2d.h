@@ -13,17 +13,14 @@ CC       biharmonic operator    : ahtt = defined at T-level
 CC                                ahtu,ahtv,ahtw never used
 CC
 CC       harmonic operator (ahtt never used)
-CC	   iso-model level   : ahtu, ahtv defined at u-, v-points
+CC       iso-model level   : ahtu, ahtv defined at u-, v-points
 CC         isopycnal         : ahtu, ahtv, ahtw defined at u-, v-, w-pts
 CC         or geopotential   
 CC
-CC	 eddy induced velocity
-CC	   always harmonic   : aeiu, aeiv, aeiw defined at u-, v-, w-pts
-CC
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
-C
+CC     eddy induced velocity
+CC       always harmonic   : aeiu, aeiv, aeiw defined at u-, v-, w-pts
+
+
       IF(lwp)WRITE(numout,*)
 #ifdef key_trahdfeiv
       IF(lwp)WRITE(numout,*) ' inihdf: 2D eddy diffusivity and eddy',

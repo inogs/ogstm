@@ -1,5 +1,3 @@
-c $Id: trcbio.generic.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC      trcbio.generic.h
 CCC      *****************
 CCC
@@ -85,8 +83,6 @@ CCC 28/4/2004 Paolo aux variables
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
-
-!                                 #include "stafun.h"
 
 C   | --------------|
 C   | Generic  MODEL| 

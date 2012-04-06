@@ -20,7 +20,7 @@ CC   INPUT :
 CC   -----
 CC      argument
 CC              kt              : time step
-CC		kindic		: indicator of abnormal termination
+CC        kindic        : indicator of abnormal termination
 
 
        USE myalloc

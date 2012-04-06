@@ -1,5 +1,3 @@
-C $Id: trcini.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trcini
 CCC---------------------------------------------------------------------
 CCC
@@ -43,13 +41,27 @@ CC----------------------------------------------------------------------
 
 #if defined key_passivetrc
 
-      INTEGER ji,jj,jk,jn,jl
+      INTEGER ji,jj,jk,jn!,jl
 
 
 #    if defined key_trc_npzd
 #    include "trcini.npzd.h"
 #    elif defined key_trc_bfm
-#    include "trcini.bfm.h"
+!#    include "trcini.bfm.h"
+      DO jj=1,jpj
+        DO ji=1,jpi
+          xze(ji,jj)=5.
+        END DO
+      END DO
+
+      DO jk=1,jpk
+        DO jj=1,jpj
+          DO ji=1,jpi
+            xpar(ji,jj,jk)=0.
+          END DO
+        END DO
+      END DO
+
       call OPA_NO_BOXES(1,1,1,1,1)
       call BFM_Initialize()
 #    elif defined key_trc_nnpzddom

@@ -20,32 +20,32 @@ CC      tential surfaces to which an eddy induced advection can be added
 CC      It is computed using before fields (forward in time) and isopyc-
 CC      nal or geopotential slopes computed in routine hdfslp.
 CC
-CC	First part: vertical trends associated with the lateral mixing
-CC	==========  (excluding the vertical flux proportional to dk[tr] )
-CC	            ('key_trahdfiso' or 'key_trahdfgeop')
-CC	vertical fluxes associated with the rotated lateral mixing:
-CC	   zftw =-ahtt {  e2t*wslpi di[ mi(mk(trb)) ]
-CC	               + e1t*wslpj dj[ mj(mk(trb)) ]  }
-CC	save avt coef. resulting from vertical physics alone in zavt:
-CC	   zavt = avt
-CC	update and save in zavt the vertical eddy viscosity coefficient:
-CC	   avt = avt + wslpi^2+wslj^2
-CC	add vertical Eddy Induced advective fluxes ('key_trahdfeiv'):
-CC	   zftw = zftw + { di[ahtt e2u mi(wslpi)]
-CC			  +dj[ahtt e1v mj(wslpj)] } mk(trb)
-CC	take the horizontal divergence of the fluxes:
+CC    First part: vertical trends associated with the lateral mixing
+CC    ==========  (excluding the vertical flux proportional to dk[tr] )
+CC                ('key_trahdfiso' or 'key_trahdfgeop')
+CC    vertical fluxes associated with the rotated lateral mixing:
+CC       zftw =-ahtt {  e2t*wslpi di[ mi(mk(trb)) ]
+CC                   + e1t*wslpj dj[ mj(mk(trb)) ]  }
+CC    save avt coef. resulting from vertical physics alone in zavt:
+CC       zavt = avt
+CC    update and save in zavt the vertical eddy viscosity coefficient:
+CC       avt = avt + wslpi^2+wslj^2
+CC    add vertical Eddy Induced advective fluxes ('key_trahdfeiv'):
+CC       zftw = zftw + { di[ahtt e2u mi(wslpi)]
+CC              +dj[ahtt e1v mj(wslpj)] } mk(trb)
+CC    take the horizontal divergence of the fluxes:
 CC         difft = 1/(e1t*e2t*e3t) dk[ zftw ] 
 CC      Add this trend to the general trend (tra):
 CC         tra = tra + difft
 CC
-CC	Second part: vertical trend associated with the vertical physics
-CC	===========  (including the vertical flux proportional to dk[tr]
-CC		      associated with the lateral mixing, through the
-CC		      update of avt)
-CC	The vertical diffusion of passive tracers (tr) is given by:
+CC    Second part: vertical trend associated with the vertical physics
+CC    ===========  (including the vertical flux proportional to dk[tr]
+CC              associated with the lateral mixing, through the
+CC              update of avt)
+CC    The vertical diffusion of passive tracers (tr) is given by:
 CC             difft = dz( avt dz(tr) ) = 1/e3t dk+1( avt/e3w dk(tr) )
 CC         'key_zdfexplicit' defined: forward  time scheme (tr=trb), using
-CC	   a time splitting technique (NOT YET IMPLEMENTED).
+CC       a time splitting technique (NOT YET IMPLEMENTED).
 CC          default option          : backward time scheme, tr=tra
 CC                                  : use ndttrc or 2 for time stepping
 CC      Bottom boundary conditions:
@@ -53,10 +53,10 @@ CC         no flux on passive tracers: applied through the masked field avt
 CC      Add this trend to the general trend tra :
 CC         tra = tra + dz( avt dz(tr) )
 CC
-CC	Third part: recover avt resulting from the vertical physics
-CC	==========  alone, as it can be used to compute the turbocline
-CC		    depth in diamld ('key_trahdfiso' or 'key_trahdfgeop')
-CC	   avt = zavt
+CC    Third part: recover avt resulting from the vertical physics
+CC    ==========  alone, as it can be used to compute the turbocline
+CC            depth in diamld ('key_trahdfiso' or 'key_trahdfgeop')
+CC       avt = zavt
 CC
 CC      'key_trc_diatrd' defined: trend saved for futher diagnostics.
 CC

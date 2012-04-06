@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/prihre.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE prihre(ptab,ki,kj,kideb,kifin,kind,kjdeb,
      $    kjfin,kjnd,pscale,kumout)
 CCC---------------------------------------------------------------------
@@ -17,17 +15,17 @@ CC      the format of print is selected with the dummy argument pscale
 CC
 CC   INPUT :
 CC   -----
-CC      argument ptab		: array for print
-CC               ki,kj    	: array dimensions
-CC               kideb,kifin	: first and last index for i
-CC               kind     	: increment for i
-CC               kjdeb,kjfin	: first and last index for j
-CC               kjnd		: increment for j
-CC               pscale		: if pscale=0 print ptab with the
+CC      argument ptab        : array for print
+CC               ki,kj        : array dimensions
+CC               kideb,kifin    : first and last index for i
+CC               kind         : increment for i
+CC               kjdeb,kjfin    : first and last index for j
+CC               kjnd        : increment for j
+CC               pscale        : if pscale=0 print ptab with the
 CC                                format e13.5
 CC                                else print pscale*ptab with the
 CC                                format f6.2
-CC               kumout		: unit for print
+CC               kumout        : unit for print
 CC
 CC
 CC   OUTPUT :                     no
@@ -35,7 +33,7 @@ CC   ------
 CC
 CC   WORKSPACE : 
 CC   ---------
-CC	ji,jj,jn,isca,il1,il2
+CC    ji,jj,jn,isca,il1,il2
 CC
 CC   MODIFICATIONS:
 CC   --------------

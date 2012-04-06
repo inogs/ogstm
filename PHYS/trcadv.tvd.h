@@ -1,5 +1,3 @@
-CCC $Id: trcadv.tvd.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC                      trcadv.tvd.h
 CCC                     **************
 CCC
@@ -60,7 +58,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                                   #include "stafun.h"
 
       IF ((neuler.eq.0).and.(kt.eq.TimeStepStart)) THEN
            z2=1.

@@ -1,5 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/prizre.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE prizre(ptab,ki,kj,kk,kjcut,kideb,kifin,kind,kkdeb,
      $    kkfin,kknd,pscale,kumout)
 CCC---------------------------------------------------------------------
@@ -35,7 +33,7 @@ CC   ------
 CC
 CC   WORKSPACE : ji,jn,jk,isca,il1,il2 
 CC   ---------
-CC	ji,jn,jk,isca,il1,il2
+CC    ji,jn,jk,isca,il1,il2
 CC
 CC   MODIFICATIONS:
 CC   --------------
@@ -54,11 +52,7 @@ C
 C
       REAL(8) pscale
       REAL(8) ptab(ki,kj,kk)
-C
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-C
+
 C
       isca=10
       IF(pscale.ne.0.) isca=20

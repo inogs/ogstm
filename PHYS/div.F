@@ -6,7 +6,7 @@ CCC                     ***************
 CCC
 CCC  Purpose :
 CCC  --------
-CCC	compute the now horizontal divergence of the velocity field.
+CCC    compute the now horizontal divergence of the velocity field.
 CCC
 CC   Method :
 CC   -------
@@ -52,7 +52,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                                          #include "stafun.h"
 
 C Horizontal slab
 C ===============

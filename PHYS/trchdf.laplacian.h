@@ -1,5 +1,3 @@
-C $Id: trchdf.laplacian.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-CCC
 CCC                       trchdf.laplacian.h
 CCC                     *********************
 CCC
@@ -10,9 +8,9 @@ CC
 CC
 CC   Method :
 CC   -------
-CC	Second order diffusive operator evaluated using before fields
+CC    Second order diffusive operator evaluated using before fields
 CC      (forward time scheme). The horizontal diffusive trends of 
-CC	passive tracer is given by:
+CC    passive tracer is given by:
 CC
 CC       * s-coordinate ('key_s_coord' defined), the vertical scale 
 CC      factors e3. are inside the derivatives:
@@ -89,15 +87,8 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-!                              #include "stafun.h"
-!                              #include "stafun.passivetrc.h"
-
-
        trclaphdfparttime = MPI_WTIME() ! F79 cronometer-start
 
-CCC
-
-C
 C Tracer slab
 C =============
 C

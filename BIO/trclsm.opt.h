@@ -34,7 +34,7 @@ CC local declarations
 CC ==================
 
 #if defined key_passivetrc && defined key_trc_npzd || defined key_trc_bfm 
-      INTEGER ji
+!      INTEGER ji
       INTEGER ilu,iused(1,100),ilseq
       CHARACTER(LEN=21) clold,clfor,clseq,clnew,cldir,clunf
       CHARACTER(LEN=32) clname

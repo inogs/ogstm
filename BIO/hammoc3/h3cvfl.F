@@ -13,13 +13,9 @@ C  document.
 C
 C**********************************************************************
 
-c#include "parameter.h"
-c#include "common.h"
        USE myalloc
 
-CC+CC  Implicit typing is never allowed
         IMPLICIT NONE
-CC+CC  Implicit typing is never allowed
 
       INTEGER kt
 #if defined key_passivetrc && defined key_trc_hamocc3

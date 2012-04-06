@@ -143,7 +143,6 @@
       USE calendar
       USE myalloc
       USE myalloc_mpp
-      USE DYN_mem
       USE TIME_MANAGER
 
       IMPLICIT NONE

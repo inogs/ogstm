@@ -1,4 +1,4 @@
-      SUBROUTINE physdump(datemean,datefrom,dateTo)
+      SUBROUTINE diadump(datemean,datefrom,dateTo)
 !     ******************
       USE calendar
       USE myalloc
@@ -37,7 +37,7 @@
       call mppsync()
 ! ----------------------------------------
       IsBackup =  (datemean.eq.dateTo)
-      if (lwp) write(*,*) 'physdump IsBackup = ',IsBackup
+      if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup
 ! ----------------------------------------
       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'//CHAR(0)
       AC       = ave_counter
@@ -312,4 +312,4 @@
 
 
 
-      end SUBROUTINE physdump
+      end SUBROUTINE diadump

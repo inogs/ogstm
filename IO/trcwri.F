@@ -3,7 +3,6 @@
 
       USE myalloc
       USE IO_mem
-!      USE DR_mem, ONLY : tmaskglo
       USE calendar
       USE TIME_MANAGER
 #ifdef key_mpp

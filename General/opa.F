@@ -86,13 +86,11 @@
        USE myalloc
        USE myalloc_mpp
        USE IO_mem
-       USE DR_mem
        USE FN_mem
        USE ADV_mem
        USE HDF_mem
        USE ZDF_mem
        USE OPT_mem
-       USE DYN_mem
        USE BC_mem
        USE BIO_mem
        USE time_manager
@@ -203,13 +201,11 @@
        USE myalloc
        USE myalloc_mpp
        USE IO_mem
-       USE DR_mem
        USE FN_mem
        USE ADV_mem
        USE HDF_mem
        USE ZDF_mem
        USE OPT_mem
-       USE DYN_mem
        USE BC_mem
        USE BIO_mem
        USE SED_mem

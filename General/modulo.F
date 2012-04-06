@@ -837,11 +837,41 @@ CC
 CC
 CC----------------------------------------------------------------------
 
+#ifdef key_trahdfeiv
+      REAL(8), allocatable, dimension(:,:,:) :: zaeiu,zaeiv, zaeiw
+#endif
+#ifdef key_s_coord
+      REAL(8), allocatable ::hbattglo(:,:)    , hbatuglo(:,:)
+      REAL(8), allocatable ::hbatvglo(:,:)    , hbatfglo(:,:)
+#endif
       INTEGER ncpu
 
 
 
       CONTAINS
+! *******************************************************************
+      subroutine myalloc_DYN()
+      mem_all = 0
+#ifdef key_trahdfeiv
+       allocate(zaeiu   (jpiglo,jpjglo,jpk))
+       allocate(zaeiv   (jpiglo,jpjglo,jpk))
+       allocate(zaeiw   (jpiglo,jpjglo,jpk))
+        mem_all = 8*(3*jpiglo*jpjglo*jpk)
+#endif
+      END subroutine myalloc_DYN
+! *******************************************************************
+      subroutine myalloc_DR()
+      mem_all = 0
+#ifdef key_s_coord
+      allocate(hbattglo(jpiglo,jpjglo))
+      allocate(hbatuglo(jpiglo,jpjglo))
+      allocate(hbatvglo(jpiglo,jpjglo))
+      allocate(hbatfglo(jpiglo,jpjglo))
+      mem_all = rea_len*4*jpiglo*jpjglo
+#endif
+      END subroutine myalloc_DR
+! *******************************************************************
+
 
        subroutine alloc_tot()
 

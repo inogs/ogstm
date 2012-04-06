@@ -19,7 +19,6 @@
       USE calendar
       USE myalloc
       USE myalloc_mpp
-      USE DR_mem
       USE BC_mem
       USE TIME_MANAGER
       IMPLICIT NONE

@@ -153,10 +153,13 @@ C
 
                              DO CSi=1,10
                                 IF ( (gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) ) THEN
-                                   CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring) ! BFM routine that dump all key fluxes
+                                   CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring) ! BFM routine that dumps all key fluxes
                                 ENDIF
                              ENDDO
-
+! Plot BFM status when carbonate system fails to converge PH_ = -1
+                             IF ( d(9) .LT. 0. ) THEN
+                                CALL OPA_SS_OUTPUT(gji,gjj,-1,NOW_datestring) ! BFM routine that dumps all key fluxes
+                             ENDIF
                           ENDIF
 ! End Diagnostic
 

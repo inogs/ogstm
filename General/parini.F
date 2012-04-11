@@ -133,8 +133,8 @@ C
       allocate(ilcit(jpni, jpnj))
       allocate(ilcjt(jpni, jpnj))
 
-      open(3333,file='Dom_Dec_jpi.ascii', form='formatted')
-      open(3334,file='Dom_Dec_jpj.ascii', form='formatted')
+      open(3333,file='Dom_Dec_jpi.ascii', ACTION='READ', form='formatted')
+      open(3334,file='Dom_Dec_jpj.ascii', ACTION='READ', form='formatted')
       
       read(3333,*) ((ilcit(ji,jj), ji=1,jpni),jj=1,jpnj) 
       read(3334,*) ((ilcjt(ji,jj), ji=1,jpni),jj=1,jpnj) 

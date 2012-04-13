@@ -58,7 +58,7 @@ CC   --------
 
        USE myalloc        
        USE OPT_mem
-             IMPLICIT NONE
+       IMPLICIT NONE
 
 #include <mpif.h>
 
@@ -68,7 +68,7 @@ CC ==================
       INTEGER kt,ktask
 
 #if defined key_passivetrc
-#    if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm 
+#if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm
 
       INTEGER ji,jj,jk,jn,in
 
@@ -87,9 +87,9 @@ CC+CC      REAL(8) zpar0m(jpi),zpar100(jpi)
 CCC        DO ji = 1,jpi
 CCC           WRITE(*,*) 'trcopt.F',ji,jj,kef(ji,jj)
 CCC        ENDDO
-CCC 10 11 2004  F79 cronometer-start
-       trcoptparttime = MPI_WTIME()
-C find Phytoplancton index - test CTRCNM
+
+       trcoptparttime = MPI_WTIME()!F79 cronometer-start
+!      find Phytoplancton index - test CTRCNM
 
       in=0
       DO jn = 1,jptra
@@ -106,10 +106,10 @@ CCC Paolo 15 10 2004 provisory value for the shadow effect
             in = ppP1n
 CCC
 #endif
-C
+
 C vertical slab
 C ===============
-C
+
 CCC F79 06 04 2005  3D  implementation
       DO 1000 jj = ktask,jpj,ncpu
 CCCC      DO 1000 site_i = ktask,nsite,ncpu
@@ -241,7 +241,7 @@ CCC          xze(ji,jj) = fsdepw(ji,jj,itabe(ji) + 1)
 C END of slab
 C ===========
 
- 1000 CONTINUE
+1000  CONTINUE
 
        trcoptparttime = MPI_WTIME() - trcoptparttime !F79 cronometer-stop
        trcopttottime = trcopttottime + trcoptparttime

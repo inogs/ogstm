@@ -43,8 +43,8 @@ CC ==================
 #    if defined key_trc_arakawa
 #       include "trcadv.arakawa.h"
 #    elif defined key_trc_smolar
-!         call smolar
-#       include "trcadv.smolar.h"
+         call smolar
+!#       include "trcadv.smolar.h"
 #    elif defined key_trc_upstream
 #       include "trcadv.upstream.h"
 #    elif defined key_trc_tvd

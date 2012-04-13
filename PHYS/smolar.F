@@ -84,7 +84,7 @@ CC----------------------------------------------------------------------
       INTEGER ji,jj,jk,jt,jn
       INTEGER pack_size
       REAL(8) zbtr,zdt
-!      REAL(8) junk, junki, junkj, junkk
+      REAL(8) junk, junki, junkj, junkk
       INTEGER A,B
 !      REAL(8) zgm,zgz
 
@@ -340,20 +340,20 @@ C
 
 #if defined key_trc_diatrd
 
-!$omp    parallel default(none) private(jk,jj,ji,mytid) shared(jpk,jpj,jpi,jn,trtrd)
+!$omp    parallel default(none) private(jk,jj,ji,mytid,B) shared(jpk,jpj,jpi,jn,trtrd)
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
       if( mytid + jn <= jptra ) then
-
+      B = mytid+jn
            DO jk = 1,jpk
              DO jj = 1,jpj
                DO ji = 1,jpi
-                 trtrd(ji,jj,jk,mytid+jn,1) = 0.
-                 trtrd(ji,jj,jk,mytid+jn,2) = 0.
-                 trtrd(ji,jj,jk,mytid+jn,3) = 0.
+                 trtrd(ji,jj,jk,B,1) = 0.
+                 trtrd(ji,jj,jk,B,2) = 0.
+                 trtrd(ji,jj,jk,B,3) = 0.
                END DO
              END DO
            END DO
@@ -370,7 +370,7 @@ C           and mass fluxes calculated above
 
 C       calcul of tracer flux in the i and j direction
 
-!$omp   parallel default(none) private(jk,jj,ji,mytid,A,B)
+!$omp   parallel default(none) private(jk,jj,ji,mytid,A,B,junk)
 !$omp&      shared(jpk,jpj,jpi,zkx,zky,zbb,zaa,zcc,jarr1,dimen_jarr1,jn,zkz,trn,jpjm1,jpim1)
 
 #ifdef __OPENMP
@@ -380,7 +380,6 @@ C       calcul of tracer flux in the i and j direction
       if( mytid + jn <= jptra ) then
       A = mytid + 1
       B = mytid + jn
-
            DO jk = 1,jpk
              DO jj=1,jpj; zkx(  1,jj,jk,A)=0.  ; END DO
              DO jj=1,jpj; zkx(jpi,jj,jk,A)=0.  ; END DO
@@ -421,10 +420,10 @@ C
               ji = jarr1(1, ju)
               jj = jarr1(2, ju)
               jk = jarr1(3, ju)
-!              junk = trn(ji,jj,jk,B)
-              zkx(ji,jj,jk,A) = fsx(trn(ji,jj,jk,B),trn(ji + 1,jj,jk,B),zaa(ji,jj,jk))
-              zky(ji,jj,jk,A) = fsy(trn(ji,jj,jk,B),trn(ji,jj + 1,jk,B),zbb(ji,jj,jk))
-              zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+              junk = trn(ji,jj,jk,B)
+              zkx(ji,jj,jk,A) = fsx(junk,trn(ji + 1,jj,jk,B),zaa(ji,jj,jk))
+              zky(ji,jj,jk,A) = fsy(junk,trn(ji,jj + 1,jk,B),zbb(ji,jj,jk))
+              zkz(ji,jj,jk,A) = fsz(junk,trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
 
            END DO
 
@@ -538,8 +537,9 @@ C 2.2 calcul of intermediary field zti
 
       IF( mytid + jn <= jptra ) THEN
       A = mytid +1
+      B = mytid + jn
              if(jt .EQ. 1) then
-                B = mytid + jn
+
                 if(ncor .EQ. 1) then
                    DO jk = 1,jpkm1
                       DO jj = 2,jpjm1
@@ -619,7 +619,7 @@ C   ... T-point, 3D array, full local array zti is initialised
 
 C 2.3 calcul of the antidiffusive flux
 
-!$omp     parallel default(none) private(mytid,A,ji,jj,jk)
+!$omp     parallel default(none) private(mytid,A,junk, junki, junkj, junkk, ji,jj,jk)
 !$omp&       shared(jn,jpkm1,jpjm1,jpim1,zti,ztj,zy,zx,zz,jarr2,big_fact_zbb,
 !$omp&              big_fact_zaa,big_fact_zcc,dimen_jarr2,rtrn,rsc)
 
@@ -633,16 +633,14 @@ C 2.3 calcul of the antidiffusive flux
 !          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
               DO ji = 2,jpim1
-!                  junk  = zti(ji,jj,jk,A)
-!                  junki = zti(ji + 1,jj,jk,A)
-!                  junkj = zti(ji,jj + 1,jk,A)
+                  junk  = zti(ji,jj,jk,A)
+                  junki = zti(ji + 1,jj,jk,A)
+                  junkj = zti(ji,jj + 1,jk,A)
 !                 if(advmask(ji,jj,jk) .NE. 0) then
 !                zx(ji,jj,jk,A) = ( abs(zaa(ji,jj,jk)) - zdt*zaa(ji,jj,jk)**2/(e1u(ji,jj)*e2u(ji,jj)*fse3u(ji,jj,jk) ) )*inv_eu(ji,jj,jk) )
 !                zy(ji,jj,jk,A) = ( abs(zbb(ji,jj,jk)) - zdt*zbb(ji,jj,jk)**2/(e1v(ji,jj)*e2v(ji,jj)*fse3v(ji,jj,jk) ) )*inv_ev(ji,jj,jk) )
-                    zx(ji,jj,jk,A) = big_fact_zaa(ji,jj,jk)*(zti(ji + 1,jj,jk,A) - zti(ji,jj,jk,A))/
-     .               (zti(ji,jj,jk,A) + zti(ji + 1,jj,jk,A) + rtrn)* rsc
-                    zy(ji,jj,jk,A) = big_fact_zbb(ji,jj,jk)*(zti(ji,jj + 1,jk,A) - zti(ji,jj,jk,A))/
-     .               (zti(ji,jj,jk,A) + zti(ji,jj + 1,jk,A) + rtrn)* rsc
+                    zx(ji,jj,jk,A) = big_fact_zaa(ji,jj,jk)*(junki - junk)/(junk + junki + rtrn)* rsc
+                    zy(ji,jj,jk,A) = big_fact_zbb(ji,jj,jk)*(junkj - junk)/(junk + junkj + rtrn)* rsc
 
 
 !                endif
@@ -658,19 +656,16 @@ C 2.3 calcul of the antidiffusive flux
                ji = jarr2(1, ju)
                jj = jarr2(2, ju)
                jk = jarr2(3, ju)
-!               junk  = zti(ji,jj,jk,A)
-!               junki = zti(ji + 1,jj,jk,A)
-!               junkj = zti(ji,jj + 1,jk,A)
-!               junkk = zti(ji,jj,jk - 1,A)
+               junk  = zti(ji,jj,jk,A)
+               junki = zti(ji + 1,jj,jk,A)
+               junkj = zti(ji,jj + 1,jk,A)
+               junkk = zti(ji,jj,jk - 1,A)
 !                zx(ji,jj,jk,A) = ( abs(zaa(ji,jj,jk)) - zdt *zaa(ji,jj,jk)**2/(e1u(ji,jj)*e2u(ji,jj)*fse3u(ji,jj,jk) ) )*inv_eu(ji,jj,jk) )
 !                zy(ji,jj,jk,A) = ( abs(zbb(ji,jj,jk)) - zdt*zbb(ji,jj,jk)**2/(e1v(ji,jj)*e2v(ji,jj)*fse3v(ji,jj,jk) ) )*inv_ev(ji,jj,jk) )
 !                zz(ji,jj,jk) = ( abs(zcc(ji,jj,jk)) - zdt*zcc(ji,jj,jk)**2/(e1t(ji,jj)*e2t(ji,jj)*fse3w(ji,jj,jk) ) )*inv_et(ji,jj,jk) )
-               zx(ji,jj,jk,A) = big_fact_zaa(ji,jj,jk)*(zti(ji + 1,jj,jk,A) - zti(ji,jj,jk,A))/
-     .          (zti(ji,jj,jk,A) + zti(ji + 1,jj,jk,A) + rtrn)* rsc
-               zy(ji,jj,jk,A) = big_fact_zbb(ji,jj,jk)*(zti(ji,jj + 1,jk,A) - zti(ji,jj,jk,A))/
-     .          (zti(ji,jj,jk,A) + zti(ji,jj + 1,jk,A) + rtrn)* rsc
-               zz(ji,jj,jk,A) = big_fact_zcc(ji,jj,jk)*(zti(ji,jj,jk,A) - zti(ji,jj,jk - 1,A))/
-     .          (zti(ji,jj,jk,A) + zti(ji,jj,jk - 1,A) + rtrn)* rsc*( -1.)
+               zx(ji,jj,jk,A) = big_fact_zaa(ji,jj,jk)*(junki - junk)/(junk + junki + rtrn)* rsc
+               zy(ji,jj,jk,A) = big_fact_zbb(ji,jj,jk)*(junkj - junk)/(junk + junkj + rtrn)* rsc
+               zz(ji,jj,jk,A) = big_fact_zcc(ji,jj,jk)*(junk - junkk)/(junk + junkk + rtrn)* rsc*( -1.)
 
            END DO
 !                 endif
@@ -828,12 +823,13 @@ C
 C 2.4 reinitialization
 C
 
-!$omp     parallel default(none) private(mytid,A,jk,jj,ji)
+!$omp     parallel default(none) private(mytid,A,junk,jk,jj,ji)
 !$omp&      shared(zkx,zky,zkz,zz,zx,zy,zti,jpjm1,jpim1,dimen_jarr1,jarr1,jpi,jpk,jpj,jn)
 
 #ifdef __OPENMP
           mytid = omp_get_thread_num()  ! take the thread ID
 #endif
+
 
       IF( mytid + jn <= jptra ) THEN
       A=mytid+1
@@ -844,9 +840,9 @@ C
              jk = 1
              DO jj = 2,jpjm1
                  DO ji = 2,jpim1
-!                   junk  = zti(ji,jj,jk,A)
-                   zkx(ji,jj,jk,A) = fsx(zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
-                   zky(ji,jj,jk,A) = fsy(zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
+                   junk  = zti(ji,jj,jk,A)
+                   zkx(ji,jj,jk,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
+                   zky(ji,jj,jk,A) = fsy(junk,zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
                  END DO
               END DO
 
@@ -866,10 +862,10 @@ C
                 ji = jarr1(1, ju)
                 jj = jarr1(2, ju)
                 jk = jarr1(3, ju)
-!                junk  = zti(ji,jj,jk,A)
-                zkx(ji,jj,jk,A) = fsx(zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
-                zky(ji,jj,jk,A) = fsy(zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
-                zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+                junk  = zti(ji,jj,jk,A)
+                zkx(ji,jj,jk,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
+                zky(ji,jj,jk,A) = fsy(junk,zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
+                zkz(ji,jj,jk,A) = fsz(junk,zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
 
              END DO
 
@@ -930,8 +926,8 @@ C        2.6. calcul of after field using an upstream advection scheme
 
 
          IF( mytid + jn <= jptra ) THEN
-          A = mytid+1
-          B = mytid+jn
+         A = mytid+1
+         B = mytid+jn
             if(ncor .EQ. 1) then
                DO ju=1, dimen_jarr3
 
@@ -985,9 +981,12 @@ C
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-        IF( mytid + jn <= jptra ) THEN
         A=mytid+1
         B=mytid+jn
+
+        IF( mytid + jn <= jptra ) THEN
+
+
            if(ncor .EQ. 1) then
               DO ju=1, dimen_jarrt
                  ji = jarrt(1, ju)

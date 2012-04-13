@@ -112,10 +112,7 @@
           nomefile(1:27)='BC/GIB_'//datestring//'.nc'
           if(lwp) write(*,*) "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
 
-
-          write(*,*) 'bc_gib: tra_matrix_gib ', tra_matrix_gib
           DO jn = 1, jn_gib
-              write(*,*) jn, 'tra_matrix_gib(jn)', tra_matrix_gib(jn)
               nomevar(1:7) = 'gib_'//ctrcnm(tra_matrix_gib(jn))
               if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
               CALL ioogsnc_bc_1d2(nomefile,nomevar, Gsizeglo,gib_aux)

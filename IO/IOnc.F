@@ -16,9 +16,6 @@
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
-      !write(*,*) 'rank = ', rank,' start = ', start, ' count = ', thecount
-
-
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
       stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)
       stat = nf90_get_var (ncid,VARid,M,start, thecount);
@@ -107,9 +104,6 @@
       start    = (/nimpp, njmpp,  1/)
       thecount = (/jpi,     jpj,  1/)
 
-
-
-      write(*,*) 'rank = ', rank,' start = ', start, ' count = ', thecount
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
       stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)

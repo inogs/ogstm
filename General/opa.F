@@ -123,8 +123,6 @@
       call parlec  ! read namelist
       call time_init
 
-      write(*,*) 'time_init called'
-
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager
       ! -------------------------
@@ -274,8 +272,6 @@
       ENDIF
 
 
-
-      write(*,*) 'Startting domrea '
       CALL domrea   !   Domain
       CALL domstp   !   Time Step for each level for tracer
       CALL inihdf   !   diffusion horizontal coefficient

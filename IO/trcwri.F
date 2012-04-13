@@ -43,6 +43,10 @@
 
       call mppsync()
 
+      buf = Miss_val
+      bufftrb = Miss_val
+      bufftrn = Miss_val
+
       DO jn=1,jptra
         if(rank == 0) then
            istart = nimpp
@@ -65,8 +69,30 @@
 
            totglamt(totistart:totiend, totjstart:totjend)       = glamt(relistart:reliend, reljstart:reljend)
            totgphit(totistart:totiend, totjstart:totjend)       = gphit(relistart:reliend, reljstart:reljend)
-           tottrn  (totistart:totiend, totjstart:totjend, 1:jpk)= trn  (relistart:reliend, reljstart:reljend, 1:jpk,jn)
-           tottrb  (totistart:totiend, totjstart:totjend, 1:jpk)= trb  (relistart:reliend, reljstart:reljend, 1:jpk,jn)
+
+
+            do jk =1 , jpk
+            do jj =1 , jpj
+            do ji =1 , jpi
+               if (tmask(ji,jj,jk).eq.1.0) buf(ji,jj, jk) = trn(ji,jj, jk, jn)
+            enddo
+            enddo
+            enddo
+           tottrn  (totistart:totiend, totjstart:totjend,:)= buf  (relistart:reliend, reljstart:reljend, :)
+
+
+            do jk =1 , jpk
+            do jj =1 , jpj
+            do ji =1 , jpi
+               if (tmask(ji,jj,jk).eq.1.0) buf(ji,jj, jk) = trb(ji,jj, jk, jn)
+            enddo
+            enddo
+            enddo
+
+           tottrb  (totistart:totiend, totjstart:totjend,:)= buf  (relistart:reliend, reljstart:reljend, :)
+
+
+
 
            do idrank = 1, size-1
 
@@ -137,9 +163,6 @@
                if (tmask(ji,jj,jk).eq.1.0) then
                   bufftrn(ind1)= trn(ji,jj, jk, jn)
                   bufftrb(ind1)= trb(ji,jj, jk, jn)
-               else
-                  bufftrn(ind1) = Miss_Val;
-                  bufftrb(ind1) = Miss_Val;
                endif
 
             enddo

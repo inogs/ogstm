@@ -13,7 +13,7 @@ CC local declarations
 CC ==================
       INTEGER kt,ktask
       LOGICAL isDumpAscii,sur,bot,isT,isBIO
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia)
+      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),e
 
       INTEGER ji,jj,jk!,jn
       INTEGER gji,gjj,gjk
@@ -67,10 +67,10 @@ C
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,gji,gjj,gjk,CSi,CS)
+!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,e,gji,gjj,gjk,CSi,CS)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
-!$omp&             sediPI,tra_pp,tra,rhopn,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
+!$omp&             sediPI,PH,tra_pp,tra,rhopn,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -97,10 +97,12 @@ C
                              a(jtr) = trn(ji,jj+mytid,jk,jtr)
                           END DO
 
+                          e=PH(ji,jj+mytid,jk)
+
                           call OPA_Input_EcologyDynamics(a,jtrmax,
      &                      tn(ji,jj+mytid,jk), sn(ji,jj+mytid,jk),
      &                      rhopn(ji,jj+mytid,jk), opa_ice, opa_co2, xpar(ji,jj+mytid,jk),
-     &                      e3t(jk), sur, vatm(ji,jj+mytid) * surf_mask(jk),bot )
+     &                      e3t(jk), sur, vatm(ji,jj+mytid) * surf_mask(jk),bot,e )
 
                           call OPA_reset()
 
@@ -119,6 +121,8 @@ C
                           DO jtr=1,jptra_dia
                              tra_pp(ji,jj+mytid,jk,jtr) = d(jtr) ! diagnostic
                           END DO
+
+                          PH(ji,jj+mytid,jk)=d(9) ! Follows solver guess
 
 ! Diagnostic
                           IF (isDumpAscii) THEN

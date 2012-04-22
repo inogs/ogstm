@@ -11,6 +11,7 @@
 !$omp  threadprivate(bfm_trn,bfm_tra)
       REAL(8), allocatable :: surf_mask(:)
       REAL(8), allocatable :: sediPI(:,:,:,:)
+      REAL(8), allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
 
 CC----------------------------------------------------------------------
       CONTAINS
@@ -23,6 +24,8 @@ CC----------------------------------------------------------------------
 !$omp end parallel
        allocate(surf_mask(jpk))
        allocate(sediPI(jpi,jpj,jpk,4))
+       allocate(PH(jpi,jpj,jpk))
+       PH=8.0
 !       sediPI = 0 ! la biologia non assegna valori sui punti di terra
        sediPI = 1000000 ! la biologia non assegna valori sui punti di terra
 !       write(*,*) 'sediPI =', sediPI

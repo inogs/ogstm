@@ -190,15 +190,15 @@ C -----------------
           DO jj = 1,jpj
             DO ji = 1,jpi
               trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
-CCC F79 We put .le. against .lt. since bfm doesn't like 0 concentration
-              if( tra(ji,jj,jk,jn+mytid).le.0.  ) then
-CCC             WRITE(numout,*) 'conc. exception ( ji , jj , jk , jn)' 
-                tra_FN(ji,jj,jk,jn+mytid) = tra_FN(ji,jj,jk,jn+mytid) - tra(ji,jj,jk,jn+mytid) + 0.00000000001
-CCC F79 13 01 2005 WARNING MASS INJECTION
-              trn(ji,jj,jk,jn+mytid) = 0.00000000001
-              trb(ji,jj,jk,jn+mytid) = 0.00000000001
-              end if
-              tra(ji,jj,jk,jn+mytid) = 0.e0
+!CCC F79 We put .le. against .lt. since bfm doesn't like 0 concentration
+!              if( tra(ji,jj,jk,jn+mytid).le.0.  ) then
+!CCC             WRITE(numout,*) 'conc. exception ( ji , jj , jk , jn)'
+!                tra_FN(ji,jj,jk,jn+mytid) = tra_FN(ji,jj,jk,jn+mytid) - tra(ji,jj,jk,jn+mytid) + 0.00000000001
+!CCC F79 13 01 2005 WARNING MASS INJECTION
+!              trn(ji,jj,jk,jn+mytid) = 0.00000000001
+!              trb(ji,jj,jk,jn+mytid) = 0.00000000001
+!              end if
+              tra(ji,jj,jk,jn+mytid) = 0.e0 ! tra becomes back trend and not source
             END DO
           END DO
         END DO

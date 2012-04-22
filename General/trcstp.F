@@ -26,8 +26,6 @@
 !   --------
 !      trc3ad, trcsbc, trczdf, trchdf, trcnxt, trcsms
 !                        passive tracers interface
-!
-
 
        USE myalloc
        IMPLICIT NONE
@@ -46,8 +44,6 @@
 
 ! this ROUTINE is called only every ndttrc time step
       IF (mod(kt,ndttrc) .NE. 0) RETURN
-
-
 
 
 ! this part is parallelized tracer  by tracer
@@ -75,6 +71,7 @@
 
       CALL trcsms(ktask,kt)
       CALL trczdf(ktask,kt) ! tracers: vertical diffusion
+      CALL snutel
       CALL trcnxt(ktask,kt) ! tracers: fields at next time step
 !      CALL trcrad           ! Correct artificial negative concentrations for isopycnal scheme
 !

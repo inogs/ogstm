@@ -31,7 +31,7 @@
       INTEGER ind
 
 
-      CHARACTER(LEN=29)  output_file_FN,output_file_nc  ! ave.20091231-12:00:00.P1n.nc
+      CHARACTER(LEN=29) output_file_nc  ! ave.20091231-12:00:00.P1n.nc
       CHARACTER(LEN=4)  var, var_nc
       CHARACTER(LEN=33) bkpname
       logical IsBackup
@@ -41,7 +41,7 @@
 ! ===================
 
 
-      INTEGER :: ir, ir2d, ir3d
+!      INTEGER :: ir2d, ir3d
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -68,15 +68,12 @@
 
       var_nc(1:3)    = ctrcnm(jn)
       output_file_nc = 'ave.'//datemean//'.'//var_nc(1:3)//'.nc'//CHAR(0)
-      output_file_FN = 'fne.'//datemean//'.'//var_nc(1:3)//'.dat'
 
 ! *************** START COLLECTING DATA *****************************
       if(rank == 0) then                    ! IF LABEL 1
-          ir  =jpiglo*jpjglo*jpk*4
-          ir3d=jpiglo*jpjglo*jpk*4
-          ir2d=jpiglo*jpjglo*4
+!          ir3d=jpiglo*jpjglo*jpk*4
+!          ir2d=jpiglo*jpjglo*4
 
-!          open(4445, file=output_file_FN, status='unknown',form='unformatted',access='direct', recl=ir)
 
 ! ******* rank 0 sets indexes of tot matrix where to place its own part
           iPd    = nldi
@@ -87,14 +84,10 @@
           jstart = njmpp
           irange    = iPe - iPd + 1
           jrange    = jPe - jPd + 1
-          totistart = istart + iPd - 1
-          totiend   = totistart + irange - 1
-          totjstart = jstart + jPd - 1
-          totjend   = totjstart + jrange - 1
-          relistart = 1 + iPd - 1
-          reliend   = relistart + irange - 1
-          reljstart = 1 + jPd - 1
-          reljend   = reljstart + jrange - 1
+          totistart = istart + iPd - 1; totiend  = totistart + irange - 1
+          totjstart = jstart + jPd - 1; totjend  = totjstart + jrange - 1
+          relistart = 1 + iPd - 1     ; reliend  = relistart + irange - 1
+          reljstart = 1 + jPd - 1     ; reljend  = reljstart + jrange - 1
 
 
 !***** START ASSEMBLING ***  rank 0 puts its tracer part in the tot matrix

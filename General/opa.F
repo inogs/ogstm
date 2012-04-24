@@ -93,6 +93,7 @@
        USE OPT_mem
        USE BC_mem
        USE BIO_mem
+       USE CALENDAR
        USE time_manager
 
 !----------------------------------------------------------------------
@@ -251,7 +252,9 @@
 ! *************************************************************
        SUBROUTINE INITIALIZING
        USE myalloc
+
        IMPLICIT NONE
+
 ! 1. Model general initialization
 ! ===============================
 
@@ -300,8 +303,9 @@
       ENDIF
 
 
-
       call ave_init
+      call photo_init
+
 
       END SUBROUTINE INITIALIZING
 
@@ -411,3 +415,23 @@
 
 
       end SUBROUTINE ave_init
+
+
+      SUBROUTINE photo_init
+       USE myalloc
+       USE calendar
+       USE TIME_Manager
+       IMPLICIT NONE
+      ! LOCAL
+       INTEGER ji,jj, julianday
+
+
+      call tau2julianday(TimeStepStart, deltaT, julianday)
+      do jj =1, jpj
+         do ji=1, jpi
+            DAY_LENGTH(ji,jj) = photoperiod(julianday, gphit(ji,jj))
+         enddo
+      enddo
+
+
+      END SUBROUTINE photo_init

@@ -99,7 +99,7 @@
 
 !***** START ASSEMBLING ***  rank 0 puts its tracer part in the tot matrix
           tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO (relistart:reliend, reljstart:reljend,:,jn)
-!          tottrnFN(totistart:totiend, totjstart:totjend,:)= tra_FN(relistart:reliend, reljstart:reljend,:,jn)
+
 
 
 
@@ -114,7 +114,6 @@
               call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 7,mpi_comm_world, status, ierr)
               call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
               call MPI_RECV(bufftrn    ,jpi_rec*jpj_rec*jpk,  mpi_real8, idrank, 9,mpi_comm_world, status, ierr) ! ** then tracer buffer
-!              call MPI_RECV(bufftrn_FN, jpi_rec*jpj_rec*jpk,  mpi_real8, idrank,10,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
@@ -133,7 +132,6 @@
                  do ji =totistart,totiend
                      ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
                      tottrnIO(ji,jj,jk)= bufftrn   (ind)
-!                     tottrnFN(ji,jj,jk)= bufftrn_FN(ind)
                  enddo
                 enddo
                enddo
@@ -151,7 +149,6 @@
              do ji =1 , jpi
                ind            =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
                bufftrn   (ind)= traIO( ji,jj,jk,jn)
-!               bufftrn_FN(ind)= tra_FN(ji,jj,jk,jn)
              enddo
             enddo
           enddo
@@ -169,7 +166,7 @@
           call MPI_SEND(nldi, 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
           call MPI_SEND(nldj, 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
           call MPI_SEND(bufftrn, jpi * jpj * jpk,mpi_real8  , 0, 9, mpi_comm_world,ierr)
-!          call MPI_SEND(bufftrn_FN, jpi * jpj * jpk,mpi_real8  , 0, 10, mpi_comm_world,ierr)
+
 
 
       endif ! IF LABEL 1, if(rank == 0)
@@ -193,8 +190,6 @@
           d2f3d= REAL(tottrnIO,4) !  conversion from double to float
           CALL IOOGSNC_AVE_3D2(output_file_nc, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo, d2f3d)
 
-!            write(4445,rec=1) (((REAL(tottrnFN(ji,jj,jk),4), ji=1,jpiglo), jj=1, jpjglo), jk=1, jpk)
-!            close(4445)
          endif
 
 

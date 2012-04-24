@@ -63,7 +63,8 @@
         PUBLIC :: ymds2ju, ju2ymds, tlen2itau, isittime,
      &   ioconf_calendar, ioget_calendar, itau2date, ioget_timestamp,
      & ioconf_startdate, itau2ymds, time_add, time_diff,
-     & write_date_string, read_date_string, datestring2sec
+     & write_date_string, read_date_string, datestring2sec,photoperiod,
+     & tau2julianday
         !
         INTERFACE ioget_calendar
           MODULE PROCEDURE ioget_calendar_real1
@@ -1074,8 +1075,138 @@
 
        END FUNCTION datestring2sec
 
+!==============================================================================
+      SUBROUTINE tau2julianday(TAU, deltaT,julian)
+
+      IMPLICIT NONE
+
+      INTEGER, INTENT(IN)  :: TAU
+      REAL(8), INTENT(IN)  :: deltaT
+      INTEGER, INTENT(OUT) :: julian
+
+      ! LOCAL
+      integer :: year, month,day
+      real(8) :: sec, julianFrom1582, julianOnYear
 
 
+         call itau2ymds(TAU,deltaT, year, month,day,sec)
+         call ymds2ju(year, month, day, sec       , julianFrom1582)
+         call ymds2ju(year,     1,  0,  real(0.0,8) , julianOnYear)
+
+         julian = INT(julianFrom1582-julianOnYear)
+
+
+      END SUBROUTINE tau2julianday
+
+
+!=======================================================================
+
+      REAL(8) FUNCTION photoperiod(jday, latit)
+!     jd          = julian day
+!     latit       = latitude in degrees
+!     photoperiod = day length in hours
+
+
+      IMPLICIT NONE
+
+      INTEGER, INTENT(IN)    :: jday
+      REAL(8), INTENT(IN)    :: latit
+
+      ! LOCAL
+      REAL(8)    :: Pi
+      REAL(8)    :: declin,refract,sundia,f0,x1
+
+
+      Pi = 3.1415927
+
+!      declin = 180./Pi * pho_delta(jday)
+      declin  = p_delta(jday)
+      refract = Pi * 17./30./180.
+      sundia  = Pi * 4./15./180.
+      f0 = 0
+
+      x1 = tan(declin + 0.5 * sundia + refract) * tan(Pi * latit / 180.)
+
+      if (x1 .GE. 1) then
+         f0 = Pi
+      endif
+
+      if ( (x1 .GT. -1) .AND. (x1 .LT. 1) ) then
+         f0 = Pi / 2. + atan(x1 / sqrt(1. - x1 * x1))
+      endif
+
+      photoperiod  = f0/Pi*24.
+
+      END FUNCTION photoperiod
+
+!=======================================================================
+      REAL(8) FUNCTION p_delta(jday)
+
+      implicit none
+
+      INTEGER, INTENT(IN)  :: jday
+      ! LOCAL
+      REAL(8)  :: sdelta
+
+
+      sdelta  = sin(p_oblique(jday)) * sin(p_lambda(jday))
+      p_delta = atan(sdelta / sqrt(1. - sdelta * sdelta))
+
+      END FUNCTION p_delta
+
+!=======================================================================
+      REAL(8) FUNCTION p_oblique(jday)
+
+      implicit none
+
+      INTEGER, INTENT(IN)  :: jday
+      !LOCAL
+
+      REAL(8)  :: rads
+
+      rads = 3.1415927 / 180.
+      p_oblique = 23.439 * rads - 4.e-07 * rads * REAL(jday,8)
+
+      END FUNCTION p_oblique
+!=======================================================================
+
+      REAL(8) FUNCTION p_lambda(jday)
+      implicit none
+
+      INTEGER, INTENT(IN)  :: jday
+      ! LOCAL
+      REAL(8)  :: rads, L, g
+
+      rads = 3.1415927 / 180.
+
+      L        = p_range(280.461 * rads + 0.9856474 * rads * jday)
+      g        = p_range(357.528 * rads + 0.9856003 * rads * jday)
+      p_lambda = p_range(L + 1.915 * rads * sin(g) + 0.02 * rads * sin(2 * g))
+
+      end function p_lambda
+!=======================================================================
+      REAL(8) FUNCTION p_range(x)
+      implicit none
+
+
+      REAL(8), INTENT(IN)  :: x
+      ! LOCAL
+      REAL(8)  :: tpi,b,a
+
+      tpi = 2 * 3.1415927
+
+      b = x / tpi
+      a = tpi * (b - floor(b))
+
+      if (a .LT. 0) then
+         a = tpi + a
+      endif
+
+      p_range = a
+
+      END FUNCTION p_range
+!=======================================================================
       END MODULE calendar
+
 
 

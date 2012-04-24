@@ -88,7 +88,8 @@
 
          sec=datestring2sec(DATEstring)
 
-         call yearly(DATEstring)
+         call yearly(DATEstring) ! Performs daily updates
+         call daily(DATEstring)  ! Performs daily updates
 
          stpparttime = MPI_WTIME()  ! stop cronomether
          if(lwp) write(*,*) "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring

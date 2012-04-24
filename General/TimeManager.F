@@ -414,6 +414,31 @@
       endif
       END SUBROUTINE YEARLY
 
+! *******************************************************
+
+      SUBROUTINE DAILY(datestring)
+       USE myalloc
+       USE CALENDAR
+      IMPLICIT NONE
+
+      CHARACTER(LEN=17),INTENT( IN) :: datestring
+      ! LOCAL
+      integer julianday, ji,jj
+
+      if (datestring(10:17).eq.'00:00:00') then
+
+         call tau2julianday(NOW_timestep, deltaT, julianday)
+         do jj =1, jpj
+            do ji=1, jpi
+               DAY_LENGTH(ji,jj) = photoperiod(julianday, gphit(ji,jj))
+            enddo
+         enddo
+
+
+      endif
+      END SUBROUTINE DAILY
+
+
 ! **************************************************************
 
       SUBROUTINE COUNTLINE(FILENAME,LINES)

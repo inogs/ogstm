@@ -464,6 +464,8 @@ CC      neuler           : restart euler forward option (0=Euler)
       INTEGER neuler
       LOGICAL lrstar
 
+      REAL(8), ALLOCATABLE, DIMENSION(:,:) :: DAY_LENGTH
+
 
 CC----------------------------------------------------------------------
 CC         opa output
@@ -595,7 +597,6 @@ CC
       REAL(8), allocatable :: tottrb(:,:,:)
 
       REAL(8), allocatable ::  tottrnIO(:,:,:) ! matrix for i/o writing(trcdit.F)
-      REAL(8), allocatable ::  tottrnFN(:,:,:)
       REAL(8), allocatable ::  tottrbIO(:,:,:)
       REAL(8), allocatable ::  totsnIO(:,:,:) 
       REAL(8), allocatable ::  tottnIO(:,:,:) 
@@ -1537,7 +1538,6 @@ CCC Paolo 30/4/2004 Flag time advance SMS or Dyn
 C     write(*,*) 'Mem_allocated:', mem_all
 CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
        allocate(tottrnIO(jpiglo,jpjglo,jpk))
-       allocate(tottrnFN(jpiglo,jpjglo,jpk))
        allocate(tottrbIO(jpiglo,jpjglo,jpk))
        allocate(totsnIO(jpiglo,jpjglo,jpk)) 
        allocate(tottnIO(jpiglo,jpjglo,jpk)) 
@@ -1554,7 +1554,7 @@ CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
        allocate(totdiaIO(jpiglo,jpjglo,jpk,jptra_dia))
 !       allocate(rsttrn(jpiglo,jpjglo,jpk))
 !       allocate(rsttrb(jpiglo,jpjglo,jpk))
-       mem_all = mem_all +  rea_len*(13*jpiglo*jpjglo*jpk
+       mem_all = mem_all +  rea_len*(12*jpiglo*jpjglo*jpk
      .          + 5*jpiglo*jpjglo)
 C     write(*,*) 'Mem_allocated:', mem_all
 
@@ -1781,6 +1781,8 @@ CC
 
 #endif
 
+CC    photoperiod
+        allocate(DAY_LENGTH(jpi,jpj))
   
         END subroutine alloc_tot
 

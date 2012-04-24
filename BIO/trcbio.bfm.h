@@ -13,7 +13,7 @@ CC local declarations
 CC ==================
       INTEGER kt,ktask
       LOGICAL isDumpAscii,sur,bot,isT,isBIO
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),e
+      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10)
 
       INTEGER ji,jj,jk!,jn
       INTEGER gji,gjj,gjk
@@ -67,9 +67,9 @@ C
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,e,gji,gjj,gjk,CSi,CS)
+!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,er,gji,gjj,gjk,CSi,CS)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
-!$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,
+!$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
 !$omp&             sediPI,PH,tra_pp,tra,rhopn,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
 
 #ifdef __OPENMP
@@ -77,10 +77,7 @@ C
 #endif
 
                  IF( mytid + jj <= jpjm1 ) THEN
-C
-C 1. biological level
-C ===================
-C
+
                  DO jk=1,jpkbm1
                     DO ji = 2,jpim1
 
@@ -96,13 +93,19 @@ C
                           DO jtr=1, jtrmax
                              a(jtr) = trn(ji,jj+mytid,jk,jtr)
                           END DO
+! Environmental regulating factors (er)
+                          er(1)  = tn(ji,jj+mytid,jk)
+                          er(2)  = sn(ji,jj+mytid,jk)
+                          er(3)  = rhopn(ji,jj+mytid,jk)
+                          er(4)  = opa_ice
+                          er(5)  = opa_co2
+                          er(6)  = xpar(ji,jj+mytid,jk)
+                          er(7)  = DAY_LENGTH(ji,jj+mytid)
+                          er(8)  = e3t(jk)
+                          er(9)  = vatm(ji,jj+mytid) * surf_mask(jk)
+                          er(10) = PH(ji,jj+mytid,jk)
 
-                          e=PH(ji,jj+mytid,jk)
-
-                          call OPA_Input_EcologyDynamics(a,jtrmax,
-     &                      tn(ji,jj+mytid,jk), sn(ji,jj+mytid,jk),
-     &                      rhopn(ji,jj+mytid,jk), opa_ice, opa_co2, xpar(ji,jj+mytid,jk),
-     &                      e3t(jk), sur, vatm(ji,jj+mytid) * surf_mask(jk),bot,e )
+                          call OPA_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
                           call OPA_reset()
 
@@ -180,8 +183,5 @@ C
 
 !$omp end parallel
 
-C END of slab
-C ===========
-C
                 END DO MAIN_LOOP
 

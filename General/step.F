@@ -43,6 +43,7 @@
       REAL(8) stpparttime,stptottime
       character(LEN=17)  datestring, datemean, datefrom
       REAL(8) sec
+      LOGICAL B
 
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
@@ -157,18 +158,30 @@
            write(*,*) "************* OPA TEMPORIZATION ************"
            write(*,*) "              Iteration",TAU
            write(*,*) "routine******time_tot*********time_ave*****"
-           write(*,*) "dtadyn____", dtadyntottime,"  ",dtadyntottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcopt____", trcopttottime,"  ",trcopttottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcsms____", trcsmstottime,"  ",trcsmstottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcadv____", trcadvtottime,"  ",trcadvtottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcbil____", trcbilaphdftottime,"  ",trcbilaphdftottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcbbl____", trcbbltottime,"  ",trcbbltottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trczdf____", trczdftottime,"  ",trczdftottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcnxt____", trcnxttottime,"  ",trcnxttottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcstp____", trcstptottime,"  ",trcstptottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcwri____", trcwritottime,"  ",trcwritottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "trcdia____", trcdiatottime,"  ",trcdiatottime/(TAU - TimeStepStart +1), " rank->", rank
-           write(*,*) "stp_______", stptottime   ,"  ",stptottime   /(TAU - TimeStepStart +1)
+           B = writeTemporization("dtadyn____",dtadyntottime)
+           B = writeTemporization("trcopt____", trcopttottime)
+           B = writeTemporization("trcsms____", trcsmstottime)
+           B = writeTemporization("trcadv____", trcadvtottime)
+           B = writeTemporization("trcbil____", trcbilaphdftottime)
+           B = writeTemporization("trcbbl____", trcbbltottime)
+           B = writeTemporization("trczdf____", trczdftottime)
+           B = writeTemporization("trcnxt____", trcnxttottime)
+           B = writeTemporization("trcstp____", trcstptottime)
+           B = writeTemporization("trcwri____", trcwritottime)
+           B = writeTemporization("trcdia____", trcdiatottime)
+           B = writeTemporization("stp_______", stptottime   )
+
+!           write(*,*) "trcopt____", trcopttottime,"  ",trcopttottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcsms____", trcsmstottime,"  ",trcsmstottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcadv____", trcadvtottime,"  ",trcadvtottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcbil____", trcbilaphdftottime,"  ",trcbilaphdftottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcbbl____", trcbbltottime,"  ",trcbbltottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trczdf____", trczdftottime,"  ",trczdftottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcnxt____", trcnxttottime,"  ",trcnxttottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcstp____", trcstptottime,"  ",trcstptottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcwri____", trcwritottime,"  ",trcwritottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "trcdia____", trcdiatottime,"  ",trcdiatottime/(TAU - TimeStepStart +1), " rank->", rank
+!           write(*,*) "stp_______", stptottime   ,"  ",stptottime   /(TAU - TimeStepStart +1)
            write(*,*) "*******************************************"
        ENDIF
       ENDIF
@@ -180,5 +193,17 @@
 
       END DO  
 
+      CONTAINS
+
+      LOGICAL FUNCTION writeTemporization(string, elapsedtime)
+      IMPLICIT NONE
+      CHARACTER(LEN=*) string
+      REAL(8) elapsedtime
+
+      write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," rank->", rank
+
+      writeTemporization = .true.
+250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I2 )
+      END FUNCTION writeTemporization
 
       END SUBROUTINE step

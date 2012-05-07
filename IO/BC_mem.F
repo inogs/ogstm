@@ -40,20 +40,23 @@
 
       IMPLICIT NONE
       CHARACTER(LEN=50) atmfile, rivfile, gibfile
-      CHARACTER(LEN=9)  nomedim0
-      CHARACTER(LEN=13) nomedim1
+!      CHARACTER(LEN=9)  nomedim0
+!      CHARACTER(LEN=13) nomedim1
+!
+!        nomedim0='riv_idxt'//CHAR(0)
+!        nomedim1 = 'gib_idxt_N1p'//CHAR(0)
 
-        nomedim0='riv_idxt'//CHAR(0)
-        nomedim1 = 'gib_idxt_N1p'//CHAR(0)
+        atmfile='BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'!//char(0);
+        gibfile='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'!//char(0);
+        rivfile='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'!//char(0);
 
-        atmfile='BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'//char(0);
-        gibfile='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'//char(0);
-        rivfile='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'//char(0);
+         call getDimension(atmfile,'atm_idxt'    ,Asizeglo)
+         call getDimension(gibfile,'gib_idxt_N1p',Gsizeglo)
+         call getDimension(rivfile,'riv_idxt'    ,Rsizeglo)
 
-
-           nomedim1(1:12)='gib_idxt_N1p'; CALL ioogsnc_idx(gibfile,nomedim1,Gsizeglo)
-           nomedim0(1:8)='riv_idxt'; CALL ioogsnc_idx(rivfile,nomedim0,Rsizeglo)
-           nomedim0(1:8)='atm_idxt'; CALL ioogsnc_idx(atmfile,nomedim0,Asizeglo)
+!           nomedim1(1:12)='gib_idxt_N1p'; CALL ioogsnc_idx(gibfile,nomedim1,Gsizeglo)
+!           nomedim0(1:8)='riv_idxt'; CALL ioogsnc_idx(rivfile,nomedim0,Rsizeglo)
+!           nomedim0(1:8)='atm_idxt'; CALL ioogsnc_idx(atmfile,nomedim0,Asizeglo)
 
 
                write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' rank = ',rank

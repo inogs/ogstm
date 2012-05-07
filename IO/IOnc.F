@@ -246,6 +246,41 @@
 
         end SUBROUTINE readnc_int_1d
 
+       !****************************************************************************
+
+
+        SUBROUTINE getDIMENSION(fileNetCDF,dimname,n)
+        use netcdf
+        implicit none
+        character  fileNetCDF*(*), dimname*(*)
+        integer n
+
+        ! local
+
+        integer DIMid,ncid,stat
+        character(LEN=100) junk
+        integer counter
+
+        counter = 0
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)    ; call handle_err1(stat,counter)
+        stat = nf90_inq_dimid (ncid, dimname, DIMid)     ; call handle_err1(stat,counter)
+        stat = nf90_Inquire_Dimension (ncid, DIMid, junk, n); call handle_err1(stat,counter)
+        stat = nf90_close(ncid)                             ; call handle_err1(stat,counter)
+        END SUBROUTINE getDIMENSION
+
+        !****************************************************************************
+       SUBROUTINE write_restart(filename,varB,varN)
+       USE netcdf
+       USE myalloc
+
+       IMPLICIT NONE
+       CHARACTER*(*) filename
+       real(8) varB, varN
+
+!      to be continued
+
+
+       END SUBROUTINE write_restart
 
 
       !****************************************************************************

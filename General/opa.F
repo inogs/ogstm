@@ -93,6 +93,7 @@
        USE OPT_mem
        USE BC_mem
        USE BIO_mem
+       USE DIA_mem
        USE CALENDAR
        USE time_manager
 
@@ -208,6 +209,7 @@
        USE BC_mem
        USE BIO_mem
        USE SED_mem
+       USE DIA_mem
 
        IMPLICIT NONE
 
@@ -230,6 +232,7 @@
 !     needs Time_Manager
       call alloc_DTATRC(); write(*,*)'My_Rank:',Rank,'alloc_TRC:', mem_all ; mem_all_tot=mem_all_tot+mem_all
 #endif
+      call alloc_DIA()   ; write(*,*)'My_Rank:',Rank,'alloc_DIA:', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
       call myalloc_BIO() ; write(*,*)'My_Rank:',Rank,'alloc_BIO :', mem_all ; mem_all_tot=mem_all_tot+mem_all
       call myalloc_SED() ; write(*,*)'My_Rank:',Rank,'alloc_SED :', mem_all ; mem_all_tot=mem_all_tot+mem_all

@@ -20,7 +20,9 @@
       USE myalloc
       USE myalloc_mpp
       USE BC_mem
+      USE DIA_mem
       USE TIME_MANAGER
+
       IMPLICIT NONE
 
 ! local declarations
@@ -193,9 +195,8 @@
           if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_gib'
           call alloc_DTATRC_local_gib
 
-          write(*,*) 'domrea->GIBRE_Indexing GIB iniziata, rank=', rank
           B=GIBRe_indexing()
-          write(*,*) 'domrea->GIBRE_Indexing GIB finita, rank=', rank
+
       endif
 
 ! ********************************  Rivers ******
@@ -206,9 +207,9 @@
 
       if (Rsize.NE. 0) then
           call alloc_DTATRC_local_riv
-          write(*,*) 'domrea->RIVRE_Indexing RIV iniziata, rank=', rank
+
           B=RIVRe_Indexing()
-          write(*,*) 'domrea->RIVRE_Indexing RIV finita, rank=', rank
+
       endif
 
 
@@ -229,7 +230,29 @@
 
 #endif
 
-!       if(lwp) write(*,*) 'DOMREA finita, wait for flushing...'
+! **************************************** FLUXES
+
+      CALL readnc_int_1d('Fluxes.nc','index',FSizeGlo,INDFluxGlo)
+      if (lwp) then
+        do ii = 1,FSizeGlo
+          write(*,*) 'Fluxes', ii, INDFluxGlo(ii)
+        enddo
+       endif
+
+
+
+      Fsize = COUNT_InSubDomain(FSizeGlo, INDFluxGlo)
+      write(*,*) 'rank=', rank, ' Fsize = ' , Fsize
+
+      if (Fsize.NE.0) then
+         call alloc_DIA_local_flx
+         write(*,*) 'domrea->FLXRE_Indexing iniziata, rank=', rank
+         B=FLXRe_Indexing()
+         write(*,*) 'domrea->FLXRE_Indexing finita, rank=', rank
+
+      endif
+
+       write(*,*) 'DOMREA finita, rank = ', rank
 
 !       call flush()
 
@@ -269,7 +292,7 @@
 
       END FUNCTION COUNT_InSubDomain
 
-
+! *************************************************************************
       LOGICAL FUNCTION RIVRE_Indexing()
           IMPLICIT NONE
           ! local
@@ -298,7 +321,7 @@
 
       RIVRE_Indexing = .true.
       END FUNCTION RIVRE_Indexing
-
+! *************************************************************************
       LOGICAL FUNCTION GIBRE_Indexing()
           IMPLICIT NONE
 
@@ -329,7 +352,7 @@
       GIBRE_Indexing= .true.
       END FUNCTION GIBRE_Indexing
 
-
+! *************************************************************************
 
           LOGICAL FUNCTION  ATMRE_Indexing()
 
@@ -359,6 +382,36 @@
            enddo
         ATMRE_Indexing =.true.
       END FUNCTION ATMRE_Indexing
+
+! *************************************************************************
+      LOGICAL FUNCTION  FLXRE_Indexing()
+
+          IMPLICIT NONE
+
+          ! local
+          INTEGER ii,jj,kk,jv
+          INTEGER counter,junk
+
+
+          counter=0
+           do kk =1, jpk
+            do jj =1, jpj
+             do ii =1, jpi
+                junk = idxt(ii,jj,kk)
+                do jv =1, FsizeGLO
+                   if ( junk.EQ.INDFluxGlo(jv) )  then
+                      counter = counter + 1
+                      flx_ridxt(counter,1) = jv
+                      flx_ridxt(counter,2) = ii
+                      flx_ridxt(counter,3) = jj
+                      flx_ridxt(counter,4) = kk
+                   endif
+              enddo
+             enddo
+            enddo
+           enddo
+        FLXRE_Indexing =.true.
+      END FUNCTION FLXRE_Indexing
 
 
 

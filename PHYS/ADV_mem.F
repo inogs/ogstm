@@ -2,6 +2,7 @@
 
        USE modul_param 
        USE myalloc
+       USE DIA_mem
 
        IMPLICIT NONE
 
@@ -12,11 +13,12 @@ CC Common/comcoh/  : ADVection matrix
 CC ---------------------------------------------------------------------
 C
 C
-      INTEGER :: goodpoints, allpoints, tpoints, ju
+      INTEGER :: goodpoints, allpoints, tpoints
       INTEGER :: dimen_jarr, dimen_jarr1, dimen_jarr2, dimen_jarr3, dimen_jarrt 
       INTEGER :: myji, myjj, myjk, locsum
       INTEGER :: jilef, jjlef, jklef, jirig, jjrig, jkrig
       INTEGER, allocatable :: advmask(:,:,:)
+      INTEGER, allocatable :: jarr(:,:), jarr1(:,:), jarr2(:,:), jarr3(:,:), jarrt(:,:), jarr_adv_flx(:)
       REAL(8), allocatable :: zti(:,:,:,:),ztj(:,:,:,:)
       REAL(8), allocatable :: zaa(:,:,:),zbb(:,:,:),zcc(:,:,:)
       REAL(8), allocatable :: zx(:,:,:,:),zy(:,:,:,:),zz(:,:,:,:)
@@ -29,7 +31,7 @@ C
       REAL(8), allocatable :: inv_eu(:,:,:), inv_ev(:,:,:), inv_et(:,:,:) 
       REAL(8), allocatable :: big_fact_zaa(:,:,:), big_fact_zbb(:,:,:), big_fact_zcc(:,:,:) 
       REAL(8), allocatable :: zbtr_arr(:,:,:)
-      REAL(8), allocatable :: jarr(:,:), jarr1(:,:), jarr2(:,:), jarr3(:,:), jarrt(:,:)
+
 CC----------------------------------------------------------------------
       CONTAINS
 
@@ -74,7 +76,8 @@ CC----------------------------------------------------------------------
        allocate(jarr2(3, jpi*jpj*jpk))
        allocate(jarr3(3, jpi*jpj*jpk))
        allocate(jarrt(3, jpi*jpj*jpk))
-       mem_all= rea_len*34 * jpi* jpj* jpk+ int_len *jpi* jpj* jpk 
+       allocate(jarr_adv_flx(jpi*jpj*jpk))
+       mem_all= rea_len*35 * jpi* jpj* jpk+ int_len *jpi* jpj* jpk
 
       END subroutine myalloc_ADV
 

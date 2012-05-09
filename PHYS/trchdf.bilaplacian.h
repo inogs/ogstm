@@ -85,6 +85,7 @@ CC----------------------------------------------------------------------
       USE myalloc
       USE myalloc_mpp
       USE HDF_mem
+      USE DIA_mem
 
         IMPLICIT NONE
 
@@ -94,8 +95,10 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER ktask,kt
+
 #if defined key_passivetrc 
-      INTEGER ji,jj,jk,jn,jv,mytid,ntids,pack_size!,itid
+      LOGICAL l1,l2,l3
+      INTEGER ji,jj,jk,jn,jv,jf,mytid,ntids,pack_size!,itid
       INTEGER myji,myjj
       INTEGER locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
 #ifdef __OPENMP
@@ -210,6 +213,22 @@ C       dimen_jvhdf3=0
                 END DO
              END DO
           END DO
+
+          jarr_hdf_flx=0
+
+             DO jf=1,Fsize
+                DO jv=1, dimen_jvhdf3
+
+                   l1 = flx_ridxt(jf,2) .EQ. jarr_hdf(1,jv,2)
+                   l2 = flx_ridxt(jf,3) .EQ. jarr_hdf(2,jv,2)
+                   l3 = flx_ridxt(jf,4) .EQ. jarr_hdf(3,jv,2)
+
+                   IF ( l1 .AND. l2 .AND. l3) THEN
+                      jarr_hdf_flx(jv)= jf
+                   END IF
+
+                END DO
+             END DO
        ENDIF
 C
 C tracer slab
@@ -295,9 +314,9 @@ C 2. Bilaplacian
 C --------------
 C
 C ... third derivative (gradient)
-!$omp  parallel default(none) private(mytid,jv,jk,jj,ji)
+!$omp  parallel default(none) private(mytid,jv,jk,jj,ji,jf)
 !$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,zlt,tmask,ztv,zeev,
-!$omp&                               dimen_jvhdf3,zta,zbtr,tra)
+!$omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -326,12 +345,19 @@ C ... fourth derivative (divergence) and add to the general tracer trend
              ji = jarr_hdf(1,jv,2)
              jj = jarr_hdf(2,jv,2)
              jk = jarr_hdf(3,jv,2)
+             jf = jarr_hdf_flx(jv)
 
 C   ... horizontal diffusive trends
              zta(mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
      $            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj)
 C   ... add it to the general tracer trends
               tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid) + zta(mytid+1)
+
+!     Save diffusive fluxes x,y
+              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
+                 diaflx(jf,jn+mytid,5) = diaflx(jf,jn+mytid,5) + ztu(ji,jj,jk,mytid+1)
+                 diaflx(jf,jn+mytid,6) = diaflx(jf,jn+mytid,6) + ztv(ji,jj,jk,mytid+1)
+              END IF
 #if defined key_trc_diatrd
 C   ... save the horizontal diffusive trends in X and Y
               trtrd(ji,jj,jk,jn,4) = (  ztu(ji,jj) - ztu(ji-1,jj) )

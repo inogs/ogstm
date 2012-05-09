@@ -6,7 +6,7 @@
 
           INTEGER FsizeGlo, Fsize
           INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo
-          INTEGER(4), allocatable, DIMENSION(:,:)   ::  flx_ridxt
+          INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
           REAL(8),    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
 
           CONTAINS
@@ -35,7 +35,7 @@
        allocate(flx_ridxt (Fsize,4        ))
 !       allocate(riv_dtatrc(Fsize,2, jn_riv))
        allocate(diaflx    (Fsize,   jptra, 7))
-
+       diaflx = 0
       END SUBROUTINE alloc_DIA_local_flx
 
 

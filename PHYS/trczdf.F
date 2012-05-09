@@ -53,41 +53,13 @@ CC         no flux on passive tracers: applied through the masked field avt
 CC      Add this trend to the general trend tra :
 CC         tra = tra + dz( avt dz(tr) )
 CC
-CC    Third part: recover avt resulting from the vertical physics
-CC    ==========  alone, as it can be used to compute the turbocline
-CC            depth in diamld ('key_trahdfiso' or 'key_trahdfgeop')
-CC       avt = zavt
-CC
-CC      'key_trc_diatrd' defined: trend saved for futher diagnostics.
-CC
-CC      macro-tasked on tracer slab (jn-loop)
-CC
-CC   Input :
-CC   ------
-CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
-CC      common
-CC            /comcoo/          : scale factors
-CC            /comask/          : masks, bathymetry
-CC            /cottrc/          : previous fields (before) and next
-CC                                fields (after)  for passive tracer
-CC
-CC   Output :
-CC   -------
-CC      common
-CC            /cottrc/ tra      : passive tracer (tr) trend increased
-CC                                by the after vertical diffusion trend
-CC            /cottrd/ trtrd    : after vertical tracer diffusion trend
-CC                                (IF 'key_trc_diatrd' is defined)
 
-CC parameters and commons
-CC ======================
 
 
        USE myalloc
        USE myalloc_mpp
        USE ZDF_mem
+       USE DIA_mem
        USE stafun
         IMPLICIT NONE
 
@@ -97,8 +69,8 @@ CC ==================
       INTEGER ktask, kt
 
 #if defined key_passivetrc
-
-      INTEGER ji, jj, jk, jn, jv
+      LOGICAL l1,l2,l3
+      INTEGER ji, jj, jk, jn, jv, jf
 ! omp variables
       INTEGER :: mytid, ntids
 
@@ -115,6 +87,7 @@ C
 C only IMPLICIT scheme
 C
       REAL(8) z2dtt
+      REAL(8)  delta_tra(jpk)
 #if ! defined key_trahdfbilap
 #    if defined key_trahdfiso || defined key_trahdfgeop
       REAL(8) zcoef0, zcoef3, zcoef4, zcoeg3
@@ -150,6 +123,22 @@ CC ===================
               ENDIF
             END DO
          END DO
+         ! Cross matrix between transect and local optimized indexing
+         jarr_zdf_flx=0
+
+         DO jf=1,Fsize
+            DO jv=1, dimen_jvzdf
+               DO jk=1,jpk
+                  l1 = flx_ridxt(jf,2) .EQ. jarr_zdf(1,jv)
+                  l2 = flx_ridxt(jf,3) .EQ. jarr_zdf(2,jv)
+                  l3 = flx_ridxt(jf,4) .EQ. jk
+                  IF ( l1 .AND. l2 .AND. l3) THEN
+                     jarr_zdf_flx(jv,jk)= jf
+                  END IF
+               END DO
+            END DO
+         END DO
+
       ENDIF
 
 C
@@ -185,9 +174,9 @@ C
 C 0. Local constant initialization
 C --------------------------------
 C
-!$omp    parallel default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2)
+!$omp    parallel default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra)
 !$omp&                           shared(jn,dimen_jvzdf,jarr_zdf,ndttrc,rdttra,jpk,jpkm1,avt,zwi,
-!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e3t,e3w)
+!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e3t,e3w,jarr_zdf_flx,Fsize,diaflx)
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -282,21 +271,9 @@ C Second member construction
 C   ... Euler time stepping when starting from rest
 
 
-CCC Paolo tra is tracer or tracer trend?
-CCC 31 10 2005 F79 We introduce a module for time advancing with diagnostic
-CCC for false negatives
             zwy(jk,mytid+1) = trb(ji,jj,jk,jn+mytid) + z2dtt * tra(ji,jj,jk,jn+mytid)
-CCC 31 10 2005 F79 we pass zwy to the F neg diagnostic
-CCC            tra(ji,jj,jk,jn) = zwy(jk) * tmask(ji,jj,jk)
 
         END DO
-
-CCC 31 10 2005 F79 we pass zwy to the F neg diagnostic
-C       IF(jn .EQ. jptra) THEN
-C        IF(jj .EQ. jpjm1) THEN
-C         CALL count_FN(kt)
-C        ENDIF
-C       ENDIF
 C
 C Matrix inversion from the first level
         ikst = 1
@@ -340,6 +317,7 @@ C
 
             zwt(jk,mytid+1)=zwd(jk,mytid+1)-zwi(jk,mytid+1)*zws(jk-1,mytid+1)
      $                             /zwt(jk-1,mytid+1)
+
         END DO
 
           zwz(ikst,mytid+1)=zwy(ikst,mytid+1)
@@ -348,6 +326,7 @@ C
 
             zwz(jk,mytid+1)=zwy(jk,mytid+1)-zwi(jk,mytid+1)/zwt(jk-1,mytid+1)
      $                             *zwz(jk-1,mytid+1)
+
         END DO
 
         zwx(jpkm1,mytid+1)=zwz(jpkm1,mytid+1)/zwt(jpkm1,mytid+1)
@@ -359,11 +338,31 @@ C
 
         END DO
 
+! calculate flux due to vertical diffusion (on top face of the grid cell jk)
+      DO jk=1,jpk
+
+         jf=  jarr_zdf_flx(jv+mytid,jk)
+
+         z2dtt = zdt * rdttra(jk)
+         delta_tra(jk)  = ( zwx(jk,mytid+1) - trb(ji,jj,jk,jn+mytid) ) / z2dtt! or trn(ji,jj,jk,jn+mytid)
+
+         IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
+               IF (jk .EQ. 1) THEN
+                  delta_tra(jk)  = 0
+                  diaflx(jf,jn+mytid,7) = diaflx(jf,jn+mytid,7) + 0
+               ELSE
+                  diaflx(jf,jn+mytid,7) = diaflx(jf,jn+mytid,7) + (delta_tra(jk-1)-delta_tra(jk))
+               ENDIF
+         ENDIF
+      ENDDO
 C
 #if defined key_trc_diatrd
 C Compute and save the vertical diffusive tracer trends
          DO jk = 1, jpkm1
            z2dtt = zdt * rdttra(jk)
+           ztra  = ( zwx(jk,mytid+1) - trn(ji,jj,jk,jn+mytid) ) / z2dtt
+           ztra1 = ztra - tra(ji,jj,jk,jn+mytid
+
 C   ... Euler time stepping when starting from rest
 
 

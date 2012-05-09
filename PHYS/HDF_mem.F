@@ -9,7 +9,7 @@
 
       INTEGER :: dimen_jvhdf1,dimen_jvhdf2,dimen_jvhdf3
       INTEGER, allocatable :: hdfmask(:,:,:)
-      INTEGER, allocatable :: jarr_hdf(:,:,:)
+      INTEGER, allocatable :: jarr_hdf(:,:,:),jarr_hdf_flx(:)
       REAL(8), allocatable :: zta(:)
       REAL(8), allocatable :: zeeu(:,:,:), zeev(:,:,:), zbtr(:,:)
       REAL(8), allocatable :: zlt(:,:,:,:), ztu(:,:,:,:), ztv(:,:,:,:)
@@ -36,6 +36,7 @@ CC----------------------------------------------------------------------
        dimen_jvhdf3=0
 
        allocate(jarr_hdf(3,jpj*jpj*jpk,2))
+       allocate(jarr_hdf_flx(jpj*jpj*jpk))
        allocate(hdfmask(jpi,jpj,jpk   ))
        allocate(zta    (            ntids))
        allocate(zeeu   (jpi,jpj,jpk      ))

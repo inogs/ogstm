@@ -9,7 +9,7 @@
 
 
       INTEGER :: dimen_jvzdf
-      INTEGER, allocatable :: jarr_zdf(:,:)
+      INTEGER, allocatable :: jarr_zdf(:,:),jarr_zdf_flx(:,:)
       REAL(8), allocatable :: zwd(:,:), zws(:,:), zwi(:,:)
       REAL(8), allocatable :: zwx(:,:), zwy(:,:), zwz(:,:), zwt(:,:)
 
@@ -31,6 +31,7 @@ CC----------------------------------------------------------------------
 #endif
        dimen_jvzdf=0
        allocate(jarr_zdf(2, jpj*jpj))
+       allocate(jarr_zdf_flx(jpj*jpj,jpk))
        allocate(zwd(jpk, ntids))
        allocate(zws(jpk, ntids))
        allocate(zwi(jpk, ntids))

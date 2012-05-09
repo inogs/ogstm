@@ -2,6 +2,7 @@
 
        USE modul_param 
        USE myalloc
+       USE DIA_mem
 
        IMPLICIT NONE
 
@@ -11,7 +12,7 @@
       INTEGER :: dimen_jvsed
       INTEGER :: nsed=21 ! number of sedimenting state variables
       INTEGER, allocatable :: sed_idx(:)
-      INTEGER, allocatable :: jarr_sed(:,:)
+      INTEGER, allocatable :: jarr_sed(:,:),jarr_sed_flx(:,:)
       REAL(8), allocatable :: ztra(:,:)
       REAL(8), allocatable :: zwork(:,:,:)
 
@@ -62,6 +63,7 @@ CC----------------------------------------------------------------------
        sed_idx(21) = ppP4i
 
        allocate(jarr_sed(2, jpj*jpj))
+       allocate(jarr_sed_flx(jpj*jpj,jpk))
 
        allocate( ztra(nsed,ntids))
 

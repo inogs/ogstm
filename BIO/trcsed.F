@@ -50,6 +50,7 @@ CC   ----------
        USE BIO_mem
        USE SED_mem
        USE stafun
+       USE DIA_mem
        IMPLICIT NONE
 
 
@@ -58,10 +59,10 @@ CC local declarations
 CC ==================
       INTEGER kt,ktask
 
-#if defined key_passivetrc  
 #   if defined key_trc_bfm
 
-      INTEGER :: ji,jj,jk,jv,js
+      LOGICAL :: l1,l2,l3
+      INTEGER :: ji,jj,jk,jv,jf,js
 !      INTEGER :: bottom
       REAL(8) :: ze3tr,d2s
 ! omp variables
@@ -89,7 +90,7 @@ CC ===================
 #endif
 
 
-      IF (dimen_jvsed .EQ. 0) THEN
+      IF (dimen_jvsed .EQ. 0) THEN ! initialization phase
          DO jj = 2,jpjm1
            DO  ji = 2,jpim1
               IF(tmask(ji,jj,1) .NE. 0) THEN
@@ -99,7 +100,23 @@ CC ===================
               ENDIF
             END DO
          END DO
-      ENDIF
+! Cross matrix between transect and local optimized indexing
+         jarr_sed_flx=0
+
+         DO jf=1,Fsize
+            DO jv=1, dimen_jvsed
+               DO jk=1,jpk
+                  l1 = flx_ridxt(jf,2) .EQ. jarr_sed(1,jv)
+                  l2 = flx_ridxt(jf,3) .EQ. jarr_sed(2,jv)
+                  l3 = flx_ridxt(jf,4) .EQ. jk
+                  IF ( l1 .AND. l2 .AND. l3) THEN
+                     jarr_sed_flx(jv,jk)= jf
+                  END IF
+               END DO
+            END DO
+         END DO
+
+      ENDIF ! End initialization phase (once at the beginning)
 
 C
 C
@@ -108,11 +125,11 @@ C =============
 C
       MAIN_LOOP: DO jv=1,dimen_jvsed,ntids
 
-!$omp    parallel default(none) private(ji,jj,jk,js,mytid)
+!$omp    parallel default(none) private(ji,jj,jk,js,mytid,jf)
 !$omp&                           shared(jv,dimen_jvsed,jarr_sed,
 !$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
 !$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
-!$omp&                                  tra,d2s)
+!$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx)
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -173,11 +190,15 @@ C                Dinoflagellates
 C 1.3 tracer flux divergence at t-point added to the general trend
 
               DO  jk = 1,jpkm1
+                 jf=  jarr_sed_flx(jv+mytid,jk)
 
                  ze3tr = 1./fse3t(ji,jj,jk)
 
                  DO js =1,21
                     ztra(js,mytid+1) = -ze3tr * (zwork(js,jk,mytid+1) - zwork(js,jk + 1,mytid+1))
+                    IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
+                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(js,jk,mytid+1)
+                    ENDIF
                  END DO
 
                  DO js =1,21
@@ -189,11 +210,14 @@ CCC  d2s convert speed from (m/day) to  (m/s)
                   trbio(ji,jj,jk,8) = ztra
 #            endif
 
+
                 END DO
         ENDIF
 
 !$omp    end parallel
+
       END DO MAIN_LOOP
+
 
 
 #    else
@@ -201,10 +225,5 @@ CCC  d2s convert speed from (m/day) to  (m/s)
 C       no Sedimentation
 
 #    endif
-#else
-
-C       no passive tracer
-
-#endif
 
       END SUBROUTINE trcsed

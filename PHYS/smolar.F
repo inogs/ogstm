@@ -3,6 +3,7 @@
        USE myalloc_mpp
        USE ADV_mem
        USE stafun
+       USE DIA_mem
           implicit none
 CCC
 CCC                      trcadv.smolar.h
@@ -80,8 +81,8 @@ CC      modifications : 00-05 (MA Foujols) add lbc for tracer trends
 CC      modifications : 00-10 (MA Foujols and E.Kestenare) INCLUDE instead of routine
 CC      modifications : 01-05 (E.Kestenare) fix bug in trtrd indexes
 CC----------------------------------------------------------------------
-      LOGICAL :: MPI_CHECK
-      INTEGER ji,jj,jk,jt,jn
+      LOGICAL :: MPI_CHECK,l1,l2,l3
+      INTEGER ji,jj,jk,jt,jn,jf,ju
       INTEGER pack_size
       REAL(8) zbtr,zdt
       REAL(8) junk, junki, junkj, junkk
@@ -110,7 +111,7 @@ CC----------------------------------------------------------------------
       mytid = 0
 #endif
 
-      if(allpoints .EQ. 0) then
+      if(allpoints .EQ. 0) then  ! INIT phase
 
 !$omp parallel default(shared) private(mytid,A)
 #ifdef __OPENMP
@@ -285,7 +286,22 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
                END DO
             END DO
          END DO
-      endif
+
+      jarr_adv_flx=0
+
+         DO jf=1,Fsize
+            DO ju=1, dimen_jarr3
+               l1 = flx_ridxt(jf,2) .EQ. jarr3(1,ju)
+               l2 = flx_ridxt(jf,3) .EQ. jarr3(2,ju)
+               l3 = flx_ridxt(jf,4) .EQ. jarr3(3,ju)
+               IF ( l1 .AND. l2 .AND. l3) THEN
+                  jarr_adv_flx(ju)= jf
+               END IF
+            END DO
+         END DO
+
+      endif ! end initialization phase
+
 
 
       zdt = rdt*float(ndttrc)
@@ -486,8 +502,9 @@ C 2. calcul of after field using an upstream advection scheme
 C -----------------------------------------------------------
 
 
-!$omp   parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju)
-!$omp&      shared(zkx,zky,zkz,zti,jpim1,jpjm1,trn,zdt,jn,jpkm1,zbtr_arr,e1t,e2t,ztj,jarr3,ncor,dimen_jarr3)
+!$omp   parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
+!$omp&      shared(zkx,zky,zkz,zti,jpim1,jpjm1,trn,zdt,jn,jpkm1,zbtr_arr,e1t,e2t,ztj,jarr3,ncor,dimen_jarr3,
+!$omp&             jarr_adv_flx,Fsize,diaflx)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -500,6 +517,7 @@ C -----------------------------------------------------------
               ji = jarr3(1, ju)
               jj = jarr3(2, ju)
               jk = jarr3(3, ju)
+              jf = jarr_adv_flx(ju)
 
               zbtr = zbtr_arr(ji,jj,jk)
 
@@ -514,8 +532,16 @@ C -----------------------------------------------------------
               trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3) -zbtr*( zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
 #endif
 
-           END DO
 
+           IF(ncor .GT. 1) THEN
+              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
+                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
+                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(ji,jj,jk,A)
+                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
+              END IF
+            END IF
+
+            END DO
       END IF
 
 !$omp end parallel
@@ -906,17 +932,18 @@ C
 C   ... T-point, 3D array, full local array zk[xy] are initialised
 C
 C
-         DO itid = 1, ntids
+      DO itid = 1, ntids
         IF( itid - 1 + jn <= jptra ) THEN
                CALL lbc( zkx(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
                CALL lbc( zky(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
         END IF
-     END DO
+      END DO
 C
 #endif
 
-!$omp    parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju)
-!$omp&      shared(zkx,zky,zkz,zbtr_arr,e1t,e2t,ztj,dimen_jarr3,jarr3,ncor,jn)
+!$omp    parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
+!$omp&      shared(zkx,zky,zkz,zbtr_arr,e1t,e2t,ztj,dimen_jarr3,jarr3,ncor,jn,
+!$omp&             jarr_adv_flx,Fsize,diaflx)
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -934,6 +961,7 @@ C        2.6. calcul of after field using an upstream advection scheme
                   ji = jarr3(1, ju)
                   jj = jarr3(2, ju)
                   jk = jarr3(3, ju)
+                  jf = jarr_adv_flx(ju)
 
 !                 if(zbtr_arr(ji,jj,jk) .NE. 0) then zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk))
                   zbtr = zbtr_arr(ji,jj,jk)
@@ -944,14 +972,23 @@ C        2.6. calcul of after field using an upstream advection scheme
                   trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) -zbtr*( zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A) )
                   trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3) -zbtr*( zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
 #endif
+!     Save advective fluxes x,y,z
+              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
+                 diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
+                 diaflx(jf,B,2) = diaflx(jf,B,2) + zky(ji,jj,jk,A)
+                 diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
+              END IF
 
               END DO
+
+
            else
               DO ju=1, dimen_jarr3
 
                   ji = jarr3(1, ju)
                   jj = jarr3(2, ju)
                   jk = jarr3(3, ju)
+                  jf = jarr_adv_flx(ju)
 
 !                if(zbtr_arr(ji,jj,jk) .NE. 0) then    zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk))
                   zbtr = zbtr_arr(ji,jj,jk)
@@ -962,8 +999,16 @@ C        2.6. calcul of after field using an upstream advection scheme
                   trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) -zbtr*( zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A) )
                   trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3) -zbtr*( zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
 #endif
-
+!     Save advective fluxes x,y,z
+                 IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
+                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
+                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(ji,jj,jk,A)
+                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
+                 END IF
               END DO
+
+
+
            endif
 
       END IF
@@ -1009,6 +1054,7 @@ C
 
       END IF
 
+
 !$omp end parallel
 
 
@@ -1022,17 +1068,17 @@ C ----------------------------------------------------
 
       DO ju=1, dimen_jarr
 
-      ji = jarr(1, ju)
-      jj = jarr(2, ju)
-      jk = jarr(3, ju)
+          ji = jarr(1, ju)
+          jj = jarr(2, ju)
+          jk = jarr(3, ju)
 
-!     if(zbtr_arr(ji,jj,jk) .NE. 0) then!              zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk))
-      zbtr =zbtr_arr(ji,jj,jk)
-      zgm =zbtr*trn(ji,jj,jk,B)*(un(ji,jj,jk)*e2u(ji,jj)*fse3u(ji,jj,jk)-un(ji-1,jj,jk)*e2u(ji-1,jj)*fse3u(ji-1,jj,jk))
-      zgz =zbtr*trn(ji,jj,jk,B)*(vn(ji,jj,jk)*e1v(ji,jj)*fse3v(ji,jj,jk)-vn(ji,jj-1,jk)*e1v(ji,jj-1)*fse3v(ji,jj-1,jk))
-      trtrd(ji,jj,jk,B,1) = trtrd(ji,jj,jk,B,1) + zgm
-      trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) + zgz
-      trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3)- trn(ji,jj,jk,B) * hdivn(ji,jj,jk)
+    !     if(zbtr_arr(ji,jj,jk) .NE. 0) then!              zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk))
+          zbtr =zbtr_arr(ji,jj,jk)
+          zgm =zbtr*trn(ji,jj,jk,B)*(un(ji,jj,jk)*e2u(ji,jj)*fse3u(ji,jj,jk)-un(ji-1,jj,jk)*e2u(ji-1,jj)*fse3u(ji-1,jj,jk))
+          zgz =zbtr*trn(ji,jj,jk,B)*(vn(ji,jj,jk)*e1v(ji,jj)*fse3v(ji,jj,jk)-vn(ji,jj-1,jk)*e1v(ji,jj-1)*fse3v(ji,jj-1,jk))
+          trtrd(ji,jj,jk,B,1) = trtrd(ji,jj,jk,B,1) + zgm
+          trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) + zgz
+          trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3)- trn(ji,jj,jk,B) * hdivn(ji,jj,jk)
 
       END DO
 

@@ -52,7 +52,7 @@ CC ==================
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn,jv,jnn
+      INTEGER ji,jj,jk,jn,jv,jnn,gji,gjj
       REAL(8) zfact,zdt
 
 CC----------------------------------------------------------------------
@@ -148,7 +148,16 @@ C Compute correction factor
             FN_CORR(jv,jn)=1-TOT_FN(jv,jn)/TOT(jv,jn)
 
             IF(FN_CORR(jv,jn) .LE. 0) THEN
-               STOP 'NEGATIVE MASS PROBLEM'
+
+               ji = jarr_snu(1,jv)
+               jj = jarr_snu(2,jv)
+
+               gji = idxt2glo(ji, jj, jk,1)
+               gjj = idxt2glo(ji, jj, jk,2)
+
+               write(*,*) 'SNUTEL --> NEGATIVE MASS PROBLEM: ji=', gji, ' jj= ', gjj, 'element= ',jn
+
+!               STOP 'NEGATIVE MASS PROBLEM'
             END IF
 
          END DO

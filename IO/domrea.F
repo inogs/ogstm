@@ -233,11 +233,6 @@
 ! **************************************** FLUXES
 
       CALL readnc_int_1d('Fluxes.nc','index',FSizeGlo,INDFluxGlo)
-      if (lwp) then
-        do ii = 1,FSizeGlo
-          write(*,*) 'Fluxes', ii, INDFluxGlo(ii)
-        enddo
-       endif
 
 
 
@@ -410,6 +405,12 @@
              enddo
             enddo
            enddo
+
+
+      do ii=1,Fsize
+         INDflxDUMP(ii) = INDFluxGlo(flx_ridxt(ii,1))
+      enddo
+
         FLXRE_Indexing =.true.
       END FUNCTION FLXRE_Indexing
 

@@ -5,9 +5,11 @@
           implicit none
 
           INTEGER FsizeGlo, Fsize
-          INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo
+          INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP
           INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
+
           REAL(8),    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
+          REAL(8),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDump
 
           CONTAINS
 
@@ -33,8 +35,9 @@
        SUBROUTINE alloc_DIA_local_flx()
 
        allocate(flx_ridxt (Fsize,4        ))
-!       allocate(riv_dtatrc(Fsize,2, jn_riv))
-       allocate(diaflx    (Fsize,   jptra, 7))
+       allocate(INDflxDUMP(Fsize          ))
+       allocate(MflxDump  (7, Fsize        ))
+       allocate(diaflx    (Fsize, jptra, 7))
        diaflx = 0
       END SUBROUTINE alloc_DIA_local_flx
 

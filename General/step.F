@@ -141,7 +141,7 @@
          CALL trcdia(datemean, datefrom, datestring)
          TauAVEfrom=TAU
 
-         CALL fluxdump(datestring) ! to be improved
+         CALL fluxdump(datemean, datefrom, datestring)
 
          IsStartBackup = .false.
       endif

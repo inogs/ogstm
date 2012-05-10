@@ -152,8 +152,8 @@ C Compute correction factor
                ji = jarr_snu(1,jv)
                jj = jarr_snu(2,jv)
 
-               gji = idxt2glo(ji, jj, jk,1)
-               gjj = idxt2glo(ji, jj, jk,2)
+               gji = idxt2glo(ji, jj, 1,1)
+               gjj = idxt2glo(ji, jj, 1,2)
 
                write(*,*) 'SNUTEL --> NEGATIVE MASS PROBLEM: ji=', gji, ' jj= ', gjj, 'element= ',jn
 

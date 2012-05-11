@@ -157,7 +157,10 @@ C Compute correction factor
 
                write(*,*) 'SNUTEL --> NEGATIVE MASS PROBLEM: ji=', gji, ' jj= ', gjj, 'element= ',jn
 
-!               STOP 'NEGATIVE MASS PROBLEM'
+               FN_CORR(jv,jn) = 1.
+
+!              STOP 'NEGATIVE MASS PROBLEM'
+
             END IF
 
          END DO

@@ -93,7 +93,7 @@
          call daily(DATEstring)  ! Performs daily updates
 
          stpparttime = MPI_WTIME()  ! stop cronomether
-         if(lwp) write(*,*) "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
+         if(lwp) write(*,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
 
 
         if (IsaRestart(DATEstring)) then

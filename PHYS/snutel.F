@@ -155,8 +155,8 @@ C Compute correction factor
                gji = idxt2glo(ji, jj, 1,1)
                gjj = idxt2glo(ji, jj, 1,2)
 
-               write(*,*) 'SNUTEL --> NEGATIVE MASS PROBLEM: ji=', gji, ' jj= ', gjj, 'element= ',jn
-
+       write(*,250) 'SNUTEL --> NEGATIVE MASS PROBLEM: ji=', gji, ' jj= ', gjj, ' element= ',jn
+250   FORMAT(A,I5,A,I5,A,I5)
                FN_CORR(jv,jn) = 1.
 
 !              STOP 'NEGATIVE MASS PROBLEM'
@@ -181,5 +181,5 @@ C Apply correction factor
       END DO
 
 
-      RETURN
-      END
+
+      END SUBROUTINE SNUTEL

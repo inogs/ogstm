@@ -110,7 +110,7 @@
     !     Starting I/O
     !    **********************************************************
           nomefile(1:27)='BC/GIB_'//datestring//'.nc'
-          if(lwp) write(*,*) "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
+          if(lwp) write(*,'(A,I4,A,A)') "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
 
           DO jn = 1, jn_gib
               nomevar(1:7) = 'gib_'//ctrcnm(tra_matrix_gib(jn))

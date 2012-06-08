@@ -157,7 +157,7 @@
 ! Starting I/O
 ! U  *********************************************************
       nomefile = 'FORCINGS/U'//datestring//'.nc'
-      if(lwp) write(*,*) "LOAD_PHYS --> I am ", rank, " starting reading forcing fields from ", nomefile(1:30)
+      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", rank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf); udta(:,:,:,2) = buf*umask;
 
 ! V *********************************************************
@@ -354,13 +354,13 @@
 !          CALL div(1,kt)
 !          CALL wzv(1,kt)
 #if defined key_trahdfiso
-#    if defined key_off_degrad
+#if defined key_off_degrad
           CALL slprea(iper)
-#    else
+#else
           CALL eos()
           CALL bn2(   1,kt)
           CALL hdfslp(1,kt)
-#    endif
+#endif
 #endif
 #if defined key_trahdfeiv && defined key_off_degrad
           CALL vgmrea(iper)

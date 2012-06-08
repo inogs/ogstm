@@ -123,7 +123,7 @@
 !    **********************************************************
       nomefile = 'FORCINGS/KextF_'//datestring//'.nc'
 
-      if(lwp) write(*,*) "LOAD_KEXT --> I am ", rank, " starting reading forcing fields from ", nomefile
+      if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", rank, " starting reading forcing fields from ", nomefile
 
       call readnc_slice_float_2d(nomefile,'kextfact',buf2); kextIO(:,:,2) = buf2*tmask(:,:,1);
 

@@ -108,7 +108,7 @@
     !     Starting I/O
     !    **********************************************************
          nomefile(1:27)='BC/TIN_'//datestring//'.nc'
-         if(lwp) write(*,*) "LOAD_TIN --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
+         if(lwp) write(*,'(A,I4,A,A)') "LOAD_TIN --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
 
 
 

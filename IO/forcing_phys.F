@@ -178,7 +178,7 @@
       call readnc_slice_float_2d(nomefile,'sowindsp',buf2); flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1);
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
                                                             flxdta(:,:,jpice ,2) = 0.
-                                                            flxdta(:,:,jpemp ,2) = 0.
+      call readnc_slice_float_2d(nomefile,'sowaflcd',buf2); flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1);
 
 
       bblxdta = 0.

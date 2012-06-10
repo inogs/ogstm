@@ -66,9 +66,8 @@
 
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
-! F79 we have moved this stuff here to control the time step
 ! ------------------------
-
+      CALL trcsbc ! surface cell processes
       CALL trcsms(ktask,kt)
       CALL trczdf(ktask,kt) ! tracers: vertical diffusion
       CALL snutel

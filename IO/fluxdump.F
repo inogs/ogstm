@@ -19,7 +19,7 @@
 
       integer s, nc,INDid, junk!, counter
       integer nid, tid
-      INTEGER IDS(Fsize)
+      INTEGER IDS(jptra)
 
 
       if (Fsize .GT. 0) THEN

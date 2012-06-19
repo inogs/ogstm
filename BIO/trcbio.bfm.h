@@ -19,7 +19,6 @@ CC ==================
       INTEGER gji,gjj,gjk
       INTEGER CSi,CS(10,3)
       INTEGER jtr,jtrmax,tra_idx
-      REAL(8):: opa_ice, opa_co2
 ! omp variables
             INTEGER :: mytid, ntids!, itid
 
@@ -58,8 +57,7 @@ C
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 
-          opa_ice=0
-          opa_co2=365.0
+
           tra_idx = tra_matrix_gib(1)
           jtrmax=jptra
 

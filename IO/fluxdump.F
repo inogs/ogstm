@@ -75,6 +75,7 @@
                  MflxDump(js,jf)=       diaflx(jf,jn,js)
                enddo
             enddo
+
           s = nf90_put_var(nc,IDS(jn) ,  MflxDump)
 
       ENDDO

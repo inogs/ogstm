@@ -21,15 +21,14 @@ CC   -------
 
 CC local declarations
 CC ==================
-      INTEGER ji,jj,nn,ME!,jk
-!      INTEGER iost, ivide1, ivide2
+      INTEGER ji,jj,nn,ME
       INTEGER ilu, iused(1,100)
       INTEGER ilglo, ildta, ibloc, ilseq
 
       CHARACTER(LEN=32) clname
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
 
-      NAMELIST/Dom_Size/ jpni, jpnj, jpnij, jpreci, jprecj
+!      NAMELIST/Dom_Size/ jpni, jpnj, jpnij, jpreci, jprecj
 
       NAMELIST/Dimension_Med_Grid/ jpiglo, jpjglo, jpk, jpidta,jpjdta, jpkdta, jpkb
       NAMELIST/Domain_Characteristic/  jperio, jpisl, jpnisl
@@ -81,14 +80,20 @@ C     this length depend of 512 for the t3d machine
       clname = 'namelist.init'
       CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
 
+
 C 1. Read namlist files
 C ---------------------
 
 C ... Namelist Dom_Size :
+!      REWIND( numnam )
+!      READ  ( numnam, Dom_Size )
+      call COUNTLINE('Dom_Dec_jpi.ascii', jpni)
+      jpnj  = 1
+      jpnij = jpni
+      jpreci = 1
+      jprecj = 1
 
 
-      REWIND( numnam )
-      READ  ( numnam, Dom_Size )
 
       IF(lwp) THEN
       WRITE(numout,*) ' '
@@ -201,5 +206,25 @@ C
       WRITE(numout,*) ' '
       ENDIF
 
+      CONTAINS
+! **************************************************************
+      SUBROUTINE COUNTLINE(FILENAME,LINES)
+          implicit none
+          character FILENAME*(*)
+          integer lines
+          integer TheUnit
 
+          TheUnit = 326
+
+          lines=0
+          OPEN(UNIT=TheUnit,file=FILENAME,status='old')
+          DO WHILE (.true.)
+       read(TheUnit, *, END=21)
+       lines = lines+1
+          ENDDO
+
+21        CLOSE(TheUnit)
+
+      END SUBROUTINE COUNTLINE
+! ***************************************************************
       END SUBROUTINE PARINI

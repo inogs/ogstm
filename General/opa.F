@@ -116,11 +116,10 @@
 
       OPEN(UNIT=numout,FILE='ocean.output',FORM='FORMATTED')
       ME = mynode() !  Nodes selection
-      call parini(ME)
 
       narea = ME+1
       lwp = narea.EQ.1
-
+      call parini(ME)
 
       call parlec  ! read namelist
       call time_init

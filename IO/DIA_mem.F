@@ -17,8 +17,14 @@
           SUBROUTINE alloc_dia
           USE NETCDF
             IMPLICIT NONE
+            logical existFile
+            INQUIRE(FILE='Fluxes.nc', EXIST=existFile)
 
-            call getDimension('Fluxes.nc','n',FsizeGlo)
+            if (existFile) then
+               call getDimension('Fluxes.nc','n',FsizeGlo)
+            else
+               FsizeGlo = 0
+            endif
 
             if (FsizeGlo.gt.0) then
                allocate(INDFluxGlo(FsizeGlo))

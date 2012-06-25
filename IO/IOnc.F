@@ -8,19 +8,19 @@
       character fileNetCDF*(*) ,varname*(*)
       integer ncid, stat, VARid
 
-      integer mycount
+      integer counter
       integer thecount(4), start(4)
       real(8) M(jpi,jpj,jpk)
 
-      mycount = 0;
+      counter = 0;
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,M,start, thecount);
-      call handle_err2(stat, fileNetCDF,varname);  call handle_err1(stat, mycount)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, mycount)
+      call handle_err2(stat, fileNetCDF,varname);  call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_slice_double
 
@@ -37,20 +37,20 @@
       character fileNetCDF*(*) ,varname*(*)
       integer ncid, stat, VARid
 
-      integer mycount
+      integer counter
       integer thecount(4), start(4)
       real(8) M(jpi,jpj,jpk)
       real(4) F(jpi,jpj,jpk)
 
-      mycount = 0;
+      counter = 0;
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,F,start, thecount);
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, mycount)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, mycount)
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
 
       M = real(F,8);
 
@@ -66,18 +66,18 @@
       character fileNetCDF*(*) ,varname*(*)
       integer ncid, stat, VARid
 
-      integer mycount
+      integer counter
       integer thecount(4), start(4)
       integer M(jpi,jpj,jpk)
-      mycount = 0;
+      counter = 0;
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,M,start, thecount)
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, mycount)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, mycount)
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_slice_int
 
@@ -95,21 +95,21 @@
       character fileNetCDF*(*) ,varname*(*)
       integer ncid, stat, VARid
 
-      integer mycount
+      integer counter
       integer thecount(3), start(3)
       real(8) M(jpi,jpj)
 
 
-      mycount = 0;
+      counter = 0;
       start    = (/nimpp, njmpp,  1/)
       thecount = (/jpi,     jpj,  1/)
 
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,M,start, thecount);
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, mycount)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, mycount)
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
 
 
 
@@ -130,21 +130,21 @@
       character fileNetCDF*(*) ,varname*(*)
       integer ncid, stat, VARid
 
-      integer mycount
+      integer counter
       integer thecount(3), start(3)
       real(8) M(jpi,jpj)
       real(4) F(jpi,jpj)
 
-      mycount = 0;
+      counter = 0;
       start    = (/nimpp, njmpp,  1/)
       thecount = (/jpi,     jpj,  1/)
 
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,F,start, thecount)
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, mycount)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, mycount)
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
 
       M = real(F,8);
 
@@ -162,20 +162,20 @@
       character fileNetCDF*(*) ,varname*(*)
       integer ncid, stat, VARid
 
-      integer mycount
+      integer counter
       integer thecount(4), start(4)
       real(8) M(jpi,jpj,jpk)
 
-      mycount = 0;
+      counter = 0;
       start    = (/1,       1,       1,  1/)
       thecount = (/jpiglo,  jpjglo, jpk, 1/)
 
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, mycount)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, mycount)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,M,start, thecount)
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, mycount)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, mycount)
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_global_double
 
@@ -196,11 +196,11 @@
         start    = (/1,       1,       1,  1/)
         thecount = (/1,       1,      jpk, 1/)
 
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat,counter)
-        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat,counter)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat, counter,FileNetCDF)
         stat = nf90_get_var (ncid,VARid,ARRAY,start, thecount);
-        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat,counter)
-        stat = nf90_close(ncid)                          ; call handle_err1(stat,counter)
+        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                          ; call handle_err1(stat, counter,FileNetCDF)
 
 
         end SUBROUTINE readmask_double_1d
@@ -217,11 +217,11 @@
 
         counter=0
 
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat,counter)
-        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat,counter)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat, counter,FileNetCDF)
         stat = nf90_get_var (ncid,VARid,ARRAY)           ;
-        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat,counter)
-        stat = nf90_close(ncid)                          ; call handle_err1(stat,counter)
+        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                          ; call handle_err1(stat, counter,FileNetCDF)
 
 
         end SUBROUTINE readnc_double_1d
@@ -237,11 +237,11 @@
 
         counter=0
 
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat,counter)
-        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat,counter)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat, counter,FileNetCDF)
         stat = nf90_get_var (ncid,VARid,ARRAY)
-        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat,counter)
-        stat = nf90_close(ncid)                          ; call handle_err1(stat,counter)
+        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                          ; call handle_err1(stat, counter,FileNetCDF)
 
 
         end SUBROUTINE readnc_int_1d
@@ -262,10 +262,10 @@
         integer counter
 
         counter = 0
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)    ; call handle_err1(stat,counter)
-        stat = nf90_inq_dimid (ncid, dimname, DIMid)     ; call handle_err1(stat,counter)
-        stat = nf90_Inquire_Dimension (ncid, DIMid, junk, n); call handle_err1(stat,counter)
-        stat = nf90_close(ncid)                             ; call handle_err1(stat,counter)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)    ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_dimid (ncid, dimname, DIMid)        ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_Inquire_Dimension (ncid, DIMid, junk, n); call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                             ; call handle_err1(stat, counter,FileNetCDF)
         END SUBROUTINE getDIMENSION
 
         !****************************************************************************
@@ -284,12 +284,14 @@
 
 
       !****************************************************************************
-        subroutine handle_err1(status,mycount)
+        subroutine handle_err1(status,mycount, fileNetCDF)
         USE netcdf
         integer status,mycount
+        character fileNetCDF*(*)
         mycount =mycount+1
         if(status .ne. nf90_NoErr)  then
            write(*,*) 'netcdf call',mycount,'with status = ',status
+           write(*,*)  'file :', fileNetCDF
            write(*,*) nf90_strerror(status)
            write(*,*) 'Stopped'
            STOP 1

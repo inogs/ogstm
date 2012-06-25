@@ -138,7 +138,7 @@
       CALL restget(nummsh,'gsi3w',1,1,jpk,0,clog,gsi3w)
       CALL restget(nummsh,'esigt',1,1,jpk,0,clog,esigt)
       CALL restget(nummsh,'esigw',1,1,jpk,0,clog,esigw)
-#  else
+#else
 
 
        CALL readmask_double_1d(maskfile,'gdept',gdept)
@@ -231,12 +231,13 @@
 #endif
 
 ! **************************************** FLUXES
+      if (FSizeGlo.GT.0) then ! file could not exist
+         CALL readnc_int_1d('Fluxes.nc','index',FSizeGlo,INDFluxGlo)
+         Fsize = COUNT_InSubDomain(FSizeGlo, INDFluxGlo)
+      else
+         Fsize=0
+      endif
 
-      CALL readnc_int_1d('Fluxes.nc','index',FSizeGlo,INDFluxGlo)
-
-
-
-      Fsize = COUNT_InSubDomain(FSizeGlo, INDFluxGlo)
       write(*,*) 'rank=', rank, ' Fsize = ' , Fsize
 
       if (Fsize.NE.0) then

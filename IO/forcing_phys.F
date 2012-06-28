@@ -38,9 +38,8 @@
       REAL(8) sec,zweigh
       integer Before, After
       INTEGER iper,iperm1,iswap
-!      INTEGER kt   ! serve alla eos
 
-!     INTEGER jtask
+
 !     iper   : INTEGER for the period modulo ndtadyn
 !     iperm1 : INTEGER for the precedent period  modulo ndtadyn
 !     iswap  : indicator of swap of dynamic DATA array
@@ -148,7 +147,7 @@
       IMPLICIT NONE
 
       CHARACTER(LEN=17), INTENT(IN) :: datestring
-
+      LOGICAL B
 
       ! LOCAL
       character(LEN=30) nomefile
@@ -178,7 +177,13 @@
       call readnc_slice_float_2d(nomefile,'sowindsp',buf2); flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1);
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
                                                             flxdta(:,:,jpice ,2) = 0.
+      call EXISTVAR(nomefile,'sowaflcd',B)
+      if (B) then
       call readnc_slice_float_2d(nomefile,'sowaflcd',buf2); flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1);
+      else
+         if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
+         flxdta(:,:,jpemp ,2) = 0.
+      endif
 
 
       bblxdta = 0.

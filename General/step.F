@@ -94,7 +94,9 @@
 
          stpparttime = MPI_WTIME()  ! stop cronomether
          if(lwp) write(*,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
-
+!         if(lwp) then
+!             OPEN(UNIT=789,FILE='check'//DATEstring,FORM='FORMATTED'); CLOSE(UNIT=789);
+!         endif
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
@@ -173,17 +175,6 @@
            B = writeTemporization("trcdia____", trcdiatottime)
            B = writeTemporization("stp_______", stptottime   )
 
-!           write(*,*) "trcopt____", trcopttottime,"  ",trcopttottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcsms____", trcsmstottime,"  ",trcsmstottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcadv____", trcadvtottime,"  ",trcadvtottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcbil____", trcbilaphdftottime,"  ",trcbilaphdftottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcbbl____", trcbbltottime,"  ",trcbbltottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trczdf____", trczdftottime,"  ",trczdftottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcnxt____", trcnxttottime,"  ",trcnxttottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcstp____", trcstptottime,"  ",trcstptottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcwri____", trcwritottime,"  ",trcwritottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "trcdia____", trcdiatottime,"  ",trcdiatottime/(TAU - TimeStepStart +1), " rank->", rank
-!           write(*,*) "stp_______", stptottime   ,"  ",stptottime   /(TAU - TimeStepStart +1)
            write(*,*) "*******************************************"
        ENDIF
       ENDIF

@@ -1,3 +1,27 @@
+       SUBROUTINE EXISTVAR(fileNetCDF, varname,B)
+       USE netcdf
+       IMPLICIT NONE
+       character, INTENT(IN) :: fileNetCDF*(*) ,varname*(*)
+       LOGICAL,   INTENT(OUT)::B
+       ! local
+       integer stat,ncid,VARid,counter
+
+       counter=0
+       B=.false.
+         stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+         stat = nf90_inq_varid (ncid, varname, VARid)      ;
+
+         if(stat .ne. nf90_NoErr)  then
+           !write(*,*) 'ERROR in Var = ', varname, ' file :', fileNetCDF
+           B = .false.
+         else
+            B=.true.
+        endif
+
+       END SUBROUTINE EXISTVAR
+
+! *********************************************************************************
+
       SUBROUTINE readnc_slice_double(fileNetCDF,varname, M)
       USE myalloc
       USE myalloc_mpp
@@ -311,3 +335,8 @@
         endif
 
         end subroutine handle_err2
+
+       ! ***************************************************************************
+
+
+

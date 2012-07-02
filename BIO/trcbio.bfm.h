@@ -119,7 +119,9 @@ C
                              sediPI(ji,jj+mytid,jk,jtr) = c(jtr) ! sedimentation velocities
                           END DO
 
-                          DO jtr=1,jptra_dia
+! Last record (jptra_dia) for evaporation rates
+
+                          DO jtr=1,jptra_dia-1
                              tra_pp(ji,jj+mytid,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 

@@ -74,7 +74,7 @@
                do jf=1,Fsize
                  MflxDump(js,jf)=       diaflx(jf,jn,js)
                enddo
-            enddo
+          enddo
 
           s = nf90_put_var(nc,IDS(jn) ,  MflxDump)
 
@@ -83,6 +83,10 @@
 
 
       s= nf90_close(nc)
+
+! reset integral of flux
+
+      diaflx = 0
 
       ENDIF
 

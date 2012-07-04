@@ -512,6 +512,7 @@ C -----------------------------------------------------------
 
       IF( mytid + jn <= jptra ) THEN
       A = mytid +1
+      B = mytid + jn
            DO ju=1, dimen_jarr3
 
               ji = jarr3(1, ju)
@@ -526,20 +527,16 @@ C -----------------------------------------------------------
      $          + zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A)
      $          + zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
 #if defined key_trc_diatrd
-              B = mytid + jn
               trtrd(ji,jj,jk,B,1) = trtrd(ji,jj,jk,B,1) -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A) )
               trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) -zbtr*( zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A) )
               trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3) -zbtr*( zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
 #endif
 
-
-           IF(ncor .GT. 1) THEN
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
                     diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
                     diaflx(jf,B,2) = diaflx(jf,B,2) + zky(ji,jj,jk,A)
                     diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
               END IF
-            END IF
 
             END DO
       END IF

@@ -19,7 +19,8 @@
       INTEGER ji, jj, jk, jn
       INTEGER ind, AC
 
-      CHARACTER(LEN=32) forcing2d_file, forcing3d_file
+!      CHARACTER(LEN=32) forcing2d_file, forcing3d_file
+      CHARACTER(LEN=29) forcing_file
       CHARACTER(LEN=33) bkpname
       logical IsBackup
 
@@ -27,7 +28,7 @@
       CHARACTER(LEN=29) dia_file_nc
       CHARACTER(LEN=4)  var ! , var_nc
 
-      INTEGER :: ir2d, ir3d
+!      INTEGER :: ir2d, ir3d
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
       INTEGER totistart, totiend, relistart, reliend
@@ -43,17 +44,17 @@
       AC       = ave_counter
 
 
-      forcing3D_file = 'ave.'//datemean//'.grid3D.dat'
-      forcing2D_file = 'ave.'//datemean//'.grid2D.dat'
+!      forcing3D_file = 'ave.'//datemean//'.grid3D.dat'
+!      forcing2D_file = 'ave.'//datemean//'.grid2D.dat'
+      forcing_file   = 'ave.'//datemean//'.phys.nc'
 
       var   (4:4)    = CHAR(0)
-!      var_nc(4:4)    = CHAR(0)
 
 
       ! *************** START COLLECTING DATA *****************************
       if (rank == 0) then                    ! IF LABEL 1
-      ir2d=jpiglo*jpjglo*4
-      ir3d=jpiglo*jpjglo*jpk*4
+!      ir2d=jpiglo*jpjglo*4
+!      ir3d=jpiglo*jpjglo*jpk*4
 
 ! ******* rank 0 sets indexes of tot matrix where to place its own part
 
@@ -76,9 +77,9 @@
 
 
 
-          write(*,*) forcing3D_file
-          open(4446, file=forcing3D_file, status='unknown',form='unformatted',access='direct', recl=ir3d) ! Output of mean Forcing Fields grid.T,.U,.V,.W
-          open(4447, file=forcing2D_file, status='unknown',form='unformatted',access='direct', recl=ir2d)
+!          write(*,*) forcing3D_file
+!          open(4446, file=forcing3D_file, status='unknown',form='unformatted',access='direct', recl=ir3d) ! Output of mean Forcing Fields grid.T,.U,.V,.W
+!          open(4447, file=forcing2D_file, status='unknown',form='unformatted',access='direct', recl=ir2d)
 
           totsnIO  (totistart:totiend, totjstart:totjend,:) = snIO    (relistart:reliend, reljstart:reljend, :)
           tottnIO  (totistart:totiend, totjstart:totjend,:) = tnIO    (relistart:reliend, reljstart:reljend, :)
@@ -247,19 +248,19 @@
             DO jk=1, jpk    ; dep(jk)= REAL(gdept(jk),4)               ; ENDDO
 
 
-            write(4446,rec=1) (((REAL(totsnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-            write(4446,rec=2) (((REAL(tottnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-            write(4446,rec=3) (((REAL(totunIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-            write(4446,rec=4) (((REAL(totvnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-            write(4446,rec=5) (((REAL(totwnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-            write(4446,rec=6) (((REAL(totavtIO(ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-            write(4447,rec=1) ((REAL(totvatmIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-            write(4447,rec=2) ((REAL(totempIO (ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-            write(4447,rec=3) ((REAL(totqsrIO (ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-            write(4447,rec=4) ((REAL(totbblxIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-            write(4447,rec=5) ((REAL(totbblyIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
+!            write(4446,rec=1) (((REAL(totsnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
+!            write(4446,rec=2) (((REAL(tottnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
+!            write(4446,rec=3) (((REAL(totunIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
+!            write(4446,rec=4) (((REAL(totvnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
+!            write(4446,rec=5) (((REAL(totwnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
+!            write(4446,rec=6) (((REAL(totavtIO(ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
+!            write(4447,rec=1) ((REAL(totvatmIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
+!            write(4447,rec=2) ((REAL(totempIO (ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
+!            write(4447,rec=3) ((REAL(totqsrIO (ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
+!            write(4447,rec=4) ((REAL(totbblxIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
+!            write(4447,rec=5) ((REAL(totbblyIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
 
-
+           call PhysDump(forcing_file, datefrom, dateTo)
 ! ******************  DIAGNOSTIC OUTPUT   *******************
            do jn =1 , jptra_dia
               var(1:3) = dia(jn)
@@ -275,20 +276,8 @@
            enddo
 
 
-!           d2f3d= REAL(totdiaIO(:,:,:,1),4)     !   conversion from double to float
-!           var(1:3) = 'ppg'
-!           CALL IOOGSNC_AVE_3D2(dia1_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
-!
-! *****************  output NET  PRIMARY  PRODUCTION ********************
-!
-!           d2f3d= REAL(totdiaIO(:,:,:,2),4)    !   conversion from double to float
-!           var(1:3) = 'ppn'
-!           CALL IOOGSNC_AVE_3D2(dia2_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
-!
-
-
-            close(4446)
-            close(4447)
+!            close(4446)
+!            close(4447)
 
 
       end if ! IF LABEL 4  if(rank == 0)

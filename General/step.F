@@ -104,7 +104,7 @@
          if(lwp) write(*,*) 'step backup = ', (.not.IsAnAveDump(DATEstring))
 
             if (.not.IsAnAveDump(DATEstring)) then ! backup conditions
-               call tau2datestring(TauAVEfrom+1, datefrom)
+               call tau2datestring(TauAVEfrom, datefrom)  ! il TauAVEfrom+1 mi causava la data dell'ave alle 12:15
                CALL trcdia(datestring, datefrom, datestring)
             endif
 

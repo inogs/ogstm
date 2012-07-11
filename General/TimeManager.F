@@ -74,12 +74,21 @@
 
           IsaRestart = .false.
 
+
+
+
           DO I=1, RESTARTS%N
         if (datestring.eq.RESTARTS%TimeStrings(I)) then
             IsaRestart = .true.
             CYCLE
         endif
           ENDDO
+
+         if (datestring.eq.DATESTART) IsaRestart = .false.
+
+
+
+
 
       END FUNCTION IsaRestart
 

@@ -110,6 +110,7 @@
           endif
       ENDDO
 
+      if (datestring.eq.DATESTART) IsAnAveDump = .false.
       END FUNCTION IsAnAveDump
 
       ! *************************************************

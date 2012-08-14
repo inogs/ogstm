@@ -101,7 +101,7 @@
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
-         if(lwp) write(*,*) 'step backup = ', (.not.IsAnAveDump(DATEstring))
+            if(lwp) write(*,*) 'step backup = ', (.not.IsAnAveDump(DATEstring))
 
             if (.not.IsAnAveDump(DATEstring)) then ! backup conditions
                call tau2datestring(TauAVEfrom, datefrom)  ! il TauAVEfrom+1 mi causava la data dell'ave alle 12:15

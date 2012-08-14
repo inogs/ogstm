@@ -182,7 +182,7 @@
         else
           d2f3d= REAL(tottrnIO,4) !  conversion from double to float
           CALL IOOGSNC_AVE_3D2(output_file_nc, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo, d2f3d)
-
+          traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
          endif
 
 
@@ -191,7 +191,7 @@
 
 
 
-      traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
+      !traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
 
 
       END DO ! do jn=1,jptra , DO LABEL 5

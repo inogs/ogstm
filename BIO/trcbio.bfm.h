@@ -127,49 +127,6 @@ C
 
                           PH(ji,jj+mytid,jk)=d(9) ! Follows solver guess
 
-! Diagnostic
-                          IF (isDumpAscii) THEN
-
-! From local to global indexing
-
-                             gji = idxt2glo(ji, jj, jk,1)
-                             gjj = idxt2glo(ji, jj, jk,2)
-                             gjk = idxt2glo(ji, jj, jk,3)
-
-! CheckSites (CS) localization --- CS(8,3)
-
-                             CS(1,1)=36;  CS(1,2)=46    ! Alboran Sea
-
-                             CS(2,1)=120; CS(2,2)=80    ! West Med
-
-                             CS(3,1)=170; CS(3,2)=80    ! Tyrrhenian
-
-                             CS(4,1)=131; CS(4,2)=105   ! DYFAMED
-
-                             CS(5,1)=220; CS(5,2)=45    ! Ionian
-
-                             CS(6,1)=310; CS(6,2)=30    ! East Med
-
-                             CS(7,1)=172; CS(7,2)=122   ! North Adriatic
-
-                             CS(8,1)=212; CS(8,2)=93    ! South Adriatic
-
-                             CS(9,1)=266; CS(9,2)=78    ! North Aegean
-
-                             CS(10,1)=279; CS(10,2)=81  ! North Aegean Critical
-
-                             DO CSi=1,10
-                                IF ( (gji .EQ. CS(CSi,1)) .AND. (gjj .EQ. CS(CSi,2)) ) THEN
-                                   CALL OPA_SS_OUTPUT(gji,gjj,gjk,NOW_datestring) ! BFM routine that dumps all key fluxes
-                                ENDIF
-                             ENDDO
-! Plot BFM status when carbonate system fails to converge PH_ = -1
-                             IF ( d(9) .LT. 0. ) THEN
-                                CALL OPA_SS_OUTPUT(gji,gjj,-1,NOW_datestring) ! BFM routine that dumps all key fluxes
-                             ENDIF
-                          ENDIF
-! End Diagnostic
-
                        ELSE
                           sediPI(ji,jj+mytid,jk,:)=0
                           tra_pp(ji,jj+mytid,jk,:)=0

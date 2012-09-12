@@ -151,8 +151,8 @@ CC        ff             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
 
 
       REAL(8) rra
-      REAL(8), allocatable, dimension(:,:) :: glamt, glamu, glamv,glamf, totglamt
-      REAL(8), allocatable, dimension(:,:) :: gphit, gphiu, gphiv,gphif, totgphit
+      REAL(8), allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf  !, glamt,
+      REAL(8), allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
       REAL(8), allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
       REAL(8), allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
 
@@ -1003,11 +1003,11 @@ CC      REAL(8) e2t(jpi,jpj), e2u(jpi,jpj), e2v(jpi,jpj), e2f(jpi,jpj)
 CC      REAL(8) ff(jpi,jpj)
         allocate(totglamt(jpiglo,jpjglo))
         allocate(totgphit(jpiglo,jpjglo))
-        allocate(glamt(jpi,jpj))
+       !allocate(glamt(jpi,jpj))
         allocate(glamu(jpi,jpj)) 
         allocate(glamv(jpi,jpj))
         allocate(glamf(jpi,jpj))
-        allocate(gphit(jpi,jpj)) 
+        allocate(gphit(jpi,jpj))
         allocate(gphiu(jpi,jpj)) 
         allocate(gphiv(jpi,jpj))
         allocate(gphif(jpi,jpj))
@@ -1020,7 +1020,7 @@ CC      REAL(8) ff(jpi,jpj)
         allocate(e2v(jpi,jpj)) 
         allocate(e2f(jpi,jpj))
         allocate(ff (jpi,jpj))
-        mem_all = mem_all + rea_len*(2*jpiglo*jpjglo+17*jpi*jpj) 
+        mem_all = mem_all + rea_len*(2*jpiglo*jpjglo+15*jpi*jpj)
 C     write(*,*) 'Mem_allocated:', mem_all
 
 #if defined key_off_degrad

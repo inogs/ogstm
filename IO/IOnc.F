@@ -20,7 +20,8 @@
 
        END SUBROUTINE EXISTVAR
 
-! *********************************************************************************
+
+! *****************************************************************************
 
       SUBROUTINE readnc_slice_double(fileNetCDF,varname, M)
       USE myalloc
@@ -188,7 +189,7 @@
 
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpi,jpj,jpk)
+      real(8) M(jpiglo,jpjglo,jpk)
 
       counter = 0;
       start    = (/1,       1,       1,  1/)
@@ -202,6 +203,34 @@
       stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_global_double
+
+
+! ************************************************************
+      SUBROUTINE readnc_global_double_2d(fileNetCDF,varname, M)
+      USE myalloc
+      USE netcdf
+      implicit none
+
+
+      character fileNetCDF*(*) ,varname*(*)
+      integer ncid, stat, VARid
+
+      integer counter
+      integer thecount(4), start(4)
+      real(8) M(jpiglo,jpjglo)
+
+      counter = 0;
+      start    = (/1,       1,      1, 1/)
+      thecount = (/jpiglo,  jpjglo, 1, 1/)
+
+
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+
+      END SUBROUTINE readnc_global_double_2d
 
 
 
@@ -293,18 +322,22 @@
         END SUBROUTINE getDIMENSION
 
        !****************************************************************************
-       SUBROUTINE write_restart(fileNetCDF,varB,varN)
+       !****************************************************************************
+       !****************************************************************************
+
+       SUBROUTINE write_restart(fileNetCDF, julian)
        USE netcdf
        USE myalloc
 
        IMPLICIT NONE
        CHARACTER*(*) fileNetCDF
-       real(8) varB, varN
+       REAL(8) julian
+
+       ! local
        CHARACTER(LEN=3) VAR
        CHARACTER(LEN=6) RSTVAR
        CHARACTER(LEN=17) TimeString
 
-      ! local
        integer s, nc, counter
        integer timid, depid, yid, xid, xaid, yaid, zaid
        integer idB, idN, idLon, idLat, idLev, idTim
@@ -333,20 +366,167 @@
 
 
         RSTVAR='TRB'//VAR;
-        s = nf90_def_var(nc,RSTVAR , nf90_double, (/xid,yid,depid,timid/),   idB)
+        s = nf90_def_var(nc,RSTVAR, nf90_double, (/xid,yid,depid,timid/), idB)
 
         RSTVAR='TRN'//VAR;
-        s = nf90_def_var(nc,RSTVAR , nf90_double, (/xid,yid,depid,timid/),   idN)
+        s = nf90_def_var(nc,RSTVAR, nf90_double, (/xid,yid,depid,timid/), idN)
 
-
+        s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00');
+        s = nf90_put_att(nc,idB   , 'missing_value',1.e+20)
+        s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
+
+        s = nf90_put_var(nc, idLon,  totglamt); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLat,  totgphit); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLev,     gdept); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_var(nc, idTim,    julian); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_var(nc, idB,      tottrb); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idN,      tottrn); call handle_err1(s,counter,fileNetCDF)
 
         s =nf90_close(nc)
 
-!      to be continued
-
 
        END SUBROUTINE write_restart
+
+       !****************************************************************************
+       !****************************************************************************
+       !****************************************************************************
+
+       SUBROUTINE WRITE_AVE(fileNetCDF, datefrom, dateTo,M)
+       USE netcdf
+       USE myalloc
+       IMPLICIT NONE
+
+       CHARACTER*(*) fileNetCDF
+       character(LEN=17) datefrom, dateTo
+       real(4) M(jpiglo, jpjglo, jpk)
+
+       character(LEN=3) VAR
+
+       integer s, nc, counter
+       integer timid, depid, yid, xid
+       integer idvartime,idgdept,idphit,idlamt,idVAR
+
+       VAR        =fileNetCDF(23:25)
+
+
+        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        ! *********** GLOBAL ********************
+        s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
+        s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
+        s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo)
+
+        ! *********** DIMENSIONS ****************
+        s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
+        s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
+        s= nf90_def_dim(nc,'depth'         , jpk   ,depid)
+        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
+
+        ! ********** VARIABLES *****************
+        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+        s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept)
+        s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
+        s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
+
+       s = nf90_def_var(nc,VAR ,           nf90_float, (/xid,yid,depid,timid/),  idVAR)
+
+        s = nf90_put_att(nc,idgdept,'units'        ,'m')
+        s = nf90_put_att(nc,idgdept,'positive'     ,'down')
+        s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north')
+        s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude')
+        s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east')
+        s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude')
+
+        s = nf90_put_att(nc,idVAR, 'long_name'    ,VAR)
+        s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20)
+
+        s =nf90_enddef(nc)
+
+        counter=0
+
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept,  REAL(   gdept,     4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idVAR  ,  M )                    ; call handle_err1(s,counter,fileNetCDF)
+
+
+        s =nf90_close(nc)
+
+       END SUBROUTINE WRITE_AVE
+
+
+!****************************************************************************
+       !****************************************************************************
+       !****************************************************************************
+
+       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, datefrom, dateTo,M)
+       USE netcdf
+       USE myalloc
+       USE IO_mem, ONLY : ave_counter
+       IMPLICIT NONE
+
+       CHARACTER*(*) fileNetCDF
+       character(LEN=17) datefrom, dateTo
+       real(8) M(jpiglo, jpjglo, jpk)
+
+       !local
+       character(LEN=3) VAR
+
+       integer s, nc, counter
+       integer timid, depid, yid, xid
+       integer idvartime,idgdept,idphit,idlamt,idVAR
+
+       VAR        =fileNetCDF(23:25)
+
+
+        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        ! *********** GLOBAL ********************
+        s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
+        s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
+        s = nf90_put_att(nc, nf90_global, 'Date__End'     ,      dateTo)
+        s = nf90_put_att(nc, nf90_global, 'ave_counter'   , ave_counter)
+
+        ! *********** DIMENSIONS ****************
+        s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
+        s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
+        s= nf90_def_dim(nc,'depth'         , jpk   ,depid)
+        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
+
+        ! ********** VARIABLES *****************
+        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+        s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept)
+        s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
+        s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
+
+       s = nf90_def_var(nc,VAR ,           nf90_double,(/xid,yid,depid,timid/),  idVAR)
+
+        s = nf90_put_att(nc,idgdept,'units'        ,'m')
+        s = nf90_put_att(nc,idgdept,'positive'     ,'down')
+        s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north')
+        s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude')
+        s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east')
+        s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude')
+
+        s = nf90_put_att(nc,idVAR, 'long_name'        ,VAR)
+        s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20)
+
+        s =nf90_enddef(nc)
+
+        counter=0
+
+
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idVAR  ,                          M  ); call handle_err1(s,counter,fileNetCDF)
+
+
+        s =nf90_close(nc)
+
+       END SUBROUTINE WRITE_AVE_BKP
+
 
        !****************************************************************************
        ! physical data were printed as grid3D.dat grid2D.dat files
@@ -366,7 +546,7 @@
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
         ! *********** GLOBAL ********************
-        s = nf90_put_att(nc, nf90_global, 'Convenctions'     , 'OPA')
+        s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
         s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo)
 
@@ -445,9 +625,9 @@
 
         counter=0
 
-        s = nf90_put_var(nc, idlamt,   REAL(glamt,4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(gphit,4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idgdept,  REAL(gdept,4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt,4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit,4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept,  REAL(   gdept,4)  ); call handle_err1(s,counter,fileNetCDF)
 !      3D vars
         s = nf90_put_var(nc, idS,      REAL(totsnIO,4)  ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idT,      REAL(tottnIO,4)  ); call handle_err1(s,counter,fileNetCDF)
@@ -469,6 +649,45 @@
        END SUBROUTINE physDump
 
        !****************************************************************************
+       !****************************************************************************
+
+
+        SUBROUTINE get_att_char(fileNetCDF,attname,attvalue)
+        use netcdf
+        IMPLICIT NONE
+        character fileNetCDF*(*)
+        character attname*(*)
+        character attvalue*(*)
+
+        integer stat, ncid
+        integer counter
+        counter=0
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ;       call handle_err1(stat, counter,FileNetCDF)
+        stat= nf90_get_att(ncid, nf90_global, attname, attvalue); call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid);
+
+        END SUBROUTINE get_att_char
+
+
+
+        !****************************************************************************
+        !****************************************************************************
+
+        SUBROUTINE get_att_int(fileNetCDF,attname,attvalue)
+        use netcdf
+        IMPLICIT NONE
+        character fileNetCDF*(*)
+        character attname*(*)
+        integer attvalue
+
+        integer stat, ncid
+        integer counter
+        counter=0
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ;       call handle_err1(stat, counter,FileNetCDF)
+        stat= nf90_get_att(ncid, nf90_global, attname, attvalue); call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid);
+
+        END SUBROUTINE get_att_int
 
 
       !****************************************************************************

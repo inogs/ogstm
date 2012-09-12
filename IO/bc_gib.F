@@ -97,25 +97,24 @@
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 !         local
-          character(LEN=8)  nomevar
-          character(LEN=28) nomefile
+          character(LEN=7)  nomevar
+          character(LEN=27) nomefile
           INTEGER(4) jn,jv
 
-          nomevar= '12345678'
+          nomevar= '1234567'
           nomefile='BC/GIB_yyyy0107-00:00:00.nc'
 
-          nomevar(8:8)    = CHAR(0) ! once and for all
-          nomefile(28:28) = CHAR(0)
 
     !     Starting I/O
     !    **********************************************************
-          nomefile(1:27)='BC/GIB_'//datestring//'.nc'
+          nomefile = 'BC/GIB_'//datestring//'.nc'
           if(lwp) write(*,'(A,I4,A,A)') "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
 
           DO jn = 1, jn_gib
-              nomevar(1:7) = 'gib_'//ctrcnm(tra_matrix_gib(jn))
+              nomevar = 'gib_'//ctrcnm(tra_matrix_gib(jn))
               if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
-              CALL ioogsnc_bc_1d2(nomefile,nomevar, Gsizeglo,gib_aux)
+              !CALL ioogsnc_bc_1d2(nomefile,nomevar, Gsizeglo,gib_aux)
+              CALL readnc_double_1d(nomefile,nomevar, Gsizeglo,gib_aux)
 
               DO jv=1,Gsize
                  gib_dtatrc(jv,2,jn) = gib_aux(gib_ridxt(jv,1))

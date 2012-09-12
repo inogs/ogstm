@@ -95,29 +95,25 @@
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 !         local
-          character(LEN=8)  nomevar
-          character(LEN=28) nomefile
+          character(LEN=7)  nomevar
+          character(LEN=27) nomefile
           INTEGER(4) jn,jv
 
-          nomevar= '123456789'
+          nomevar= '1234567'
           nomefile='BC/TIN_yyyy0107-00:00:00.nc'
-
-          nomevar(8:8)    = CHAR(0) ! once and for all
-          nomefile(28:28) = CHAR(0)
 
     !     Starting I/O
     !    **********************************************************
-         nomefile(1:27)='BC/TIN_'//datestring//'.nc'
+         nomefile  ='BC/TIN_'//datestring//'.nc'
          if(lwp) write(*,'(A,I4,A,A)') "LOAD_TIN --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
-
-
 
 
 
           DO jn = 1, jn_riv
 
-              nomevar(1:7) = 'riv_'//ctrcnm(tra_matrix_riv(jn))(1:3)
-              CALL ioogsnc_bc_1d2(nomefile,nomevar,Rsizeglo,riv_aux)
+              nomevar = 'riv_'//ctrcnm(tra_matrix_riv(jn))(1:3)
+              !CALL ioogsnc_bc_1d2(nomefile,nomevar,Rsizeglo,riv_aux)
+              CALL readnc_double_1d(nomefile,nomevar, Rsizeglo,riv_aux)
               DO jv=1,Rsize
                  riv_dtatrc(jv,2,jn) = riv_aux(riv_ridxt(jv,1))
               ENDDO

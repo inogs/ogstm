@@ -14,21 +14,17 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
 
-      REAL(4) lon(jpiglo), lat(jpjglo), dep(jpk)
-
       INTEGER ji, jj, jk, jn
-      INTEGER ind, AC
+      INTEGER ind
 
-!      CHARACTER(LEN=32) forcing2d_file, forcing3d_file
       CHARACTER(LEN=29) forcing_file
-      CHARACTER(LEN=33) bkpname
+      CHARACTER(LEN=32) bkpname
       logical IsBackup
 
 
-      CHARACTER(LEN=29) dia_file_nc
-      CHARACTER(LEN=4)  var ! , var_nc
+      CHARACTER(LEN=28) dia_file_nc
+      CHARACTER(LEN=3)  var
 
-!      INTEGER :: ir2d, ir3d
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
       INTEGER totistart, totiend, relistart, reliend
@@ -40,21 +36,14 @@
       IsBackup =  (datemean.eq.dateTo)
       if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup
 ! ----------------------------------------
-      bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'//CHAR(0)
-      AC       = ave_counter
-
-
-!      forcing3D_file = 'ave.'//datemean//'.grid3D.dat'
-!      forcing2D_file = 'ave.'//datemean//'.grid2D.dat'
+      bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
       forcing_file   = 'ave.'//datemean//'.phys.nc'
 
-      var   (4:4)    = CHAR(0)
 
 
       ! *************** START COLLECTING DATA *****************************
       if (rank == 0) then                    ! IF LABEL 1
-!      ir2d=jpiglo*jpjglo*4
-!      ir3d=jpiglo*jpjglo*jpk*4
+
 
 ! ******* rank 0 sets indexes of tot matrix where to place its own part
 
@@ -74,12 +63,6 @@
           reliend   = relistart + irange - 1
           reljstart = 1 + jPd - 1
           reljend   = reljstart + jrange - 1
-
-
-
-!          write(*,*) forcing3D_file
-!          open(4446, file=forcing3D_file, status='unknown',form='unformatted',access='direct', recl=ir3d) ! Output of mean Forcing Fields grid.T,.U,.V,.W
-!          open(4447, file=forcing2D_file, status='unknown',form='unformatted',access='direct', recl=ir2d)
 
           totsnIO  (totistart:totiend, totjstart:totjend,:) = snIO    (relistart:reliend, reljstart:reljend, :)
           tottnIO  (totistart:totiend, totjstart:totjend,:) = tnIO    (relistart:reliend, reljstart:reljend, :)
@@ -242,61 +225,43 @@
 
       if(rank == 0) then ! IF LABEL 4,
 
-
-            DO ji=1, jpiglo ; lon(ji)= REAL(glamt(1,1),4)+(ji-1)*0.125 ; ENDDO
-            DO jj=1, jpjglo ; lat(jj)= REAL(gphit(1,1),4)+(jj-1)*0.125 ; ENDDO
-            DO jk=1, jpk    ; dep(jk)= REAL(gdept(jk),4)               ; ENDDO
-
-
-!            write(4446,rec=1) (((REAL(totsnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-!            write(4446,rec=2) (((REAL(tottnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-!            write(4446,rec=3) (((REAL(totunIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-!            write(4446,rec=4) (((REAL(totvnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-!            write(4446,rec=5) (((REAL(totwnIO (ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-!            write(4446,rec=6) (((REAL(totavtIO(ji,jj,jk),4), ji=1,jpiglo), jj=1,jpjglo), jk=1,jpk)
-!            write(4447,rec=1) ((REAL(totvatmIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-!            write(4447,rec=2) ((REAL(totempIO (ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-!            write(4447,rec=3) ((REAL(totqsrIO (ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-!            write(4447,rec=4) ((REAL(totbblxIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-!            write(4447,rec=5) ((REAL(totbblyIO(ji,jj)   ,4), ji=1,jpiglo), jj=1,jpjglo)
-
            call PhysDump(forcing_file, datefrom, dateTo)
 ! ******************  DIAGNOSTIC OUTPUT   *******************
            do jn =1 , jptra_dia
-              var(1:3) = dia(jn)
-              bkpname    = 'ave.'//datemean//'.'//dia(jn)//'.nc.bkp'//CHAR(0)
-              dia_file_nc ='ave.'//datemean//'.'//dia(jn)//'.nc'//CHAR(0)
+              var        =  dia(jn)
+              bkpname     = 'ave.'//datemean//'.'//var//'.nc.bkp'
+              dia_file_nc = 'ave.'//datemean//'.'//var//'.nc'
 
               if (IsBackup) then
-                 CALL IOOGSNC_AVE_BKP(bkpname,var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom,dateTo,totdiaIO(:,:,:,jn),AC)
+                 CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,totdiaIO(:,:,:,jn));
+                 !CALL IOOGSNC_AVE_BKP(bkpname,var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom,dateTo,totdiaIO(:,:,:,jn),AC)
               else
-                 d2f3d= REAL(totdiaIO(:,:,:,jn),4)     !   conversion from double to float
-                 CALL IOOGSNC_AVE_3D2(dia_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+                 CALL WRITE_AVE(dia_file_nc,datefrom,dateTo, REAL(totdiaIO(:,:,:,jn),4));
+                 !CALL IOOGSNC_AVE_3D2(dia_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
+
               endif
            enddo
 
 
-!            close(4446)
-!            close(4447)
 
 
       end if ! IF LABEL 4  if(rank == 0)
 
 
-
-      snIO     = 0.
-      tnIO     = 0.
-      vatmIO   = 0.
-      empIO    = 0.
-      qsrIO    = 0.
-      unIO     = 0.
-      bblxIO   = 0.
-      vnIO     = 0.
-      bblyIO   = 0.
-      wnIO     = 0.
-      avtIO    = 0.
-      tra_ppIO = 0.
-
+      if (.not.IsBackup) then
+          snIO     = 0.
+          tnIO     = 0.
+          vatmIO   = 0.
+          empIO    = 0.
+          qsrIO    = 0.
+          unIO     = 0.
+          bblxIO   = 0.
+          vnIO     = 0.
+          bblyIO   = 0.
+          wnIO     = 0.
+          avtIO    = 0.
+          tra_ppIO = 0.
+      endif
 
 
 

@@ -96,15 +96,13 @@
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 !         local
-          character(LEN=8)  nomevar
-          character(LEN=28) nomefile
+          character(LEN=7)  nomevar
+          character(LEN=27) nomefile
           INTEGER(4) jn,jv
 
-          nomevar= '123456789'
+          nomevar= '1234567'
           nomefile='BC/ATM_yyyy0107-00:00:00.nc'
 
-          nomevar(8:8)    = CHAR(0) ! once and for all
-          nomefile(28:28) = CHAR(0)
 
     !     Starting I/O
     !    **********************************************************
@@ -117,8 +115,9 @@
 
           DO jn = 1, jn_atm
 
-              nomevar(1:7) = 'atm_'//ctrcnm(tra_matrix_atm(jn))(1:3)
-              CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
+              nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))(1:3)
+              !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
+              CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
               DO jv=1,Asize
                  atm_dtatrc(jv,2,jn) = atm_aux(atm_ridxt(jv,1))
               ENDDO

@@ -60,13 +60,13 @@
 
 ! 1. Horzontal grid-point position
 ! --------------------------------
-
-      call readnc_slice_double_2d(maskfile,'glamt', glamt)
+      call readnc_global_double_2d(maskfile,'glamt', totglamt)
+!     call readnc_slice_double_2d(maskfile,'glamt', glamt)
       call readnc_slice_double_2d(maskfile,'glamu', glamu)
       call readnc_slice_double_2d(maskfile,'glamv', glamv)
       call readnc_slice_double_2d(maskfile,'glamf', glamf)
 
-
+      call readnc_global_double_2d(maskfile,'gphit', totgphit)
       call readnc_slice_double_2d(maskfile,'gphit', gphit)
       call readnc_slice_double_2d(maskfile,'gphiu', gphiu)
       call readnc_slice_double_2d(maskfile,'gphiv', gphiv)

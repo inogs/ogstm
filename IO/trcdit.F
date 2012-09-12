@@ -25,23 +25,21 @@
 ! ==================
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
 
-      REAL(4) lon(jpiglo), lat(jpjglo), dep(jpk)
+
 
       INTEGER ji, jj, jk, jn
       INTEGER ind
 
 
-      CHARACTER(LEN=29) output_file_nc  ! ave.20091231-12:00:00.P1n.nc
-      CHARACTER(LEN=4)  var, var_nc
-      CHARACTER(LEN=33) bkpname
+      CHARACTER(LEN=28) output_file_nc  ! ave.20091231-12:00:00.P1n.nc
+      CHARACTER(LEN=3)  var
+      CHARACTER(LEN=32) bkpname
       logical IsBackup
 
 !----------------------------------------------------------------------
 ! statement functions
 ! ===================
 
-
-!      INTEGER :: ir2d, ir3d
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -52,12 +50,10 @@
        IsBackup =  (datemean.eq.dateTo)
        if (lwp) write(*,*) 'trcdit IsBackup = ',IsBackup
 ! ----------------------------------------
-       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'//CHAR(0)
+       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
       call mppsync()
       if (.not.IsBackup) ave_counter = 0   !  we reset the counter
 
-      var   (4:4)    = CHAR(0)
-      var_nc(4:4)    = CHAR(0)
 
 
 
@@ -66,14 +62,12 @@
 
       DO jn=1,jptra ! DO LABEL 5
 
-      var_nc(1:3)    = ctrcnm(jn)
-      output_file_nc = 'ave.'//datemean//'.'//var_nc(1:3)//'.nc'//CHAR(0)
+      var    = ctrcnm(jn)
+      output_file_nc = 'ave.'//datemean//'.'//var//'.nc'
+      bkpname        = 'ave.'//datemean//'.'//var//'.nc.bkp'
 
 ! *************** START COLLECTING DATA *****************************
       if(rank == 0) then                    ! IF LABEL 1
-!          ir3d=jpiglo*jpjglo*jpk*4
-!          ir2d=jpiglo*jpjglo*4
-
 
 ! ******* rank 0 sets indexes of tot matrix where to place its own part
           iPd    = nldi
@@ -150,14 +144,14 @@
 
 
 ! ******  2.send buffer to rank 0
-          call MPI_SEND(jpi, 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
-          call MPI_SEND(jpj, 1,mpi_integer, 0, 2, mpi_comm_world, ierr)
+          call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
+          call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
           call MPI_SEND(nimpp, 1,mpi_integer, 0, 3, mpi_comm_world,ierr)
           call MPI_SEND(njmpp, 1,mpi_integer, 0, 4, mpi_comm_world,ierr)
-          call MPI_SEND(nlei, 1,mpi_integer, 0, 5, mpi_comm_world,ierr)
-          call MPI_SEND(nlej, 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
-          call MPI_SEND(nldi, 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
-          call MPI_SEND(nldj, 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
+          call MPI_SEND(nlei , 1,mpi_integer, 0, 5, mpi_comm_world,ierr)
+          call MPI_SEND(nlej , 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
+          call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
+          call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
           call MPI_SEND(bufftrn, jpi * jpj * jpk,mpi_real8  , 0, 9, mpi_comm_world,ierr)
 
 
@@ -171,18 +165,14 @@
 ! *********** START WRITING **************************
       if(rank == 0) then ! IF LABEL 4
 
-            DO ji=1, jpiglo ; lon(ji)= REAL(glamt(1,1),4)+(ji-1)*0.125 ; ENDDO
-            DO jj=1, jpjglo ; lat(jj)= REAL(gphit(1,1),4)+(jj-1)*0.125 ; ENDDO
-            DO jk=1, jpk    ; dep(jk)= REAL(gdept(jk),4)               ; ENDDO
-
 
         if (IsBackup) then
-          bkpname = 'ave.'//datemean//'.'//var_nc(1:3)//'.nc.bkp'//CHAR(0)
-          CALL IOOGSNC_AVE_BKP(bkpname, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo,tottrnIO,ave_counter)
+          CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO);
+          !CALL IOOGSNC_AVE_BKP(bkpname, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo,tottrnIO,ave_counter)
+
         else
-          d2f3d= REAL(tottrnIO,4) !  conversion from double to float
-          CALL IOOGSNC_AVE_3D2(output_file_nc, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo, d2f3d)
-          traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
+          CALL WRITE_AVE(output_file_nc,datefrom, dateTo, REAL(tottrnIO,4));
+          !CALL IOOGSNC_AVE_3D2(output_file_nc, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo, d2f3d)
          endif
 
 
@@ -191,10 +181,13 @@
 
 
 
-      !traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
+
 
 
       END DO ! do jn=1,jptra , DO LABEL 5
+
+
+      if (.not.IsBackup) traIO(:,:,:,:) = 0.  !      we reset matrix for new average
 
 
       if(rank == 0) WRITE(numout,*) '**** trcdit : write NetCDF passive tracer concentration'

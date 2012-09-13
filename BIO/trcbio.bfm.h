@@ -17,6 +17,10 @@ CC ==================
 
       INTEGER ji,jj,jk
       INTEGER jtr,jtrmax,tra_idx
+      TYPE (TIME_CONTAINER) :: CARBONIO
+      real(8) t_interp
+      integer Before,After
+
 ! omp variables
             INTEGER :: mytid, ntids!, itid
 
@@ -54,20 +58,25 @@ C
 #endif
           surf_mask(:) = 0.
           surf_mask(1) = 1.
-
-          opa_co2 = opa_co2_start + (opa_co2_end - opa_co2_start) * 1
+! -------------------------------------------------
+          CARBONIO%Filename='carbon.times'
+          call Load_Time_container(CARBONIO)
+          call TimeInterpolation(NOW_sec, CARBONIO, Before, After, t_interp)
+          opa_co2 = opa_co2_start + (opa_co2_end - opa_co2_start) * t_interp
+          if (lwp) write(*,*) 'opa_co2 =', opa_co2
+! --------------------------------------------------
 
           tra_idx = tra_matrix_gib(1)
           jtrmax=jptra
 
-          isDumpAscii=IsAnAveDump(NOW_datestring)
+
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
 !$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,er)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_pp,tra,rho,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
+!$omp&             sediPI,PH,tra_pp,tra,rho,opa_ice,opa_co2,idxt2glo)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID

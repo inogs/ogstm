@@ -84,10 +84,11 @@
       DO TAU = TimeStepStart, TimeStep__End
 
          call tau2datestring(TAU, DATEstring)
+         sec=datestring2sec(DATEstring)
 
          NOW_datestring = DATEstring ! update time manager module
+         NOW_sec        = sec
 
-         sec=datestring2sec(DATEstring)
 
          call yearly(DATEstring) ! Performs daily updates
          call daily(DATEstring)  ! Performs daily updates

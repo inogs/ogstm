@@ -55,6 +55,7 @@ C
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 
+          opa_co2 = opa_co2_start + (opa_co2_end - opa_co2_start) * 1
 
           tra_idx = tra_matrix_gib(1)
           jtrmax=jptra

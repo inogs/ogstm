@@ -12,7 +12,7 @@
       REAL(8), allocatable :: surf_mask(:)
       REAL(8), allocatable :: sediPI(:,:,:,:)
       REAL(8), allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
-      REAL(8):: opa_ice, opa_co2
+      REAL(8):: opa_ice, opa_co2, opa_co2_start, opa_co2_end
 
 CC----------------------------------------------------------------------
       CONTAINS
@@ -29,7 +29,8 @@ CC----------------------------------------------------------------------
        PH=8.0
 
        opa_ice=0
-       opa_co2=370.0
+       opa_co2_start=290.0
+       opa_co2_end=370.0
 !       sediPI = 0 ! la biologia non assegna valori sui punti di terra
        sediPI = 1000000 ! la biologia non assegna valori sui punti di terra
 !       write(*,*) 'sediPI =', sediPI

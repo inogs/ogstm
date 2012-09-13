@@ -63,10 +63,10 @@ C
 
       MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,er,gji,gjj,gjk,CSi,CS)
+!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,er)
 !$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_pp,tra,rhopn,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
+!$omp&             sediPI,PH,tra_pp,tra,rho,opa_ice,opa_co2,idxt2glo,isDumpAscii,NOW_datestring)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID

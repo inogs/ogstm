@@ -22,9 +22,9 @@
 
                   ztra = 1./ rhopn(ji,jj,1) * zse3t * tmask(ji,jj,1) * emp(ji,jj) * trn(ji,jj,1,jn) ! original emps(ji,jj)
 
-                  tra(ji,jj,1,jn) = tra(ji,jj,1,jn) + ztra
-                  if (jn .EQ. ppO3h) then
-                     tra_pp(ji,jj,1,jptra_dia) = ztra ! save evaporation rate
+                  if (jn .GT. 49) then
+                     tra(ji,jj,1,jn) = tra(ji,jj,1,jn) + ztra
+                     tra_pp(ji,jj,jn-49,jptra_dia) = ztra ! save evaporation rate
                   endif
             END DO
          END DO

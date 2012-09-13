@@ -15,9 +15,7 @@ CC ==================
       LOGICAL isDumpAscii,sur,bot,isT,isBIO
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10)
 
-      INTEGER ji,jj,jk!,jn
-      INTEGER gji,gjj,gjk
-      INTEGER CSi,CS(10,3)
+      INTEGER ji,jj,jk
       INTEGER jtr,jtrmax,tra_idx
 ! omp variables
             INTEGER :: mytid, ntids!, itid
@@ -39,7 +37,7 @@ CC ===================
             integer dim_opa_tra
             real(8):: sediPI(4)
             real(8):: opa_tra(dim_opa_tra)
-            real(8):: local_opa_dia(33)
+            real(8):: local_opa_dia(23)
          end subroutine
       END INTERFACE
 

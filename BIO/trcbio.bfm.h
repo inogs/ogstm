@@ -94,7 +94,7 @@ C
 ! Environmental regulating factors (er)
                           er(1)  = tn(ji,jj+mytid,jk)
                           er(2)  = sn(ji,jj+mytid,jk)
-                          er(3)  = rhopn(ji,jj+mytid,jk)
+                          er(3)  = rho(ji,jj+mytid,jk)
                           er(4)  = opa_ice
                           er(5)  = opa_co2
                           er(6)  = xpar(ji,jj+mytid,jk)

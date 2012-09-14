@@ -74,8 +74,8 @@
           CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
 
 
-         call get_att_int(bkpname,'Ave_counter', ave_counter)
-         call get_att_char(bkpname,'Time_Start', BKPdatefrom)
+         call get_att_int(bkpname,'ave_counter', ave_counter)
+         call get_att_char(bkpname,'DateStart', BKPdatefrom)
 
 
 
@@ -85,14 +85,14 @@
 
            DO jn=1, jptra_dia
 
-              bkpname    = 'ave.'//DateStart//'.'//dia(jn)//'.nc.bkp'//CHAR(0)
+              bkpname    = 'ave.'//DateStart//'.'//dia(jn)//'.nc.bkp'
               INQUIRE(FILE=bkpname, EXIST=existFile)
 
               if (existFile) then
                    CALL readnc_slice_double(bkpname,dia(jn), tra_ppIO(:,:,:,jn) )
 
-                  call get_att_int(bkpname,'Ave_counter', ave_counter)
-                  call get_att_char(bkpname,'Time_Start', BKPdatefrom)
+                  call get_att_int(bkpname,'ave_counter', ave_counter)
+                  call get_att_char(bkpname,'DateStart', BKPdatefrom)
 
 
 

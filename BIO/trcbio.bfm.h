@@ -12,12 +12,12 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER kt,ktask
-      LOGICAL isDumpAscii,sur,bot,isT,isBIO
+      LOGICAL sur,bot,isT,isBIO
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10)
 
       INTEGER ji,jj,jk
       INTEGER jtr,jtrmax,tra_idx
-      TYPE (TIME_CONTAINER) :: CARBONIO
+
       real(8) t_interp
       integer Before,After
 
@@ -59,8 +59,7 @@ C
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 ! -------------------------------------------------
-          CARBONIO%Filename='carbon.times'
-          call Load_Time_container(CARBONIO)
+
           call TimeInterpolation(NOW_sec, CARBONIO, Before, After, t_interp)
           opa_co2 = opa_co2_start + (opa_co2_end - opa_co2_start) * t_interp
           if (lwp) write(numout,*) 'opa_co2 =', opa_co2

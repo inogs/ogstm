@@ -63,7 +63,7 @@ C
           call Load_Time_container(CARBONIO)
           call TimeInterpolation(NOW_sec, CARBONIO, Before, After, t_interp)
           opa_co2 = opa_co2_start + (opa_co2_end - opa_co2_start) * t_interp
-          if (lwp) write(*,*) 'opa_co2 =', opa_co2
+          if (lwp) write(numout,*) 'opa_co2 =', opa_co2
 ! --------------------------------------------------
 
           tra_idx = tra_matrix_gib(1)

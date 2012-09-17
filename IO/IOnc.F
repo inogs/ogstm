@@ -408,6 +408,10 @@
        integer s, nc, counter
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
+       real lat_actual_range(2), lon_actual_range(2), depth_actual_range(2)
+         lon_actual_range=(/-9.25  , 36.0   /)
+         lat_actual_range=(/30.5   , 44.5   /)
+       depth_actual_range=(/ 4.9991,4450.068/)
 
        VAR        =fileNetCDF(23:25)
 
@@ -432,12 +436,17 @@
 
        s = nf90_def_var(nc,VAR ,           nf90_float, (/xid,yid,depid,timid/),  idVAR)
 
-        s = nf90_put_att(nc,idgdept,'units'        ,'m')
+        s = nf90_put_att(nc,idgdept,'units'        ,'meter')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')
+        s = nf90_put_att(nc,idgdept,'actual_range' ,depth_actual_range)
+
         s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north')
         s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude')
+        s = nf90_put_att(nc,idphit,'actual_range' ,lat_actual_range)
+
         s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east')
         s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude')
+        s = nf90_put_att(nc,idlamt,'actual_range' ,lon_actual_range)
 
         s = nf90_put_att(nc,idVAR, 'long_name'    ,VAR)
         s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20)
@@ -478,6 +487,7 @@
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
 
+
        VAR        =fileNetCDF(23:25)
 
 
@@ -504,10 +514,13 @@
 
         s = nf90_put_att(nc,idgdept,'units'        ,'m')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')
+
         s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north')
         s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude')
+
         s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east')
         s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude')
+
 
         s = nf90_put_att(nc,idVAR, 'long_name'        ,VAR)
         s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20)

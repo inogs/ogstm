@@ -111,7 +111,7 @@
 
           DO jn = 1, jn_riv
 
-              nomevar = 'riv_'//ctrcnm(tra_matrix_riv(jn))(1:3)
+              nomevar = 'riv_'//ctrcnm(tra_matrix_riv(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Rsizeglo,riv_aux)
               CALL readnc_double_1d(nomefile,nomevar, Rsizeglo,riv_aux)
               DO jv=1,Rsize

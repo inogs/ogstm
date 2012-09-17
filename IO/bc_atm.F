@@ -115,7 +115,7 @@
 
           DO jn = 1, jn_atm
 
-              nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))(1:3)
+              nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
               CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
               DO jv=1,Asize

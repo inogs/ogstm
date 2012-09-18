@@ -94,10 +94,9 @@
          call daily(DATEstring)  ! Performs daily updates
 
          stpparttime = MPI_WTIME()  ! stop cronomether
-         if(lwp) write(*,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
-!         if(lwp) then
-!             OPEN(UNIT=789,FILE='check'//DATEstring,FORM='FORMATTED'); CLOSE(UNIT=789);
-!         endif
+         if(lwp) write(numout,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
+         if(lwp) write(*     ,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
+
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files

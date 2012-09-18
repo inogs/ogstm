@@ -33,7 +33,8 @@
       REAL(8), allocatable :: bufftma(:)
       REAL(8), allocatable :: bufftrIO(:)
       REAL(8), allocatable :: buffpp(:)
-!      REAL(4), allocatable :: d2f3d(:,:,:)
+      REAL(4), allocatable :: d2f3d(:,:,:)
+      REAL(4), allocatable :: d2f2d(:,:)
 !----------------------------------------------------------------------
       CONTAINS
 
@@ -57,10 +58,14 @@
        allocate(bufftma   (jpi_max* jpj_max* jpk))
        allocate(bufftrIO  (jpi_max* jpj_max* jpk))
        allocate(buffpp    (jpi_max* jpj_max* jpk*jptra_dia))
-!       allocate(d2f3d     (jpiglo,jpjglo,jpk))
+       allocate(d2f3d     (jpiglo,jpjglo,jpk))
+       allocate(d2f2d     (jpiglo,jpjglo))
 
-      mem_all = rea_len *(7*jpi_max* jpj_max + 10*jpi_max* jpj_max* jpk +
-     &           jpi_max* jpj_max* jpk*3) + 4 * (jpiglo + jpjglo + jpk  )
+
+      mem_all = rea_len *(7*jpi_max*jpj_max + (10+jptra_dia)*jpi_max* jpj_max*jpk) +
+     &   + 4* (jpiglo*jpjglo*jpk + jpiglo*jpjglo )
+
+
       END subroutine myalloc_IO
 
 

@@ -225,7 +225,8 @@
 
       if(rank == 0) then ! IF LABEL 4,
 
-           call PhysDump(forcing_file, datefrom, dateTo)
+         if (.not.IsBackup) call PhysDump(forcing_file, datefrom, dateTo)
+
 ! ******************  DIAGNOSTIC OUTPUT   *******************
            do jn =1 , jptra_dia
               var        =  dia(jn)
@@ -236,7 +237,8 @@
                  CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,totdiaIO(:,:,:,jn));
                  !CALL IOOGSNC_AVE_BKP(bkpname,var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom,dateTo,totdiaIO(:,:,:,jn),AC)
               else
-                 CALL WRITE_AVE(dia_file_nc,datefrom,dateTo, REAL(totdiaIO(:,:,:,jn),4));
+                 d2f3d = REAL(totdiaIO(:,:,:,jn),4)
+                 CALL WRITE_AVE(dia_file_nc,datefrom,dateTo, d2f3d);
                  !CALL IOOGSNC_AVE_3D2(dia_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
               endif

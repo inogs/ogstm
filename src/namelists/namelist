@@ -1,0 +1,32 @@
+&NAMDOM
+   nizoom =     1,
+   njzoom =     1,
+   nacc   =     0,
+   atfp   =   0.025,
+   rdt    =  1800,
+   rdtmin =  1800,
+   rdtmax =  1800,
+   rdth   =  1800,
+/
+&NAMHDF
+   aht0   =  -3.e9,
+   ahtb0  =     0.,
+   aeiv0  =  2000.,
+/
+&NAMZDF
+   avt0   = 0.3e-4,
+   ntrbbl = 0,
+/
+&NAMEOS
+   neos   =      0,
+   Rau0   =  1020.,
+   ralpha =  2.e-4,
+   rbeta  =  0.001,
+   rcp    =  4.e+3,
+/
+&NAMRUN
+   lrstar = .true.,
+   CalendarType = 1,
+   nsptint = 1, 
+/
+

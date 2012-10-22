@@ -1,0 +1,28 @@
+&Dimension_Med_Grid
+      jpiglo = 362,    
+      jpjglo = 128,    
+      jpk    = 72, 
+      jpidta = 362,  
+      jpjdta = 128, 
+      jpkdta = 72, 
+      jpkb   = 72 
+/
+&Domain_Characteristic
+      jperio=0,  
+      jpisl=9,   
+      jpnisl=800 
+/
+&Number_Fluxes
+      jpflx = 13,
+      jptaux=1,
+      jptauy=2,
+      jpwind=3,
+      jpemp=4,
+      jpice=5,
+      jpqsr=6,
+      jpkef=7,
+      jpilec=362,
+      jpjlec=128,
+      jpklec=72
+/
+

@@ -1,0 +1,24 @@
+&natgas     gasfac = 1.7, igaswind = 1,
+            icice=1 ,
+/
+&natext    ilecvit = 12 ,
+            atcco2 = 278.,
+/
+&natopt
+      xkg0  = 0.0232,
+      xkr0  = 0.225,
+      xkgp  = 0.074,
+      xkrp  = 0.037,
+      xlg   = 0.674,
+      xlr   = 0.629,
+      rpig  = 0.7,
+
+/ 
+&NATSED
+      vsed      = 3.0,
+      vsed_dia  = 1.0,
+      tmaxr     = 1./(     4.*rday)*0.,
+      tminr     = 1./(24.*30.*rday)*0.,
+
+/
+

@@ -1,0 +1,163 @@
+       MODULE BC_mem
+
+       USE modul_param 
+       USE myalloc
+       USE myalloc_mpp
+       IMPLICIT NONE
+
+       public
+
+! ----------------------------------------------------------------------
+!  Variables for nutrient Nudging
+!  ---------------------------------------------------------------------
+      INTEGER jn_gib, jn_riv, jn_atm
+      INTEGER(4) Gsizeglo, Rsizeglo, Asizeglo
+      INTEGER(4) Gsize, Rsize, Asize
+
+      INTEGER(4), allocatable, DIMENSION(:) ::  tra_matrix_gib, tra_matrix_riv, tra_matrix_atm
+
+
+      INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxtglo, riv_idxtglo, atm_idxtglo ! <--domrea
+!     INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxt   , riv_idxt   , atm_idxt
+      INTEGER(4), allocatable, DIMENSION(:,:) ::  gib_ridxt  , riv_ridxt  , atm_ridxt   ! <--domrea.ReIndexing()
+!     queste matrici ridotte hanno nel primo indice l'indice globale, negli altri 3 il corrispondente indice i,j,k locale (per cpu)
+
+
+      REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux,atm_aux
+      REAL(8), allocatable, DIMENSION(:)       :: restocorr
+      REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv, atm
+      REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm_dtatrc       ! <--bc_gib.load_gib(), bc_tin.
+      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr
+! ----------------------------------------------------------------------
+      CONTAINS
+!     *******************************************************************
+!     SUBROUTINE alloc_DTATRC
+!     called by myOPA()
+!     *******************************************************************
+      SUBROUTINE alloc_DTATRC
+      USE TIME_MANAGER
+      USE myalloc_mpp
+
+      IMPLICIT NONE
+      CHARACTER(LEN=50) atmfile, rivfile, gibfile
+!      CHARACTER(LEN=9)  nomedim0
+!      CHARACTER(LEN=13) nomedim1
+!
+!        nomedim0='riv_idxt'//CHAR(0)
+!        nomedim1 = 'gib_idxt_N1p'//CHAR(0)
+
+        atmfile='BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'!//char(0);
+        gibfile='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'!//char(0);
+        rivfile='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'!//char(0);
+
+         call getDimension(atmfile,'atm_idxt'    ,Asizeglo)
+         call getDimension(gibfile,'gib_idxt_N1p',Gsizeglo)
+         call getDimension(rivfile,'riv_idxt'    ,Rsizeglo)
+
+!           nomedim1(1:12)='gib_idxt_N1p'; CALL ioogsnc_idx(gibfile,nomedim1,Gsizeglo)
+!           nomedim0(1:8)='riv_idxt'; CALL ioogsnc_idx(rivfile,nomedim0,Rsizeglo)
+!           nomedim0(1:8)='atm_idxt'; CALL ioogsnc_idx(atmfile,nomedim0,Asizeglo)
+
+
+               write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' rank = ',rank
+           if (lwp) then
+               write(*,*) 'Size of vector Riv to allocate -->', Rsizeglo
+               write(*,*) 'Size of vector Atm to allocate -->', Asizeglo
+           endif
+
+!     We consider nudging of N1p O2o N3n Slca
+!     O2o jn = 1 Dissolved Oxygen (seasonal)
+!     N1p jn = 2 phophates        (seasonal)
+!     N3n jn = 3 nitrates         (climatological)
+!     N5s jn = 4 Silicates        (seasonal)
+      
+      jn_gib  = 7
+      jn_riv  = 5
+      jn_atm  = 2
+
+       allocate(resto(jpi,jpj,jpk,jn_gib))
+       allocate(restotr(jpi,jpj,jpk,jptra))
+
+       IF (Gsizeglo .NE. 0) THEN
+           allocate(tra_matrix_gib(jn_gib))
+           allocate(restocorr(jn_gib))        !Correction to restoration for O3c and O3h
+           allocate(gib_aux(       Gsizeglo))
+           allocate(gib_idxtglo(   Gsizeglo))
+           mem_all = jn_gib*2*Gsizeglo
+
+          tra_matrix_gib(1) = ppO2o; restocorr(1)=1. ! dissolved Oxygen
+          tra_matrix_gib(2) = ppN1p; restocorr(2)=1. ! phosphates
+          tra_matrix_gib(3) = ppN3n; restocorr(3)=1. ! nitrates
+          tra_matrix_gib(4) = ppN5s; restocorr(4)=1. ! silicates
+          tra_matrix_gib(5) = ppO3c; restocorr(5)=2. ! Dic
+          tra_matrix_gib(6) = ppO3h; restocorr(6)=2. ! Alk
+          tra_matrix_gib(7) = ppN6r; restocorr(7)=2. ! N6r
+       ENDIF
+       
+       IF (Rsizeglo .NE. 0) THEN
+           allocate(tra_matrix_riv(jn_riv))
+           allocate(riv_aux(       Rsizeglo))
+           allocate(riv_idxtglo(   Rsizeglo))
+           mem_all = jn_riv*2*Rsizeglo
+
+          tra_matrix_riv(1) = ppN1p ! phosphates
+          tra_matrix_riv(2) = ppN3n ! nitrates
+          tra_matrix_riv(3) = ppN5s ! silicates
+          tra_matrix_riv(4) = ppO3c ! Dic
+          tra_matrix_riv(5) = ppO3h ! Alk
+       ENDIF
+       
+       IF (Asizeglo .NE. 0) THEN
+           allocate(tra_matrix_atm(jn_atm))
+           allocate(atm_aux(       Asizeglo))
+           allocate(atm_idxtglo(   Asizeglo))
+           mem_all = jn_atm*2*Asizeglo
+
+          tra_matrix_atm(1) = ppN1p ! phosphates
+          tra_matrix_atm(2) = ppN3n ! nitrates
+       ENDIF
+
+      END SUBROUTINE alloc_DTATRC
+
+!     ****************************************
+!     SUBROUTINE alloc_DTATRC_local_gib
+!     called by domrea
+!     ****************************************
+      SUBROUTINE alloc_DTATRC_local_gib()
+
+       if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
+
+       allocate(gib_ridxt (Gsize, 4        ))
+       allocate(gib_dtatrc(Gsize, 2, jn_gib))
+       allocate(gib       (Gsize,    jn_gib))
+
+      END SUBROUTINE alloc_DTATRC_local_gib
+
+
+
+!     ****************************************
+!     SUBROUTINE alloc_DTATRC_local_riv
+!     called by domrea
+!     ****************************************
+      SUBROUTINE alloc_DTATRC_local_riv()
+
+       allocate(riv_ridxt (Rsize,4        ))
+       allocate(riv_dtatrc(Rsize,2, jn_riv))
+       allocate(riv       (Rsize,   jn_riv))
+
+      END SUBROUTINE alloc_DTATRC_local_riv
+
+
+!     ****************************************
+!     SUBROUTINE alloc_DTATRC_local_atm
+!     called by domrea
+!     ****************************************
+      SUBROUTINE alloc_DTATRC_local_atm()
+
+       allocate(atm_ridxt (Asize, 4        ))
+       allocate(atm_dtatrc(Asize, 2, jn_atm))
+       allocate(atm       (Asize,    jn_atm))
+
+      END SUBROUTINE alloc_DTATRC_local_atm
+
+      END MODULE 

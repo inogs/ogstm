@@ -325,34 +325,45 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
        END DO
 !$omp  end parallel
 
-       DO jk = 1,jpk
+       DO jk = 1,jpk,ntids
+!$omp parallel default(none) private(mytid, ji,jj)
+!$omp&         shared(jk, jpi, jpj, jpk,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,
+!$omp&                un,vn,wn,e2u,e1v,e1t,e2t,zdt )
+#ifdef __OPENMP
+       mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+
+       if (jk+mytid.le.jpk) then
           DO jj = 1,jpj
              DO ji = 1,jpi
-                zaa(ji,jj,jk) = e2u(ji,jj)*fse3u(ji,jj,jk) * un(ji,jj,jk)
-                zbb(ji,jj,jk) = e1v(ji,jj)*fse3v(ji,jj,jk) * vn(ji,jj,jk)
-                zcc(ji,jj,jk) = e1t(ji,jj)*e2t(ji,jj)      * wn(ji,jj,jk)
-                big_fact_zaa(ji,jj,jk) = ( abs(zaa(ji,jj,jk)) - zdt*zaa(ji,jj,jk)**2*inv_eu(ji,jj,jk) )!/(e1u(ji,jj)*e2u(ji,jj)*fse3u(ji,jj,jk) ) )
-                big_fact_zbb(ji,jj,jk) = ( abs(zbb(ji,jj,jk)) - zdt*zbb(ji,jj,jk)**2*inv_ev(ji,jj,jk) )!/(e1v(ji,jj)*e2v(ji,jj)*fse3v(ji,jj,jk) ) )
-                big_fact_zcc(ji,jj,jk) = ( abs(zcc(ji,jj,jk)) - zdt*zcc(ji,jj,jk)**2*inv_et(ji,jj,jk) )!/(e1t(ji,jj)*e2t(ji,jj)*fse3w(ji,jj,jk) ) )
+                zaa(ji,jj,jk+mytid) = e2u(ji,jj)*fse3u(ji,jj,jk+mytid) * un(ji,jj,jk+mytid)
+                zbb(ji,jj,jk+mytid) = e1v(ji,jj)*fse3v(ji,jj,jk+mytid) * vn(ji,jj,jk+mytid)
+                zcc(ji,jj,jk+mytid) = e1t(ji,jj)*e2t(ji,jj)      * wn(ji,jj,jk+mytid)
+                big_fact_zaa(ji,jj,jk+mytid) = ( abs(zaa(ji,jj,jk+mytid)) - zdt*zaa(ji,jj,jk+mytid)**2*inv_eu(ji,jj,jk+mytid) )!/(e1u(ji,jj)*e2u(ji,jj)*fse3u(ji,jj,jk+mytid) ) )
+                big_fact_zbb(ji,jj,jk+mytid) = ( abs(zbb(ji,jj,jk+mytid)) - zdt*zbb(ji,jj,jk+mytid)**2*inv_ev(ji,jj,jk+mytid) )!/(e1v(ji,jj)*e2v(ji,jj)*fse3v(ji,jj,jk+mytid) ) )
+                big_fact_zcc(ji,jj,jk+mytid) = ( abs(zcc(ji,jj,jk+mytid)) - zdt*zcc(ji,jj,jk+mytid)**2*inv_et(ji,jj,jk+mytid) )!/(e1t(ji,jj)*e2t(ji,jj)*fse3w(ji,jj,jk+mytid) ) )
              END DO
           END DO
+
+         endif
+!$omp end parallel
        END DO
 
-C
 
-C
+
+
 C     tracer loop parallelized (macrotasking)
 C     =======================================
-C
+
       trcadvparttime = MPI_WTIME()
       TRACER_LOOP: DO  jn = 1, jptra, ntids
 
-C
+
 C        1. tracer flux in the 3 directions
 C        ----------------------------------
-C
+
 C        1.1 mass flux at u v and t-points and initialization
-C
+
 
 #if defined key_trc_diatrd
 

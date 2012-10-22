@@ -21,6 +21,7 @@
       integer nid, tid
       INTEGER IDS(jptra)
 
+      flx_partTime = MPI_WTIME()
 
       if (Fsize .GT. 0) THEN
 
@@ -90,6 +91,7 @@
 
       ENDIF
 
-
+      flx_partTime = MPI_WTIME() - flx_partTime
+      flx_TotTime  = flx_TotTime + flx_partTime
 
       end SUBROUTINE fluxdump

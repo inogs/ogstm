@@ -46,9 +46,7 @@
 
 
 
-       trcdiaparttime = MPI_WTIME() - trcdiaparttime  ! F79 cronometer-stop
-       trcdiatottime = trcdiatottime + trcdiaparttime
+       trcdiaparttime =   MPI_WTIME() - trcdiaparttime  ! F79 cronometer-stop
+       trcdiatottime  = trcdiatottime + trcdiaparttime
 
-
-      RETURN 
-      END 
+      END SUBROUTINE trcdia

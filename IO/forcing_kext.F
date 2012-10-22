@@ -20,7 +20,7 @@
 
 
 
-       dtadynparttime = MPI_WTIME()
+      forcing_kext_partTime = MPI_WTIME()
 
       sec=datestring2sec(DATEstring)
       call TimeInterpolation(sec,TC_LEX, BEFORE, AFTER, zweigh)
@@ -89,8 +89,8 @@
 !      jtask = 1; kt = 1 ; CALL eos(jtask,kt)
 
 
-       dtadynparttime = MPI_WTIME() - dtadynparttime
-       dtadyntottime = dtadyntottime + dtadynparttime
+      forcing_kext_partTime = MPI_WTIME() - forcing_kext_partTime
+      forcing_kext_TotTime  = forcing_kext_TotTime + forcing_kext_partTime
 
 
 

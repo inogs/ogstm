@@ -63,7 +63,7 @@
 
 
       mem_all = rea_len *(7*jpi_max*jpj_max + (10+jptra_dia)*jpi_max* jpj_max*jpk) +
-     &   + 4* (jpiglo*jpjglo*jpk + jpiglo*jpjglo )
+     &    4* (jpiglo*jpjglo*jpk + jpiglo*jpjglo )
 
 
       END subroutine myalloc_IO

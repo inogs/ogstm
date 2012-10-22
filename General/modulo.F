@@ -1,6 +1,7 @@
        MODULE myalloc
 
-       USE modul_param 
+       USE modul_param
+       USE timers
 
        IMPLICIT NONE
 
@@ -74,26 +75,7 @@ CC      rjjss            : number of seconds in one day
 
 
 
-CC----------------------------------------------------------------------
-CC      cronometer for function calls
-CC -----------------------------------
 
-      REAL(8) dayparttime, daytottime
-      REAL(8) dtadynparttime, dtadyntottime
-      REAL(8) dtatrcparttime, dtatrctottime
-      REAL(8) trcdiaparttime, trcdiatottime
-      REAL(8) trcstpparttime, trcstptottime
-      REAL(8) trcwriparttime, trcwritottime
-      REAL(8) trcsmsparttime, trcsmstottime
-      REAL(8) trcadvparttime, trcadvtottime
-      REAL(8) trcdmpparttime, trcdmptottime
-      REAL(8) trclaphdfparttime, trclaphdftottime
-      REAL(8) trcbilaphdfparttime, trcbilaphdftottime
-      REAL(8) trcbblparttime, trcbbltottime
-      REAL(8) trczdfparttime, trczdftottime
-      REAL(8) trcnxtparttime, trcnxttottime
-      REAL(8) trcoptparttime, trcopttottime
-      REAL(8) trcbioparttime, trcbiotottime
 
 CC----------------------------------------------------------------------
 CC       ocean physical parameters (equation of state, ...)

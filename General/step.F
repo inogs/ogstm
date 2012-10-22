@@ -40,43 +40,24 @@
 ! local declarations
 ! ==================
       INTEGER TAU, indic
-      REAL(8) stpparttime,stptottime
+
       character(LEN=17)  datestring, datemean, datefrom
       REAL(8) sec
-      LOGICAL B
+      LOGICAL B, isFIRST
 
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
 !++++++++++++++++++++++++++++++c
 
-        daytottime = 0.     !  Reset of the cronometer
-        dtadyntottime = 0.
-        dtatrctottime = 0.
-        trcdiatottime = 0.
-        trcstptottime = 0.
-        trcwritottime = 0.
-        trcdiatottime = 0.
-        trcsmstottime = 0.
-        trcopttottime = 0.
-        trcbiotottime = 0.
-        trcadvtottime = 0.
-        trcdmptottime = 0.
-        trclaphdftottime = 0.
-        trcbilaphdftottime = 0.
-        trcbbltottime = 0.
-        trczdftottime = 0.
-        trcnxttottime = 0.
-        trcstptottime = 0.
-        stptottime = 0.
 
-
+      isFIRST=.true.
 
       indic=1  ! 1 for indic to initialize output files (first call)
 
       if (IsStartBackup) then
          TauAVEfrom = datestringToTAU(BKPdatefrom)
       else
-         TauAVEfrom = TimeStepStart -1
+         TauAVEfrom = TimeStepStart! -1
       endif
 
 
@@ -107,7 +88,8 @@
                call tau2datestring(TauAVEfrom, datefrom)  ! il TauAVEfrom+1 mi causava la data dell'ave alle 12:15
                CALL trcdia(datestring, datefrom, datestring)
             endif
-
+         B = writeTemporization("trcdia____", trcdiatottime)
+         B = writeTemporization("trcwri____", trcwritottime)
          endif
 
 
@@ -137,7 +119,7 @@
       if (IsAnAveDump(DATEstring)) then
          call MIDDLEDATE(TauAVEfrom, TAU, datemean)
 
-         call tau2datestring(TauAVEfrom+1, datefrom)
+         call tau2datestring(TauAVEfrom, datefrom)
          if (IsStartBackup) datefrom = BKPdatefrom ! overwrite
 
          CALL trcdia(datemean, datefrom, datestring)
@@ -146,6 +128,7 @@
          CALL fluxdump(datemean, datefrom, datestring)
 
          IsStartBackup = .false.
+         B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
 
@@ -154,7 +137,7 @@
 
 
        stpparttime = MPI_WTIME() - stpparttime
-       stptottime  = stptottime + stpparttime
+       stptottime  = stptottime  + stpparttime
 
 ! OPA TEMPORIZATION
        IF (TAU.GT.TimeStepStart) THEN
@@ -162,8 +145,15 @@
            write(*,*) "************* OPA TEMPORIZATION ************"
            write(*,*) "              Iteration",TAU
            write(*,*) "routine******time_tot*********time_ave*****"
-           B = writeTemporization("dtadyn____",dtadyntottime)
+           B = writeTemporization("forPhys___", forcing_phys_TotTime)
+           B = writeTemporization("forKext___", forcing_kext_TotTime)
+           B = writeTemporization("bcTIN_____", bc_tin_TotTime)
+           B = writeTemporization("bcATM_____", bc_atm_TotTime)
+           B = writeTemporization("bcGIB_____", bc_gib_TotTime)
+           B = writeTemporization("density___", density_TotTime)
+           B = writeTemporization("averaging_", ave_TotTime   )
            B = writeTemporization("trcopt____", trcopttottime)
+           B = writeTemporization("trcbio____", BIOtottime)
            B = writeTemporization("trcsms____", trcsmstottime)
            B = writeTemporization("trcadv____", trcadvtottime)
            B = writeTemporization("trcbil____", trcbilaphdftottime)
@@ -171,10 +161,12 @@
            B = writeTemporization("trczdf____", trczdftottime)
            B = writeTemporization("trcnxt____", trcnxttottime)
            B = writeTemporization("trcstp____", trcstptottime)
-           B = writeTemporization("trcwri____", trcwritottime)
-           B = writeTemporization("trcdia____", trcdiatottime)
+
+
+           B = writeTemporization("flxdump____",flx_TotTime  )
            B = writeTemporization("stp_______", stptottime   )
 
+           call reset_Timers()
            write(*,*) "*******************************************"
        ENDIF
       ENDIF
@@ -193,8 +185,12 @@
       CHARACTER(LEN=*) string
       REAL(8) elapsedtime
 
-      write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," rank->", rank
-
+      if (isFIRST) then
+         write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," rank->", rank
+         isFirst=.false.
+      else
+         write(*,250) string,elapsedtime,elapsedtime/nwritetrc," rank->", rank
+      endif
       writeTemporization = .true.
 250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I2 )
       END FUNCTION writeTemporization

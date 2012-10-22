@@ -183,7 +183,7 @@
 
       CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
 
-      if (lwp) write(*,*) 'domrea->ioogsnc_idx_1d  finita'
+      if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
       if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
 
       Gsize = COUNT_InSubDomain(Gsizeglo, gib_idxtglo)

@@ -19,6 +19,10 @@
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
+      ave_partTime = MPI_WTIME()
+
+
+
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
@@ -141,6 +145,9 @@
 
 
          ave_counter = ave_counter +1  ! start incrementing our counter
+
+      ave_partTime = MPI_WTIME() - ave_partTime
+      ave_TotTime = ave_TotTime  + ave_partTime
 
       END SUBROUTINE trcave
 

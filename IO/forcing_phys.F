@@ -47,12 +47,12 @@
 
 
 
-       dtadynparttime = MPI_WTIME()  ! cronometer-start
+       forcing_phys_partTime = MPI_WTIME()  ! cronometer-start
 
 
 
       sec=datestring2sec(DATEstring)
-      call TimeInterpolation(sec,TC_FOR, BEFORE, AFTER, zweigh)
+      call TimeInterpolation(sec,TC_FOR, BEFORE, AFTER, zweigh) ! 3.e-05 sec
 
 
       iperm1 = 1        ! li tengo buoni solo per la slopes
@@ -115,7 +115,11 @@
               END IF
 
           CASE (1) ! ------------linear interpolation ---------------
+
              call ACTUALIZE_PHYS(zweigh)
+
+
+
       END SELECT
 
 
@@ -124,12 +128,12 @@
 !      jtask = 1; kt = 1 ; CALL eos(jtask,kt)
 
 
-       dtadynparttime = MPI_WTIME() - dtadynparttime
-       dtadyntottime = dtadyntottime + dtadynparttime
 
 
+       forcing_phys_partTime = MPI_WTIME() - forcing_phys_partTime
+       forcing_phys_TotTime  = forcing_phys_TotTime  + forcing_phys_partTime
 
-      RETURN
+
       END SUBROUTINE forcings_PHYS
 
 ! ******************************************************
@@ -216,61 +220,109 @@
          USE OPT_mem
          USE stafun
          IMPLICIT NONE
-         REAL(8) zweigh
+         REAL(8) zweigh, Umzweigh
 
          INTEGER ji,jj,jk
-          DO jk=1,jpk
+         INTEGER uk, uj      ! aux variables for OpenMP
+
+      INTEGER :: mytid, ntids! omp variables
+
+#ifdef __OPENMP
+      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
+      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
+#endif
+
+
+#ifdef __OPENMP
+      ntids = omp_get_max_threads() ! take the number of threads
+      mytid = -1000000
+
+#else
+      ntids = 1
+      mytid = 0
+#endif
+
+      Umzweigh  = 1.0 - zweigh
+
+          DO jk=1,jpk, ntids
+!$omp parallel default(none) private(mytid,jj,ji)
+!$omp&                       shared(jpi,jpj,jpk,jk,uk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
+!$omp&                              zweigh,Umzweigh,tmask)
+#ifdef __OPENMP
+         mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+        if (mytid+jk.le.jpk) then
+
+            uk = mytid+jk
             DO jj=1,jpj
               DO ji=1,jpi
-                ub(ji,jj,jk) = un(ji,jj,jk) ! serve ?
-                vb(ji,jj,jk) = vn(ji,jj,jk)
-                un(ji,jj,jk) = ((1. - zweigh)*  udta(ji,jj,jk,1) + zweigh*  udta(ji,jj,jk,2))
-                vn(ji,jj,jk) = ((1. - zweigh)*  vdta(ji,jj,jk,1) + zweigh*  vdta(ji,jj,jk,2))
-                wn(ji,jj,jk) = ((1. - zweigh)*  wdta(ji,jj,jk,1) + zweigh*  wdta(ji,jj,jk,2))
-               avt(ji,jj,jk) = ((1. - zweigh)*avtdta(ji,jj,jk,1) + zweigh*avtdta(ji,jj,jk,2))
+
+                if (tmask(ji,jj,uk). NE . 0.0) then
+                !ub(ji,jj,uk) = un(ji,jj,uk) ! serve ?
+                !vb(ji,jj,uk) = vn(ji,jj,uk)
+                un(ji,jj,uk) = (Umzweigh*  udta(ji,jj,uk,1) + zweigh*  udta(ji,jj,uk,2))
+                vn(ji,jj,uk) = (Umzweigh*  vdta(ji,jj,uk,1) + zweigh*  vdta(ji,jj,uk,2))
+                wn(ji,jj,uk) = (Umzweigh*  wdta(ji,jj,uk,1) + zweigh*  wdta(ji,jj,uk,2))
+               avt(ji,jj,uk) = (Umzweigh*avtdta(ji,jj,uk,1) + zweigh*avtdta(ji,jj,uk,2))
 #if defined key_off_tra
-                tn(ji,jj,jk) = ((1. - zweigh)*  tdta(ji,jj,jk,1) + zweigh*  tdta(ji,jj,jk,2))
-                sn(ji,jj,jk) = ((1. - zweigh)*  sdta(ji,jj,jk,1) + zweigh*  sdta(ji,jj,jk,2))
+                tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
+                sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
 #endif
 #if defined key_trahdfiso
-              uslp(ji,jj,jk) = ((1. - zweigh) *  uslpdta(ji,jj,jk,1)+ zweigh*  uslpdta(ji,jj,jk,2))
-              vslp(ji,jj,jk) = ((1. - zweigh) *  vslpdta(ji,jj,jk,1)+ zweigh*  vslpdta(ji,jj,jk,2))
-             wslpi(ji,jj,jk) = ((1. - zweigh) * wslpidta(ji,jj,jk,1)+ zweigh* wslpidta(ji,jj,jk,2))
-             wslpj(ji,jj,jk) = ((1. - zweigh) * wslpjdta(ji,jj,jk,1)+ zweigh* wslpjdta(ji,jj,jk,2))
+              uslp(ji,jj,uk) = (Umzweigh *  uslpdta(ji,jj,uk,1)+ zweigh*  uslpdta(ji,jj,uk,2))
+              vslp(ji,jj,uk) = (Umzweigh *  vslpdta(ji,jj,uk,1)+ zweigh*  vslpdta(ji,jj,uk,2))
+             wslpi(ji,jj,uk) = (Umzweigh * wslpidta(ji,jj,uk,1)+ zweigh* wslpidta(ji,jj,uk,2))
+             wslpj(ji,jj,uk) = (Umzweigh * wslpjdta(ji,jj,uk,1)+ zweigh* wslpjdta(ji,jj,uk,2))
 #endif
 #if  defined key_trahdfeiv 
-              ugm(ji,jj,jk)  = ((1. - zweigh) *   ugmdta(ji,jj,jk,1)+ zweigh*    ugmdta(ji,jj,jk,2))
-              vgm(ji,jj,jk)  = ((1. - zweigh) *   vgmdta(ji,jj,jk,1)+ zweigh*    vgmdta(ji,jj,jk,2))
-              wgm(ji,jj,jk)  = ((1. - zweigh) *   wgmdta(ji,jj,jk,1)+ zweigh*    wgmdta(ji,jj,jk,2))
+              ugm(ji,jj,uk)  = (Umzweigh *   ugmdta(ji,jj,uk,1)+ zweigh*    ugmdta(ji,jj,uk,2))
+              vgm(ji,jj,uk)  = (Umzweigh *   vgmdta(ji,jj,uk,1)+ zweigh*    vgmdta(ji,jj,uk,2))
+              wgm(ji,jj,uk)  = (Umzweigh *   wgmdta(ji,jj,uk,1)+ zweigh*    wgmdta(ji,jj,uk,2))
 #endif
+              endif ! tmask
               END DO 
             END DO
+      endif
+!$omp end parallel
           END DO
 
-          DO jk=1,jpflx
-            DO ji=1,jpi
-              DO jj=1,jpj
-                flx(ji,jj,jk) = ( (1. - zweigh) * flxdta(ji,jj,jk,1)+ zweigh     * flxdta(ji,jj,jk,2) )
+          DO jj=1,jpj,ntids
+!$omp parallel default(none) private(mytid,jk,ji)
+!$omp&                       shared(jpi,jpj,jpk,jj,uj,flx,flxdta,bblx,bblxdta,bbly,bblydta,hmld,zmxldta,
+!$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
+#ifdef __OPENMP
+         mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+        uj = jj+mytid
+        if (mytid+jj.le.jpj) then
+
+
+            DO jk=1,jpflx
+              DO ji=1,jpi
+                flx(ji,uj,jk) = ( Umzweigh * flxdta(ji,uj,jk,1)+ zweigh     * flxdta(ji,uj,jk,2) )
               END DO 
             END DO
-          END DO
 
-          do jj=1,jpj
+
+!          do jj=1,jpj
             do ji=1,jpi
-              bblx(ji,jj)= (1.-zweigh) * bblxdta(ji,jj,1)+zweigh    * bblxdta(ji,jj,2)
-              bbly(ji,jj)= (1.-zweigh) * bblydta(ji,jj,1)+zweigh    * bblydta(ji,jj,2)
-              hmld(ji,jj)=((1.-zweigh) * zmxldta(ji,jj,1)+zweigh    * zmxldta(ji,jj,2))
+              bblx(ji,uj)= Umzweigh * bblxdta(ji,uj,1)+zweigh    * bblxdta(ji,uj,2)
+              bbly(ji,uj)= Umzweigh * bblydta(ji,uj,1)+zweigh    * bblydta(ji,uj,2)
+              hmld(ji,uj)=(Umzweigh * zmxldta(ji,uj,1)+zweigh    * zmxldta(ji,uj,2))
             end do
-          end do
+!          end do
 
             DO ji=1,jpi
-                DO jj=1,jpj
-                  vatm(ji,jj)   = flx(ji,jj,jpwind)
-                  freeze(ji,jj) = flx(ji,jj,jpice)
-                  emp(ji,jj)    = flx(ji,jj,jpemp)
-                  qsr(ji,jj)    = flx(ji,jj,jpqsr)
-                END DO
-              END DO
+!                DO jj=1,jpj
+                  vatm(ji,uj)   = flx(ji,uj,jpwind)
+                  freeze(ji,uj) = flx(ji,uj,jpice)
+                  emp(ji,uj)    = flx(ji,uj,jpemp)
+                  qsr(ji,uj)    = flx(ji,uj,jpqsr)
+            END DO
+
+        endif
+!$omp end parallel
+       END DO
 
 
       END SUBROUTINE ACTUALIZE_PHYS

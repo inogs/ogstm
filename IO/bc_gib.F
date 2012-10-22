@@ -15,7 +15,7 @@
       integer Before, After
       INTEGER iswap
 
-      dtadynparttime = MPI_WTIME()
+      bc_gib_partTime = MPI_WTIME()
 
       sec=datestring2sec(DATEstring)
       call TimeInterpolation(sec,TC_GIB, BEFORE, AFTER, zweigh)
@@ -72,8 +72,8 @@
       END SELECT
 
 
-       dtatrcparttime = MPI_WTIME() - dtatrcparttime
-       dtatrctottime = dtatrctottime + dtatrcparttime
+       bc_gib_partTime = MPI_WTIME()    - bc_gib_partTime
+       bc_gib_TotTime  = bc_gib_TotTime + bc_gib_partTime
 
 
       END SUBROUTINE BC_GIB

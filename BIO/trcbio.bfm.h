@@ -49,6 +49,9 @@ C   | --------------|
 C   | BFM MODEL CALL|
 C   | --------------|
 C
+
+        BIOparttime = MPI_WTIME()
+
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
@@ -149,3 +152,5 @@ C
 
                 END DO MAIN_LOOP
 
+                BIOparttime =  MPI_WTIME() -BIOparttime
+                BIOtottime  = BIOtottime  + BIOparttime

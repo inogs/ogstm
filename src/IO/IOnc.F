@@ -9,7 +9,7 @@
        counter=0
        B=.false.
          stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-         stat = nf90_inq_varid (ncid, varname, VARid)      ;
+         stat = nf90_inq_varid (ncid, varname, VARid)
 
          if(stat .ne. nf90_NoErr)  then
            !write(*,*) 'ERROR in Var = ', varname, ' file :', fileNetCDF
@@ -17,7 +17,7 @@
          else
             B=.true.
         endif
-
+        stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
        END SUBROUTINE EXISTVAR
 
 

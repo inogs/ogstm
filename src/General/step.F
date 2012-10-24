@@ -163,7 +163,7 @@
            B = writeTemporization("trcstp____", trcstptottime)
 
 
-           B = writeTemporization("flxdump____",flx_TotTime  )
+           B = writeTemporization("flxdump___",flx_TotTime  )
            B = writeTemporization("stp_______", stptottime   )
 
            call reset_Timers()

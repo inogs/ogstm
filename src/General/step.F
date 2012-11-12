@@ -64,6 +64,8 @@
 
       DO TAU = TimeStepStart, TimeStep__End
 
+         stpparttime = MPI_WTIME()  ! stop cronomether
+
          call tau2datestring(TAU, DATEstring)
          sec=datestring2sec(DATEstring)
 
@@ -74,7 +76,7 @@
          call yearly(DATEstring) ! Performs daily updates
          call daily(DATEstring)  ! Performs daily updates
 
-         stpparttime = MPI_WTIME()  ! stop cronomether
+
          if(lwp) write(numout,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
          if(lwp) write(*     ,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
 
@@ -154,11 +156,14 @@
            B = writeTemporization("averaging_", ave_TotTime   )
            B = writeTemporization("trcopt____", trcopttottime)
            B = writeTemporization("trcbio____", BIOtottime)
-           B = writeTemporization("trcsms____", trcsmstottime)
            B = writeTemporization("trcadv____", trcadvtottime)
+           B = writeTemporization("trcdmp____", trcdmptottime)
            B = writeTemporization("trcbil____", trcbilaphdftottime)
            B = writeTemporization("trcbbl____", trcbbltottime)
+           B = writeTemporization("trcsbc____", trcsbctottime)
+           B = writeTemporization("trcsms____", trcsmstottime)
            B = writeTemporization("trczdf____", trczdftottime)
+           B = writeTemporization("snutel____", snuteltottime)
            B = writeTemporization("trcnxt____", trcnxttottime)
            B = writeTemporization("trcstp____", trcstptottime)
 

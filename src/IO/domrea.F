@@ -172,8 +172,11 @@
       call readnc_slice_int   ('bounmask.nc','index',idxt);
 
 
+! ************************************ BFM points re-indexing *******
 
-
+      NBFMPOINTS = BFM_count()
+      call myalloc_BFM()
+      B=BFM_Indexing();
 
 ! *********************************   Gibraltar area
       filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
@@ -202,7 +205,6 @@
 ! ********************************  Rivers ******
       filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc';
       CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
-      !CALL ioogsnc_idx_1d2(filename,nomevar04, Rsizeglo,riv_idxtglo)
       Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
 
       if (Rsize.NE. 0) then
@@ -218,7 +220,6 @@
 ! ******************************************* Atmospherical inputs
       filename       = 'BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'
       CALL readnc_int_1d(filename, 'atm_idxt',Asizeglo,atm_idxtglo)
-!      CALL ioogsnc_idx_1d2(filename, nomevar04,Asizeglo,atm_idxtglo)
       Asize = COUNT_InSubDomain(Asizeglo,atm_idxtglo)
 
       if (Asize.NE. 0) then
@@ -250,7 +251,6 @@
 
        write(*,*) 'DOMREA finita, rank = ', rank
 
-!       call flush()
 
       CONTAINS
 
@@ -348,6 +348,38 @@
       GIBRE_Indexing= .true.
       END FUNCTION GIBRE_Indexing
 
+
+!      LOGICAL FUNCTION GIBRE_Indexing2()
+!          IMPLICIT NONE
+!
+!          ! local
+!          INTEGER ii,jj,kk,jv
+!          INTEGER counter,junk
+!
+!
+!          counter=0
+!           do kk =1, jpk
+!            do jj =1, jpj
+!             do ii =1, jpi
+!                junk = idxt(ii,jj,kk)
+!                do jv =1, Gsizeglo
+!                   if ( junk.EQ.gib_idxtglo(jv) )  then
+!                      gib_ridxt(counter+1) = jv
+!                      gib_ridxt(counter+2) = ii
+!                      gib_ridxt(counter+3) = jj
+!                      gib_ridxt(counter+4) = kk
+!                      counter = counter + 4
+!                   endif
+!              enddo
+!             enddo
+!            enddo
+!           enddo
+!
+!
+!      GIBRE_Indexing= .true.
+!      END FUNCTION GIBRE_Indexing2
+
+
 ! *************************************************************************
 
           LOGICAL FUNCTION  ATMRE_Indexing()
@@ -414,6 +446,63 @@
 
         FLXRE_Indexing =.true.
       END FUNCTION FLXRE_Indexing
+
+
+
+          LOGICAL FUNCTION  BFM_Indexing()
+
+          IMPLICIT NONE
+
+          ! local
+          INTEGER ii,jj,kk
+          INTEGER counter
+
+
+          counter=0
+           do kk =1, jpkb-1
+            do jj =1, jpj-1
+             do ii =2, jpi-1
+
+               !if ( tmask(kk,jj,ii).EQ.1.0 )  then
+               if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0 )) then
+                  counter = counter + 1
+                  BFMpoints(1,counter) = ii
+                  BFMpoints(2,counter) = jj
+                  BFMpoints(3,counter) = kk
+
+               endif
+
+             enddo
+            enddo
+           enddo
+        BFM_Indexing =.true.
+      END FUNCTION BFM_Indexing
+
+
+
+! ***************************************************************
+          INTEGER FUNCTION  BFM_count()
+          USE myalloc, only:  NBFMPOINTS_SUP
+          IMPLICIT NONE
+
+          ! local
+          INTEGER ii,jj,kk
+          INTEGER :: counter = 0
+
+           do kk =1, jpkb-1
+            if (kk.eq.2)  NBFMPOINTS_SUP = counter
+            do jj =1, jpj-1
+             do ii =2, jpi-1
+
+               if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0) )  counter = counter + 1
+
+             enddo
+            enddo
+           enddo
+        BFM_count =counter
+      END FUNCTION BFM_count
+
+
 
 
 

@@ -186,6 +186,8 @@ CC      vmask, fmask()
 
 
       REAL(8), allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
+      INTEGER NBFMPOINTS, NBFMPOINTS_SUP
+      INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CC
@@ -855,6 +857,12 @@ CC----------------------------------------------------------------------
       END subroutine myalloc_DR
 ! *******************************************************************
 
+       subroutine myalloc_BFM()
+
+       allocate(BFMpoints(3,NBFMPOINTS))
+       mem_all = mem_all + 3*NBFMPOINTS*4
+       end subroutine myalloc_BFM
+
 
        subroutine alloc_tot()
 
@@ -1073,6 +1081,8 @@ C
       allocate(umask(jpi,jpj,jpk))
       allocate(vmask(jpi,jpj,jpk))
       mem_all = mem_all + int_len*jpi*jpj + rea_len*4*jpi*jpj*jpk  
+
+
 C     write(*,*) 'Mem_allocated:', mem_all
 C
 CC

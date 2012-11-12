@@ -28,6 +28,8 @@ CC -----------------------------------
       REAL(8) :: trcbioparttime       =0.0, trcbiotottime     = 0.0
       REAL(8) :: stpparttime          =0.0, stptottime        = 0.0
       REAL(8) :: BIOparttime          =0.0, BIOtottime        = 0.0
+      REAL(8) :: snutelparttime       =0.0, snuteltottime     = 0.0
+      REAL(8) :: trcsbcparttime       =0.0, trcsbctottime     = 0.0
       CONTAINS
 
 
@@ -58,6 +60,8 @@ CC -----------------------------------
       trcbiotottime        = 0.0
       stptottime           = 0.0
       BIOtottime           = 0.0
+      snuteltottime        = 0.0
+      trcsbctottime        = 0.0
       END SUBROUTINE reset_Timers
 
       END MODULE TIMERS

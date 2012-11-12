@@ -42,8 +42,8 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
 
-      INTEGER :: kt,pack_size
-      INTEGER :: elements,nelements(6),idx_element(14,6)
+!      INTEGER :: kt,pack_size
+!      INTEGER :: elements,nelements(6),idx_element(14,6)
 ! omp variables
       INTEGER :: mytid, ntids, itid
 
@@ -68,7 +68,10 @@ CC ===================
       mytid = 0
 #endif
 
-      SMALL =  0.00000000001
+
+!      SMALL =  0.00000000001
+
+!****************     INIT PHASE  *********************
 
       IF (dimen_jvsnu .EQ. 0) THEN
          DO jj = 2,jpjm1
@@ -82,6 +85,8 @@ CC ===================
          END DO
       ENDIF
 
+! ***************************************************
+      snutelparttime = MPI_WTIME()
 
       TRACER_LOOP: DO  jn = 1, jptra, ntids
 
@@ -105,7 +110,7 @@ C -----------------
 
                      else
                         tra_FN(ji,jj,jk,jn+mytid) =  - tra(ji,jj,jk,jn+mytid) + SMALL
-                        tra(ji,jj,jk,jn+mytid)    = SMALL
+                        tra(   ji,jj,jk,jn+mytid) =  SMALL
                      end if
 
                   END DO
@@ -121,65 +126,75 @@ C -----------------
 C Frequency of correction if plus module of kt
 
 
-      CALL OPA_elements(elements,nelements,idx_element)
+!      CALL OPA_elements(elements,nelements,idx_element)
 
-      TOT(:,:) =0
-      TOT_FN(:,:)=0
+!      TOT(:,:) =0
+!      TOT_FN(:,:)=0
 
 C Compute vertical integral
-      DO jn=1, elements
-         DO jnn=1, nelements(jn)
-            DO jv = 1,dimen_jvsnu
-               ji = jarr_snu(1,jv)
-               jj = jarr_snu(2,jv)
+      DO jv = 1,dimen_jvsnu, ntids ! cicla sui punti terra 2D
+
+!$omp   parallel default(none) private(mytid,ji,jj,jk)
+!$omp&      shared(dimen_jvsnu,jarr_snu,jv,jn,jpk,elements,nelements,TOT,TOT_FN,tra,tra_FN,idx_element,e3t,FN_CORR)
+
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+      IF( mytid + jv <= dimen_jvsnu ) THEN
+
+          ji = jarr_snu(1,jv+mytid)
+          jj = jarr_snu(2,jv+mytid)
+          TOT(   jv+mytid,:) = 0.
+          TOT_FN(jv+mytid,:) = 0.
+
+
+          DO jn =1, elements
+          DO jnn=1, nelements(jn)
+
                DO jk = 1,jpk
-                  TOT(jv,jn)=TOT(jv,jn)+tra(ji,jj,jk,idx_element(jnn,jn))*e3t(jk)
-                  TOT_FN(jv,jn)=TOT_FN(jv,jn)+tra_FN(ji,jj,jk,idx_element(jnn,jn))*e3t(jk)
+                  TOT(   jv+mytid,jn)=TOT(   jv+mytid,jn) +   tra(ji,jj,jk,idx_element(jnn,jn))*e3t(jk)
+                  TOT_FN(jv+mytid,jn)=TOT_FN(jv+mytid,jn) +tra_FN(ji,jj,jk,idx_element(jnn,jn))*e3t(jk)
                END DO
-            END DO
-         END DO
-      END DO
+           END DO
+           END DO
+
 
 C Compute correction factor
 
-      DO jn=1, elements
-         DO jv = 1,dimen_jvsnu
+          DO jn=1, elements
 
-            FN_CORR(jv,jn)=1-TOT_FN(jv,jn)/TOT(jv,jn)
 
-            IF(FN_CORR(jv,jn) .LE. 0) THEN
+                FN_CORR(jv+mytid,jn) = 1-TOT_FN(jv+mytid,jn)/TOT(jv+mytid,jn)
 
-               ji = jarr_snu(1,jv)
-               jj = jarr_snu(2,jv)
+                IF(FN_CORR(jv+mytid,jn) .LE. 0) THEN
 
-               gji = idxt2glo(ji, jj, 1,1)
-               gjj = idxt2glo(ji, jj, 1,2)
+    !               gji = idxt2glo(ji, jj, 1,1)
+    !               gjj = idxt2glo(ji, jj, 1,2)
+    !       write(*,250) 'SNUTEL --> NEGATIVE MASS PROBLEM: ji=', gji, ' jj= ', gjj, ' element= ',jn
+    !250   FORMAT(A,I5,A,I5,A,I5)
+                   FN_CORR(jv+mytid,jn) = 1.
+    !              STOP 'NEGATIVE MASS PROBLEM'
 
-!       write(*,250) 'SNUTEL --> NEGATIVE MASS PROBLEM: ji=', gji, ' jj= ', gjj, ' element= ',jn
-!250   FORMAT(A,I5,A,I5,A,I5)
-               FN_CORR(jv,jn) = 1.
+                END IF
 
-!              STOP 'NEGATIVE MASS PROBLEM'
+          END DO
 
-            END IF
-
-         END DO
-      END DO
 
 C Apply correction factor
 
-      DO jn=1, elements
-         DO jnn=1, nelements(jn)
-            DO jk = 1,jpk
-               DO jv = 1,dimen_jvsnu
-                  ji = jarr_snu(1,jv)
-                  jj = jarr_snu(2,jv)
-                  tra(ji,jj,jk,idx_element(jnn,jn)) = FN_CORR(jv,jn) * tra(ji,jj,jk,idx_element(jnn,jn))
-               END DO
-            END DO
-         END DO
-      END DO
+          DO jn=1, elements
+             DO jnn=1, nelements(jn)
+                DO jk = 1,jpk
+                      tra(ji,jj,jk,idx_element(jnn,jn)) = FN_CORR(jv+mytid,jn) * tra(ji,jj,jk,idx_element(jnn,jn))
+                   END DO
+                END DO
+             END DO
 
+      ENDIF
+!$omp end parallel
+      END DO ! jv
 
+      snutelparttime = MPI_WTIME()   - snutelparttime
+      snuteltottime  = snuteltottime + snutelparttime
 
       END SUBROUTINE SNUTEL

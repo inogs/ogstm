@@ -66,12 +66,13 @@ CC ==================
 ! omp variables
       INTEGER :: mytid, ntids
 
+
 #ifdef __OPENMP
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn
+      INTEGER ji,jj,jk,jn,jw
 
 
 #ifdef __OPENMP
@@ -155,41 +156,41 @@ C ----------------------------------------
 
 C 2.b TRB for Smolarkiewicz scheme
 C -------------------------------
-!$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trb,tra)
+c!$omp   parallel default(none) private(mytid,ji,jj,jk)
+c!$omp&      shared(jn,jpk,jpj,jpi,trb,tra)
 
-#ifdef __OPENMP
-        mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-      IF( mytid + jn <= jptra ) THEN
-
-        DO jk=1,jpk
-          DO jj=1,jpj
-            DO ji=1,jpi
-              trb(ji,jj,jk,jn+mytid)=tra(ji,jj,jk,jn+mytid)
-            END DO
-          END DO
-        END DO 
-
-      END IF
-!$omp end parallel
+!#ifdef __OPENMP
+!        mytid = omp_get_thread_num()  ! take the thread ID
+!#endif
+!      IF( mytid + jn <= jptra ) THEN
+!
+!        DO jk=1,jpk
+!          DO jj=1,jpj
+!            DO ji=1,jpi
+!              trb(ji,jj,jk,jn+mytid)=tra(ji,jj,jk,jn+mytid)
+!            END DO
+!          END DO
+!        END DO
+!
+!      END IF
+c!$omp end parallel
 #endif
 C
 C
 C 3. swap of arrays
 C -----------------
-!$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,tra_FN)
+!$omp   parallel default(none) private(mytid,ji,jj,jk,jw)
+!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) !NWATERPOINTS,WATERPOINTS,JWATERPOINTS,KWATERPOINTS)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
       IF( mytid + jn <= jptra ) THEN
 
-        DO jk = 1,jpk
-          DO jj = 1,jpj
-            DO ji = 1,jpi
-              trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
+C        DO jk = 1,jpk
+C          DO jj = 1,jpj
+C            DO ji = 1,jpi
+C              trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
 !CCC F79 We put .le. against .lt. since bfm doesn't like 0 concentration
 !              if( tra(ji,jj,jk,jn+mytid).le.0.  ) then
 !CCC             WRITE(numout,*) 'conc. exception ( ji , jj , jk , jn)'
@@ -198,10 +199,28 @@ C -----------------
 !              trn(ji,jj,jk,jn+mytid) = 0.00000000001
 !              trb(ji,jj,jk,jn+mytid) = 0.00000000001
 !              end if
-              tra(ji,jj,jk,jn+mytid) = 0.e0 ! tra becomes back trend and not source
+C              tra(ji,jj,jk,jn+mytid) = 0.e0 ! tra becomes back trend and not source
+C            END DO
+C          END DO
+C        END DO
+
+
+        DO jk = 1,jpk
+          DO jj = 1,jpj
+            DO ji = 1,jpi
+!        DO jw = 1, NWATERPOINTS
+!            ji = WATERPOINTS(1,jw)
+!            jj = WATERPOINTS(2,jw)
+!            jk = WATERPOINTS(3,jw)
+            trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
+            trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
+            tra(ji,jj,jk,jn+mytid) = 0.e0
+!         ENDDO
             END DO
           END DO
         END DO
+
+
 
       END IF
 !$omp end parallel

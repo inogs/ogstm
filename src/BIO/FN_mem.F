@@ -20,6 +20,7 @@
       REAL(8), allocatable :: cou_FN(:,:,:)
 !     REAL(8), allocatable :: cor_FN(:,:,:)
       REAL(8), allocatable :: FN_ranking(:)
+      INTEGER :: elements,nelements(6),idx_element(14,6)
 
 
 !----------------------------------------------------------------------
@@ -29,7 +30,7 @@
 
 
       IMPLICIT NONE
-      INTEGER :: elements,nelements(6),idx_element(14,6)
+
 
       dimen_jvsnu = 0
       SMALL=0.00000000001
@@ -39,8 +40,8 @@
 
       CALL OPA_elements(elements,nelements,idx_element)
 
-      allocate(TOT(jpj*jpi,elements)) ! elements is the number of element considered (C,P,N,...)
-      allocate(TOT_FN(jpj*jpi,elements))
+      allocate(TOT    (jpj*jpi,elements)) ! elements is the number of element considered (C,P,N,...)
+      allocate(TOT_FN (jpj*jpi,elements))
       allocate(FN_CORR(jpj*jpi,elements))
 
 

@@ -12,17 +12,17 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER kt,ktask
-      LOGICAL sur,bot,isT,isBIO
+      LOGICAL sur,bot
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10)
 
-      INTEGER ji,jj,jk
+      INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
 
       real(8) t_interp
       integer Before,After
 
 ! omp variables
-            INTEGER :: mytid, ntids!, itid
+            INTEGER :: mytid, ntids
 
 #ifdef __OPENMP
             INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
@@ -71,12 +71,51 @@ C
           tra_idx = tra_matrix_gib(1)
           jtrmax=jptra
 
+! ---------------- Fuori dai punti BFM
+         DO jn=1,4,ntids
+!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(sediPI,jpi,jpj,jpk,jn)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+			IF (mytid+jn <= 4) then
+				 do jk=1,jpk
+				 do jj=1,jpj
+				 do ji=1,jpi
+					 sediPI(ji,jj,jk,jn+mytid)=0.
+				 end do
+				 end do
+				 end do
+
+			  ENDIF
+!$omp end parallel
+         ENDDO
+
+         DO jn=1, jptra_dia-1, ntids
+!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_pp,jpi,jpj,jpk,jn)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+			IF (mytid+jn <= jptra_dia-1) then
+				 do jk=1,jpk
+				 do jj=1,jpj
+				 do ji=1,jpi
+					 tra_pp(ji,jj,jk,jn+mytid)=0.
+				 end do
+				 end do
+				 end do
+
+			  ENDIF
+!$omp end parallel
+         ENDDO
 
 
-      MAIN_LOOP: DO  jj = 1, jpjm1, ntids
 
-!$omp   parallel default(none) private(jk,ji,mytid,isT,isBIO,sur,bot,jtr,a,b,c,d,er)
-!$omp&      shared(jj,jpjm1,jpkbm1,jpim1,Tmask,tra_idx,tra_matrix_gib,
+!      MAIN_LOOP: DO  jj = 1, jpjm1, ntids
+      MAIN_LOOP: DO  jb = 1, NBFMPOINTS, ntids
+
+
+!$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,er)
+!$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
 !$omp&             sediPI,PH,tra_pp,tra,rho,opa_ice,opa_co2,idxt2glo)
 
@@ -84,34 +123,31 @@ C
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-                 IF( mytid + jj <= jpjm1 ) THEN
+                 IF( mytid + jb <= NBFMPOINTS ) THEN
 
-                 DO jk=1,jpkbm1
-                    DO ji = 2,jpim1
 
-                       isT     = Tmask(ji,jj+mytid,jk) .eq. 1
-                       isBIO   = restotr(ji,jj+mytid,jk,tra_idx) .eq. 0 ! no nudging points are considered
+                 ji = BFMpoints(1, mytid+jb)
+                 jj = BFMpoints(2, mytid+jb)
+                 jk = BFMpoints(3, mytid+jb)
 
-                       IF( isT .and. isBIO) THEN
 
                           sur = (jk .eq. 1)
-
                           bot = .FALSE.
 
                           DO jtr=1, jtrmax
-                             a(jtr) = trn(ji,jj+mytid,jk,jtr)
+                             a(jtr) = trn(ji,jj,jk,jtr)
                           END DO
 ! Environmental regulating factors (er)
-                          er(1)  = tn(ji,jj+mytid,jk)
-                          er(2)  = sn(ji,jj+mytid,jk)
-                          er(3)  = rho(ji,jj+mytid,jk)
+                          er(1)  = tn (ji,jj,jk)
+                          er(2)  = sn (ji,jj,jk)
+                          er(3)  = rho(ji,jj,jk)
                           er(4)  = opa_ice
                           er(5)  = opa_co2
-                          er(6)  = xpar(ji,jj+mytid,jk)
-                          er(7)  = DAY_LENGTH(ji,jj+mytid)
+                          er(6)  = xpar(ji,jj,jk)
+                          er(7)  = DAY_LENGTH(ji,jj)
                           er(8)  = e3t(jk)
-                          er(9)  = vatm(ji,jj+mytid) * surf_mask(jk)
-                          er(10) = PH(ji,jj+mytid,jk)
+                          er(9)  = vatm(ji,jj) * surf_mask(jk)
+                          er(10) = PH(ji,jj,jk)
 
                           call OPA_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
@@ -122,29 +158,21 @@ C
                           call OPA_Output_EcologyDynamics(b, jtrmax, c, d)
 
                           DO jtr=1, jtrmax
-                             tra(ji,jj+mytid,jk,jtr) =tra(ji,jj+mytid,jk,jtr) +b(jtr) ! trend
+                             tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend
                           END DO
 
                           DO jtr=1,4
-                             sediPI(ji,jj+mytid,jk,jtr) = c(jtr) ! sedimentation velocities
+                             sediPI(ji,jj,jk,jtr) = c(jtr) ! sedimentation velocities
                           END DO
 
 ! Last record (jptra_dia) for evaporation rates
 
                           DO jtr=1,jptra_dia-1
-                             tra_pp(ji,jj+mytid,jk,jtr) = d(jtr) ! diagnostic
+                             tra_pp(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
-                          PH(ji,jj+mytid,jk)=d(9) ! Follows solver guess
+                          PH(ji,jj,jk)=d(9) ! Follows solver guess
 
-                       ELSE
-                          sediPI(ji,jj+mytid,jk,:)=0
-                          tra_pp(ji,jj+mytid,jk,:)=0
-                       ENDIF
-
-                    END DO
-
-                END DO
 
              ENDIF
 

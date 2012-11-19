@@ -52,7 +52,7 @@
 C 0. initializations
 
       namelist /nattrc/ nwritetrc,lrsttr,nrsttr, ctrcnm,ctrcnl,ctrcun,lutini
-      namelist /natnum/ rsc,rtrn,ncor,ndttrc,crosster,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0
+      namelist /natnum/ rsc,rtrn,ncor,ndttrc,crosster,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed
 
 #    if defined key_trc_diatrd
       namelist /natrtd/ luttrd,nwritetrd                      ! dynamical trends
@@ -149,6 +149,7 @@ C 0. initializations
       trcrat  = 1.
       ahtrc0  = aht0
       aeivtr0 = aeiv0
+      vsed    = 3.0
 
       REWIND(numnat)
       READ(numnat,natnum)
@@ -167,6 +168,7 @@ C 0. initializations
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ' ,trcrat
           WRITE(numout,*) ' horizontal eddy diffus. for passive tr  = ',ahtrc0
           WRITE(numout,*) ' eddy induced veloc. coef. for passive tr = ',aeivtr0
+          WRITE(numout,*)' detritus sedimentation speed          vsed =',vsed/86400
           WRITE(numout,*) ' '
       ENDIF
 #    if defined key_trc_diatrd
@@ -239,8 +241,5 @@ C 0. initializations
       ENDIF
 #    endif
 
-! 1.4 namelist natdmp : passive tracers dumping
-
-!      CALL trclsm
 
       END SUBROUTINE trclec

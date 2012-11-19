@@ -124,16 +124,30 @@
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-      IF( mytid + jn <= jptra_dia ) then
+      IF( mytid + jn .LT. jptra_dia ) then
          DO jk=1, jpk
             DO jj=1, jpj
                DO ji=1, jpi
-              IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                 tra_ppIO(ji,jj,jk,jn+mytid)=(tra_ppIO(ji,jj,jk,jn+mytid)*Realcounter+
-     &            tra_pp(ji,jj,jk,jn+mytid))*Realcounterp1
-              ELSE
-                 tra_ppIO(ji,jj,jk,jn+mytid)=Miss_val
-              ENDIF
+                  IF(tmask(ji,jj,jk) .NE. 0.) THEN
+                    tra_ppIO(ji,jj,jk,jn+mytid)=(tra_ppIO(ji,jj,jk,jn+mytid)*Realcounter+
+     &              tra_pp(ji,jj,jk,jn+mytid))*Realcounterp1
+                  ELSE
+                    tra_ppIO(ji,jj,jk,jn+mytid)=Miss_val
+                  ENDIF
+               END DO
+            END DO
+         END DO
+      ENDIF
+      IF( mytid + jn .EQ. jptra_dia ) then ! surface diagnostic packed in last 3D file
+         DO jk=1, jpk
+            DO jj=1, jpj
+               DO ji=1, jpi
+                  IF(tmask(ji,jj,1) .NE. 0.) THEN
+                    tra_ppIO(ji,jj,jk,jn+mytid)=(tra_ppIO(ji,jj,jk,jn+mytid)*Realcounter+
+     &              tra_pp(ji,jj,jk,jn+mytid))*Realcounterp1
+                  ELSE
+                    tra_ppIO(ji,jj,jk,jn+mytid)=Miss_val
+                  ENDIF
                END DO
             END DO
          END DO
@@ -144,7 +158,7 @@
 ! here when nwritetrc  is ok we have to pass the average field!
 
 
-         ave_counter = ave_counter +1  ! start incrementing our counter
+      ave_counter = ave_counter +1  ! start incrementing our counter
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

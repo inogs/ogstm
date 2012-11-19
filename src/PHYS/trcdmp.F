@@ -34,6 +34,7 @@
       INTEGER tra_idx
       INTEGER nmldmp_gib,nmldmp_riv,nmldmp_atm
       INTEGER(4) jv
+      INTEGER shift
       REAL(8)  ztra
       INTEGER :: mytid, ntids
 #ifdef __OPENMP
@@ -108,8 +109,8 @@ c           ENDIF
 ! Boundary conditions for rivers
        IF (Rsize .NE. 0) THEN
          DO jn=1, jn_riv,ntids
-!$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx)
-!$omp&                         shared(jn,tra, riv,Rsize, riv_ridxt,tra_matrix_riv,jn_riv)
+!$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx,shift)
+!$omp&                         shared(jn,tra, riv,Rsize, riv_ridxt,tra_matrix_riv,jn_riv,tra_pp)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -123,6 +124,24 @@ c           ENDIF
              jk = riv_ridxt(jv,4)
              tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + riv(jv,jn+mytid) ! since nmldmp_riv=1
           ENDDO
+
+           !output diagnostic on jptra_dia
+             if (tra_idx .EQ. ppN1p) shift = 2
+             if (tra_idx .EQ. ppN3n) shift = 4
+             if (tra_idx .EQ. ppN5s) shift = 6
+             if (tra_idx .EQ. ppO3c) shift = 8
+             if (tra_idx .EQ. ppO3h) shift = 10
+
+             DO jv=1, Rsize
+
+                ji = riv_ridxt(jv,2)
+                jj = riv_ridxt(jv,3)
+                jk = riv_ridxt(jv,4) + shift
+
+                tra_pp(ji,jj,jk,jptra_dia) = riv(jv,jn+mytid) ! since nmldmp_riv=1
+
+             ENDDO
+
         ENDIF
 !$omp end parallel
 
@@ -146,8 +165,8 @@ c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
 ! Boundary conditions for Atmosphere
        IF (Asize .NE. 0) THEN
          DO jn=1, jn_atm, ntids
-!$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx)
-!$omp&                         shared(jn,tra,atm,Asize, atm_ridxt,tra_matrix_atm,jn_atm)
+!$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx,shift)
+!$omp&                         shared(jn,tra,atm,Asize, atm_ridxt,tra_matrix_atm,jn_atm,tra_pp)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -161,6 +180,21 @@ c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
              jk = atm_ridxt(jv,4)
              tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + atm(jv,jn+mytid) ! since nmldmp_atm=1
          ENDDO
+
+                 !output diagnostic on jptra_dia
+             if (tra_idx .EQ. ppN1p) shift = 12
+             if (tra_idx .EQ. ppN3n) shift = 13
+
+
+             DO jv=1, Asize
+
+                ji = atm_ridxt(jv,2)
+                jj = atm_ridxt(jv,3)
+                jk = atm_ridxt(jv,4) + shift
+
+                tra_pp(ji,jj,jk,jptra_dia) = atm(jv,jn+mytid) ! since nmldmp_riv=1
+
+             ENDDO
       ENDIF
 !$omp end parallel
 

@@ -3,6 +3,7 @@
             ndttrc = 1,
             lhdf = .true.
             crosster = .false. ,
+            vsed     = 3.0
 /
 &NATTRC
    nwritetrc = 100,

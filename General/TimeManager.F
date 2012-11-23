@@ -7,7 +7,7 @@
       MODULE TIME_MANAGER
       use calendar
       IMPLICIT NONE
-      integer, parameter :: Time_Max = 5000
+      integer, parameter :: Time_Max = 15000
 
       TYPE TIME_CONTAINER
           CHARACTER(LEN=50)          :: NAME

@@ -3951,8 +3951,6 @@ C
           END IF
       ENDIF
       CALL pvmfbarrier(opaall,npvm_nproc,info)
-#endif
-#endif
       RETURN
       END
       SUBROUTINE PvmIsl2(kdtatyp,kx,ky,kdim,knfo)
@@ -3963,6 +3961,18 @@ C
       END DO
       RETURN
       END
+#endif
+#endif
+      END
+
+!      SUBROUTINE PvmIsl2(kdtatyp,kx,ky,kdim,knfo)
+!      INTEGER kx(kdim),ky(kdim)
+!      INTEGER kdim,knfo,kdtatyp,ji
+!      DO ji=1,kdim
+!        IF (ky(ji) .NE. 0) kx(ji)=ky(ji)
+!      END DO
+!      RETURN
+!      END
 
       SUBROUTINE mppimin(ktab,kdim,kwork)
 CCC---------------------------------------------------------------------

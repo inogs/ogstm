@@ -13,7 +13,7 @@ CC local declarations
 CC ==================
       INTEGER kt,ktask
       LOGICAL sur,bot
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10)
+      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia-1),er(10)
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
@@ -33,17 +33,6 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-
-      INTERFACE OPA_Output_EcologyDynamics
-         subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI, local_opa_dia)
-!            use global_mem, ONLY:RLEN
-            IMPLICIT NONE
-            integer dim_opa_tra
-            real(8):: sediPI(4)
-            real(8):: opa_tra(dim_opa_tra)
-            real(8):: local_opa_dia(23)
-         end subroutine
-      END INTERFACE
 
 C   | --------------|
 C   | BFM MODEL CALL|
@@ -155,7 +144,7 @@ C
 
                           call EcologyDynamics()
 
-                          call OPA_Output_EcologyDynamics(b, jtrmax, c, d)
+                          call OPA_Output_EcologyDynamics(b, jtrmax, c, d,jptra_dia-1)
 
                           DO jtr=1, jtrmax
                              tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend

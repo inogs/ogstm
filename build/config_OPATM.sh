@@ -19,9 +19,9 @@ export OPATMDIR=$PWD/..
 #----------------- User configuration -----------------
 archfile="${OPATMDIR}/compilers/compiler.inc"
 if [ $OPA_ARCH == 'ppc64' ] ; then
-   cppdefs="-WF,-Dkey_off_tra,-Dkey_trahdfcoef1d,-Dkey_trahdfbilap,-Dkey_mpp,-Dkey_mpp_mpi,-Dkey_passivetrc,-Dkey_trc_smolar,-Dkey_trc_hdfbilap,-Dkey_trc_dmp,-Dkey_kef,-Dkey_trc_sed,-Dkey_trc_bfm,-Dkey_INCLUDE_BFM_PELCO2,-D__OPENMP"
+   cppdefs="-WF,-Dkey_off_tra,-Dkey_trahdfcoef1d,-Dkey_trahdfbilap,-Dkey_mpp,-Dkey_mpp_mpi,-Dkey_passivetrc,-Dkey_trc_smolar,-Dkey_trc_hdfbilap,-Dkey_trc_dmp,-Dkey_kef,-Dkey_trc_sed,-Dkey_trc_bfm,-Dkey_INCLUDE_BFM_PELCO2,-D__OPENMP,-Dkey_INCLUDE_BFM_E2E_1_5"
 else
-   cppdefs="-Dkey_off_tra -Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_passivetrc -Dkey_trc_smolar  -Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2 -D__OPENMP"
+   cppdefs="-Dkey_off_tra -Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_passivetrc -Dkey_trc_smolar  -Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2 -D__OPENMP,-Dkey_INCLUDE_BFM_E2E_1_5"
 fi
 exe=${OPATMDIR}/bin/opa.xx
 #----------------- User configuration -----------------

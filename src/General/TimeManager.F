@@ -404,6 +404,11 @@
           AFTER  = BEFORE +1
           if (BEFORE.eq.0   ) then ; BEFORE = N; endif
           if (AFTER.eq.(N+1)) then ; AFTER  = 1; endif
+      ELSE
+         if (BEFORE.eq.0) then
+              BEFORE = 1
+              t_interp = 1.0
+          endif
       ENDIF
 
 

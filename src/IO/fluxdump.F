@@ -11,13 +11,11 @@
       CHARACTER(LEN=17), INTENT(IN) :: datemean, datefrom, dateend
 
       INTEGER jf,js,jn
-!      INTEGER jkk!,jjg,jkg
-!      INTEGER flux_unit
 
-      CHARACTER(LEN=31) flux_file
-      CHARACTER(LEN=2) rankstring
+      CHARACTER(LEN=33) flux_file
+      CHARACTER(LEN= 4) rankstring
 
-      integer s, nc,INDid, junk!, counter
+      integer s, nc,INDid
       integer nid, tid
       INTEGER IDS(jptra)
 
@@ -27,23 +25,8 @@
 
       write(rankstring,1414) rank
 
-!      flux_file= 'flux.'//datenow//'.COR'//rankstring//'.as'
-!
-!      flux_unit=5028
-!
-!          OPEN(UNIT=flux_unit,FILE=flux_file,FORM='FORMATTED')
-!
-!          do js=1,7
-!             do jn=1,jptra
-!                do jf=1,Fsize
-!                   jkk = INDFluxGlo(flx_ridxt(jf,1))
-!                   write(flux_unit,*) jkk, diaflx(jf,jn,js)
-!                enddo
-!             enddo
-!          enddo
-!
-!          CLOSE(flux_unit)
-1414  FORMAT(I2.2)
+
+1414  FORMAT(I4.4)
 
 
       flux_file= 'flux.'//datemean//'.COR'//rankstring//'.nc'

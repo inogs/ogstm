@@ -197,7 +197,7 @@
          write(*,250) string,elapsedtime,elapsedtime/nwritetrc," rank->", rank
       endif
       writeTemporization = .true.
-250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I2 )
+250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I3 )
       END FUNCTION writeTemporization
 
       END SUBROUTINE step

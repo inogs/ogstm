@@ -20,6 +20,18 @@
 !       The trend is computed either throughout the water column
 !       (nlmdmptrc=0) or in area of weak vertical mixing (nlmdmptrc=1) or
 !       below the well mixed layer (nlmdmptrc=2)
+!     DIAGNOSTIC DUMP
+!     Diagnostic output written in the flux file with number jptra_dia (*F[jptra_dia].nc)
+!     Each level (or couple of levels) of the 3D matrix contains different variables
+!     1   evapo rate --> O3c (refer to trcsbc.F)
+!     2   evapo rate --> O3h (refer to trcsbc.F)
+!     (3-4)   Rivers --> N1p
+!     (5-6)   Rivers --> N3n
+!     (7-8)   Rivers --> N5s
+!     (9-10)  Rivers --> O3c
+!     (11-12) Rivers --> O3h
+!     13  Atmosphere --> N1p
+!     14  Atmosphere --> N3n
 
        USE myalloc
        USE myalloc_mpp

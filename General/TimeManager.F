@@ -38,6 +38,7 @@
       TYPE (TIME_CONTAINER) :: TC_ATM
       TYPE (TIME_CONTAINER) :: TC_GIB
       TYPE (TIME_CONTAINER) :: TC_LEX
+      TYPE (TIME_CONTAINER) :: TC_CO2
 
       TYPE (DUMP_CONTAINER) :: RESTARTS
       TYPE (DUMP_CONTAINER) :: AVE
@@ -145,13 +146,14 @@
       if (.not.CheckDatelist(DATESTART,TC_ATM)) then ; B = .false.; endif
       if (.not.CheckDatelist(DATESTART,TC_GIB)) then ; B = .false.; endif
       if (.not.CheckDatelist(DATESTART,TC_LEX)) then ; B = .false.; endif
-
+      if (.not.CheckDatelist(DATESTART,TC_CO2)) then ; B = .false.; endif
 
       if (.not.CheckDatelist(DATE__END,TC_FOR)) then ; B = .false.; endif
       if (.not.CheckDatelist(DATE__END,TC_TIN)) then ; B = .false.; endif
       if (.not.CheckDatelist(DATE__END,TC_ATM)) then ; B = .false.; endif
       if (.not.CheckDatelist(DATE__END,TC_GIB)) then ; B = .false.; endif
       if (.not.CheckDatelist(DATE__END,TC_LEX)) then ; B = .false.; endif
+      if (.not.CheckDatelist(DATE__END,TC_CO2)) then ; B = .false.; endif
 
       CheckStartEnd = B
       END FUNCTION CheckStartEnd
@@ -284,6 +286,10 @@
       TC_GIB%Filename    = 'GibTimes'
       TC_GIB%Name        = 'Gibraltar'
 
+      TC_CO2%Filename    = 'carbonTimes'
+      TC_CO2%Name        = 'Co2 surface value'
+
+
       RESTARTS%Filename  = 'restartTimes'
       RESTARTS%Name      = 'BFM files'
 
@@ -301,6 +307,7 @@
       call Load_Time_container(TC_ATM)
       call Load_Time_container(TC_GIB)
       call Load_Time_container(TC_LEX)
+      call Load_Time_container(TC_CO2)
 
       ! DUMP
       call Load_Dump_container(RESTARTS)
@@ -426,6 +433,7 @@
          call TimeExtension(datestring,TC_ATM)
          call TimeExtension(datestring,TC_GIB)
          call TimeExtension(datestring,TC_LEX)
+         call TimeExtension(datestring,TC_CO2)
       endif
       END SUBROUTINE YEARLY
 

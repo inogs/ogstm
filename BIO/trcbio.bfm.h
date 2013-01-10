@@ -1,7 +1,6 @@
 
        USE myalloc
        USE myalloc_mpp
-       USE TIME_MANAGER
        USE BIO_mem
        USE BC_mem
 
@@ -17,9 +16,6 @@ CC ==================
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
-
-      real(8) t_interp
-      integer Before,After
 
 ! omp variables
             INTEGER :: mytid, ntids
@@ -62,11 +58,6 @@ C
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 ! -------------------------------------------------
-
-          call TimeInterpolation(NOW_sec, CARBONIO, Before, After, t_interp)
-          opa_co2 = opa_co2_start + (opa_co2_end - opa_co2_start) * t_interp
-          if (lwp) write(numout,*) 'opa_co2 =', opa_co2
-! --------------------------------------------------
 
           tra_idx = tra_matrix_gib(1)
           jtrmax=jptra
@@ -142,7 +133,7 @@ C
                           er(2)  = sn (ji,jj,jk)
                           er(3)  = rho(ji,jj,jk)
                           er(4)  = opa_ice
-                          er(5)  = opa_co2
+                          er(5)  = opa_co2(ji,jj)
                           er(6)  = xpar(ji,jj,jk)
                           er(7)  = DAY_LENGTH(ji,jj)
                           er(8)  = e3t(jk)

@@ -201,14 +201,25 @@ CCC  --------------
 CC
 CC       jptra  : number of tracers
 CC
-#    if defined key_INCLUDE_BFM_PELCO2
+#if defined key_INCLUDE_BFM_PELCO2
 
       INTEGER, parameter :: jptra = 51
+
+#ifndef key_INCLUDE_BFM_E2E_1_5
       INTEGER, parameter :: jptra_dia = 23
+#endif
+#ifdef key_INCLUDE_BFM_E2E_1_5
+      INTEGER, parameter :: jptra_dia = 67
+#endif
 #    else
 
       INTEGER, parameter :: jptra = 49
-      INTEGER, parameter :: jptra_dia = 3
+#ifndef key_INCLUDE_BFM_E2E_1_5
+      INTEGER, parameter :: jptra_dia = 4
+#endif
+#ifdef
+      INTEGER, parameter :: jptra_dia = 48
+#endif
 #    endif
 CC
 CC productive layer depth
@@ -270,18 +281,44 @@ C    &     ppR6n=48, ppR6p=49, ppR6s=50, ppR7c=51
      &     ppR6s=48, ppR7c=49
 C       diagnostic indexes
         integer,parameter :: ppPPG=1, ppNPP=2, ppBPP=3
-#    if defined key_INCLUDE_BFM_PELCO2
+#if defined key_INCLUDE_BFM_PELCO2
 
         integer,parameter :: ppO3c=50, ppO3h=51
-C       diagnostic indexes
+C     diagnostic indexes
+#ifndef key_INCLUDE_BFM_E2E_1_5
         integer,parameter :: ppDIC=4, ppCO2=5,  ppHCO3=6,  ppCO3=7,   ppAc=8,
      &                       pppH =9, pppCO2=10, ppF01 =11, ppF02=12, ppF03=13,
      &                       ppF04=14, ppF05=15, ppF06 =16, ppF07=17, ppF08=18,
      &                       ppF09=19, ppF10=20, ppF11 =21, ppF12=22, ppF13=23
-
-
-#    endif
-
+#endif
+#ifdef key_INCLUDE_BFM_E2E_1_5
+        integer,parameter :: ppDIC=4, ppCO2=5,  ppHCO3=6,  ppCO3=7,   ppAc=8,
+     &                       pppH =9, pppCO2=10, ppF01 =11, ppF02=12, ppF03=13,
+     &                       ppF04=14, ppF05=15, ppF06 =16, ppF07=17, ppF08=18,
+     &                       ppF09=19, ppF10=20, ppF11 =21, ppF12=22, ppF13=23,
+     &                       ppF14=24,ppF15=25,ppF16=26,ppF17=27,ppF18=28,
+     &                       ppF19=29,ppF20=30,ppF21=31,ppF22=32,ppF23=33,ppF24=34,
+     &                       ppF25=35,ppF26=36,ppF27=37,ppF28=38,ppF29=39,ppF30=40,
+     &                       ppF31=41,ppF32=42,ppF33=43,ppF34=44,ppF35=45,ppF36=46,
+     &                       ppF37=47,ppF38=48,ppF39=49,ppF40=50,ppF41=51,ppF42=52,
+     &                       ppF43=53,ppF44=54,ppF45=55,ppF46=56,ppF47=57,ppF48=58,
+     &                       ppF49=59,ppF50=60,ppF51=61,ppF52=62,ppF53=63,ppF54=64,
+     &                       ppF55=65,ppF56=66,ppF57=67
+#endif
+! no PCO2 module
+#elif
+#ifdef key_INCLUDE_BFM_E2E_1_5
+        integer,parameter :: ppF01=4, ppF02=5, ppF03=6,
+     &                       ppF04=7, ppF05=8, ppF06 =9, ppF07=10, ppF08=11,
+     &                       ppF09=12, ppF10=13, ppF11 =14, ppF12=15, ppF13=16,
+     &                       ppF14=17,ppF15=18,ppF16=19,ppF17=20,ppF17=21,ppF18=22,
+     &                       ppF19=23,ppF20=24,ppF21=25,ppF22=26,ppF23=27,ppF24=28,
+     &                       ppF25=29,ppF26=30,ppF27=31,ppF28=32,ppF29=33,ppF30=34,
+     &                       ppF31=35,ppF32=36,ppF33=36,ppF34=37,ppF35=38,ppF36=39,
+     &                       ppF37=40,ppF38=41,ppF39=42,ppF40=43,ppF41=44,ppF42=45,
+     &                       ppF43=46,ppF44=47,ppF45=48
+#endif
+#endif
 #    elif defined key_test00
 CC    test CASE : nutrient adv-dif without reaction
       INTEGER, parameter :: jptra = 5

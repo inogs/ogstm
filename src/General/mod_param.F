@@ -209,7 +209,7 @@ CC
       INTEGER, parameter :: jptra_dia = 23
 #endif
 #ifdef key_INCLUDE_BFM_E2E_1_5
-      INTEGER, parameter :: jptra_dia = 67
+      INTEGER, parameter :: jptra_dia = 71
 #endif
 #    else
 
@@ -303,7 +303,8 @@ C     diagnostic indexes
      &                       ppF37=47,ppF38=48,ppF39=49,ppF40=50,ppF41=51,ppF42=52,
      &                       ppF43=53,ppF44=54,ppF45=55,ppF46=56,ppF47=57,ppF48=58,
      &                       ppF49=59,ppF50=60,ppF51=61,ppF52=62,ppF53=63,ppF54=64,
-     &                       ppF55=65,ppF56=66,ppF57=67
+     &                       ppF55=65,ppF56=66,ppF57=67,ppF58=68,ppF59=69,ppF70=70,
+     &                       ppF71=71
 #endif
 ! no PCO2 module
 #elif

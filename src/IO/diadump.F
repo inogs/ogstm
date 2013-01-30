@@ -40,7 +40,7 @@
       forcing_file   = 'ave.'//datemean//'.phys.nc'
 
 
-
+!      PHYSICS FIRST!!
       ! *************** START COLLECTING DATA *****************************
       if (rank == 0) then                    ! IF LABEL 1
 
@@ -55,14 +55,10 @@
           jstart = njmpp
           irange    = iPe - iPd + 1
           jrange    = jPe - jPd + 1
-          totistart = istart + iPd - 1
-          totiend   = totistart + irange - 1
-          totjstart = jstart + jPd - 1
-          totjend   = totjstart + jrange - 1
-          relistart = 1 + iPd - 1
-          reliend   = relistart + irange - 1
-          reljstart = 1 + jPd - 1
-          reljend   = reljstart + jrange - 1
+          totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
+          totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
+          relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
+          reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
           totsnIO  (totistart:totiend, totjstart:totjend,:) = snIO    (relistart:reliend, reljstart:reljend, :)
           tottnIO  (totistart:totiend, totjstart:totjend,:) = tnIO    (relistart:reliend, reljstart:reljend, :)
@@ -75,7 +71,7 @@
           totbblyIO(totistart:totiend, totjstart:totjend)   = bblyIO  (relistart:reliend, reljstart:reljend)
           totwnIO  (totistart:totiend, totjstart:totjend,:) = wnIO    (relistart:reliend, reljstart:reljend, :)
           totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
-          totdiaIO (totistart:totiend, totjstart:totjend,:,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,:) ! diagnostic from reaction model
+!          totdiaIO (totistart:totiend, totjstart:totjend,:,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,:) ! diagnostic from reaction model
 
           do idrank = 1, size-1
 ! **************  rank 0 is receiving from the others their buffer  ****
@@ -101,19 +97,15 @@
       call MPI_RECV(buffbbly,jpi_rec*jpj_rec              ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
       call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 20,mpi_comm_world, status, ierr)
       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 21,mpi_comm_world, status, ierr)
-      call MPI_RECV(buffpp  ,jpi_rec*jpj_rec*jpk*jptra_dia,mpi_real8,idrank, 22,mpi_comm_world, status, ierr)
+!      call MPI_RECV(buffpp  ,jpi_rec*jpj_rec*jpk*jptra_dia,mpi_real8,idrank, 22,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
               jrange    = jPe - jPd + 1
-              totistart = istart + iPd - 1
-              totiend   = totistart + irange - 1
-              totjstart = jstart + jPd - 1
-              totjend   = totjstart + jrange - 1
-              relistart = 1 + iPd - 1
-              reliend   = relistart + irange - 1
-              reljstart = 1 + jPd - 1
-              reljend   = reljstart + jrange - 1
+              totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
+              totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
+              relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
+              reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
               do jk =1 , jpk ! 3d vars
                do jj =totjstart,totjend
@@ -129,17 +121,17 @@
                 enddo
                enddo
 
-               do jn=1, jptra_dia
-                  do jk =1 , jpk ! 3d vars
-                     do jj =totjstart,totjend
-                        do ji =totistart,totiend
-                           ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-     &                           +(jn-1)*jpk*jpj_rec*jpi_rec
-                           totdiaIO(ji,jj,jk,jn)= buffpp (ind)
-                        enddo
-                     enddo
-                  enddo
-               enddo
+!               do jn=1, jptra_dia
+!                  do jk =1 , jpk ! 3d vars
+!                     do jj =totjstart,totjend
+!                        do ji =totistart,totiend
+!                           ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
+!     &                           +(jn-1)*jpk*jpj_rec*jpi_rec
+!                           totdiaIO(ji,jj,jk,jn)= buffpp (ind)
+!                        enddo
+!                     enddo
+!                  enddo
+!               enddo
 
 
                do jj =totjstart,totjend ! and 2d vars
@@ -159,16 +151,16 @@
       else  ! IF LABEL 1,  if(rank == 0)
 
 
-           do jn =1 , jptra_dia
-            do jk =1, jpk
-             do jj =1 , jpj
-              do ji =1 , jpi
-                  ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1) + jpi*jpj*jpk *(jn-1)
-                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn)
-              enddo
-             enddo
-            enddo
-           enddo
+!           do jn =1 , jptra_dia
+!            do jk =1, jpk
+!             do jj =1 , jpj
+!              do ji =1 , jpi
+!                  ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1) + jpi*jpj*jpk *(jn-1)
+!                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn)
+!              enddo
+!             enddo
+!            enddo
+!           enddo
 
            do jk =1 , jpk
             do jj =1 , jpj
@@ -221,20 +213,21 @@
 
 
       endif ! IF LABEL 1, if(rank == 0)
+!************* END COLLECTING DATA  *****************
 
+! *********** START WRITING **************************
 
       if(rank == 0) then ! IF LABEL 4,
-
          if (.not.IsBackup) call PhysDump(forcing_file, datefrom, dateTo)
-
+      endif
 
 
 
 
 ! ******************  DIAGNOSTIC OUTPUT   *******************
-           do jn =1 , jptra_dia
+      DO jn =1 , jptra_dia
 
-              if (rank == 0) then                    ! IF LABEL 1
+          if (rank == 0) then                    ! IF LABEL 1
 
 
 ! ******* rank 0 sets indexes of tot matrix where to place its own part
@@ -247,14 +240,10 @@
              jstart = njmpp
              irange    = iPe - iPd + 1
              jrange    = jPe - jPd + 1
-             totistart = istart + iPd - 1
-             totiend   = totistart + irange - 1
-             totjstart = jstart + jPd - 1
-             totjend   = totjstart + jrange - 1
-             relistart = 1 + iPd - 1
-             reliend   = relistart + irange - 1
-             reljstart = 1 + jPd - 1
-             reljend   = reljstart + jrange - 1
+             totistart = istart + iPd - 1 ;totiend   = totistart + irange - 1
+             totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
+             relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
+             reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
              tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
 
@@ -275,14 +264,10 @@
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
                 jrange    = jPe - jPd + 1
-                totistart = istart + iPd - 1
-                totiend   = totistart + irange - 1
-                totjstart = jstart + jPd - 1
-                totjend   = totjstart + jrange - 1
-                relistart = 1 + iPd - 1
-                reliend   = relistart + irange - 1
-                reljstart = 1 + jPd - 1
-                reljend   = reljstart + jrange - 1
+                totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
+                totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
+                relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
+                reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
 
                 do jk =1 , jpk ! 3d vars
@@ -295,10 +280,10 @@
                   enddo
 
 
-          enddo !idrank = 1, size-1
+             enddo !idrank = 1, size-1
 
 
-      else  ! IF LABEL 1,  if(rank == 0)
+          else  ! IF LABEL 1,  if(rank == 0)
 
 
             do jk =1, jpk
@@ -326,7 +311,11 @@
 
 
       endif ! IF LABEL 1, if(rank == 0)
+!************* END COLLECTING DATA  *****************
 
+! *********** START WRITING **************************
+
+      if (rank == 0) then
               var        =  dia(jn)
               bkpname     = 'ave.'//datemean//'.'//var//'.nc.bkp'
               dia_file_nc = 'ave.'//datemean//'.'//var//'.nc'

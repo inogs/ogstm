@@ -87,9 +87,9 @@ C ---------------------
 C ... Namelist Dom_Size :
 !      REWIND( numnam )
 !      READ  ( numnam, Dom_Size )
-      call COUNTLINE('Dom_Dec_jpi.ascii', jpni)
-      jpnj  = 1
-      jpnij = jpni
+      call COUNTLINE ('Dom_Dec_jpi.ascii', jpni)
+      call COUNTWORDS('Dom_Dec_jpi.ascii', jpnj)
+      jpnij = jpni*jpnj
       jpreci = 1
       jprecj = 1
 
@@ -141,8 +141,8 @@ C
       open(3333,file='Dom_Dec_jpi.ascii', form='formatted')
       open(3334,file='Dom_Dec_jpj.ascii', form='formatted')
       
-      read(3333,*) ((ilcit(ji,jj), ji=1,jpni),jj=1,jpnj) 
-      read(3334,*) ((ilcjt(ji,jj), ji=1,jpni),jj=1,jpnj) 
+      read(3333,*) ((ilcit(ji,jj), jj=1,jpnj),ji=1,jpni)
+      read(3334,*) ((ilcjt(ji,jj), jj=1,jpnj),ji=1,jpni)
       
       close(3333)
       close(3334)
@@ -226,5 +226,28 @@ C
 21        CLOSE(TheUnit)
 
       END SUBROUTINE COUNTLINE
+! **************************************************************
+      SUBROUTINE COUNTWORDS(filename,n)
+        IMPLICIT NONE
+        CHARACTER*(*) filename
+        INTEGER N
+        ! local
+        INTEGER I
+        CHARACTER*1024 str, str_blank
+
+
+        open(unit=21,file=filename, form='formatted')
+        read(21,'(A)') str
+        close(21)
+
+        str_blank=' '//trim(str)
+        N=0
+        do i = 1,len(trim(str))
+         if ((str_blank(i:i).eq.' ').and.(str_blank(i+1:i+1).ne.' ') )  N=N+1
+        enddo
+
+      END SUBROUTINE COUNTWORDS
+
+
 ! ***************************************************************
       END SUBROUTINE PARINI

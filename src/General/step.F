@@ -111,6 +111,7 @@
       CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
       CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
+      CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp(TAU) ! se commento questo non fa calcoli
@@ -149,6 +150,7 @@
            write(*,*) "routine******time_tot*********time_ave*****"
            B = writeTemporization("forPhys___", forcing_phys_TotTime)
            B = writeTemporization("forKext___", forcing_kext_TotTime)
+           B = writeTemporization("bcCO2_____", bc_co2_TotTime)
            B = writeTemporization("bcTIN_____", bc_tin_TotTime)
            B = writeTemporization("bcATM_____", bc_atm_TotTime)
            B = writeTemporization("bcGIB_____", bc_gib_TotTime)
@@ -197,7 +199,7 @@
          write(*,250) string,elapsedtime,elapsedtime/nwritetrc," rank->", rank
       endif
       writeTemporization = .true.
-250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I2 )
+250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I3 )
       END FUNCTION writeTemporization
 
       END SUBROUTINE step

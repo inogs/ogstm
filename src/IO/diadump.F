@@ -23,6 +23,7 @@
 
 
       CHARACTER(LEN=28) dia_file_nc
+      CHARACTER(LEN=33) dia_vect_nc
       CHARACTER(LEN=3)  var
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
@@ -136,13 +137,15 @@
               var        =  dia(jn)
               bkpname     = 'ave.'//datemean//'.'//var//'.nc.bkp'
               dia_file_nc = 'ave.'//datemean//'.'//var//'.nc'
+              dia_vect_nc = 'ave.'//datemean//'.'//var//'.nc.vect'
 
               if (IsBackup) then
                  CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO(:,:,:));
                  !CALL IOOGSNC_AVE_BKP(bkpname,var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom,dateTo,totdiaIO(:,:,:,jn),AC)
               else
                  d2f3d = REAL(tottrnIO(:,:,:),4)
-                 CALL WRITE_AVE(dia_file_nc,datefrom,dateTo, d2f3d);
+                 CALL WRITE_AVE       (dia_file_nc,datefrom,dateTo, d2f3d);
+                 CALL WRITE_VECTOR_AVE(dia_vect_nc,datefrom,dateTo, d2f3d);
                  !CALL IOOGSNC_AVE_3D2(dia_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
               endif

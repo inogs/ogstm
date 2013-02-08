@@ -87,7 +87,8 @@ C
 C only IMPLICIT scheme
 C
       REAL(8) z2dtt
-      REAL(8)  delta_tra(jpk)
+      REAL(8) delta_tra(jpk),int_tra(jpk)
+      REAL(8) Aij
 #if ! defined key_trahdfbilap
 #    if defined key_trahdfiso || defined key_trahdfgeop
       REAL(8) zcoef0, zcoef3, zcoef4, zcoeg3
@@ -174,9 +175,10 @@ C
 C 0. Local constant initialization
 C --------------------------------
 C
-!$omp    parallel default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra)
+!$omp    parallel default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij)
 !$omp&                           shared(jn,dimen_jvzdf,jarr_zdf,ndttrc,rdttra,jpk,jpkm1,avt,zwi,
-!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e3t,e3w,jarr_zdf_flx,Fsize,diaflx)
+!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e1t,e2t,e3t,e3w,jarr_zdf_flx,Fsize,
+!$omp&                                   diaflx)
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -191,8 +193,9 @@ C =============
 C
         DO jv = 1, dimen_jvzdf
 
-           ji = jarr_zdf(1,jv)
-           jj = jarr_zdf(2,jv)
+           ji  = jarr_zdf(1,jv)
+           jj  = jarr_zdf(2,jv)
+           Aij = e1t(ji,jj) * e2t(ji,jj)
 C
 C
 C I. Vertical trends associated with lateral mixing
@@ -339,21 +342,29 @@ C
         END DO
 
 ! calculate flux due to vertical diffusion (on top face of the grid cell jk)
+! the flux is computed as an integral (int_tra) starting from the surface
+
       DO jk=1,jpk
 
-         jf=  jarr_zdf_flx(jv+mytid,jk)
-
          z2dtt = zdt * rdttra(jk)
-         delta_tra(jk)  = ( zwx(jk,mytid+1) - trb(ji,jj,jk,jn+mytid) ) / z2dtt! or trn(ji,jj,jk,jn+mytid)
+         delta_tra(jk) = ( zwx(jk,mytid+1) - zwy(jk,mytid+1) ) / z2dtt * Aij * e3t(jk)! or trn(ji,jj,jk,jn+mytid)
+
+         IF (jk .EQ. 1) THEN
+             int_tra(1)  = 0
+         ELSE
+             int_tra(jk) = delta_tra(jk) + int_tra(jk-1)
+         ENDIF
+
+      jf = jarr_zdf_flx(jv,jk)
+
+! jf = 0 are the points not included in the transect they are excluded
 
          IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-               IF (jk .EQ. 1) THEN
-                  delta_tra(jk)  = 0
-                  diaflx(jf,jn+mytid,7) = diaflx(jf,jn+mytid,7) + 0
-               ELSE
-                  diaflx(jf,jn+mytid,7) = diaflx(jf,jn+mytid,7) + (delta_tra(jk-1)-delta_tra(jk))
-               ENDIF
+
+                  diaflx(jf,jn+mytid,7) = int_tra(jk)
+
          ENDIF
+
       ENDDO
 C
 #if defined key_trc_diatrd
@@ -361,7 +372,7 @@ C Compute and save the vertical diffusive tracer trends
          DO jk = 1, jpkm1
            z2dtt = zdt * rdttra(jk)
            ztra  = ( zwx(jk,mytid+1) - trn(ji,jj,jk,jn+mytid) ) / z2dtt
-           ztra1 = ztra - tra(ji,jj,jk,jn+mytid
+           ztra1 = ztra - tra(ji,jj,jk,jn+mytid)
 
 C   ... Euler time stepping when starting from rest
 

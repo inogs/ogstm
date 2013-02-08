@@ -173,7 +173,7 @@
         else
           d2f3d = REAL(tottrnIO,4)
           CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
-          !CALL IOOGSNC_AVE_3D2(output_file_nc, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo, d2f3d)
+          CALL WRITE_VECTOR_AVE(output_file_nc,datefrom, dateTo, d2f3d);
          endif
 
 

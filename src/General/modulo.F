@@ -187,7 +187,8 @@ CC      vmask, fmask()
 
       REAL(8), allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
       INTEGER NBFMPOINTS, NBFMPOINTS_SUP
-      INTEGER, allocatable, dimension(:,:) :: BFMpoints
+      INTEGER NwaterPointsGLO
+      INTEGER, allocatable, dimension(:,:) :: BFMpoints, WATERPOINTSGLO
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CC
@@ -862,6 +863,11 @@ CC----------------------------------------------------------------------
        allocate(BFMpoints(3,NBFMPOINTS))
        mem_all = mem_all + 3*NBFMPOINTS*4
        end subroutine myalloc_BFM
+
+       subroutine myalloc_WATERPOINTS()
+       allocate(waterPointsGLO(NwaterPointsGLO,3))
+       mem_all = mem_all + 3*NwaterPointsGLO*4
+       end subroutine myalloc_WATERPOINTS
 
 
        subroutine alloc_tot()

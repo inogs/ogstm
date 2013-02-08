@@ -233,6 +233,35 @@
       END SUBROUTINE readnc_global_double_2d
 
 
+! ************************************************************
+      SUBROUTINE readnc_int_2d(fileNetCDF,varname, im,jm,M)
+      USE myalloc
+      USE netcdf
+      implicit none
+
+
+      character fileNetCDF*(*) ,varname*(*)
+      integer im,jm
+      integer ncid, stat, VARid
+
+      integer counter
+      integer thecount(2), start(2)
+      integer M(im,jm)
+
+      counter = 0;
+      start    = (/1,   1 /)
+      thecount = (/im,  jm/)
+
+
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+
+      END SUBROUTINE readnc_int_2d
+
+
 
         !****************************************************************************
         SUBROUTINE readmask_double_1d(fileNetCDF,varname,ARRAY)
@@ -390,6 +419,50 @@
 
        END SUBROUTINE write_restart
 
+       !****************************************************************************
+       !****************************************************************************
+       !****************************************************************************
+        SUBROUTINE WRITE_VECTOR_AVE(fileNetCDF, datefrom, dateTo,M)
+        USE netcdf
+        USE myalloc
+        USE IO_mem, ONLY: ave_vect
+        IMPLICIT NONE
+
+        CHARACTER*(*) fileNetCDF
+        character(LEN=17) datefrom, dateTo
+        real(4) M(jpiglo, jpjglo, jpk)
+
+        ! local
+        integer ji,jj,jk,jw
+        character(LEN=3) VAR
+        integer s, nc, counter
+        integer WPid, varID
+
+        VAR        =fileNetCDF(23:25)
+
+        do jw=1,NwaterPointsGlo
+             ji= waterPointsGlo(jw,1)
+             jj= waterPointsGlo(jw,2)
+             jk= waterPointsGlo(jw,3)
+             ave_vect(jw) = M(ji,jj,jk)
+         enddo
+
+        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
+        s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
+        s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo)
+
+        s= nf90_def_dim(nc,'waterpoints', NwaterPointsGlo,  WPid)
+
+        s = nf90_def_var(nc, VAR, nf90_float,(/WPid/),    varID)
+        s =nf90_enddef(nc)
+
+        counter=0
+
+        s = nf90_put_var(nc, VARID  ,  ave_vect )  ; call handle_err1(s,counter,fileNetCDF)
+
+        s =nf90_close(nc)
+        END SUBROUTINE WRITE_VECTOR_AVE
        !****************************************************************************
        !****************************************************************************
        !****************************************************************************

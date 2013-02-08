@@ -35,6 +35,7 @@
       REAL(8), allocatable :: buffpp(:)
       REAL(4), allocatable :: d2f3d(:,:,:)
       REAL(4), allocatable :: d2f2d(:,:)
+      REAL(4), allocatable :: ave_vect(:)
 !----------------------------------------------------------------------
       CONTAINS
 
@@ -61,7 +62,9 @@
        allocate(d2f3d     (jpiglo,jpjglo,jpk))
        allocate(d2f2d     (jpiglo,jpjglo))
 
-
+       call getDIMENSION('bounmask.nc','waterpoints',NwaterPointsGLO)
+       allocate(ave_vect(NwaterPointsGLO))
+       call myalloc_WaterPoints()
       mem_all = rea_len *(7*jpi_max*jpj_max + (10+jptra_dia)*jpi_max* jpj_max*jpk) +
      &    4* (jpiglo*jpjglo*jpk + jpiglo*jpjglo )
 

@@ -58,7 +58,7 @@
        allocate(buffavt   (jpi_max* jpj_max* jpk))
        allocate(bufftma   (jpi_max* jpj_max* jpk))
        allocate(bufftrIO  (jpi_max* jpj_max* jpk))
-       allocate(buffpp    (jpi_max* jpj_max* jpk*jptra_dia))
+       allocate(buffpp    (jpi_max* jpj_max* jpk))
        allocate(d2f3d     (jpiglo,jpjglo,jpk))
        allocate(d2f2d     (jpiglo,jpjglo))
 

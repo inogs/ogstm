@@ -595,9 +595,6 @@ CC
       REAL(8), allocatable ::  totwnIO(:,:,:) 
       REAL(8), allocatable ::  totavtIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
-      REAL(8), allocatable ::  totdiaIO(:,:,:,:)
-!      REAL(8), allocatable ::  rsttrn(:,:,:)
-!      REAL(8), allocatable ::  rsttrb(:,:,:)
 
 
       REAL(8), allocatable ::  trb(:,:,:,:)
@@ -1549,9 +1546,6 @@ CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
        allocate(totwnIO(jpiglo,jpjglo,jpk)) 
        allocate(totavtIO(jpiglo,jpjglo,jpk)) 
        allocate(tottmaIO(jpiglo,jpjglo,jpk)) 
-       allocate(totdiaIO(jpiglo,jpjglo,jpk,jptra_dia))
-!       allocate(rsttrn(jpiglo,jpjglo,jpk))
-!       allocate(rsttrb(jpiglo,jpjglo,jpk))
        mem_all = mem_all +  rea_len*(12*jpiglo*jpjglo*jpk
      .          + 5*jpiglo*jpjglo)
 C     write(*,*) 'Mem_allocated:', mem_all

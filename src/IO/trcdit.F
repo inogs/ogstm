@@ -32,6 +32,7 @@
 
 
       CHARACTER(LEN=28) output_file_nc  ! ave.20091231-12:00:00.P1n.nc
+      CHARACTER(LEN=33) output_vect_nc  ! ave.20091231-12:00:00.P1n.nc.vect
       CHARACTER(LEN=3)  var
       CHARACTER(LEN=32) bkpname
       logical IsBackup
@@ -64,6 +65,7 @@
 
       var    = ctrcnm(jn)
       output_file_nc = 'ave.'//datemean//'.'//var//'.nc'
+      output_vect_nc = 'ave.'//datemean//'.'//var//'.nc.vect'
       bkpname        = 'ave.'//datemean//'.'//var//'.nc.bkp'
 
 ! *************** START COLLECTING DATA *****************************
@@ -172,8 +174,8 @@
 
         else
           d2f3d = REAL(tottrnIO,4)
-          CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
-          CALL WRITE_VECTOR_AVE(output_file_nc,datefrom, dateTo, d2f3d);
+          CALL WRITE_AVE(       output_file_nc,datefrom, dateTo, d2f3d);
+          CALL WRITE_VECTOR_AVE(output_vect_nc,datefrom, dateTo, d2f3d);
          endif
 
 

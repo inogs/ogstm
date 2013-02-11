@@ -170,7 +170,7 @@
 
       enddo
       call readnc_slice_int   ('bounmask.nc','index',idxt);
-      call readnc_int_2d('bounmask.nc','index_inv', WaterPointsGLO)
+      call readnc_int_2d('bounmask.nc','index_inv', NWaterPointsGLO,3,WaterPointsGLO)
 
 ! ************************************ BFM points re-indexing *******
 

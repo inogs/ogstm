@@ -441,14 +441,13 @@
         VAR        =fileNetCDF(23:25)
 
         do jw=1,NwaterPointsGlo
-             ji= waterPointsGlo(jw,1)
-             jj= waterPointsGlo(jw,2)
-             jk= waterPointsGlo(jw,3)
+             jk= waterPointsGlo(1,jw)
+             jj= waterPointsGlo(2,jw)
+             ji= waterPointsGlo(3,jw)
              ave_vect(jw) = M(ji,jj,jk)
          enddo
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
-        s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
         s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo)
 

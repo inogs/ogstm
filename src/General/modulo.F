@@ -862,7 +862,7 @@ CC----------------------------------------------------------------------
        end subroutine myalloc_BFM
 
        subroutine myalloc_WATERPOINTS()
-       allocate(waterPointsGLO(NwaterPointsGLO,3))
+       allocate(waterPointsGLO(3,NwaterPointsGLO))
        mem_all = mem_all + 3*NwaterPointsGLO*4
        end subroutine myalloc_WATERPOINTS
 

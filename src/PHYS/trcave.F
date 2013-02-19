@@ -158,7 +158,6 @@
 ! here when nwritetrc  is ok we have to pass the average field!
 
 
-      ave_counter = ave_counter +1  ! start incrementing our counter
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

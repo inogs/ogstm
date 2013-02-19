@@ -53,7 +53,6 @@
 ! ----------------------------------------
        bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
       call mppsync()
-      if (.not.IsBackup) ave_counter = 0   !  we reset the counter
 
 
 

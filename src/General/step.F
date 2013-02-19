@@ -34,6 +34,7 @@
        USE myalloc_mpp
        USE TIME_MANAGER
        USE BC_mem
+       USE IO_mem, only: ave_counter
        IMPLICIT NONE
 
 
@@ -116,6 +117,7 @@
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp(TAU) ! se commento questo non fa calcoli
         call trcave
+        ave_counter = ave_counter +1  ! incrementing our counter
 !        Diagnostics:
 !        ------------
 
@@ -128,8 +130,7 @@
          CALL trcdia(datemean, datefrom, datestring)
          TauAVEfrom=TAU
 
-         CALL fluxdump(datemean, datefrom, datestring)
-
+         ave_counter = 0   !  reset the counter
          IsStartBackup = .false.
          B = writeTemporization("trcdia____", trcdiatottime)
       endif

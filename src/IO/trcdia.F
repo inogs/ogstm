@@ -21,6 +21,7 @@
 !      writes ave files for tracer concentration
       CALL   trcdit(datemean, datefrom, dateend)
       CALL  diadump(datemean, datefrom, dateend)
+      CALL fluxdump(datemean, datefrom, dateend)
   
        kindic = 0 ! serve a niente...
 ! ************************************************ FINISCE QUI

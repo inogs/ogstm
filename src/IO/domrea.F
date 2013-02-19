@@ -29,7 +29,7 @@
 ! ==================
 
       INTEGER ii, jj, kk, jn, iinew, jjnew, iiend, jjend
-
+      INTEGER ierr
 
       CHARACTER(LEN=11) maskfile
       CHARACTER(LEN=50) filename
@@ -239,7 +239,9 @@
          Fsize=0
       endif
 
-      write(*,*) 'rank=', rank, ' Fsize = ' , Fsize
+      call MPI_ALLREDUCE(Fsize, FsizeMax, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
+
+      write(*,*) 'rank=', rank, ' Fsize = ' , Fsize,' FsizeMax = ' , FsizeMax
 
       if (Fsize.NE.0) then
          call alloc_DIA_local_flx
@@ -249,7 +251,9 @@
 
       endif
 
-       write(*,*) 'DOMREA finita, rank = ', rank
+      call alloc_DIA_MPI_flx()
+
+      write(*,*) 'DOMREA finita, rank = ', rank
 
 
       CONTAINS

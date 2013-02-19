@@ -4,12 +4,12 @@
 
           implicit none
 
-          INTEGER FsizeGlo, Fsize
-          INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP
+          INTEGER FsizeGlo, Fsize, FsizeMax
+          INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP, INDflxDUMPglo, INDflxBuff
           INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
 
           REAL(8),    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
-          REAL(8),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDump
+          REAL(8),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
 
           CONTAINS
 
@@ -27,6 +27,7 @@
             endif
 
             if (FsizeGlo.gt.0) then
+
                allocate(INDFluxGlo(FsizeGlo))
 
             endif
@@ -40,12 +41,17 @@
 
        SUBROUTINE alloc_DIA_local_flx()
 
-       allocate(flx_ridxt (Fsize,4        ))
-       allocate(INDflxDUMP(Fsize          ))
-       allocate(MflxDump  (7, Fsize        ))
-       allocate(diaflx    (Fsize, jptra, 7))
+       allocate(flx_ridxt     (Fsize,4           ))
+       allocate(INDflxDUMP    (Fsize             ))
+       allocate(INDflxDUMPglo (FsizeGlo          ))
+       allocate(MflxDumpGlo   (7, FsizeGlo       ))
+       allocate(diaflx        (Fsize, jptra, 7   ))
        diaflx = 0
       END SUBROUTINE alloc_DIA_local_flx
 
+      SUBROUTINE alloc_DIA_MPI_flx()
+       allocate(INDflxBuff    (FsizeMax          ))
+       allocate(diaflxBuff    (FsizeMax, 7))
+      END SUBROUTINE alloc_DIA_MPI_flx
 
       END MODULE DIA_mem

@@ -4,6 +4,7 @@
       USE DIA_mem
       USE netcdf
       USE myalloc_mpp
+      USE IO_mem, only: ave_counter
 
       IMPLICIT NONE
 
@@ -103,6 +104,7 @@
               enddo
           end do
           !************************ now, put var
+
           s = nf90_put_var(nc, IndID,      INDflxDUMPglo)
 
     !     fluxes values
@@ -131,6 +133,7 @@
               ENDDO ! loop on rank for each tracers
 
       !************************ now, put var
+          MflxDumpGlo = MflxDumpGlo / ave_counter ! we store average flux
           s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo)
 
           ENDDO ! loop on tracers

@@ -76,7 +76,6 @@ C     this length depend of 512 for the t3d machine
 
 
       numnam = 1004
-      REWIND( numnam )
       clname = 'namelist.init'
       CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
 
@@ -206,6 +205,8 @@ C
       WRITE(numout,*) ' '
       ENDIF
 
+
+      CLOSE(numnam)
       CONTAINS
 ! **************************************************************
       SUBROUTINE COUNTLINE(FILENAME,LINES)

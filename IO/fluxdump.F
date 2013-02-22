@@ -11,7 +11,7 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, datefrom, dateend
 
-      INTEGER jf,js,jn,ji,jj,counter,counterV(jptra)
+      INTEGER jf,js,jn,ji,jj,counter,counterV
       INTEGER idrank, ierr, istart,status(MPI_STATUS_SIZE)
 
       CHARACTER(LEN=25) flux_file
@@ -20,10 +20,13 @@
       integer s, nc,INDid
       integer nid, tid
       INTEGER IDS(jptra)
+      REAL(8)  Realcounter
+
+      Realcounter   =    1./REAL(ave_counter  , 8)
 
       flx_partTime = MPI_WTIME()
 
-!!!!!!!!!!!!!!!!!!PROCESSOR ZERO COLLECT ALL FLUXES AND DUMP ON NETCDF FILE
+!!!!!!!!!!!!!!!!!!PROCESSOR ZERO COLLECTS ALL FLUXES AND DUMPS  ON NETCDF FILE
       if (rank ==0) then
 !     Rank Zero only create netcdf file
 !     1234567890123456789012345
@@ -50,7 +53,7 @@
 
           counter = 1
           INDflxBuff = 0
-          MflxDumpGlo = 0
+
 
           if (Fsize .GT. 0) THEN
 
@@ -59,41 +62,28 @@
                   ji = flx_ridxt(jf,2)
                   jj = flx_ridxt(jf,3)
 
-                  INDflxBuff(jf)=INDflxDUMP(jf)
+                  INDflxDUMPZERO(jf)=INDflxDUMP(jf)
 
-                  if ( (ji .EQ. 1) .OR. (ji .EQ. jpi) ) INDflxBuff(jf) = 0 ! Ghost cell value has index 0
-                  if ( (jj .EQ. 1) .OR. (jj .EQ. jpj) ) INDflxBuff(jf) = 0 ! Ghost cell value has index 0
+                  if ( (ji .EQ. 1) .OR. (ji .EQ. jpi) ) INDflxDUMPZERO(jf) = 0 ! Ghost cell value has index 0
+                  if ( (jj .EQ. 1) .OR. (jj .EQ. jpj) ) INDflxDUMPZERO(jf) = 0 ! Ghost cell value has index 0
 
-                  if (INDflxBuff(jf) .NE. 0) then
-                      INDflxDUMPglo(counter) = INDflxDUMP(jf)
+
+                  if (INDflxDUMPZERO(jf) .NE. 0) then
+                      INDflxDUMPglo(counter) = INDflxDUMPZERO(jf)
                       counter = counter +1
                   endif
               enddo
 
-              DO jn=1,jptra
-
-                  counterV(jn) = 1
-
-                  do jf=1,Fsize
-
-                      if (INDflxBuff(jf) .NE. 0) then
-                          do js=1,7
-                              MflxDumpGlo(js,counterV(jn)) = diaflx(jf,jn,js)
-                          end do
-                          counterV(jn) = counterV(jn) +1
-                      endif
-
-                  enddo
-
-              ENDDO
 
           endif
-!     index part
+
+
           do idrank = 1, size-1
 
               call MPI_RECV(INDflxBuff    , FsizeMax,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr)
 
               do jf=1,FsizeMax
+
                   if (INDflxBuff(jf) .NE. 0) then
 
                       INDflxDUMPglo(counter) = INDflxBuff(jf)
@@ -101,14 +91,40 @@
                       counter = counter +1
 
                   endif
+
               enddo
+
           end do
+
+!     index part
+
           !************************ now, put var
 
           s = nf90_put_var(nc, IndID,      INDflxDUMPglo)
 
-    !     fluxes values
           DO jn=1,jptra
+
+              MflxDumpGlo = 0
+
+              counterV=1
+
+              if (Fsize .GT. 0) THEN
+
+                  do jf=1,Fsize
+
+                      if (INDflxDUMPZERO(jf) .NE. 0) then
+
+                          do js=1,7
+                              MflxDumpGlo(js,counterV) = diaflx(jf,jn,js)
+                          end do
+
+                          counterV = counterV +1
+
+                      endif
+
+                  enddo
+
+              endif
 
               DO idrank = 1, size-1
 
@@ -120,10 +136,10 @@
                       if (INDflxBuff(jf) .NE. 0) then
 
                           DO js=1,7
-                              MflxDumpGlo(js,counterV(jn)) = diaflxBuff(jf,js)
+                              MflxDumpGlo(js,counterV) = diaflxBuff(jf,js)
                           END DO
 
-                          counterV(jn) = counterV(jn) +1
+                          counterV = counterV +1
 
                       endif
 
@@ -133,7 +149,8 @@
               ENDDO ! loop on rank for each tracers
 
       !************************ now, put var
-          MflxDumpGlo = MflxDumpGlo / ave_counter ! we store average flux
+
+          MflxDumpGlo = MflxDumpGlo * Realcounter ! we store average flux
           s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo)
 
           ENDDO ! loop on tracers
@@ -143,7 +160,7 @@
 
 !!!!!!!!!!!!!!!!!!END OF TASK ZERO JOB
       else ! Other ranks than zero
-!!!!!!!!!!!!!!!!!!OTHER THAN RANK ZERO JOB START --> SENDING DATA TO PROCESSOR ZERO
+!!!!!!!!!!!!!!!!!!OTHER THAN RANK ZERO JOB STARTS --> SENDING DATA TO PROCESSOR ZERO
 
           INDflxBuff = 0
           diaflxBuff = 0

@@ -50,7 +50,6 @@
 
           CALL LOAD_TIN(TC_TIN%TimeStrings(TC_TIN%After))
 
-          IF (lwp) WRITE (numout,*) 'Riverine factor DATA READ for Time = ', TC_TIN%TimeStrings(TC_TIN%After)
 
 !      ******* LOADED NEW FRAME *************
       END IF
@@ -106,7 +105,6 @@
     !     Starting I/O
     !    **********************************************************
          nomefile  ='BC/TIN_'//datestring//'.nc'
-         if(lwp) write(*,'(A,I4,A,A)') "LOAD_TIN --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
 
 
 

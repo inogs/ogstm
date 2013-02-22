@@ -77,10 +77,9 @@
          call yearly(DATEstring) ! Performs daily updates
          call daily(DATEstring)  ! Performs daily updates
 
-
-         if(lwp) write(numout,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
+         if ( mod( TAU, 48 ).EQ.0) THEN
          if(lwp) write(*     ,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
-
+         endif
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
@@ -91,8 +90,6 @@
                call tau2datestring(TauAVEfrom, datefrom)  ! il TauAVEfrom+1 mi causava la data dell'ave alle 12:15
                CALL trcdia(datestring, datefrom, datestring)
             endif
-         B = writeTemporization("trcdia____", trcdiatottime)
-         B = writeTemporization("trcwri____", trcwritottime)
          endif
 
 

@@ -144,7 +144,6 @@ CC----------------------------------------------------------------------
          jarr2 = 0
          jarr3 = 0
          jarrt = 0
-         write(*,*) "Storing good points ..."
          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
@@ -185,7 +184,6 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
             END DO
          END DO
 
-         write(*,*) 'trcadv: RANK -> ', RANK, ' all_points -> ', allpoints
 
          goodpoints = 0
          DO jk = 1,jpk
@@ -221,7 +219,6 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
             END DO
          END DO
 
-         write(*,*) 'trcadv: RANK -> ', RANK, ' good_points -> ', goodpoints
 
          DO jk = 1,jpk
             DO jj = 2,jpjm1

@@ -24,7 +24,6 @@
 
 ! ----------------------- INITIALIZATION -------------
       IF (datestring.eq.DATESTART) then
-!         scrivi qualche log sul numout
 
           CALL LOAD_GIB(TC_GIB%TimeStrings(TC_GIB%Before)) ! CALL trcrea(iperm1,bc)
           iswap = 1
@@ -50,8 +49,6 @@
 
 
           CALL LOAD_GIB(TC_GIB%TimeStrings(TC_GIB%After))
-
-          IF(lwp) WRITE (numout,*) 'Gibraltar factor DATA READ for Time = ', TC_GIB%TimeStrings(TC_GIB%After)
 
 !      ******* LOADED NEW FRAME *************
       END IF
@@ -108,12 +105,9 @@
     !     Starting I/O
     !    **********************************************************
           nomefile = 'BC/GIB_'//datestring//'.nc'
-          if(lwp) write(*,'(A,I4,A,A)') "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
 
           DO jn = 1, jn_gib
               nomevar = 'gib_'//ctrcnm(tra_matrix_gib(jn))
-              if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
-              !CALL ioogsnc_bc_1d2(nomefile,nomevar, Gsizeglo,gib_aux)
               CALL readnc_double_1d(nomefile,nomevar, Gsizeglo,gib_aux)
 
               DO jv=1,Gsize

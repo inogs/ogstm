@@ -182,16 +182,13 @@
       filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
 
 
-       if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
 
       CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
 
-      if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
       if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
 
       Gsize = COUNT_InSubDomain(Gsizeglo, gib_idxtglo)
 
-      write(*,*) 'domrea->Gsize   : ', Gsize, 'rank=', rank
 
 
       if (Gsize.NE.0) then
@@ -215,7 +212,6 @@
       endif
 
 
-       if(lwp) write(*,*) 'RIV finiti'
 
 ! ******************************************* Atmospherical inputs
       filename       = 'BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'
@@ -224,9 +220,7 @@
 
       if (Asize.NE. 0) then
          call alloc_DTATRC_local_atm
-         write(*,*) 'domrea->ATMRE_Indexing ATM iniziata, rank=', rank
          B=ATMRe_Indexing()
-         write(*,*) 'domrea->ATMRE_Indexing ATM finita, rank=', rank
       endif
 
 #endif
@@ -241,19 +235,16 @@
 
       call MPI_ALLREDUCE(Fsize, FsizeMax, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
-      write(*,*) 'rank=', rank, ' Fsize = ' , Fsize,' FsizeMax = ' , FsizeMax
 
       if (Fsize.NE.0) then
          call alloc_DIA_local_flx
-         write(*,*) 'domrea->FLXRE_Indexing iniziata, rank=', rank
          B=FLXRe_Indexing()
-         write(*,*) 'domrea->FLXRE_Indexing finita, rank=', rank
 
       endif
 
       call alloc_DIA_MPI_flx()
 
-      write(*,*) 'DOMREA finita, rank = ', rank
+
 
 
       CONTAINS

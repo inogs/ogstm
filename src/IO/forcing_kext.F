@@ -61,7 +61,6 @@
 
           CALL LOAD_KEXT(TC_LEX%TimeStrings(TC_LEX%After))
 
-          IF(lwp) WRITE (numout,*) ' Extinction factor DATA READ for Time = ', TC_LEX%TimeStrings(TC_LEX%After)
 !      ******* LOADED NEW FRAME *************
       END IF
 
@@ -123,7 +122,6 @@
 !    **********************************************************
       nomefile = 'FORCINGS/KextF_'//datestring//'.nc'
 
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", rank, " starting reading forcing fields from ", nomefile
 
       call readnc_slice_float_2d(nomefile,'kextfact',buf2); kextIO(:,:,2) = buf2*tmask(:,:,1);
 

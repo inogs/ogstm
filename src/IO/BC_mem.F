@@ -59,11 +59,6 @@
 !           nomedim0(1:8)='atm_idxt'; CALL ioogsnc_idx(atmfile,nomedim0,Asizeglo)
 
 
-               write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' rank = ',rank
-           if (lwp) then
-               write(*,*) 'Size of vector Riv to allocate -->', Rsizeglo
-               write(*,*) 'Size of vector Atm to allocate -->', Asizeglo
-           endif
 
 !     We consider nudging of N1p O2o N3n Slca
 !     O2o jn = 1 Dissolved Oxygen (seasonal)
@@ -125,7 +120,6 @@
 !     ****************************************
       SUBROUTINE alloc_DTATRC_local_gib()
 
-       if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
 
        allocate(gib_ridxt (Gsize, 4        ))
        allocate(gib_dtatrc(Gsize, 2, jn_gib))

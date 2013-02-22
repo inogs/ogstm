@@ -53,6 +53,7 @@
 
       CHARACTER(LEN=32) clname
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
+      logical mlwp
 
 
       NAMELIST/namrun/ lrstar, calendarType, nsptint
@@ -63,6 +64,7 @@
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta, rcp
 
 
+      mlwp=.false.
 ! ... Open specifier
       clold = 'OLD'
       clnew = 'NEW'
@@ -84,7 +86,7 @@
         iused(1,ji) = 0
       END DO
 
-      IF(lwp) THEN
+      IF(mlwp) THEN
           WRITE(numout,*) ' '
           WRITE(numout,*) ' '
           WRITE(numout,*) ' routine parlec'
@@ -100,7 +102,7 @@
 
       numnam = 4
       clname = 'namelist'
-      CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
+      CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, mlwp, 1)
 
 
 ! 1. Read namlist files
@@ -121,7 +123,7 @@
       REWIND( numnam )
       READ  ( numnam, namdom )
 
-      IF(lwp) THEN
+      IF(mlwp) THEN
       WRITE(numout,*) ' '
       WRITE(numout,*) 'namdom'
       WRITE(numout,*) ' '
@@ -147,7 +149,7 @@
       REWIND( numnam )
       READ  ( numnam, namhdf )
 
-      IF(lwp) THEN
+      IF(mlwp) THEN
       WRITE(numout,*) 'namhdf'
       WRITE(numout,*) ' '
       WRITE(numout,*) ' horizontal eddy diffusivity    aht0   = ',aht0
@@ -165,7 +167,7 @@
       REWIND( numnam )
       READ  ( numnam, namzdf )
 
-      IF(lwp) THEN
+      IF(mlwp) THEN
       WRITE(numout,*) 'namzdf'
       WRITE(numout,*) ' '
       WRITE(numout,*) ' vertical eddy diffusivity      avt0   = ',avt0
@@ -190,7 +192,7 @@
 
       ro0cpr = 1. / ( rau0 * rcp )
 
-      IF(lwp) THEN
+      IF(mlwp) THEN
       WRITE(numout,*) 'nameos'
       WRITE(numout,*) ' '
       WRITE(numout,*) ' flag for eq. of state and N^2  neos   = ',neos
@@ -212,7 +214,7 @@
       REWIND( numnam )
       READ  ( numnam, namrun )
 
-      IF(lwp) THEN
+      IF(mlwp) THEN
       WRITE(numout,*) 'namrun'
       WRITE(numout,*) ' '
       WRITE(numout,*) ' restart logical                lrstar = ',lrstar

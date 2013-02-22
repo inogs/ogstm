@@ -24,7 +24,6 @@
 
 ! ----------------------- INITIALIZATION -------------
       IF (datestring.eq.DATESTART) then
-!         scrivi qualche log sul numout
 
           CALL LOAD_ATM(TC_ATM%TimeStrings(TC_ATM%Before)) ! CALL trcrea(iperm1,bc)
           iswap = 1
@@ -51,7 +50,6 @@
 
           CALL LOAD_ATM(TC_ATM%TimeStrings(TC_ATM%After))
 
-          IF(lwp) WRITE (numout,*) 'Atmospheric factor DATA READ for Time = ', TC_ATM%TimeStrings(TC_ATM%After)
 !      ******* LOADED NEW FRAME *************
       END IF
 
@@ -106,9 +104,6 @@
     !     Starting I/O
     !    **********************************************************
          nomefile(1:27)='BC/ATM_'//datestring//'.nc'
-         if(lwp) write(*,'(A,I4,A,A)') "LOAD_ATM --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
-
-
 
 
 

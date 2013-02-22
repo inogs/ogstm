@@ -136,38 +136,15 @@
        nimpp  = 1
        njmpp  = 1 
 
-#ifdef key_mpp
-      OPEN(UNIT=nummpp,FILE='mpp.output',FORM='FORMATTED')
-#endif
 
-
-
-! 0.3 First prints
-
-      IF(lwp) THEN
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '             Institut Pierre-Simon LAPLACE'
-          WRITE(numout,*) '                      L O D Y C'
-          WRITE(numout,*) ' Laboratoire d"Oceanographie DYnamique et de Climatologie'
-          WRITE(numout,*) '             unite mixte de recherche 121'
-          WRITE(numout,*) '                  CNRS/ORSTOM/UPCM'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '                  Offline O P A model'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '            Ocean General Circulation Model'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' version OPA.8.1.offline'
-          WRITE(numout,*) ' 03/04/1998'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-      ENDIF
 
 
 
 
       CALL INITIALIZING
+      if(lwp) WRITE(numout,*) 'End of initialization. Good bye.'
+
+      CLOSE( numout ) ! others units are closed in mppstop
 
 ! -----------------------------------------------
       CALL step
@@ -178,14 +155,11 @@
 ! ==========
 
 #ifdef key_mpp
-      write(*,*)'My_Rank=',Rank,'before mpi finalize'
       CALL mppstop
-      write(*,*)'My_Rank=',Rank,'after mpi finalize'
+      if(lwp) write(*,*)'My_Rank=',Rank,'after mpi finalize'
 #endif
 
-      if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
 
-      CLOSE( numout ) ! others units are closed in mppstop
 
       END SUBROUTINE myopa
 
@@ -215,34 +189,33 @@
        REAL(8) mem_all_tot
        INTEGER ierr
 
-      write(*,*)'My_Rank=',Rank,':allocazione_memoria'
       mem_all_tot=0
       mem_all=0
 
-      call   alloc_tot() ; write(*,*)'My_Rank:',Rank,'alloc_init:', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call  myalloc_DR() ; write(*,*)'My_Rank:',Rank,'alloc_DR  :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_OPT() ; write(*,*)'My_Rank:',Rank,'alloc_OPT :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_ADV() ; write(*,*)'My_Rank:',Rank,'alloc_ADV :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_HDF() ; write(*,*)'My_Rank:',Rank,'alloc_HDF :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_ZDF() ; write(*,*)'My_Rank:',Rank,'alloc_ZDF :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_DYN() ; write(*,*)'My_Rank:',Rank,'alloc_DYN :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call   alloc_tot() ; mem_all_tot=mem_all_tot+mem_all
+      call  myalloc_DR() ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_OPT() ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_ADV() ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_HDF() ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_ZDF() ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_DYN() ; mem_all_tot=mem_all_tot+mem_all
 
 #ifdef key_trc_dmp
 !     needs Time_Manager
-      call alloc_DTATRC(); write(*,*)'My_Rank:',Rank,'alloc_TRC:', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call alloc_DTATRC(); mem_all_tot=mem_all_tot+mem_all
 #endif
-      call alloc_DIA()   ; write(*,*)'My_Rank:',Rank,'alloc_DIA:', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call alloc_DIA()   ; mem_all_tot=mem_all_tot+mem_all
 
-      call myalloc_BIO() ; write(*,*)'My_Rank:',Rank,'alloc_BIO :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_SED() ; write(*,*)'My_Rank:',Rank,'alloc_SED :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_BIO() ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_SED() ; mem_all_tot=mem_all_tot+mem_all
 
-      call myalloc_FN()  ; write(*,*)'My_Rank:',Rank,'alloc_FN  :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_FN()  ; mem_all_tot=mem_all_tot+mem_all
 
 
       call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
       call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
-      call myalloc_IO()  ; write(*,*)'My_Rank:',Rank,'alloc_IO  :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_IO()  ; mem_all_tot=mem_all_tot+mem_all
 
       write(*,*)'My_Rank,',Rank,'memoria_totale_allocata',mem_all_tot
       END SUBROUTINE ALLOC_ALL
@@ -343,7 +316,6 @@
 ! -----------------------------------------
       call Load_Timestrings
       if (CheckStartEnd()) then
-       if (lwp) write(*,*) 'start End ok'
         else
            if (lwp) write(*,*) 'Problems with start End. Program will stop. '
            STOP

@@ -35,8 +35,10 @@ CC ==================
       INTEGER ildta, ilglo, ibloc, ilseq, ilindta
 
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf, clunk
+      logical mlwp
+      mlwp=.false.
 
-      IF(lwp) THEN
+      IF(mlwp) THEN
       WRITE(numout,*) ' '
       WRITE(numout,*) ' '
       WRITE(numout,*) ' routine parctl'
@@ -54,10 +56,10 @@ C
 
 
 #if defined restart || defined zdftke || defined bsfpcg || defined islands || defined qsr || defined saldta || defined temdta || defined tau || defined flx  || defined eoslinear || defined eoseckart || defined eosunesco || defined nobsf || defined bsfpcg || defined bsfsor || defined zdfconstant || defined zdfrichardson || defined temdmp || defined saldmp || defined dyndmp || defined zdfexplicit || defined npc || defined freeslip || defined dynhdfbilap || defined trahdfbilap || defined vorenergy || defined vorcombined || defined coupled
-      IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' OPA 8, cpp keys have been changed '
-      IF(lwp)WRITE(numout,*) ' All keynames begin with the prefix key_'
-      IF(lwp)WRITE(numout,*) ' see the reference manual'
+      IF(mlwp)WRITE(numout,9000)
+      IF(mlwp)WRITE(numout,*) ' OPA 8, cpp keys have been changed '
+      IF(mlwp)WRITE(numout,*) ' All keynames begin with the prefix key_'
+      IF(mlwp)WRITE(numout,*) ' see the reference manual'
       istop = istop + 1
 #endif
 
@@ -69,10 +71,10 @@ C ... OPA8.0 ==> OPA8.1,  cpp key suppressed
 C     --------------------------------------
 C
 #if defined key_trahdfisog
-      IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' opa8.1 release: key_trahdfisog has been '
-      IF(lwp)WRITE(numout,*) ' changed into key_trahdfeiv and requires '
-      IF(lwp)WRITE(numout,*) ' key_trahdfiso to be defined.'
+      IF(mlwp)WRITE(numout,9000)
+      IF(mlwp)WRITE(numout,*) ' opa8.1 release: key_trahdfisog has been '
+      IF(mlwp)WRITE(numout,*) ' changed into key_trahdfeiv and requires '
+      IF(mlwp)WRITE(numout,*) ' key_trahdfiso to be defined.'
       istop = istop + 1
 #endif
 C
@@ -151,7 +153,7 @@ C
         mindj(jj) = jj+njzoom-1
       END DO
 
-      IF (lwp) THEN
+      IF (mlwp) THEN
        WRITE(numout,*) ' '
        WRITE(numout,*) '*** domain '
        WRITE(numout,*) '    data input domain: jpidta = ', jpidta,' jpjdta = ', jpjdta, ' jpkdta = ', jpkdta
@@ -170,37 +172,37 @@ C
  25   FORMAT( (100(4x,19i4,/)) )
 
       IF ( mindi(jpi).GT.jpidta .OR. mindj(jpj).GT.jpjdta ) THEN
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*) ' subdomain greater than the initial'
-          IF(lwp)WRITE(numout,*) ' one, check your dimensions'
+          IF(mlwp)WRITE(numout,9000)
+          IF(mlwp)WRITE(numout,*) ' subdomain greater than the initial'
+          IF(mlwp)WRITE(numout,*) ' one, check your dimensions'
           istop = istop + 1
       ENDIF
 
 
-      IF(lwp)WRITE(numout,*) ' '
-      IF(lwp)WRITE(numout,*) '**************************************** '
-      IF(lwp)WRITE(numout,*) '* OPA8.1 OFFLINE                       * '
-      IF(lwp)WRITE(numout,*) '*                                      * '
-      IF(lwp)WRITE(numout,*) '*  global ocean simulation             * '
-      IF(lwp)WRITE(numout,*) '* ------------------------             * '
-      IF(lwp)WRITE(numout,*) '*                                      * '
-      IF(lwp)WRITE(numout,*) '**************************************** '
-      IF(lwp)WRITE(numout,*) '  '
+      IF(mlwp)WRITE(numout,*) ' '
+      IF(mlwp)WRITE(numout,*) '**************************************** '
+      IF(mlwp)WRITE(numout,*) '* OPA8.1 OFFLINE                       * '
+      IF(mlwp)WRITE(numout,*) '*                                      * '
+      IF(mlwp)WRITE(numout,*) '*  global ocean simulation             * '
+      IF(mlwp)WRITE(numout,*) '* ------------------------             * '
+      IF(mlwp)WRITE(numout,*) '*                                      * '
+      IF(mlwp)WRITE(numout,*) '**************************************** '
+      IF(mlwp)WRITE(numout,*) '  '
       IF ( jpiglo.LT.jpidta .OR. jpjglo.LT.jpjdta ) THEN
-          IF(lwp)WRITE(numout,*) ' '
-          IF(lwp)WRITE(numout,*) '*********************************** '
-          IF(lwp)WRITE(numout,*) '*                                 * '
-          IF(lwp)WRITE(numout,*) '* use a subdomain zoom            * '
-          IF(lwp)WRITE(numout,*) '*                                 * '
-          IF(lwp)WRITE(numout,*) '*********************************** '
-          IF(lwp)WRITE(numout,*) ' '
-          IF(lwp)WRITE(numout,*) ' c a u t i o n'
-          IF(lwp)WRITE(numout,*) ' ============='
-          IF(lwp)WRITE(numout,*) 'don t use dist.coast file, compute it'
-          IF(lwp)WRITE(numout,*) 'see island identification in dommba.F'
-          IF(lwp)WRITE(numout,*) 'and diffusivity coef. in inimix.F'
-          IF(lwp)WRITE(numout,*) 'and damping coef. in dtacof.F'
-          IF(lwp)WRITE(numout,*) ' '
+          IF(mlwp)WRITE(numout,*) ' '
+          IF(mlwp)WRITE(numout,*) '*********************************** '
+          IF(mlwp)WRITE(numout,*) '*                                 * '
+          IF(mlwp)WRITE(numout,*) '* use a subdomain zoom            * '
+          IF(mlwp)WRITE(numout,*) '*                                 * '
+          IF(mlwp)WRITE(numout,*) '*********************************** '
+          IF(mlwp)WRITE(numout,*) ' '
+          IF(mlwp)WRITE(numout,*) ' c a u t i o n'
+          IF(mlwp)WRITE(numout,*) ' ============='
+          IF(mlwp)WRITE(numout,*) 'don t use dist.coast file, compute it'
+          IF(mlwp)WRITE(numout,*) 'see island identification in dommba.F'
+          IF(mlwp)WRITE(numout,*) 'and diffusivity coef. in inimix.F'
+          IF(mlwp)WRITE(numout,*) 'and damping coef. in dtacof.F'
+          IF(mlwp)WRITE(numout,*) ' '
       ENDIF
 C
 C
@@ -209,16 +211,16 @@ C ----------------------------
 C
 C   ... Vertical coordinate
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** vertical coordinate option'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** vertical coordinate option'
       ioptio = 0
 #ifdef key_s_coord
-      IF(lwp)WRITE(numout,*) '     s-coordinates'
+      IF(mlwp)WRITE(numout,*) '     s-coordinates'
       ioptio = ioptio+1
 #endif
       IF ( ioptio.eq.0) THEN
-          IF(lwp)WRITE(numout,*) '     z-coordinates (default)'
+          IF(mlwp)WRITE(numout,*) '     z-coordinates (default)'
       ENDIF
 
 
@@ -232,13 +234,13 @@ C
 C ... dynamic and physic input file
 C ---------------------------------
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** dynamic and physics file'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** dynamic and physics file'
 
 
 #if defined key_off_tra
-      IF(lwp) THEN
+      IF(mlwp) THEN
           WRITE(numout,*) ' *** we USE temp. and salinity fields'
           WRITE(numout,*)
       END IF
@@ -247,25 +249,25 @@ C
 C ... slope input file
 C -------------------
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** slope file'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** slope file'
 
 
-      CALL ctlopn(numslp,'slp.dta',clold,clunf,clseq,ilindta,ilu,iused,numout,lwp,1)
+      CALL ctlopn(numslp,'slp.dta',clold,clunf,clseq,ilindta,ilu,iused,numout,mlwp,1)
 
 #endif
 #if defined key_off_degrad && defined key_trahdfeiv
 C ... slope input file
 C -------------------
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** Gent et Mc William Speed  file'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** Gent et Mc William Speed  file'
 C
 C
       clname='vgm.dta'
-      CALL ctlopn(numvgm,clname,clold,clunf,clseq,ilindta,ilu,iused,numout,lwp,1)
+      CALL ctlopn(numvgm,clname,clold,clunf,clseq,ilindta,ilu,iused,numout,mlwp,1)
 
 #endif
 
@@ -275,48 +277,48 @@ C Algorithmic & Schemes
 C
 C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) '     Algorithmic and numerical schemes'
-      IF(lwp)WRITE(numout,*) '     ---------------------------------'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) '     Algorithmic and numerical schemes'
+      IF(mlwp)WRITE(numout,*) '     ---------------------------------'
 
 
 
 #if defined key_mpp
-      IF(lwp)WRITE(numout,*) '     use of mpp option (cray t3d+pvm): macrotasking is not used '
+      IF(mlwp)WRITE(numout,*) '     use of mpp option (cray t3d+pvm): macrotasking is not used '
       IF ( jpni*jpnj.EQ.jpnij ) THEN
-          IF(lwp)WRITE(numout,*) '     jpni x jpnj = jpnij : standard cutting out'
+          IF(mlwp)WRITE(numout,*) '     jpni x jpnj = jpnij : standard cutting out'
         ELSE
           IF ( jpni*jpnj.LT.jpnij ) THEN
-              IF(lwp)WRITE(numout,9000)
-              IF(lwp)WRITE(numout,*) ' jpnij > jpni x jpnj impossible'
+              IF(mlwp)WRITE(numout,9000)
+              IF(mlwp)WRITE(numout,*) ' jpnij > jpni x jpnj impossible'
               istop = istop + 1
           ENDIF
-          IF(lwp)WRITE(numout,*) '     jpnij < jpni x jpnj : eliminate land processors algorithm'
+          IF(mlwp)WRITE(numout,*) '     jpnij < jpni x jpnj : eliminate land processors algorithm'
       ENDIF
 
       ioptio = ioptio+1
 #  else
       IF ( jpni.NE.1 .or. jpnj.NE.1 ) THEN
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*) ' jpni x jpnj not equal to 1. The do-'
-          IF(lwp)WRITE(numout,*) ' main is lay out to do mpp computer'
+          IF(mlwp)WRITE(numout,9000)
+          IF(mlwp)WRITE(numout,*) ' jpni x jpnj not equal to 1. The do-'
+          IF(mlwp)WRITE(numout,*) ' main is lay out to do mpp computer'
           istop = istop + 1
       ENDIF
 #endif
       IF ( ioptio.EQ.0 ) THEN
           imulti = 1
-          IF(lwp)WRITE(numout,*) '     macro-tasking option (default)'
+          IF(mlwp)WRITE(numout,*) '     macro-tasking option (default)'
 
           IF ( 1.GT.jpcpu ) THEN
-              IF(lwp)WRITE(numout,9000)
-              IF(lwp)WRITE(numout,*) ' ncpu=',1,' > ',' jpcpu=',jpcpu
+              IF(mlwp)WRITE(numout,9000)
+              IF(mlwp)WRITE(numout,*) ' ncpu=',1,' > ',' jpcpu=',jpcpu
               istop = istop + 1
           ENDIF
         ELSEIF ( ioptio.GT.1 ) THEN
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*) ' key_monotasking and key_mpp options'
-          IF(lwp)WRITE(numout,*) ' are incompatible'
+          IF(mlwp)WRITE(numout,9000)
+          IF(mlwp)WRITE(numout,*) ' key_monotasking and key_mpp options'
+          IF(mlwp)WRITE(numout,*) ' are incompatible'
           istop = istop + 1
       ENDIF
 C
@@ -327,28 +329,28 @@ C ... OCEAN PHYSICS
 C
 C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) '     Ocean Physics'
-      IF(lwp)WRITE(numout,*) '     -------------'
-      IF(lwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) '     Ocean Physics'
+      IF(mlwp)WRITE(numout,*) '     -------------'
+      IF(mlwp)WRITE(numout,*)
 C
 C ... Equation of state
 C ---------------------
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** equation of state option'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** equation of state option'
       IF ( neos.EQ.0 ) THEN
-          IF(lwp)WRITE(numout,*) '     use of Jackett & McDougall (1994) equation of state and'
-          IF(lwp)WRITE(numout,*) '            McDougall (1987) Brunt-Vaisala frequency'
+          IF(mlwp)WRITE(numout,*) '     use of Jackett & McDougall (1994) equation of state and'
+          IF(mlwp)WRITE(numout,*) '            McDougall (1987) Brunt-Vaisala frequency'
         ELSEIF ( neos.EQ.1 ) THEN
-          IF(lwp)WRITE(numout,*) '     use of linear eos rho(T) = rau0 * ( 1.028 - ralpha * T )'
+          IF(mlwp)WRITE(numout,*) '     use of linear eos rho(T) = rau0 * ( 1.028 - ralpha * T )'
         ELSEIF ( neos.EQ.2 ) THEN
-          IF(lwp)WRITE(numout,*) '     use of linear eos rho(T,S) = rau0 * ( rbeta * S - ralpha * T )'
+          IF(mlwp)WRITE(numout,*) '     use of linear eos rho(T,S) = rau0 * ( rbeta * S - ralpha * T )'
         ELSE
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*) ' neos flag has a wrong value : ',neos
+          IF(mlwp)WRITE(numout,9000)
+          IF(mlwp)WRITE(numout,*) ' neos flag has a wrong value : ',neos
           istop = istop + 1
       ENDIF
 C
@@ -358,38 +360,38 @@ C
 C ... Vertical diffusion (implicit)
 C ---------------------------------
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** vertical diffusion option'
-      IF(lwp)WRITE(numout,*) '     use an implicit scheme'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** vertical diffusion option'
+      IF(mlwp)WRITE(numout,*) '     use an implicit scheme'
 C
 C
 C ... Lateral Ocean Diffusion
 C ---------------------------
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** lateral diffusion option'
-      IF(lwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** lateral diffusion option'
+      IF(mlwp)WRITE(numout,*)
 C
 C   ... Space variation of eddy coefficients
       ioptio = 0
 #if defined key_trahdfcoef3d
-      IF(lwp)WRITE(numout,*) '     tracer eddy coef. function of latitude, longitude and depth'
+      IF(mlwp)WRITE(numout,*) '     tracer eddy coef. function of latitude, longitude and depth'
       ioptio = ioptio+1
 #endif
 #if defined key_trahdfcoef2d 
-      IF(lwp)WRITE(numout,*) '     tracer eddy coef. function of latitude and longitude'
+      IF(mlwp)WRITE(numout,*) '     tracer eddy coef. function of latitude and longitude'
       ioptio = ioptio+1 
 #endif
 #if defined key_trahdfcoef1d 
-      IF(lwp)WRITE(numout,*) '     tracer eddy coef. function of depth only'
+      IF(mlwp)WRITE(numout,*) '     tracer eddy coef. function of depth only'
       ioptio = ioptio+1 
 #endif
       IF ( ioptio.EQ.0 ) THEN
-          IF(lwp)WRITE(numout,*) '     constant tracer eddy coef. (default option)'
+          IF(mlwp)WRITE(numout,*) '     constant tracer eddy coef. (default option)'
         ELSEIF ( ioptio.GT.1 ) THEN
-          IF(lwp) THEN
+          IF(mlwp) THEN
           WRITE(numout,9000)
           WRITE(numout,*) ' use only one of the following keys: key_trahdfcoef3d, key_trahdfcoef2d, key_trahdfcoef1d'
           END IF
@@ -398,8 +400,8 @@ C   ... Space variation of eddy coefficients
 C
 #if defined key_s_coord
 #    if defined key_trahdfcoef1d
-      IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' key_trahdfcoef1d cannot be used with key_s_coord'
+      IF(mlwp)WRITE(numout,9000)
+      IF(mlwp)WRITE(numout,*) ' key_trahdfcoef1d cannot be used with key_s_coord'
       istop = istop + 1
 #    endif
 #endif
@@ -407,51 +409,51 @@ C
 C   ... Type of diffusive operator
 C
 #if defined key_trahdfbilap
-      IF(lwp)WRITE(numout,*) '     biharmonic tracer diffusion'
+      IF(mlwp)WRITE(numout,*) '     biharmonic tracer diffusion'
 #  else
-      IF(lwp)WRITE(numout,*) '     harmonic tracer diffusion (default)'
+      IF(mlwp)WRITE(numout,*) '     harmonic tracer diffusion (default)'
 #endif
 C
 C   ... direction of diffusion
 C
       ioptio = 0
 #if defined key_trahdfiso
-      IF(lwp)WRITE(numout,*) '     isopycnal tracer diffusion'
+      IF(mlwp)WRITE(numout,*) '     isopycnal tracer diffusion'
       ioptio = ioptio+1
 #endif
 #if defined key_trahdfgeop
-      IF(lwp)WRITE(numout,*) '     geopotential tracer diffusion'
+      IF(mlwp)WRITE(numout,*) '     geopotential tracer diffusion'
 #  if ! defined key_s_coord
-      IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' key_trahdfgeop require key_s_coord'
+      IF(mlwp)WRITE(numout,9000)
+      IF(mlwp)WRITE(numout,*) ' key_trahdfgeop require key_s_coord'
       istop = istop + 1
 #  endif
       ioptio = ioptio+1
 #endif
       IF ( ioptio.EQ.0 ) THEN
-          IF(lwp)WRITE(numout,*) '     iso-level tracer diff. (default)'
-          IF(lwp)WRITE(numout,*)
+          IF(mlwp)WRITE(numout,*) '     iso-level tracer diff. (default)'
+          IF(mlwp)WRITE(numout,*)
         ELSEIF ( ioptio.GT.1 ) THEN
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*) ' key_trahdfiso and key_trahdfgeop '
-          IF(lwp)WRITE(numout,*) ' are incompatibles. '
+          IF(mlwp)WRITE(numout,9000)
+          IF(mlwp)WRITE(numout,*) ' key_trahdfiso and key_trahdfgeop '
+          IF(mlwp)WRITE(numout,*) ' are incompatibles. '
           istop = istop + 1
       ENDIF
 C
 #if defined key_trahdfeiv
-      IF(lwp)WRITE(numout,*) '     eddy induced velocity on tracers'
+      IF(mlwp)WRITE(numout,*) '     eddy induced velocity on tracers'
 #  if ! defined key_trahdfiso
-      IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' the eddy induced velocity on tracers'
-      IF(lwp)WRITE(numout,*) ' requires isopycnal diffusion, defines'
-      IF(lwp)WRITE(numout,*) ' key_trahdfiso. '
+      IF(mlwp)WRITE(numout,9000)
+      IF(mlwp)WRITE(numout,*) ' the eddy induced velocity on tracers'
+      IF(mlwp)WRITE(numout,*) ' requires isopycnal diffusion, defines'
+      IF(mlwp)WRITE(numout,*) ' key_trahdfiso. '
       istop = istop + 1
 #  endif
 #  if defined key_trahdfbilap
-      IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' the eddy induced velocity on tracers'
-      IF(lwp)WRITE(numout,*) ' does not work with biharmonic operator'
-      IF(lwp)WRITE(numout,*) ' suppress key_trahdfbilap. '
+      IF(mlwp)WRITE(numout,9000)
+      IF(mlwp)WRITE(numout,*) ' the eddy induced velocity on tracers'
+      IF(mlwp)WRITE(numout,*) ' does not work with biharmonic operator'
+      IF(mlwp)WRITE(numout,*) ' suppress key_trahdfbilap. '
       istop = istop + 1
 #  endif
 #endif
@@ -469,10 +471,10 @@ C
 C ... Logical units in use
 C ------------------------
 C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** units opened for the run'
-      IF(lwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' *** units opened for the run'
+      IF(mlwp)WRITE(numout,*)
 C
 C   ... Output file ( open in the opa routine )
       ilu = ilu+1
@@ -490,33 +492,33 @@ C   ... Order logical units by growing numbers
       imode = 0
       CALL orders(imode,iwork,iused,indx,ilu,1,8,1)
       IF ( imode.NE.0 ) THEN
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*)' problem in sorting logical units'
-          IF(lwp)WRITE(numout,*)' return code is: ',imode
+          IF(mlwp)WRITE(numout,9000)
+          IF(mlwp)WRITE(numout,*)' problem in sorting logical units'
+          IF(mlwp)WRITE(numout,*)' return code is: ',imode
           istop = istop + 1
       ENDIF
 C
 C   ... Print logical units in use
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) '     Logical units used by the code :'
-      IF(lwp)WRITE(numout,*) '     --------------------------------'
-      IF(lwp)WRITE(numout,*) ( iused(1,indx(ji)), ji = 1, ilu )
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' if you need a new unit, use any other number between 10 and 100'
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) '     Logical units used by the code :'
+      IF(mlwp)WRITE(numout,*) '     --------------------------------'
+      IF(mlwp)WRITE(numout,*) ( iused(1,indx(ji)), ji = 1, ilu )
+      IF(mlwp)WRITE(numout,*)
+      IF(mlwp)WRITE(numout,*) ' if you need a new unit, use any other number between 10 and 100'
 C
 C ... W a r n i n g  and  e r r o r  control
 C ------------------------------------------
       IF ( iwarn.GT.0 ) THEN
-          IF(lwp)WRITE(numout,*)
-          IF(lwp)WRITE(numout,*) iwarn,' w a r n i n g found'
-          IF(lwp)WRITE(numout,*) '**************************'
-          IF(lwp)WRITE(numout,*)
+          IF(mlwp)WRITE(numout,*)
+          IF(mlwp)WRITE(numout,*) iwarn,' w a r n i n g found'
+          IF(mlwp)WRITE(numout,*) '**************************'
+          IF(mlwp)WRITE(numout,*)
       ENDIF
       IF ( istop.GT.0 ) THEN
-          IF(lwp)WRITE(numout,*)
-          IF(lwp)WRITE(numout,*) istop,' E R R O R found : we stop'
-          IF(lwp)WRITE(numout,*) '**************************'
-          IF(lwp)WRITE(numout,*)
+          IF(mlwp)WRITE(numout,*)
+          IF(mlwp)WRITE(numout,*) istop,' E R R O R found : we stop'
+          IF(mlwp)WRITE(numout,*) '**************************'
+          IF(mlwp)WRITE(numout,*)
           STOP 'parctl'
       ENDIF
 

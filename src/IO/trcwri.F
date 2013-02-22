@@ -37,7 +37,6 @@
        !filename(29:29)=CHAR(0)
        julian=datestring2sec(datestring)
 
-       if(lwp)write(*,*) 'trcwri ------------  rank =',rank,' datestring = ',  datestring
 
        trcwriparttime = MPI_WTIME() ! F79 cronometer-start
 

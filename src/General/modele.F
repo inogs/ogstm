@@ -10,7 +10,6 @@ CCC  ---------
 CCC     Send opa model, adjoint model, linear tangent
 CCC
 C
-      write(*,*) "Starting ..."
       CALL myopa()
 C
       STOP

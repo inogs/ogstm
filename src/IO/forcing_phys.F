@@ -95,7 +95,6 @@
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After))
           CALL SLOPES(iper) !Computes wdta (and slopes if key_trahdfiso)
 
-          IF(lwp) WRITE (numout,*) ' dynamics DATA READ for Time = ', TC_FOR%TimeStrings(TC_FOR%After)
 
 !      ******* LOADED NEW FRAME *************
       END IF
@@ -177,7 +176,6 @@
 ! Starting I/O
 ! U  *********************************************************
       nomefile = 'FORCINGS/U'//datestring//'.nc'
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", rank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf);
 
       DO jk=1,jpk,ntids!udta(:,:,:,2) = buf*umask;
@@ -292,7 +290,6 @@
       if (B) then
       call readnc_slice_float_2d(nomefile,'sowaflcd',buf2); flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1);
       else
-         if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
          flxdta(:,:,jpemp ,2) = 0.
       endif
 

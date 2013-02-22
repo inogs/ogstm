@@ -49,7 +49,6 @@
 
 ! ----------------------------------------
        IsBackup =  (datemean.eq.dateTo)
-       if (lwp) write(*,*) 'trcdit IsBackup = ',IsBackup
 ! ----------------------------------------
        bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
       call mppsync()
@@ -173,7 +172,6 @@
 
         else
           d2f3d = REAL(tottrnIO,4)
-          CALL WRITE_AVE(       output_file_nc,datefrom, dateTo, d2f3d);
           CALL WRITE_VECTOR_AVE(output_vect_nc,datefrom, dateTo, d2f3d);
          endif
 
@@ -192,7 +190,6 @@
       if (.not.IsBackup) traIO(:,:,:,:) = 0.  !      we reset matrix for new average
 
 
-      if(rank == 0) WRITE(numout,*) '**** trcdit : write NetCDF passive tracer concentration'
 
 
       END SUBROUTINE trcdit

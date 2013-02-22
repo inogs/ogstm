@@ -35,7 +35,6 @@
       call mppsync()
 ! ----------------------------------------
       IsBackup =  (datemean.eq.dateTo)
-      if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup
 ! ----------------------------------------
       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
 
@@ -144,9 +143,7 @@
                  !CALL IOOGSNC_AVE_BKP(bkpname,var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom,dateTo,totdiaIO(:,:,:,jn),AC)
               else
                  d2f3d = REAL(tottrnIO(:,:,:),4)
-                 CALL WRITE_AVE       (dia_file_nc,datefrom,dateTo, d2f3d);
                  CALL WRITE_VECTOR_AVE(dia_vect_nc,datefrom,dateTo, d2f3d);
-                 !CALL IOOGSNC_AVE_3D2(dia_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
               endif
 

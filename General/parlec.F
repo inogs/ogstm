@@ -99,7 +99,6 @@
       ENDIF
 
       numnam = 4
-      REWIND( numnam )
       clname = 'namelist'
       CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
 

@@ -65,7 +65,6 @@
       ENDIF
 
       numnam = 2004
-      REWIND( numnam )
       clname = 'namelist.diagnostics'
       CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
 

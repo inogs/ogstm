@@ -5,7 +5,7 @@
           implicit none
 
           INTEGER FsizeGlo, Fsize, FsizeMax
-          INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP, INDflxDUMPglo, INDflxBuff
+          INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP, INDflxDUMPglo, INDflxBuff, INDflxDUMPZERO
           INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
 
           REAL(8),    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
@@ -43,6 +43,7 @@
 
        allocate(flx_ridxt     (Fsize,4           ))
        allocate(INDflxDUMP    (Fsize             ))
+       allocate(INDflxDUMPZERO(Fsize             ))
        allocate(INDflxDUMPglo (FsizeGlo          ))
        allocate(MflxDumpGlo   (7, FsizeGlo       ))
        allocate(diaflx        (Fsize, jptra, 7   ))

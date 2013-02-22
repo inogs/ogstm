@@ -119,7 +119,6 @@ C -----------------------------
           ENDIF
 
           clname='trc.restart'
-          CALL ctlopn(nutrst,clname,clunk,clunf,cldir,ilglo,ilu,iused,numout,lwp,1)
 
           IF(lwp) THEN
               IF(nrsttr.eq.0) THEN

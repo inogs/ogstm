@@ -94,7 +94,6 @@ C 0. initializations
       ENDIF
 
       numnat=80
-      REWIND (numnat)
 
       clname='namelist.passivetrc'
       CALL ctlopn(numnat,clname,clold,clfor,clseq,ilseq,ilu,iused,numout,lwp,1)
@@ -241,5 +240,6 @@ C 0. initializations
       ENDIF
 #    endif
 
+      CLOSE(numnat)
 
       END SUBROUTINE trclec

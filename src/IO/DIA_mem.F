@@ -10,6 +10,7 @@
 
           REAL(8),    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
           REAL(8),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
+          REAL(4),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo_Float
 
           CONTAINS
 
@@ -43,12 +44,20 @@
 
        allocate(flx_ridxt     (Fsize,4           ))
        allocate(INDflxDUMP    (Fsize             ))
-       allocate(INDflxDUMPZERO(Fsize             ))
-       allocate(INDflxDUMPglo (FsizeGlo          ))
-       allocate(MflxDumpGlo   (7, FsizeGlo       ))
+
        allocate(diaflx        (Fsize, jptra, 7   ))
        diaflx = 0
       END SUBROUTINE alloc_DIA_local_flx
+
+
+
+      SUBROUTINE alloc_DIA_GLOBAL_flx()
+      allocate(INDflxDUMPZERO(   Fsize             ))
+      allocate(MflxDumpGlo      (7, FsizeGlo       ))
+      allocate(MflxDumpGlo_FLOAT(7, FsizeGlo       ))
+      allocate(INDflxDUMPglo    (FsizeGlo          ))
+      END SUBROUTINE alloc_DIA_GLOBAL_flx
+
 
       SUBROUTINE alloc_DIA_MPI_flx()
        allocate(INDflxBuff    (FsizeMax          ))

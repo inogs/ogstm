@@ -238,6 +238,7 @@
 
       if (Fsize.NE.0) then
          call alloc_DIA_local_flx
+         if (rank ==0) call alloc_DIA_GLOBAL_flx()
          B=FLXRe_Indexing()
 
       endif

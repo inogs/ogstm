@@ -325,10 +325,6 @@
 
         call getTimesteps(TimeStepStart, TimeStep__End)
 
-        if (lwp) then
-            write(*,*) 'Time Step Start : ', TimeStepStart
-            write(*,*) 'Time Step End   : ', TimeStep__End
-        endif
 
 
         sec        = TimeStepStart*deltaT + TIME_0
@@ -349,15 +345,6 @@
         call TimeInterpolation(sec,TC_LEX, TC_LEX%Before, TC_LEX%After, t_interp)
         call TimeInterpolation(sec,TC_CO2, TC_CO2%Before, TC_CO2%After, t_interp)
 
-        if (lwp) then
-            write(*,*) 'BeforeForcings', TC_FOR%Before, 'AfterForcing', TC_FOR%After
-            write(*,*) 'BeforeRivers',   TC_TIN%Before, 'AfterRivers',  TC_TIN%After
-            write(*,*) 'BeforeGib',      TC_GIB%Before, 'AfterGib',     TC_GIB%After
-            write(*,*) 'BeforeAtm',      TC_ATM%Before, 'AfterAtm',     TC_GIB%After
-            write(*,*) 'BeforeCo2',      TC_CO2%Before, 'AfterCo2',     TC_CO2%After
-            write(*,*) 'BeforeKex',      TC_LEX%Before, 'AfterKex',     TC_LEX%After
-
-        endif
       END SUBROUTINE time_init
 
 

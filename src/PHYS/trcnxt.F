@@ -180,7 +180,7 @@ C
 C 3. swap of arrays
 C -----------------
 !$omp   parallel default(none) private(mytid,ji,jj,jk,jw)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) !NWATERPOINTS,WATERPOINTS,JWATERPOINTS,KWATERPOINTS)
+!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -208,14 +208,10 @@ C        END DO
         DO jk = 1,jpk
           DO jj = 1,jpj
             DO ji = 1,jpi
-!        DO jw = 1, NWATERPOINTS
-!            ji = WATERPOINTS(1,jw)
-!            jj = WATERPOINTS(2,jw)
-!            jk = WATERPOINTS(3,jw)
             trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
             trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
             tra(ji,jj,jk,jn+mytid) = 0.e0
-!         ENDDO
+
             END DO
           END DO
         END DO

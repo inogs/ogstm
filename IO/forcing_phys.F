@@ -352,8 +352,8 @@
       Umzweigh  = 1.0 - zweigh
 
           DO jk=1,jpk, ntids
-!$omp parallel default(none) private(mytid,jj,ji)
-!$omp&                       shared(jpi,jpj,jpk,jk,uk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
+!$omp parallel default(none) private(mytid,jj,ji,uk)
+!$omp&                       shared(jpi,jpj,jpk,jk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
 !$omp&                              zweigh,Umzweigh,tmask)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -394,15 +394,15 @@
           END DO
 
           DO jj=1,jpj,ntids
-!$omp parallel default(none) private(mytid,jk,ji)
-!$omp&                       shared(jpi,jpj,jpk,jj,uj,flx,flxdta,bblx,bblxdta,bbly,bblydta,hmld,zmxldta,
+!$omp parallel default(none) private(mytid,jk,ji,uj)
+!$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,bblx,bblxdta,bbly,bblydta,hmld,zmxldta,
 !$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-        uj = jj+mytid
-        if (mytid+jj.le.jpj) then
 
+        if (mytid+jj.le.jpj) then
+           uj = jj+mytid
 
             DO jk=1,jpflx
               DO ji=1,jpi

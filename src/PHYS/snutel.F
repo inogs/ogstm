@@ -134,8 +134,8 @@ C Frequency of correction if plus module of kt
 C Compute vertical integral
       DO jv = 1,dimen_jvsnu, ntids ! cicla sui punti terra 2D
 
-!$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(dimen_jvsnu,jarr_snu,jv,jn,jpk,elements,nelements,TOT,TOT_FN,tra,tra_FN,idx_element,e3t,FN_CORR)
+!$omp   parallel default(none) private(mytid,ji,jj,jk,jn,jnn)
+!$omp&      shared(dimen_jvsnu,jarr_snu,jv,jpk,elements,nelements,TOT,TOT_FN,tra,tra_FN,idx_element,e3t,FN_CORR)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID

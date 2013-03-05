@@ -59,10 +59,11 @@
        allocate(bufftma   (jpi_max* jpj_max* jpk))
        allocate(bufftrIO  (jpi_max* jpj_max* jpk))
        allocate(buffpp    (jpi_max* jpj_max* jpk))
+
+       if (lwp) then
        allocate(d2f3d     (jpiglo,jpjglo,jpk))
        allocate(d2f2d     (jpiglo,jpjglo))
 
-       if (lwp) then
            call getDIMENSION('bounmask.nc','waterpoints',NwaterPointsGLO)
            allocate(ave_vect(NwaterPointsGLO))
            call myalloc_WaterPoints()

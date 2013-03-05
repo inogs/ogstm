@@ -634,8 +634,8 @@ C      trcadvparttime = MPI_WTIME()
 
 
 
-!$omp   parallel default(none) private(jk,jj,ji,mytid)
-!$omp&      shared(packsize,nbondi,nperio,jpk,jpj,jpi,ptab,jpim1,jn,ktype,iihom,nlci,jpreci,ijhom,nlcj,jprecj)
+!$omp   parallel default(none) private(jn,jk,jj,ji,mytid,iihom,ijhom)
+!$omp&      shared(packsize,nbondi,nperio,jpk,jpj,jpi,ptab,jpim1,ktype,nlci,jpreci,nlcj,jprecj)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -715,8 +715,8 @@ C ------------------------------------
 C
 C 2.1 Read Dirichlet lateral conditions
 C
-!$omp   parallel default(none) private(jk,jj,jl,mytid)
-!$omp&      shared(packsize,nbondi,iihom,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab,jn)
+!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
+!$omp&      shared(packsize,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -829,8 +829,8 @@ C
 C 2.3 Write Dirichlet lateral conditions
 C
 C      trcadvparttime = MPI_WTIME()
-!$omp   parallel default(none) private(jk,jj,jl,mytid)
-!$omp&      shared(packsize,nbondi,iihom,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab,jn)
+!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
+!$omp&      shared(packsize,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -877,8 +877,8 @@ C
 C 3.1 Read Dirichlet lateral conditions
 C
 C        trcadvparttime = MPI_WTIME()
-!$omp   parallel default(none) private(jk,ji,jl,mytid)
-!$omp&      shared(packsize,nbondj,ijhom,nlcj,nrecj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab,jn)
+!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
+!$omp&      shared(packsize,nbondj,nlcj,nrecj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -994,8 +994,8 @@ C 3.3 Write Dirichlet lateral conditions
 C
 C        trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jk,ji,jl,mytid)
-!$omp&      shared(packsize,nbondj,ijhom,nlcj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab,jn)
+!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
+!$omp&      shared(packsize,nbondj,nlcj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -1043,8 +1043,8 @@ C 4.1 treatment without exchange (jpni odd)
 C   
 C      trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jk,ji,ijt,iju,mytid)
-!$omp&      shared(packsize,npolj,iloc,jpiglo,nimpp,ktype,jpk,nlci,zsgn,ptab,nlcj,jn)
+!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
+!$omp&      shared(packsize,npolj,jpiglo,nimpp,ktype,jpk,nlci,zsgn,ptab,nlcj)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -1112,8 +1112,8 @@ C ... sign ans sort are taken into account in the sender processor
 C
 C        trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jk,ji,ijt,iju,mytid)
-!$omp&      shared(packsize,npolj,iloc,jpiglo,nimpp,nimppt,nono,ktype,jpk,jpi,t3p1_my1,t3p2_my1,zsgn,ptab,nlcj,jn)
+!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
+!$omp&      shared(packsize,npolj,jpiglo,nimpp,nimppt,nono,ktype,jpk,jpi,t3p1_my1,t3p2_my1,zsgn,ptab,nlcj)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -1263,8 +1263,8 @@ C
 C        trcadvparttime = MPI_WTIME()
 C
 
-!$omp   parallel default(none) private(jk,ji,mytid)
-!$omp&      shared(packsize,npolj,ktype,jpk,nlci,ptab,t3p1_my1,nimpp,nlcj,t3p2_my1,jpjglo,jn)
+!$omp   parallel default(none) private(jn,jk,ji,mytid)
+!$omp&      shared(packsize,npolj,ktype,jpk,nlci,ptab,t3p1_my1,nimpp,nlcj,t3p2_my1,jpjglo)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -1332,8 +1332,8 @@ C ------------------------------------
 C
 C      trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jl,jk,jj,mytid)
-!$omp&      shared(packsize,npolj,nbondi,iihom,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab,jn)
+!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
+!$omp&      shared(packsize,npolj,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
@@ -1454,8 +1454,8 @@ C 5.3 Write Dirichlet lateral conditions
 C
 C        trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jl,jk,jj,mytid)
-!$omp&      shared(packsize,npolj,nbondi,iihom,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab,jn)
+!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
+!$omp&      shared(packsize,npolj,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1

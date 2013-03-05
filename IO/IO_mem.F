@@ -58,9 +58,11 @@
        allocate(bufftma   (jpi_max* jpj_max* jpk))
        allocate(bufftrIO  (jpi_max* jpj_max* jpk))
        allocate(buffpp    (jpi_max* jpj_max* jpk))
+
+       if (lwp) then
        allocate(d2f3d     (jpiglo,jpjglo,jpk))
        allocate(d2f2d     (jpiglo,jpjglo))
-
+       endif
 
       mem_all = rea_len *(7*jpi_max*jpj_max + (10+jptra_dia)*jpi_max* jpj_max*jpk) +
      &    4* (jpiglo*jpjglo*jpk + jpiglo*jpjglo )

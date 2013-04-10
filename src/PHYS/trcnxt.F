@@ -72,7 +72,7 @@ CC ==================
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn,jw
+      INTEGER ji,jj,jk,jn
 
 
 #ifdef __OPENMP
@@ -116,70 +116,9 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
         CALL lbc( tra(1,1,1,jn), 1, 1, 1, 1, jpk, 1 )
 
 #endif
-#if defined key_trc_arakawa || defined key_trc_tvd 
 
-
-C 2.a Time filter for Arakawa or TVD Sheme 
-C ----------------------------------------
 
 !$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,neuler,kt,TimeStepStart,jpk,jpj,jpi,trb,trn,tra,tmask)
-
-#ifdef __OPENMP
-        mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-      IF( mytid + jn <= jptra ) THEN
-
-        IF ((neuler.eq.0).and.(kt.eq.TimeStepStart)) THEN
-            DO jk=1,jpk
-              DO jj=1,jpj
-                DO ji=1,jpi
-                  trb(ji,jj,jk,jn+mytid)=trn(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
-                END DO
-              END DO
-            END DO 
-        ELSE
-            DO jk=1,jpk
-             DO jj=1,jpj
-                DO ji=1,jpi
-                  trb(ji,jj,jk,jn+mytid)=fsass(trb(ji,jj,jk,jn+mytid),
-     $                trn(ji,jj,jk,jn+mytid),tra(ji,jj,jk,jn+mytid))
-                END DO  
-              END DO  
-            END DO 
-        ENDIF
-
-      END IF
-!$omp end parallel
-
-#else
-
-C 2.b TRB for Smolarkiewicz scheme
-C -------------------------------
-c!$omp   parallel default(none) private(mytid,ji,jj,jk)
-c!$omp&      shared(jn,jpk,jpj,jpi,trb,tra)
-
-!#ifdef __OPENMP
-!        mytid = omp_get_thread_num()  ! take the thread ID
-!#endif
-!      IF( mytid + jn <= jptra ) THEN
-!
-!        DO jk=1,jpk
-!          DO jj=1,jpj
-!            DO ji=1,jpi
-!              trb(ji,jj,jk,jn+mytid)=tra(ji,jj,jk,jn+mytid)
-!            END DO
-!          END DO
-!        END DO
-!
-!      END IF
-c!$omp end parallel
-#endif
-C
-C
-C 3. swap of arrays
-C -----------------
-!$omp   parallel default(none) private(mytid,ji,jj,jk,jw)
 !$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) !NWATERPOINTS,WATERPOINTS,JWATERPOINTS,KWATERPOINTS)
 
 #ifdef __OPENMP
@@ -187,31 +126,11 @@ C -----------------
 #endif
       IF( mytid + jn <= jptra ) THEN
 
-C        DO jk = 1,jpk
-C          DO jj = 1,jpj
-C            DO ji = 1,jpi
-C              trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
-!CCC F79 We put .le. against .lt. since bfm doesn't like 0 concentration
-!              if( tra(ji,jj,jk,jn+mytid).le.0.  ) then
-!CCC             WRITE(numout,*) 'conc. exception ( ji , jj , jk , jn)'
-!                tra_FN(ji,jj,jk,jn+mytid) = tra_FN(ji,jj,jk,jn+mytid) - tra(ji,jj,jk,jn+mytid) + 0.00000000001
-!CCC F79 13 01 2005 WARNING MASS INJECTION
-!              trn(ji,jj,jk,jn+mytid) = 0.00000000001
-!              trb(ji,jj,jk,jn+mytid) = 0.00000000001
-!              end if
-C              tra(ji,jj,jk,jn+mytid) = 0.e0 ! tra becomes back trend and not source
-C            END DO
-C          END DO
-C        END DO
-
 
         DO jk = 1,jpk
           DO jj = 1,jpj
             DO ji = 1,jpi
-!        DO jw = 1, NWATERPOINTS
-!            ji = WATERPOINTS(1,jw)
-!            jj = WATERPOINTS(2,jw)
-!            jk = WATERPOINTS(3,jw)
+
             trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
             trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
             tra(ji,jj,jk,jn+mytid) = 0.e0
@@ -219,8 +138,6 @@ C        END DO
             END DO
           END DO
         END DO
-
-
 
       END IF
 !$omp end parallel

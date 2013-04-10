@@ -129,7 +129,7 @@
 
          ave_counter = 0   !  reset the counter
          IsStartBackup = .false.
-         B = writeTemporization("trcdia____", trcdiatottime)
+         if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
 

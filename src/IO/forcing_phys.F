@@ -351,7 +351,7 @@
           DO jk=1,jpk, ntids
 !$omp parallel default(none) private(mytid,jj,ji,uk)
 !$omp&                       shared(jpi,jpj,jpk,jk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
-!$omp&                              zweigh,Umzweigh,tmask)
+!$omp&                              zweigh,Umzweigh,tmask,umask,vmask)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -361,17 +361,25 @@
             DO jj=1,jpj
               DO ji=1,jpi
 
-                if (tmask(ji,jj,uk). NE . 0.0) then
-                !ub(ji,jj,uk) = un(ji,jj,uk) ! serve ?
-                !vb(ji,jj,uk) = vn(ji,jj,uk)
+                if (umask(ji,jj,uk). NE . 0.0) then
                 un(ji,jj,uk) = (Umzweigh*  udta(ji,jj,uk,1) + zweigh*  udta(ji,jj,uk,2))
+                endif
+
+                if (vmask(ji,jj,uk). NE . 0.0) then
                 vn(ji,jj,uk) = (Umzweigh*  vdta(ji,jj,uk,1) + zweigh*  vdta(ji,jj,uk,2))
+                endif
+
+                if (tmask(ji,jj,uk). NE . 0.0) then
+
                 wn(ji,jj,uk) = (Umzweigh*  wdta(ji,jj,uk,1) + zweigh*  wdta(ji,jj,uk,2))
                avt(ji,jj,uk) = (Umzweigh*avtdta(ji,jj,uk,1) + zweigh*avtdta(ji,jj,uk,2))
 #if defined key_off_tra
                 tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
                 sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
 #endif
+                endif ! tmask
+
+
 #if defined key_trahdfiso
               uslp(ji,jj,uk) = (Umzweigh *  uslpdta(ji,jj,uk,1)+ zweigh*  uslpdta(ji,jj,uk,2))
               vslp(ji,jj,uk) = (Umzweigh *  vslpdta(ji,jj,uk,1)+ zweigh*  vslpdta(ji,jj,uk,2))
@@ -383,7 +391,6 @@
               vgm(ji,jj,uk)  = (Umzweigh *   vgmdta(ji,jj,uk,1)+ zweigh*    vgmdta(ji,jj,uk,2))
               wgm(ji,jj,uk)  = (Umzweigh *   wgmdta(ji,jj,uk,1)+ zweigh*    wgmdta(ji,jj,uk,2))
 #endif
-              endif ! tmask
               END DO 
             END DO
       endif

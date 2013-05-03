@@ -323,6 +323,9 @@
       un        = 0.0
       vn        = 0.0
       wn        = 0.0
+      avt       = 0.0
+      tn        = 0.0
+      sn        = 0.0
       call photo_init
 
 

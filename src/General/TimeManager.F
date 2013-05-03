@@ -402,7 +402,7 @@
          BEFORE = I - 1;
 
       AFTER = BEFORE +1
-      t_interp = (sec - STRUCT%Times(BEFORE))/(STRUCT%Times(AFTER) - STRUCT%Times(BEFORE))
+      if (BEFORE.gt.0) t_interp = (sec - STRUCT%Times(BEFORE))/(STRUCT%Times(AFTER) - STRUCT%Times(BEFORE))
 
 
       IF (STRUCT%Periodic) then

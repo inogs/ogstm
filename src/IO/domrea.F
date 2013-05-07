@@ -467,8 +467,7 @@
             do jj =1, jpj-1
              do ii =2, jpi-1
 
-               !if ( tmask(kk,jj,ii).EQ.1.0 )  then
-               if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0 )) then
+               if  (tmask(ii,jj,kk).EQ.1.0 ) then ! .and. (resto(ii,jj,kk,1).eq.0.0 )) then
                   counter = counter + 1
                   BFMpoints(1,counter) = ii
                   BFMpoints(2,counter) = jj

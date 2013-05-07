@@ -497,7 +497,7 @@
             do jj =1, jpj-1
              do ii =2, jpi-1
 
-               if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0) )  counter = counter + 1
+               if  (tmask(ii,jj,kk).EQ.1.0 )   counter = counter + 1
 
              enddo
             enddo

@@ -72,7 +72,7 @@ C
 
             xEPS(ji,jk)          = kef(ji,mytid+jj)
             xEPS(ji,jk)          = max(xEPS(ji,jk),1.D-15) ! avoid denormalized number
-            xpar(ji,mytid+jj,jk) = xpar(ji,mytid+jj,jk-1) *exp(-1. * xEPS(ji,jk-1)* e3t(jk-1))
+            xpar(ji,mytid+jj,jk) = xpar(ji,mytid+jj,jk-1) *exp(-1. * xEPS(ji,jk)* e3t(jk))
             xpar(ji,mytid+jj,jk) = max(xpar(ji,mytid+jj,jk),1.D-15) ! avoid denormalized number
 
           END DO

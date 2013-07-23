@@ -124,7 +124,7 @@ C
                           er(4)  = opa_ice
                           er(5)  = opa_co2(ji,jj)
                           er(6)  = xpar(ji,jj,jk)
-                          er(7)  = DAY_LENGTH(ji,jj)
+                          er(7)  = 24.0
                           er(8)  = e3t(jk)
                           er(9)  = vatm(ji,jj) * surf_mask(jk)
                           er(10) = PH(ji,jj,jk)

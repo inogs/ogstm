@@ -63,7 +63,7 @@ CC ==================
 
       LOGICAL :: l1,l2,l3
       INTEGER :: ji,jj,jk,jv,jf,js
-!      INTEGER :: bottom
+      INTEGER :: bottom
       REAL(8) :: ze3tr,d2s
 ! omp variables
       INTEGER :: mytid, ntids
@@ -125,11 +125,12 @@ C =============
 C
       MAIN_LOOP: DO jv=1,dimen_jvsed,ntids
 
-!$omp    parallel default(none) private(ji,jj,jk,js,mytid,jf)
+!$omp    parallel default(none) private(ji,jj,jk,js,mytid,jf,bottom)
 !$omp&                           shared(jv,dimen_jvsed,jarr_sed,
 !$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
 !$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
-!$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx)
+!$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx,
+!$omp&                                  mbathy,bottom_flux)
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -184,8 +185,8 @@ C                Dinoflagellates
 
               END DO
 
-!              bottom = mbathy(ji,jj) + 1
-!              zwork(:,bottom,mytid+1) = 0 ! no flux in the sea floor
+               bottom = mbathy(ji,jj) + 1
+               zwork(:,bottom,mytid+1) = bottom_flux * zwork(:,bottom,mytid+1) ! bottom_flux = 0 -> no flux in the sea floor
 
 C 1.3 tracer flux divergence at t-point added to the general trend
 

@@ -771,6 +771,12 @@ CC      no passive tracers DATA at given time step
 CC
 CC
 CC
+CC    fotoperiod formulation
+CC    photop      : Fotoperiod formulation if false daylength is 24 h
+      LOGICAL photop
+CC    atlantic buffer biology activation
+      LOGICAL atlantic_bfm
+
 #    if defined key_trc_bfm
 CC
 CC      vsed      : sedimentation speed (NAMELIST)
@@ -781,7 +787,7 @@ CC      tminr     : minimum coefficient for passive tracer damping (NAMELIST)
 CC      remdmp()  : damping coefficient of passive tracers (depth dependant)
 
 
-      REAL(8) vsed,vsed_dia,tmaxr,tminr
+      REAL(8) vsed,vsed_dia,tmaxr,tminr,bottom_flux
       REAL(8), allocatable :: remine(:,:,:)
       REAL(8), allocatable :: remdmp(:,:)
 

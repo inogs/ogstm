@@ -448,17 +448,25 @@
       ! LOCAL
       integer julianday, ji,jj
 
-      if (datestring(10:17).eq.'00:00:00') then
+      if (photop) then
+          if (datestring(10:17).eq.'00:00:00') then
 
-         call tau2julianday(NOW_timestep, deltaT, julianday)
-         do jj =1, jpj
-            do ji=1, jpi
-               DAY_LENGTH(ji,jj) = photoperiod(julianday, gphit(ji,jj))
-            enddo
-         enddo
+              call tau2julianday(NOW_timestep, deltaT, julianday)
 
+              do jj =1, jpj
+                  do ji=1, jpi
+                      DAY_LENGTH(ji,jj) = photoperiod(julianday, gphit(ji,jj))
+                  enddo
+              enddo
 
-      endif
+          end if
+
+      else
+
+         DAY_LENGTH(:,:) = 24.
+
+      end if
+
       END SUBROUTINE DAILY
 
 

@@ -64,7 +64,7 @@ C 0. initializations
 #    if defined key_trc_dmp
 !      namelist/natdmp/nmldmptr
 #    endif
-
+      namelist /MAXVALUES/ maxvalue
 
 ! OPEN specifier
 
@@ -254,6 +254,10 @@ C 0. initializations
           WRITE(numout,*) ' '
       ENDIF
 #    endif
+
+
+      REWIND(numnat)
+      READ(numnat,maxvalues)
 
       CLOSE(numnat)
 

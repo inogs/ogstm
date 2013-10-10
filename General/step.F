@@ -167,12 +167,13 @@
            B = writeTemporization("trcsms____", trcsmstottime)
            B = writeTemporization("trczdf____", trczdftottime)
            B = writeTemporization("snutel____", snuteltottime)
+           B = writeTemporization("check_____", checkVtottime)
            B = writeTemporization("trcnxt____", trcnxttottime)
            B = writeTemporization("trcstp____", trcstptottime)
 
 
            B = writeTemporization("flxdump___",flx_TotTime  )
-           B = writeTemporization("stp_______", stptottime   )
+           B = writeTemporization("stp_______", stptottime  )
 
            call reset_Timers()
            write(*,*) "*******************************************"

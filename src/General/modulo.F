@@ -548,6 +548,7 @@ CC
 
       LOGICAL ::  lutini(jptra)
       INTEGER ::  nutini(jptra)
+      REAL(8) ::  maxvalue(jptra)
 CC
 CC----------------------------------------------------------------------
 CC

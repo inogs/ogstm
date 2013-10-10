@@ -71,6 +71,7 @@
       CALL trcsms(ktask,kt)
       CALL trczdf(ktask,kt) ! tracers: vertical diffusion
       CALL snutel
+      CALL checkValues
       CALL trcnxt(ktask,kt) ! tracers: fields at next time step
 !      CALL trcrad           ! Correct artificial negative concentrations for isopycnal scheme
 !

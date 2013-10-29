@@ -30,8 +30,8 @@ CC----------------------------------------------------------------------
       ntids = omp_get_max_threads() ! take the number of threads
 #endif
        dimen_jvzdf=0
-       allocate(jarr_zdf(2, jpj*jpj))
-       allocate(jarr_zdf_flx(jpj*jpj,jpk))
+       allocate(jarr_zdf(2, jpi*jpj))
+       allocate(jarr_zdf_flx(jpi*jpj,jpk))
        allocate(zwd(jpk, ntids))
        allocate(zws(jpk, ntids))
        allocate(zwi(jpk, ntids))

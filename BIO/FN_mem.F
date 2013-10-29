@@ -35,7 +35,7 @@
       dimen_jvsnu = 0
       SMALL=0.00000000001
 
-      allocate(jarr_snu(2, jpj*jpj))
+      allocate(jarr_snu(2, jpi*jpj))
       allocate(tra_FN(jpi,jpj,jpk,jptra))
 
       CALL OPA_elements(elements,nelements,idx_element)

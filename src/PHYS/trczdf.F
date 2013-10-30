@@ -117,7 +117,7 @@ CC ===================
       IF (dimen_jvzdf .EQ. 0) THEN
          DO jj = 2,jpjm1
            DO  ji = 2,jpim1
-              IF(tmask(ji,jj,1) .NE. 0) THEN
+              IF( (tmask(ji,jj,1) .NE. 0) .AND. (coastp(ji,jj) .NE. 5 )) THEN
                  dimen_jvzdf = dimen_jvzdf + 1
                  jarr_zdf(1,dimen_jvzdf) = ji
                  jarr_zdf(2,dimen_jvzdf) = jj

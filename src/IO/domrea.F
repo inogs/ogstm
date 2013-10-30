@@ -95,6 +95,7 @@
       CALL readnc_slice_double (maskfile,'fmask', fmask )
       CALL readnc_slice_double (maskfile,'tmask', tmask )
 !      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
+      CALL readnc_slice_double_2d(maskfile,'coastp', coastp)
 
 
 ! F79 Initialization of mbathy
@@ -467,7 +468,7 @@
             do jj =1, jpj-1
              do ii =2, jpi-1
 
-               if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0 )) then
+               if ( (tmask(ii,jj,kk).EQ.1.0 ) .AND. (coastp(ii,jj) .NE. 5.) ) then
                   counter = counter + 1
                   BFMpoints(1,counter) = ii
                   BFMpoints(2,counter) = jj
@@ -497,7 +498,7 @@
             do jj =1, jpj-1
              do ii =2, jpi-1
 
-               if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0) )  counter = counter + 1
+               if ( (tmask(ii,jj,kk).EQ.1.0 ) .AND. (coastp(ii,jj) .NE.  5.) )   counter = counter + 1
 
              enddo
             enddo

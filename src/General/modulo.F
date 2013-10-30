@@ -186,6 +186,7 @@ CC      vmask, fmask()
 
 
       REAL(8), allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
+      REAL(8), allocatable, dimension(:,:)   :: coastp
       INTEGER NBFMPOINTS, NBFMPOINTS_SUP
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
@@ -1077,8 +1078,8 @@ C
       allocate(fmask(jpi,jpj,jpk))
       allocate(umask(jpi,jpj,jpk))
       allocate(vmask(jpi,jpj,jpk))
-      mem_all = mem_all + int_len*jpi*jpj + rea_len*4*jpi*jpj*jpk  
-
+      allocate(coastp(jpi,jpj))
+      mem_all = mem_all + int_len*jpi*jpj + rea_len*4*jpi*jpj*jpk + rea_len *jpi*jpj 
 
 C     write(*,*) 'Mem_allocated:', mem_all
 C

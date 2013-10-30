@@ -93,7 +93,7 @@ CC ===================
       IF (dimen_jvsed .EQ. 0) THEN ! initialization phase
          DO jj = 2,jpjm1
            DO  ji = 2,jpim1
-              IF(tmask(ji,jj,1) .NE. 0) THEN
+              IF((tmask(ji,jj,1) .NE. 0) .AND. (coastp(ji,jj) .NE. 5 ) ) THEN
                  dimen_jvsed = dimen_jvsed + 1
                  jarr_sed(1,dimen_jvsed) = ji
                  jarr_sed(2,dimen_jvsed) = jj

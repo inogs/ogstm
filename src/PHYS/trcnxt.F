@@ -119,7 +119,7 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 
 
 !$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) !NWATERPOINTS,WATERPOINTS,JWATERPOINTS,KWATERPOINTS)
+!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,coastp) 
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -134,8 +134,40 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
             trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
             trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
             tra(ji,jj,jk,jn+mytid) = 0.e0
-!         ENDDO
+            
             END DO
+          END DO
+        END DO
+
+        DO jj = 1,jpj
+          DO ji = 1,jpi
+
+            if     ( (coastp(ji,jj) .EQ. 1.) .AND. (jj .LT. jpj) ) then
+
+              trb(ji,jj+1,1,jn+mytid) = trn(ji,jj,1,jn+mytid)
+              trn(ji,jj+1,1,jn+mytid) = trn(ji,jj,1,jn+mytid)*tmask(ji,jj,1)
+              tra(ji,jj+1,1,jn+mytid) = 0.e0
+
+            elseif ( (coastp(ji,jj) .EQ. 2.) .AND. (ji .LT. jpi) ) then
+
+              trb(ji+1,jj,1,jn+mytid) = trn(ji,jj,1,jn+mytid)
+              trn(ji+1,jj,1,jn+mytid) = trn(ji,jj,1,jn+mytid)*tmask(ji,jj,1)
+              tra(ji+1,jj,1,jn+mytid) = 0.e0
+
+            elseif ( (coastp(ji,jj) .EQ. 3.) .AND. (jj .GT. 1) )then
+
+              trb(ji,jj-1,1,jn+mytid) = trn(ji,jj,1,jn+mytid)
+              trn(ji,jj-1,1,jn+mytid) = trn(ji,jj,1,jn+mytid)*tmask(ji,jj,1)
+              tra(ji,jj-1,1,jn+mytid) = 0.e0
+
+            elseif ( (coastp(ji,jj) .EQ. 4.) .AND. (ji .GT. 1) ) then
+
+              trb(ji-1,jj,1,jn+mytid) = trn(ji,jj,1,jn+mytid)
+              trn(ji-1,jj,1,jn+mytid) = trn(ji,jj,1,jn+mytid)*tmask(ji,jj,1)
+              tra(ji-1,jj,1,jn+mytid) = 0.e0
+            
+            endif 
+
           END DO
         END DO
 

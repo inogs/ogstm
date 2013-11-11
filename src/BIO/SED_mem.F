@@ -62,8 +62,8 @@ CC----------------------------------------------------------------------
        sed_idx(20) = ppP4p
        sed_idx(21) = ppP4i
 
-       allocate(jarr_sed(2, jpj*jpj))
-       allocate(jarr_sed_flx(jpj*jpj,jpk))
+       allocate(jarr_sed(2, jpi*jpj))
+       allocate(jarr_sed_flx(jpi*jpj,jpk))
 
        allocate( ztra(nsed,ntids))
 

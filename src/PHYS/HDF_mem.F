@@ -35,8 +35,8 @@ CC----------------------------------------------------------------------
        dimen_jvhdf2=0
        dimen_jvhdf3=0
 
-       allocate(jarr_hdf(3,jpj*jpj*jpk,2))
-       allocate(jarr_hdf_flx(jpj*jpj*jpk))
+       allocate(jarr_hdf(3,jpi*jpj*jpk,2))
+       allocate(jarr_hdf_flx(jpi*jpj*jpk))
        allocate(hdfmask(jpi,jpj,jpk   ))
        allocate(zta    (            ntids))
        allocate(zeeu   (jpi,jpj,jpk      ))

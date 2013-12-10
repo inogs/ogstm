@@ -2,6 +2,7 @@
 
        USE modul_param 
        USE myalloc
+       USE myalloc_mpp
 
        IMPLICIT NONE
 
@@ -23,11 +24,13 @@ CC----------------------------------------------------------------------
       INTEGER :: ntids, omp_get_max_threads
       EXTERNAL :: omp_get_max_threads
 #else
-      INTEGER :: ntids = 1
+      INTEGER :: ntids 
 #endif
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
+#else
+      ntids = mpi_pack_size
 #endif
 
 

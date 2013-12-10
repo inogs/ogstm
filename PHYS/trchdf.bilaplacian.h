@@ -98,7 +98,7 @@ CC ==================
 
 #if defined key_passivetrc 
       LOGICAL l1,l2,l3
-      INTEGER ji,jj,jk,jn,jv,jf,mytid,ntids,pack_size!,itid
+      INTEGER ji,jj,jk,jn,jv,jf,mytid,ntids,pack_size,jp
       INTEGER myji,myjj
       INTEGER locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
 #ifdef __OPENMP
@@ -115,7 +115,7 @@ CCC OpenMP
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
-      ntids = 1
+      ntids = mpi_pack_size
       mytid = 0
 #endif
 
@@ -245,6 +245,9 @@ C ... First derivative (gradient)
 !$omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
+#else
+      PACK_LOOP1: DO jp=1,ntids
+       mytid=jp-1
 #endif
          IF( mytid + jn <= jptra ) THEN
 
@@ -279,6 +282,11 @@ C ... Multiply by the eddy diffusivity coefficient
 
        ENDIF
 !$omp  end parallel
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP1
+      mytid =0
+#endif
 C
 C
 C ... Lateral boundary conditions on the laplacian (zlt,zls)
@@ -319,6 +327,9 @@ C ... third derivative (gradient)
 !$omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
+#else
+      PACK_LOOP2: DO jp=1,ntids
+       mytid=jp-1
 #endif
        IF( mytid + jn <= jptra ) THEN
 
@@ -370,7 +381,12 @@ C   ... save the horizontal diffusive trends in X and Y
 
       ENDIF
 !$omp  end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP2
+      mytid =0
+#endif
+      
 C Lateral boundary conditions on trtrd:
 #      if defined key_trc_diatrd
 #         ifdef key_mpp

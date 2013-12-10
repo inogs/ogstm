@@ -72,14 +72,14 @@ CC ==================
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn
+      INTEGER ji,jj,jk,jn,jp
 
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
-      ntids = 1
+      ntids = mpi_pack_size
       mytid = 0
 #endif
 
@@ -119,10 +119,13 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 
 
 !$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) !NWATERPOINTS,WATERPOINTS,JWATERPOINTS,KWATERPOINTS)
+!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) 
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
+#else
+      PACK_LOOP1: DO jp=1,ntids
+       mytid=jp-1
 #endif
       IF( mytid + jn <= jptra ) THEN
 
@@ -134,13 +137,18 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
             trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
             trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
             tra(ji,jj,jk,jn+mytid) = 0.e0
-!         ENDDO
+
             END DO
           END DO
         END DO
 
       END IF
 !$omp end parallel
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP1
+      mytid =0
+#endif
 
 
 

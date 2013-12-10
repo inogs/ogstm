@@ -31,6 +31,7 @@ CC ==================
 !      NAMELIST/Dom_Size/ jpni, jpnj, jpnij, jpreci, jprecj
 
       NAMELIST/Dimension_Med_Grid/ jpiglo, jpjglo, jpk, jpidta,jpjdta, jpkdta, jpkb
+      NAMELIST/MPI_config/ mpi_pack_size
       NAMELIST/Domain_Characteristic/  jperio, jpisl, jpnisl
       NAMELIST/Number_Fluxes/ jpflx, jptaux, jptauy, jpwind, jpemp,
      &                        jpkef, jpice, jpqsr, jpilec, jpjlec,jpklec
@@ -167,6 +168,20 @@ CC      jpij    :  jpi x jpj
       jpkm1=jpk-1
       jpij=jpi*jpj
       jpkbm1=jpkb-1
+
+C ... Namelist :MPI_config
+C     Deafault value
+      mpi_pack_size = 1
+
+      REWIND( numnam )
+      READ  ( numnam, MPI_config )
+
+      IF(lwp) THEN
+      WRITE(numout,*) 'MPI_config'
+      WRITE(numout,*) ' '
+      WRITE(numout,*) ' mpi_pack_size  :size of mpi packet -->  ',mpi_pack_size
+      WRITE(numout,*) ' '
+      ENDIF
 
 C
 C ... namelist.init: Domain_Characteristic

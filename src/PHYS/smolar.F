@@ -83,7 +83,7 @@ CC      modifications : 01-05 (E.Kestenare) fix bug in trtrd indexes
 CC----------------------------------------------------------------------
       LOGICAL :: MPI_CHECK,l1,l2,l3
       INTEGER ji,jj,jk,jt,jn,jf,ju
-      INTEGER pack_size
+      INTEGER jp,pack_size
       REAL(8) zbtr,zdt
       REAL(8) junk, junki, junkj, junkk
       INTEGER A,B
@@ -107,7 +107,7 @@ CC----------------------------------------------------------------------
       mytid = -1000000
 
 #else
-      ntids = 1
+      ntids = mpi_pack_size
       mytid = 0
 #endif
 
@@ -116,6 +116,9 @@ CC----------------------------------------------------------------------
 !$omp parallel default(shared) private(mytid,A)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
+#else
+      PACK_LOOP0: DO jp=1,ntids
+       mytid=jp-1
 #endif
       A = mytid+1
          zti(:,:,:,A)  = 0.
@@ -123,11 +126,16 @@ CC----------------------------------------------------------------------
          zkx(:,:,:,A)  = 0.
          zky(:,:,:,A)  = 0.
          zkz(:,:,:,A)  = 0.
-         zbuf = 0.
+         zbuf(:,:,:,A) = 0.
          zx(:,:,:,A)   = 0.
          zy(:,:,:,A)   = 0.
          zz(:,:,:,A)   = 0.
 !$omp end parallel
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP0
+      mytid =0
+#endif
 
          zaa  = 0.
          zbb  = 0.
@@ -310,8 +318,11 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
 !$omp  parallel default(none) private(A,mytid,jk,jj,ji) shared(jpk,jpj,jpi,ztj,zx,zy,zz)
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
+#else
+      PACK_LOOP1: DO jp=1,ntids
+       mytid=jp-1
 #endif
-      A = mytid + 1
+       A = mytid + 1
 
        DO jk = 1,jpk
           DO jj = 1,jpj
@@ -324,6 +335,11 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
           END DO
        END DO
 !$omp  end parallel
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP1
+      mytid =0
+#endif
 
        DO jk = 1,jpk,ntids
 !$omp parallel default(none) private(mytid, ji,jj)
@@ -331,6 +347,9 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
 !$omp&                un,vn,wn,e2u,e1v,e1t,e2t,zdt )
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
+#else
+      PACK_LOOP2: DO jp=1,ntids
+       mytid=jp-1
 #endif
 
        if (jk+mytid.le.jpk) then
@@ -347,6 +366,11 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
 
          endif
 !$omp end parallel
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP2
+      mytid =0
+#endif
        END DO
 
 
@@ -371,6 +395,9 @@ C        1.1 mass flux at u v and t-points and initialization
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
+#else
+         PACK_LOOP3: DO jp=1,ntids
+         mytid=jp-1
 #endif
 
       if( mytid + jn <= jptra ) then
@@ -388,7 +415,11 @@ C        1.1 mass flux at u v and t-points and initialization
       end if
 
 !$omp    end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP3
+      mytid=0
+#endif
 #endif
 
 
@@ -402,6 +433,9 @@ C       calcul of tracer flux in the i and j direction
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
+#else
+        PACK_LOOP4: DO jp=1,ntids
+         mytid=jp-1
 #endif
 
       if( mytid + jn <= jptra ) then
@@ -457,7 +491,11 @@ C
       end if
 
 !$omp end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP4
+      mytid=0
+#endif
 
 C ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
@@ -483,7 +521,7 @@ C       END DO
         ELSE
            pack_size = ntids - (ntids - 1 + jn - jptra)
       END IF
-
+		write(*,*) 'pack_size -->', pack_size
         CALL mpplnk_my(zkx, pack_size,1,1)
         CALL mpplnk_my(zky, pack_size,1,1)
 
@@ -519,6 +557,9 @@ C -----------------------------------------------------------
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
+#else
+        PACK_LOOP5: DO jp=1,ntids
+         mytid=jp-1
 #endif
 
       IF( mytid + jn <= jptra ) THEN
@@ -553,7 +594,11 @@ C -----------------------------------------------------------
       END IF
 
 !$omp end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP5
+      mytid=0
+#endif
 
 C 2.1 start of antidiffusive correction loop
 
@@ -563,10 +608,13 @@ C 2.2 calcul of intermediary field zti
 
 
 !$omp     parallel default(none) private(mytid,A,B,ji,jj,jk)
-!$omp&       shared(jt,jn,ncor,jpkm1,jpjm1,jpim1,zti,ztj,trn,zdt)
+!$omp&       shared(jt,jn,ncor,jpkm1,jpjm1,jpim1,zti,ztj,trn,zdt,zbuf)
 
 #ifdef __OPENMP
           mytid = omp_get_thread_num()  ! take the thread ID
+#else
+        PACK_LOOP6: DO jp=1,ntids
+         mytid=jp-1
 #endif
 
       IF( mytid + jn <= jptra ) THEN
@@ -587,7 +635,7 @@ C 2.2 calcul of intermediary field zti
                       DO jj = 2,jpjm1
                          DO ji = 2,jpim1
                             zti(ji,jj,jk,A) = trn(ji,jj,jk,B) + zdt*ztj(ji,jj,jk,A)
-                            zbuf(ji,jj,jk) = ztj(ji,jj,jk,A)
+                            zbuf(ji,jj,jk,A) = ztj(ji,jj,jk,A)
                          END DO
                       END DO
                    END DO
@@ -599,7 +647,7 @@ C 2.2 calcul of intermediary field zti
                    DO jj = 2,jpjm1
                       DO ji = 2,jpim1
                          zti(ji,jj,jk,A) =  zti(ji,jj,jk,A) + zdt*ztj(ji,jj,jk,A)
-                         zbuf(ji,jj,jk)  = zbuf(ji,jj,jk)       + ztj(ji,jj,jk,A)
+                         zbuf(ji,jj,jk,A)  = zbuf(ji,jj,jk,A)       + ztj(ji,jj,jk,A)
                       END DO
                    END DO
                 END DO
@@ -609,7 +657,11 @@ C 2.2 calcul of intermediary field zti
       END IF
 
 !$omp     end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP6
+      mytid=0
+#endif
 
 
 
@@ -659,6 +711,9 @@ C 2.3 calcul of the antidiffusive flux
 
 #ifdef __OPENMP
           mytid = omp_get_thread_num()  ! take the thread ID
+#else
+        PACK_LOOP7: DO jp=1,ntids
+         mytid=jp-1
 #endif
 
       IF( mytid + jn <= jptra ) THEN
@@ -707,7 +762,11 @@ C 2.3 calcul of the antidiffusive flux
           END IF
 
 !$omp end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP7
+      mytid=0
+#endif
 
 C---------------------------------------------------------------------------
 C 2.4 cross terms
@@ -862,6 +921,9 @@ C
 
 #ifdef __OPENMP
           mytid = omp_get_thread_num()  ! take the thread ID
+#else
+        PACK_LOOP8: DO jp=1,ntids
+         mytid=jp-1
 #endif
 
 
@@ -906,7 +968,11 @@ C
       END IF
 
 !$omp end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP8
+      mytid=0
+#endif
 
 
 C ... Lateral boundary conditions on zk[xy]
@@ -955,6 +1021,9 @@ C
 
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
+#else
+        PACK_LOOP9: DO jp=1,ntids
+         mytid=jp-1
 #endif
 
 C        2.6. calcul of after field using an upstream advection scheme
@@ -1022,17 +1091,24 @@ C        2.6. calcul of after field using an upstream advection scheme
       END IF
 
 !$omp end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP9
+      mytid=0
+#endif
         END DO ANTIDIFF_CORR
 
 
 C       3. trend due to horizontal and vertical advection of tracer jn
 C       --------------------------------------------------------------
 C
-!$omp   parallel default(none) private(mytid,A,B,ji,jj,jk,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn)
+!$omp   parallel default(none) private(mytid,A,B,ji,jj,jk,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
+#else
+        PACK_LOOP10: DO jp=1,ntids
+         mytid=jp-1
 #endif
         A=mytid+1
         B=mytid+jn
@@ -1046,7 +1122,7 @@ C
                  jj = jarrt(2, ju)
                  jk = jarrt(3, ju)
 
-                 tra(ji,jj,jk,B) = tra(ji,jj,jk,B)+ ztj(ji,jj,jk,A)!+ (zbuf(ji,jj,jk) + ztj(ji,jj,jk,A))
+                 tra(ji,jj,jk,B) = tra(ji,jj,jk,B)+ ztj(ji,jj,jk,A)!+ (zbuf(ji,jj,jk,A) + ztj(ji,jj,jk,A))
 
               END DO
            else
@@ -1055,7 +1131,7 @@ C
                  jj = jarrt(2, ju)
                  jk = jarrt(3, ju)
 
-                 tra(ji,jj,jk,B) = tra(ji,jj,jk,B)+ (zbuf(ji,jj,jk) + ztj(ji,jj,jk,A))
+                 tra(ji,jj,jk,B) = tra(ji,jj,jk,B)+ (zbuf(ji,jj,jk,A) + ztj(ji,jj,jk,A))
 
               END DO
            endif
@@ -1064,7 +1140,11 @@ C
 
 
 !$omp end parallel
-
+#ifdef __OPENMP
+#else
+      END DO PACK_LOOP10
+      mytid=0
+#endif
 
 
 

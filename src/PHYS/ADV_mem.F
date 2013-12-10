@@ -2,6 +2,7 @@
 
        USE modul_param 
        USE myalloc
+       USE myalloc_mpp
        USE DIA_mem
 
        IMPLICIT NONE
@@ -23,8 +24,8 @@ C
       REAL(8), allocatable :: zaa(:,:,:),zbb(:,:,:),zcc(:,:,:)
       REAL(8), allocatable :: zx(:,:,:,:),zy(:,:,:,:),zz(:,:,:,:)
 
-      REAL(8), allocatable :: zbuf(:,:,:)
-!$omp threadprivate( zbuf )
+      REAL(8), allocatable :: zbuf(:,:,:,:)
+
 
       REAL(8), allocatable :: zkx(:,:,:,:),zky(:,:,:,:),zkz(:,:,:,:)
 
@@ -41,11 +42,13 @@ CC----------------------------------------------------------------------
       INTEGER :: ntids, omp_get_max_threads
       EXTERNAL :: omp_get_max_threads
 #else
-      INTEGER :: ntids = 1
+      INTEGER :: ntids 
 #endif
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
+#else
+      ntids = mpi_pack_size
 #endif
 
        allocate(advmask(jpi, jpj, jpk))
@@ -57,9 +60,9 @@ CC----------------------------------------------------------------------
        allocate(zx(jpi, jpj, jpk, ntids))
        allocate(zy(jpi, jpj, jpk, ntids))
        allocate(zz(jpi, jpj, jpk, ntids))
-!$omp parallel default(none) shared(jpi, jpj, jpk)
-       allocate(zbuf(jpi, jpj, jpk))
-!$omp end parallel
+
+       allocate(zbuf(jpi, jpj, jpk,ntids))
+
        allocate(zkx(jpi, jpj, jpk, ntids))
        allocate(zky(jpi, jpj, jpk, ntids))
        allocate(zkz(jpi, jpj, jpk, ntids))

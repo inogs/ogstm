@@ -34,7 +34,7 @@ CC    size : number of process
 CC    rank : process number  [ 0 - size-1 ]
 CC
       INTEGER  size,rank
-C      COMMON/commpi/size,rank
+      INTEGER  :: mpi_pack_size =18
 #  else
 CC
 CC PVM and SHMEM VERSION

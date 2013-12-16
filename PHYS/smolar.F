@@ -521,7 +521,6 @@ C       END DO
         ELSE
            pack_size = ntids - (ntids - 1 + jn - jptra)
       END IF
-		write(*,*) 'pack_size -->', pack_size
         CALL mpplnk_my(zkx, pack_size,1,1)
         CALL mpplnk_my(zky, pack_size,1,1)
 

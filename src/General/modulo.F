@@ -657,20 +657,11 @@ CC      information for outputs
 CC ------------------------------------------------------------------
 CC
 CC      nwritetrc: time step frequency for concentration outputs (NAMELIST)
-CC      ndext50   : INTEGER arrays for ocean 3D INDEX 
-CC      ndext51   : INTEGER arrays for ocean surface INDEX 
 CC
 CC    netcdf files and index common
 CC
 
       INTEGER nwritetrc
-
-
-      INTEGER, allocatable :: ndext50(:) 
-     $       ,ndext51(:)
-     $       ,ndexttot50(:) 
-     $       ,ndexttot51(:) 
-            
       REAL(8) djulian
 
 #    if defined key_trc_diaadd
@@ -1601,25 +1592,6 @@ CC      ahtrc0    : horizontal eddy diffusivity for passive tracers (m2/s)
 CC    aeivtr0   : eddy induced velocity coefficient (m2/s)
 CC
 CC
-CC----------------------------------------------------------------------
-CC
-CC          information for outputs
-CC ------------------------------------------------------------------
-CC
-CC      nwritetrc: time step frequency for concentration outputs (NAMELIST)
-CC
-CC      ndext50   : INTEGER arrays for ocean 3D INDEX 
-CC      ndext51   : INTEGER arrays for ocean surface INDEX 
-
-       allocate(ndext50(jpi*jpj*jpk))
-       allocate(ndext51(jpi*jpj))
-       allocate(ndexttot50(jpiglo*jpjglo*jpk)) 
-       allocate(ndexttot51(jpiglo*jpjglo)) 
-       mem_all = mem_all +  rea_len*(2*jpiglo*jpjglo*jpk 
-     .          + jpiglo* jpjglo
-     .          + jpi*jpj*jpk+jpi*jpj)
-C     write(*,*) 'Mem_allocated:', mem_all
-            
 
 #    if defined key_trc_diaadd
 CC----------------------------------------------------------------------

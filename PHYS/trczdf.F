@@ -344,7 +344,7 @@ C
 ! calculate flux due to vertical diffusion (on top face of the grid cell jk)
 ! the flux is computed as an integral (int_tra) starting from the surface
 
-      DO jk=1,jpk
+      DO jk=1,jpkm1
 
          z2dtt = zdt * rdttra(jk)
          delta_tra(jk) = ( zwx(jk,mytid+1) - zwy(jk,mytid+1) ) / z2dtt * Aij * e3t(jk)! or trn(ji,jj,jk,jn+mytid)

@@ -15,6 +15,7 @@
       INTEGER :: jpi_rec, jpj_rec
       INTEGER :: jpi_max, jpj_max
       INTEGER :: ave_counter=0
+      LOGICAL :: existFilebkp = .false.
       REAL(8), allocatable :: buffglamt(:) 
       REAL(8), allocatable :: buffgphit(:)
       REAL(8), allocatable :: bufftrn(:)

@@ -22,6 +22,7 @@
       INTEGER IDS(jptra)
       REAL(8)  Realcounter
 
+      if (.not.existFileFluxes) RETURN
       Realcounter   =    1./REAL(ave_counter  , 8)
 
       flx_partTime = MPI_WTIME()

@@ -254,7 +254,7 @@
 ! *************************************************************
        SUBROUTINE INITIALIZING
        USE myalloc
-
+       USE IO_mem, ONLY : existFilebkp
        IMPLICIT NONE
 
 ! 1. Model general initialization
@@ -306,6 +306,7 @@
 
 
       !call ave_init
+      if (.not.existFilebkp) then
       traIO     = trn ! initialization of Average  Matrix
       snIO      = 0.0
       tnIO      = 0.0
@@ -313,12 +314,14 @@
       empIO     = 0.0
       qsrIO     = 0.0
       unIO      = 0.0
-      bblxIO    = 0.0
       vnIO      = 0.0
-      bblyIO    = 0.0
       wnIO      = 0.0
       avtIO     = 0.0
       tra_ppIO  = 0.0
+      endif
+
+      bblxIO    = 0.0
+      bblyIO    = 0.0
 
       un        = 0.0
       vn        = 0.0

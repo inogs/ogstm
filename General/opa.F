@@ -366,7 +366,7 @@
 ! -----------------------------------------
       call Load_Timestrings
       if (CheckStartEnd()) then
-       if (lwp) write(*,*) 'start End ok'
+       if (lwp) write(*,*) 'start End ok ', DATESTART, ' ', DATE__END
         else
            if (lwp) write(*,*) 'Problems with start End. Program will stop. '
            STOP

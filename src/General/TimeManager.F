@@ -7,15 +7,14 @@
       MODULE TIME_MANAGER
       use calendar
       IMPLICIT NONE
-      integer, parameter :: Time_Max = 15000
 
       TYPE TIME_CONTAINER
           CHARACTER(LEN=50)          :: NAME
           INTEGER                    :: N
           CHARACTER(LEN=1024)        :: Filename
-          CHARACTER(LEN=17), DIMENSION(Time_Max) :: TimeStrings
-          CHARACTER(LEN=17), DIMENSION(Time_Max) :: TimeStringsExtended
-          real(8),           DIMENSION(Time_Max) :: Times
+          CHARACTER(LEN=17), POINTER  :: TimeStrings(:)
+          CHARACTER(LEN=17), POINTER  :: TimeStringsExtended(:)
+          real(8),           POINTER  :: Times(:)
           INTEGER                                :: Before
           INTEGER                                :: After
           LOGICAL                                :: Periodic
@@ -25,7 +24,7 @@
           CHARACTER(LEN=50)                      :: NAME
           INTEGER                                :: N
           CHARACTER(LEN=1024)                    :: Filename
-          CHARACTER(LEN=17), DIMENSION(Time_Max) :: TimeStrings
+          CHARACTER(LEN=17),           POINTER   :: TimeStrings(:)
       END TYPE DUMP_CONTAINER
 
 
@@ -201,13 +200,10 @@
 
           TheUnit = 326
           call countline(STRUCT%Filename,N)
-          if ((N+2).gt.Time_Max) then
-             write(*,*) 'Increase Time_Max, please'
-             STOP
-          endif
+
           STRUCT%N = N
 
-!          ALLOCATE(STRUCT%Timestrings(N))
+          ALLOCATE(STRUCT%Timestrings(N))
 
           OPEN(UNIT=TheUnit,file=STRUCT%Filename,status='old')
           DO I=1,N
@@ -227,13 +223,9 @@
       TheUnit = 326
       call countline(STRUCT%Filename,N)
 
-      if ((N+2).gt.Time_Max) then
-         write(*,*) 'Increase Time_Max, please'
-         STOP
-      endif
 
       STRUCT%N = N
-!      ALLOCATE(STRUCT%Timestrings(N))
+      ALLOCATE(STRUCT%Timestrings(N))
 
 
       OPEN(UNIT=TheUnit,file=STRUCT%Filename,status='old')
@@ -245,11 +237,11 @@
        ! Periodicità ( mensile, stagionale, ... )
       if (STRUCT%TimeStrings(1)(1:4).eq.'yyyy') then
           STRUCT%Periodic = .true.
-!          ALLOCATE(STRUCT%Times        (1:N+2))
-!          ALLOCATE(STRUCT%TimeStringsExtended(1:N+2))
+          ALLOCATE(STRUCT%Times              (N+2))
+          ALLOCATE(STRUCT%TimeStringsExtended(N+2))
       else
           STRUCT%Periodic = .false.
-!          ALLOCATE(STRUCT%Times(1:N))
+          ALLOCATE(STRUCT%Times(1:N))
           DO I=1,N
               STRUCT%Times(I)= datestring2sec(STRUCT%TimeStrings(I))
           ENDDO

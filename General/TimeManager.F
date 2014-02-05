@@ -414,7 +414,8 @@
       ELSE
          if (BEFORE.eq.0) then
               BEFORE = 1
-              t_interp = 1.0
+              AFTER  = 2
+              t_interp = 0.0
           endif
       ENDIF
 

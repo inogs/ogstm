@@ -17,7 +17,7 @@
       INTEGER ji, jj, jk, jn
       INTEGER ind
 
-      CHARACTER(LEN=29) forcing_file
+      CHARACTER(LEN=33) forcing_file
       CHARACTER(LEN=32) bkpname
       logical IsBackup
 
@@ -37,7 +37,11 @@
       if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup
 ! ----------------------------------------
       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
-      forcing_file   = 'ave.'//datemean//'.phys.nc'
+      if (IsBackup) then
+         forcing_file   = 'ave.'//datemean//'.phys.nc.bkp'
+      else
+         forcing_file   = 'ave.'//datemean//'.phys.nc'
+      endif
 
 
 !      PHYSICS FIRST!!
@@ -218,7 +222,11 @@
 ! *********** START WRITING **************************
 
       if(rank == 0) then ! IF LABEL 4,
-         if (.not.IsBackup) call PhysDump(forcing_file, datefrom, dateTo)
+         if (IsBackup) then
+            call PhysDump_bkp(forcing_file, datefrom, dateTo)
+          else
+            call PhysDump(forcing_file, datefrom, dateTo)
+         endif
       endif
 
 

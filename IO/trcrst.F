@@ -15,7 +15,7 @@
        USE myalloc
        USE myalloc_mpp
        USE TIME_MANAGER
-       USE IO_MEM , ONLY : ave_counter
+       USE IO_MEM , ONLY : ave_counter,existFilebkp
 
        IMPLICIT NONE
 
@@ -25,9 +25,8 @@
       INTEGER jn
       CHARACTER(LEN=28) filename
       CHARACTER(LEN=6)  varname
-      CHARACTER(LEN=32) bkpname
+      CHARACTER(LEN=33) bkpname
       logical existFile
-
 
 ! 0. initialisations
        bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
@@ -59,50 +58,55 @@
 
 
 ! ********************   we put initial undef to 0
-        trb(:,:,:,jn) = trb(:,:,:,jn) * tmask;
-        trn(:,:,:,jn) = trn(:,:,:,jn) * tmask;
+          trb(:,:,:,jn) = trb(:,:,:,jn) * tmask;
+          trn(:,:,:,jn) = trn(:,:,:,jn) * tmask;
 
-!     SECTION AVE backup
-!     rsttrn var is used instead of to define another one
+!         SECTION AVE backup
+!         rsttrn var is used instead of to define another one
 
-      bkpname= 'ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
+          bkpname= 'ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
 
-      INQUIRE(FILE=bkpname, EXIST=existFile)
+          INQUIRE(FILE=bkpname, EXIST=existFilebkp)
 
-      if (existFile) then
-          isStartBackup = .true.
-          CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
-
-
-         call get_att_int(bkpname,'ave_counter', ave_counter)
-         call get_att_char(bkpname,'DateStart', BKPdatefrom)
+          if (existFilebkp) then
+              isStartBackup = .true.
+              CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
 
 
+             call get_att_int(bkpname,'ave_counter', ave_counter)
+             call get_att_char(bkpname,'DateStart', BKPdatefrom)
 
+
+
+          endif
+
+      END DO
+
+      DO jn=1, jptra_dia
+
+          bkpname    = 'ave.'//DateStart//'.'//dia(jn)//'.nc.bkp'
+          INQUIRE(FILE=bkpname, EXIST=existFile)
+
+          if (existFile) then
+               CALL readnc_slice_double(bkpname,dia(jn), tra_ppIO(:,:,:,jn) )
+          endif
+
+      END DO
+
+      bkpname    = 'ave.'//DateStart//'.phys.nc.bkp'
+      if (existFilebkp) then
+          call readnc_slice_double(bkpname,'vosaline',snIO);
+          call readnc_slice_double(bkpname,'votemper',tnIO);
+
+          call readnc_slice_double(bkpname,'vozocrtx',unIO);
+          call readnc_slice_double(bkpname,'vomecrty',vnIO);
+          call readnc_slice_double(bkpname,'vovecrtz',wnIO);
+          call readnc_slice_double(bkpname,'votkeavt',avtIO);
+
+          call readnc_slice_double_2d(bkpname,'soshfldo',qsrIO)
+          call readnc_slice_double_2d(bkpname,'sowindsp',vatmIO)
+          call readnc_slice_double_2d(bkpname,'sowaflcd',empIO)
       endif
-
-       END DO
-
-           DO jn=1, jptra_dia
-
-              bkpname    = 'ave.'//DateStart//'.'//dia(jn)//'.nc.bkp'
-              INQUIRE(FILE=bkpname, EXIST=existFile)
-
-              if (existFile) then
-                   CALL readnc_slice_double(bkpname,dia(jn), tra_ppIO(:,:,:,jn) )
-
-                  call get_att_int(bkpname,'ave_counter', ave_counter)
-                  call get_att_char(bkpname,'DateStart', BKPdatefrom)
-
-
-
-              endif
-
-
-          END DO
-
-
-
 
       END SUBROUTINE trcrst
 

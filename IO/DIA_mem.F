@@ -11,6 +11,7 @@
           REAL(8),    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
           REAL(8),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
           REAL(4),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo_Float
+          logical existFileFluxes
 
           CONTAINS
 
@@ -18,10 +19,9 @@
           SUBROUTINE alloc_dia
           USE NETCDF
             IMPLICIT NONE
-            logical existFile
-            INQUIRE(FILE='Fluxes.nc', EXIST=existFile)
 
-            if (existFile) then
+            INQUIRE(FILE='Fluxes.nc', EXIST=existFileFluxes)
+            if (existFileFluxes) then
                call getDimension('Fluxes.nc','n',FsizeGlo)
             else
                FsizeGlo = 0

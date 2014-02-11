@@ -68,7 +68,7 @@ CC ===================
       mytid = 0
 #endif
 
-
+       TRA_FN = 0.0
 !      SMALL =  0.00000000001
 
 !****************     INIT PHASE  *********************
@@ -93,7 +93,7 @@ CC ===================
 C 3. swap of arrays
 C -----------------
 !$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,tra_FN,SMALL)
+!$omp&      shared(jn,jpk,jpj,jpi,tra,tmask,tra_FN,SMALL)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -105,14 +105,14 @@ C -----------------
                DO jj = 1,jpj
                   DO ji = 1,jpi
 
-
+                     if (tmask(ji,jj,jk).ne.0.0) then
                      if( tra(ji,jj,jk,jn+mytid) .GT. 0.  ) then
 
                      else
                         tra_FN(ji,jj,jk,jn+mytid) =  - tra(ji,jj,jk,jn+mytid) + SMALL
                         tra(   ji,jj,jk,jn+mytid) =  SMALL
                      end if
-
+                     endif
                   END DO
                END DO
             END DO

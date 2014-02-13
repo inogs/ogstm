@@ -1,4 +1,4 @@
-      SUBROUTINE trcdit(datemean,datefrom,dateTo)
+      SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 !---------------------------------------------------------------------
 !
 !                       ROUTINE trcdit
@@ -24,12 +24,12 @@
 ! local declarations
 ! ==================
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
-
+      INTEGER, INTENT(IN) :: FREQ_GROUP
 
 
       INTEGER ji, jj, jk, jn
       INTEGER ind
-
+      INTEGER ave_counter
 
       CHARACTER(LEN=28) output_file_nc  ! ave.20091231-12:00:00.P1n.nc
       CHARACTER(LEN=3)  var
@@ -48,18 +48,24 @@
 
 ! ----------------------------------------
        IsBackup =  (datemean.eq.dateTo)
-       if (lwp) write(*,*) 'trcdit IsBackup = ',IsBackup
+       if (lwp) write(*,*) 'trcdit IsBackup = ',IsBackup, ' group ' ,FREQ_GROUP
 ! ----------------------------------------
        bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
       call mppsync()
 
 
 
-
+      SELECT CASE (FREQ_GROUP)
+        CASE (1) ; ave_counter=ave_counter_1
+        CASE (2) ; ave_counter=ave_counter_2
+      END SELECT
 
 !  Ghost Shells - Manual s Indexes-
 
       DO jn=1,jptra ! DO LABEL 5
+
+      if (FREQ_AVE_GROUP_TRA(jn).ne.FREQ_GROUP) CYCLE
+
 
       var    = ctrcnm(jn)
       output_file_nc = 'ave.'//datemean//'.'//var//'.nc'
@@ -166,7 +172,8 @@
 
 
         if (IsBackup) then
-          CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO);
+          write(*,*) "trcdit ave_counter --> ", bkpname, ave_counter
+          CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO,ave_counter);
           !CALL IOOGSNC_AVE_BKP(bkpname, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo,tottrnIO,ave_counter)
 
         else
@@ -181,13 +188,12 @@
 
 
 
-
-
+      if (.not.IsBackup) traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
 
       END DO ! do jn=1,jptra , DO LABEL 5
 
 
-      if (.not.IsBackup) traIO(:,:,:,:) = 0.  !      we reset matrix for new average
+
 
 
       if(rank == 0) WRITE(numout,*) '**** trcdit : write NetCDF passive tracer concentration'

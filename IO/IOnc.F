@@ -470,15 +470,15 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, datefrom, dateTo,M)
+       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, datefrom, dateTo,M, ave_counter)
        USE netcdf
        USE myalloc
-       USE IO_mem, ONLY : ave_counter
        IMPLICIT NONE
 
        CHARACTER*(*) fileNetCDF
        character(LEN=17) datefrom, dateTo
        real(8) M(jpiglo, jpjglo, jpk)
+       integer ave_counter
 
        !local
        character(LEN=3) VAR
@@ -665,15 +665,16 @@
 
        !****************************************************************************
        ! physical data were printed as grid3D.dat grid2D.dat files
-       SUBROUTINE physDump_bkp(fileNetCDF, datefrom, dateTo)
+       SUBROUTINE physDump_bkp(fileNetCDF, datefrom, dateTo,ave_counter)
        USE myalloc
        USE netcdf
-       USE IO_mem, ONLY : ave_counter
+
 
        IMPLICIT NONE
 
         character fileNetCDF*(*)
         character(LEN=17) datefrom, dateTo
+        integer ave_counter
         integer s, nc, counter
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt

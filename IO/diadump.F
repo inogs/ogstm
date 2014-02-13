@@ -1,4 +1,4 @@
-      SUBROUTINE diadump(datemean,datefrom,dateTo)
+      SUBROUTINE diadump(datemean,datefrom,dateTo,FREQ_GROUP)
 !     ******************
       USE calendar
       USE myalloc
@@ -13,13 +13,14 @@
 
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
-
+      INTEGER, INTENT(IN) :: FREQ_GROUP
       INTEGER ji, jj, jk, jn
       INTEGER ind
 
       CHARACTER(LEN=33) forcing_file
       CHARACTER(LEN=32) bkpname
       logical IsBackup
+      integer ave_counter
 
 
       CHARACTER(LEN=28) dia_file_nc
@@ -34,7 +35,7 @@
       call mppsync()
 ! ----------------------------------------
       IsBackup =  (datemean.eq.dateTo)
-      if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup
+      if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup, ' group ' ,FREQ_GROUP
 ! ----------------------------------------
       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
       if (IsBackup) then
@@ -45,6 +46,7 @@
 
 
 !      PHYSICS FIRST!!
+      if ( freq_ave_phys.eq.FREQ_GROUP) then
       ! *************** START COLLECTING DATA *****************************
       if (rank == 0) then                    ! IF LABEL 1
 
@@ -223,17 +225,25 @@
 
       if(rank == 0) then ! IF LABEL 4,
          if (IsBackup) then
-            call PhysDump_bkp(forcing_file, datefrom, dateTo)
+
+              SELECT CASE (freq_ave_phys)
+                 CASE (1); ave_counter =ave_counter_1
+                 CASE (2); ave_counter =ave_counter_2
+              END SELECT
+
+            call PhysDump_bkp(forcing_file, datefrom, dateTo,ave_counter)
           else
             call PhysDump(forcing_file, datefrom, dateTo)
          endif
       endif
 
-
+      endif !if ( freq_ave_phys.eq.FREQ_GROUP)
 
 
 ! ******************  DIAGNOSTIC OUTPUT   *******************
       DO jn =1 , jptra_dia
+
+          if (FREQ_AVE_GROUP_TRA_DIA(jn).ne.FREQ_GROUP) CYCLE
 
           if (rank == 0) then                    ! IF LABEL 1
 
@@ -329,7 +339,12 @@
               dia_file_nc = 'ave.'//datemean//'.'//var//'.nc'
 
               if (IsBackup) then
-                 CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO(:,:,:));
+              SELECT CASE (FREQ_AVE_GROUP_TRA_DIA(jn))
+                 CASE (1); ave_counter =ave_counter_1
+                 CASE (2); ave_counter =ave_counter_2
+              END SELECT
+                 write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
+                 CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO(:,:,:),ave_counter);
                  !CALL IOOGSNC_AVE_BKP(bkpname,var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom,dateTo,totdiaIO(:,:,:,jn),AC)
               else
                  d2f3d = REAL(tottrnIO(:,:,:),4)
@@ -340,10 +355,11 @@
 
 
       end if ! IF LABEL 4  if(rank == 0)
-
+         if (.not.IsBackup) tra_ppIO(:,:,:,jn) = 0.
       enddo  ! loop in jn
 
-      if (.not.IsBackup) then
+      if ((.not.IsBackup).and.( freq_ave_phys.eq.FREQ_GROUP) ) then
+
           snIO     = 0.
           tnIO     = 0.
           vatmIO   = 0.
@@ -355,7 +371,6 @@
           bblyIO   = 0.
           wnIO     = 0.
           avtIO    = 0.
-          tra_ppIO = 0.
       endif
 
 

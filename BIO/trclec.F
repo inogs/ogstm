@@ -65,6 +65,7 @@ C 0. initializations
 !      namelist/natdmp/nmldmptr
 #    endif
       namelist /MAXVALUES/ maxvalue
+      namelist /frequency_avedump/ FREQ_AVE_GROUP_TRA
 
 ! OPEN specifier
 
@@ -258,7 +259,20 @@ C 0. initializations
 
       REWIND(numnat)
       READ(numnat,maxvalues)
-
+      REWIND(numnat)
+      READ(numnat,frequency_avedump)
       CLOSE(numnat)
+
+      do ji =1,jptra
+          SELECT CASE (freq_ave_group_tra(ji))
+            CASE (1) ; WRITE(numout,*) ctrcnm(ji), ' belongs to freq 1'
+            CASE (2) ; WRITE(numout,*) ctrcnm(ji), ' belongs to freq 2'
+            CASE DEFAULT
+               write(numout,*) ctrcnm(ji), ' bad freq value!  Choose 1 or 2 in namelist.passivetrc.'
+               write(     *,*) ctrcnm(ji), ' bad freq value!  Choose 1 or 2 in namelist.passivetrc.'
+               write(     *,*) freq_ave_group_tra(ji)
+               STOP
+          END SELECT
+      enddo
 
       END SUBROUTINE trclec

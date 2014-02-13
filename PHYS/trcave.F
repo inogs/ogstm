@@ -10,7 +10,8 @@
 !     local
       integer ji,jj,jk,jn
       REAL(8) ::  Miss_val =1.e20
-      real(8) Realcounter, Realcounterp1
+      REAL(8) :: Realcounter, Realcounterp1
+
 ! omp variables
       INTEGER :: mytid, ntids!, itid
 
@@ -31,20 +32,34 @@
       mytid = 0
 #endif
 
-      Realcounter   =    REAL(ave_counter  , 8)
-      Realcounterp1 = 1./REAL(ave_counter+1, 8)
+
 
 
 
 
       DO jn=1 ,jptra,ntids
-!$omp parallel default(none) private(jk,jj,ji,mytid) shared(jpk,jpj,jpi,jn,tmask,traIO,Realcounter,trn,Realcounterp1,
-!$omp&                                                      Miss_val)
+
+!$omp parallel default(none) private(jk,jj,ji,mytid,Realcounter,Realcounterp1)
+!$omp&                       shared(jpk,jpj,jpi,jn,tmask,traIO,trn,Miss_val,FREQ_AVE_GROUP_TRA,ave_counter_1,ave_counter_2)
+
 
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
        IF( mytid + jn <= jptra ) then
+              SELECT CASE (FREQ_AVE_GROUP_TRA(jn+mytid))
+                 CASE (1)
+                          Realcounter   =    REAL(ave_counter_1  , 8)
+                          Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+                 CASE (2)
+                          Realcounter   =    REAL(ave_counter_2  , 8)
+                          Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+              END SELECT
+
+
+
+
+
           DO jk=1, jpk
              DO jj=1, jpj
                 DO ji=1, jpi
@@ -59,6 +74,15 @@
        ENDIF
 !$omp    end parallel
       END DO
+
+      SELECT CASE (freq_ave_phys)
+         CASE (1)
+                  Realcounter   =    REAL(ave_counter_1  , 8)
+                  Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+         CASE (2)
+                  Realcounter   =    REAL(ave_counter_2  , 8)
+                  Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+      END SELECT
 
       DO jk=1, jpk
        DO jj=1, jpj
@@ -118,13 +142,26 @@
       END DO
 
       DO jn=1, jptra_dia,ntids
-!$omp parallel default(none) private(jk,jj,ji,mytid) shared(jpk,jpj,jpi,jn,tmask,tra_ppIO,Realcounter,tra_pp,
-!$omp&   Realcounterp1,Miss_val)
+
+
+
+!$omp parallel default(none) private(jk,jj,ji,mytid,Realcounter,Realcounterp1)
+!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_ppIO,tra_pp,Miss_val,FREQ_AVE_GROUP_TRA_DIA,ave_counter_1,ave_counter_2)
 
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
       IF( mytid + jn .LT. jptra_dia ) then
+
+      SELECT CASE (FREQ_AVE_GROUP_TRA_DIA(jn+mytid))
+         CASE (1)
+              Realcounter   =    REAL(ave_counter_1  , 8)
+              Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+          CASE (2)
+            Realcounter   =    REAL(ave_counter_2  , 8)
+            Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+      END SELECT
+
          DO jk=1, jpk
             DO jj=1, jpj
                DO ji=1, jpi

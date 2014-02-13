@@ -4,7 +4,7 @@
       USE DIA_mem
       USE netcdf
       USE myalloc_mpp
-      USE IO_mem, only: ave_counter
+      USE IO_mem, only: ave_counter_1
 
       IMPLICIT NONE
 
@@ -23,7 +23,7 @@
       REAL(8)  Realcounter
 
       if (.not.existFileFluxes) RETURN
-      Realcounter   =    1./REAL(ave_counter  , 8)
+      Realcounter   =    1./REAL(ave_counter_1  , 8)
 
       flx_partTime = MPI_WTIME()
 

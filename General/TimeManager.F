@@ -40,7 +40,7 @@
       TYPE (TIME_CONTAINER) :: TC_CO2
 
       TYPE (DUMP_CONTAINER) :: RESTARTS
-      TYPE (DUMP_CONTAINER) :: AVE
+      TYPE (DUMP_CONTAINER) :: AVE_FREQ1, AVE_FREQ2
 
 
       CHARACTER(LEN=17) :: DATESTART
@@ -52,13 +52,15 @@
       REAL(8)           :: TIME_0
 
 
-      INTEGER           :: TauAVEfrom
+      INTEGER           :: TauAVEfrom_1
+      INTEGER           :: TauAVEfrom_2
       CHARACTER(LEN=17) :: NOW_datestring
       INTEGER           :: NOW_timestep
       REAL(8)           :: NOW_sec
-      CHARACTER(LEN=17) :: BKPdatefrom
-      LOGICAL           :: IsStartBackup = .false.
-
+      CHARACTER(LEN=17) :: BKPdatefrom_1
+      CHARACTER(LEN=17) :: BKPdatefrom_2
+      LOGICAL           :: IsStartBackup_1 = .false.
+      LOGICAL           :: IsStartBackup_2 = .false.
 
 
 
@@ -95,20 +97,32 @@
       ! *************************************************
       ! ** true if the datestring is in the ave list
       ! *************************************************
-      LOGICAL FUNCTION IsAnAveDump(datestring)
+      LOGICAL FUNCTION IsAnAveDump(datestring, FREQ_GROUP)
       CHARACTER(LEN=17), INTENT(IN) :: datestring
-
+      INTEGER, INTENT(IN) :: FREQ_GROUP
       ! LOCAL
       INTEGER I
 
       IsAnAveDump = .false.
+      SELECT CASE (FREQ_GROUP)
+         CASE (1)
+              DO I=1, AVE_FREQ1%N
+                  if (datestring.eq.AVE_FREQ1%TimeStrings(I)) then
+                     IsAnAveDump = .true.
+                     CYCLE
+                  endif
+              ENDDO
+         CASE (2)
+              DO I=1, AVE_FREQ2%N
+                  if (datestring.eq.AVE_FREQ2%TimeStrings(I)) then
+                     IsAnAveDump = .true.
+                     CYCLE
+                  endif
+              ENDDO
+      END SELECT
 
-      DO I=1, AVE%N
-          if (datestring.eq.AVE%TimeStrings(I)) then
-        IsAnAveDump = .true.
-        CYCLE
-          endif
-      ENDDO
+
+
 
       if (datestring.eq.DATESTART) IsAnAveDump = .false.
       END FUNCTION IsAnAveDump
@@ -285,7 +299,8 @@
       RESTARTS%Filename  = 'restartTimes'
       RESTARTS%Name      = 'BFM files'
 
-      AVE%Filename       = 'aveTimes'
+      AVE_FREQ1%Filename       = '1.aveTimes'
+      AVE_FREQ2%Filename       = '2.aveTimes'
       TC_LEX%Filename    = 'kextTimes'
 
       FileName = 'Start_End_Times'
@@ -303,7 +318,8 @@
 
       ! DUMP
       call Load_Dump_container(RESTARTS)
-      call Load_Dump_container(AVE)
+      call Load_Dump_container(AVE_FREQ1)
+      call Load_Dump_container(AVE_FREQ2)
 
 
       END SUBROUTINE Load_Timestrings

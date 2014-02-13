@@ -549,6 +549,10 @@ CC
       LOGICAL ::  lutini(jptra)
       INTEGER ::  nutini(jptra)
       REAL(8) ::  maxvalue(jptra)
+      INTEGER :: freq_ave_group_tra(jptra)
+      INTEGER :: freq_ave_group_tra_dia(jptra_dia)
+      INTEGER freq_ave_phys
+
 CC
 CC----------------------------------------------------------------------
 CC

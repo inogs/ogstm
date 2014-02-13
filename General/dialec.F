@@ -27,7 +27,7 @@
        integer ilseq,ji
       INTEGER ilu, iused(1,100)
       NAMELIST/DIAGNOSTICS/ dia
-
+      NAMELIST/frequency_avedump/ freq_ave_group_tra_dia, freq_ave_phys
 
 
 !----------------------------------------------------------------------
@@ -79,7 +79,28 @@
 
       REWIND(numnam)
       READ(numnam,DIAGNOSTICS)
+      REWIND(numnam)
+      READ(numnam,frequency_avedump)
 
+      do ji =1, jptra_dia
+          SELECT CASE (freq_ave_group_tra_dia(ji))
+            CASE (1) ; WRITE(numout,*) dia(ji), ' belongs to freq 1'
+            CASE (2) ; WRITE(numout,*) dia(ji), ' belongs to freq 2'
+            CASE DEFAULT
+               write(numout,*) dia(ji), ' bad freq value!  Choose 1 or 2 in namelist.diagnostics.'
+               write(     *,*) dia(ji), ' bad freq value!  Choose 1 or 2 in namelist.diagnostics.'
+               STOP
+          END SELECT
+      enddo
+      if (freq_ave_phys.eq.2) then
+           WRITE(numout,*) 'Forcings phys will be dumped following 2.aveTimes file'
+           else
+           if (freq_ave_phys.eq.2) then
+             WRITE(numout,*) 'Forcings phys will be dumped following 1.aveTimes file'
+           else
+             WRITE(numout,*) 'Forcings phys will not be dumped'
+           endif
+      endif
 
 
       CLOSE( numnam )

@@ -1,14 +1,15 @@
-      SUBROUTINE trcdia(datemean, datefrom, dateend)
+      SUBROUTINE trcdia(datemean, datefrom, dateend,FREQ_GROUP)
 
 !      CALLED by : step
 
       USE myalloc
       IMPLICIT NONE
 
+
 #include <mpif.h>
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, datefrom, dateend
-
+      INTEGER, INTENT(IN) :: FREQ_GROUP
 
 
       ! local
@@ -19,8 +20,8 @@
        trcdiaparttime = MPI_WTIME() !F79 cronometer-start
 
 !      writes ave files for tracer concentration
-      CALL   trcdit(datemean, datefrom, dateend)
-      CALL  diadump(datemean, datefrom, dateend)
+      CALL   trcdit(datemean, datefrom, dateend,FREQ_GROUP)
+      CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
       CALL fluxdump(datemean, datefrom, dateend)
   
        kindic = 0 ! serve a niente...

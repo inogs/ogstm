@@ -34,7 +34,7 @@
        USE myalloc_mpp
        USE TIME_MANAGER
        USE BC_mem
-       USE IO_mem, only: ave_counter
+       USE IO_mem, only: ave_counter_1, ave_counter_2
        IMPLICIT NONE
 
 
@@ -42,7 +42,7 @@
 ! ==================
       INTEGER TAU, indic
 
-      character(LEN=17)  datestring, datemean, datefrom
+      character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
       REAL(8) sec
       LOGICAL B, isFIRST
 
@@ -55,13 +55,8 @@
 
       indic=1  ! 1 for indic to initialize output files (first call)
 
-      if (IsStartBackup) then
-         TauAVEfrom = datestringToTAU(BKPdatefrom)
-      else
-         TauAVEfrom = TimeStepStart! -1
-      endif
-
-
+      TauAVEfrom_1 = TimeStepStart ; if (IsStartBackup_1) TauAVEfrom_1 = datestringToTAU(BKPdatefrom_1)
+      TauAVEfrom_2 = TimeStepStart ; if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
 
       DO TAU = TimeStepStart, TimeStep__End
 
@@ -74,32 +69,33 @@
          NOW_sec        = sec
 
 
-         call yearly(DATEstring) ! Performs daily updates
-         call daily(DATEstring)  ! Performs daily updates
+         call yearly(DATEstring) ! Performs yearly updates
+         call daily(DATEstring)  ! Performs daily  updates
 
 
-         if(lwp) write(numout,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
-         if(lwp) write(*     ,'(A,I8,A,A)') "  step ----------------- Starting timestep = ",TAU,' time :', DATEstring
+         if(lwp) write(numout,'(A,I8,A,A)') "  step ------------ Starting timestep = ",TAU,' time :', DATEstring
+         if(lwp) write(      *,'(A,I8,A,A)') "  step ------------ Starting timestep = ",TAU,' time :', DATEstring
 
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
-            if(lwp) write(*,*) 'step backup = ', (.not.IsAnAveDump(DATEstring))
 
-            if (.not.IsAnAveDump(DATEstring)) then ! backup conditions
-               call tau2datestring(TauAVEfrom, datefrom)  ! il TauAVEfrom+1 mi causava la data dell'ave alle 12:15
-               CALL trcdia(datestring, datefrom, datestring)
+
+            if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions
+               call tau2datestring(TauAVEfrom_1, datefrom_1)  ! il TauAVEfrom+1 mi causava la data dell'ave alle 12:15
+               CALL trcdia(datestring, datefrom_1, datestring,1)
             endif
+
+            if (.not.IsAnAveDump(DATEstring,2)) then ! the same, for group 2
+               call tau2datestring(TauAVEfrom_2, datefrom_2)
+               CALL trcdia(datestring, datefrom_2, datestring,2)
+            endif
+
+
          B = writeTemporization("trcdia____", trcdiatottime)
          B = writeTemporization("trcwri____", trcwritottime)
          endif
-
-
-
-
-
-
 
 
 
@@ -114,30 +110,41 @@
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
-! Call Passive tracer model between synchronization for small parallelisation
-        CALL trcstp(TAU) ! se commento questo non fa calcoli
-        call trcave
-        ave_counter = ave_counter +1  ! incrementing our counter
-!        Diagnostics:
-!        ------------
 
-      if (IsAnAveDump(DATEstring)) then
-         call MIDDLEDATE(TauAVEfrom, TAU, datemean)
 
-         call tau2datestring(TauAVEfrom, datefrom)
-         if (IsStartBackup) datefrom = BKPdatefrom ! overwrite
+      if (IsAnAveDump(DATEstring,1)) then
+         call MIDDLEDATE(TauAVEfrom_1, TAU, datemean)
 
-         CALL trcdia(datemean, datefrom, datestring)
-         TauAVEfrom=TAU
+         call tau2datestring(TauAVEfrom_1, datefrom_1)
+         if (IsStartBackup_1) datefrom_1 = BKPdatefrom_1 ! overwrite
+         CALL trcdia(datemean, datefrom_1, datestring,1)
+         TauAVEfrom_1    = TAU
+         ave_counter_1   = 0   !  reset the counter
+         IsStartBackup_1 = .false.
+         B = writeTemporization("trcdia____", trcdiatottime)
+      endif
 
-         ave_counter = 0   !  reset the counter
-         IsStartBackup = .false.
+      if (IsAnAveDump(DATEstring,2)) then
+         call MIDDLEDATE(TauAVEfrom_2, TAU, datemean)
+
+         call tau2datestring(TauAVEfrom_2, datefrom_2)
+         if (IsStartBackup_2) datefrom_2 = BKPdatefrom_2 ! overwrite
+         CALL trcdia(datemean, datefrom_2, datestring,2)
+         TauAVEfrom_2    = TAU
+         ave_counter_2   = 0   !  reset the counter
+         IsStartBackup_2 = .false.
          B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
 
 
 
+
+! Call Passive tracer model between synchronization for small parallelisation
+        CALL trcstp(TAU) ! se commento questo non fa calcoli
+        call trcave
+        ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
+        ave_counter_2 = ave_counter_2 +1
 
 
        stpparttime = MPI_WTIME() - stpparttime

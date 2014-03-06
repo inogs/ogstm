@@ -35,7 +35,7 @@ CC      mindi, mindj() : indexes array of the subdomain
       INTEGER, allocatable :: mindi(:), mindj(:)
       INTEGER, allocatable :: nimppt(:), njmppt(:), nlcit(:), nlcjt(:)
       INTEGER, allocatable ::  nldit(:),  nldjt(:), nleit(:), nlejt(:)
-      INTEGER mem_all,rea_len,int_len
+      REAL(8) mem_all,rea_len,int_len
 
       INTEGER npolj
 
@@ -549,8 +549,9 @@ CC
       LOGICAL ::  lutini(jptra)
       INTEGER ::  nutini(jptra)
       REAL(8) ::  maxvalue(jptra)
-      INTEGER :: freq_ave_group_tra(jptra)
-      INTEGER :: freq_ave_group_tra_dia(jptra_dia)
+      INTEGER :: jptra_high, jptra_dia_high
+      INTEGER :: highfreq_tra(jptra)
+      INTEGER :: highfreq_tra_dia(jptra_dia)
       INTEGER freq_ave_phys
 
 CC
@@ -569,7 +570,8 @@ CC
       REAL(8), allocatable ::  trn(:,:,:,:)
       REAL(8), allocatable ::  tra(:,:,:,:)
       REAL(8), allocatable ::  tra_pp(:,:,:,:)
-      REAL(8), allocatable ::  traIO(:,:,:,:) 
+      REAL(8), allocatable ::  traIO(:,:,:,:)
+      REAL(8), allocatable ::  traIO_HIGH(:,:,:,:)
       REAL(8), allocatable ::  snIO(:,:,:) 
       REAL(8), allocatable ::  tnIO(:,:,:) 
       REAL(8), allocatable ::  vatmIO(:,:) 
@@ -581,7 +583,8 @@ CC
       REAL(8), allocatable ::  bblyIO(:,:) 
       REAL(8), allocatable ::  wnIO(:,:,:) 
       REAL(8), allocatable ::  avtIO(:,:,:) 
-      REAL(8), allocatable ::  tra_ppIO(:,:,:,:) 
+      REAL(8), allocatable ::  tra_ppIO(:,:,:,:)
+      REAL(8), allocatable ::  tra_ppIO_HIGH(:,:,:,:)
       REAL(8), allocatable :: tottrn(:,:,:)
       REAL(8), allocatable :: tottrb(:,:,:)
 
@@ -604,6 +607,7 @@ CC
       REAL(8), allocatable ::  trb(:,:,:,:)
       REAL(8), allocatable ::  buf(:,:,:)
       REAL(8), allocatable ::  buf2(:,:)
+      INTEGER, allocatable, dimension(:) :: highfreq_table,highfreq_table_dia
 
 CC----------------------------------------------------------------------
 CC
@@ -835,7 +839,7 @@ CC----------------------------------------------------------------------
       CONTAINS
 ! *******************************************************************
       subroutine myalloc_DYN()
-      mem_all = 0
+      mem_all = 0.
 #ifdef key_trahdfeiv
        allocate(zaeiu   (jpiglo,jpjglo,jpk))
        allocate(zaeiv   (jpiglo,jpjglo,jpk))
@@ -861,6 +865,7 @@ CC----------------------------------------------------------------------
        allocate(BFMpoints(3,NBFMPOINTS))
        mem_all = mem_all + 3*NBFMPOINTS*4
        end subroutine myalloc_BFM
+
 
 
        subroutine alloc_tot()
@@ -896,9 +901,9 @@ CC    INTEGER nimppt(jpnij), njmppt(jpnij), nlcit(jpnij), nlcjt(jpnij)
 CC    INTEGER  nldit(jpnij),  nldjt(jpnij), nleit(jpnij), nlejt(jpnij)
 CCC F79 18 01 2006 to calculate total memory allocated
       ncpu = 1
-      mem_all = 0
-      int_len = 4
-      rea_len = 8
+      mem_all = 0.0
+      int_len = 4.0
+      rea_len = 8.0
       allocate(mindi(jpi))
       allocate(mindj(jpj))
       allocate(nimppt(jpnij))
@@ -1523,11 +1528,16 @@ CCC Paolo 30/4/2004 Flag time advance SMS or Dyn
        allocate(buf   (jpi,jpj,jpk))
        allocate(buf2   (jpi,jpj))
        allocate(tra_ppIO(jpi,jpj,jpk,jptra_dia))
-       mem_all = mem_all +  rea_len*(3*jpi*jpj*jpk*jptra 
+       allocate(traIO_HIGH(   jpi,jpj,jpk,jptra_HIGH))
+       allocate(tra_ppIO_HIGH(jpi,jpj,jpk,jptra_dia_HIGH))
+
+
+       mem_all = mem_all +  rea_len*(3*jpi*jpj*jpk*jptra
+     .          + (jpi*jpj*jpk)*(jptra_HIGH + jptra_dia_HIGH)
      .          + 13*jpi*jpj*jpk+2*jpiglo* jpjglo* jpk
      .          + 5*jpi*jpj)
-C     write(*,*) 'Mem_allocated:', mem_all
-CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
+
+
        if (lwp) allocate(tottrnIO(jpiglo,jpjglo,jpk))
        if (lwp) allocate(tottrbIO(jpiglo,jpjglo,jpk))
        if (lwp) allocate(totsnIO (jpiglo,jpjglo,jpk))
@@ -1544,13 +1554,11 @@ CCC 26 9 2004 Paolo matrix for i/o writing(trcdit.F)
        if (lwp) allocate(tottmaIO(jpiglo,jpjglo,jpk))
        mem_all = mem_all +  rea_len*(12*jpiglo*jpjglo*jpk
      .          + 5*jpiglo*jpjglo)
-C     write(*,*) 'Mem_allocated:', mem_all
 
-CC
        allocate(trb(jpi,jpj,jpk,jptra))
        mem_all = mem_all +  rea_len*jpi*jpj*jpk*jptra 
-C     write(*,*) 'Mem_allocated:', mem_all
-CC
+
+
 CC----------------------------------------------------------------------
 CC
 CC COMMON /cot3ad/ non-centered advection scheme (smolarkiewicz)

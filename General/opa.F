@@ -123,6 +123,7 @@
 
       call parlec  ! read namelist
       call time_init
+      call trclec; call dialec
 
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager
@@ -216,8 +217,8 @@
        INTEGER ierr
 
       write(*,*)'My_Rank=',Rank,':allocazione_memoria'
-      mem_all_tot=0
-      mem_all=0
+      mem_all_tot=0.0
+      mem_all=0.0
 
       call   alloc_tot() ; write(*,*)'My_Rank:',Rank,'alloc_init:', mem_all ; mem_all_tot=mem_all_tot+mem_all
       call  myalloc_DR() ; write(*,*)'My_Rank:',Rank,'alloc_DR  :', mem_all ; mem_all_tot=mem_all_tot+mem_all
@@ -263,7 +264,7 @@
 !    Run parameters
 !    --------------
       CALL parcst;  CALL parlec ; CALL parctl ! CALL inipar
-      CALL dialec
+      !CALL dialec ! fatto prima
 
 
 ! ... Large domain
@@ -290,7 +291,7 @@
           WRITE(numout,*) ' '
       ENDIF
 
-      CALL trclec ! READ passive tracers namelists
+      !CALL trclec ! READ passive tracers namelists, fatto prima
       CALL trcctl ! control consistency between parameters, cpp key and namelists
 !      CALL time_init
 

@@ -22,17 +22,18 @@
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      INTEGER jn
-      CHARACTER(LEN=28) filename
+      INTEGER jn, jn_high
+      CHARACTER(LEN=37) filename
       CHARACTER(LEN=6)  varname
-      CHARACTER(LEN=33) bkpname
+      CHARACTER(LEN=43) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread
+      CHARACTER(LEN=11) DIR
 
 
 ! 0. initialisations
-       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
-       filename = 'RST.20111231-15:30:00.N1p.nc'
+       bkpname  = 'AVE_FREQ_1/ave.20111231-15:30:00.N1p.nc.bkp'
+       filename = 'RESTARTS/RST.20111231-15:30:00.N1p.nc'
        varname  = 'TRNN1p'
        bkp1hasbeenread = .false.
        bkp2hasbeenread = .false.
@@ -48,11 +49,12 @@
           WRITE(numout,*) ' '
       ENDIF
 
+      jn_high=0
       DO jn=1, jptra  ! global loop on tracers to read restart
 
 
          varname  = 'TRN'//ctrcnm(jn)
-         filename = 'RST.'//DateStart//'.'//ctrcnm(jn)//'.nc'
+         filename = 'RESTARTS/RST.'//DateStart//'.'//ctrcnm(jn)//'.nc'
 
          CALL readnc_slice_double(filename,varname, trn(:,:,:,jn) )
 
@@ -68,67 +70,87 @@
 !         SECTION AVE backup
 !         rsttrn var is used instead of to define another one
 
-          bkpname= 'ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
+          bkpname= 'AVE_FREQ_2/ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
 
           INQUIRE(FILE=bkpname, EXIST=existFilebkp)
 
           if (existFilebkp) then
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
-
-             SELECT CASE (FREQ_AVE_GROUP_TRA(jn))
-               CASE (1)
-                    if (.not.bkp1hasbeenread) then
-                      call get_att_int( bkpname,'ave_counter', ave_counter_1)
-                      call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
-                      bkp1hasbeenread=.true.
-                    endif
-
-               CASE (2)
-                    if (.not.bkp2hasbeenread) then
-                       call get_att_int( bkpname,'ave_counter', ave_counter_2)
-                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
-                       bkp2hasbeenread=.true.
-                    endif
-             END SELECT
-
+             if (.not.bkp2hasbeenread) then
+               call get_att_int( bkpname,'ave_counter', ave_counter_2)
+               call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
+               bkp2hasbeenread=.true.
+             endif
           else
              traIO(:,:,:,jn) = trn(:,:,:,jn)
           endif
 
+
+
+         IF (highfreq_tra(jn).eq.1)  THEN
+           jn_high = jn_high + 1
+           bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
+           INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+
+           if (existFilebkp) then
+             if (lwp) write(*,*) 'reading ', bkpname
+             CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO_HIGH(:,:,:,jn_high) )
+                if (.not.bkp1hasbeenread) then
+
+                  call get_att_int( bkpname,'ave_counter', ave_counter_1)
+                  call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
+                  bkp1hasbeenread=.true.
+                endif
+           else
+              traIO_HIGH(:,:,:,jn_high) = 0.0
+           endif
+         ENDIF
+
+
       END DO
 
+      jn_high=0
       DO jn=1, jptra_dia
 
-          bkpname    = 'ave.'//DateStart//'.'//dia(jn)//'.nc.bkp'
+          bkpname    = 'AVE_FREQ_2/ave.'//DateStart//'.'//dia(jn)//'.nc.bkp'
           INQUIRE(FILE=bkpname, EXIST=existFile)
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,dia(jn), tra_ppIO(:,:,:,jn) )
-             SELECT CASE (FREQ_AVE_GROUP_TRA_DIA(jn))
-               CASE (1)
+             if (.not.bkp2hasbeenread) then
+                call get_att_int( bkpname,'ave_counter', ave_counter_2)
+                call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
+                bkp2hasbeenread=.true.
+             endif
+          else
+             tra_ppIO(:,:,:,jn) = 0.0
+          endif
+
+          IF (highfreq_tra_dia(jn).eq.1)  THEN
+           jn_high = jn_high + 1
+           bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
+           INQUIRE(FILE=bkpname, EXIST=existFile)
+           if (existFile) then
+             if (lwp) write(*,*) 'reading ', bkpname
+             CALL readnc_slice_double(bkpname,ctrcnm(jn), tra_ppIO_HIGH(:,:,:,jn_high) )
                     if (.not.bkp1hasbeenread) then
                       call get_att_int( bkpname,'ave_counter', ave_counter_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
+           else
+              tra_ppIO_HIGH(:,:,:,jn_high) = 0.0
+           endif
 
-               CASE (2)
-                    if (.not.bkp2hasbeenread) then
-                       call get_att_int( bkpname,'ave_counter', ave_counter_2)
-                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
-                       bkp2hasbeenread=.true.
-                    endif
-             END SELECT
+          ENDIF
 
-          else
-             tra_ppIO(:,:,:,jn) = 0.0
-          endif
+
 
       END DO
 
-      bkpname    = 'ave.'//DateStart//'.phys.nc.bkp'
+      bkpname    = 'AVE_PHYS/ave.'//DateStart//'.phys.nc.bkp'
       if (existFilebkp) then
           call readnc_slice_double(   bkpname,'vosaline',  snIO)
           call readnc_slice_double(   bkpname,'votemper',  tnIO)
@@ -153,7 +175,7 @@
           avtIO     = 0.0
       endif
 
-      write(*,*) 'trcrst avecounter_1 = ', ave_counter_1, ' avecounter_2 = ', ave_counter_2
+      if (lwp) write(*,*) 'trcrst avecounter_1 = ', ave_counter_1, ' avecounter_2 = ', ave_counter_2
       IsStartBackup_1 = bkp1hasbeenread
       IsStartBackup_2 = bkp2hasbeenread
 

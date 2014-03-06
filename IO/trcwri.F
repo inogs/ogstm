@@ -22,8 +22,8 @@
       REAL(8) julian
 
 
-      CHARACTER(LEN=28) filename
-!      CHARACTER(LEN=7) varB,varN
+      CHARACTER(LEN=37) filename
+
       CHARACTER(LEN=3) varname
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
@@ -34,7 +34,7 @@
 
 
        filename = 'RST.20111231-15:30:00.N1p.nc'
-       !filename(29:29)=CHAR(0)
+
        julian=datestring2sec(datestring)
 
        if(lwp)write(*,*) 'trcwri ------------  rank =',rank,' datestring = ',  datestring
@@ -163,13 +163,8 @@
         if(rank == 0) then
 
             varname=ctrcnm(jn)
-            filename(1:28) = 'RST.'//datestring//'.'//varname//'.nc'
+            filename = 'RESTARTS/RST.'//datestring//'.'//varname//'.nc'
 
-!            varN ='TRN'//varname//CHAR(0)
-!            varB ='TRB'//varname//CHAR(0)
-
-
-        !CALL ioogsnc_rst2(filename,varB,varN,jpiglo,jpjglo,jpk,totglamt, totgphit, gdept,julian,tottrb,tottrn)
         CALL write_restart(filename,julian)
 
         endif ! if rank = 0

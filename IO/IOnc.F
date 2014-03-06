@@ -342,8 +342,8 @@
        integer timid, depid, yid, xid, xaid, yaid, zaid
        integer idB, idN, idLon, idLat, idLev, idTim
 
-       TimeString =fileNetCDF( 5:21)
-       VAR        =fileNetCDF(23:25)
+       TimeString =fileNetCDF(14:30)
+       VAR        =fileNetCDF(32:34)
 
 
       s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -413,7 +413,7 @@
          lat_actual_range=(/30.5   , 44.5   /)
        depth_actual_range=(/ 4.9991,4450.068/)
 
-       VAR        =fileNetCDF(23:25)
+       VAR        =fileNetCDF(34:36)
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -488,7 +488,7 @@
        integer idvartime,idgdept,idphit,idlamt,idVAR
 
 
-       VAR        =fileNetCDF(23:25)
+       VAR        =fileNetCDF(34:36)
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)

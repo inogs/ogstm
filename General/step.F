@@ -73,8 +73,8 @@
          call daily(DATEstring)  ! Performs daily  updates
 
 
-         if(lwp) write(numout,'(A,I8,A,A)') "  step ------------ Starting timestep = ",TAU,' time :', DATEstring
-         if(lwp) write(      *,'(A,I8,A,A)') "  step ------------ Starting timestep = ",TAU,' time :', DATEstring
+         if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
+         if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
 
 
         if (IsaRestart(DATEstring)) then
@@ -82,12 +82,12 @@
 
 
 
-            if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions
-               call tau2datestring(TauAVEfrom_1, datefrom_1)  ! il TauAVEfrom+1 mi causava la data dell'ave alle 12:15
+            if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
+               call tau2datestring(TauAVEfrom_1, datefrom_1)
                CALL trcdia(datestring, datefrom_1, datestring,1)
             endif
 
-            if (.not.IsAnAveDump(DATEstring,2)) then ! the same, for group 2
+            if (.not.IsAnAveDump(DATEstring,2)) then ! backup conditions group 2
                call tau2datestring(TauAVEfrom_2, datefrom_2)
                CALL trcdia(datestring, datefrom_2, datestring,2)
             endif

@@ -14,16 +14,17 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
       INTEGER, INTENT(IN) :: FREQ_GROUP
-      INTEGER ji, jj, jk, jn
+      INTEGER ji, jj, jk, jn, jn_high
       INTEGER ind
 
-      CHARACTER(LEN=33) forcing_file
-      CHARACTER(LEN=32) bkpname
+      CHARACTER(LEN=42) forcing_file
+      CHARACTER(LEN=43) bkpname
+      CHARACTER(LEN=11) DIR
       logical IsBackup
       integer ave_counter
 
 
-      CHARACTER(LEN=28) dia_file_nc
+      CHARACTER(LEN=39) dia_file_nc
       CHARACTER(LEN=3)  var
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
@@ -39,10 +40,17 @@
 ! ----------------------------------------
       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
       if (IsBackup) then
-         forcing_file   = 'ave.'//datemean//'.phys.nc.bkp'
+         forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc.bkp'
       else
-         forcing_file   = 'ave.'//datemean//'.phys.nc'
+         forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc'
       endif
+
+      jn_high = 0
+
+      SELECT CASE (FREQ_GROUP)
+        CASE (1) ; ave_counter=ave_counter_1 ; DIR='AVE_FREQ_1/'
+        CASE (2) ; ave_counter=ave_counter_2 ; DIR='AVE_FREQ_2/'
+      END SELECT
 
 
 !      PHYSICS FIRST!!
@@ -226,11 +234,6 @@
       if(rank == 0) then ! IF LABEL 4,
          if (IsBackup) then
 
-              SELECT CASE (freq_ave_phys)
-                 CASE (1); ave_counter =ave_counter_1
-                 CASE (2); ave_counter =ave_counter_2
-              END SELECT
-
             call PhysDump_bkp(forcing_file, datefrom, dateTo,ave_counter)
           else
             call PhysDump(forcing_file, datefrom, dateTo)
@@ -243,7 +246,7 @@
 ! ******************  DIAGNOSTIC OUTPUT   *******************
       DO jn =1 , jptra_dia
 
-          if (FREQ_AVE_GROUP_TRA_DIA(jn).ne.FREQ_GROUP) CYCLE
+          if (.not.is_time_to_save(jn,FREQ_GROUP)) CYCLE
 
           if (rank == 0) then                    ! IF LABEL 1
 
@@ -263,8 +266,12 @@
              relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
              reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
+             if (FREQ_GROUP.eq.1) then
+             jn_high = jn_high+1
+      tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO_HIGH(relistart:reliend,reljstart:reljend, :,jn_high)
+             else
              tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
-
+             endif
              do idrank = 1, size-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
@@ -303,7 +310,7 @@
 
           else  ! IF LABEL 1,  if(rank == 0)
 
-
+      if (FREQ_GROUP.eq.2) then
             do jk =1, jpk
              do jj =1 , jpj
               do ji =1 , jpi
@@ -312,6 +319,16 @@
               enddo
              enddo
             enddo
+      else
+            do jk =1, jpk
+             do jj =1 , jpj
+              do ji =1 , jpi
+                  ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
+                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn_high)
+              enddo
+             enddo
+            enddo
+      endif
 
 
 
@@ -335,27 +352,27 @@
 
       if (rank == 0) then
               var        =  dia(jn)
-              bkpname     = 'ave.'//datemean//'.'//var//'.nc.bkp'
-              dia_file_nc = 'ave.'//datemean//'.'//var//'.nc'
+              bkpname     = DIR//'ave.'//datemean//'.'//var//'.nc.bkp'
+              dia_file_nc = DIR//'ave.'//datemean//'.'//var//'.nc'
 
               if (IsBackup) then
-              SELECT CASE (FREQ_AVE_GROUP_TRA_DIA(jn))
-                 CASE (1); ave_counter =ave_counter_1
-                 CASE (2); ave_counter =ave_counter_2
-              END SELECT
-                 write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
+                 !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
                  CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO(:,:,:),ave_counter);
-                 !CALL IOOGSNC_AVE_BKP(bkpname,var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom,dateTo,totdiaIO(:,:,:,jn),AC)
               else
                  d2f3d = REAL(tottrnIO(:,:,:),4)
                  CALL WRITE_AVE(dia_file_nc,datefrom,dateTo, d2f3d);
-                 !CALL IOOGSNC_AVE_3D2(dia_file_nc, var,jpiglo,jpjglo,jpk,lon,lat,dep,datefrom, dateTo,d2f3d)
 
               endif
 
 
       end if ! IF LABEL 4  if(rank == 0)
-         if (.not.IsBackup) tra_ppIO(:,:,:,jn) = 0.
+         if (.not.IsBackup) then
+             if (FREQ_GROUP.eq.2) then
+                tra_ppIO(:,:,:,jn) = 0.
+              else
+                tra_ppIO_HIGH(:,:,:,jn_high) = 0.
+              endif
+          endif
       enddo  ! loop in jn
 
       if ((.not.IsBackup).and.( freq_ave_phys.eq.FREQ_GROUP) ) then
@@ -374,6 +391,22 @@
       endif
 
 
+      CONTAINS
 
+      LOGICAL FUNCTION IS_TIME_TO_SAVE(jn,FREQ_GROUP)
+      IMPLICIT NONE
+
+      integer jn, FREQ_GROUP
+
+      IF (FREQ_GROUP.eq.2) then
+         IS_TIME_TO_SAVE = .true.
+      ELSE
+        IF (highfreq_tra_dia(jn).eq.1) then
+            IS_TIME_TO_SAVE = .true.
+        ELSE
+           IS_TIME_TO_SAVE = .false.
+         ENDIF
+      ENDIF
+      END FUNCTION IS_TIME_TO_SAVE
 
       end SUBROUTINE diadump

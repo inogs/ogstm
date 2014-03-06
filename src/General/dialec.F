@@ -27,7 +27,7 @@
        integer ilseq,ji
       INTEGER ilu, iused(1,100)
       NAMELIST/DIAGNOSTICS/ dia
-      NAMELIST/frequency_avedump/ freq_ave_group_tra_dia, freq_ave_phys
+      NAMELIST/frequency_avedump/ highfreq_tra_dia, freq_ave_phys
 
 
 !----------------------------------------------------------------------
@@ -82,16 +82,24 @@
       REWIND(numnam)
       READ(numnam,frequency_avedump)
 
+      jptra_dia_high= 0
       do ji =1, jptra_dia
-          SELECT CASE (freq_ave_group_tra_dia(ji))
-            CASE (1) ; WRITE(numout,*) dia(ji), ' belongs to freq 1'
-            CASE (2) ; WRITE(numout,*) dia(ji), ' belongs to freq 2'
-            CASE DEFAULT
-               write(numout,*) dia(ji), ' bad freq value!  Choose 1 or 2 in namelist.diagnostics.'
-               write(     *,*) dia(ji), ' bad freq value!  Choose 1 or 2 in namelist.diagnostics.'
-               STOP
-          END SELECT
+          IF (highfreq_tra_dia(ji).eq.1) jptra_dia_high = jptra_dia_high + 1
+      ENDDO
+      allocate(highfreq_table_dia(jptra_dia_HIGH))
+
+      jptra_dia_high = 0
+
+      do ji =1, jptra_dia
+          IF (highfreq_tra_dia(ji).eq.1) then
+            jptra_dia_high = jptra_dia_high + 1
+            highfreq_table_dia(jptra_dia_high) = ji
+            WRITE(numout,*) dia(ji), ' belongs also to high freq group'
+          ELSE
+            WRITE(numout,*) dia(ji), ' belongs only to low freq group'
+          ENDIF
       enddo
+
       if (freq_ave_phys.eq.2) then
            WRITE(numout,*) 'Forcings phys will be dumped following 2.aveTimes file'
            else

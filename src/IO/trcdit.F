@@ -24,16 +24,17 @@
 ! local declarations
 ! ==================
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
-      INTEGER, INTENT(IN) :: FREQ_GROUP
+      INTEGER, INTENT(IN) :: FREQ_GROUP ! 1 = HIGH FREQ, 2 = LOW FREQ
 
 
-      INTEGER ji, jj, jk, jn
+      INTEGER ji, jj, jk, jn, jn_high
       INTEGER ind
       INTEGER ave_counter
 
-      CHARACTER(LEN=28) output_file_nc  ! ave.20091231-12:00:00.P1n.nc
+      CHARACTER(LEN=39) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
       CHARACTER(LEN=3)  var
-      CHARACTER(LEN=32) bkpname
+      CHARACTER(LEN=43) bkpname
+      CHARACTER(LEN=11) DIR
       logical IsBackup
 
 !----------------------------------------------------------------------
@@ -50,26 +51,26 @@
        IsBackup =  (datemean.eq.dateTo)
        if (lwp) write(*,*) 'trcdit IsBackup = ',IsBackup, ' group ' ,FREQ_GROUP
 ! ----------------------------------------
-       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
+       bkpname  = 'AVE_FREQ_1/ave.20111231-15:30:00.N1p.nc.bkp'
       call mppsync()
 
-
+      jn_high = 0
 
       SELECT CASE (FREQ_GROUP)
-        CASE (1) ; ave_counter=ave_counter_1
-        CASE (2) ; ave_counter=ave_counter_2
+        CASE (1) ; ave_counter=ave_counter_1 ; DIR='AVE_FREQ_1/'
+        CASE (2) ; ave_counter=ave_counter_2 ; DIR='AVE_FREQ_2/'
       END SELECT
 
 !  Ghost Shells - Manual s Indexes-
 
       DO jn=1,jptra ! DO LABEL 5
 
-      if (FREQ_AVE_GROUP_TRA(jn).ne.FREQ_GROUP) CYCLE
-
+      if (.not.is_time_to_save(jn,FREQ_GROUP)) CYCLE
+      if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
       var    = ctrcnm(jn)
-      output_file_nc = 'ave.'//datemean//'.'//var//'.nc'
-      bkpname        = 'ave.'//datemean//'.'//var//'.nc.bkp'
+      output_file_nc = DIR//'ave.'//datemean//'.'//var//'.nc'
+      bkpname        = DIR//'ave.'//datemean//'.'//var//'.nc.bkp'
 
 ! *************** START COLLECTING DATA *****************************
       if(rank == 0) then                    ! IF LABEL 1
@@ -90,9 +91,11 @@
 
 
 !***** START ASSEMBLING ***  rank 0 puts its tracer part in the tot matrix
+          if (FREQ_GROUP.eq.1) then
+          tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO_HIGH(relistart:reliend, reljstart:reljend,:,jn_high)
+          else
           tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO (relistart:reliend, reljstart:reljend,:,jn)
-
-
+          endif
 
 
           do idrank = 1, size-1
@@ -135,7 +138,7 @@
 ! **** work of the other ranks
 ! ****** 1. load  inf buffer their IO matrices
 
-
+        if (FREQ_GROUP.eq.2) then
            do jk =1 , jpk
             do jj =1 , jpj
              do ji =1 , jpi
@@ -144,6 +147,16 @@
              enddo
             enddo
           enddo
+        else ! FREQ_GROUP.eq.1
+           do jk =1 , jpk
+            do jj =1 , jpj
+             do ji =1 , jpi
+               ind            =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
+               bufftrn   (ind)= traIO_HIGH( ji,jj,jk,jn_high)
+             enddo
+            enddo
+          enddo
+        endif
 
 
 
@@ -172,14 +185,11 @@
 
 
         if (IsBackup) then
-          write(*,*) "trcdit ave_counter --> ", bkpname, ave_counter
           CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO,ave_counter);
-          !CALL IOOGSNC_AVE_BKP(bkpname, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo,tottrnIO,ave_counter)
 
         else
           d2f3d = REAL(tottrnIO,4)
           CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
-          !CALL IOOGSNC_AVE_3D2(output_file_nc, var_nc, jpiglo, jpjglo,jpk,lon,lat,dep, datefrom, dateTo, d2f3d)
          endif
 
 
@@ -188,7 +198,13 @@
 
 
 
-      if (.not.IsBackup) traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
+      if (.not.IsBackup) then
+         if (FREQ_GROUP.eq.2) then
+            traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
+         else
+            traIO_HIGH(:,:,:,jn_high) = 0.
+         endif
+      endif
 
       END DO ! do jn=1,jptra , DO LABEL 5
 
@@ -198,5 +214,27 @@
 
       if(rank == 0) WRITE(numout,*) '**** trcdit : write NetCDF passive tracer concentration'
 
+      CONTAINS
+
+      LOGICAL FUNCTION IS_TIME_TO_SAVE(jn,FREQ_GROUP)
+      IMPLICIT NONE
+
+      integer jn, FREQ_GROUP
+
+      IF (FREQ_GROUP.eq.2) then
+         IS_TIME_TO_SAVE = .true.
+      ELSE
+        IF (highfreq_tra(jn).eq.1) then
+            IS_TIME_TO_SAVE = .true.
+        ELSE
+           IS_TIME_TO_SAVE = .false.
+         ENDIF
+      ENDIF
+      END FUNCTION IS_TIME_TO_SAVE
 
       END SUBROUTINE trcdit
+
+
+
+
+

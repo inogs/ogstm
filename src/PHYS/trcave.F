@@ -9,11 +9,12 @@
       implicit none
 !     local
       integer ji,jj,jk,jn
+      integer :: jn_high, jn_on_all
       REAL(8) ::  Miss_val =1.e20
       REAL(8) :: Realcounter, Realcounterp1
 
 ! omp variables
-      INTEGER :: mytid, ntids!, itid
+      INTEGER :: mytid, ntids
 
 #ifdef __OPENMP
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
@@ -33,32 +34,20 @@
 #endif
 
 
-
-
-
+!     FIRST, LOW FREQUENCY
+      Realcounter   =    REAL(ave_counter_2  , 8)
+      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
 
       DO jn=1 ,jptra,ntids
 
-!$omp parallel default(none) private(jk,jj,ji,mytid,Realcounter,Realcounterp1)
-!$omp&                       shared(jpk,jpj,jpi,jn,tmask,traIO,trn,Miss_val,FREQ_AVE_GROUP_TRA,ave_counter_1,ave_counter_2)
+!$omp parallel default(none) private(jk,jj,ji,mytid)
+!$omp&                       shared(jpk,jpj,jpi,jn,tmask,traIO,trn,Miss_val,Realcounter,Realcounterp1)
 
 
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
        IF( mytid + jn <= jptra ) then
-              SELECT CASE (FREQ_AVE_GROUP_TRA(jn+mytid))
-                 CASE (1)
-                          Realcounter   =    REAL(ave_counter_1  , 8)
-                          Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
-                 CASE (2)
-                          Realcounter   =    REAL(ave_counter_2  , 8)
-                          Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
-              END SELECT
-
-
-
-
 
           DO jk=1, jpk
              DO jj=1, jpj
@@ -73,16 +62,45 @@
           END DO
        ENDIF
 !$omp    end parallel
+
       END DO
 
-      SELECT CASE (freq_ave_phys)
-         CASE (1)
-                  Realcounter   =    REAL(ave_counter_1  , 8)
-                  Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
-         CASE (2)
-                  Realcounter   =    REAL(ave_counter_2  , 8)
-                  Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
-      END SELECT
+
+
+
+      Realcounter   =    REAL(ave_counter_1  , 8)! ****************** HIGH FREQUENCY
+      Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+      DO jn_high=1 ,jptra_high,ntids
+
+!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
+!$omp& shared(jpk,jpj,jpi,jn_high,jptra_high,highfreq_table,tmask,traIO_HIGH,trn,Miss_val,Realcounter,Realcounterp1)
+
+#ifdef __OPENMP
+           mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+       IF( mytid + jn_high <= jptra_high ) then
+          jn_on_all = highfreq_table(jn_high+mytid)
+          DO jk=1, jpk
+             DO jj=1, jpj
+                DO ji=1, jpi
+               IF(tmask(ji,jj,jk) .NE. 0.) THEN
+                  traIO_HIGH(ji,jj,jk,jn_high+mytid)=
+     &           (traIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+trn(ji,jj,jk,jn_on_all))*Realcounterp1
+               ELSE
+                  traIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+               ENDIF
+                END DO
+             END DO
+          END DO
+       ENDIF
+!$omp    end parallel
+
+      END DO
+
+
+      Realcounter   =    REAL(ave_counter_2  , 8)
+      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+
 
       DO jk=1, jpk
        DO jj=1, jpj
@@ -141,26 +159,20 @@
         END DO
       END DO
 
+!     FIRST, LOW FREQUENCY
+
+      Realcounter   =    REAL(ave_counter_2  , 8)
+      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+
       DO jn=1, jptra_dia,ntids
 
-
-
-!$omp parallel default(none) private(jk,jj,ji,mytid,Realcounter,Realcounterp1)
-!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_ppIO,tra_pp,Miss_val,FREQ_AVE_GROUP_TRA_DIA,ave_counter_1,ave_counter_2)
+!$omp parallel default(none) private(jk,jj,ji,mytid)
+!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_ppIO,tra_pp,Miss_val,Realcounter,Realcounterp1)
 
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
       IF( mytid + jn .LT. jptra_dia ) then
-
-      SELECT CASE (FREQ_AVE_GROUP_TRA_DIA(jn+mytid))
-         CASE (1)
-              Realcounter   =    REAL(ave_counter_1  , 8)
-              Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
-          CASE (2)
-            Realcounter   =    REAL(ave_counter_2  , 8)
-            Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
-      END SELECT
 
          DO jk=1, jpk
             DO jj=1, jpj
@@ -191,6 +203,52 @@
       ENDIF
 !$omp    end parallel
       END DO
+
+
+
+
+      Realcounter   =    REAL(ave_counter_1  , 8) ! ****************** HIGH FREQUENCY
+      Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+
+      DO jn_high=1, jptra_dia_high,ntids
+!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
+!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_ppIO_HIGH,tra_pp,Miss_val,
+!$omp&   Realcounter,Realcounterp1)
+#ifdef __OPENMP
+           mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+      IF( mytid + jn_high .LT. jptra_dia ) then
+         jn_on_all = highfreq_table_dia(jn_high+mytid)
+         DO jk=1, jpk
+            DO jj=1, jpj
+               DO ji=1, jpi
+                  IF(tmask(ji,jj,jk) .NE. 0.) THEN
+                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
+     &             (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
+                  ELSE
+                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                  ENDIF
+               END DO
+            END DO
+         END DO
+      ENDIF
+      IF( mytid + jn_high .EQ. jptra_dia ) then ! surface diagnostic packed in last 3D file
+         DO jk=1, jpk
+            DO jj=1, jpj
+               DO ji=1, jpi
+                  IF(tmask(ji,jj,1) .NE. 0.) THEN
+                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
+     &             (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
+                  ELSE
+                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                  ENDIF
+               END DO
+            END DO
+         END DO
+      ENDIF
+!$omp    end parallel
+      END DO
+
 
 ! here when nwritetrc  is ok we have to pass the average field!
 

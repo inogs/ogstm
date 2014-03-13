@@ -159,6 +159,7 @@
 /
 
 &MAXVALUES
+   isCheckLOG = .false.
    maxvalue(1)= 1000.  !'O2o',
    maxvalue(2)=    5.  !'N1p',
    maxvalue(3)=  500.  !'N3n',

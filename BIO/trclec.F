@@ -64,7 +64,7 @@ C 0. initializations
 #    if defined key_trc_dmp
 !      namelist/natdmp/nmldmptr
 #    endif
-      namelist /MAXVALUES/ maxvalue
+      namelist /MAXVALUES/isCheckLOG, maxvalue
       namelist /frequency_avedump/ highfreq_tra
 
 ! OPEN specifier

@@ -549,6 +549,7 @@ CC
       LOGICAL ::  lutini(jptra)
       INTEGER ::  nutini(jptra)
       REAL(8) ::  maxvalue(jptra)
+      LOGICAL :: isCheckLOG
       INTEGER :: jptra_high, jptra_dia_high
       INTEGER :: highfreq_tra(jptra)
       INTEGER :: highfreq_tra_dia(jptra_dia)

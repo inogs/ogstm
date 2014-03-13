@@ -151,6 +151,7 @@
       END DO
 
       bkpname    = 'AVE_PHYS/ave.'//DateStart//'.phys.nc.bkp'
+      INQUIRE(FILE=bkpname, EXIST=existFilebkp)
       if (existFilebkp) then
           call readnc_slice_double(   bkpname,'vosaline',  snIO)
           call readnc_slice_double(   bkpname,'votemper',  tnIO)

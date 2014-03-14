@@ -550,6 +550,7 @@ CC
       INTEGER ::  nutini(jptra)
       REAL(8) ::  maxvalue(jptra)
       LOGICAL :: isCheckLOG
+      LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
       INTEGER :: jptra_high, jptra_dia_high
       INTEGER :: highfreq_tra(jptra)
       INTEGER :: highfreq_tra_dia(jptra_dia)

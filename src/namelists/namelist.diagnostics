@@ -144,5 +144,6 @@ highfreq_tra_dia(68) = 0 ! 'F58'
 highfreq_tra_dia(69) = 0 ! 'F59'
 highfreq_tra_dia(70) = 0 ! 'F60'
 highfreq_tra_dia(71) = 0 ! 'F61'
-freq_ave_phys              = 2 ! 0 = none, 1=group 1, 2 = group 2
+freq_ave_phys        = 2 ! 0 = none, 1=group 1, 2 = group 2
+save_bkp_group2      = .false.  
 /

@@ -89,7 +89,7 @@
 
             if (.not.IsAnAveDump(DATEstring,2)) then ! backup conditions group 2
                call tau2datestring(TauAVEfrom_2, datefrom_2)
-               CALL trcdia(datestring, datefrom_2, datestring,2)
+               if (save_bkp_group2) CALL trcdia(datestring, datefrom_2, datestring,2)
             endif
 
 

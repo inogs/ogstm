@@ -36,7 +36,7 @@
 
       DO jn=1, jptra, ntids
 !$omp parallel default(none) private(mytid, ji,jj,jk,varname,maxV)
-!$omp&         shared(jn, jpi, jpj, jpk, tra, rank, tmask,ctrcnm,STR,maxvalue)
+!$omp&         shared(jn, jpi, jpj, jpk, tra, rank, tmask,ctrcnm,STR,maxvalue,isCheckLOG)
 
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID

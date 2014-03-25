@@ -247,6 +247,7 @@
       DO jn =1 , jptra_dia
 
           if (.not.is_time_to_save(jn,FREQ_GROUP)) CYCLE
+          if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
           if (rank == 0) then                    ! IF LABEL 1
 
@@ -266,12 +267,11 @@
              relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
              reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
-             if (FREQ_GROUP.eq.1) then
-             jn_high = jn_high+1
+      if (FREQ_GROUP.eq.1) then
       tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO_HIGH(relistart:reliend,reljstart:reljend, :,jn_high)
-             else
-             tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
-             endif
+      else
+      tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
+      endif
              do idrank = 1, size-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 

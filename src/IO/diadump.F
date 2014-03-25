@@ -324,7 +324,7 @@
              do jj =1 , jpj
               do ji =1 , jpi
                   ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn_high)
+                  buffpp(ind) = tra_ppIO_HIGH(ji,jj, jk,jn_high)
               enddo
              enddo
             enddo

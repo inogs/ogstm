@@ -1,0 +1,14 @@
+    CC=mpicc
+    FC=mpif90 -fopenmp
+    LD=mpif90 -fopenmp
+	AR=ar
+	ARFLAGS=-r
+	BFM_LIB=-L @@BFM_LIB@@ -lbfm
+	CPPFLAGS=
+# F Flags
+        FFLAGS_OPT= -O2  -fimplicit-none  -ffixed-line-length-132
+	FFLAGS= $(FFLAGS_OPT)  -I$(NETCDF_INC)  -I$(OPENMPI_HOME)/include -fno-underscoring
+	LDFLAGS= -L $(NETCDF_LIB) -lnetcdff -L $(MPI_LIB)/lib -lmpi_f90 $(BFM_LIB) -fno-underscoring
+# C Flags
+        CFLAGS_OPT=
+        CFLAGS=  ${CFLAGS_OPT} -I$(NETCDF_INC) -I$(OPENMPI_HOME)/include

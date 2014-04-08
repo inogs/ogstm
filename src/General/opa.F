@@ -96,7 +96,9 @@
        USE DIA_mem
        USE CALENDAR
        USE time_manager
-
+#ifdef key_trc_bfm
+#include "BFM_module_list.h"
+#endif
 !----------------------------------------------------------------------
 ! externals
 ! =========

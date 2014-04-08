@@ -4,10 +4,9 @@
     LD=/bgsys/drivers/ppcfloor/comm/xl.ndebug/bin/mpixlf90_r 
     AR=ar
     ARFLAGS=-r
-    BFM_LIB=-L @@BFM_LIB@@ -lbfm
     CPPFLAGS=
 # F Flags
     FFLAGS_OPT=-O3 -qstrict -qarch=qp -qtune=qp -g -qdpc=e -qalias=noaryovrlp:nointptr -qalign=linuxppc -qsmp=noauto:omp
-    FFLAGS_DBG=-O0 -g -qsmp=noauto:omp -qflttrap=nanq
-    FFLAGS=$(FFLAGS_DBG) -I$(NETCDF_INC)  -qfixed=130
-    LDFLAGS= -L$(NETCDF_LIB) -lnetcdff -lnetcdf -L$(HDF5_HOME)/lib -lhdf5_fortran -lhdf5_hl -lhdf5 -L$(SZIP_LIB) -lsz -L$(ZLIB_LIB) -lz $(BFM_LIB)  -qsmp=noauto:omp
+#   FFLAGS_DBG=-C
+    FFLAGS=$(FFLAGS_OPT) -I$(NETCDF_INC) -I$(BFM_INC) -qfixed=130
+    LDFLAGS= -L$(NETCDF_LIB) -lnetcdff -lnetcdf -L$(HDF5_HOME)/lib -lhdf5_fortran -lhdf5_hl -lhdf5 -L$(SZIP_LIB) -lsz -L$(ZLIB_LIB) -lz -L$(BFM_LIB) -lbfm -qsmp=noauto:omp

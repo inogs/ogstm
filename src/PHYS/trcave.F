@@ -98,8 +98,14 @@
       END DO
 
 
-      Realcounter   =    REAL(ave_counter_2  , 8)
-      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+!     *****************  PHYS *****************************************************
+      if (freq_ave_phys.eq.1) then
+          Realcounter   =    REAL(ave_counter_1  , 8)
+          Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+      else
+          Realcounter   =    REAL(ave_counter_2  , 8)
+          Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+      endif
 
 
       DO jk=1, jpk
@@ -158,6 +164,8 @@
            ENDIF
         END DO
       END DO
+
+!     *****************  END PHYS *************************************************
 
 !     FIRST, LOW FREQUENCY
 
@@ -248,9 +256,6 @@
       ENDIF
 !$omp    end parallel
       END DO
-
-
-! here when nwritetrc  is ok we have to pass the average field!
 
 
 

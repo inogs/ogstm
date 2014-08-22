@@ -225,7 +225,7 @@
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-      IF( mytid + jn_high .LT. jptra_dia ) then
+      IF( mytid + jn_high .LT. jptra_dia_high ) then
          jn_on_all = highfreq_table_dia(jn_high+mytid)
          DO jk=1, jpk
             DO jj=1, jpj
@@ -240,7 +240,7 @@
             END DO
          END DO
       ENDIF
-      IF( mytid + jn_high .EQ. jptra_dia ) then ! surface diagnostic packed in last 3D file
+      IF( mytid + jn_high .EQ. jptra_dia_high ) then ! surface diagnostic packed in last 3D file
          DO jk=1, jpk
             DO jj=1, jpj
                DO ji=1, jpi

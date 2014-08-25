@@ -241,6 +241,7 @@
          END DO
       ENDIF
       IF( mytid + jn_high .EQ. jptra_dia_high ) then ! surface diagnostic packed in last 3D file
+       jn_on_all = highfreq_table_dia(jptra_dia_high)
          DO jk=1, jpk
             DO jj=1, jpj
                DO ji=1, jpi

@@ -25,6 +25,8 @@ dia(23) = 'F13'
 /
 
 &frequency_avedump
+freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
+save_bkp_group2      = .true.
 highfreq_tra_dia(1)  = 0 ! 'ppg'
 highfreq_tra_dia(2)  = 0 ! 'ppn'
 highfreq_tra_dia(3)  = 0 ! 'ppb'
@@ -47,7 +49,6 @@ highfreq_tra_dia(19) = 0 ! 'F09'
 highfreq_tra_dia(20) = 0 ! 'F10'
 highfreq_tra_dia(21) = 0 ! 'F11'
 highfreq_tra_dia(22) = 0 ! 'F12'
-highfreq_tra_dia(23) = 0 ! 'F13'
-freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
-save_bkp_group2      = .true.  
+highfreq_tra_dia(23) = 0 ! 'F13'  
 /
+

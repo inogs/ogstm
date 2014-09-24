@@ -27,7 +27,7 @@
        integer ilseq,ji
       INTEGER ilu, iused(1,100)
       NAMELIST/DIAGNOSTICS/ dia
-      NAMELIST/frequency_avedump/ highfreq_tra_dia, freq_ave_phys, save_bkp_group2
+      NAMELIST/frequency_avedump/ freq_ave_phys, save_bkp_group2, highfreq_tra_dia
 
 
 !----------------------------------------------------------------------

@@ -18,7 +18,6 @@
 
 
       REAL(8), allocatable :: cou_FN(:,:,:)
-!     REAL(8), allocatable :: cor_FN(:,:,:)
       REAL(8), allocatable :: FN_ranking(:)
       INTEGER :: elements,nelements(6),idx_element(14,6)
 
@@ -35,19 +34,19 @@
       dimen_jvsnu = 0
       SMALL=0.00000000001
 
-      allocate(jarr_snu(2, jpi*jpj))
-      allocate(tra_FN(jpi,jpj,jpk,jptra))
+      allocate(jarr_snu(2, jpi*jpj))      ; jarr_snu = huge(jarr_snu(1,1))
+      allocate(tra_FN(jpi,jpj,jpk,jptra)) ; tra_FN   = huge(tra_FN(1,1,1,1))
 
       CALL OPA_elements(elements,nelements,idx_element)
 
-      allocate(TOT    (jpj*jpi,elements)) ! elements is the number of element considered (C,P,N,...)
-      allocate(TOT_FN (jpj*jpi,elements))
-      allocate(FN_CORR(jpj*jpi,elements))
+      allocate(TOT    (jpj*jpi,elements)) ; TOT        = huge(TOT(1,1))        ! elements is the number of element considered (C,P,N,...)
+      allocate(TOT_FN (jpj*jpi,elements)) ; TOT_FN     = huge(TOT_FN(1,1))
+      allocate(FN_CORR(jpj*jpi,elements)) ; FN_CORR    = huge(FN_CORR(1,1))
 
 
-      allocate(cou_FN(jpi,jpj,jpk))
-!     allocate(cor_FN(jpi,jpj,jpk))
-      allocate(FN_ranking(jptra))
+      allocate(cou_FN(jpi,jpj,jpk))       ; cou_FN     = huge(cou_FN(1,1,1))
+      allocate(FN_ranking(jptra))         ; FN_ranking = huge(FN_ranking(1))
+
       mem_all = rea_len*(jpi*jpj*jpk*jptra+2*jpi*jpj*jpk+ jptra)
 
       tra_FN=0.

@@ -38,16 +38,16 @@ CC----------------------------------------------------------------------
        dimen_jvhdf2=0
        dimen_jvhdf3=0
 
-       allocate(jarr_hdf(3,jpi*jpj*jpk,2))
-       allocate(jarr_hdf_flx(jpi*jpj*jpk))
-       allocate(hdfmask(jpi,jpj,jpk   ))
-       allocate(zta    (            ntids))
-       allocate(zeeu   (jpi,jpj,jpk      ))
-       allocate(zeev   (jpi,jpj,jpk      ))
-       allocate(zbtr   (jpi,jpj          ))
-       allocate(zlt    (jpi,jpj,jpk,ntids))
-       allocate(ztu    (jpi,jpj,jpk,ntids))
-       allocate(ztv    (jpi,jpj,jpk,ntids))
+       allocate(jarr_hdf(3,jpi*jpj*jpk,2))  ; jarr_hdf     = huge(jarr_hdf(1,1,1))
+       allocate(jarr_hdf_flx(jpi*jpj*jpk))  ; jarr_hdf_flx = huge(jarr_hdf_flx(1))
+       allocate(hdfmask(jpi,jpj,jpk   ))    ; hdfmask      = huge(hdfmask(1,1,1))
+       allocate(zta    (            ntids)) ; zta          = huge(zta(1))
+       allocate(zeeu   (jpi,jpj,jpk      )) ; zeeu         = huge(zeeu(1,1,1))
+       allocate(zeev   (jpi,jpj,jpk      )) ; zeev         = huge(zeev(1,1,1))
+       allocate(zbtr   (jpi,jpj          )) ; zbtr         = huge(zbtr(1,1)) 
+       allocate(zlt    (jpi,jpj,jpk,ntids)) ; zlt          = huge(zlt(1,1,1,1)) 
+       allocate(ztu    (jpi,jpj,jpk,ntids)) ; ztu          = huge(ztu(1,1,1,1))
+       allocate(ztv    (jpi,jpj,jpk,ntids)) ; ztv          = huge(ztv(1,1,1,1))
 
 
        mem_all= int_len*7*jpi*jpj*jpk + rea_len*jpi*jpj + 2*rea_len*jpi*jpj*jpk+

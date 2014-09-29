@@ -75,14 +75,16 @@
       jn_riv  = 5
       jn_atm  = 2
 
-       allocate(resto(jpi,jpj,jpk,jn_gib))
-       allocate(restotr(jpi,jpj,jpk,jptra))
+       allocate(resto(jpi,jpj,jpk,jn_gib))   ; resto   = huge(resto(1,1,1,1))
+       allocate(restotr(jpi,jpj,jpk,jptra))  ; restotr = huge(restotr(1,1,1,1))
 
        IF (Gsizeglo .NE. 0) THEN
-           allocate(tra_matrix_gib(jn_gib))
-           allocate(restocorr(jn_gib))        !Correction to restoration for O3c and O3h
-           allocate(gib_aux(       Gsizeglo))
-           allocate(gib_idxtglo(   Gsizeglo))
+
+           allocate(tra_matrix_gib(jn_gib))   ; tra_matrix_gib = huge(tra_matrix_gib(1))
+           allocate(restocorr(jn_gib))        ; restocorr      = huge(restocorr(1))                  !Correction to restoration for O3c and O3h
+           allocate(gib_aux(       Gsizeglo)) ; gib_aux        = huge(gib_aux(1))
+           allocate(gib_idxtglo(   Gsizeglo)) ; gib_idxtglo    = huge(gib_idxtglo(1))
+
            mem_all = jn_gib*2*Gsizeglo
 
           tra_matrix_gib(1) = ppO2o; restocorr(1)=1. ! dissolved Oxygen
@@ -95,9 +97,9 @@
        ENDIF
        
        IF (Rsizeglo .NE. 0) THEN
-           allocate(tra_matrix_riv(jn_riv))
-           allocate(riv_aux(       Rsizeglo))
-           allocate(riv_idxtglo(   Rsizeglo))
+           allocate(tra_matrix_riv(jn_riv))   ; tra_matrix_riv = huge(tra_matrix_riv(1))
+           allocate(riv_aux(       Rsizeglo)) ; riv_aux        = huge(riv_aux(1))
+           allocate(riv_idxtglo(   Rsizeglo)) ; riv_idxtglo    = huge(riv_idxtglo(1))
            mem_all = jn_riv*2*Rsizeglo
 
           tra_matrix_riv(1) = ppN1p ! phosphates
@@ -108,9 +110,9 @@
        ENDIF
        
        IF (Asizeglo .NE. 0) THEN
-           allocate(tra_matrix_atm(jn_atm))
-           allocate(atm_aux(       Asizeglo))
-           allocate(atm_idxtglo(   Asizeglo))
+           allocate(tra_matrix_atm(jn_atm))    ; tra_matrix_atm = huge(tra_matrix_atm(1))
+           allocate(atm_aux(       Asizeglo))  ; atm_aux        = huge(atm_aux(1))
+           allocate(atm_idxtglo(   Asizeglo))  ; atm_idxtglo    = huge(atm_idxtglo(1))
            mem_all = jn_atm*2*Asizeglo
 
           tra_matrix_atm(1) = ppN1p ! phosphates
@@ -127,9 +129,9 @@
 
        if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
 
-       allocate(gib_ridxt (Gsize, 4        ))
-       allocate(gib_dtatrc(Gsize, 2, jn_gib))
-       allocate(gib       (Gsize,    jn_gib))
+       allocate(gib_ridxt (Gsize, 4        )) ; gib_ridxt  = huge(gib_ridxt(1,1))
+       allocate(gib_dtatrc(Gsize, 2, jn_gib)) ; gib_dtatrc = huge(gib_dtatrc(1,1,1))
+       allocate(gib       (Gsize,    jn_gib)) ; gib        = huge(gib(1,1))
 
       END SUBROUTINE alloc_DTATRC_local_gib
 
@@ -141,9 +143,9 @@
 !     ****************************************
       SUBROUTINE alloc_DTATRC_local_riv()
 
-       allocate(riv_ridxt (Rsize,4        ))
-       allocate(riv_dtatrc(Rsize,2, jn_riv))
-       allocate(riv       (Rsize,   jn_riv))
+       allocate(riv_ridxt (Rsize,4        )) ; riv_ridxt  = huge(riv_ridxt(1,1))
+       allocate(riv_dtatrc(Rsize,2, jn_riv)) ; riv_dtatrc = huge(riv_dtatrc(1,1,1))
+       allocate(riv       (Rsize,   jn_riv)) ; riv        = huge(riv(1,1))
 
       END SUBROUTINE alloc_DTATRC_local_riv
 
@@ -154,9 +156,9 @@
 !     ****************************************
       SUBROUTINE alloc_DTATRC_local_atm()
 
-       allocate(atm_ridxt (Asize, 4        ))
-       allocate(atm_dtatrc(Asize, 2, jn_atm))
-       allocate(atm       (Asize,    jn_atm))
+       allocate(atm_ridxt (Asize, 4        )) ; atm_ridxt  = huge(atm_ridxt(1,1))
+       allocate(atm_dtatrc(Asize, 2, jn_atm)) ; atm_dtatrc = huge(atm_dtatrc(1,1,1))
+       allocate(atm       (Asize,    jn_atm)) ; atm        = huge(atm(1,1))
 
       END SUBROUTINE alloc_DTATRC_local_atm
 

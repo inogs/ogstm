@@ -34,7 +34,7 @@ CC----------------------------------------------------------------------
 #endif
        dimen_jvsed=0
 
-       allocate(sed_idx(nsed))
+       allocate(sed_idx(nsed))  ; sed_idx = huge(sed_idx(1))
 
        sed_idx(1)  = ppR6c
        sed_idx(2)  = ppR6n
@@ -62,13 +62,13 @@ CC----------------------------------------------------------------------
        sed_idx(20) = ppP4p
        sed_idx(21) = ppP4i
 
-       allocate(jarr_sed(2, jpi*jpj))
-       allocate(jarr_sed_flx(jpi*jpj,jpk))
+       allocate(jarr_sed(2, jpi*jpj))      ; jarr_sed     = huge(jarr_sed(1,1))
+       allocate(jarr_sed_flx(jpi*jpj,jpk)) ; jarr_sed_flx = huge(jarr_sed_flx(1,1))
+ 
+       allocate( ztra(nsed,ntids))         ; ztra         = huge(ztra(1,1))
 
-       allocate( ztra(nsed,ntids))
 
-
-       allocate(zwork(nsed, jpk, ntids))
+       allocate(zwork(nsed, jpk, ntids))   ; zwork        = huge(zwork(1,1,1))
 
 
 

@@ -30,15 +30,16 @@ CC----------------------------------------------------------------------
       ntids = omp_get_max_threads() ! take the number of threads
 #endif
        dimen_jvzdf=0
-       allocate(jarr_zdf(2, jpi*jpj))
-       allocate(jarr_zdf_flx(jpi*jpj,jpk))
-       allocate(zwd(jpk, ntids))
-       allocate(zws(jpk, ntids))
-       allocate(zwi(jpk, ntids))
-       allocate(zwx(jpk, ntids))
-       allocate(zwy(jpk, ntids))
-       allocate(zwz(jpk, ntids))
-       allocate(zwt(jpk, ntids))
+
+       allocate(jarr_zdf(2, jpi*jpj))      ; jarr_zdf     = huge(jarr_zdf(1,1))
+       allocate(jarr_zdf_flx(jpi*jpj,jpk)) ; jarr_zdf_flx = huge(jarr_zdf_flx(1,1))
+       allocate(zwd(jpk, ntids))           ; zwd          = huge(zwd(1,1))
+       allocate(zws(jpk, ntids))           ; zws          = huge(zws(1,1))
+       allocate(zwi(jpk, ntids))           ; zwi          = huge(zwi(1,1))
+       allocate(zwx(jpk, ntids))           ; zwx          = huge(zwx(1,1))
+       allocate(zwy(jpk, ntids))           ; zwy          = huge(zwy(1,1))
+       allocate(zwz(jpk, ntids))           ; zwz          = huge(zwz(1,1))
+       allocate(zwt(jpk, ntids))           ; zwt          = huge(zwt(1,1))
        mem_all= rea_len*jpk *ntids*7+ int_len *2*jpi* jpj
 
       END subroutine myalloc_ZDF

@@ -23,7 +23,7 @@ if [ $OPA_ARCH == 'ppc64' ] ; then
 
    if [ $OPENMP_FLAG ] ; then cppdefs+=",-D__OPENMP"; fi
 else
-   cppdefs="-Dkey_off_tra -Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_passivetrc -Dkey_trc_smolar  -Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2"
+   cppdefs="-Dkey_off_tra -Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_passivetrc -Dkey_trc_smolar  -Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2 -DMem_Monitor"
    if [ $OPENMP_FLAG ] ; then cppdefs+=" -D__OPENMP"; fi
 fi
 exe=${OPATMDIR}/bin/opa.xx
@@ -44,8 +44,12 @@ fi
 
 cd ${BLDDIR}
 
+ls ${OPATMDIR}/src/General/get_mem.c       >  OPATM.lst
+ls ${OPATMDIR}/src/General/get_mem_mod.F90 >> OPATM.lst
+${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p libNotUsed.a OPATM.lst
+mv Makefile MakeLib
 
-ls ${OPATMDIR}/src/General/*.[Fhc] > OPATM.lst
+ls ${OPATMDIR}/src/General/*.[Fhc] >  OPATM.lst
 ls ${OPATMDIR}/src/IO/*.[Fhc]     >> OPATM.lst
 ls ${OPATMDIR}/src/MPI/*.[Fhc]    >> OPATM.lst
 ls ${OPATMDIR}/src/PHYS/*.[Fhc]   >> OPATM.lst

@@ -212,42 +212,50 @@
        USE BIO_mem
        USE SED_mem
        USE DIA_mem
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
 
        IMPLICIT NONE
 
-       REAL(8) mem_all_tot
-       INTEGER ierr
+       INTEGER  mem_all_tot
+       INTEGER err, ierr
 
-      write(*,*)'My_Rank=',Rank,':allocazione_memoria'
-      mem_all_tot=0.0
-      mem_all=0.0
+      mem_all_tot=0
+      mem_all=0
 
-      call   alloc_tot() ; write(*,*)'My_Rank:',Rank,'alloc_init:', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call  myalloc_DR() ; write(*,*)'My_Rank:',Rank,'alloc_DR  :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_OPT() ; write(*,*)'My_Rank:',Rank,'alloc_OPT :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_ADV() ; write(*,*)'My_Rank:',Rank,'alloc_ADV :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_HDF() ; write(*,*)'My_Rank:',Rank,'alloc_HDF :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_ZDF() ; write(*,*)'My_Rank:',Rank,'alloc_ZDF :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_DYN() ; write(*,*)'My_Rank:',Rank,'alloc_DYN :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+#ifdef Mem_Monitor
+       mem_all = get_mem(err) 
+#endif Mem_Monitor
+      write(*,*)'My_Rank=',Rank,': Memory Allocation - Basal - (MB):',  mem_all ; mem_all_tot=mem_all_tot+mem_all 
+
+      call   alloc_tot() ; write(*,*)'My_Rank:',Rank,'alloc_init (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call  myalloc_DR() ; write(*,*)'My_Rank:',Rank,'alloc_DR   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_OPT() ; write(*,*)'My_Rank:',Rank,'alloc_OPT  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_ADV() ; write(*,*)'My_Rank:',Rank,'alloc_ADV  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_HDF() ; write(*,*)'My_Rank:',Rank,'alloc_HDF  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_ZDF() ; write(*,*)'My_Rank:',Rank,'alloc_ZDF  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_DYN() ; write(*,*)'My_Rank:',Rank,'alloc_DYN  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
 #ifdef key_trc_dmp
 !     needs Time_Manager
-      call alloc_DTATRC(); write(*,*)'My_Rank:',Rank,'alloc_TRC:', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call alloc_DTATRC(); write(*,*)'My_Rank:',Rank,'alloc_TRC  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 #endif
-      call alloc_DIA()   ; write(*,*)'My_Rank:',Rank,'alloc_DIA:', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call alloc_DIA()   ; write(*,*)'My_Rank:',Rank,'alloc_DIA  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
-      call myalloc_BIO() ; write(*,*)'My_Rank:',Rank,'alloc_BIO :', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_SED() ; write(*,*)'My_Rank:',Rank,'alloc_SED :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_BIO() ; write(*,*)'My_Rank:',Rank,'alloc_BIO  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_SED() ; write(*,*)'My_Rank:',Rank,'alloc_SED  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
-      call myalloc_FN()  ; write(*,*)'My_Rank:',Rank,'alloc_FN  :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_FN()  ; write(*,*)'My_Rank:',Rank,'alloc_FN   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
 
       call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
       call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
-      call myalloc_IO()  ; write(*,*)'My_Rank:',Rank,'alloc_IO  :', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_IO()  ; write(*,*)'My_Rank:',Rank,'alloc_IO   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
-      write(*,*)'My_Rank,',Rank,'memoria_totale_allocata',mem_all_tot
+      write(*,*)'My_Rank,',Rank,'Total Allocated Memory (MB):',mem_all_tot
       END SUBROUTINE ALLOC_ALL
 
 

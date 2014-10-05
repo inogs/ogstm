@@ -5,13 +5,15 @@
        USE myalloc_mpp
        USE DIA_mem
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
 
-CC----------------------------------------------------------------------
-CC Common/comcoh/  : ADVection matrix
-CC ---------------------------------------------------------------------
 C
 C
       INTEGER :: goodpoints, allpoints, tpoints
@@ -44,6 +46,13 @@ CC----------------------------------------------------------------------
 #else
       INTEGER :: ntids 
 #endif
+
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
@@ -81,7 +90,10 @@ CC----------------------------------------------------------------------
        allocate(jarrt(3, jpi*jpj*jpk))        ; jarrt        = huge(jarrt(1,1))
        allocate(jarr_adv_flx(jpi*jpj*jpk))    ; jarr_adv_flx = huge(jarr_adv_flx(1))
 
-       mem_all= rea_len*35 * jpi* jpj* jpk+ int_len *jpi* jpj* jpk
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_ADV
 

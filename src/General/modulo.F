@@ -40,7 +40,7 @@ CC      mindi, mindj() : indexes array of the subdomain
       INTEGER, allocatable :: mindi(:), mindj(:)
       INTEGER, allocatable :: nimppt(:), njmppt(:), nlcit(:), nlcjt(:)
       INTEGER, allocatable ::  nldit(:),  nldjt(:), nleit(:), nlejt(:)
-      REAL(8) mem_all,rea_len,int_len
+      INTEGER  mem_all
 
       INTEGER npolj
 
@@ -846,51 +846,74 @@ CC----------------------------------------------------------------------
       CONTAINS
 ! *******************************************************************
       subroutine myalloc_DYN()
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err) 
+#endif Mem_Monitor
+
 #ifdef key_trahdfeiv
        allocate(zaeiu   (jpiglo,jpjglo,jpk)) ; zaeiu = huge(zaeiu(1,1,1))
        allocate(zaeiv   (jpiglo,jpjglo,jpk)) ; zaeiv = huge(zaeiv(1,1,1))
        allocate(zaeiw   (jpiglo,jpjglo,jpk)) ; zaeiw = huge(zaeiw(1,1,1))
 
-        mem_all = 8*(3*jpiglo*jpjglo*jpk)
 #endif
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
       END subroutine myalloc_DYN
 ! *******************************************************************
       subroutine myalloc_DR()
-      mem_all = 0
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err) 
+#endif Mem_Monitor
+
 #ifdef key_s_coord
       allocate(hbattglo(jpiglo,jpjglo)) ; hbattglo = huge(hbattglo(1,1))
       allocate(hbatuglo(jpiglo,jpjglo)) ; hbatuglo = huge(hbatuglo(1,1))
       allocate(hbatvglo(jpiglo,jpjglo)) ; hbatvglo = huge(hbatvglo(1,1))
       allocate(hbatfglo(jpiglo,jpjglo)) ; hbatfglo = huge(hbatfglo(1,1))
 
-      mem_all = rea_len*4*jpiglo*jpjglo
 #endif
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
+
       END subroutine myalloc_DR
 ! *******************************************************************
 
        subroutine myalloc_BFM()
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err) 
+#endif Mem_Monitor
 
        allocate(BFMpoints(3,NBFMPOINTS)) ; BFMpoints = huge(BFMpoints(1,1))
 
-       mem_all = mem_all + 3*NBFMPOINTS*4
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
+
        end subroutine myalloc_BFM
 
       subroutine alloc_tot()
 
       INTEGER  :: err
       INTEGER  :: aux_mem
-      INTEGER  :: mem_alloc_tot
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
 #endif Mem_Monitor
      
 
-      mem_all = 0.
-
       ncpu = 1
-      mem_all = 0.0
-      int_len = 4.0
-      rea_len = 8.0
 
       allocate(mindi(jpi))    ;mindi  = huge(mindi(1))
       allocate(mindj(jpj))    ;mindj  = huge(mindj(1))   
@@ -903,10 +926,8 @@ CC----------------------------------------------------------------------
       allocate(nleit(jpnij))  ;nleit  = huge(nleit(1))
       allocate(nlejt(jpnij))  ;nlejt  = huge(nlejt(1))
 
-      mem_all = mem_all + int_len*(jpi+jpj+8*jpnij) 
 
       allocate(rdttra(jpk))   ;rdttra = huge(rdttra(1))
-      mem_all = mem_all + int_len*jpk 
 
       allocate(totglamt(jpiglo,jpjglo)) ;totglamt = huge(totglamt(1,1))
       allocate(totgphit(jpiglo,jpjglo)) ;totgphit = huge(totgphit(1,1))
@@ -926,11 +947,9 @@ CC----------------------------------------------------------------------
       allocate(e2v(jpi,jpj))            ;e2v      = huge(e2v(1,1))
       allocate(e2f(jpi,jpj))            ;e2f      = huge(e2f(1,1))
       allocate(ff (jpi,jpj))            ;ff       = huge(ff(1,1))
-        mem_all = mem_all + rea_len*(2*jpiglo*jpjglo+15*jpi*jpj)
 
 #if defined key_off_degrad
       allocate(facvol(jpi,jpj,jpk))     ;facvol   = huge(facvol(1,1,1))
-        mem_all = mem_all + rea_len*(jpi*jpj*jpk) 
 #endif
 #ifdef key_s_coord
 C
@@ -944,7 +963,6 @@ C
        allocate(esigt(jpk))     ;esigt = huge(esigt(1))
        allocate(esigw(jpk))     ;esigw = huge(esigw(1))
 
-       mem_all = mem_all + rea_len*(4*jpi*jpj+5*jpk) 
 CC
 #  else
 CC
@@ -953,7 +971,6 @@ CC
       allocate(  e3t(jpk)) ;  e3t = huge(e3t(1))
       allocate(  e3w(jpk)) ;  e3w = huge(e3w(1))
 
-       mem_all = mem_all + rea_len*(4*jpk) 
 C
 #endif
 C
@@ -965,13 +982,11 @@ C
       allocate(umask(jpi,jpj,jpk)) ;umask = huge(umask(1,1,1))
       allocate(vmask(jpi,jpj,jpk)) ;vmask = huge(vmask(1,1,1))
 
-      mem_all = mem_all + int_len*jpi*jpj + rea_len*4*jpi*jpj*jpk  
 
 C
       allocate(ub(jpi,jpj,jpk)) ;ub = huge(ub(1,1,1))
       allocate(vb(jpi,jpj,jpk)) ;vb = huge(vb(1,1,1))
 
-      mem_all = mem_all +  rea_len*2*jpi*jpj*jpk  
 CC
        allocate(un(jpi,jpj,jpk))    ;un     = huge(un(1,1,1))
        allocate(vn(jpi,jpj,jpk))    ;vn     = huge(vn(1,1,1))
@@ -984,14 +999,12 @@ CC
        allocate(rho(jpi,jpj,jpk))   ;rho    = huge(rho(1,1,1))
        allocate(bn2n(jpi,jpj,jpk))  ;bn2n   = huge(bn2n(1,1,1))
 
-       mem_all = mem_all +  rea_len*9*jpi*jpj*jpk  
 CC
       allocate(ahtu(jpk)) ;ahtu = huge(ahtu(1))
       allocate(ahtv(jpk)) ;ahtv = huge(ahtv(1))
       allocate(ahtw(jpk)) ;ahtw = huge(ahtw(1))
       allocate(ahtt(jpk)) ;ahtt = huge(ahtt(1))
 
-      mem_all = mem_all +  rea_len*4*jpk  
 
 C
 #if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
@@ -1000,16 +1013,12 @@ C
       allocate(wslpi(jpi,jpj,jpk)) ;wslpi = huge(wslpi(1,1,1))
       allocate(wslpj(jpi,jpj,jpk)) ;wslpj = huge(wslpj(1,1,1))
 
-       mem_all = mem_all +  rea_len*4*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
 #  if defined key_trahdfbilap
       allocate(wk1(jpi,jpj,jpk)) ; wk1 = huge(wk1(1,1,1))
       allocate(wk2(jpi,jpj,jpk)) ; wk2 = huge(wk2(1,1,1))
       allocate(wk3(jpi,jpj,jpk)) ; wk3 = huge(wk3(1,1,1))
       allocate(wk4(jpi,jpj,jpk)) ; wk4 = huge(wk4(1,1,1))
 
-       mem_all = mem_all +  rea_len*4*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
 #   else
 #  endif
 C
@@ -1024,22 +1033,16 @@ C
        allocate(aeiv(jpi,jpj,jpk)) ; aeiv = huge(aeiv(1,1,1))
        allocate(aeiw(jpi,jpj,jpk)) ; aeiw = huge(aeiw(1,1,1))
 
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
 #   elif key_trahdfcoef2d
        allocate(aeiu(jpi,jpj)) ; aeiu = huge(aeiu(1,1))
        allocate(aeiv(jpi,jpj)) ; aeiv = huge(aeiv(1,1))
        allocate(aeiw(jpi,jpj)) ; aeiw = huge(aeiw(1,1))
  
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
 #   elif key_trahdfcoef1d
        allocate(aeiu(jpk))  ; aeiu = huge(aeiu(1))
        allocate(aeiv(jpk))  ; aeiv = huge(aeiv(1))
        allocate(aeiw(jpk))  ; aeiw = huge(aeiw(1))
 
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
 #   else
 #  endif
 # else
@@ -1048,8 +1051,6 @@ C     write(*,*) 'Mem_allocated:', mem_all
       allocate(aeiv(jpi,jpj,jpk)) ; aeiv = huge(aeiv(1,1,1))
       allocate(aeiw(jpi,jpj,jpk)) ; aeiw = huge(aeiw(1,1,1))
 
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
 #     else
 #     endif
 #endif
@@ -1059,8 +1060,6 @@ C
        allocate(vgm(jpi,jpj,jpk)) ; vgm = huge(vgm(1,1,1))
        allocate(wgm(jpi,jpj,jpk)) ; wgm = huge(wgm(1,1,1))
 
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
 #endif
 C
        allocate(avt (jpi,jpj,jpk)) ; avt  = huge(avt(1,1,1))
@@ -1068,7 +1067,6 @@ C
        allocate(bblx(jpi,jpj))     ; bblx = huge(bblx(1,1))
        allocate(bbly(jpi,jpj))     ; bbly = huge(bbly(1,1))
 
-       mem_all = mem_all +  rea_len*(jpi*jpj*jpk+ jpk +2*jpi*jpj) 
 
 C
        allocate(taux  (jpi,jpj)) ; taux   = huge(taux(1,1))
@@ -1076,20 +1074,16 @@ C
        allocate(vatm  (jpi,jpj)) ; vatm   = huge(vatm(1,1))
        allocate(freeze(jpi,jpj)) ; freeze = huge(freeze(1,1))
 
-       mem_all = mem_all +  rea_len*(4*jpi*jpj) 
 
-C     write(*,*) 'Mem_allocated:', mem_all
 
        allocate(qt    (jpi,jpj)) ; qt     = huge(qt(1,1))
        allocate(q     (jpi,jpj)) ; q      = huge(q(1,1))
        allocate(emp   (jpi,jpj)) ; emp    = huge(emp(1,1))
        allocate(runoff(jpi,jpj)) ; runoff = huge(runoff(1,1))
 
-       mem_all = mem_all +  rea_len*(4*jpi*jpj) 
 
 CC
        allocate(qsr(jpi,jpj)) ; qsr = huge(qsr(1,1))
-       mem_all = mem_all +  rea_len*(jpi*jpj) 
 
 
        allocate(udta   (jpi,jpj,jpk,2))   ; udta    = huge(udta(1,1,1,1))
@@ -1103,7 +1097,6 @@ CC
        allocate(zmxldta(jpi,jpj,2))       ; zmxldta = huge(zmxldta(1,1,1))
        allocate(hmld(jpi,jpj))            ; hmld    = huge(hmld(1,1))
 
-       mem_all = mem_all +  rea_len*(17*jpi*jpj+ jpi*jpj*jpflx) 
 
 
 #if defined key_off_tra
@@ -1111,7 +1104,6 @@ CC
        allocate(tdta(jpi,jpj,jpk,2)) ; tdta = huge(tdta(1,1,1,1))
        allocate(sdta(jpi,jpj,jpk,2)) ; sdta = huge(sdta(1,1,1,1))
 
-       mem_all = mem_all +  rea_len*(4*jpi*jpj*jpk) 
 CC
 #endif
 CC
@@ -1121,7 +1113,6 @@ CC
        allocate(vslpdta(jpi,jpj,jpk,2))  ; vslpdta  = huge(vslpdta(1,1,1,1))
        allocate(wslpidta(jpi,jpj,jpk,2)) ; wslpidta = huge(wslpidta(1,1,1,1))
        allocate(wslpjdta(jpi,jpj,jpk,2)) ; wslpjdta = huge(wslpjdta(1,1,1,1))
-       mem_all = mem_all +  rea_len*(8*jpi*jpj*jpk) 
 CC
 #endif
 CC
@@ -1132,14 +1123,12 @@ CC
        allocate(vgmdta(jpi,jpj,jpk,2)) ; vgmdta = huge(vgmdta(1,1,1,1))
        allocate(wgmdta(jpi,jpj,jpk,2)) ; wgmdta = huge(wgmdta(1,1,1,1))
 
-       mem_all = mem_all +  rea_len*(6*jpi*jpj*jpk) 
 #endif
 CC
 CC----------------------------------------------------------------------
 
 
         allocate(mtask(3,jpcpu)) ; mtask = huge(mtask(1,1))
-       mem_all = mem_all +  int_len*(3*jpcpu) 
 
 #if defined key_mpp || defined key_debug 
 C
@@ -1156,8 +1145,6 @@ C
        allocate(t2ew(jpj,jpreci,2))                ; t2ew     = huge(t2ew(1,1,1))
        allocate(t2we(jpj,jpreci,2))                ; t2we     = huge(t2we(1,1,1))
 
-       mem_all = mem_all +  rea_len*(4*jpi*jprecj*jpk+4*jpj*jpreci*jpk 
-     .           + 4*jpi*jprecj+4*jpj*jpreci) 
 C
 #  else
 C     no mpp
@@ -1167,15 +1154,11 @@ C
        allocate(tabdta(jpidta,jpjdta)) ; tabdta = huge(tabdta(1,1))
        allocate(tabglo(jpiglo,jpjglo)) ; tabglo = huge(tabglo(1,1))
 
-       mem_all = mem_all +  rea_len*(jpidta*jpjdta+jpiglo*jpjglo) 
-C     write(*,*) 'Mem_allocated:', mem_all
 CC
 #if defined key_mpp|| defined key_debug
 CC      tabio()          : i/o workspace array
 C
       allocate(tabio(jpi,jpj,jpnij,jpkmod)) ; tabio =huge(tabio(1,1,1,1))
-       mem_all = mem_all +  rea_len*(jpi*jpj*jpnij*jpkmod) 
-C     write(*,*) 'Mem_allocated:', mem_all
 CC
 #  else
 #endif
@@ -1207,10 +1190,6 @@ CC
        allocate(tra_ppIO_HIGH(jpi,jpj,jpk,jptra_dia_HIGH)) ; tra_ppIO_HIGH = huge(tra_ppIO_HIGH(1,1,1,1))
 
 
-       mem_all = mem_all +  rea_len*(3*jpi*jpj*jpk*jptra
-     .          + (jpi*jpj*jpk)*(jptra_HIGH + jptra_dia_HIGH)
-     .          + 13*jpi*jpj*jpk+2*jpiglo* jpjglo* jpk
-     .          + 5*jpi*jpj)
 
 
        if (lwp) allocate(tottrnIO(jpiglo,jpjglo,jpk)) ; tottrnIO  = huge(tottrnIO(1,1,1))
@@ -1228,11 +1207,8 @@ CC
        if (lwp) allocate(totavtIO(jpiglo,jpjglo,jpk)) ; totavtIO  = huge(totavtIO(1,1,1))
        if (lwp) allocate(tottmaIO(jpiglo,jpjglo,jpk)) ; tottmaIO  = huge(tottmaIO(1,1,1))
 
-       mem_all = mem_all +  rea_len*(12*jpiglo*jpjglo*jpk
-     .          + 5*jpiglo*jpjglo)
 
        allocate(trb(jpi,jpj,jpk,jptra))              ; trb        = huge(trb(1,1,1,1))
-       mem_all = mem_all +  rea_len*jpi*jpj*jpk*jptra 
 
 
 
@@ -1247,22 +1223,17 @@ CC
        allocate(trc3d(jpi,jpj,jpk,jpdia3d)) ; trc3d  = huge(trc3d(1,1,1,1))
        allocate(trc2d(jpi,jpj,jpdia2d))     ; trc2d  = huge(trc2d(1,1,1))
 
-       mem_all = mem_all +  rea_len*(3*jpdia3d+3*jpdia2d +
-     .           + jpi*jpj*jpk*jpdia3d+jpi*jpj*jpdia2d )
 
 #    endif
 
 #    if defined key_trc_diatrd
 CC
       allocate(luttrd(jptra)) ; luttrd = huge(luttrd(1))
-       mem_all = mem_all +  rea_len*jptra
 
       allocate(trtrd(jpi,jpj,jpk,jptra,jpdiatrc)) ; trtrd =huge(trtrd(1,1,1,1,1))
 
-      mem_all = mem_all +  rea_len*jpi*jpj*jpk*jptra*jpdiatrc
 CC
 
-        mem_all = mem_all +  rea_len*3*jptra
 #    endif 
 CC
 CC
@@ -1274,8 +1245,6 @@ CC
       allocate(idxt2glo(jpi,jpj,jpk,4))     ; idxt2glo = huge(idxt2glo(1,1,1,1))
 
 
-      mem_all = mem_all +  rea_len*(4*jpi*jpj*jpk*jptra
-     &                  + 2*jpi*jpj*jpk + 0*jpiglo*jpjglo*jpk)
 CC
 #    else
 #    endif
@@ -1287,13 +1256,11 @@ CC
       allocate(remine(jpi,jpj,jpk)) ; remine = huge(remine(1,1,1))
       allocate(remdmp(jpk,jptra))   ; remdmp = huge(remdmp(1,1))
 
-      mem_all = mem_all +  rea_len*(jpi*jpj*jpk+jpk*jptra)
 CC
 
       allocate(xze(jpi,jpj))        ; xze  = huge(xze(1,1))
       allocate(xpar(jpi,jpj,jpk))   ; xpar = huge(xpar(1,1,1))
  
-      mem_all = mem_all +  rea_len*(jpi*jpj*jpk+jpi*jpj)
 
 #endif
 
@@ -1301,9 +1268,8 @@ CC    photoperiod
         allocate(DAY_LENGTH(jpi,jpj))   ; DAY_LENGTH = huge(DAY_LENGTH(1,1))
 
 #ifdef Mem_Monitor
-      mem_alloc_tot=get_mem(err) - aux_mem
+      mem_all=get_mem(err) - aux_mem
 #endif Mem_Monitor
-      write (*,*) 'memory Allocated in - alloc_tot --> ', mem_alloc_tot
   
         END subroutine alloc_tot
 

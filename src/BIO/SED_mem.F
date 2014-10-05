@@ -4,6 +4,12 @@
        USE myalloc
        USE DIA_mem
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
+
        IMPLICIT NONE
 
        public
@@ -28,6 +34,12 @@ CC----------------------------------------------------------------------
 #else
       INTEGER :: ntids = 1
 #endif
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
@@ -71,8 +83,9 @@ CC----------------------------------------------------------------------
        allocate(zwork(nsed, jpk, ntids))   ; zwork        = huge(zwork(1,1,1))
 
 
-
-       mem_all= rea_len*(nsed*ntids+nsed*jpk*ntids)+int_len*(2*jpj*jpi)
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_SED
 

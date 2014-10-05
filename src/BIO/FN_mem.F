@@ -3,6 +3,11 @@
        USE modul_param 
        USE myalloc
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
@@ -30,6 +35,12 @@
 
       IMPLICIT NONE
 
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
       dimen_jvsnu = 0
       SMALL=0.00000000001
@@ -47,12 +58,15 @@
       allocate(cou_FN(jpi,jpj,jpk))       ; cou_FN     = huge(cou_FN(1,1,1))
       allocate(FN_ranking(jptra))         ; FN_ranking = huge(FN_ranking(1))
 
-      mem_all = rea_len*(jpi*jpj*jpk*jptra+2*jpi*jpj*jpk+ jptra)
 
       tra_FN=0.
       cou_FN=0.
 !     cor_FN=0.
       FN_ranking=0.
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_FN
 

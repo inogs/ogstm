@@ -4,6 +4,11 @@
        USE myalloc
        USE myalloc_mpp
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
@@ -26,6 +31,12 @@ CC----------------------------------------------------------------------
 #else
       INTEGER :: ntids 
 #endif
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
@@ -50,8 +61,9 @@ CC----------------------------------------------------------------------
        allocate(ztv    (jpi,jpj,jpk,ntids)) ; ztv          = huge(ztv(1,1,1,1))
 
 
-       mem_all= int_len*7*jpi*jpj*jpk + rea_len*jpi*jpj + 2*rea_len*jpi*jpj*jpk+
-     .           3*rea_len*jpi*jpj*jpk*ntids+rea_len*ntids
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_HDF
 

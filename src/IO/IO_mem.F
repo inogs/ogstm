@@ -3,6 +3,11 @@
        USE modul_param 
        USE myalloc
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
@@ -40,6 +45,12 @@
       CONTAINS
 
       subroutine myalloc_IO()
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
        allocate(buffglamt (jpi_max* jpj_max))      ; buffglamt = huge(buffglamt(1))
        allocate(buffgphit (jpi_max* jpj_max))      ; buffgphit = huge(buffgphit(1))
@@ -65,9 +76,9 @@
        allocate(d2f2d     (jpiglo,jpjglo))         ; d2f2d     = huge(d2f2d(1,1))
        endif
 
-      mem_all = rea_len *(7*jpi_max*jpj_max + (10+jptra_dia)*jpi_max* jpj_max*jpk) +
-     &    4* (jpiglo*jpjglo*jpk + jpiglo*jpjglo )
-
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_IO
 

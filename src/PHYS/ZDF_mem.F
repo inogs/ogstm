@@ -3,6 +3,11 @@
        USE modul_param 
        USE myalloc
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
@@ -25,6 +30,12 @@ CC----------------------------------------------------------------------
 #else
       INTEGER :: ntids = 1
 #endif
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
@@ -40,7 +51,11 @@ CC----------------------------------------------------------------------
        allocate(zwy(jpk, ntids))           ; zwy          = huge(zwy(1,1))
        allocate(zwz(jpk, ntids))           ; zwz          = huge(zwz(1,1))
        allocate(zwt(jpk, ntids))           ; zwt          = huge(zwt(1,1))
-       mem_all= rea_len*jpk *ntids*7+ int_len *2*jpi* jpj
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
+
 
       END subroutine myalloc_ZDF
 

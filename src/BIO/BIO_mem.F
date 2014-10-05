@@ -4,6 +4,12 @@
        USE myalloc
        USE TIME_MANAGER
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
+
        IMPLICIT NONE
 
        public
@@ -22,6 +28,13 @@ CC----------------------------------------------------------------------
 
       subroutine myalloc_BIO()
 
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
+
 !$omp parallel default(none)
        allocate(bfm_trn(jptra))        ; bfm_trn   = huge(bfm_trn(1))
        allocate(bfm_tra(jptra))        ; bfm_tra   = huge(bfm_tra(1))
@@ -37,7 +50,9 @@ CC----------------------------------------------------------------------
        !opa_co2_start=290.0
        !opa_co2_end=370.0
 
-       mem_all= rea_len*(2*jptra+jpk+ jpi*jpj*jpk*5  + jpi*jpj*3)
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_BIO
 

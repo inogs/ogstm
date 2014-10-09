@@ -61,6 +61,9 @@ CC----------------------------------------------------------------------
        allocate(ztv    (jpi,jpj,jpk,ntids)) ; ztv          = huge(ztv(1,1,1,1))
 
 
+       ztu = 0.
+       ztv = 0.
+
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
 #endif Mem_Monitor

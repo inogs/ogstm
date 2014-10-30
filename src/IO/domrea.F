@@ -99,11 +99,13 @@
 
 ! F79 Initialization of mbathy
       mbathy(:,:) = 0
+      NWATERPOINTS=0
       do jj=1, jpj
        do ii=1, jpi          
         do kk=1, jpk
          if (tmask(ii, jj, kk).NE.0.) then
             mbathy(ii,jj) = mbathy(ii,jj) +1
+            NWATERPOINTS = NWATERPOINTS +1
          endif
         enddo
        enddo

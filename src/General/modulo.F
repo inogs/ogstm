@@ -191,7 +191,7 @@ CC      vmask, fmask()
 
 
       REAL(8), allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
-      INTEGER NBFMPOINTS, NBFMPOINTS_SUP
+      INTEGER NBFMPOINTS, NBFMPOINTS_SUP, NWATERPOINTS
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

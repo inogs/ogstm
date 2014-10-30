@@ -165,13 +165,18 @@
       var_nc(6) = 'O3h'
       var_nc(7) = 'N6r'
 
+      IF (NWATERPOINTS.GT.0) THEN
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
          call readnc_slice_double('bounmask.nc',nomevar01,resto(:,:,:,jn));
 
       enddo
+      ELSE
+        resto=0.0
+      ENDIF
       call readnc_slice_int   ('bounmask.nc','index',idxt);
+
 
 
 ! ************************************ BFM points re-indexing *******
@@ -310,10 +315,10 @@
                 do jv =1, RsizeGLO
                    if ( junk.EQ.riv_idxtglo(jv) )  then
                       counter = counter + 1
-                      riv_ridxt(counter,1) = jv
-                      riv_ridxt(counter,2) = ii
-                      riv_ridxt(counter,3) = jj
-                      riv_ridxt(counter,4) = kk
+                      riv_ridxt(1,counter) = jv
+                      riv_ridxt(2,counter) = ii
+                      riv_ridxt(3,counter) = jj
+                      riv_ridxt(4,counter) = kk
                    endif
               enddo
              enddo
@@ -340,10 +345,10 @@
                 do jv =1, Gsizeglo
                    if ( junk.EQ.gib_idxtglo(jv) )  then
                       counter = counter + 1
-                      gib_ridxt(counter,1) = jv
-                      gib_ridxt(counter,2) = ii
-                      gib_ridxt(counter,3) = jj
-                      gib_ridxt(counter,4) = kk
+                      gib_ridxt(1,counter) = jv
+                      gib_ridxt(2,counter) = ii
+                      gib_ridxt(3,counter) = jj
+                      gib_ridxt(4,counter) = kk
                    endif
               enddo
              enddo
@@ -354,36 +359,6 @@
       GIBRE_Indexing= .true.
       END FUNCTION GIBRE_Indexing
 
-
-!      LOGICAL FUNCTION GIBRE_Indexing2()
-!          IMPLICIT NONE
-!
-!          ! local
-!          INTEGER ii,jj,kk,jv
-!          INTEGER counter,junk
-!
-!
-!          counter=0
-!           do kk =1, jpk
-!            do jj =1, jpj
-!             do ii =1, jpi
-!                junk = idxt(ii,jj,kk)
-!                do jv =1, Gsizeglo
-!                   if ( junk.EQ.gib_idxtglo(jv) )  then
-!                      gib_ridxt(counter+1) = jv
-!                      gib_ridxt(counter+2) = ii
-!                      gib_ridxt(counter+3) = jj
-!                      gib_ridxt(counter+4) = kk
-!                      counter = counter + 4
-!                   endif
-!              enddo
-!             enddo
-!            enddo
-!           enddo
-!
-!
-!      GIBRE_Indexing= .true.
-!      END FUNCTION GIBRE_Indexing2
 
 
 ! *************************************************************************
@@ -405,10 +380,10 @@
                 do jv =1, AsizeGLO
                    if ( junk.EQ.atm_idxtglo(jv) )  then
                       counter = counter + 1
-                      atm_ridxt(counter,1) = jv
-                      atm_ridxt(counter,2) = ii
-                      atm_ridxt(counter,3) = jj
-                      atm_ridxt(counter,4) = kk
+                      atm_ridxt(1,counter) = jv
+                      atm_ridxt(2,counter) = ii
+                      atm_ridxt(3,counter) = jj
+                      atm_ridxt(4,counter) = kk
                    endif
               enddo
              enddo

@@ -153,7 +153,7 @@
 
        if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
 
-       allocate(gib_ridxt (Gsize, 4        )) ; gib_ridxt  = huge(gib_ridxt(1,1))
+       allocate(gib_ridxt (4, Gsize        )) ; gib_ridxt  = huge(gib_ridxt(1,1))
        allocate(gib_dtatrc(Gsize, 2, jn_gib)) ; gib_dtatrc = huge(gib_dtatrc(1,1,1))
        allocate(gib       (Gsize,    jn_gib)) ; gib        = huge(gib(1,1))
 
@@ -184,7 +184,7 @@
 #endif Mem_Monitor
 
 
-       allocate(riv_ridxt (Rsize,4        )) ; riv_ridxt  = huge(riv_ridxt(1,1))
+       allocate(riv_ridxt (4, Rsize       )) ; riv_ridxt  = huge(riv_ridxt(1,1))
        allocate(riv_dtatrc(Rsize,2, jn_riv)) ; riv_dtatrc = huge(riv_dtatrc(1,1,1))
        allocate(riv       (Rsize,   jn_riv)) ; riv        = huge(riv(1,1))
 
@@ -213,7 +213,7 @@
 #endif Mem_Monitor
 
 
-       allocate(atm_ridxt (Asize, 4        )) ; atm_ridxt  = huge(atm_ridxt(1,1))
+       allocate(atm_ridxt (4, Asize        )) ; atm_ridxt  = huge(atm_ridxt(1,1))
        allocate(atm_dtatrc(Asize, 2, jn_atm)) ; atm_dtatrc = huge(atm_dtatrc(1,1,1))
        allocate(atm       (Asize,    jn_atm)) ; atm        = huge(atm(1,1))
 

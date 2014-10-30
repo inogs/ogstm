@@ -89,9 +89,9 @@
 
           tra_idx=tra_matrix_gib(jn+mytid)
           DO jv=1, Gsize
-             ji = gib_ridxt(jv,2)
-             jj = gib_ridxt(jv,3)
-             jk = gib_ridxt(jv,4)
+             ji = gib_ridxt(2,jv)
+             jj = gib_ridxt(3,jv)
+             jk = gib_ridxt(4,jv)
 c           ztra = 0 ************* DEFAULT CASE
 c           IF ( nmldmp_gib.EQ.0 ) THEN
 !             write(*,*) 'tra_idx  -->', tra_idx
@@ -131,9 +131,9 @@ c           ENDIF
 
           DO jv=1, Rsize
 
-             ji = riv_ridxt(jv,2)
-             jj = riv_ridxt(jv,3)
-             jk = riv_ridxt(jv,4)
+             ji = riv_ridxt(2,jv)
+             jj = riv_ridxt(3,jv)
+             jk = riv_ridxt(4,jv)
              tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + riv(jv,jn+mytid) ! since nmldmp_riv=1
           ENDDO
 
@@ -146,9 +146,9 @@ c           ENDIF
 
              DO jv=1, Rsize
 
-                ji = riv_ridxt(jv,2)
-                jj = riv_ridxt(jv,3)
-                jk = riv_ridxt(jv,4) + shift
+                ji = riv_ridxt(2,jv)
+                jj = riv_ridxt(3,jv)
+                jk = riv_ridxt(4,jv) + shift
 
                 tra_pp(ji,jj,jk,jptra_dia) = riv(jv,jn+mytid) ! since nmldmp_riv=1
 
@@ -187,9 +187,9 @@ c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
           tra_idx=tra_matrix_atm(jn+mytid)
           DO jv=1, Asize
 
-             ji = atm_ridxt(jv,2)
-             jj = atm_ridxt(jv,3)
-             jk = atm_ridxt(jv,4)
+             ji = atm_ridxt(2,jv)
+             jj = atm_ridxt(3,jv)
+             jk = atm_ridxt(4,jv)
              tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + atm(jv,jn+mytid) ! since nmldmp_atm=1
          ENDDO
 
@@ -200,9 +200,9 @@ c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
 
              DO jv=1, Asize
 
-                ji = atm_ridxt(jv,2)
-                jj = atm_ridxt(jv,3)
-                jk = atm_ridxt(jv,4) + shift
+                ji = atm_ridxt(2,jv)
+                jj = atm_ridxt(3,jv)
+                jk = atm_ridxt(4,jv) + shift
 
                 tra_pp(ji,jj,jk,jptra_dia) = atm(jv,jn+mytid) ! since nmldmp_riv=1
 

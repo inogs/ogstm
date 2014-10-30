@@ -153,9 +153,11 @@
 ! OPA TEMPORIZATION
        IF (TAU.GT.TimeStepStart) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
-           write(*,*) "************* OPA TEMPORIZATION ************"
-           write(*,*) "              Iteration",TAU
-           write(*,*) "routine******time_tot*********time_ave*****"
+           if (lwp) then
+               write(*,*) "************* OPA TEMPORIZATION ************"
+               write(*,*) "              Iteration",TAU
+               write(*,*) "routine******time_tot*********time_ave*****"
+           endif
            B = writeTemporization("forPhys___", forcing_phys_TotTime)
            B = writeTemporization("forKext___", forcing_kext_TotTime)
            B = writeTemporization("bcCO2_____", bc_co2_TotTime)
@@ -183,7 +185,6 @@
            B = writeTemporization("stp_______", stptottime  )
 
            call reset_Timers()
-           write(*,*) "*******************************************"
        ENDIF
       ENDIF
 

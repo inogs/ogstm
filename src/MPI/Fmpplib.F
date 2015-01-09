@@ -1,4 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/Fmpplib.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
 CC
 CC ORCA
 CC

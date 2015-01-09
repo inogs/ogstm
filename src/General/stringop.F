@@ -1,4 +1,3 @@
-      !$Header: /cvsroot/opatm-bfm/opa_model/OPA/stringop.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
       !
       MODULE stringop
       !---------------------------------------------------------------------

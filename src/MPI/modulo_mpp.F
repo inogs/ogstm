@@ -5,8 +5,6 @@
        IMPLICIT NONE
 
        public
-
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/modulo_mpp.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
 CCC---------------------------------------------------------------------
 CCC                      COMMON MPP
 CCC                     *************

@@ -1,87 +1,24 @@
 
 !*********************************************************************
-!                   Institut Pierre-Simon Laplace
+!               Istituto Nazionale di Oceanografia e di
+!                       Geofisica Sperimentale
 !
-!                             L O D Y C
-!       Laboratoire d Oceanographie DYnamique et de CLImatologie
-!                   Unite mixte de recherche 121
-!                          CNRS/ORSTOM/UPCM
+!                                OGS
 !
 !
-!                             O P A model
 !
-!                    Ocean General Circulation Model
+!                             OGSTM model
 !
 !
-! version OPA.8.1  (1997)
+!     Giorgio Bolzon (gbolzon@ogs.trieste.it)
+!     Paolo Lazzari  (plazzari@ogs.trieste.it)
 !
-!*********************************************************************
-!
-!  opa                 main program
-!  **first part : initialization
-!          inipar              initialization parameters
-!          parcst            constants
-!           parlec            namelist read
-!          parctl            control options
-!                 ctlopn              open file and check
-!     inimpp                          Initialisation for large domain
-!     inimpp2                         Initialisation with land elimination
-!     domrea                         read a meshmask file
-!     domstp                         prepares diferent time step for
-!                                     each level
-!     initrc                            initialization passive tracers
-!          ......            passive tracers model package
-!     inihdf                          horizontal diffusion coefficient
-!     dtadyn                          dynamique and physique
-!    mlbxinit            task initialization
-!     **second part : time step loop
-!    step                 time step routine
-!           dtadyn            dynamique and physique
-!                 div                horizontal divergence
-!                 wzv                vertical velocity
-!                 eos            equation of state
-!                 bn2            Brunt-Vaisala frequency
-!                 hdfslp                isopycnal slope computation
-!           stpctl            control step execution
-!                 mpprisl             mpp real(8) no zero value
-!           trcwri                     write restart FILE for tracer
-!           trcdia            write standard output
-!     **end of time loop
 !
 !*********************************************************************
 !
-      SUBROUTINE myopa()
-!---------------------------------------------------------------------
+      SUBROUTINE ogstm()
 !
-!                        ******************
-!                        *   ***********  *
-!                        *    OPA MODEL   *
-!                        *   ***********  *
-!                        ******************
-!
-!  Purpose :
-!  --------
-!     opa solves the primitive equations with rigid lid assumption
-!    on any orthogonal curvilinear mesh on the sphere which vertical
-!    direction is the geographical one.
-!
-!   Method :
-!   -------
-!    model general initialization
-!
-!    execution of time loop by calling the routine step
-!
-!   Input :        : no
-!   ------
-!
-!   External :
-!   --------
-!      inipar, inidta, inidtr,
-!    step.
 
-!
-! parameters and commons
-! ======================
 
        USE myalloc
        USE myalloc_mpp
@@ -99,11 +36,7 @@
 #ifdef key_trc_bfm
 #include "BFM_module_list.h"
 #endif
-!----------------------------------------------------------------------
-! externals
-! =========
-!      EXTERNAL step
-!----------------------------------------------------------------------
+
 ! local declarations
 ! ==================
       INTEGER ME
@@ -117,10 +50,13 @@
       ! *********************************************
 
       OPEN(UNIT=numout,FILE='ocean.output',FORM='FORMATTED')
+
       ME = mynode() !  Nodes selection
 
       narea = ME+1
       lwp = narea.EQ.1
+
+
       call parini(ME)
 
       call parlec  ! read namelist
@@ -134,7 +70,7 @@
       numnam = 208
       numrst = 209
       numbat = 212
-      nummsh = 214 ! serve alla restget
+      nummsh = 214 !restget
       nummpp =  8
        nimpp  = 1
        njmpp  = 1 
@@ -144,25 +80,24 @@
 #endif
 
 
-
 ! 0.3 First prints
 
       IF(lwp) THEN
           WRITE(numout,*) ' '
-          WRITE(numout,*) '             Institut Pierre-Simon LAPLACE'
-          WRITE(numout,*) '                      L O D Y C'
-          WRITE(numout,*) ' Laboratoire d"Oceanographie DYnamique et de Climatologie'
-          WRITE(numout,*) '             unite mixte de recherche 121'
-          WRITE(numout,*) '                  CNRS/ORSTOM/UPCM'
+          WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
+          WRITE(numout,*) '                  Geofisica Sperimentale'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '                           OGS'
           WRITE(numout,*) ' '
           WRITE(numout,*) ' '
-          WRITE(numout,*) '                  Offline O P A model'
           WRITE(numout,*) ' '
-          WRITE(numout,*) '            Ocean General Circulation Model'
+          WRITE(numout,*) '                        OGSTM model'
           WRITE(numout,*) ' '
           WRITE(numout,*) ' '
-          WRITE(numout,*) ' version OPA.8.1.offline'
-          WRITE(numout,*) ' 03/04/1998'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '  Giorgio Bolzon (gbolzon@ogs.trieste.it)'
+          WRITE(numout,*) '  Paolo Lazzari  (plazzari@ogs.trieste.it)'
           WRITE(numout,*) ' '
           WRITE(numout,*) ' '
       ENDIF
@@ -172,9 +107,8 @@
 
       CALL INITIALIZING
 
-! -----------------------------------------------
+
       CALL step
-! -----------------------------------------------
 
 
 ! 3. Job end
@@ -190,7 +124,7 @@
 
       CLOSE( numout ) ! others units are closed in mppstop
 
-      END SUBROUTINE myopa
+      END SUBROUTINE ogstm
 
 
 
@@ -228,6 +162,7 @@
 #ifdef Mem_Monitor
        mem_all = get_mem(err) 
 #endif Mem_Monitor
+
       write(*,*)'My_Rank=',Rank,': Memory Allocation - Basal - (MB):',  mem_all ; mem_all_tot=mem_all_tot+mem_all 
 
       call   alloc_tot() ; write(*,*)'My_Rank:',Rank,'alloc_init (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
@@ -274,7 +209,6 @@
 !    Run parameters
 !    --------------
       CALL parcst;  CALL parlec ; CALL parctl ! CALL inipar
-      !CALL dialec ! fatto prima
 
 
 ! ... Large domain
@@ -301,12 +235,10 @@
           WRITE(numout,*) ' '
       ENDIF
 
-      !CALL trclec ! READ passive tracers namelists, fatto prima
       CALL trcctl ! control consistency between parameters, cpp key and namelists
-!      CALL time_init
 
+      call trccof ! initialisation of data fields
 
-      call trccof ! call trcdta ! initialisation of data fields
       CALL trcini ! computes some initialisation
 
       IF(lrsttr) THEN ! restart from a FILE (nutrst)

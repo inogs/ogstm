@@ -6,7 +6,7 @@
 !
 !  PURPOSE :
 !  ---------
-!    Time loop of OPA
+!    Time loop of ogstm
 !
 !   METHOD :
 !   -------
@@ -151,11 +151,11 @@
        stpparttime = MPI_WTIME() - stpparttime
        stptottime  = stptottime  + stpparttime
 
-! OPA TEMPORIZATION
+! OGSTM TEMPORIZATION
        IF (TAU.GT.TimeStepStart) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
            if (lwp) then
-               write(*,*) "************* OPA TEMPORIZATION ************"
+               write(*,*) "************* OGSTM TEMPORIZATION *********"
                write(*,*) "              Iteration",TAU
                write(*,*) "routine******time_tot*********time_ave*****"
            endif

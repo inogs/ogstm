@@ -3989,7 +3989,6 @@ CC   -----
 CC                   ktab   ->   input array
 CC                   kdim   ->   dimension of the array ktab and kwork
 CC                   kwork->   work space array used by mpi 
-CC                               (Never user by opa!)
 CC
 CC   Modifications:
 CC   --------------
@@ -4126,7 +4125,6 @@ CC      argument
 CC                   ktab   ->   input array
 CC                   kdim   ->   dimension of the array ktab and kwork
 CC                   kwork  ->   work space array used by mpi 
-CC                               (Never user by opa!)
 CC   Output :
 CC   -------
 CC       argument 
@@ -4688,7 +4686,6 @@ CC      argument                :
 CC                   ptab   ->   input array
 CC                   kdim   ->   dimension of the array ktab and kwork
 CC                   pwork  ->   work space array used by mpi 
-CC                               (Never user by opa!)
 CC
 CC   Modifications:
 CC   --------------

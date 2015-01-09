@@ -55,7 +55,7 @@ C
 
 #if defined restart || defined zdftke || defined bsfpcg || defined islands || defined qsr || defined saldta || defined temdta || defined tau || defined flx  || defined eoslinear || defined eoseckart || defined eosunesco || defined nobsf || defined bsfpcg || defined bsfsor || defined zdfconstant || defined zdfrichardson || defined temdmp || defined saldmp || defined dyndmp || defined zdfexplicit || defined npc || defined freeslip || defined dynhdfbilap || defined trahdfbilap || defined vorenergy || defined vorcombined || defined coupled
       IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' OPA 8, cpp keys have been changed '
+      IF(lwp)WRITE(numout,*) '  cpp keys have been changed '
       IF(lwp)WRITE(numout,*) ' All keynames begin with the prefix key_'
       IF(lwp)WRITE(numout,*) ' see the reference manual'
       istop = istop + 1
@@ -65,12 +65,11 @@ C
 C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 C
 C
-C ... OPA8.0 ==> OPA8.1,  cpp key suppressed
 C     --------------------------------------
 C
 #if defined key_trahdfisog
       IF(lwp)WRITE(numout,9000)
-      IF(lwp)WRITE(numout,*) ' opa8.1 release: key_trahdfisog has been '
+      IF(lwp)WRITE(numout,*) '  release: key_trahdfisog has been '
       IF(lwp)WRITE(numout,*) ' changed into key_trahdfeiv and requires '
       IF(lwp)WRITE(numout,*) ' key_trahdfiso to be defined.'
       istop = istop + 1
@@ -123,8 +122,8 @@ C     numdyn : dynamic and physic file unit
 C     numtke : tke file                unit
 C
 
-C     numout = unit intialize in the main program opa < 10
-C     nummpp = unit intialize in the main program opa < 10
+C     numout = unit intialize in the main program ogstm < 10
+C     nummpp = unit intialize in the main program ogstm < 10
 C     numnam = unit intialize in parlec < 10
       nummsh = 13
 C      numbat = 11 PAS DE BATHY.
@@ -474,11 +473,11 @@ C
       IF(lwp)WRITE(numout,*) ' *** units opened for the run'
       IF(lwp)WRITE(numout,*)
 C
-C   ... Output file ( open in the opa routine )
+C   ... Output file ( open in the ogstm routine )
       ilu = ilu+1
       iused(1,ilu) = numout
 C
-C   ... mpp output file ( open in the opa routine )
+C   ... mpp output file ( open in the ogstm routine )
       ilu = ilu+1
       iused(1,ilu) = nummpp
 C

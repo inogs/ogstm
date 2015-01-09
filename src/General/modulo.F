@@ -457,7 +457,7 @@ CC      neuler           : restart euler forward option (0=Euler)
 
 
 CC----------------------------------------------------------------------
-CC         opa output
+CC         ogstm output
 CC ---------------------------
 CC      numout           : logical unit for output print
 

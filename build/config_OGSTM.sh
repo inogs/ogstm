@@ -2,7 +2,7 @@
 
 usage() {
 echo "SYNOPSYS"
-echo "config_OPATM.sh arch "
+echo "config_OGSTM.sh arch "
 }
 
 if [ $# -lt 1 ] ; then
@@ -12,12 +12,12 @@ fi
 
 OPA_ARCH=$1
 #OMP_FLAG=$2
-export OPATMDIR=$PWD/..
+export OGSTMDIR=$PWD/..
 
 
 
 #----------------- User configuration -----------------
-archfile="${OPATMDIR}/compilers/compiler.inc"
+archfile="${OGSTMDIR}/compilers/compiler.inc"
 if [ $OPA_ARCH == 'ppc64' ] ; then
    cppdefs="-WF,-Dkey_off_tra,-Dkey_trahdfcoef1d,-Dkey_trahdfbilap,-Dkey_mpp,-Dkey_mpp_mpi,-Dkey_passivetrc,-Dkey_trc_smolar,-Dkey_trc_hdfbilap,-Dkey_trc_dmp,-Dkey_kef,-Dkey_trc_sed,-Dkey_trc_bfm,-Dkey_INCLUDE_BFM_PELCO2"
 
@@ -26,17 +26,17 @@ else
    cppdefs="-Dkey_off_tra -Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_passivetrc -Dkey_trc_smolar  -Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2 -DMem_Monitor"
    if [ $OPENMP_FLAG ] ; then cppdefs+=" -D__OPENMP"; fi
 fi
-exe=${OPATMDIR}/bin/opa.xx
+exe=${OGSTMDIR}/bin/ogstm.xx
 #----------------- User configuration -----------------
 
-if [ "${OPATMDIR}" = "" ]; then
-   echo "Environmental variable OPATMDIR not defined!"
+if [ "${OGSTMDIR}" = "" ]; then
+   echo "Environmental variable OGSTMDIR not defined!"
    exit 1
 fi
 
-BLDDIR="${OPATMDIR}/build/BLD_OPATM"
-MKMF="${OPATMDIR}/bin/mkmf"
-oflags=" -I${OPATMDIR}/src/ "
+BLDDIR="${OGSTMDIR}/build/BLD_OGSTM"
+MKMF="${OGSTMDIR}/bin/mkmf"
+oflags=" -I${OGSTMDIR}/src/ "
 
 if [ ! -d ${BLDDIR} ]; then
   mkdir ${BLDDIR}
@@ -44,16 +44,16 @@ fi
 
 cd ${BLDDIR}
 
-ls ${OPATMDIR}/src/General/get_mem.c       >  OPATM.lst
-ls ${OPATMDIR}/src/General/get_mem_mod.F90 >> OPATM.lst
-${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p libNotUsed.a OPATM.lst
+ls ${OGSTMDIR}/src/General/get_mem.c       >  OGSTM.lst
+ls ${OGSTMDIR}/src/General/get_mem_mod.F90 >> OGSTM.lst
+${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p libNotUsed.a OGSTM.lst
 mv Makefile MakeLib
 
-ls ${OPATMDIR}/src/General/*.[Fhc] >  OPATM.lst
-ls ${OPATMDIR}/src/IO/*.[Fhc]     >> OPATM.lst
-ls ${OPATMDIR}/src/MPI/*.[Fhc]    >> OPATM.lst
-ls ${OPATMDIR}/src/PHYS/*.[Fhc]   >> OPATM.lst
-ls ${OPATMDIR}/src/BIO/*.[Fhc]    >> OPATM.lst
+ls ${OGSTMDIR}/src/General/*.[Fhc] >  OGSTM.lst
+ls ${OGSTMDIR}/src/IO/*.[Fhc]     >> OGSTM.lst
+ls ${OGSTMDIR}/src/MPI/*.[Fhc]    >> OGSTM.lst
+ls ${OGSTMDIR}/src/PHYS/*.[Fhc]   >> OGSTM.lst
+ls ${OGSTMDIR}/src/BIO/*.[Fhc]    >> OGSTM.lst
 
 
-${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p ${exe} OPATM.lst
+${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p ${exe} OGSTM.lst

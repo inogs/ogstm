@@ -19,7 +19,7 @@ CC ===================
       IF(lwp)WRITE(numout,*) ' routine parcst'
       IF(lwp)WRITE(numout,*) ' **************'
       IF(lwp)WRITE(numout,*) ' '
-      IF(lwp)WRITE(numout,*) ' initialization of opa model'
+      IF(lwp)WRITE(numout,*) ' initialization of ogstm model'
       IF(lwp)WRITE(numout,*) ' '
 
 C 1. Parameters

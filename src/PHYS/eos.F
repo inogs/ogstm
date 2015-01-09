@@ -26,7 +26,7 @@ CC       before the call of dynhpg.
 CC
 CC    neos = 0 : Jackett and McDougall (1994) equation of state.
 CC         the in situ density is computed directly as a function of
-CC         potential temperature relative to the surface (the opa t
+CC         potential temperature relative to the surface (the ogstm t
 CC         variable), salt and pressure (assuming no pressure variation
 CC         along geopotential surfaces, i.e. the pressure p in decibars
 CC         is approximated by the depth in meters.

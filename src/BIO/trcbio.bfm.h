@@ -30,22 +30,10 @@ CC statement functions
 CC ===================
 
 
-      INTERFACE OPA_Output_EcologyDynamics
-         subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI, local_opa_dia,jptra_dia)
-!            use global_mem, ONLY:RLEN
-            IMPLICIT NONE
-            integer dim_opa_tra,jptra_dia
-            real(8):: sediPI(4)
-            real(8):: opa_tra(dim_opa_tra)
-            real(8):: local_opa_dia(jptra_dia)
-         end subroutine
-      END INTERFACE
-
 C   | --------------|
 C   | BFM MODEL CALL|
 C   | --------------|
 C
-
         BIOparttime = MPI_WTIME()
 
 #ifdef __OPENMP
@@ -146,7 +134,7 @@ C
 
                           call EcologyDynamics()
 
-                          call OPA_Output_EcologyDynamics(b, jtrmax, c, d, jptra_dia-1)
+                          call OPA_Output_EcologyDynamics(b, c, d)
 
                           DO jtr=1, jtrmax
                              tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend

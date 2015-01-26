@@ -95,7 +95,6 @@ C
 #elif defined key_trc_npzdb
 da inserire       
 #elif key_trc_bfm
-# include "trcdtr.bfm.h"
 
 #endif
 

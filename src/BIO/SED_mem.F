@@ -45,22 +45,22 @@ CC----------------------------------------------------------------------
        sed_idx(6)  = ppP1n
        sed_idx(7)  = ppP1p
        sed_idx(8)  = ppP1s
-       sed_idx(9)  = ppP1i
+       sed_idx(9)  = ppP1l
 
        sed_idx(10) = ppP2c
        sed_idx(11) = ppP2n
        sed_idx(12) = ppP2p
-       sed_idx(13) = ppP2i
+       sed_idx(13) = ppP2l
 
        sed_idx(14) = ppP3c
        sed_idx(15) = ppP3n
        sed_idx(16) = ppP3p
-       sed_idx(17) = ppP3i
+       sed_idx(17) = ppP3l
 
        sed_idx(18) = ppP4c
        sed_idx(19) = ppP4n
        sed_idx(20) = ppP4p
-       sed_idx(21) = ppP4i
+       sed_idx(21) = ppP4l
 
        allocate(jarr_sed(2, jpi*jpj))
        allocate(jarr_sed_flx(jpi*jpj,jpk))

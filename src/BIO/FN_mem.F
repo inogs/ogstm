@@ -38,11 +38,11 @@
       allocate(jarr_snu(2, jpi*jpj))
       allocate(tra_FN(jpi,jpj,jpk,jptra))
 
-      CALL OPA_elements(elements,nelements,idx_element)
+      !CALL OPA_elements(elements,nelements,idx_element)
 
-      allocate(TOT    (jpj*jpi,elements)) ! elements is the number of element considered (C,P,N,...)
-      allocate(TOT_FN (jpj*jpi,elements))
-      allocate(FN_CORR(jpj*jpi,elements))
+      !allocate(TOT    (jpj*jpi,elements)) ! elements is the number of element considered (C,P,N,...)
+      !allocate(TOT_FN (jpj*jpi,elements))
+      !allocate(FN_CORR(jpj*jpi,elements))
 
 
       allocate(cou_FN(jpi,jpj,jpk))

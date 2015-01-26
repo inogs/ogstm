@@ -117,7 +117,7 @@
               CALL readnc_double_1d(nomefile,nomevar, Gsizeglo,gib_aux)
 
               DO jv=1,Gsize
-                 gib_dtatrc(jv,2,jn) = gib_aux(gib_ridxt(jv,1))
+                 gib_dtatrc(jv,2,jn) = gib_aux(gib_ridxt(1,jv))
               ENDDO
           ENDDO
 

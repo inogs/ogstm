@@ -3,6 +3,11 @@
        USE modul_param
        USE timers
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
@@ -35,7 +40,7 @@ CC      mindi, mindj() : indexes array of the subdomain
       INTEGER, allocatable :: mindi(:), mindj(:)
       INTEGER, allocatable :: nimppt(:), njmppt(:), nlcit(:), nlcjt(:)
       INTEGER, allocatable ::  nldit(:),  nldjt(:), nleit(:), nlejt(:)
-      REAL(8) mem_all,rea_len,int_len
+      INTEGER  mem_all
 
       INTEGER npolj
 
@@ -186,7 +191,7 @@ CC      vmask, fmask()
 
 
       REAL(8), allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
-      INTEGER NBFMPOINTS, NBFMPOINTS_SUP
+      INTEGER NBFMPOINTS, NBFMPOINTS_SUP, NWATERPOINTS
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -452,7 +457,7 @@ CC      neuler           : restart euler forward option (0=Euler)
 
 
 CC----------------------------------------------------------------------
-CC         opa output
+CC         ogstm output
 CC ---------------------------
 CC      numout           : logical unit for output print
 
@@ -841,376 +846,179 @@ CC----------------------------------------------------------------------
       CONTAINS
 ! *******************************************************************
       subroutine myalloc_DYN()
-      mem_all = 0.
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err) 
+#endif Mem_Monitor
+
 #ifdef key_trahdfeiv
-       allocate(zaeiu   (jpiglo,jpjglo,jpk))
-       allocate(zaeiv   (jpiglo,jpjglo,jpk))
-       allocate(zaeiw   (jpiglo,jpjglo,jpk))
-        mem_all = 8*(3*jpiglo*jpjglo*jpk)
+       allocate(zaeiu   (jpiglo,jpjglo,jpk)) ; zaeiu = huge(zaeiu(1,1,1))
+       allocate(zaeiv   (jpiglo,jpjglo,jpk)) ; zaeiv = huge(zaeiv(1,1,1))
+       allocate(zaeiw   (jpiglo,jpjglo,jpk)) ; zaeiw = huge(zaeiw(1,1,1))
+
 #endif
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
       END subroutine myalloc_DYN
 ! *******************************************************************
       subroutine myalloc_DR()
-      mem_all = 0
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err) 
+#endif Mem_Monitor
+
 #ifdef key_s_coord
-      allocate(hbattglo(jpiglo,jpjglo))
-      allocate(hbatuglo(jpiglo,jpjglo))
-      allocate(hbatvglo(jpiglo,jpjglo))
-      allocate(hbatfglo(jpiglo,jpjglo))
-      mem_all = rea_len*4*jpiglo*jpjglo
+      allocate(hbattglo(jpiglo,jpjglo)) ; hbattglo = huge(hbattglo(1,1))
+      allocate(hbatuglo(jpiglo,jpjglo)) ; hbatuglo = huge(hbatuglo(1,1))
+      allocate(hbatvglo(jpiglo,jpjglo)) ; hbatvglo = huge(hbatvglo(1,1))
+      allocate(hbatfglo(jpiglo,jpjglo)) ; hbatfglo = huge(hbatfglo(1,1))
+
 #endif
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
+
       END subroutine myalloc_DR
 ! *******************************************************************
 
        subroutine myalloc_BFM()
+      INTEGER  :: err
+      INTEGER  :: aux_mem
 
-       allocate(BFMpoints(3,NBFMPOINTS))
-       mem_all = mem_all + 3*NBFMPOINTS*4
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err) 
+#endif Mem_Monitor
+
+       allocate(BFMpoints(3,NBFMPOINTS)) ; BFMpoints = huge(BFMpoints(1,1))
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
+
        end subroutine myalloc_BFM
 
+      subroutine alloc_tot()
 
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err) 
+#endif Mem_Monitor
+     
 
-       subroutine alloc_tot()
-
-C I. MODEL SET UP
-C ===============
-C
-C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
-CC----------------------------------------------------------------------
-CC Common/comdom/  : domain parameters
-CC -----------------------------------
-CC      nizoom, njzoom   : (i,j) indexes for the domain left bottom zoom
-CC      nperio           : lateral boundary condition type 
-CC      nimpp,njmpp      : (i,j) indexes for mpp-subdomain left bottom
-CC      nreci,nrecj      : overlap region in i and j
-CC      nproc            : number for local processor
-CC      narea            : number for local area
-CC      nbondi, nbondj   : mark of i- and j-direction local boundaries
-CC      nlci, nlcj       : i, j dimensions of the local subdomain
-CC      nldi, nlei,      : first and last indoor i- and j-indexes
-CC      nldj, nlej   
-CC      noea, nowe,      : index of the local neighboring processors in
-CC      noso, nono         east, west, south and north directions
-CC      nimppt(),njmppt(): i-, j-indexes for each processor
-CC      nlcit(), nlcjt() : dimensions of every subdomain
-CC      nldit(), nldjt() : first, last indoor index for each i-domain
-CC      nleit(), nlejt() : first, last indoor index for each j-domain
-CC      mindi(), mindj() : indexes array of the subdomain
-CC
-CC      INTEGER mindi(jpi), mindj(jpj)
-CC    INTEGER nimppt(jpnij), njmppt(jpnij), nlcit(jpnij), nlcjt(jpnij)
-CC    INTEGER  nldit(jpnij),  nldjt(jpnij), nleit(jpnij), nlejt(jpnij)
-CCC F79 18 01 2006 to calculate total memory allocated
       ncpu = 1
-      mem_all = 0.0
-      int_len = 4.0
-      rea_len = 8.0
-      allocate(mindi(jpi))
-      allocate(mindj(jpj))
-      allocate(nimppt(jpnij))
-      allocate(njmppt(jpnij))
-      allocate(nlcit(jpnij))
-      allocate(nlcjt(jpnij))
-      allocate(nldit(jpnij))
-      allocate(nldjt(jpnij))
-      allocate(nleit(jpnij))
-      allocate(nlejt(jpnij))
-      mem_all = mem_all + int_len*(jpi+jpj+8*jpnij) 
-C     write(*,*) 'Mem_allocated:', mem_all
-CC
-CC----------------------------------------------------------------------
-CC Common/comcst/ : physical constants
-CC -----------------------------------
-CC      nbiss()          : number of days per month (leap-year)
-CC      nobis()          : number of days per month (365 days a year)
-CC      rpi              : pi
-CC      rday             : day
-CC      rsiyea           : sideral year
-CC      rsiday           : sideral day  
-CC      omega            : earth rotation parameter
-CC      ra               : earth radius (meter)
-CC      g                : gravity
-CC      rtt              : fusion point
-CC      rt0              : zero celsius
-CC      rauw             : density of pure water kg/m3
-CC      rad              : conversion coeff. from degre into radian
-CC      rcs              : conversion coeff. from millimeter per day
-CC                         into meter per second
-CC      raajj            : number of days in one year
-CC      raamo            : number of months in one year
-CC      rjjhh            : number of hours in one day
-CC      rhhmm            : number of minutes in one hour
-CC      rmmss            : number of seconds in one minute
-CC      raass            : number of seconds in one year
-CC      rmoss            : number of seconds in one month
-CC      rjjss            : number of seconds in one day
-C
-C
-CC
-CC
-CC----------------------------------------------------------------------
-CC Common/my_temp/ : cronometer for function calls
-CC -----------------------------------
 
-CC----------------------------------------------------------------------
-CC Common/comeos/ : ocean physical parameters (equation of state, ...)
-CC ------------------------------------------
-CC    neos         : flag of the type of equation of state used
-CC      rau0             : reference volumic mass of the ocean (kg/m3)
-CC      ralpha, rbeta    : thermique and haline expension coef. used
-CC               for linear equation of state (neos=1 or 2)
-CC      rcp              : ocean specific heat
-CC      ro0cpr           : = 1. / ( rau0 * rcp )
-C
-CC
+      allocate(mindi(jpi))    ;mindi  = huge(mindi(1))
+      allocate(mindj(jpj))    ;mindj  = huge(mindj(1))   
+      allocate(nimppt(jpnij)) ;nimppt = huge(nimppt(1))
+      allocate(njmppt(jpnij)) ;njmppt = huge(njmppt(1))
+      allocate(nlcit(jpnij))  ;nlcit  = huge(nlcit(1)) 
+      allocate(nlcjt(jpnij))  ;nlcjt  = huge(nlcjt(1))
+      allocate(nldit(jpnij))  ;nldit  = huge(nldit(1))
+      allocate(nldjt(jpnij))  ;nldjt  = huge(nldjt(1))
+      allocate(nleit(jpnij))  ;nleit  = huge(nleit(1))
+      allocate(nlejt(jpnij))  ;nlejt  = huge(nlejt(1))
 
-      allocate(rdttra(jpk))
-      mem_all = mem_all + int_len*jpk 
-C     write(*,*) 'Mem_allocated:', mem_all
-CC
-CC
-CC----------------------------------------------------------------------
-CC     horizontal curvilinear coordinate and scale factors
-CC ---------------------------------------------------------------------
-CC      nummsh           : logical unit of coordinate/meshes output file
-CC      ngrid            : flag to read or compute coordinates
-CC      nmsh             : flag to write coordinates and meshes file
-CC      njpi, njpj       : read dimensions
-CC      rra              : read earth radius
-CC      glamt()          : longitude of t-point (degre)
-CC      glamu()          : longitude of u-point (degre)
-CC      glamv()          : longitude of v-point (degre)
-CC      glamf()          : longitude of f-point (degre)
-CC      gphit()          : latitude  of t-point (degre)
-CC      gphiu()          : latitude  of u-point (degre)
-CC      gphiv()          : latitude  of v-point (degre)
-CC      gphif()          : latitude  of f-point (degre)
-CC      e1t,e2t()        : horizontal scale factors at t-point (m)
-CC      e1u,e2u()        : horizontal scale factors at u-point (m)
-CC      e1v,e2v()        : horizontal scale factors at v-point (m)
-CC      e1f,e2f()        : horizontal scale factors at f-point (m)
-CC    ff()             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
-C
-CC      REAL(8) glamt(jpi,jpj), glamu(jpi,jpj), glamv(jpi,jpj),glamf(jpi,jpj)
-CC      REAL(8) gphit(jpi,jpj), gphiu(jpi,jpj), gphiv(jpi,jpj),gphif(jpi,jpj)
-CC      REAL(8) e1t(jpi,jpj), e1u(jpi,jpj), e1v(jpi,jpj), e1f(jpi,jpj)
-CC      REAL(8) e2t(jpi,jpj), e2u(jpi,jpj), e2v(jpi,jpj), e2f(jpi,jpj)
-CC      REAL(8) ff(jpi,jpj)
-        allocate(totglamt(jpiglo,jpjglo))
-        allocate(totgphit(jpiglo,jpjglo))
-       !allocate(glamt(jpi,jpj))
-        allocate(glamu(jpi,jpj)) 
-        allocate(glamv(jpi,jpj))
-        allocate(glamf(jpi,jpj))
-        allocate(gphit(jpi,jpj))
-        allocate(gphiu(jpi,jpj)) 
-        allocate(gphiv(jpi,jpj))
-        allocate(gphif(jpi,jpj))
-        allocate(e1t(jpi,jpj)) 
-        allocate(e1u(jpi,jpj)) 
-        allocate(e1v(jpi,jpj)) 
-        allocate(e1f(jpi,jpj))
-        allocate(e2t(jpi,jpj)) 
-        allocate(e2u(jpi,jpj)) 
-        allocate(e2v(jpi,jpj)) 
-        allocate(e2f(jpi,jpj))
-        allocate(ff (jpi,jpj))
-        mem_all = mem_all + rea_len*(2*jpiglo*jpjglo+15*jpi*jpj)
-C     write(*,*) 'Mem_allocated:', mem_all
+
+      allocate(rdttra(jpk))   ;rdttra = huge(rdttra(1))
+
+      allocate(totglamt(jpiglo,jpjglo)) ;totglamt = huge(totglamt(1,1))
+      allocate(totgphit(jpiglo,jpjglo)) ;totgphit = huge(totgphit(1,1))
+      allocate(glamu(jpi,jpj))          ;glamu    = huge(glamu(1,1))
+      allocate(glamv(jpi,jpj))          ;glamv    = huge(glamv(1,1))
+      allocate(glamf(jpi,jpj))          ;glamf    = huge(glamf(1,1))
+      allocate(gphit(jpi,jpj))          ;gphit    = huge(gphit(1,1))
+      allocate(gphiu(jpi,jpj))          ;gphiu    = huge(gphiu(1,1))
+      allocate(gphiv(jpi,jpj))          ;gphiv    = huge(gphiv(1,1))
+      allocate(gphif(jpi,jpj))          ;gphif    = huge(gphif(1,1))
+      allocate(e1t(jpi,jpj))            ;e1t      = huge(e1t(1,1))
+      allocate(e1u(jpi,jpj))            ;e1u      = huge(e1u(1,1))
+      allocate(e1v(jpi,jpj))            ;e1v      = huge(e1v(1,1))
+      allocate(e1f(jpi,jpj))            ;e1f      = huge(e1f(1,1))
+      allocate(e2t(jpi,jpj))            ;e2t      = huge(e2t(1,1))
+      allocate(e2u(jpi,jpj))            ;e2u      = huge(e2u(1,1))
+      allocate(e2v(jpi,jpj))            ;e2v      = huge(e2v(1,1))
+      allocate(e2f(jpi,jpj))            ;e2f      = huge(e2f(1,1))
+      allocate(ff (jpi,jpj))            ;ff       = huge(ff(1,1))
 
 #if defined key_off_degrad
-        allocate(facvol(jpi,jpj,jpk))
-        mem_all = mem_all + rea_len*(jpi*jpj*jpk) 
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(facvol(jpi,jpj,jpk))     ;facvol   = huge(facvol(1,1,1))
 #endif
-C
-CC
-CC----------------------------------------------------------------------
-CC Common/comcoz/  : vertical coordinate and scale factors
-CC -------------------------------------------------------
-CC      numhba           : logical unit for bathymetry file (meters)
-C
-C
-CC
 #ifdef key_s_coord
-CC                   s-coordinate ('key_s_coord')
-CC                   ----------------------------
-CC      hbatt(), hbatu() : ocean depth at the vertical of  t-, u-, v-
-CC      hbatv(), hbatf()   and f-point (m)
-CC      gsigt(), gsigw() : model level depth coefficient at t-, w-levels
-CC      gsi3w()          : model level depth coefficient at w-level
-CC                         defined as the sum of e3w scale factors
-CC      esigt(), esigw() : vertical scale factor coef. at t-, w-levels
 C
-       allocate(hbatt(jpi,jpj))
-       allocate(hbatu(jpi,jpj)) 
-       allocate(hbatv(jpi,jpj))
-       allocate(hbatf(jpi,jpj))
-       allocate(gsigt(jpk)) 
-       allocate(gsigw(jpk))
-       allocate(gsi3w(jpk))
-       allocate(esigt(jpk))
-       allocate(esigw(jpk))
-       mem_all = mem_all + rea_len*(4*jpi*jpj+5*jpk) 
-      write(*,*) 'Mem_allocated:', mem_all
-C
+       allocate(hbatt(jpi,jpj)) ;hbatt = huge(hbatt(1,1))     
+       allocate(hbatu(jpi,jpj)) ;hbatu = huge(hbatu(1,1))
+       allocate(hbatv(jpi,jpj)) ;hbatv = huge(hbatv(1,1))
+       allocate(hbatf(jpi,jpj)) ;hbatf = huge(hbatf(1,1))
+       allocate(gsigt(jpk))     ;gsigt = huge(gsigt(1))
+       allocate(gsigw(jpk))     ;gsigw = huge(gsigw(1))
+       allocate(gsi3w(jpk))     ;gsi3w = huge(gsi3w(1))
+       allocate(esigt(jpk))     ;esigt = huge(esigt(1))
+       allocate(esigw(jpk))     ;esigw = huge(esigw(1))
+
 CC
 #  else
-CC                  z-coordinate (default option)
-CC                  ------------------------------
-CC      gdept(), gdepw() : depth of t- and w-points (m)
-CC      e3t(), e3w()     : vertical scale factors at t- and w-points (m)
 CC
-      allocate(gdept(jpk)) 
-      allocate(gdepw(jpk))
-      allocate(  e3t(jpk))
-      allocate(  e3w(jpk))
-       mem_all = mem_all + rea_len*(4*jpk) 
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(gdept(jpk)) ;gdept = huge(gdept(1))
+      allocate(gdepw(jpk)) ;gdepw = huge(gdepw(1))
+      allocate(  e3t(jpk)) ;  e3t = huge(e3t(1))
+      allocate(  e3w(jpk)) ;  e3w = huge(e3w(1))
+
 C
 #endif
-CC
-CC----------------------------------------------------------------------
-CC Common/comask/  : masks, bathymetry
-CC -----------------------------------
-CC      numbat           : logical unit for bathymetry file
-CC      mbathy()         : number of ocean level (=0, 1, ... , jpk-1)
-CC      tmask(), umask() : land/ocean mask at t-, u-, v- and f-points
-CC      vmask(), fmask()
 C
-      allocate(mbathy(jpi,jpj))
+      allocate(mbathy(jpi,jpj)) ; mbathy = huge(mbathy(1,1))
 C
 C
-      allocate(tmask(jpi,jpj,jpk))
-      allocate(fmask(jpi,jpj,jpk))
-      allocate(umask(jpi,jpj,jpk))
-      allocate(vmask(jpi,jpj,jpk))
-      mem_all = mem_all + int_len*jpi*jpj + rea_len*4*jpi*jpj*jpk  
+      allocate(tmask(jpi,jpj,jpk)) ;tmask = huge(tmask(1,1,1))
+      allocate(fmask(jpi,jpj,jpk)) ;fmask = huge(fmask(1,1,1))
+      allocate(umask(jpi,jpj,jpk)) ;umask = huge(umask(1,1,1))
+      allocate(vmask(jpi,jpj,jpk)) ;vmask = huge(vmask(1,1,1))
 
 
-C     write(*,*) 'Mem_allocated:', mem_all
 C
-CC
-CC
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
-CC II. DYNAMICS AND TRACERS
-CC ========================
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
-CC----------------------------------------------------------------------
-CC Common/combef/  : previous fields (before)
-CC -----------------------------------------
-CC    ub(), vb()       : horizontal velocity (m s-1)
-C
-      allocate(ub(jpi,jpj,jpk)) 
-      allocate(vb(jpi,jpj,jpk))
-      mem_all = mem_all +  rea_len*2*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
-C
-CC
-CC----------------------------------------------------------------------
-CC Common/comnow/  : present fields (now)
-CC -------------------------------------
-CC    un(), vn(), wn() : horizontal and vertical velocity (m s-1)
-CC    hdivn()          : horizontal divergence
-CC    tn(),   sn()     : pot. temperature (celsius), salinity (psu)
-CC      rdn()            : in situ density anomalie rdn=(rho-rau0)/rau0
-CC                         (no units)
-CC    rhopn()          : potential volumic mass (kg m-3)
-CC      bn2n()           : brunt-vaisala frequency (s-2)
-CC
-       allocate(un(jpi,jpj,jpk))
-       allocate(vn(jpi,jpj,jpk))
-       allocate(wn(jpi,jpj,jpk))
-       allocate(hdivn(jpi,jpj,jpk))
-       allocate(tn(jpi,jpj,jpk))
-       allocate(sn(jpi,jpj,jpk))
-       allocate(rdn(jpi,jpj,jpk))
-       allocate(rhopn(jpi,jpj,jpk))
-       allocate(rho(jpi,jpj,jpk))
-       allocate(bn2n(jpi,jpj,jpk))
-       mem_all = mem_all +  rea_len*9*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
-C
-CC
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC III. OCEAN PHYSICS
-CC ==================
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
-CC----------------------------------------------------------------------
-CC Common/comhdt/ : lateral diffusivity (tracers)
-CC ------------------------------------
-CC      aht0             : lateral diffusivity coefficient    (namelist)
-CC      ahtb0            : background diffusivity coefficient (m2/s)
-CC      ahtu(), ahtv()   : lateral diffusivity coef. at u-, v-, w- t-pts
-CC      ahtw(), ahtt()     (harmonic operator: no rotation, use of u-
-CC                          and v-points; rotation, use of u-, v- w-pts)
-CC                         (biharmonic operator: rotation or not, use of
-CC                          t-point only)
-CC                         (the arrays used are 3D, 2D, 1D or 0D depen-
-CC                          ding on 'key_trahdfcoef.d' )
-C
-CCC Paolo 22/4/2004 i killed all options
-#if defined key_trahdfbilap
-# else
-#  if defined key_trahdfcoef3d
-C    allocate(ahtu(jpi,jpj,jpk))
-C    allocate(ahtv(jpi,jpj,jpk))
-C    allocate(ahtw(jpi,jpj,jpk))
-#   elif key_trahdfcoef2d
-C    allocate(ahtu(jpi,jpj)) 
-C    allocate(ahtv(jpi,jpj))
-C    allocate(ahtw(jpi,jpj))
-#   elif key_trahdfcoef1d
-C    allocate(ahtu(jpk)) 
-C    allocate(ahtv(jpk))
-C    allocate(ahtw(jpk))
-#   else
-#     if defined key_off_degrad
-C     allocate(ahtu(jpi,jpj,jpk)) 
-C     allocate(ahtv(jpi,jpj,jpk))
-C     allocate(ahtw(jpi,jpj,jpk))
-#     else
-#     endif
-#  endif
-#endif
-CCC  Paolo 22/4/2004 new conditions 1D case attention
-      allocate(ahtu(jpk))
-      allocate(ahtv(jpk))
-      allocate(ahtw(jpk))
-      allocate(ahtt(jpk))
-      mem_all = mem_all +  rea_len*4*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(ub(jpi,jpj,jpk)) ;ub = huge(ub(1,1,1))
+      allocate(vb(jpi,jpj,jpk)) ;vb = huge(vb(1,1,1))
 
 CC
-CC----------------------------------------------------------------------
-CC Common/comdhd/ : direction of lateral diffusion (momentum & tracers) 
-CC -----------------------------------------------
-CC Slopes ('key_trahdfiso' or 'key_s_coord' defined)
-CC      uslp(), wslpi()  : i-direction slope at u-, w-points
-CC      vslp(), wslpj()  : j-direction slope at v-, w-points
-CC    wk1(), wk2()     : work array used in rotated biharmonic ope-
-CC    wk3(), wk4()       rator on momentum and/or tracers
+       allocate(un(jpi,jpj,jpk))    ;un     = huge(un(1,1,1))
+       allocate(vn(jpi,jpj,jpk))    ;vn     = huge(vn(1,1,1))
+       allocate(wn(jpi,jpj,jpk))    ;wn     = huge(wn(1,1,1))
+       allocate(hdivn(jpi,jpj,jpk)) ;hdivn  = huge(hdivn(1,1,1))
+       allocate(tn(jpi,jpj,jpk))    ;tn     = huge(tn(1,1,1))
+       allocate(sn(jpi,jpj,jpk))    ;sn     = huge(sn(1,1,1))
+       allocate(rdn(jpi,jpj,jpk))   ;rdn    = huge(rdn(1,1,1))
+       allocate(rhopn(jpi,jpj,jpk)) ;rhopn  = huge(rhopn(1,1,1))
+       allocate(rho(jpi,jpj,jpk))   ;rho    = huge(rho(1,1,1))
+       allocate(bn2n(jpi,jpj,jpk))  ;bn2n   = huge(bn2n(1,1,1))
+
+CC
+      allocate(ahtu(jpk)) ;ahtu = huge(ahtu(1))
+      allocate(ahtv(jpk)) ;ahtv = huge(ahtv(1))
+      allocate(ahtw(jpk)) ;ahtw = huge(ahtw(1))
+      allocate(ahtt(jpk)) ;ahtt = huge(ahtt(1))
+
+
 C
 #if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
-      allocate(uslp(jpi,jpj,jpk)) 
-      allocate(vslp(jpi,jpj,jpk))
-      allocate(wslpi(jpi,jpj,jpk))
-      allocate(wslpj(jpi,jpj,jpk))
-       mem_all = mem_all +  rea_len*4*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(uslp(jpi,jpj,jpk))  ;uslp  = huge(uslp(1,1,1))
+      allocate(vslp(jpi,jpj,jpk))  ;vslp  = huge(vslp(1,1,1))
+      allocate(wslpi(jpi,jpj,jpk)) ;wslpi = huge(wslpi(1,1,1))
+      allocate(wslpj(jpi,jpj,jpk)) ;wslpj = huge(wslpj(1,1,1))
+
 #  if defined key_trahdfbilap
-      allocate(wk1(jpi,jpj,jpk))
-      allocate(wk2(jpi,jpj,jpk))
-      allocate(wk3(jpi,jpj,jpk))
-      allocate(wk4(jpi,jpj,jpk))
-       mem_all = mem_all +  rea_len*4*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(wk1(jpi,jpj,jpk)) ; wk1 = huge(wk1(1,1,1))
+      allocate(wk2(jpi,jpj,jpk)) ; wk2 = huge(wk2(1,1,1))
+      allocate(wk3(jpi,jpj,jpk)) ; wk3 = huge(wk3(1,1,1))
+      allocate(wk4(jpi,jpj,jpk)) ; wk4 = huge(wk4(1,1,1))
+
 #   else
 #  endif
 C
@@ -1218,550 +1026,250 @@ C
 C     diffusion along model level surfaces: no arrays
 #endif
 CC
-CC----------------------------------------------------------------------
-CC Common/comeiv/ : eddy induced velocity parameterization
-CC -------------------------------------------------------
-CC      aeiv0            : eddy induced velocity coefficient (m2/s)
-CC      aeiu(), aeiv()   : eddy induced velocity coef. at u-, v- and
-CC      aeiw()             w-points (m2/s). The arrays used are 3D
-CC                         2D, 1D or 0D, depending on 'key_trahdfcoef.d'
 C
 #if defined key_trahdfeiv
 #  if defined key_trahdfcoef3d
-       allocate(aeiu(jpi,jpj,jpk))
-       allocate(aeiv(jpi,jpj,jpk))
-       allocate(aeiw(jpi,jpj,jpk))
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(aeiu(jpi,jpj,jpk)) ; aeiu = huge(aeiu(1,1,1))
+       allocate(aeiv(jpi,jpj,jpk)) ; aeiv = huge(aeiv(1,1,1))
+       allocate(aeiw(jpi,jpj,jpk)) ; aeiw = huge(aeiw(1,1,1))
+
 #   elif key_trahdfcoef2d
-       allocate(aeiu(jpi,jpj)) 
-       allocate(aeiv(jpi,jpj))
-       allocate(aeiw(jpi,jpj))
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(aeiu(jpi,jpj)) ; aeiu = huge(aeiu(1,1))
+       allocate(aeiv(jpi,jpj)) ; aeiv = huge(aeiv(1,1))
+       allocate(aeiw(jpi,jpj)) ; aeiw = huge(aeiw(1,1))
+ 
 #   elif key_trahdfcoef1d
-       allocate(aeiu(jpk)) 
-       allocate(aeiv(jpk))
-       allocate(aeiw(jpk))
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(aeiu(jpk))  ; aeiu = huge(aeiu(1))
+       allocate(aeiv(jpk))  ; aeiv = huge(aeiv(1))
+       allocate(aeiw(jpk))  ; aeiw = huge(aeiw(1))
+
 #   else
 #  endif
 # else
 #     if defined key_off_degrad
-      allocate(aeiu(jpi,jpj,jpk))
-      allocate(aeiv(jpi,jpj,jpk)) 
-      allocate(aeiw(jpi,jpj,jpk))
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(aeiu(jpi,jpj,jpk)) ; aeiu = huge(aeiu(1,1,1))
+      allocate(aeiv(jpi,jpj,jpk)) ; aeiv = huge(aeiv(1,1,1))
+      allocate(aeiw(jpi,jpj,jpk)) ; aeiw = huge(aeiw(1,1,1))
+
 #     else
 #     endif
 #endif
 C
-CC-------------------------------------------------------------------
-CC Common/comgm/ : eddy induced velocities (Gent et Mc William)
-CC---------------------------------------------------------------
-CC       ugm  : eddy induced velocity
-CC       vgm
-CC       wgm
-C
 #if defined key_trahdfeiv
-       allocate(ugm(jpi,jpj,jpk))
-       allocate(vgm(jpi,jpj,jpk))
-       allocate(wgm(jpi,jpj,jpk))
-       mem_all = mem_all +  rea_len*3*jpi*jpj*jpk  
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(ugm(jpi,jpj,jpk)) ; ugm = huge(ugm(1,1,1))
+       allocate(vgm(jpi,jpj,jpk)) ; vgm = huge(vgm(1,1,1))
+       allocate(wgm(jpi,jpj,jpk)) ; wgm = huge(wgm(1,1,1))
+
 #endif
-CC
-CC----------------------------------------------------------------------
-CC Common/comzdf/ : vertical diffusion
-CC -----------------------------------
-CC    avt0             : vertical viscosity and diff. coef. (namelist)
-CC      ntrbbl         : bottom boundary layer (namelist)
-CC      atrbbl         : bottom boundary layer diffusivity (namelist)
-CC    avt()             : vertical diffusivity coeff. at w-point
-CC    avtb()           : background profile of avm and avt
 C
+       allocate(avt (jpi,jpj,jpk)) ; avt  = huge(avt(1,1,1))
+       allocate(avtb(jpk))         ; avtb = huge(avtb(1))
+       allocate(bblx(jpi,jpj))     ; bblx = huge(bblx(1,1))
+       allocate(bbly(jpi,jpj))     ; bbly = huge(bbly(1,1))
+
+
 C
-       allocate(avt (jpi,jpj,jpk))
-       allocate(avtb(jpk))
-       allocate(bblx(jpi,jpj))
-       allocate(bbly(jpi,jpj))
-       mem_all = mem_all +  rea_len*(jpi*jpj*jpk+ jpk +2*jpi*jpj) 
+       allocate(taux  (jpi,jpj)) ; taux   = huge(taux(1,1))
+       allocate(tauy  (jpi,jpj)) ; tauy   = huge(tauy(1,1))
+       allocate(vatm  (jpi,jpj)) ; vatm   = huge(vatm(1,1))
+       allocate(freeze(jpi,jpj)) ; freeze = huge(freeze(1,1))
+
+
+
+       allocate(qt    (jpi,jpj)) ; qt     = huge(qt(1,1))
+       allocate(q     (jpi,jpj)) ; q      = huge(q(1,1))
+       allocate(emp   (jpi,jpj)) ; emp    = huge(emp(1,1))
+       allocate(runoff(jpi,jpj)) ; runoff = huge(runoff(1,1))
 
 
 CC
-CC
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
-CC IV. SURFACE FORCING AND DATA
-CC ============================
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
-CC----------------------------------------------------------------------
-CC Common/comtau/ : surface wind stress at givem time_step
-CC -------------------------------------------------------
-CC    taux(), tauy()   : wind stress components in (i,j) referential
-CC    tauxg(), tauyg() : zonal and meridian wind stress component used
-CC                       in output (geographical referential)
-C
-       allocate(taux  (jpi,jpj))
-       allocate(tauy  (jpi,jpj))
-       allocate(vatm  (jpi,jpj))
-       allocate(freeze(jpi,jpj))
-       mem_all = mem_all +  rea_len*(4*jpi*jpj) 
-C     write(*,*) 'Mem_allocated:', mem_all
-C
-CC
-CC----------------------------------------------------------------------
-CC Common/comflx/ : surface fluxes
-CC -------------------------------
-CC      qt()             : total surface heat flux (w m-2)
-CC      q()              : surface heat flux (w m-2)
-CC      emp()            : evaporation minus precipitation (mm day-1)
-CC      runoff()         : annual run off (mm/day)
-
-       allocate(qt    (jpi,jpj))
-       allocate(q     (jpi,jpj))
-       allocate(emp   (jpi,jpj))
-       allocate(runoff(jpi,jpj))
-       mem_all = mem_all +  rea_len*(4*jpi*jpj) 
-
-CC----------------------------------------------------------------------
-CC
-CC COMMON/comqsr/ : penetrative solar radiation
-CC --------------------------------------------
-CC      qsr()     : solar radiation (w m-2)
-CC
-       allocate(qsr(jpi,jpj))
-       mem_all = mem_all +  rea_len*(jpi*jpj) 
+       allocate(qsr(jpi,jpj)) ; qsr = huge(qsr(1,1))
 
 
-       allocate(udta   (jpi,jpj,jpk,2))
-       allocate(vdta   (jpi,jpj,jpk,2))
-       allocate(wdta   (jpi,jpj,jpk,2))
-       allocate(avtdta (jpi,jpj,jpk,2))
-       allocate(flxdta (jpi,jpj,jpflx,2))
-       allocate(flx    (jpi,jpj,jpflx))
-       allocate(bblxdta(jpi,jpj,2))
-       allocate(bblydta(jpi,jpj,2))
-       allocate(zmxldta(jpi,jpj,2))
-       allocate(hmld(jpi,jpj))
-       mem_all = mem_all +  rea_len*(17*jpi*jpj+ jpi*jpj*jpflx) 
+       allocate(udta   (jpi,jpj,jpk,2))   ; udta    = huge(udta(1,1,1,1))
+       allocate(vdta   (jpi,jpj,jpk,2))   ; vdta    = huge(vdta(1,1,1,1))
+       allocate(wdta   (jpi,jpj,jpk,2))   ; wdta    = huge(wdta(1,1,1,1))
+       allocate(avtdta (jpi,jpj,jpk,2))   ; avtdta  = huge(avtdta(1,1,1,1))
+       allocate(flxdta (jpi,jpj,jpflx,2)) ; flxdta  = huge(flxdta(1,1,1,1))
+       allocate(flx    (jpi,jpj,jpflx))   ; flx     = huge(flx(1,1,1))
+       allocate(bblxdta(jpi,jpj,2))       ; bblxdta = huge(bblxdta(1,1,1))
+       allocate(bblydta(jpi,jpj,2))       ; bblydta = huge(bblydta(1,1,1))
+       allocate(zmxldta(jpi,jpj,2))       ; zmxldta = huge(zmxldta(1,1,1))
+       allocate(hmld(jpi,jpj))            ; hmld    = huge(hmld(1,1))
+
 
 
 #if defined key_off_tra
-CC----------------------------------------------------------------------
 CC
-CC Common/comdyt/ : dynamic data selection
-CC ---------------------------------------
-CC      tdta(),sdta()  : temperature and salinity data array
-CC
-       allocate(tdta(jpi,jpj,jpk,2))
-       allocate(sdta(jpi,jpj,jpk,2))
-       mem_all = mem_all +  rea_len*(4*jpi*jpj*jpk) 
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(tdta(jpi,jpj,jpk,2)) ; tdta = huge(tdta(1,1,1,1))
+       allocate(sdta(jpi,jpj,jpk,2)) ; sdta = huge(sdta(1,1,1,1))
+
 CC
 #endif
 CC
 #if defined key_trahdfiso
-CC----------------------------------------------------------------------
 CC
-CC Common/comdyi/ : dynamic data selection
-CC ---------------------------------------
-CC      uslpdta()      : zonal slope (u point) data array
-CC      vslpdta()      : meridian slope (v point) data array
-CC      wslpidta()     : zonal slope (t point) data array
-CC      wslpjdta()     : meridian slope (t point) data array
-CC
-       allocate(uslpdta(jpi,jpj,jpk,2))
-       allocate(vslpdta(jpi,jpj,jpk,2))
-       allocate(wslpidta(jpi,jpj,jpk,2))
-       allocate(wslpjdta(jpi,jpj,jpk,2))
-       mem_all = mem_all +  rea_len*(8*jpi*jpj*jpk) 
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(uslpdta(jpi,jpj,jpk,2))  ; uslpdta  = huge(uslpdta(1,1,1,1))
+       allocate(vslpdta(jpi,jpj,jpk,2))  ; vslpdta  = huge(vslpdta(1,1,1,1))
+       allocate(wslpidta(jpi,jpj,jpk,2)) ; wslpidta = huge(wslpidta(1,1,1,1))
+       allocate(wslpjdta(jpi,jpj,jpk,2)) ; wslpjdta = huge(wslpjdta(1,1,1,1))
 CC
 #endif
 CC
 #if defined key_trahdfeiv
 CC
-CC Common/comdyd/ : dynamic data selection
-CC ---------------------------------------
-CC      ugmdta()      : zonal Gent et Mc William speed (u point) data array
-CC      vgmdta()      : meridian Gent et Mc William speed (v point) data array
-CC      wgmdta()      : vertical Gent et Mc William speed (w point) data array
 CC
-       allocate(ugmdta(jpi,jpj,jpk,2))
-       allocate(vgmdta(jpi,jpj,jpk,2))
-       allocate(wgmdta(jpi,jpj,jpk,2))
-       mem_all = mem_all +  rea_len*(6*jpi*jpj*jpk) 
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(ugmdta(jpi,jpj,jpk,2)) ; ugmdta = huge(ugmdta(1,1,1,1))
+       allocate(vgmdta(jpi,jpj,jpk,2)) ; vgmdta = huge(vgmdta(1,1,1,1))
+       allocate(wgmdta(jpi,jpj,jpk,2)) ; wgmdta = huge(wgmdta(1,1,1,1))
+
 #endif
 CC
 CC----------------------------------------------------------------------
 
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
-CC V. DIAGNOSTICS
-CC ==============
 
+        allocate(mtask(3,jpcpu)) ; mtask = huge(mtask(1,1))
 
-CC----------------------------------------------------------------------
-CC           multitasking
-
-        allocate(mtask(3,jpcpu))
-       mem_all = mem_all +  int_len*(3*jpcpu) 
-
-CC----------------------------------------------------------------------
-CC        massively parallel processors
-CC ----------------------------------------------
-CC      lwp              : boolean term for mpp output
-CC      nummpp           : logical unit for mpp test print
-CC
 #if defined key_mpp || defined key_debug 
-CC      t3ew()           : 3d message passing arrays east-west    
-CC      t3we()           : 3d message passing arrays west-east
-CC      t3ns()           : 3d message passing arrays north-south
-CC      t3sn()           : 3d message passing arrays south-north 
-CC      t2ew()           : 2d message passing arrays east-west    
-CC      t2we()           : 2d message passing arrays west-east
-CC      t2ns()           : 2d message passing arrays north-south
-CC      t2sn()           : 2d message passing arrays south-north 
 C
-       allocate(t3ns(jpi,jprecj,jpk,2))
-       allocate(t3sn(jpi,jprecj,jpk,2))
-       allocate(t3ew(jpj,jpreci,jpk,2)) 
-       allocate(t3we(jpj,jpreci,jpk,2))
-       allocate(t3ew_my1(jpj,jpreci,jpk,jptra,2)) 
-       allocate(t3we_my1(jpj,jpreci,jpk,jptra,2))
-       allocate(t3sn_my1(jpi,jpreci,jpk,jptra,2)) 
-       allocate(t3ns_my1(jpi,jpreci,jpk,jptra,2))
-       allocate(t2ns(jpi,jprecj,2))  
-       allocate(t2sn(jpi,jprecj,2))
-       allocate(t2ew(jpj,jpreci,2))
-       allocate(t2we(jpj,jpreci,2))
-       mem_all = mem_all +  rea_len*(4*jpi*jprecj*jpk+4*jpj*jpreci*jpk 
-     .           + 4*jpi*jprecj+4*jpj*jpreci) 
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(t3ns(jpi,jprecj,jpk,2))            ; t3ns     = huge(t3ns(1,1,1,1))
+       allocate(t3sn(jpi,jprecj,jpk,2))            ; t3sn     = huge(t3sn(1,1,1,1))
+       allocate(t3ew(jpj,jpreci,jpk,2))            ; t3ew     = huge(t3ew(1,1,1,1))
+       allocate(t3we(jpj,jpreci,jpk,2))            ; t3we     = huge(t3we(1,1,1,1))
+       allocate(t3ew_my1(jpj,jpreci,jpk,jptra,2))  ; t3ew_my1 = huge(t3ew_my1(1,1,1,1,1))
+       allocate(t3we_my1(jpj,jpreci,jpk,jptra,2))  ; t3we_my1 = huge(t3we_my1(1,1,1,1,1))
+       allocate(t3sn_my1(jpi,jpreci,jpk,jptra,2))  ; t3sn_my1 = huge(t3sn_my1(1,1,1,1,1))
+       allocate(t3ns_my1(jpi,jpreci,jpk,jptra,2))  ; t3ns_my1 = huge(t3ns_my1(1,1,1,1,1))
+       allocate(t2ns(jpi,jprecj,2))                ; t2ns     = huge(t2ns(1,1,1))
+       allocate(t2sn(jpi,jprecj,2))                ; t2sn     = huge(t2sn(1,1,1))
+       allocate(t2ew(jpj,jpreci,2))                ; t2ew     = huge(t2ew(1,1,1))
+       allocate(t2we(jpj,jpreci,2))                ; t2we     = huge(t2we(1,1,1))
+
 C
 #  else
 C     no mpp
 #endif
 CC
-CC----------------------------------------------------------------------
-CC          io workspace
-CC -----------------------------
-CC      tabdta()         : data auxilary array
-CC      tabglo()         : global auxilary array
 C
-       allocate(tabdta(jpidta,jpjdta))
-       allocate(tabglo(jpiglo,jpjglo))
-       mem_all = mem_all +  rea_len*(jpidta*jpjdta+jpiglo*jpjglo) 
-C     write(*,*) 'Mem_allocated:', mem_all
+       allocate(tabdta(jpidta,jpjdta)) ; tabdta = huge(tabdta(1,1))
+       allocate(tabglo(jpiglo,jpjglo)) ; tabglo = huge(tabglo(1,1))
+
 CC
 #if defined key_mpp|| defined key_debug
 CC      tabio()          : i/o workspace array
 C
-      allocate(tabio(jpi,jpj,jpnij,jpkmod))
-       mem_all = mem_all +  rea_len*(jpi*jpj*jpnij*jpkmod) 
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(tabio(jpi,jpj,jpnij,jpkmod)) ; tabio =huge(tabio(1,1,1,1))
 CC
 #  else
 #endif
 CC
-CC
-CC
-CC
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
-CC PASSIVE TRACER MODEL
-CC =============
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
 
 #if defined key_passivetrc
-CCC F79 Namelist does not accept allocatable
-CCC         allocate(ctrcnm(jptra))
-CCC         allocate(ctrcun(jptra))
-CCC         allocate(ctrcnl(jptra))
-CC
-CC
-CC Common/citctl/ : parameters for the control of passive tracers
-CC --------------------------------------------------------------
-CC
-CC      numnat    : the number of the passive tracer NAMELIST
-CC      lutini    : initialisation from FILE or not (NAMELIST)
-CC      nutini    : FORTRAN LOGICAL UNIT for initialisation file
-CC
-CCC F79 Namelist does not accept allocatable
-CCC       allocate(lutini(jptra))
-CCC       allocate(nutini(jptra))
-CC
-CC----------------------------------------------------------------------
-CC
-CC COMMON/cottrc/ : passive tracers fields (before,now,after)
-CC ---------------------------------------
-CC      trai      : initial total tracer
-CC      trn()     : traceur concentration for actual time step
-CC      tra()     : traceur concentration for next time step
-CC      trb()     : traceur concentration for before time step
-CC
-CCC Paolo 30/4/2004 Flag time advance SMS or Dyn
 
-       allocate(trn(jpi,jpj,jpk,jptra))
-       allocate(tra(jpi,jpj,jpk,jptra))
-       allocate(tra_pp(jpi,jpj,jpk,jptra_dia))
-       if (lwp) allocate(tottrn(jpiglo, jpjglo, jpk))
-       if (lwp) allocate(tottrb(jpiglo, jpjglo, jpk))
-       allocate(traIO(jpi,jpj,jpk,jptra)) 
-       allocate(snIO(jpi,jpj,jpk)) 
-       allocate(tnIO(jpi,jpj,jpk)) 
-       allocate(vatmIO(jpi,jpj)) 
-       allocate(empIO(jpi,jpj)) 
-       allocate(qsrIO(jpi,jpj)) 
-       allocate(unIO  (jpi,jpj,jpk))
-       allocate(bblxIO(jpi,jpj)) 
-       allocate(vnIO  (jpi,jpj,jpk))
-       allocate(bblyIO(jpi,jpj)) 
-       allocate(wnIO  (jpi,jpj,jpk))
-       allocate(avtIO (jpi,jpj,jpk))
-       allocate(buf   (jpi,jpj,jpk))
-       allocate(buf2   (jpi,jpj))
-       allocate(tra_ppIO(jpi,jpj,jpk,jptra_dia))
-       allocate(traIO_HIGH(   jpi,jpj,jpk,jptra_HIGH))
-       allocate(tra_ppIO_HIGH(jpi,jpj,jpk,jptra_dia_HIGH))
+       allocate(trn(jpi,jpj,jpk,jptra))                    ; trn    = huge(trn(1,1,1,1))
+       allocate(tra(jpi,jpj,jpk,jptra))                    ; tra    = huge(trn(1,1,1,1))
+       allocate(tra_pp(jpi,jpj,jpk,jptra_dia))             ; tra_pp = huge(tra_pp(1,1,1,1))
+       if (lwp) allocate(tottrn(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrn = huge(tottrn(1,1,1)) 
+       if (lwp) allocate(tottrb(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrb = huge(tottrb(1,1,1))
+       allocate(traIO(jpi,jpj,jpk,jptra))                  ; traIO  = huge(traIO(1,1,1,1)) 
+       allocate(snIO(jpi,jpj,jpk))                         ; snIO   = huge(snIO(1,1,1))
+       allocate(tnIO(jpi,jpj,jpk))                         ; tnIO   = huge(tnIO(1,1,1))
+       allocate(vatmIO(jpi,jpj))                           ; vatmIO = huge(vatmIO(1,1))
+       allocate(empIO(jpi,jpj))                            ; empIO  = huge(empIO(1,1))
+       allocate(qsrIO(jpi,jpj))                            ; qsrIO  = huge(qsrIO(1,1))
+       allocate(unIO  (jpi,jpj,jpk))                       ; unIO   = huge(unIO(1,1,1))
+       allocate(bblxIO(jpi,jpj))                           ; bblxIO = huge(bblxIO(1,1))
+       allocate(vnIO  (jpi,jpj,jpk))                       ; vnIO   = huge(vnIO(1,1,1))
+       allocate(bblyIO(jpi,jpj))                           ; bblyIO        = huge(bblyIO(1,1))   
+       allocate(wnIO  (jpi,jpj,jpk))                       ; wnIO          = huge(wnIO(1,1,1))
+       allocate(avtIO (jpi,jpj,jpk))                       ; avtIO         = huge(avtIO(1,1,1))
+       allocate(buf   (jpi,jpj,jpk))                       ; buf           = huge(buf(1,1,1))
+       allocate(buf2   (jpi,jpj))                          ; buf2          = huge(buf2(1,1))
+       allocate(tra_ppIO(jpi,jpj,jpk,jptra_dia))           ; tra_ppIO      = huge(tra_ppIO(1,1,1,1))
+       allocate(traIO_HIGH(   jpi,jpj,jpk,jptra_HIGH))     ; traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
+       allocate(tra_ppIO_HIGH(jpi,jpj,jpk,jptra_dia_HIGH)) ; tra_ppIO_HIGH = huge(tra_ppIO_HIGH(1,1,1,1))
 
 
-       mem_all = mem_all +  rea_len*(3*jpi*jpj*jpk*jptra
-     .          + (jpi*jpj*jpk)*(jptra_HIGH + jptra_dia_HIGH)
-     .          + 13*jpi*jpj*jpk+2*jpiglo* jpjglo* jpk
-     .          + 5*jpi*jpj)
 
 
-       if (lwp) allocate(tottrnIO(jpiglo,jpjglo,jpk))
-       if (lwp) allocate(tottrbIO(jpiglo,jpjglo,jpk))
-       if (lwp) allocate(totsnIO (jpiglo,jpjglo,jpk))
-       if (lwp) allocate(tottnIO (jpiglo,jpjglo,jpk))
-       if (lwp) allocate(totvatmIO(jpiglo,jpjglo))
-       if (lwp) allocate(totempIO(jpiglo,jpjglo))
-       if (lwp) allocate(totqsrIO(jpiglo,jpjglo))
-       if (lwp) allocate(totunIO(jpiglo,jpjglo,jpk))
-       if (lwp) allocate(totbblxIO(jpiglo,jpjglo))
-       if (lwp) allocate(totvnIO(jpiglo,jpjglo,jpk))
-       if (lwp) allocate(totbblyIO(jpiglo,jpjglo))
-       if (lwp) allocate(totwnIO(jpiglo,jpjglo,jpk))
-       if (lwp) allocate(totavtIO(jpiglo,jpjglo,jpk))
-       if (lwp) allocate(tottmaIO(jpiglo,jpjglo,jpk))
-       mem_all = mem_all +  rea_len*(12*jpiglo*jpjglo*jpk
-     .          + 5*jpiglo*jpjglo)
-
-       allocate(trb(jpi,jpj,jpk,jptra))
-       mem_all = mem_all +  rea_len*jpi*jpj*jpk*jptra 
+       if (lwp)  allocate(tottrnIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottrnIO  = huge(tottrnIO(1,1,1)) 
+       if (lwp)  allocate(tottrbIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottrbIO  = huge(tottrbIO(1,1,1)) 
+       if (lwp)  allocate(totsnIO (jpiglo,jpjglo,jpk)) ; if (lwp) totsnIO   = huge(totsnIO(1,1,1))  
+       if (lwp)  allocate(tottnIO (jpiglo,jpjglo,jpk)) ; if (lwp) tottnIO   = huge(tottnIO(1,1,1))  
+       if (lwp)  allocate(totvatmIO(jpiglo,jpjglo))    ; if (lwp) totvatmIO = huge(totvatmIO(1,1))  
+       if (lwp)  allocate(totempIO(jpiglo,jpjglo))     ; if (lwp) totempIO  = huge(totempIO(1,1))   
+       if (lwp)  allocate(totqsrIO(jpiglo,jpjglo))     ; if (lwp) totqsrIO  = huge(totqsrIO(1,1))   
+       if (lwp)  allocate(totunIO(jpiglo,jpjglo,jpk))  ; if (lwp) totunIO   = huge(totunIO(1,1,1))  
+       if (lwp)  allocate(totbblxIO(jpiglo,jpjglo))    ; if (lwp) totbblxIO = huge(totbblxIO(1,1))  
+       if (lwp)  allocate(totvnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totvnIO   = huge(totvnIO(1,1,1))  
+       if (lwp)  allocate(totbblyIO(jpiglo,jpjglo))    ; if (lwp) totbblyIO = huge(totbblyIO(1,1))  
+       if (lwp)  allocate(totwnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totwnIO   = huge(totwnIO(1,1,1))  
+       if (lwp)  allocate(totavtIO(jpiglo,jpjglo,jpk)) ; if (lwp) totavtIO  = huge(totavtIO(1,1,1)) 
+       if (lwp)  allocate(tottmaIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottmaIO  = huge(tottmaIO(1,1,1)) 
 
 
-CC----------------------------------------------------------------------
-CC
-CC COMMON /cot3ad/ non-centered advection scheme (smolarkiewicz)
-CC -------------------------------------------------------------
-CC      rsc         : tuning coefficient for anti-diffusion (NAMELIST)
-CC      rtrn        : value for truncation (NAMELIST)
-CC
-CC
+       allocate(trb(jpi,jpj,jpk,jptra))              ; trb        = huge(trb(1,1,1,1))
 
-CC----------------------------------------------------------------------
-CC
-CC COMMON /cit3ad/ non-centered advection scheme (smolarkiewicz)
-CC -------------------------------------------------------------
-CC      crosster    : logical if true computes crossterms (NAMELIST) 
-CC      lhdf        : logical if true CALL trchdf (NAMELIST) 
-CC      ncor        : number of corrective phases (NAMELIST)
-CC      ndttrc      : frequency of step on passive tracers (NAMELIST)
-CC
 
-CC
-CC
-CC----------------------------------------------------------------------
-CC
-CC COMMON/citrst/ : passive tracers restart (input and output)
-CC -----------------------------------------------------------
-CC      nutwrs    : output FILE for passive tracers restart
-CC      lrsttr    : boolean term for restart i/o for passive tracers 
-CC                  (NAMELIST)
-CC      nutrst    : logical unit for restart FILE for passive tracers
-CC      nrsttr    : control of the time step ( 0 or 1 ) for pass. tr.
-CC                  (NAMELIST)
-CC
-CC
-CC----------------------------------------------------------------------
-CC
-CC COMMON/cotiso/ : isopycnal sheme for passive tracers 
-CC -----------------------------------------------------------
-CC      ahtrb0    : background diffusivity coefficient (m2/s)
-CC                  for passive tracer
-CC      trcrat    : ratio between passive and active tracer coeff
-CC                  for diffusion
-CC      ahtrc0    : horizontal eddy diffusivity for passive tracers (m2/s)
-CC    aeivtr0   : eddy induced velocity coefficient (m2/s)
-CC
-CC
 
 #    if defined key_trc_diaadd
-CC----------------------------------------------------------------------
 CC
-CC       : additional 2D/3D outputs
-CC ------------------------------------------------------------------
-CC
-CC      ctrc3d    : 3d output field name (NAMELIST)
-CC      ctrc3l    : 3d output field long name (NAMELIST)
-CC      ctrc3u    : 3d output field unit (NAMELIST)
-CC      ctrc2d    : 2d output field name (NAMELIST)
-CC      ctrc2l    : 2d output field long name (NAMELIST)
-CC      ctrc2u    : 2d output field unit (NAMELIST)
-CC      trc3d     : additional 3d outputs
-CC      trc2d     : additional 2d outputs
-CC
-       allocate(ctrc3d(jpdia3d),allocate(ctrc2d(jpdia2d)
-       allocate(ctrc3u(jpdia3d),allocate(ctrc2u(jpdia2d)
-       allocate(ctrc3l(jpdia3d),allocate(ctrc2l(jpdia2d)
-       allocate(trc3d(jpi,jpj,jpk,jpdia3d), allocate(trc2d(jpi,jpj,jpdia2d)
+       allocate(ctrc3d(jpdia3d))            ; ctrc3d = huge(ctrc3d(1))
+       allocate(ctrc2d(jpdia2d))            ; ctrc2d = huge(ctrc2d(1))
+       allocate(ctrc3u(jpdia3d))            ; ctrc3u = huge(ctrc3u(1))
+       allocate(ctrc2u(jpdia2d))            ; ctrc2u = huge(ctrc2u(1))
+       allocate(ctrc3l(jpdia3d))            ; ctrc3l = huge(ctrc3l(1))
+       allocate(ctrc2l(jpdia2d))            ; ctrc2l = huge(ctrc2l(1))
+       allocate(trc3d(jpi,jpj,jpk,jpdia3d)) ; trc3d  = huge(trc3d(1,1,1,1))
+       allocate(trc2d(jpi,jpj,jpdia2d))     ; trc2d  = huge(trc2d(1,1,1))
 
-       mem_all = mem_all +  rea_len*(3*jpdia3d+3*jpdia2d +
-     .           + jpi*jpj*jpk*jpdia3d+jpi*jpj*jpdia2d )
-C     write(*,*) 'Mem_allocated:', mem_all
 
-CC
-CC    netcdf files and index common
-CC
-CC      nwriteadd: frequency of additional arrays outputs (NAMELIST)
-CC      nitd     : id for additional array output FILE
-CC      ndepitd  : id for depth mesh
-CC      nhoritd  : id for horizontal mesh
-CC
 #    endif
 
 #    if defined key_trc_diatrd
-CC----------------------------------------------------------------------
 CC
-CC COMMON/cottrd/ : non conservative trends (biological, ...)
-CC ------------------------------------------------------------------
-CC
-CC      luttrd    : large trends diagnostic to WRITE or not (NAMELIST)
-CC
-      allocate(luttrd(jptra))
-       mem_all = mem_all +  rea_len*jptra
-C     write(*,*) 'Mem_allocated:', mem_all
-CC
-CC    dynamical trends
-CC
-CC    trtrd()   : trends of the tracer equations
-CC           1 : X advection
-CC           2 : Y advection
-CC           3 : Z advection
-CC           4 : X diffusion
-CC           5 : Y diffusion
-CC           6 : Z diffusion
-CC           7 : X gent velocity
-CC           8 : Y gent velocity
-CC           9 : Z gent velocity
+      allocate(luttrd(jptra)) ; luttrd = huge(luttrd(1))
 
-      allocate(trtrd(jpi,jpj,jpk,jptra,jpdiatrc))
-      mem_all = mem_all +  rea_len*jpi*jpj*jpk*jptra*jpdiatrc
-C     write(*,*) 'Mem_allocated:', mem_all
-CC
-CC    netcdf files and index common
-CC
-CC      nwritetrd: frequency for dynamical trends output (NAMELIST)
-CC                 one per tracer
+      allocate(trtrd(jpi,jpj,jpk,jptra,jpdiatrc)) ; trtrd =huge(trtrd(1,1,1,1,1))
 
-        mem_all = mem_all +  rea_len*3*jptra
-C     write(*,*) 'Mem_allocated:', mem_all
+CC
+
 #    endif 
-CC
-CC----------------------------------------------------------------------
-CC
-CC     passive tracers DATA READ and at given time_step
-CC -----------------------------------------------------------------
-CC      nclimr    : switch for passive tracers initialization
-CC      ncontr    : variable for time interpolation
-CC      numtr1    : LOGICAL UNIT for passive tracers DATA
-CC      numtr2    : LOGICAL UNIT for passive tracers DATA created IF
-CC                  interpolation is needed (ninttr=1)
-CC      nlectr    : switch for reading once
-CC      ninttr    : switch for interpolation on model grid
-CC      nmldmptr  : : = 0/1/2 type of damping in the mixed layer
-CC      trcdat()  : passive tracers DATA array for two value
-CC                  needed for time interpolation
-CC
-CC      trdta()   : passive tracers DATA at given time-step
-CC      restotr() : array of restoring coeff. for passive tracers
-CC
 CC
 CC
 #    if defined key_trc_dmp 
 
-      allocate(trdta(jpi,jpj,jpk,jptra))
-      allocate(trcdat(jpi,jpj,jpk,2,jptra))
-!      allocate(restoglo(jpiglo,jpjglo,jpk))
-      allocate(idxt(jpi,jpj,jpk))
-      allocate(idxt2glo(jpi,jpj,jpk,4))
-!      allocate(idxtglo(jpiglo,jpjglo,jpk))
-      mem_all = mem_all +  rea_len*(4*jpi*jpj*jpk*jptra
-     &                  + 2*jpi*jpj*jpk + 0*jpiglo*jpjglo*jpk)
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(trdta(jpi,jpj,jpk,jptra))    ; trdta    = huge(trdta(1,1,1,1))
+      allocate(trcdat(jpi,jpj,jpk,2,jptra)) ; trcdat   = huge(trcdat(1,1,1,1,1))
+      allocate(idxt(jpi,jpj,jpk))           ; idxt     = huge(idxt(1,1,1))
+      allocate(idxt2glo(jpi,jpj,jpk,4))     ; idxt2glo = huge(idxt2glo(1,1,1,1))
+
+
 CC
 #    else
-CC      no passive tracers DATA at given time step
 #    endif
-CC
 # endif
 
 #ifdef key_trc_bfm
 CC
-CC      vsed      : sedimentation speed (NAMELIST)
-CC      remine()  : remineralisation trend
-CC
-CC      tmaxr     : maximum coefficient for passive tracer damping (NAMELIST)
-CC      tminr     : minimum coefficient for passive tracer damping (NAMELIST)
-CC      remdmp()  : damping coefficient of passive tracers (depth dependant)
-CC
 
-      allocate(remine(jpi,jpj,jpk))
-      allocate(remdmp(jpk,jptra))
-      mem_all = mem_all +  rea_len*(jpi*jpj*jpk+jpk*jptra)
-C     write(*,*) 'Mem_allocated:', mem_all
+      allocate(remine(jpi,jpj,jpk)) ; remine = huge(remine(1,1,1))
+      allocate(remdmp(jpk,jptra))   ; remdmp = huge(remdmp(1,1))
 
 CC
 
-CC
-CC----------------------------------------------------------------------
-CC
-CC COMMON/cotopt/ : optical parameters
-CC -----------------------------------
-CC
-CC      xze       : euphotic layer depth
-CC      xpar      : par (photosynthetic available radiation)
-CC      xkr0      : water coefficient absorption in red (NAMELIST)
-CC      xkg0      : water coefficient absorption in green (NAMELIST)
-CC      xkrp      : pigment coefficient absorption in red (NAMELIST)
-CC      xkgp      : pigment coefficient absorption in green (NAMELIST)
-CC      xlr       : exposant for pigment absorption in red (NAMELIST)
-CC      xlg       : exposant for pigment absorption in green (NAMELIST)
-CC      rpig      : chla/chla+phea ratio (NAMELIST)
-CC
-
-      allocate(xze(jpi,jpj))
-      allocate(xpar(jpi,jpj,jpk))
-      mem_all = mem_all +  rea_len*(jpi*jpj*jpk+jpi*jpj)
-C     write(*,*) 'Mem_allocated:', mem_all
-CC----------------------------------------------------------------------
-CC
+      allocate(xze(jpi,jpj))        ; xze  = huge(xze(1,1))
+      allocate(xpar(jpi,jpj,jpk))   ; xpar = huge(xpar(1,1,1))
+ 
 
 #endif
 
 CC    photoperiod
-        allocate(DAY_LENGTH(jpi,jpj))
+        allocate(DAY_LENGTH(jpi,jpj))   ; DAY_LENGTH = huge(DAY_LENGTH(1,1))
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
   
         END subroutine alloc_tot
 

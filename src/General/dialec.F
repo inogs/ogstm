@@ -27,7 +27,7 @@
        integer ilseq,ji
       INTEGER ilu, iused(1,100)
       NAMELIST/DIAGNOSTICS/ dia
-      NAMELIST/frequency_avedump/ highfreq_tra_dia, freq_ave_phys, save_bkp_group2
+      NAMELIST/frequency_avedump/ freq_ave_phys, save_bkp_group2, highfreq_tra_dia
 
 
 !----------------------------------------------------------------------
@@ -86,6 +86,8 @@
       do ji =1, jptra_dia
           IF (highfreq_tra_dia(ji).eq.1) jptra_dia_high = jptra_dia_high + 1
       ENDDO
+
+      if (lwp) write(*,*) 'High freq diagnostics number :', jptra_dia_HIGH
       allocate(highfreq_table_dia(jptra_dia_HIGH))
 
       jptra_dia_high = 0
@@ -94,20 +96,22 @@
           IF (highfreq_tra_dia(ji).eq.1) then
             jptra_dia_high = jptra_dia_high + 1
             highfreq_table_dia(jptra_dia_high) = ji
-            WRITE(numout,*) dia(ji), ' belongs also to high freq group'
+            if (lwp) WRITE(numout,*) dia(ji), ' belongs also to high freq group'
           ELSE
-            WRITE(numout,*) dia(ji), ' belongs only to low freq group'
+            if (lwp) WRITE(numout,*) dia(ji), ' belongs only to low freq group'
           ENDIF
       enddo
 
-      if (freq_ave_phys.eq.2) then
-           WRITE(numout,*) 'Forcings phys will be dumped following 2.aveTimes file'
-           else
-           if (freq_ave_phys.eq.2) then
-             WRITE(numout,*) 'Forcings phys will be dumped following 1.aveTimes file'
-           else
-             WRITE(numout,*) 'Forcings phys will not be dumped'
-           endif
+      if (lwp) then
+          if (freq_ave_phys.eq.2) then
+               WRITE(numout,*) 'Forcings phys will be dumped following 2.aveTimes file'
+               else
+               if (freq_ave_phys.eq.2) then
+                 WRITE(numout,*) 'Forcings phys will be dumped following 1.aveTimes file'
+               else
+                 WRITE(numout,*) 'Forcings phys will not be dumped'
+               endif
+          endif
       endif
 
 

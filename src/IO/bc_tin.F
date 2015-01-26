@@ -116,7 +116,7 @@
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Rsizeglo,riv_aux)
               CALL readnc_double_1d(nomefile,nomevar, Rsizeglo,riv_aux)
               DO jv=1,Rsize
-                 riv_dtatrc(jv,2,jn) = riv_aux(riv_ridxt(jv,1))
+                 riv_dtatrc(jv,2,jn) = riv_aux(riv_ridxt(1,jv))
               ENDDO
           ENDDO
 

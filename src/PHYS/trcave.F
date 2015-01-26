@@ -98,8 +98,14 @@
       END DO
 
 
-      Realcounter   =    REAL(ave_counter_2  , 8)
-      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+!     *****************  PHYS *****************************************************
+      if (freq_ave_phys.eq.1) then
+          Realcounter   =    REAL(ave_counter_1  , 8)
+          Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+      else
+          Realcounter   =    REAL(ave_counter_2  , 8)
+          Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+      endif
 
 
       DO jk=1, jpk
@@ -159,6 +165,8 @@
         END DO
       END DO
 
+!     *****************  END PHYS *************************************************
+
 !     FIRST, LOW FREQUENCY
 
       Realcounter   =    REAL(ave_counter_2  , 8)
@@ -210,47 +218,52 @@
       Realcounter   =    REAL(ave_counter_1  , 8) ! ****************** HIGH FREQUENCY
       Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
 
+
       DO jn_high=1, jptra_dia_high,ntids
+
 !$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
 !$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_ppIO_HIGH,tra_pp,Miss_val,
 !$omp&   Realcounter,Realcounterp1)
+
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-      IF( mytid + jn_high .LT. jptra_dia ) then
-         jn_on_all = highfreq_table_dia(jn_high+mytid)
-         DO jk=1, jpk
-            DO jj=1, jpj
-               DO ji=1, jpi
-                  IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
-     &             (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
-                  ELSE
-                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
-                  ENDIF
-               END DO
-            END DO
-         END DO
-      ENDIF
-      IF( mytid + jn_high .EQ. jptra_dia ) then ! surface diagnostic packed in last 3D file
-         DO jk=1, jpk
-            DO jj=1, jpj
-               DO ji=1, jpi
-                  IF(tmask(ji,jj,1) .NE. 0.) THEN
-                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
-     &             (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
-                  ELSE
-                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
-                  ENDIF
-               END DO
-            END DO
-         END DO
+
+      IF (mytid + jn_high .LE. jptra_dia_high)  then
+          IF (mytid + jn_high .LT. jptra_dia ) then
+             jn_on_all = highfreq_table_dia(jn_high+mytid)
+
+             DO jk=1, jpk
+             DO jj=1, jpj
+             DO ji=1, jpi
+                IF(tmask(ji,jj,jk) .NE. 0.) THEN
+                   tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
+     &            (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
+                ELSE
+                   tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                ENDIF
+             END DO
+             END DO
+             END DO
+          ENDIF
+          IF( mytid + jn_high .EQ. jptra_dia ) then ! surface diagnostic packed in last 3D file
+          jn_on_all = highfreq_table_dia(jn_high+mytid)
+             DO jk=1, jpk
+             DO jj=1, jpj
+             DO ji=1, jpi
+                IF(tmask(ji,jj,1) .NE. 0.) THEN
+                tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
+     &         (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
+                ELSE
+                tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                ENDIF
+             END DO
+             END DO
+             END DO
+          ENDIF
       ENDIF
 !$omp    end parallel
       END DO
-
-
-! here when nwritetrc  is ok we have to pass the average field!
 
 
 

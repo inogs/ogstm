@@ -18,7 +18,6 @@ CC      argument
 CC              ktask           : task identificator
 CC              kt              : time step
 CC      common
-CC              all the common defined in opa
 CC
 CC
 CC   OUTPUT :                   : no

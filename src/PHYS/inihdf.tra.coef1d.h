@@ -1,4 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/inihdf.tra.coef1d.h,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
 CCC
 CCC             inihdf.tra.coef1d.h
 CCC           ***********************

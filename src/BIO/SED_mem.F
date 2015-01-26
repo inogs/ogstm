@@ -4,6 +4,12 @@
        USE myalloc
        USE DIA_mem
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
+
        IMPLICIT NONE
 
        public
@@ -28,13 +34,19 @@ CC----------------------------------------------------------------------
 #else
       INTEGER :: ntids = 1
 #endif
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
 #endif
        dimen_jvsed=0
 
-       allocate(sed_idx(nsed))
+       allocate(sed_idx(nsed))  ; sed_idx = huge(sed_idx(1))
 
        sed_idx(1)  = ppR6c
        sed_idx(2)  = ppR6n
@@ -62,17 +74,18 @@ CC----------------------------------------------------------------------
        sed_idx(20) = ppP4p
        sed_idx(21) = ppP4l
 
-       allocate(jarr_sed(2, jpi*jpj))
-       allocate(jarr_sed_flx(jpi*jpj,jpk))
-
-       allocate( ztra(nsed,ntids))
-
-
-       allocate(zwork(nsed, jpk, ntids))
+       allocate(jarr_sed(2, jpi*jpj))      ; jarr_sed     = huge(jarr_sed(1,1))
+       allocate(jarr_sed_flx(jpi*jpj,jpk)) ; jarr_sed_flx = huge(jarr_sed_flx(1,1))
+ 
+       allocate( ztra(nsed,ntids))         ; ztra         = huge(ztra(1,1))
 
 
+       allocate(zwork(nsed, jpk, ntids))   ; zwork        = huge(zwork(1,1,1))
 
-       mem_all= rea_len*(nsed*ntids+nsed*jpk*ntids)+int_len*(2*jpj*jpi)
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_SED
 

@@ -19,7 +19,7 @@ CC   -----
 CC      argument
 CC              ktask           : task identificator
 CC      common
-CC              all the common defined in opa
+CC              all the common defined in ogstm
 CC
 CC
 CC   OUTPUT :                   : no

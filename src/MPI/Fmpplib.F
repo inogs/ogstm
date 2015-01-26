@@ -1,4 +1,3 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/Fmpplib.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
 CC
 CC ORCA
 CC
@@ -3990,7 +3989,6 @@ CC   -----
 CC                   ktab   ->   input array
 CC                   kdim   ->   dimension of the array ktab and kwork
 CC                   kwork->   work space array used by mpi 
-CC                               (Never user by opa!)
 CC
 CC   Modifications:
 CC   --------------
@@ -4127,7 +4125,6 @@ CC      argument
 CC                   ktab   ->   input array
 CC                   kdim   ->   dimension of the array ktab and kwork
 CC                   kwork  ->   work space array used by mpi 
-CC                               (Never user by opa!)
 CC   Output :
 CC   -------
 CC       argument 
@@ -4689,7 +4686,6 @@ CC      argument                :
 CC                   ptab   ->   input array
 CC                   kdim   ->   dimension of the array ktab and kwork
 CC                   pwork  ->   work space array used by mpi 
-CC                               (Never user by opa!)
 CC
 CC   Modifications:
 CC   --------------

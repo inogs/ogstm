@@ -9,7 +9,7 @@
             bottom_flux   = 1.
 /
 &NATTRC
-   nwritetrc = 100,
+   nwritetrc = 10000,
    lrsttr = .true.,
    nrsttr = 0 ,
    ctrcnm(1)='O2o',
@@ -209,7 +209,7 @@
    maxvalue(47)=   0.5 !'R6p',
    maxvalue(48)=   3.  !'R6s',
    maxvalue(49)=3000.  !'R7c',
-   maxvalue(50)=200000.!'O3c',
+   maxvalue(50)=200000. !'O3c',
    maxvalue(51)=20000. !'O3h',
 /
 

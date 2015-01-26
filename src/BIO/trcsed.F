@@ -143,7 +143,7 @@ C
            ji = jarr_sed(1,jv+mytid)
            jj = jarr_sed(2,jv+mytid)
 
-              DO  jk = 2,jpkm1
+              DO  jk = 1,jpk
 
                  DO js = 1, nsed
 

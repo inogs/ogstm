@@ -5,13 +5,15 @@
        USE myalloc_mpp
        USE DIA_mem
 
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
 
-CC----------------------------------------------------------------------
-CC Common/comcoh/  : ADVection matrix
-CC ---------------------------------------------------------------------
 C
 C
       INTEGER :: goodpoints, allpoints, tpoints
@@ -45,42 +47,53 @@ CC----------------------------------------------------------------------
       INTEGER :: ntids 
 #endif
 
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
+
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
 #else
       ntids = mpi_pack_size
 #endif
 
-       allocate(advmask(jpi, jpj, jpk))
-       allocate(zti(jpi, jpj, jpk, ntids))
-       allocate(ztj(jpi, jpj, jpk, ntids))
-       allocate(zaa(jpi, jpj, jpk))
-       allocate(zbb(jpi, jpj, jpk))
-       allocate(zcc(jpi, jpj, jpk))
-       allocate(zx(jpi, jpj, jpk, ntids))
-       allocate(zy(jpi, jpj, jpk, ntids))
-       allocate(zz(jpi, jpj, jpk, ntids))
+       allocate(advmask(jpi, jpj, jpk))       ; advmask      = huge(advmask(1,1,1))
+       allocate(zti(jpi, jpj, jpk, ntids))    ; zti          = huge(zti(1,1,1,1))
+       allocate(ztj(jpi, jpj, jpk, ntids))    ; ztj          = huge(ztj(1,1,1,1))
+       allocate(zaa(jpi, jpj, jpk))           ; zaa          = huge(zaa(1,1,1))
+       allocate(zbb(jpi, jpj, jpk))           ; zbb          = huge(zbb(1,1,1))
+       allocate(zcc(jpi, jpj, jpk))           ; zcc          = huge(zcc(1,1,1))
+       allocate(zx(jpi, jpj, jpk, ntids))     ; zx           = huge(zx(1,1,1,1))
+       allocate(zy(jpi, jpj, jpk, ntids))     ; zy           = huge(zy(1,1,1,1))
+       allocate(zz(jpi, jpj, jpk, ntids))     ; zz           = huge(zz(1,1,1,1))
 
-       allocate(zbuf(jpi, jpj, jpk,ntids))
+       allocate(zbuf(jpi, jpj, jpk,ntids))    ; zbuf         = huge(zbuf(1,1,1,1))
 
-       allocate(zkx(jpi, jpj, jpk, ntids))
-       allocate(zky(jpi, jpj, jpk, ntids))
-       allocate(zkz(jpi, jpj, jpk, ntids))
+       allocate(zkx(jpi, jpj, jpk, ntids))    ; zkx          = huge(zkx(1,1,1,1))
+       allocate(zky(jpi, jpj, jpk, ntids))    ; zky          = huge(zky(1,1,1,1))
+       allocate(zkz(jpi, jpj, jpk, ntids))    ; zkz          = huge(zkz(1,1,1,1))
 
-       allocate(inv_eu(jpi, jpj, jpk))
-       allocate(inv_ev(jpi, jpj, jpk))
-       allocate(inv_et(jpi, jpj, jpk))
-       allocate(big_fact_zaa (jpi, jpj, jpk))
-       allocate(big_fact_zbb(jpi, jpj, jpk))
-       allocate(big_fact_zcc(jpi, jpj, jpk))
-       allocate(zbtr_arr(jpi, jpj, jpk))
-       allocate(jarr(3, jpi*jpj*jpk))
-       allocate(jarr1(3, jpi*jpj*jpk))
-       allocate(jarr2(3, jpi*jpj*jpk))
-       allocate(jarr3(3, jpi*jpj*jpk))
-       allocate(jarrt(3, jpi*jpj*jpk))
-       allocate(jarr_adv_flx(jpi*jpj*jpk))
-       mem_all= rea_len*35 * jpi* jpj* jpk+ int_len *jpi* jpj* jpk
+       allocate(inv_eu(jpi, jpj, jpk))        ; inv_eu       = huge(inv_eu(1,1,1))
+       allocate(inv_ev(jpi, jpj, jpk))        ; inv_ev       = huge(inv_ev(1,1,1))
+       allocate(inv_et(jpi, jpj, jpk))        ; inv_et       = huge(inv_et(1,1,1))
+       allocate(big_fact_zaa (jpi, jpj, jpk)) ; big_fact_zaa = huge(big_fact_zaa(1,1,1))
+       allocate(big_fact_zbb(jpi, jpj, jpk))  ; big_fact_zbb = huge(big_fact_zbb(1,1,1))
+       allocate(big_fact_zcc(jpi, jpj, jpk))  ; big_fact_zcc = huge(big_fact_zcc(1,1,1))
+       allocate(zbtr_arr(jpi, jpj, jpk))      ; zbtr_arr     = huge(zbtr_arr(1,1,1))
+       allocate(jarr(3, jpi*jpj*jpk))         ; jarr         = huge(jarr(1,1))
+       allocate(jarr1(3, jpi*jpj*jpk))        ; jarr1        = huge(jarr1(1,1))
+       allocate(jarr2(3, jpi*jpj*jpk))        ; jarr2        = huge(jarr2(1,1))
+       allocate(jarr3(3, jpi*jpj*jpk))        ; jarr3        = huge(jarr3(1,1))
+       allocate(jarrt(3, jpi*jpj*jpk))        ; jarrt        = huge(jarrt(1,1))
+       allocate(jarr_adv_flx(jpi*jpj*jpk))    ; jarr_adv_flx = huge(jarr_adv_flx(1))
+
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END subroutine myalloc_ADV
 

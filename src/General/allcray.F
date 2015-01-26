@@ -1,4 +1,4 @@
-!  Cray subroutines or functions used by OPA model and possibly
+!  Cray subroutines or functions used by OGSTM model and possibly
 !  not found on other platforms.
 
 !  check their existence

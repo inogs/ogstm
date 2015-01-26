@@ -3,6 +3,12 @@
        USE modul_param 
        USE myalloc
        USE myalloc_mpp
+
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+
        IMPLICIT NONE
 
        public
@@ -38,8 +44,14 @@
       USE TIME_MANAGER
       USE myalloc_mpp
 
-      IMPLICIT NONE
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
       CHARACTER(LEN=50) atmfile, rivfile, gibfile
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 !      CHARACTER(LEN=9)  nomedim0
 !      CHARACTER(LEN=13) nomedim1
 !
@@ -75,15 +87,15 @@
       jn_riv  = 5
       jn_atm  = 2
 
-       allocate(resto(jpi,jpj,jpk,jn_gib))
-       allocate(restotr(jpi,jpj,jpk,jptra))
+       allocate(resto(jpi,jpj,jpk,jn_gib))   ; resto   = huge(resto(1,1,1,1))
+       allocate(restotr(jpi,jpj,jpk,jptra))  ; restotr = huge(restotr(1,1,1,1))
 
        IF (Gsizeglo .NE. 0) THEN
-           allocate(tra_matrix_gib(jn_gib))
-           allocate(restocorr(jn_gib))        !Correction to restoration for O3c and O3h
-           allocate(gib_aux(       Gsizeglo))
-           allocate(gib_idxtglo(   Gsizeglo))
-           mem_all = jn_gib*2*Gsizeglo
+
+           allocate(tra_matrix_gib(jn_gib))   ; tra_matrix_gib = huge(tra_matrix_gib(1))
+           allocate(restocorr(jn_gib))        ; restocorr      = huge(restocorr(1))                  !Correction to restoration for O3c and O3h
+           allocate(gib_aux(       Gsizeglo)) ; gib_aux        = huge(gib_aux(1))
+           allocate(gib_idxtglo(   Gsizeglo)) ; gib_idxtglo    = huge(gib_idxtglo(1))
 
           tra_matrix_gib(1) = ppO2o; restocorr(1)=1. ! dissolved Oxygen
           tra_matrix_gib(2) = ppN1p; restocorr(2)=1. ! phosphates
@@ -95,10 +107,9 @@
        ENDIF
        
        IF (Rsizeglo .NE. 0) THEN
-           allocate(tra_matrix_riv(jn_riv))
-           allocate(riv_aux(       Rsizeglo))
-           allocate(riv_idxtglo(   Rsizeglo))
-           mem_all = jn_riv*2*Rsizeglo
+           allocate(tra_matrix_riv(jn_riv))   ; tra_matrix_riv = huge(tra_matrix_riv(1))
+           allocate(riv_aux(       Rsizeglo)) ; riv_aux        = huge(riv_aux(1))
+           allocate(riv_idxtglo(   Rsizeglo)) ; riv_idxtglo    = huge(riv_idxtglo(1))
 
           tra_matrix_riv(1) = ppN1p ! phosphates
           tra_matrix_riv(2) = ppN3n ! nitrates
@@ -108,14 +119,18 @@
        ENDIF
        
        IF (Asizeglo .NE. 0) THEN
-           allocate(tra_matrix_atm(jn_atm))
-           allocate(atm_aux(       Asizeglo))
-           allocate(atm_idxtglo(   Asizeglo))
-           mem_all = jn_atm*2*Asizeglo
+           allocate(tra_matrix_atm(jn_atm))    ; tra_matrix_atm = huge(tra_matrix_atm(1))
+           allocate(atm_aux(       Asizeglo))  ; atm_aux        = huge(atm_aux(1))
+           allocate(atm_idxtglo(   Asizeglo))  ; atm_idxtglo    = huge(atm_idxtglo(1))
 
           tra_matrix_atm(1) = ppN1p ! phosphates
           tra_matrix_atm(2) = ppN3n ! nitrates
        ENDIF
+
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END SUBROUTINE alloc_DTATRC
 
@@ -124,12 +139,28 @@
 !     called by domrea
 !     ****************************************
       SUBROUTINE alloc_DTATRC_local_gib()
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
+
 
        if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
 
-       allocate(gib_ridxt (Gsize, 4        ))
-       allocate(gib_dtatrc(Gsize, 2, jn_gib))
-       allocate(gib       (Gsize,    jn_gib))
+       allocate(gib_ridxt (4, Gsize        )) ; gib_ridxt  = huge(gib_ridxt(1,1))
+       allocate(gib_dtatrc(Gsize, 2, jn_gib)) ; gib_dtatrc = huge(gib_dtatrc(1,1,1))
+       allocate(gib       (Gsize,    jn_gib)) ; gib        = huge(gib(1,1))
+
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END SUBROUTINE alloc_DTATRC_local_gib
 
@@ -141,9 +172,26 @@
 !     ****************************************
       SUBROUTINE alloc_DTATRC_local_riv()
 
-       allocate(riv_ridxt (Rsize,4        ))
-       allocate(riv_dtatrc(Rsize,2, jn_riv))
-       allocate(riv       (Rsize,   jn_riv))
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+      INTEGER  :: err
+      INTEGER  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
+
+
+       allocate(riv_ridxt (4, Rsize       )) ; riv_ridxt  = huge(riv_ridxt(1,1))
+       allocate(riv_dtatrc(Rsize,2, jn_riv)) ; riv_dtatrc = huge(riv_dtatrc(1,1,1))
+       allocate(riv       (Rsize,   jn_riv)) ; riv        = huge(riv(1,1))
+
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
 
       END SUBROUTINE alloc_DTATRC_local_riv
 
@@ -153,11 +201,26 @@
 !     called by domrea
 !     ****************************************
       SUBROUTINE alloc_DTATRC_local_atm()
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif Mem_Monitor
+      INTEGER  :: err
+      INTEGER  :: aux_mem
 
-       allocate(atm_ridxt (Asize, 4        ))
-       allocate(atm_dtatrc(Asize, 2, jn_atm))
-       allocate(atm       (Asize,    jn_atm))
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif Mem_Monitor
 
+
+       allocate(atm_ridxt (4, Asize        )) ; atm_ridxt  = huge(atm_ridxt(1,1))
+       allocate(atm_dtatrc(Asize, 2, jn_atm)) ; atm_dtatrc = huge(atm_dtatrc(1,1,1))
+       allocate(atm       (Asize,    jn_atm)) ; atm        = huge(atm(1,1))
+
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif Mem_Monitor
       END SUBROUTINE alloc_DTATRC_local_atm
 
       END MODULE 

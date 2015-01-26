@@ -51,7 +51,8 @@
 
 
       Do jn=50,jptra
-      tra_pp(:,:,jn-49,jptra_dia) = 0.0
+      tra_pp(:,:,:,jptra_dia) = 0.0
+!     tra_pp(:,:,jn-49,jptra_dia) = 0.0
 
          DO jb=1,NBFMPOINTS_SUP,ntids
 

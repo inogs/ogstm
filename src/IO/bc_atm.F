@@ -118,7 +118,7 @@
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
               CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
               DO jv=1,Asize
-                 atm_dtatrc(jv,2,jn) = atm_aux(atm_ridxt(jv,1))
+                 atm_dtatrc(jv,2,jn) = atm_aux(atm_ridxt(1,jv))
               ENDDO
           ENDDO
 

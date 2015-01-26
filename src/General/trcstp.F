@@ -6,7 +6,7 @@
 !
 !  PURPOSE :
 !  ---------
-!	time loop of opa for passive tracer
+!	time loop of ogstm for passive tracer
 !
 !   METHOD :
 !   -------

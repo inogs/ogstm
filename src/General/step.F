@@ -6,7 +6,7 @@
 !
 !  PURPOSE :
 !  ---------
-!    Time loop of OPA
+!    Time loop of ogstm
 !
 !   METHOD :
 !   -------
@@ -92,9 +92,10 @@
                if (save_bkp_group2) CALL trcdia(datestring, datefrom_2, datestring,2)
             endif
 
-
-         B = writeTemporization("trcdia____", trcdiatottime)
-         B = writeTemporization("trcwri____", trcwritottime)
+         if (lwp) then
+             B = writeTemporization("trcdia____", trcdiatottime)
+             B = writeTemporization("trcwri____", trcwritottime)
+         endif
          endif
 
 
@@ -103,7 +104,7 @@
 ! ------------------------------------------------------------------
 
 
-      CALL forcings_PHYS(DATEstring)     ! dtadyn
+      CALL forcings_PHYS(DATEstring)
       CALL forcings_KEXT(datestring)
       CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
       CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
@@ -121,7 +122,7 @@
          TauAVEfrom_1    = TAU
          ave_counter_1   = 0   !  reset the counter
          IsStartBackup_1 = .false.
-         B = writeTemporization("trcdia____", trcdiatottime)
+        if (lwp)  B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
       if (IsAnAveDump(DATEstring,2)) then
@@ -133,7 +134,7 @@
          TauAVEfrom_2    = TAU
          ave_counter_2   = 0   !  reset the counter
          IsStartBackup_2 = .false.
-         B = writeTemporization("trcdia____", trcdiatottime)
+         if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
 
@@ -150,12 +151,14 @@
        stpparttime = MPI_WTIME() - stpparttime
        stptottime  = stptottime  + stpparttime
 
-! OPA TEMPORIZATION
+! OGSTM TEMPORIZATION
        IF (TAU.GT.TimeStepStart) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
-           write(*,*) "************* OPA TEMPORIZATION ************"
-           write(*,*) "              Iteration",TAU
-           write(*,*) "routine******time_tot*********time_ave*****"
+           if (lwp) then
+               write(*,*) "************* OGSTM TEMPORIZATION *********"
+               write(*,*) "              Iteration",TAU
+               write(*,*) "routine******time_tot*********time_ave*****"
+           endif
            B = writeTemporization("forPhys___", forcing_phys_TotTime)
            B = writeTemporization("forKext___", forcing_kext_TotTime)
            B = writeTemporization("bcCO2_____", bc_co2_TotTime)
@@ -183,7 +186,6 @@
            B = writeTemporization("stp_______", stptottime  )
 
            call reset_Timers()
-           write(*,*) "*******************************************"
        ENDIF
       ENDIF
 

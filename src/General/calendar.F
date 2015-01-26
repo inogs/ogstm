@@ -36,7 +36,6 @@
 
       MODULE calendar
         !
-        !$Header: /cvsroot/opatm-bfm/opa_model/OPA/calendar.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
         !
         !
         !   This is the calendar which going to be used to do all calculations

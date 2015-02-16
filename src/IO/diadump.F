@@ -351,7 +351,7 @@
 ! *********** START WRITING **************************
 
       if (rank == 0) then
-              var        =  dia(jn)
+              var        =  dianm(jn)
               bkpname     = DIR//'ave.'//datemean//'.'//var//'.nc.bkp'
               dia_file_nc = DIR//'ave.'//datemean//'.'//var//'.nc'
 
@@ -401,7 +401,7 @@
       IF (FREQ_GROUP.eq.2) then
          IS_TIME_TO_SAVE = .true.
       ELSE
-        IF (highfreq_tra_dia(jn).eq.1) then
+        IF (diahf(jn).eq.1) then
             IS_TIME_TO_SAVE = .true.
         ELSE
            IS_TIME_TO_SAVE = .false.

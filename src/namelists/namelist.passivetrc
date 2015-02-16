@@ -1,17 +1,6 @@
-&natnum    rsc            =    1.,
-            rtrn          = 1.e-25,
-            ndttrc        = 1,
-            lhdf          = .true.,
-            crosster      = .false. ,
-            vsed          = 3.0,
-            photop        = .false.
-            atlantic_bfm  = .true.
-            bottom_flux   = 1.
-/
+
 &NATTRC
-   nwritetrc = 10000,
-   lrsttr = .true.,
-   nrsttr = 0 ,
+
    ctrcnm(1)='O2o',
    ctrcnm(2)='N1p',
    ctrcnm(3)='N3n',
@@ -159,7 +148,7 @@
 /
 
 &MAXVALUES
-   isCheckLOG = .false.
+
    maxvalue(1)= 1000.  !'O2o',
    maxvalue(2)=    5.  !'N1p',
    maxvalue(3)=  500.  !'N3n',

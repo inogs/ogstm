@@ -224,7 +224,7 @@
       IF (FREQ_GROUP.eq.2) then
          IS_TIME_TO_SAVE = .true.
       ELSE
-        IF (highfreq_tra(jn).eq.1) then
+        IF (ctr_hf(jn).eq.1) then
             IS_TIME_TO_SAVE = .true.
         ELSE
            IS_TIME_TO_SAVE = .false.

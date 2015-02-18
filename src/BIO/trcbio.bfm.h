@@ -149,7 +149,7 @@ C
                              tra_pp(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
-                          PH(ji,jj,jk)=8. ! Follows solver guess
+                          PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 
 
              ENDIF

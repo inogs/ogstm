@@ -127,7 +127,6 @@ C
                           er(8)  = e3t(jk)
                           er(9)  = vatm(ji,jj) * surf_mask(jk)
                           er(10) = PH(ji,jj,jk)
-
                           call OPA_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
                           call OPA_reset()
@@ -150,7 +149,7 @@ C
                              tra_pp(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
-                          PH(ji,jj,jk)=d(9) ! Follows solver guess
+                          PH(ji,jj,jk)=8. ! Follows solver guess
 
 
              ENDIF

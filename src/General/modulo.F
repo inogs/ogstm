@@ -534,7 +534,7 @@ CC
 #if defined key_passivetrc
 CCC F79 Namelist does not accept allocatable
 
-          CHARACTER(LEN=3) :: ctrcnm(jptra)
+          CHARACTER(LEN=20) :: ctrcnm(jptra)
           CHARACTER(LEN=12) :: ctrcun(jptra)
           CHARACTER(LEN=6) :: mycln
           CHARACTER(LEN=80) ::  ctrcnl(jptra)

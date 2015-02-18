@@ -31,9 +31,9 @@
       INTEGER ind
       INTEGER ave_counter
 
-      CHARACTER(LEN=39) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
-      CHARACTER(LEN=3)  var
-      CHARACTER(LEN=43) bkpname
+      CHARACTER(LEN=56) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
+      CHARACTER(LEN=20)  var
+      CHARACTER(LEN=60) bkpname
       CHARACTER(LEN=11) DIR
       logical IsBackup
 
@@ -69,8 +69,8 @@
       if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
       var    = ctrcnm(jn)
-      output_file_nc = DIR//'ave.'//datemean//'.'//var//'.nc'
-      bkpname        = DIR//'ave.'//datemean//'.'//var//'.nc.bkp'
+      output_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
+      bkpname        = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
 
 ! *************** START COLLECTING DATA *****************************
       if(rank == 0) then                    ! IF LABEL 1

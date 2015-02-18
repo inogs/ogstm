@@ -18,14 +18,14 @@
       INTEGER ind
 
       CHARACTER(LEN=42) forcing_file
-      CHARACTER(LEN=43) bkpname
+      CHARACTER(LEN=60) bkpname
       CHARACTER(LEN=11) DIR
       logical IsBackup
       integer ave_counter
 
 
-      CHARACTER(LEN=39) dia_file_nc
-      CHARACTER(LEN=3)  var
+      CHARACTER(LEN=56) dia_file_nc
+      CHARACTER(LEN=20)  var
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -352,8 +352,8 @@
 
       if (rank == 0) then
               var        =  dianm(jn)
-              bkpname     = DIR//'ave.'//datemean//'.'//var//'.nc.bkp'
-              dia_file_nc = DIR//'ave.'//datemean//'.'//var//'.nc'
+              bkpname     = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
+              dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
 
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter

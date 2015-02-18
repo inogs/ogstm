@@ -334,16 +334,17 @@
        REAL(8) julian
 
        ! local
-       CHARACTER(LEN=3) VAR
-       CHARACTER(LEN=6) RSTVAR
+       CHARACTER(LEN=20) VAR
        CHARACTER(LEN=17) TimeString
-
+       integer istart, iend
        integer s, nc, counter
        integer timid, depid, yid, xid, xaid, yaid, zaid
        integer idB, idN, idLon, idLat, idLev, idTim
 
        TimeString =fileNetCDF(14:30)
-       VAR        =fileNetCDF(32:34)
+       istart=index(fileNetCDF,'00.')+3
+       iend  =index(fileNetCDF,'.nc')-1
+       VAR        =fileNetCDF(istart:iend)
 
 
       s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -364,12 +365,8 @@
        s = nf90_def_var(nc,'nav_lev', nf90_double,  (/depid/)  , idLev)
        s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
 
-
-        RSTVAR='TRB'//VAR;
-        s = nf90_def_var(nc,RSTVAR, nf90_double, (/xid,yid,depid,timid/), idB)
-
-        RSTVAR='TRN'//VAR;
-        s = nf90_def_var(nc,RSTVAR, nf90_double, (/xid,yid,depid,timid/), idN)
+        s = nf90_def_var(nc,'TRB'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idB)
+        s = nf90_def_var(nc,'TRN'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idN)
 
         s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00');
         s = nf90_put_att(nc,idB   , 'missing_value',1.e+20)
@@ -403,7 +400,8 @@
        character(LEN=17) datefrom, dateTo
        real(4) M(jpiglo, jpjglo, jpk)
 
-       character(LEN=3) VAR
+       character(LEN=20) VAR
+       integer istart,iend
 
        integer s, nc, counter
        integer timid, depid, yid, xid
@@ -413,7 +411,9 @@
          lat_actual_range=(/30.5   , 44.5   /)
        depth_actual_range=(/ 4.9991,4450.068/)
 
-       VAR        =fileNetCDF(34:36)
+       istart=index(fileNetCDF,'00.')+3
+       iend  =index(fileNetCDF,'.nc')-1
+       VAR        =fileNetCDF(istart:iend)
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -434,7 +434,7 @@
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
 
-       s = nf90_def_var(nc,VAR ,           nf90_float, (/xid,yid,depid,timid/),  idVAR)
+       s = nf90_def_var(nc,trim(VAR) ,        nf90_float, (/xid,yid,depid,timid/),  idVAR)
 
         s = nf90_put_att(nc,idgdept,'units'        ,'meter')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')
@@ -481,14 +481,17 @@
        integer ave_counter
 
        !local
-       character(LEN=3) VAR
+       character(LEN=20) VAR
+       integer istart,iend
 
        integer s, nc, counter
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
 
 
-       VAR        =fileNetCDF(34:36)
+       istart=index(fileNetCDF,'00.')+3
+       iend  =index(fileNetCDF,'.nc')-1
+       VAR        =fileNetCDF(istart:iend)
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -510,7 +513,7 @@
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
 
-       s = nf90_def_var(nc,VAR ,           nf90_double,(/xid,yid,depid,timid/),  idVAR)
+       s = nf90_def_var(nc,trim(VAR) ,           nf90_double,(/xid,yid,depid,timid/),  idVAR)
 
         s = nf90_put_att(nc,idgdept,'units'        ,'m')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')

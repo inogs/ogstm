@@ -55,6 +55,7 @@ C ... computation of the record length for direct access file
 C     this length depend of 512 for the t3d machine
       ibloc = 512
       ildta = ibloc*((jpidta*jpjdta)/ibloc+1)*jpbyt
+      write(*,*) 'PARINI', jpjdta, jpidta, ildta
       ilglo = ibloc*((jpiglo*jpjglo)/ibloc+1)*jpbyt
       ilu = 0
       DO ji = 1, 100
@@ -110,6 +111,17 @@ C ... Namelist Dom_Size :
       ENDIF
 C
 C ... Namelist :Dimension_Med_Grid
+
+      call getDimension('meshmask.nc','x',jpiglo)
+      call getDimension('meshmask.nc','y',jpjglo)
+      call getDimension('meshmask.nc','z',jpk)
+      jpidta = jpiglo
+      jpidta = jpjglo
+      jpkdta = jpk
+      jpkb   = jpk
+      jpilec = jpiglo
+      jpjlec = jpjglo
+      jpklec = jpk
 
 
       REWIND( numnam )

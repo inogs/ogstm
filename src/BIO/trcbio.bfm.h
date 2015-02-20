@@ -69,12 +69,12 @@ C
 !$omp end parallel
          ENDDO
 
-         DO jn=1, jptra_dia-1, ntids
+         DO jn=1, jptra_dia, ntids
 !$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_pp,jpi,jpj,jpk,jn)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-			IF (mytid+jn <= jptra_dia-1) then
+			IF (mytid+jn <= jptra_dia) then
 				 do jk=1,jpk
 				 do jj=1,jpj
 				 do ji=1,jpi
@@ -145,7 +145,7 @@ C
 
 ! Last record (jptra_dia) for evaporation rates
 
-                          DO jtr=1,jptra_dia-1
+                          DO jtr=1,jptra_dia
                              tra_pp(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 

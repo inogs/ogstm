@@ -28,13 +28,9 @@ CC ==================
       CHARACTER(LEN=32) clname
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
 
-!      NAMELIST/Dom_Size/ jpni, jpnj, jpnij, jpreci, jprecj
-
-      NAMELIST/Dimension_Med_Grid/ jpiglo, jpjglo, jpk, jpidta,jpjdta, jpkdta, jpkb
       NAMELIST/MPI_config/ mpi_pack_size
       NAMELIST/Domain_Characteristic/  jperio, jpisl, jpnisl
-      NAMELIST/Number_Fluxes/ jpflx, jptaux, jptauy, jpwind, jpemp,
-     &                        jpkef, jpice, jpqsr, jpilec, jpjlec,jpklec
+      NAMELIST/Number_Fluxes/ jpflx, jptaux, jptauy, jpwind, jpemp,jpkef, jpice, jpqsr
 CC----------------------------------------------------------------------
 
 C 0. Initializations
@@ -47,15 +43,14 @@ C ... Open specifier
       clunf = 'UNFORMATTED'
       clseq = 'SEQUENTIAL'
       cldir = 'DIRECT'
-C
+
 C ... Sequential value
       ilseq = 1
-C
+
 C ... computation of the record length for direct access file
 C     this length depend of 512 for the t3d machine
       ibloc = 512
       ildta = ibloc*((jpidta*jpjdta)/ibloc+1)*jpbyt
-      write(*,*) 'PARINI', jpjdta, jpidta, ildta
       ilglo = ibloc*((jpiglo*jpjglo)/ibloc+1)*jpbyt
       ilu = 0
       DO ji = 1, 100
@@ -82,12 +77,6 @@ C     this length depend of 512 for the t3d machine
       CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
 
 
-C 1. Read namlist files
-C ---------------------
-
-C ... Namelist Dom_Size :
-!      REWIND( numnam )
-!      READ  ( numnam, Dom_Size )
       call COUNTLINE ('Dom_Dec_jpi.ascii', jpni)
       call COUNTWORDS('Dom_Dec_jpi.ascii', jpnj)
       jpnij = jpni*jpnj
@@ -109,14 +98,13 @@ C ... Namelist Dom_Size :
       WRITE(numout,*) ' '
 
       ENDIF
-C
-C ... Namelist :Dimension_Med_Grid
+
 
       call getDimension('meshmask.nc','x',jpiglo)
       call getDimension('meshmask.nc','y',jpjglo)
       call getDimension('meshmask.nc','z',jpk)
       jpidta = jpiglo
-      jpidta = jpjglo
+      jpjdta = jpjglo
       jpkdta = jpk
       jpkb   = jpk
       jpilec = jpiglo
@@ -124,8 +112,6 @@ C ... Namelist :Dimension_Med_Grid
       jpklec = jpk
 
 
-      REWIND( numnam )
-      READ  ( numnam, Dimension_Med_Grid )
 
       IF(lwp) THEN
       WRITE(numout,*) 'Dimension_Med_Grid'
@@ -139,13 +125,10 @@ C ... Namelist :Dimension_Med_Grid
       WRITE(numout,*) ' jpkb    : first vertical layers where biology is active > or = jpkb   ',jpkb
       WRITE(numout,*) ' '
       ENDIF
-C
+
       jpkmod=(1+(jpk-1)/jpnij)
 
-C ... Namelist.init :Matrix_Size
-C
-C
-C
+
 
       allocate(ilcit(jpni, jpnj)) ; ilcit = huge(ilcit(1,1))
       allocate(ilcjt(jpni, jpnj)) ; ilcjt = huge(ilcjt(1,1))
@@ -167,7 +150,7 @@ C
           jpj =  ilcjt(ji,jj)
         endif
       enddo
-C
+
 CC Other dimension parameters
 CC --------------------------
 CC      jpim1   :  jpi - 1
@@ -201,8 +184,8 @@ C
 C
       REWIND( numnam )
       READ  ( numnam, Domain_Characteristic )
-C
-C
+
+
       IF(lwp) THEN
       WRITE(numout,*) 'Domain_Characteristic'
       WRITE(numout,*) ' '
@@ -210,13 +193,13 @@ C
       WRITE(numout,*) ' jpisl  : number of islands', jpisl
       WRITE(numout,*) ' jpnisl  : maximum number of points per island', jpnisl
       ENDIF
-C
+
 C ..  Namelist :  Number of fluxes
-C
-C
+
+
       REWIND( numnam )
       READ  ( numnam, Number_Fluxes )
-C
+
       IF(lwp) THEN
       WRITE(numout,*) 'Number of fluxes'
       WRITE(numout,*) ' '
@@ -261,7 +244,7 @@ C
         INTEGER N
         ! local
         INTEGER I
-        CHARACTER*1024 str, str_blank
+        CHARACTER(LEN=1024) str, str_blank
 
 
         open(unit=21,file=filename, form='formatted')

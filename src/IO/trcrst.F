@@ -24,21 +24,16 @@
 ! ==================
       INTEGER jn, jn_high
       CHARACTER(LEN=37) filename
-      CHARACTER(LEN=6)  varname
       CHARACTER(LEN=43) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread
-      CHARACTER(LEN=11) DIR
 
 
 ! 0. initialisations
        bkpname  = 'AVE_FREQ_1/ave.20111231-15:30:00.N1p.nc.bkp'
        filename = 'RESTARTS/RST.20111231-15:30:00.N1p.nc'
-       varname  = 'TRNN1p'
        bkp1hasbeenread = .false.
        bkp2hasbeenread = .false.
-
-!      qui leggeva il date.step
 
 
       IF(lwp) THEN
@@ -53,13 +48,9 @@
       DO jn=1, jptra  ! global loop on tracers to read restart
 
 
-         varname  = 'TRN'//ctrcnm(jn)
-         filename = 'RESTARTS/RST.'//DateStart//'.'//ctrcnm(jn)//'.nc'
-
-         CALL readnc_slice_double(filename,varname, trn(:,:,:,jn) )
-
-         varname = 'TRB'//ctrcnm(jn)
-         CALL readnc_slice_double(filename,varname, trb(:,:,:,jn) )
+         filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))//'.nc'
+         CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
+         CALL readnc_slice_double(filename, 'TRB'//trim(ctrcnm(jn)), trb(:,:,:,jn) )
 
 
 
@@ -70,7 +61,7 @@
 !         SECTION AVE backup
 !         rsttrn var is used instead of to define another one
 
-          bkpname= 'AVE_FREQ_2/ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
+          bkpname= 'AVE_FREQ_2/ave.'//DateStart//'.'//trim(ctrcnm(jn))//'.nc.bkp'
 
           INQUIRE(FILE=bkpname, EXIST=existFilebkp)
 
@@ -88,9 +79,9 @@
 
 
 
-         IF (highfreq_tra(jn).eq.1)  THEN
+         IF (ctr_hf(jn).eq.1)  THEN
            jn_high = jn_high + 1
-           bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
+           bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(ctrcnm(jn))//'.nc.bkp'
            INQUIRE(FILE=bkpname, EXIST=existFilebkp)
 
            if (existFilebkp) then
@@ -113,12 +104,12 @@
       jn_high=0
       DO jn=1, jptra_dia
 
-          bkpname    = 'AVE_FREQ_2/ave.'//DateStart//'.'//dia(jn)//'.nc.bkp'
+          bkpname    = 'AVE_FREQ_2/ave.'//DateStart//'.'//trim(dianm(jn))//'.nc.bkp'
           INQUIRE(FILE=bkpname, EXIST=existFile)
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,dia(jn), tra_ppIO(:,:,:,jn) )
+             CALL readnc_slice_double(bkpname,dianm(jn), tra_ppIO(:,:,:,jn) )
              if (.not.bkp2hasbeenread) then
                 call get_att_int( bkpname,'ave_counter', ave_counter_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
@@ -128,13 +119,13 @@
              tra_ppIO(:,:,:,jn) = 0.0
           endif
 
-          IF (highfreq_tra_dia(jn).eq.1)  THEN
+          IF (diahf(jn).eq.1)  THEN
            jn_high = jn_high + 1
-           bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//ctrcnm(jn)//'.nc.bkp'
+           bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm(jn))//'.nc.bkp'
            INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,ctrcnm(jn), tra_ppIO_HIGH(:,:,:,jn_high) )
+             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_ppIO_HIGH(:,:,:,jn_high) )
                     if (.not.bkp1hasbeenread) then
                       call get_att_int( bkpname,'ave_counter', ave_counter_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)

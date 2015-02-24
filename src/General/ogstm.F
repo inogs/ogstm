@@ -61,7 +61,7 @@
 
       call parlec  ! read namelist
       call time_init
-      call trclec; call dialec
+      call trclec
 
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager

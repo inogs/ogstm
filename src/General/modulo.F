@@ -534,12 +534,13 @@ CC
 #if defined key_passivetrc
 CCC F79 Namelist does not accept allocatable
 
-          CHARACTER(LEN=3) :: ctrcnm(jptra)
-          CHARACTER(LEN=8) :: ctrcun(jptra)
+          CHARACTER(LEN=20) :: ctrcnm(jptra)
+          CHARACTER(LEN=12) :: ctrcun(jptra)
           CHARACTER(LEN=6) :: mycln
           CHARACTER(LEN=80) ::  ctrcnl(jptra)
-          CHARACTER(LEN=3) :: dia(jptra_dia)
-
+          CHARACTER(LEN=20) :: dianm(jptra_dia)
+          CHARACTER(LEN=20) :: diaun(jptra_dia)
+          INTEGER           :: diahf(jptra_dia)
 CC
 CC
 CC Common/citctl/ : parameters for the control of passive tracers
@@ -553,12 +554,12 @@ CC
 
       LOGICAL ::  lutini(jptra)
       INTEGER ::  nutini(jptra)
-      REAL(8) ::  maxvalue(jptra)
+      REAL(8) ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
       LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
       INTEGER :: jptra_high, jptra_dia_high
-      INTEGER :: highfreq_tra(jptra)
-      INTEGER :: highfreq_tra_dia(jptra_dia)
+      INTEGER :: ctr_hf(jptra)
+
       INTEGER freq_ave_phys
 
 CC

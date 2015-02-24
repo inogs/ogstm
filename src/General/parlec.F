@@ -20,25 +20,9 @@
 !            &namzdf           : vertical diffusion
 !            &nameos           : ocean physical parameters
 !            &namdyn           : offline dynamic selection
-!
-!   Output :
-!   -------
-!      common
-!            /comdom/          : domain parameters
-!                                and scale factors
-!            /comcoh/          : horizontal coordinates and factors
-!            /comask/          : masks, bathymetry
-!            /comhdt/          : lateral diffusivity
-!                                diffusion
-!            /comeos		: ocean physical parameters
-!            /comstp/          : time step
-!            /comrst/          : restart parameter
-!            /comctl/          : parameters for the control
-!            /comwri/          : parameters for output
-!            /comphy/          : parameters for physical process
-!            /comtsk/          : multitasking
-!            /comdyn/          : dynamic data selection
-!
+!            &natnum           : numerical schemes
+!            &general_IO       : IO settings
+
 
 
        USE myalloc
@@ -61,6 +45,11 @@
       NAMELIST/namhdf/ aht0, ahtb0, aeiv0
       NAMELIST/namzdf/ avt0,ntrbbl,atrbbl
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta, rcp
+      namelist /natnum/ rsc,rtrn,ncor,ndttrc,crosster,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
+!      namelist /natnum/ rsc,rtrn,ndttrc,crosster,lhdf,vsed,photop,atlantic_bfm,bottom_flux
+!      namelist /dovesiete/  ncor,ahtrb0,trcrat,ahtrc0,aeivtr0
+      NAMELIST/General_IO/   nwritetrc,lrsttr, nrsttr,freq_ave_phys,save_bkp_group2, isCheckLOG
+
 
 
 ! ... Open specifier
@@ -223,7 +212,83 @@
 
 
 
+! 1.1 namelist natnum :
+
+      rsc         = 1.
+      rtrn        = 1.e-15
+      ncor        = 1
+      ndttrc      = 4
+      crosster    = .FALSE.
+      lhdf        = .TRUE.
+      ahtrb0      = 0.
+      trcrat      = 1.
+      ahtrc0      = aht0
+      aeivtr0     = aeiv0
+      vsed        = 3.0
+      photop      = .FALSE.
+      atlantic_bfm= .FALSE.
+      bottom_flux = 0.
+
+      REWIND(numnam)
+      READ(numnam,natnum)
+
+      IF(lwp) THEN
+          WRITE(numout,*) ' '
+          WRITE(numout,*) 'natnum'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' rsc tuning coefficient                            = ' , rsc
+          WRITE(numout,*) ' rtrn truncation value                             = ' , rtrn
+          WRITE(numout,*) ' ncor number of corrective phase                   = ', ncor
+          WRITE(numout,*) ' ndttrc time step freq. for pass. trac.            = ', ndttrc
+          WRITE(numout,*) ' crosster  computes or not crossterms              = ', crosster
+          WRITE(numout,*) ' lhdf  calls or not trchdf                         = ', lhdf
+          WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
+          WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat
+          WRITE(numout,*) ' horizontal eddy diffus. for passive tr            = ', ahtrc0
+          WRITE(numout,*) ' eddy induced veloc. coef. for passive tr          = ', aeivtr0
+          WRITE(numout,*) ' detritus sedimentation speed   vsed               =', vsed/86400
+          WRITE(numout,*) ' photoperiod scaling photop                        =', photop
+          WRITE(numout,*) ' activation of bfm in atlantic buffer              =', atlantic_bfm
+          WRITE(numout,*) ' bottom flux [0,1], 0 -> no flux, 1 -> total flux  =', bottom_flux
+      ENDIF
+
+      IF (vsed .LT. 0.) THEN
+          write (*,*) 'vsed must be greated than 0 instead it is:', vsed/86400
+          STOP
+      ENDIF
+
+      IF ((bottom_flux .LT. 0.) .OR. (bottom_flux .GT. 1.)) THEN
+          write (*,*) 'bottom flux must be in [0,1] instead it is:', bottom_flux
+          STOP
+      ENDIF
+
+
+
+! ************* namelist GENERAL_IO  *****************
+
+      nwritetrc = 10
+      lrsttr    =.FALSE.
+      nrsttr    = 0
+
+      REWIND( numnam )
+      READ  ( numnam, General_IO )
+
+
+
+      if (lwp) then
+          if (freq_ave_phys.eq.2) then
+               WRITE(numout,*) 'Forcings phys will be dumped following 2.aveTimes file'
+               else
+               if (freq_ave_phys.eq.1) then
+                 WRITE(numout,*) 'Forcings phys will be dumped following 1.aveTimes file'
+               else
+                 WRITE(numout,*) 'Forcings phys will not be dumped'
+               endif
+          endif
+      endif
+
+
 
       CLOSE( numnam)
-      !CALL FLUSH(numout)
+
       END SUBROUTINE parlec

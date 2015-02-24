@@ -62,8 +62,8 @@ CC----------------------------------------------------------------------
         END DO
       END DO
 
-      call OPA_NO_BOXES(1,1,1,1,1)
-      call BFM_Initialize()
+      call BFM0D_NO_BOXES(1,1,1,1,1)
+      call Initialize()
 #    elif defined key_trc_nnpzddom
 #    include "trcini.nnpzddom.h"
 #    elif defined key_trc_hamocc3

@@ -36,7 +36,7 @@
 
       DO jn=1, jptra, ntids
 !$omp parallel default(none) private(mytid, ji,jj,jk,varname,maxV)
-!$omp&         shared(jn, jpi, jpj, jpk, tra, rank, tmask,ctrcnm,STR,maxvalue,isCheckLOG)
+!$omp&         shared(jn, jpi, jpj, jpk, tra, rank, tmask,ctrcnm,STR,ctrmax,isCheckLOG)
 
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
@@ -44,7 +44,7 @@
 
        IF (jn+mytid.le.jptra) then
 
-         maxV   = maxvalue(jn+mytid)
+         maxV     = ctrmax(jn+mytid)
          varname  = ctrcnm(jn+mytid)
 
          DO jk = 1,jpk

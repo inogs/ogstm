@@ -18,14 +18,14 @@
       INTEGER ind
 
       CHARACTER(LEN=42) forcing_file
-      CHARACTER(LEN=43) bkpname
+      CHARACTER(LEN=60) bkpname
       CHARACTER(LEN=11) DIR
       logical IsBackup
       integer ave_counter
 
 
-      CHARACTER(LEN=39) dia_file_nc
-      CHARACTER(LEN=3)  var
+      CHARACTER(LEN=56) dia_file_nc
+      CHARACTER(LEN=20)  var
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -351,9 +351,9 @@
 ! *********** START WRITING **************************
 
       if (rank == 0) then
-              var        =  dia(jn)
-              bkpname     = DIR//'ave.'//datemean//'.'//var//'.nc.bkp'
-              dia_file_nc = DIR//'ave.'//datemean//'.'//var//'.nc'
+              var        =  dianm(jn)
+              bkpname     = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
+              dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
 
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
@@ -401,7 +401,7 @@
       IF (FREQ_GROUP.eq.2) then
          IS_TIME_TO_SAVE = .true.
       ELSE
-        IF (highfreq_tra_dia(jn).eq.1) then
+        IF (diahf(jn).eq.1) then
             IS_TIME_TO_SAVE = .true.
         ELSE
            IS_TIME_TO_SAVE = .false.

@@ -1,12 +1,3 @@
-&Dimension_Med_Grid
-      jpiglo = 362,    
-      jpjglo = 128,    
-      jpk    = 72, 
-      jpidta = 362,  
-      jpjdta = 128, 
-      jpkdta = 72, 
-      jpkb   = 72 
-/
 &MPI_config
       mpi_pack_size =1
 /
@@ -24,8 +15,5 @@
       jpice=5,
       jpqsr=6,
       jpkef=7,
-      jpilec=362,
-      jpjlec=128,
-      jpklec=72
 /
 

@@ -30,22 +30,10 @@ CC statement functions
 CC ===================
 
 
-      INTERFACE OPA_Output_EcologyDynamics
-         subroutine OPA_Output_EcologyDynamics(opa_tra, dim_opa_tra, sediPI, local_opa_dia,jptra_dia)
-!            use global_mem, ONLY:RLEN
-            IMPLICIT NONE
-            integer dim_opa_tra,jptra_dia
-            real(8):: sediPI(4)
-            real(8):: opa_tra(dim_opa_tra)
-            real(8):: local_opa_dia(jptra_dia)
-         end subroutine
-      END INTERFACE
-
 C   | --------------|
 C   | BFM MODEL CALL|
 C   | --------------|
 C
-
         BIOparttime = MPI_WTIME()
 
 #ifdef __OPENMP
@@ -81,12 +69,12 @@ C
 !$omp end parallel
          ENDDO
 
-         DO jn=1, jptra_dia-1, ntids
+         DO jn=1, jptra_dia, ntids
 !$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_pp,jpi,jpj,jpk,jn)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-			IF (mytid+jn <= jptra_dia-1) then
+			IF (mytid+jn <= jptra_dia) then
 				 do jk=1,jpk
 				 do jj=1,jpj
 				 do ji=1,jpi
@@ -139,14 +127,13 @@ C
                           er(8)  = e3t(jk)
                           er(9)  = vatm(ji,jj) * surf_mask(jk)
                           er(10) = PH(ji,jj,jk)
+                          call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
-                          call OPA_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
-
-                          call OPA_reset()
+                          call BFM0D_reset()
 
                           call EcologyDynamics()
 
-                          call OPA_Output_EcologyDynamics(b, jtrmax, c, d, jptra_dia-1)
+                          call BFM0D_Output_EcologyDynamics(b, c, d)
 
                           DO jtr=1, jtrmax
                              tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend
@@ -158,11 +145,11 @@ C
 
 ! Last record (jptra_dia) for evaporation rates
 
-                          DO jtr=1,jptra_dia-1
+                          DO jtr=1,jptra_dia
                              tra_pp(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
-                          PH(ji,jj,jk)=d(9) ! Follows solver guess
+                          PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 
 
              ENDIF

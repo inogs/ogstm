@@ -30,3 +30,26 @@
    nsptint = 1, 
 /
 
+&natnum    rsc            =    1.,
+            rtrn          = 1.e-25,
+            ndttrc        = 1,
+            lhdf          = .true.,
+            crosster      = .false. ,
+            vsed          = 3.0,
+            photop        = .false.
+            atlantic_bfm  = .true.
+            bottom_flux   = 1.
+/
+
+&General_IO
+
+   nwritetrc = 10000,
+   lrsttr = .true.,
+   nrsttr = 0 ,
+   freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
+   save_bkp_group2      = .true.
+   isCheckLOG = .false.
+/
+
+
+

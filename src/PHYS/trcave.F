@@ -180,7 +180,7 @@
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-      IF( mytid + jn .LT. jptra_dia ) then
+      IF( mytid + jn .LE. jptra_dia ) then
 
          DO jk=1, jpk
             DO jj=1, jpj
@@ -195,20 +195,7 @@
             END DO
          END DO
       ENDIF
-      IF( mytid + jn .EQ. jptra_dia ) then ! surface diagnostic packed in last 3D file
-         DO jk=1, jpk
-            DO jj=1, jpj
-               DO ji=1, jpi
-                  IF(tmask(ji,jj,1) .NE. 0.) THEN
-                    tra_ppIO(ji,jj,jk,jn+mytid)=(tra_ppIO(ji,jj,jk,jn+mytid)*Realcounter+
-     &              tra_pp(ji,jj,jk,jn+mytid))*Realcounterp1
-                  ELSE
-                    tra_ppIO(ji,jj,jk,jn+mytid)=Miss_val
-                  ENDIF
-               END DO
-            END DO
-         END DO
-      ENDIF
+
 !$omp    end parallel
       END DO
 
@@ -230,7 +217,7 @@
 #endif
 
       IF (mytid + jn_high .LE. jptra_dia_high)  then
-          IF (mytid + jn_high .LT. jptra_dia ) then
+          IF (mytid + jn_high .LE. jptra_dia ) then
              jn_on_all = highfreq_table_dia(jn_high+mytid)
 
              DO jk=1, jpk
@@ -241,21 +228,6 @@
      &            (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
                 ELSE
                    tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
-                ENDIF
-             END DO
-             END DO
-             END DO
-          ENDIF
-          IF( mytid + jn_high .EQ. jptra_dia ) then ! surface diagnostic packed in last 3D file
-          jn_on_all = highfreq_table_dia(jn_high+mytid)
-             DO jk=1, jpk
-             DO jj=1, jpj
-             DO ji=1, jpi
-                IF(tmask(ji,jj,1) .NE. 0.) THEN
-                tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
-     &         (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
-                ELSE
-                tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
                 ENDIF
              END DO
              END DO

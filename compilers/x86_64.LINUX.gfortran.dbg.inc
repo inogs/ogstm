@@ -5,7 +5,7 @@
 	ARFLAGS=-r
 	CPPFLAGS=
 # F Flags
-        FFLAGS_DBG= -O0 -g -Wall -Wextra -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow,underflow -pedantic -ffixed-line-length-132
+        FFLAGS_DBG= -O0 -g -Wall -Wextra -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -ffixed-line-length-132
 	FFLAGS= $(FFLAGS_DBG)  -I$(NETCDF_INC)  -I$(OPENMPI_HOME)/include   -I$(BFM_INC) -fno-underscoring
 	LDFLAGS= -L $(NETCDF_LIB) -lnetcdff -L $(MPI_LIB)/lib -lmpi_f90 -L$(BFM_LIB) -lbfm -fno-underscoring
 # C Flags

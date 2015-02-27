@@ -65,24 +65,15 @@ CC----------------------------------------------------------------------
       INTEGER nbne, nbnw, nbse, nbsw, npne, npnw, npse, npsw
       INTEGER, PARAMETER :: nsolv = 3
 
-#ifdef key_mpp
+#ifdef key_mpp_mpi
       INTEGER ji,jj,jn,jproc
-      INTEGER ii,ij!,ifreq,il1,il2
+      INTEGER ii,ij
       INTEGER iresti,irestj,ijm1,imil
       INTEGER iimppt(jpni,jpnj),ijmppt(jpni,jpnj)
-CC-CC      INTEGER ilcit (jpni,jpnj),ilcjt (jpni,jpnj)
       INTEGER ibonit(jpnij),ibonjt(jpnij)
       INTEGER iglo(4),iloc(4),iabsf(4),iabsl(4),ihals(4),ihale(4)
       REAL(8)    zidom ,zjdom
 
-#ifdef key_mpp_shmem
-C
-C  0. Initialisation of shmem array
-C ---------------------------------
-C
-      CALL mppshmem
-C
-#endif
 C
 C  1. Dimension arrays for subdomains
 C -----------------------------------
@@ -95,32 +86,11 @@ C  array.
 C
       nreci=2*jpreci
       nrecj=2*jprecj
-CC-CC      iresti = mod ( jpiglo - nreci , jpni )
-CC-CC      irestj = mod ( jpjglo - nrecj , jpnj )
-CC-CC F79 11/04/2005 we suppose the domain 
-CC-CC decomposition fill well the space
+
            iresti = 0
            irestj = 0
 C
-CC-CC      IF (iresti.eq.0) iresti = jpni
-CC-CC      DO jj=1,jpnj
-CC-CC        DO ji=1,iresti
-CC-CC          ilcit(ji,jj) = jpi
-CC-CC        END DO
-CC-CC        DO ji=iresti+1,jpni
-CC-CC          ilcit(ji,jj) = jpi -1
-CC-CC        END DO
-CC-CC      END DO
 
-CC-CC      IF (irestj.eq.0) irestj = jpnj
-CC-CC      DO ji=1,jpni
-CC-CC        DO jj=1,irestj
-CC-CC          ilcjt(ji,jj) = jpj
-CC-CC        END DO
-CC-CC        DO jj=irestj+1,jpnj
-CC-CC          ilcjt(ji,jj) = jpj -1
-CC-CC        END DO
-CC-CC      END DO
 C
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,*) ' inimpp: defines mpp subdomains'
@@ -129,30 +99,7 @@ C
       IF(lwp)WRITE(numout,*)"iresti=",iresti," irestj=",irestj
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,*)"jpni=",jpni," jpnj=",jpnj
-CC-CC      IF(lwp) THEN
-CC-CC          ifreq=4
-CC-CC          il1=1
-CC-CC          DO jn=1,(jpni-1)/ifreq+1
-CC-CC            il2=min(jpni,il1+ifreq-1)
-CC-CC            WRITE(numout,*)
-CC-CC            WRITE(numout,9201) (ji,ji=il1,il2)
-CC-CC            WRITE(numout,9200) ('***',ji=il1,il2-1)
-CC-CC            DO jj=1,jpnj
-CC-CCC             WRITE(numout,9200)
-CC-CC              WRITE(numout,9203) ('   ',ji=il1,il2-1)
-CC-CC              WRITE(numout,9202) jj,
-CC-CC     $            (ilcit(ji,jj),ilcjt(ji,jj),ji=il1,il2)
-CC-CC              WRITE(numout,9203) ('   ',ji=il1,il2-1)
-CC-CC              WRITE(numout,9200) ('***',ji=il1,il2-1)
-CC-CCC             WRITE(numout,9200)
-CC-CC            END DO
-CC-CC            il1=il1+ifreq
-CC-CC          END DO
-CC-CC 9200     FORMAT('     ***',20('*************',a3))
-CC-CC 9203     FORMAT('     *     ',20('         *   ',a3))
-CC-CC 9201     FORMAT('        ',20('   ',i3,'          '))
-CC-CC 9202     FORMAT(' ',i3,' *  ',20(i3,'  x',i3,'   *   '))
-CC-CC      ENDIF
+
 C
       zidom=nreci
       DO ji=1,jpni
@@ -369,9 +316,7 @@ C
       ENDIF 
 C
 C Periodicity : no corner if nbondi = 2 and nperio != 1
-C
-CC-CC Paolo could be a mess
-CC-CC      lwp = .TRUE.
+
 
       IF(lwp)WRITE(numout,*) ' nproc=  ',nproc
       IF(lwp)WRITE(numout,*) ' nowe=   ',nowe
@@ -394,8 +339,7 @@ C
       IF((nperio.eq.1.or.nperio.eq.4).and.jpni.ne.1)THEN
           STOP 'inimpp'
       ENDIF
-CCC F79 22.08.2005 with cobra we have problems
-!!      call flush_(numout)
+
 
 C     6. calendar
 C
@@ -430,7 +374,7 @@ C
           WRITE(numout,*) 'ihals',ihals(1),ihals(2),ihals(3)
           WRITE(numout,*) 'ihale',ihale(1),ihale(2),ihale(3)
       ENDIF
-CCC      CALL calendar_inimpp(jpnij,nproc,iglo,iloc,iabsf,iabsl,ihals,ihale)
+
 
 #  else
 C

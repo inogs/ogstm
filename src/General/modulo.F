@@ -150,9 +150,6 @@ CC       vertical coordinate and scale factors
 CC -------------------------------------------------------
 
 
-      INTEGER numhba    !  logical unit for bathymetry file (meters)
-
-
 #ifdef key_s_coord
 CC                   s-coordinate ('key_s_coord')
 CC                   ----------------------------
@@ -375,15 +372,11 @@ CC      qsr     : solar radiation (w m-2)
 
       REAL(8), allocatable :: qsr(:,:)
 
-CC----------------------------------------------------------------------
-
 CC     dynamic data selection
 CC ---------------------------------------
-CC      numdyn    : logical unit for dynamic DATA read
-CC      numtke    : logical unit for tke DATA read
 CC      nsptint   : TYPE of spatial interpolation (NAMELIST)
 
-      INTEGER numdyn,numtke, nsptint,numslp,numvgm
+      INTEGER nsptint
 
 
 CC      udta,vdta()  : horizontal velocity data array
@@ -460,18 +453,6 @@ CC      numout           : logical unit for output print
 
 
       INTEGER numout
-
-
-
-
-CC----------------------------------------------------------------------
-CC           multitasking
-
-      INTEGER, allocatable :: mtask(:,:)   ! array of multitasking monitoring
-
-CC----------------------------------------------------------------------
-CC         massively parallel processors
-CC ----------------------------------------------
 CC      lwp              : boolean term for mpp output
       LOGICAL lwp
 
@@ -497,20 +478,7 @@ C
 C     no mpp
 #endif
 
-CC----------------------------------------------------------------------
-CC Common/comwio/ : io workspace
-CC -----------------------------
-CC      tabdta         : data auxilary array
-CC      tabglo         : global auxilary array
 
-      REAL(8), allocatable :: tabdta(:,:), tabglo(:,:)
-
-#if defined key_mpp|| defined key_debug
-CC      tabio          : i/o workspace array
-
-      REAL(8), allocatable :: tabio(:,:,:,:)
-
-#endif
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 CC
@@ -727,50 +695,25 @@ CC           8 : Y gent velocity
 CC           9 : Z gent velocity
 
       REAL(8), allocatable ::  trtrd(:,:,:,:,:)
-CC
-CC    netcdf files and index common
-CC
 CC      nwritetrd: frequency for dynamical trends output (NAMELIST)
 CC                 one per tracer
 
-CC
-      INTEGER nwritetrd,nhorit6(:)
+      INTEGER nwritetrd
 #    endif 
-CC
-CC----------------------------------------------------------------------
-CC
-CC COMMON/cotrda/ : passive tracers DATA READ and at given time_step
-CC -----------------------------------------------------------------
-CC      nclimr    : switch for passive tracers initialization
-CC      ncontr    : variable for time interpolation
-CC      numtr1    : LOGICAL UNIT for passive tracers DATA
-CC      numtr2    : LOGICAL UNIT for passive tracers DATA created IF
-CC                  interpolation is needed (ninttr=1)
-CC      nlectr    : switch for reading once
-CC      ninttr    : switch for interpolation on model grid
-CC      nmldmptr  : : = 0/1/2 type of damping in the mixed layer
-CC      trcdat()  : passive tracers DATA array for two value
-CC                  needed for time interpolation
-CC
-CC      trdta()   : passive tracers DATA at given time-step
+
+
 CC      restotr() : array of restoring coeff. for passive tracers
-CC
-      INTEGER nclimr,ncontr,numtr1,numtr2,nlectr,ninttr,nmldmptr
-CC
-CC
+
 #    if defined key_trc_dmp 
 
-      REAL(8), allocatable ::  trdta(:,:,:,:),trcdat(:,:,:,:,:)
 !      REAL(8), allocatable ::  restoglo(:,:,:), idxtglo(:,:,:)
       INTEGER(4), allocatable ::  idxt(:,:,:),idxt2glo(:,:,:,:)
 
-CC
+
 #    else
 CC      no passive tracers DATA at given time step
 #    endif
-CC
-CC
-CC
+
 CC    fotoperiod formulation
 CC    photop      : Fotoperiod formulation if false daylength is 24 h
       LOGICAL photop
@@ -778,51 +721,27 @@ CC    atlantic buffer biology activation
       LOGICAL atlantic_bfm
 
 #    if defined key_trc_bfm
-CC
+
 CC      vsed      : sedimentation speed (NAMELIST)
-CC      remine()  : remineralisation trend
-CC
-CC      tmaxr     : maximum coefficient for passive tracer damping (NAMELIST)
-CC      tminr     : minimum coefficient for passive tracer damping (NAMELIST)
 CC      remdmp()  : damping coefficient of passive tracers (depth dependant)
 
-
-      REAL(8) vsed,vsed_dia,tmaxr,tminr,bottom_flux
-      REAL(8), allocatable :: remine(:,:,:)
+      REAL(8) vsed,bottom_flux
       REAL(8), allocatable :: remdmp(:,:)
-
 
 CC----------------------------------------------------------------------
 CC
-CC COMMON/cotopt/ : optical parameters
+CC     optical parameters
 CC -----------------------------------
-CC
 CC      xze       : euphotic layer depth
 CC      xpar      : par (photosynthetic available radiation)
-CC      xkr0      : water coefficient absorption in red (NAMELIST)
-CC      xkg0      : water coefficient absorption in green (NAMELIST)
-CC      xkrp      : pigment coefficient absorption in red (NAMELIST)
-CC      xkgp      : pigment coefficient absorption in green (NAMELIST)
-CC      xlr       : exposant for pigment absorption in red (NAMELIST)
-CC      xlg       : exposant for pigment absorption in green (NAMELIST)
-CC      rpig      : chla/chla+phea ratio (NAMELIST)
-CC
-      REAL(8) xkr0,xkg0,xkrp,xkgp,xlr,xlg,rpig
-
       REAL(8), allocatable :: xze(:,:)
       REAL(8), allocatable :: xpar(:,:,:)
 CC----------------------------------------------------------------------
-CC
 
 #    endif
-CC
-CC
 #else
-CC
 CC no passive tracer COMMON specification
-CC
 #endif
-CC
 CC----------------------------------------------------------------------
 
 #ifdef key_trahdfeiv
@@ -945,7 +864,6 @@ CC----------------------------------------------------------------------
       allocate(facvol(jpi,jpj,jpk))     ;facvol   = huge(facvol(1,1,1))
 #endif
 #ifdef key_s_coord
-C
        allocate(hbatt(jpi,jpj)) ;hbatt = huge(hbatt(1,1))     
        allocate(hbatu(jpi,jpj)) ;hbatu = huge(hbatu(1,1))
        allocate(hbatv(jpi,jpj)) ;hbatv = huge(hbatv(1,1))
@@ -956,31 +874,23 @@ C
        allocate(esigt(jpk))     ;esigt = huge(esigt(1))
        allocate(esigw(jpk))     ;esigw = huge(esigw(1))
 
-CC
 #  else
-CC
       allocate(gdept(jpk)) ;gdept = huge(gdept(1))
       allocate(gdepw(jpk)) ;gdepw = huge(gdepw(1))
       allocate(  e3t(jpk)) ;  e3t = huge(e3t(1))
       allocate(  e3w(jpk)) ;  e3w = huge(e3w(1))
 
-C
 #endif
-C
       allocate(mbathy(jpi,jpj)) ; mbathy = huge(mbathy(1,1))
-C
-C
+
       allocate(tmask(jpi,jpj,jpk)) ;tmask = huge(tmask(1,1,1))
       allocate(fmask(jpi,jpj,jpk)) ;fmask = huge(fmask(1,1,1))
       allocate(umask(jpi,jpj,jpk)) ;umask = huge(umask(1,1,1))
       allocate(vmask(jpi,jpj,jpk)) ;vmask = huge(vmask(1,1,1))
 
-
-C
       allocate(ub(jpi,jpj,jpk)) ;ub = huge(ub(1,1,1))
       allocate(vb(jpi,jpj,jpk)) ;vb = huge(vb(1,1,1))
 
-CC
        allocate(un(jpi,jpj,jpk))    ;un     = huge(un(1,1,1))
        allocate(vn(jpi,jpj,jpk))    ;vn     = huge(vn(1,1,1))
        allocate(wn(jpi,jpj,jpk))    ;wn     = huge(wn(1,1,1))
@@ -992,14 +902,12 @@ CC
        allocate(rho(jpi,jpj,jpk))   ;rho    = huge(rho(1,1,1))
        allocate(bn2n(jpi,jpj,jpk))  ;bn2n   = huge(bn2n(1,1,1))
 
-CC
       allocate(ahtu(jpk)) ;ahtu = huge(ahtu(1))
       allocate(ahtv(jpk)) ;ahtv = huge(ahtv(1))
       allocate(ahtw(jpk)) ;ahtw = huge(ahtw(1))
       allocate(ahtt(jpk)) ;ahtt = huge(ahtt(1))
 
 
-C
 #if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
       allocate(uslp(jpi,jpj,jpk))  ;uslp  = huge(uslp(1,1,1))
       allocate(vslp(jpi,jpj,jpk))  ;vslp  = huge(vslp(1,1,1))
@@ -1014,12 +922,10 @@ C
 
 #   else
 #  endif
-C
 # else
 C     diffusion along model level surfaces: no arrays
 #endif
-CC
-C
+
 #if defined key_trahdfeiv
 #  if defined key_trahdfcoef3d
        allocate(aeiu(jpi,jpj,jpk)) ; aeiu = huge(aeiu(1,1,1))
@@ -1047,21 +953,18 @@ C
 #     else
 #     endif
 #endif
-C
 #if defined key_trahdfeiv
        allocate(ugm(jpi,jpj,jpk)) ; ugm = huge(ugm(1,1,1))
        allocate(vgm(jpi,jpj,jpk)) ; vgm = huge(vgm(1,1,1))
        allocate(wgm(jpi,jpj,jpk)) ; wgm = huge(wgm(1,1,1))
 
 #endif
-C
        allocate(avt (jpi,jpj,jpk)) ; avt  = huge(avt(1,1,1))
        allocate(avtb(jpk))         ; avtb = huge(avtb(1))
        allocate(bblx(jpi,jpj))     ; bblx = huge(bblx(1,1))
        allocate(bbly(jpi,jpj))     ; bbly = huge(bbly(1,1))
 
 
-C
        allocate(taux  (jpi,jpj)) ; taux   = huge(taux(1,1))
        allocate(tauy  (jpi,jpj)) ; tauy   = huge(tauy(1,1))
        allocate(vatm  (jpi,jpj)) ; vatm   = huge(vatm(1,1))
@@ -1074,8 +977,6 @@ C
        allocate(emp   (jpi,jpj)) ; emp    = huge(emp(1,1))
        allocate(runoff(jpi,jpj)) ; runoff = huge(runoff(1,1))
 
-
-CC
        allocate(qsr(jpi,jpj)) ; qsr = huge(qsr(1,1))
 
 
@@ -1093,38 +994,25 @@ CC
 
 
 #if defined key_off_tra
-CC
        allocate(tdta(jpi,jpj,jpk,2)) ; tdta = huge(tdta(1,1,1,1))
        allocate(sdta(jpi,jpj,jpk,2)) ; sdta = huge(sdta(1,1,1,1))
 
-CC
 #endif
-CC
 #if defined key_trahdfiso
-CC
        allocate(uslpdta(jpi,jpj,jpk,2))  ; uslpdta  = huge(uslpdta(1,1,1,1))
        allocate(vslpdta(jpi,jpj,jpk,2))  ; vslpdta  = huge(vslpdta(1,1,1,1))
        allocate(wslpidta(jpi,jpj,jpk,2)) ; wslpidta = huge(wslpidta(1,1,1,1))
        allocate(wslpjdta(jpi,jpj,jpk,2)) ; wslpjdta = huge(wslpjdta(1,1,1,1))
-CC
 #endif
-CC
 #if defined key_trahdfeiv
-CC
-CC
        allocate(ugmdta(jpi,jpj,jpk,2)) ; ugmdta = huge(ugmdta(1,1,1,1))
        allocate(vgmdta(jpi,jpj,jpk,2)) ; vgmdta = huge(vgmdta(1,1,1,1))
        allocate(wgmdta(jpi,jpj,jpk,2)) ; wgmdta = huge(wgmdta(1,1,1,1))
 
 #endif
-CC
 CC----------------------------------------------------------------------
 
-
-        allocate(mtask(3,jpcpu)) ; mtask = huge(mtask(1,1))
-
 #if defined key_mpp || defined key_debug 
-C
        allocate(t3ns(jpi,jprecj,jpk,2))            ; t3ns     = huge(t3ns(1,1,1,1))
        allocate(t3sn(jpi,jprecj,jpk,2))            ; t3sn     = huge(t3sn(1,1,1,1))
        allocate(t3ew(jpj,jpreci,jpk,2))            ; t3ew     = huge(t3ew(1,1,1,1))
@@ -1138,24 +1026,11 @@ C
        allocate(t2ew(jpj,jpreci,2))                ; t2ew     = huge(t2ew(1,1,1))
        allocate(t2we(jpj,jpreci,2))                ; t2we     = huge(t2we(1,1,1))
 
-C
 #  else
 C     no mpp
 #endif
-CC
-C
-       allocate(tabdta(jpidta,jpjdta)) ; tabdta = huge(tabdta(1,1))
-       allocate(tabglo(jpiglo,jpjglo)) ; tabglo = huge(tabglo(1,1))
 
-CC
-#if defined key_mpp|| defined key_debug
-CC      tabio()          : i/o workspace array
-C
-      allocate(tabio(jpi,jpj,jpnij,jpkmod)) ; tabio =huge(tabio(1,1,1,1))
-CC
-#  else
-#endif
-CC
+
 
 #if defined key_passivetrc
 
@@ -1206,7 +1081,6 @@ CC
 
 
 #    if defined key_trc_diaadd
-CC
        allocate(ctrc3d(jpdia3d))            ; ctrc3d = huge(ctrc3d(1))
        allocate(ctrc2d(jpdia2d))            ; ctrc2d = huge(ctrc2d(1))
        allocate(ctrc3u(jpdia3d))            ; ctrc3u = huge(ctrc3u(1))
@@ -1215,45 +1089,27 @@ CC
        allocate(ctrc2l(jpdia2d))            ; ctrc2l = huge(ctrc2l(1))
        allocate(trc3d(jpi,jpj,jpk,jpdia3d)) ; trc3d  = huge(trc3d(1,1,1,1))
        allocate(trc2d(jpi,jpj,jpdia2d))     ; trc2d  = huge(trc2d(1,1,1))
-
-
 #    endif
 
 #    if defined key_trc_diatrd
-CC
       allocate(luttrd(jptra)) ; luttrd = huge(luttrd(1))
 
       allocate(trtrd(jpi,jpj,jpk,jptra,jpdiatrc)) ; trtrd =huge(trtrd(1,1,1,1,1))
 
-CC
-
 #    endif 
-CC
-CC
 #    if defined key_trc_dmp 
 
-      allocate(trdta(jpi,jpj,jpk,jptra))    ; trdta    = huge(trdta(1,1,1,1))
-      allocate(trcdat(jpi,jpj,jpk,2,jptra)) ; trcdat   = huge(trcdat(1,1,1,1,1))
       allocate(idxt(jpi,jpj,jpk))           ; idxt     = huge(idxt(1,1,1))
       allocate(idxt2glo(jpi,jpj,jpk,4))     ; idxt2glo = huge(idxt2glo(1,1,1,1))
 
-
-CC
 #    else
 #    endif
 # endif
 
 #ifdef key_trc_bfm
-CC
-
-      allocate(remine(jpi,jpj,jpk)) ; remine = huge(remine(1,1,1))
       allocate(remdmp(jpk,jptra))   ; remdmp = huge(remdmp(1,1))
-
-CC
-
       allocate(xze(jpi,jpj))        ; xze  = huge(xze(1,1))
       allocate(xpar(jpi,jpj,jpk))   ; xpar = huge(xpar(1,1,1))
- 
 
 #endif
 

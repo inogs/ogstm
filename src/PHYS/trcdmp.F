@@ -92,28 +92,15 @@
              ji = gib_ridxt(2,jv)
              jj = gib_ridxt(3,jv)
              jk = gib_ridxt(4,jv)
-c           ztra = 0 ************* DEFAULT CASE
-c           IF ( nmldmp_gib.EQ.0 ) THEN
-!             write(*,*) 'tra_idx  -->', tra_idx
-!             write(*,*) 'restotr --> ',restotr(ji,jj,jk,tra_idx)
-!             write(*,*) 'gib(jv,jn) -->', gib(jv,jn)
-!             write(*,*) 'trb(ji,jj,jk,tra_idx) -->', trb(ji,jj,jk,tra_idx)
+
              ztra = restotr(ji,jj,jk,tra_idx) * ( gib(jv,jn+mytid)-trb(ji,jj,jk,tra_idx) )
-c           ENDIF
-c           IF ( nmldmp_gib.EQ.1 ) THEN
-c             ztra = gib(jv,jn)
-c           ENDIF
+
              tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
           ENDDO
       ENDIF
 !$omp end parallel
 
          ENDDO 
-!        write(103+rank,*) 'NEW - > restotr', restotr(20,62,1,tra_matrix(1))
-!        write(103+rank,*) 'NEW - > gib    ', gib(1,1)
-!        write(103+rank,*) 'NEW - > trb    ', trb(20,62,1,tra_matrix(1))
-!        write(103+rank,*) 'NEW - > ztra   ' , restotr(20,62,1,tra_matrix(1))* ( gib(1,1)-trb(20,62,1,tra_matrix(1)) )
-!        CALL flush_(103+rank)
  
        ENDIF
 
@@ -167,9 +154,7 @@ c           ENDIF
 c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
 
          ENDDO
-!        write(103+rank,*) 'OLD - >', restotr(20,62,1,tra_matrix(1)) * ( trdta(20,62,1,tra_matrix(1))-trb(20,62,1,tra_matrix(1)) )
-!        write(103+rank,*) 'NEW - >', restotr(20,62,1,tra_matrix(1))* ( riv(1,1)-trb(20,62,1,tra_matrix(1)) )
-!        CALL flush_(103+rank)
+
 
        ENDIF
 

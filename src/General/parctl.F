@@ -110,24 +110,9 @@ C
       ildta = ibloc*((jpidta*jpjdta)/ibloc+1)*jpbyt
       ilglo = ibloc*((jpiglo*jpjglo)/ibloc+1)*jpbyt
       ilindta = ibloc*((jpidta*jpjdta)/ibloc+1)*jpbytda
-C
-C ... Logical unit initialization for files
-C
-C     numout : output file             unit (always used)
-C     numnam : namelist                unit (always used)
-C     numhba : bathymetry (meters)     unit (#ifdef "key_s_coord")
-C     numdyn : dynamic and physic file unit
-C     numtke : tke file                unit
-C
 
-C     numout = unit intialize in the main program ogstm < 10
 
-C     numnam = unit intialize in parlec < 10
-      numdyn = 63
-      numtke = 64
-      numslp = 65
-      numvgm = 66
-C      numhba = 77
+
 
 C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 C
@@ -238,31 +223,8 @@ C
           WRITE(numout,*)
       END IF
 #endif
-#if defined key_off_degrad && defined key_trahdfiso
-C ... slope input file
-C -------------------
-C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** slope file'
 
 
-      CALL ctlopn(numslp,'slp.dta',clold,clunf,clseq,ilindta,ilu,iused,numout,lwp,1)
-
-#endif
-#if defined key_off_degrad && defined key_trahdfeiv
-C ... slope input file
-C -------------------
-C
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) ' *** Gent et Mc William Speed  file'
-C
-C
-      clname='vgm.dta'
-      CALL ctlopn(numvgm,clname,clold,clunf,clseq,ilindta,ilu,iused,numout,lwp,1)
-
-#endif
 
 C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 C

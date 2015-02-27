@@ -117,19 +117,10 @@
 ! 4. depth and vertical scale factors
 ! -----------------------------------
 
-#ifdef key_s_coord
-#else
-
-
        CALL readmask_double_1d(maskfile,'gdept',gdept)
        CALL readmask_double_1d(maskfile,'gdepw',gdepw)
        CALL readmask_double_1d(maskfile,'e3t',    e3t)
        CALL readmask_double_1d(maskfile,'e3w',    e3w)
-
-
-
-#endif
-#ifdef key_trc_dmp
 
 
 !       Restoration Mask ****************
@@ -214,7 +205,7 @@
          write(*,*) 'domrea->ATMRE_Indexing ATM finita, rank=', rank
       endif
 
-#endif
+
 
 ! **************************************** FLUXES
       if (FSizeGlo.GT.0) then ! file could not exist

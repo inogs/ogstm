@@ -1,5 +1,5 @@
 
-      SUBROUTINE trcbio(ktask,kt)
+      SUBROUTINE trcbio
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trcbio

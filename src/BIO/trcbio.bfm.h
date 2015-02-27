@@ -10,7 +10,6 @@
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER kt,ktask
       LOGICAL sur,bot
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10)
 
@@ -56,16 +55,16 @@ C
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-			IF (mytid+jn <= 4) then
-				 do jk=1,jpk
-				 do jj=1,jpj
-				 do ji=1,jpi
-					 sediPI(ji,jj,jk,jn+mytid)=0.
-				 end do
-				 end do
-				 end do
+        IF (mytid+jn <= 4) then
+            do jk=1,jpk
+            do jj=1,jpj
+            do ji=1,jpi
+                sediPI(ji,jj,jk,jn+mytid)=0.
+            end do
+            end do
+            end do
+        ENDIF
 
-			  ENDIF
 !$omp end parallel
          ENDDO
 
@@ -74,16 +73,15 @@ C
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-			IF (mytid+jn <= jptra_dia) then
-				 do jk=1,jpk
-				 do jj=1,jpj
-				 do ji=1,jpi
-					 tra_pp(ji,jj,jk,jn+mytid)=0.
-				 end do
-				 end do
-				 end do
-
-			  ENDIF
+        IF (mytid+jn <= jptra_dia) then
+            do jk=1,jpk
+            do jj=1,jpj
+            do ji=1,jpi
+               tra_pp(ji,jj,jk,jn+mytid)=0.
+            end do
+            end do
+            end do
+        ENDIF
 !$omp end parallel
          ENDDO
 

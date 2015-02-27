@@ -1,5 +1,5 @@
 
-      SUBROUTINE trcopt(ktask,kt)
+      SUBROUTINE trcopt
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trcopt
@@ -13,7 +13,7 @@ CCC                     ******************
 
 CC local declarations
 CC ==================
-      INTEGER kt,ktask
+
       REAL(8) conversion
 #if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm
 

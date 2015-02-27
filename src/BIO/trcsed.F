@@ -1,4 +1,4 @@
-      SUBROUTINE trcsed(ktask,kt)
+      SUBROUTINE trcsed
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trcsed
@@ -57,7 +57,7 @@ CC   ----------
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER kt,ktask
+
 
 #   if defined key_trc_bfm
 

@@ -3284,37 +3284,6 @@ C
 
 
 C
-      IF(lrstar) CLOSE( numrst )
-C
-
-C
-      IF(lwp) THEN
-CMAF          IF( ntopo.EQ.1 ) CLOSE( numbat )
-
-          IF( nmsh .EQ.1 ) CLOSE( nummsh )
-      ENDIF
-C
-
-C
-
-C
-
-C
-
-C
-
-CMAF      CLOSE( numicl )
-
-
-
-CMAF      IF(lwp) CLOSE( numsol )
-C
-
-C
-
-C
-
-C
 C 2. Mpp synchroneus
 C ------------------
 C

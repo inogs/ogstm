@@ -61,18 +61,18 @@
 ! tracers: horizontal diffusion IF lhdf is true
 ! -----------------------------
 
-      IF (lhdf)            CALL trchdf(ktask,kt)
-      IF ( ntrbbl .EQ. 1 ) CALL trcbbl(ktask,kt)
+      IF (lhdf)            CALL trchdf
+      IF ( ntrbbl .EQ. 1 ) CALL trcbbl
 
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
 ! ------------------------
       CALL trcsbc ! surface cell processes
-      CALL trcsms(ktask,kt)
-      CALL trczdf(ktask,kt) ! tracers: vertical diffusion
+      CALL trcsms
+      CALL trczdf ! tracers: vertical diffusion
       CALL snutel
       CALL checkValues
-      CALL trcnxt(ktask,kt) ! tracers: fields at next time step
+      CALL trcnxt ! tracers: fields at next time step
 !      CALL trcrad           ! Correct artificial negative concentrations for isopycnal scheme
 !
 !

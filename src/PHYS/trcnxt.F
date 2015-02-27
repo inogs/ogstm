@@ -1,4 +1,4 @@
-      SUBROUTINE trcnxt(ktask,kt)
+      SUBROUTINE trcnxt
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trcnxt
@@ -36,13 +36,6 @@ CC
 CC
 CC   INPUT :
 CC   -----
-CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
-CC      COMMON
-CC            /comcoo/          : orthogonal curvilinear coordinates
-CC                                and scale factors
-CC            /comask/          : masks, bathymetry
 CC
 CC   OUTPUT :
 CC   ------
@@ -50,8 +43,8 @@ CC      argument                : no
 CC
 CC   WORKSPACE :
 CC   ---------
-CC   ktask kt ji jj jk jn zfact zdt
-CC
+CC     ji jj jk jn zfact zdt
+
 
        USE myalloc
        USE myalloc_mpp
@@ -62,7 +55,7 @@ CC
 
 CC local declarations
 CC ==================
-      INTEGER ktask,kt,pack_size
+      INTEGER pack_size
 ! omp variables
       INTEGER :: mytid, ntids
 
@@ -92,7 +85,7 @@ C Tracer slab
 C ===========
 
 
-      TRACER_LOOP: DO  jn = ktask, jptra, ntids
+      TRACER_LOOP: DO  jn = 1, jptra, ntids
 
 
 C 1. Lateral boundary conditions on tra (1,1,1,jn)

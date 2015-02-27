@@ -1,4 +1,4 @@
-      SUBROUTINE trchdf(ktask,kt)
+      SUBROUTINE trchdf
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trchdf

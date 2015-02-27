@@ -1,4 +1,4 @@
-      SUBROUTINE trczdf ( ktask, kt )
+      SUBROUTINE trczdf
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trczdf
@@ -66,7 +66,7 @@ CC
 CC---------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER ktask, kt
+
 
 #if defined key_passivetrc
       LOGICAL l1,l2,l3

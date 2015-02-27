@@ -1,4 +1,4 @@
-      SUBROUTINE trcbbl( ktask, kt )
+      SUBROUTINE trcbbl
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trcbbl
@@ -43,23 +43,9 @@ CC      not macro-tasked
 CC
 CC   Input :
 CC   ------
-CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
-CC      common
-CC            /comcoo/          : mesh and scale factors
-CC            /comask/          : masks, bathymetry
-CC            /combef/          : previous fields (before)
-CC            /comaft/          : next fields (after)
-CC            /comtsk/          : multitasking
 CC
 CC   Output :
 CC   -------
-CC      common
-CC            /comaft/ ta, sa   : general tracer trend increased by the
-CC                                before horizontal diffusion trend
-CC            /comtrd/ ttrd,strd: now horizontal tracer diffusion trend
-CC                                (if 'key_diatrends' defined)
 CC
 CC   References :                 NO
 CC   -----------
@@ -71,7 +57,6 @@ CC    Beckmann, A., and R. Doscher, 1997, J. Phys.Oceanogr., 581-591.
 
 #include <mpif.h>
 
-      INTEGER ktask, kt
 
 #if defined key_passivetrc
 

@@ -1,4 +1,4 @@
-      SUBROUTINE trcsms(ktask,kt)
+      SUBROUTINE trcsms
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trcsms
@@ -14,8 +14,6 @@ CC      compute the well/spring evolution
 CC
 CC   INPUT :
 CC   -----
-
-
 CC
 CC   EXTERNAL :
 CC   --------
@@ -33,7 +31,6 @@ C this ROUTINE is called only every ndttrc time step
 
        trcsmsparttime = MPI_WTIME() ! F79 cronometer-start
 
-      IF (mod(kt,ndttrc) .NE. 0) RETURN
 
 C this first routines are parallelized on vertical slab
 

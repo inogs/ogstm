@@ -115,8 +115,6 @@ C ... Logical unit initialization for files
 C
 C     numout : output file             unit (always used)
 C     numnam : namelist                unit (always used)
-C     nummsh : coordinates/meshes      unit 
-C     numbat : bathymetry              unit
 C     numhba : bathymetry (meters)     unit (#ifdef "key_s_coord")
 C     numdyn : dynamic and physic file unit
 C     numtke : tke file                unit
@@ -125,8 +123,6 @@ C
 C     numout = unit intialize in the main program ogstm < 10
 
 C     numnam = unit intialize in parlec < 10
-      nummsh = 13
-C      numbat = 11 PAS DE BATHY.
       numdyn = 63
       numtke = 64
       numslp = 65

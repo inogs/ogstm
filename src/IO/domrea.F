@@ -118,28 +118,6 @@
 ! -----------------------------------
 
 #ifdef key_s_coord
-      CALL restget(nummsh,'hbatt',jpiglo,jpjglo,1,0,clog,hbattglo)
-      CALL restget(nummsh,'hbatu',jpiglo,jpjglo,1,0,clog,hbatuglo)
-      CALL restget(nummsh,'hbatv',jpiglo,jpjglo,1,0,clog,hbatvglo)
-      CALL restget(nummsh,'hbatf',jpiglo,jpjglo,1,0,clog,hbatfglo)
-
-      do jj=jjsta, jjend
-         do ii=iista, iiend
-            iinew = ii - nimpp + 1
-            jjnew = jj - njmpp + 1
-            hbatt(iinew, jjnew) = hbattglo(ii, jj)
-            hbatu(iinew, jjnew) = hbatuglo(ii, jj)
-            hbatv(iinew, jjnew) = hbatvglo(ii, jj)
-            hbatf(iinew, jjnew) = hbatfglo(ii, jj)
-         enddo
-      enddo
-
-
-      CALL restget(nummsh,'gsigt',1,1,jpk,0,clog,gsigt)
-      CALL restget(nummsh,'gsigw',1,1,jpk,0,clog,gsigw)
-      CALL restget(nummsh,'gsi3w',1,1,jpk,0,clog,gsi3w)
-      CALL restget(nummsh,'esigt',1,1,jpk,0,clog,esigt)
-      CALL restget(nummsh,'esigw',1,1,jpk,0,clog,esigw)
 #else
 
 

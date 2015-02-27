@@ -68,9 +68,6 @@
       ! -------------------------
 
       numnam = 208
-      numrst = 209
-      numbat = 212
-      nummsh = 214 !restget
        nimpp  = 1
        njmpp  = 1 
 
@@ -211,7 +208,6 @@
           CALL inimpp !   ... standard cutting out
         ELSE
 !   ... eliminate land processors
-
 !         CALL inimpp2 ! to be tested
          STOP
       ENDIF

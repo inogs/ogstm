@@ -115,9 +115,7 @@ CC
 CC----------------------------------------------------------------------
 CC        horizontal curvilinear coordinate and scale factors
 CC ---------------------------------------------------------------------
-CC      nummsh           : logical unit of coordinate/meshes output file
 CC      ngrid            : flag to read or compute coordinates
-CC      nmsh             : flag to write coordinates and meshes file
 CC      njpi, njpj       : read dimensions
 CC      rra              : read earth radius
 CC      glamt          : longitude of t-point (degre)
@@ -134,7 +132,7 @@ CC      e1v,e2v        : horizontal scale factors at v-point (m)
 CC      e1f,e2f        : horizontal scale factors at f-point (m)
 CC        ff             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
 
-      INTEGER nummsh, ngrid, nmsh, njpi, njpj
+      INTEGER ngrid, njpi, njpj
 
 
       REAL(8) rra
@@ -181,12 +179,10 @@ CC
 CC----------------------------------------------------------------------
 CC        masks, bathymetry
 CC -----------------------------------
-CC      numbat          : logical unit for bathymetry file
 CC      mbathy         : number of ocean level (=0, 1, ... , jpk-1)
 CC      tmask, umask() : land/ocean mask at t-, u-, v- and f-points
 CC      vmask, fmask()
 
-      INTEGER numbat
       INTEGER, allocatable :: mbathy(:,:)
 
 
@@ -441,14 +437,13 @@ CC       parameters for the control
 CC -------------------------------------------
 CC      numnam           : logical unit for namelist
 
-CC      numrst           : logical unit for restart file
 CC      lrstar           : boolean term for restart i/o
 CC      calendarType     : leap years calendar (0/1)
 CC      neuler           : restart euler forward option (0=Euler)
 
 
 
-      INTEGER numnam, numrst
+      INTEGER numnam
       INTEGER calendarType
       INTEGER neuler
       LOGICAL lrstar

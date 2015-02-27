@@ -4899,20 +4899,12 @@ C
       CLOSE( numnam )
 
 
-C
-      IF(lrstar) CLOSE( numrst )
-C
 #if defined key_islands
       CLOSE( numisl )
       IF(lwp) CLOSE( numisp )
 #endif
-C
-      IF(lwp) THEN
-CMAF          IF( ntopo.EQ.1 ) CLOSE( numbat )
 
-          IF( nmsh .EQ.1 ) CLOSE( nummsh )
-      ENDIF
-C
+
 #if defined key_temdta
       CLOSE( numte1 )
 #endif

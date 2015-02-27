@@ -4,24 +4,24 @@ CC
 CC mpp routines
 CC
 CC mynode
-CC mpparent
-CC mppspawn
-CC mppshmem
+CC mpparent    --> to be removed
+CC mppspawn    --> to be removed
+CC mppshmem    --> to be removed
 CC mpplnk
 CC mpplnk2
 CC mpplnks
 CC mpprecv
 CC mppsend
 CC mppwait
-CC mppscatter
-CC mppgather
-CC mppiisl
-CC mppimin
-CC mppisum
-CC mpprisl
-CC mpprmax
-CC mpprmin
-CC mpprsum
+CC mppscatter  --> to be removed
+CC mppgather   --> to be removed
+CC mppiisl     --> to be removed
+CC mppimin     --> to be removed
+CC mppisum     --> to be removed
+CC mpprisl     --> to be removed
+CC mpprmax     --> to be removed
+CC mpprmin     --> to be removed
+CC mpprsum     --> to be removed
 CC mppsync
 CC mppstop
 CC
@@ -57,7 +57,7 @@ C-----------------------------------------------------------------------
         IMPLICIT NONE
 
 
-#ifdef key_mpp
+
 
 C
 #ifdef key_mpp_mpi
@@ -81,155 +81,6 @@ CC-CC      endif
 
       mynode=rank
       RETURN
-#  else
-C
-C PVM or SHMEM VERSION
-C
-      INTEGER mynode
-      INTEGER imypid, imyhost
-      INTEGER ji,info
-      INTEGER iparent_tid
-C
-      IF(npvm_ipas .NE. nprocmax) THEN
-C
-C         ---   first passage in mynode
-C
-C         -------------
-C         enroll in pvm
-C         -------------
-C
-          CALL pvmfmytid( npvm_mytid )
-          IF( mynode_print .NE. 0) THEN
-              WRITE(nummpp,*) 'mynode, npvm_ipas=',npvm_ipas,
-     $            ' nprocmax=',nprocmax
-              WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $            ' after pvmfmytid'
-          END IF
-C
-C         ---------------------------------------------------------------
-C         find out IF i am parent or child spawned processes have parents
-C         ---------------------------------------------------------------
-C
-          CALL mpparent(iparent_tid)
-          IF( mynode_print .NE. 0) THEN
-              WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $            ' after mpparent, npvm_tids(0)=',
-     $            npvm_tids(0),' iparent_tid=',
-     $            iparent_tid
-          END IF
-          IF(iparent_tid .LT. 0 )  THEN
-              WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $            ' after mpparent, npvm_tids(0)=',
-     $            npvm_tids(0),' iparent_tid=',
-     $            iparent_tid
-              npvm_tids(0) = npvm_mytid
-              npvm_me = 0
-              IF(ndim_mpp .GT. nprocmax) THEN
-                  WRITE(nummpp,*) 'npvm_mytid=',npvm_mytid,' too great'
-                  STOP  ' mynode '
-              ELSE
-                  npvm_nproc = ndim_mpp
-              END IF
-C
-C             -------------------------
-C             start up copies of myself
-C             -------------------------
-C
-              IF(npvm_nproc .GT. 1) THEN
-                  CALL mppspawn(executable,pvmdefault,'*'
-     $                ,npvm_nproc-1,npvm_tids(1),info)
-                  IF(info .NE. npvm_nproc-1) THEN
-                      WRITE(nummpp,*) 'mynode.f, problem in spawn '
-     $                    ,' info=',info
-     $                    ,' executable=',executable
-                      STOP
-                  END IF
-                  IF(mynode_print .NE. 0) THEN
-                      WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $                    ' maitre=',executable
-     $                    ,' info=',info
-     $                    ,' npvm_nproc=',npvm_nproc
-                      WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $                    ' npvm_tids '
-     $                    ,(npvm_tids(ji),ji=0,npvm_nproc-1)
-                  ENDIF
-C
-C                 ---------------------------
-C                 multicast tids array to children
-C                 ---------------------------
-C
-                  CALL pvmfinitsend( pvmdefault, info )
-                  CALL pvmfpack(jpvmint,npvm_nproc,1,1,info)
-                  CALL pvmfpack(jpvmint,npvm_tids,npvm_nproc,1,info)
-                  CALL pvmfmcast(npvm_nproc-1,npvm_tids(1),10,info)
-              END IF
-          ELSE
-C
-C             ---------------------------------
-C             receive the tids array and set me
-C             ---------------------------------
-C
-              IF(mynode_print .NE. 0) THEN
-                  WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $                ' pvmfrecv'
-              ENDIF
-              CALL pvmfrecv( iparent_tid, 10, info )
-              IF(mynode_print .NE. 0) THEN
-                  WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $                " fin pvmfrecv"
-              ENDIF
-              CALL pvmfunpack(jpvmint,npvm_nproc,1,1,info)
-              CALL pvmfunpack(jpvmint,npvm_tids,npvm_nproc,1,info)
-              IF(mynode_print.ne.0) THEN
-                  WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $                ' esclave='
-     $                ,executable,' info=',info
-     $                ,' npvm_nproc=',npvm_nproc
-                  WRITE(nummpp,*) 'mynode, npvm_mytid=',npvm_mytid,
-     $                'npvm_tids'
-     $                ,(npvm_tids(ji),ji=0,npvm_nproc-1)
-              ENDIF
-              DO ji=0, npvm_nproc-1
-                IF(npvm_mytid .EQ. npvm_tids(ji) ) npvm_me = ji
-              END DO   
-          ENDIF
-C
-C         ------------------------------------------------------------
-C         all nproc tasks are equal now
-C         and can address each other by tids(0) thru tids(nproc-1)
-C         for each process me => process number [0-(nproc-1)]
-C         ------------------------------------------------------------
-C
-          CALL pvmfjoingroup ("bidon", info)
-          CALL pvmfbarrier ("bidon", npvm_nproc, info)
-          DO ji=0, npvm_nproc-1
-            IF(ji .EQ. npvm_me) THEN
-                CALL pvmfjoingroup (opaall, npvm_inum)
-                IF(npvm_inum .NE. npvm_me) WRITE(nummpp,*) 'mynode',
-     $              ' not arrived in the good order for opaall'
-            END IF
-            CALL pvmfbarrier("bidon",npvm_nproc,info)
-          END DO
-          CALL pvmfbarrier(opaall,npvm_nproc,info)
-C
-      ELSE
-C
-C         ---   other passage in mynode
-C
-      ENDIF
-
-      npvm_ipas = nprocmax
-      mynode    = npvm_me
-      imypid    = npvm_mytid
-      imyhost   = npvm_tids(0)
-      IF(mynode_print .NE. 0) THEN
-          WRITE(nummpp,*)'mynode, npvm_mytid=',npvm_mytid
-     $        ,' npvm_me=',npvm_me
-     $        ,' npvm_nproc=',npvm_nproc
-     $        ,' npvm_ipas=',npvm_ipas
-      END IF
-      RETURN
-#endif
 #  else
       INTEGER mynode
       mynode=0
@@ -273,95 +124,13 @@ C-----------------------------------------------------------------------
 C
       INTEGER kparent_tid
 C
-#ifdef key_mpp
 
-
-
-
-#ifdef key_mpp_pvm
-C
-C PVM VERSION
-C
-      CALL pvmfparent(kparent_tid)
-C
-#elif defined key_mpp_mpi
+#ifdef key_mpp_mpi
 C
 C MPI VERSION
 C
       kparent_tid=-1
 C
-#else
-C
-C SHMEM VERSION or PVM onto T3E
-C
-      INTEGER it3d_my_pe
-      INTEGER leadz
-      INTEGER ji,info
-C
-      CALL pvmfmytid(nt3d_mytid)
-      CALL pvmfgetpe(nt3d_mytid,it3d_my_pe)
-      IF(mpparent_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mpparent, nt3d_mytid=',nt3d_mytid
-     $        ,' it3d_my_pe=',it3d_my_pe
-      END IF
-      IF(it3d_my_pe .EQ. 0) THEN
-C
-C-----------------------------------------------------------------c
-C     process = 0 => receive other tids                           c
-C-----------------------------------------------------------------c
-C
-          kparent_tid = -1
-          IF(mpparent_print .NE. 0) THEN
-              WRITE(nummpp,*) 'mpparent, nt3d_mytid=',nt3d_mytid
-     $            ,' kparent_tid=',kparent_tid
-          END IF
-C
-C          --- END receive dimension ---
-C
-          IF(ndim_mpp .GT. nprocmax) THEN
-              WRITE(nummpp,*) 'mytid=',nt3d_mytid,' too great'
-              STOP  ' mpparent '
-          ELSE
-              nt3d_nproc =  ndim_mpp
-          END IF
-          IF(mpparent_print .NE. 0) THEN
-              WRITE(nummpp,*) 'mpparent, nt3d_mytid=',nt3d_mytid
-     $            ,' nt3d_nproc=',nt3d_nproc
-          END IF
-C
-C-------- receive tids from others process --------
-C
-          DO ji=1,nt3d_nproc-1
-            CALL pvmfrecv( ji , 100, info )
-            CALL pvmfunpack(jpvmint,nt3d_tids(ji),1,1,info)
-            IF(mpparent_print .NE. 0) THEN
-                WRITE(nummpp,*) 'mpparent, nt3d_mytid=',nt3d_mytid
-     $              ,' receive=',nt3d_tids(ji),' from=',ji
-            END IF
-          END DO
-          nt3d_tids(0)=nt3d_mytid
-          IF(mpparent_print .NE. 0) THEN
-              WRITE(nummpp,*) 'mpparent, nt3d_mytid=',nt3d_mytid
-     $            ,' nt3d_tids(ji) =',(nt3d_tids(ji),
-     $            ji=0,nt3d_nproc-1)
-          END IF
-          IF(mpparent_print .NE. 0) THEN
-              WRITE(nummpp,*) 'mpparent, nt3d_mytid=',nt3d_mytid
-     $            ,' kparent_tid=',kparent_tid
-          END IF
-
-      ELSE
-C
-C-----------------------------------------------------------------c
-C     process <> 0 => send  other tids                            c
-C-----------------------------------------------------------------c
-C
-          kparent_tid = 0
-          CALL pvmfinitsend( pvmdataraw, info )
-          CALL pvmfpack(jpvmint,nt3d_mytid,1,1,info)
-          CALL pvmfsend(kparent_tid,100,info)
-      END IF
-#endif
 #endif
       RETURN
       END
@@ -405,34 +174,15 @@ C-----------------------------------------------------------------------
 C
       CHARACTER  cdexec(*),cdwhere(*)
       INTEGER kmod,kproc,ktids(*),kinfo
-CC
-#ifdef key_mpp
 
 
 C
-#ifdef key_mpp_pvm
-C
-C PVM VERSION
-C
-      CALL pvmfspawn(cdexec,kmod,cdwhere,kproc,ktids,kinfo)
-C
-#  elif defined key_mpp_mpi
+#ifdef key_mpp_mpi
 C
 C MPI VERSION
 C
       kinfo=-1
 C
-#  else
-C
-C SHMEM VERSION or PVM onto T3E
-C
-      INTEGER ji
-C
-      DO ji=1,kproc
-        ktids(ji)=nt3d_tids(ji)
-      END DO
-      kinfo=kproc
-#endif
 #endif
 C
 C
@@ -460,29 +210,6 @@ C-----------------------------------------------------------------------
         IMPLICIT NONE
 
 
-C-----------------------------------------------------------------------
-#ifdef key_mpp
-
-
-C
-#ifdef key_mpp_shmem
-C
-      nrs1sync_shmem = SHMEM_SYNC_VALUE
-      nrs2sync_shmem = SHMEM_SYNC_VALUE
-      nis1sync_shmem = SHMEM_SYNC_VALUE
-      nis2sync_shmem = SHMEM_SYNC_VALUE
-      nil1sync_shmem = SHMEM_SYNC_VALUE
-      nil2sync_shmem = SHMEM_SYNC_VALUE
-      ni11sync_shmem = SHMEM_SYNC_VALUE
-      ni12sync_shmem = SHMEM_SYNC_VALUE
-      ni21sync_shmem = SHMEM_SYNC_VALUE
-      ni22sync_shmem = SHMEM_SYNC_VALUE
-C
-      CALL barrier()
-#endif
-#endif
-C
-C
       RETURN
       END
 
@@ -586,7 +313,7 @@ C
       REAL(8) t3p1_my1(jpi,1,jpk,packsize,2)
       REAL(8) t3p2_my1(jpi,1,jpk,packsize,2)
 
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
       INTEGER ji,jj,jk,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
@@ -748,26 +475,6 @@ C        trcadvtottime = trcadvtottime + trcadvparttime
 C
 C 2.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      imigr=jpreci*jpj*jpk*packsize
-C
-      IF(nbondi.eq.-1) THEN
-      CALL shmem_put(t3we_my1(1,1,1,1,2),t3we_my1(1,1,1,1,1),imigr,noea)
-      ELSE IF(nbondi.eq.0) THEN
-          CALL shmem_put(t3ew_my1(1,1,1,1,2),t3ew_my1(1,1,1,1,1),imigr,nowe)
-          CALL shmem_put(t3we_my1(1,1,1,1,2),t3we_my1(1,1,1,1,1),imigr,noea)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL shmem_put(t3ew_my1(1,1,1,1,2),t3ew_my(1,1,1,1,1),imigr,nowe)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       imigr=jpreci*jpj*jpk*packsize
 C
@@ -796,34 +503,7 @@ C         endif
           CALL mppwait(reqr1)
       ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-      imigr=jpreci*jpj*jpk*jpbyt*packsize
-C
-      IF(nbondi.eq.-1) THEN
-          CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs1)
-          CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondi.eq.0) THEN
-          CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
-          CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs2)
-          CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
-          CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-C
-#endif
+
 C
 C 2.3 Write Dirichlet lateral conditions
 C
@@ -911,26 +591,6 @@ C       trcadvtottime = trcadvtottime + trcadvparttime
 C
 C 3.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      imigr=jprecj*jpi*jpk*packsize
-C
-      IF(nbondj.eq.-1) THEN
-          CALL shmem_put(t3sn_my1(1,1,1,1,2),t3sn_my1(1,1,1,1,1),imigr,nono)
-      ELSE IF(nbondj.eq.0) THEN
-          CALL shmem_put(t3ns_my1(1,1,1,1,2),t3ns_my1(1,1,1,1,1),imigr,noso)
-          CALL shmem_put(t3sn_my1(1,1,1,1,2),t3sn_my1(1,1,1,1,1),imigr,nono)
-      ELSE IF(nbondj.eq.1) THEN
-          CALL shmem_put(t3ns_my1(1,1,1,1,2),t3ns_my1(1,1,1,1,1),imigr,noso)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       imigr=jprecj*jpi*jpk*packsize
 C
@@ -960,34 +620,6 @@ C     endif
           CALL mppwait(reqr1)
       ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-      imigr=jprecj*jpi*jpk*jpbyt*packsize
-C
-      IF(nbondj.eq.-1) THEN
-          CALL mppsend(4,t3sn_my1(1,1,1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t3ns_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondj.eq.0) THEN
-          CALL mppsend(3,t3ns_my1(1,1,1,1,1),imigr,noso,0,reqs1)
-          CALL mppsend(4,t3sn_my1(1,1,1,1,1),imigr,nono,0,reqs2)
-          CALL mpprecv(3,t3ns_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mpprecv(4,t3sn_my1(1,1,1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondj.eq.1) THEN
-          CALL mppsend(3,t3ns_my1(1,1,1,1,1),imigr,noso,0,reqs1)
-          CALL mpprecv(4,t3sn_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-C
-#endif
 C
 C 3.3 Write Dirichlet lateral conditions
 C
@@ -1207,20 +839,6 @@ C
 C 4.2 Migrations
           IF(npolj.eq.3) THEN
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-          imigr=jprecj*jpi*jpk*packsize
-C
-          CALL shmem_put(t3p1_my1(1,1,1,1,2),t3p1_my1(1,1,1,1,1),imigr,nono)
-          CALL shmem_put(t3p2_my1(1,1,1,1,2),t3p2_my1(1,1,1,1,1),imigr,nono)
-          CALL barrier()
-          CALL shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
           imigr=jprecj*jpi*jpk*packsize
 C     if (rank==1) then
@@ -1238,22 +856,6 @@ C
           CALL mppwait(reqs2)
           CALL mppwait(reqr2)
 C
-#  else
-C
-C PVM VERSION
-C
-          imigr=jprecj*jpi*jpk*jpbyt*packsize
-C
-          CALL mppsend(3,t3p1_my1(1,1,1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t3p1_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-          CALL mppsend(4,t3p2_my1(1,1,1,1,1),imigr,nono,0,reqs2)
-          CALL mpprecv(4,t3p2_my1(1,1,1,1,2),imigr,reqr2)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr2)
-C
-#endif      
           ENDIF
 C
 C 4.3 Write north fold conditions
@@ -1370,26 +972,6 @@ C
 C 5.2 Migrations
       IF (npolj.eq.3.or.npolj.eq.4) THEN
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-          imigr=jpreci*jpj*jpk*packsize
-C
-          IF(nbondi.eq.-1) THEN
-              CALL shmem_put(t3we_my1(1,1,1,1,2),t3we_my1(1,1,1,1,1),imigr,noea)
-          ELSE IF(nbondi.eq.0) THEN
-              CALL shmem_put(t3ew_my1(1,1,1,1,2),t3ew_my1(1,1,1,1,1),imigr,nowe)
-              CALL shmem_put(t3we_my1(1,1,1,1,2),t3we_my1(1,1,1,1,1),imigr,noea)
-          ELSE IF(nbondi.eq.1) THEN
-              CALL shmem_put(t3ew_my1(1,1,1,1,2),t3ew_my1(1,1,1,1,1),imigr,nowe)
-          ENDIF
-          CALL  barrier()
-          CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
           imigr=jpreci*jpj*jpk*packsize
 C     if (rank==1) then
@@ -1419,34 +1001,7 @@ C
               CALL mppwait(reqr1)
           ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-          imigr=jpreci*jpj*jpk*jpbyt*packsize
-C
-          IF(nbondi.eq.-1) THEN
-              CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs1)
-              CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqr1)
-          ELSE IF(nbondi.eq.0) THEN
-              CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
-              CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs2)
-              CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
-              CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr2)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqs2)
-              CALL mppwait(reqr1)
-              CALL mppwait(reqr2)
-          ELSE IF(nbondi.eq.1) THEN
-              CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
-              CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr1)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqr1)
-          ENDIF
-C
-#endif
+
          ENDIF
 C
 C 5.3 Write Dirichlet lateral conditions
@@ -1597,7 +1152,7 @@ C
       REAL(8) t3p1(jpi,1,jpk,2)
       REAL(8) t3p2(jpi,1,jpk,2)
 
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
       INTEGER ji,jj,jk,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
@@ -1699,26 +1254,7 @@ C
 C
 C 2.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      imigr=jpreci*jpj*jpk
-C
-      IF(nbondi.eq.-1) THEN
-          CALL shmem_put(t3we(1,1,1,2),t3we(1,1,1,1),imigr,noea)
-      ELSE IF(nbondi.eq.0) THEN
-          CALL shmem_put(t3ew(1,1,1,2),t3ew(1,1,1,1),imigr,nowe)
-          CALL shmem_put(t3we(1,1,1,2),t3we(1,1,1,1),imigr,noea)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL shmem_put(t3ew(1,1,1,2),t3ew(1,1,1,1),imigr,nowe)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       imigr=jpreci*jpj*jpk
 C
@@ -1747,34 +1283,7 @@ C     endif
           CALL mppwait(reqr1)
       ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-      imigr=jpreci*jpj*jpk*jpbyt
-C
-      IF(nbondi.eq.-1) THEN
-          CALL mppsend(2,t3we(1,1,1,1),imigr,noea,0,reqs1)
-          CALL mpprecv(1,t3ew(1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondi.eq.0) THEN
-          CALL mppsend(1,t3ew(1,1,1,1),imigr,nowe,0,reqs1)
-          CALL mppsend(2,t3we(1,1,1,1),imigr,noea,0,reqs2)
-          CALL mpprecv(1,t3ew(1,1,1,2),imigr,reqr1)
-          CALL mpprecv(2,t3we(1,1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL mppsend(1,t3ew(1,1,1,1),imigr,nowe,0,reqs1)
-          CALL mpprecv(2,t3we(1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-C
-#endif
+
 C
 C 2.3 Write Dirichlet lateral conditions
 C
@@ -1821,26 +1330,6 @@ C
 C
 C 3.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      imigr=jprecj*jpi*jpk
-C
-      IF(nbondj.eq.-1) THEN
-          CALL shmem_put(t3sn(1,1,1,2),t3sn(1,1,1,1),imigr,nono)
-      ELSE IF(nbondj.eq.0) THEN
-          CALL shmem_put(t3ns(1,1,1,2),t3ns(1,1,1,1),imigr,noso)
-          CALL shmem_put(t3sn(1,1,1,2),t3sn(1,1,1,1),imigr,nono)
-      ELSE IF(nbondj.eq.1) THEN
-          CALL shmem_put(t3ns(1,1,1,2),t3ns(1,1,1,1),imigr,noso)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       imigr=jprecj*jpi*jpk
 C
@@ -1870,34 +1359,7 @@ C     endif
           CALL mppwait(reqr1)
       ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-      imigr=jprecj*jpi*jpk*jpbyt
-C
-      IF(nbondj.eq.-1) THEN
-          CALL mppsend(4,t3sn(1,1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t3ns(1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondj.eq.0) THEN
-          CALL mppsend(3,t3ns(1,1,1,1),imigr,noso,0,reqs1)
-          CALL mppsend(4,t3sn(1,1,1,1),imigr,nono,0,reqs2)
-          CALL mpprecv(3,t3ns(1,1,1,2),imigr,reqr1)
-          CALL mpprecv(4,t3sn(1,1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondj.eq.1) THEN
-          CALL mppsend(3,t3ns(1,1,1,1),imigr,noso,0,reqs1)
-          CALL mpprecv(4,t3sn(1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-C
-#endif
+
 C
 C 3.3 Write Dirichlet lateral conditions
 C
@@ -2049,20 +1511,7 @@ CCC                  t3p2(ji,1,jk,1) = ptab(iju,nlcj-3,jk)
 C
 C 4.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-          imigr=jprecj*jpi*jpk
-C
-          CALL shmem_put(t3p1(1,1,1,2),t3p1(1,1,1,1),imigr,nono)
-          CALL shmem_put(t3p2(1,1,1,2),t3p2(1,1,1,1),imigr,nono)
-          CALL barrier()
-          CALL shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
           imigr=jprecj*jpi*jpk
 C     if (rank==1) then
@@ -2080,22 +1529,7 @@ C
           CALL mppwait(reqs2)
           CALL mppwait(reqr2)
 C
-#  else
-C
-C PVM VERSION
-C
-          imigr=jprecj*jpi*jpk*jpbyt
-C
-          CALL mppsend(3,t3p1(1,1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t3p1(1,1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-          CALL mppsend(4,t3p2(1,1,1,1),imigr,nono,0,reqs2)
-          CALL mpprecv(4,t3p2(1,1,1,2),imigr,reqr2)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr2)
-C
-#endif      
+
 C
 C 4.3 Write north fold conditions
 C
@@ -2164,26 +1598,6 @@ C
 C
 C 5.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-          imigr=jpreci*jpj*jpk
-C
-          IF(nbondi.eq.-1) THEN
-              CALL shmem_put(t3we(1,1,1,2),t3we(1,1,1,1),imigr,noea)
-          ELSE IF(nbondi.eq.0) THEN
-              CALL shmem_put(t3ew(1,1,1,2),t3ew(1,1,1,1),imigr,nowe)
-              CALL shmem_put(t3we(1,1,1,2),t3we(1,1,1,1),imigr,noea)
-          ELSE IF(nbondi.eq.1) THEN
-              CALL shmem_put(t3ew(1,1,1,2),t3ew(1,1,1,1),imigr,nowe)
-          ENDIF
-          CALL  barrier()
-          CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
           imigr=jpreci*jpj*jpk
 C     if (rank==1) then
@@ -2213,34 +1627,6 @@ C
               CALL mppwait(reqr1)
           ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-          imigr=jpreci*jpj*jpk*jpbyt
-C
-          IF(nbondi.eq.-1) THEN
-              CALL mppsend(2,t3we(1,1,1,1),imigr,noea,0,reqs1)
-              CALL mpprecv(1,t3ew(1,1,1,2),imigr,reqr1)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqr1)
-          ELSE IF(nbondi.eq.0) THEN
-              CALL mppsend(1,t3ew(1,1,1,1),imigr,nowe,0,reqs1)
-              CALL mppsend(2,t3we(1,1,1,1),imigr,noea,0,reqs2)
-              CALL mpprecv(1,t3ew(1,1,1,2),imigr,reqr1)
-              CALL mpprecv(2,t3we(1,1,1,2),imigr,reqr2)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqs2)
-              CALL mppwait(reqr1)
-              CALL mppwait(reqr2)
-          ELSE IF(nbondi.eq.1) THEN
-              CALL mppsend(1,t3ew(1,1,1,1),imigr,nowe,0,reqs1)
-              CALL mpprecv(2,t3we(1,1,1,2),imigr,reqr1)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqr1)
-          ENDIF
-C
-#endif
 C
 C 5.3 Write Dirichlet lateral conditions
 C
@@ -2368,7 +1754,7 @@ C
       REAL(8) ptab(jpi,jpj)
       REAL(8) t2p1(jpi,1,2)
       REAL(8) t2p2(jpi,1,2)
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
@@ -2456,26 +1842,6 @@ C
 C
 C 2.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      imigr=jpreci*jpj
-C
-      IF(nbondi.eq.-1) THEN
-          CALL shmem_put(t2we(1,1,2),t2we(1,1,1),imigr,noea)
-      ELSE IF(nbondi.eq.0) THEN
-          CALL shmem_put(t2ew(1,1,2),t2ew(1,1,1),imigr,nowe)
-          CALL shmem_put(t2we(1,1,2),t2we(1,1,1),imigr,noea)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL shmem_put(t2ew(1,1,2),t2ew(1,1,1),imigr,nowe)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       imigr=jpreci*jpj
 C
@@ -2500,34 +1866,6 @@ C
           CALL mppwait(reqr1)
       ENDIF
 C
-# else
-C
-C PVM VERSION
-C
-      imigr=jpreci*jpj*jpbyt
-C
-      IF(nbondi.eq.-1) THEN
-          CALL mppsend(2,t2we(1,1,1),imigr,noea,0,reqs1)
-          CALL mpprecv(1,t2ew(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondi.eq.0) THEN
-          CALL mppsend(1,t2ew(1,1,1),imigr,nowe,0,reqs1)
-          CALL mppsend(2,t2we(1,1,1),imigr,noea,0,reqs2)
-          CALL mpprecv(1,t2ew(1,1,2),imigr,reqr1)
-          CALL mpprecv(2,t2we(1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL mppsend(1,t2ew(1,1,1),imigr,nowe,0,reqs1)
-          CALL mpprecv(2,t2we(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-C
-#endif
 C
 C 2.3 Write Dirichlet lateral conditions
 C
@@ -2568,27 +1906,6 @@ C
 C
 C 3.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-C
-      imigr=jprecj*jpi
-C
-      IF(nbondj.eq.-1) THEN
-          CALL shmem_put(t2sn(1,1,2),t2sn(1,1,1),imigr,nono)
-      ELSE IF(nbondj.eq.0) THEN
-          CALL shmem_put(t2ns(1,1,2),t2ns(1,1,1),imigr,noso)
-          CALL shmem_put(t2sn(1,1,2),t2sn(1,1,1),imigr,nono)
-      ELSE IF(nbondj.eq.1) THEN
-          CALL shmem_put(t2ns(1,1,2),t2ns(1,1,1),imigr,noso)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       imigr=jprecj*jpi
 C
@@ -2613,34 +1930,6 @@ C
           CALL mppwait(reqr1)
       ENDIF
 C
-#else
-C
-C PVM VERSION
-C
-      imigr=jprecj*jpi*jpbyt
-C
-      IF(nbondj.eq.-1) THEN
-          CALL mppsend(4,t2sn(1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t2ns(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondj.eq.0) THEN
-          CALL mppsend(3,t2ns(1,1,1),imigr,noso,0,reqs1)
-          CALL mppsend(4,t2sn(1,1,1),imigr,nono,0,reqs2)
-          CALL mpprecv(3,t2ns(1,1,2),imigr,reqr1)
-          CALL mpprecv(4,t2sn(1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondj.eq.1) THEN
-          CALL mppsend(3,t2ns(1,1,1),imigr,noso,0,reqs1)
-          CALL mpprecv(4,t2sn(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-C
-#endif
 C
 C 3.3 Write Dirichlet lateral conditions
 C
@@ -2772,20 +2061,6 @@ CCC                t2p2(ji,1,1) = ptab(iju,nlcj-3)
 C
 C 4.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-          imigr=jprecj*jpi
-C
-          CALL shmem_put(t2p1(1,1,2),t2p1(1,1,1),imigr,nono)
-          CALL shmem_put(t2p2(1,1,2),t2p2(1,1,1),imigr,nono)
-          CALL barrier()
-          CALL shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
           imigr=jprecj*jpi
 C
@@ -2798,22 +2073,6 @@ C
           CALL mppwait(reqs2)
           CALL mppwait(reqr2)
 C
-#  else
-C
-C PVM VERSION
-C
-          imigr=jprecj*jpi*jpbyt
-C
-          CALL mppsend(3,t2p1(1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t2p1(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-          CALL mppsend(4,t2p2(1,1,1),imigr,nono,0,reqs2)
-          CALL mpprecv(4,t2p2(1,1,2),imigr,reqr2)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr2)
-C
-#endif      
 C
 C 4.3 Write north fold conditions
 C
@@ -2869,26 +2128,6 @@ C
 C
 C 5.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-          imigr=jpreci*jpj
-C
-          IF(nbondi.eq.-1) THEN
-              CALL shmem_put(t2we(1,1,2),t2we(1,1,1),imigr,noea)
-          ELSE IF(nbondi.eq.0) THEN
-              CALL shmem_put(t2ew(1,1,2),t2ew(1,1,1),imigr,nowe)
-              CALL shmem_put(t2we(1,1,2),t2we(1,1,1),imigr,noea)
-          ELSE IF(nbondi.eq.1) THEN
-              CALL shmem_put(t2ew(1,1,2),t2ew(1,1,1),imigr,nowe)
-          ENDIF
-          CALL  barrier()
-          CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
           imigr=jpreci*jpj
 C
@@ -2913,34 +2152,6 @@ C
               CALL mppwait(reqr1)
           ENDIF
 C
-# else
-C
-C PVM VERSION
-C
-          imigr=jpreci*jpj*jpbyt
-C
-          IF(nbondi.eq.-1) THEN
-              CALL mppsend(2,t2we(1,1,1),imigr,noea,0,reqs1)
-              CALL mpprecv(1,t2ew(1,1,2),imigr,reqr1)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqr1)
-          ELSE IF(nbondi.eq.0) THEN
-              CALL mppsend(1,t2ew(1,1,1),imigr,nowe,0,reqs1)
-              CALL mppsend(2,t2we(1,1,1),imigr,noea,0,reqs2)
-              CALL mpprecv(1,t2ew(1,1,2),imigr,reqr1)
-              CALL mpprecv(2,t2we(1,1,2),imigr,reqr2)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqs2)
-              CALL mppwait(reqr1)
-              CALL mppwait(reqr2)
-          ELSE IF(nbondi.eq.1) THEN
-              CALL mppsend(1,t2ew(1,1,1),imigr,nowe,0,reqs1)
-              CALL mpprecv(2,t2we(1,1,2),imigr,reqr1)
-              CALL mppwait(reqs1)
-              CALL mppwait(reqr1)
-          ENDIF
-C
-#endif
 C
 C 5.3 Write Dirichlet lateral conditions
 C
@@ -3049,7 +2260,7 @@ C
       REAL(8) t2p1(jpi,1,2)
 !      REAL(8) t2p2(jpi,1,2)
 
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
       INTEGER ji,jj,jl
@@ -3071,19 +2282,6 @@ C 1.2 treatment with exchange (jpni greater than 1)
 C 
       IF (npolj.eq.3) THEN
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-          imigr=jprecj*jpi
-C
-          CALL shmem_put(t2p1(1,1,2),t2p1(1,1,1),imigr,nono)
-          CALL barrier()
-          CALL shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
           imigr=jprecj*jpi
 C
@@ -3092,18 +2290,6 @@ C
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
 C
-#  else
-C
-C PVM VERSION
-C
-          imigr=jprecj*jpi*jpbyt
-C
-          CALL mppsend(3,t2p1(1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t2p1(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-C
-#endif      
 C
 C Write north fold conditions
 C
@@ -3131,26 +2317,6 @@ C
 C
 C 2.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      imigr=jpreci*jpj
-C
-      IF(nbondi.eq.-1) THEN
-          CALL shmem_put(t2we(1,1,2),t2we(1,1,1),imigr,noea)
-        ELSE IF(nbondi.eq.0) THEN
-          CALL shmem_put(t2ew(1,1,2),t2ew(1,1,1),imigr,nowe)
-          CALL shmem_put(t2we(1,1,2),t2we(1,1,1),imigr,noea)
-        ELSE IF(nbondi.eq.1) THEN
-          CALL shmem_put(t2ew(1,1,2),t2ew(1,1,1),imigr,nowe)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       imigr=jpreci*jpj
 C
@@ -3175,34 +2341,6 @@ C
           CALL mppwait(reqr1)
       ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-      imigr=jpreci*jpj*jpbyt
-C
-      IF(nbondi.eq.-1) THEN
-          CALL mppsend(2,t2we(1,1,1),imigr,noea,0,reqs1)
-          CALL mpprecv(1,t2ew(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondi.eq.0) THEN
-          CALL mppsend(1,t2ew(1,1,1),imigr,nowe,0,reqs1)
-          CALL mppsend(2,t2we(1,1,1),imigr,noea,0,reqs2)
-          CALL mpprecv(1,t2ew(1,1,2),imigr,reqr1)
-          CALL mpprecv(2,t2we(1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL mppsend(1,t2ew(1,1,1),imigr,nowe,0,reqs1)
-          CALL mpprecv(2,t2we(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-C
-#endif
 C
 C 2.3 Write Dirichlet lateral conditions
 C
@@ -3242,26 +2380,6 @@ C
 C
 C 3.2 Migrations
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      imigr=jprecj*jpi
-C
-      IF(nbondj.eq.-1) THEN
-          CALL shmem_put(t2sn(1,1,2),t2sn(1,1,1),imigr,nono)
-        ELSE IF(nbondj.eq.0) THEN
-          CALL shmem_put(t2ns(1,1,2),t2ns(1,1,1),imigr,noso)
-          CALL shmem_put(t2sn(1,1,2),t2sn(1,1,1),imigr,nono)
-        ELSE IF(nbondj.eq.1) THEN
-          CALL shmem_put(t2ns(1,1,2),t2ns(1,1,1),imigr,noso)
-      ENDIF
-      CALL  barrier()
-      CALL  shmem_udcflush()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       imigr=jprecj*jpi
 C
@@ -3286,33 +2404,6 @@ C
           CALL mppwait(reqr1)
       ENDIF
 C
-#  else
-C
-C PVM VERSION
-C
-      imigr=jprecj*jpi*jpbyt
-C
-      IF(nbondj.eq.-1) THEN
-          CALL mppsend(4,t2sn(1,1,1),imigr,nono,0,reqs1)
-          CALL mpprecv(3,t2ns(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ELSE IF(nbondj.eq.0) THEN
-          CALL mppsend(3,t2ns(1,1,1),imigr,noso,0,reqs1)
-          CALL mppsend(4,t2sn(1,1,1),imigr,nono,0,reqs2)
-          CALL mpprecv(3,t2ns(1,1,2),imigr,reqr1)
-          CALL mpprecv(4,t2sn(1,1,2),imigr,reqr2)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
-      ELSE IF(nbondj.eq.1) THEN
-          CALL mppsend(3,t2ns(1,1,1),imigr,noso,0,reqs1)
-          CALL mpprecv(4,t2sn(1,1,2),imigr,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
-      ENDIF
-#endif
 C
 C 3.3 Write Dirichlet lateral conditions
 C
@@ -3384,21 +2475,11 @@ C
       REAL(8) pmess(*)
       INTEGER kbytes,kdest,ktyp,kid, ireqsend
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
-C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-C routine not used
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       INTEGER iflag
 !      INTEGER itid_dest,info
@@ -3407,31 +2488,7 @@ C      write(*,*)  "#### kbytes = ", kbytes
       CALL mpi_isend(pmess,kbytes,mpi_real8,kdest,ktyp,
      $    mpi_comm_world,ireqsend,iflag)
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER iflag
-      INTEGER itid_dest,info
-C
-      itid_dest = npvm_tids(kdest)
-      IF(mppsend_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,
-     $        ' ========== mppsend.f ========== '
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,
-     $        ' kbytes=',kbytes,' kdest=',kdest
-     $        ,' ktyp=',ktyp,' iflag=',iflag
-      END IF
-      CALL pvmfinitsend(pvmdataraw, info)
-      CALL pvmfpack( byte1, pmess, kbytes, 1, info )
-      IF(info .LT. 0) STOP ' mppsend.f : problem in pvmfpack '
-      CALL pvmfsend  ( itid_dest , ktyp , iflag )
-      IF(iflag .LT. 0) STOP ' mppsend.f : problem in pvmfsend '
-      IF(mppsend_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,' after:itid_dest='
-     $        ,itid_dest,' iflag=',iflag
-      END IF
-#endif
+
 #endif
       RETURN
       END
@@ -3477,19 +2534,12 @@ C
       REAL(8) pmess(*)
       INTEGER   kbytes,ktyp, ireqrecv
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-C routine not used
-C
-#  elif defined key_mpp_mpi
 C
 C MPI VERSION
 C
@@ -3498,24 +2548,7 @@ C
 C
       CALL mpi_irecv(pmess,kbytes,mpi_real8,mpi_any_source,ktyp,mpi_comm_world,ireqrecv,iflag)
 c
-#  else
-C
-C PVM VERSION
-C
-      INTEGER itid_kexp,info,ibufid
-C
-      itid_kexp = -1
-      IF(mpprecv_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,' ============= mpprecv.f ============'
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,' mpprecv, pvmfrecv, itid_kexp=',itid_kexp
-      END IF
-      CALL pvmfrecv  ( itid_kexp , ktyp , ibufid )
-      IF(mpprecv_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mytid=',npvm_mytid,' mpprecv,END pvmfrecv','ibufid=',ibufid,' npvm_me=',npvm_me
-      END IF
-      CALL pvmfunpack( byte1, pmess, kbytes, 1, info )
-      IF(info .LT. 0) kbytes = info
-#endif
+
 #endif
       RETURN
       END
@@ -3541,19 +2574,14 @@ C-----------------------------------------------------------------------
 
 
 C-----------------------------------------------------------------------
-#ifdef key_mpp
 
-
-
-#endif
 
       integer req
       INTEGER istatus(mpi_status_size), ierr
 
-#ifdef key_mpp
+
 #ifdef key_mpp_mpi
       call MPI_WAIT(req, istatus, ierr)  
-#endif
 #endif
       RETURN
       END        
@@ -3621,71 +2649,20 @@ C
       INTEGER kk,kp
       REAL(8) ptab(jpi,jpj),pio(jpi,jpj,jpnij)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      CALL barrier()
-      CALL shmem_put(pio(1,1,npvm_me+1),ptab,jpi*jpj,kp)
-      CALL barrier()
-C
-#elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       INTEGER itaille,ierror
 C
       itaille=jpi*jpj
       CALL mpi_gather(ptab,itaille,mpi_real8,pio,itaille
      $    ,mpi_real8,kp,mpi_comm_world,ierror) 
-#else
-C
-C PVM VERSION
-C
-      INTEGER imess,ic
-      INTEGER ji,jj
-      INTEGER ii
-      INTEGER reqs1, reqs2, reqr1, reqr2
-C
-      IF(jpnij .EQ. 1) THEN
-          DO jj=1,jpj
-            DO ji=1,jpi
-              pio(ji,jj,1)=ptab(ji,jj)
-            END DO 
-          END DO 
-          RETURN
-      ENDIF
-      CALL mppsync
-      IF (npvm_me .NE. kp) THEN 
-c
-c     send data to the root member
-c
-      imess=kk+ 100000*npvm_me
-      CALL mppsend(imess,ptab,jpi*jpj*jpbyt,kp,0,reqs1)
-      ELSE 
-c
-c     receive message form other member
-c     of the group
-c
-          DO ji=0,npvm_nproc-1
-            IF  (ji .EQ. npvm_me) THEN 
-                pio(:,:,ji+1)=ptab(:,:)
-            ELSE 
-                imess=kk+ 100000*ji
-                CALL mpprecv(imess,pio(1,1,ji+1),jpi*jpj*jpbyt,reqr1)
-                CALL mppwait(reqr1)
-            ENDIF 
-          END DO 
-      ENDIF
-      CALL mppwait(reqs1)
-      CALL  mppsync
-#endif
+
 #endif
 C
       RETURN
@@ -3753,23 +2730,13 @@ C
       INTEGER kk,kp
       REAL(8) ptab(jpi,jpj),pio(jpi,jpj,jpnij)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      CALL barrier()
-      CALL shmem_get(ptab,pio(1,1,npvm_me+1),jpi*jpj,kp)
-      CALl barrier()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       INTEGER itaille, ierror
 C
@@ -3778,31 +2745,7 @@ C
       CALL mpi_scatter(pio,itaille,mpi_real8,ptab,itaille,
      $     mpi_real8,kp,mpi_comm_world,ierror)
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER imess,ic
-      INTEGER ji,jj
-C
-      IF (jpnij .EQ. 1) THEN
-          DO jj=1,jpj
-            DO ji=1,jpi
-              ptab(ji,jj)=pio(ji,jj,1)
-            END DO 
-          END DO 
-          RETURN
-      ENDIF
-      CALL  mppsync
-      imess=kk
-      CALL pvmfscatter(ptab,pio,jpi*jpj,jpvmreal,imess,opaall,kp,ic)
-      IF(ic .NE. 0) THEN
-          WRITE(nummpp,*) "problem pvmfscatter"
-     $        ," kk=",kk
-     $        ," kp=",kp
-      END IF
-      CALL  mppsync
-#endif
+
 #endif
 C
 C
@@ -3849,54 +2792,13 @@ C
       INTEGER kdim
       INTEGER ktab(kdim),kwork(kdim)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      INTEGER ji
-      INTEGER, SAVE :: IBOOL=0
-C
-      IF( kdim .GT. jpmppsum ) THEN
-          WRITE(numout,*) 'mppiisl routine : kdim is too big'
-          WRITE(numout,*) 'change jpmppsum dimension in mpp.h'
-          STOP 'mppiisl'
-      ENDIF
-C
-      DO ji=1,kdim
-        niitab_shmem(ji)=ktab(ji)
-      END DO
-      CALL  barrier()
-      IF (IBOOL == 0) THEN 
-          CALL shmem_int8_min_to_all (ni11tab_shmem,niitab_shmem,kdim,0
-     $        ,0,N$PES,ni11wrk_shmem,ni11sync_shmem)
-          CALL shmem_int8_max_to_all (ni12tab_shmem,niitab_shmem,kdim,0
-     $        ,0,N$PES,ni12wrk_shmem,ni12sync_shmem)
-        ELSE
-          CALL shmem_int8_min_to_all (ni11tab_shmem,niitab_shmem,kdim,0
-     $        ,0,N$PES,ni21wrk_shmem,ni21sync_shmem)
-          CALL shmem_int8_max_to_all (ni12tab_shmem,niitab_shmem,kdim,0
-     $        ,0,N$PES,ni22wrk_shmem,ni22sync_shmem)
-      ENDIF
-      CALL  barrier()
-      IBOOL=IBOOL+1
-      IBOOL=mod(IBOOL,2)
-      DO ji=1,kdim
-        IF (ni11tab_shmem(ji).ne.0.) THEN
-            ktab(ji)=ni11tab_shmem(ji)
-          ELSE
-            ktab(ji)=ni12tab_shmem(ji)
-        ENDIF
-      END DO      
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       EXTERNAL lc_isl
       LOGICAL lcommute
@@ -3911,56 +2813,7 @@ CCC      CALL mpi_allreduce(ptab,pwork,kdim,mpi_integer
      $    ,mpi_isl,mpi_comm_world,ierror)
       ktab=kwork
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER ityd
-      INTEGER info,itype,ibuf,iroot
-      EXTERNAL PvmIsl2
-C
-      itype= 100
-      iroot=0
-      ityd=npvm_tids(npvm_me)
-      IF(jpnij .EQ. 1) RETURN
-      IF(mpprisl_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mppiisl me=',npvm_me
-     $        ,' ityd=',ityd
-      END IF
-      CALL pvmfreduce(PvmIsl2, ktab, kdim, jpvmint,
-     $    itype, opaall, iroot,info)
-      IF (iroot .EQ. npvm_me) THEN
-          CALL pvmfinitsend(pvmdataraw, ibuf )
-          CALL pvmfpack(jpvmint,ktab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfpack problem'
-          STOP 'mppiisl.f'
-          END IF
-          CALL pvmfbcast(opaall,itype+1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfbcast problem'
-              STOP 'mppiisl.f'
-          END IF
-        ELSE
-          CALL pvmfrecv(iroot,itype+1,ibuf)
-          CALL pvmfunpack(jpvmint,ktab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfunpack problem'
-              STOP 'mppiisl.f'
-          END IF
-      ENDIF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-      RETURN
-      END
-      SUBROUTINE PvmIsl2(kdtatyp,kx,ky,kdim,knfo)
-      INTEGER kx(kdim),ky(kdim)
-      INTEGER kdim,knfo,kdtatyp,ji
-      DO ji=1,kdim
-        IF (ky(ji) .NE. 0) kx(ji)=ky(ji)
-      END DO
-      RETURN
-      END
-#endif
+
 #endif
       END
 
@@ -4015,46 +2868,12 @@ CC ==================
       INTEGER kdim
       INTEGER ktab(kdim),kwork(kdim)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      INTEGER ji
-      INTEGER, SAVE :: IBOOL=0
-C
-      IF( kdim .GT. jpmppsum ) THEN
-          WRITE(numout,*) 'mppimin routine : kdim is too big'
-          WRITE(numout,*) 'change jpmppsum dimension in mpp.h'
-          STOP 'mppimin'
-      ENDIF
-C
-      DO ji=1,kdim
-        niltab_shmem(ji)=ktab(ji)
-      END DO
-      CALL  barrier()
-      IF (IBOOL == 0) THEN 
-          CALL shmem_int8_min_to_all (niltab_shmem,niltab_shmem,kdim,0,0
-     $        ,N$PES,nil1wrk_shmem,nil1sync_shmem )
-        ELSE
-          CALL shmem_int8_min_to_all (niltab_shmem,niltab_shmem,kdim,0,0
-     $        ,N$PES,nil2wrk_shmem,nil2sync_shmem )
-      ENDIF
-      CALL  barrier()
-      IBOOL=IBOOL+1
-      IBOOL=mod(IBOOL,2)
-      DO ji=1,kdim
-        ktab(ji)=niltab_shmem(ji)
-      END DO
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       INTEGER ierror
 C
@@ -4063,46 +2882,7 @@ C
 
       ktab=kwork
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER ityd
-      INTEGER info,itype,ibuf,iroot
-      EXTERNAL PvmMin
-C
-      itype= 100
-      iroot=0
-      ityd=npvm_tids(npvm_me)
-      IF(jpnij .EQ. 1) RETURN
-      IF(mppimin_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mppimin me=',npvm_me
-     $        ,' ityd=',ityd
-      END IF
-      CALL pvmfreduce(PvmMin,ktab, kdim, jpvmint,
-     $    itype, opaall, iroot, info)
-      IF (iroot .EQ. npvm_me) THEN
-          CALL pvmfinitsend(pvmdataraw, ibuf )
-          CALL pvmfpack(jpvmint,ktab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfpack problem'
-          STOP 'mppimin.f'
-          END IF
-          CALL pvmfbcast(opaall,itype+1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfbcast problem'
-              STOP 'mppimin.f'
-          END IF
-        ELSE
-          CALL pvmfrecv(iroot,itype+1,ibuf)
-          CALL pvmfunpack(jpvmint,ktab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfunpack problem'
-              STOP 'mppimin.f'
-          END IF
-      ENDIF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-#endif
+
 #endif
 C
       RETURN
@@ -4152,45 +2932,12 @@ C
       INTEGER kdim
       INTEGER ktab(kdim),kwork(kdim)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      INTEGER ji
-      INTEGER, SAVE :: IBOOL=0
-C
-      IF( kdim .GT. jpmppsum ) THEN
-          WRITE(numout,*) 'mppisum routine : kdim is too big'
-          WRITE(numout,*) 'change jpmppsum dimension in mpp.h'
-          STOP 'mppisum'
-      ENDIF
-C
-      DO ji=1,kdim
-        nistab_shmem(ji)=ktab(ji)
-      END DO
-      CALL  barrier()
-      IF (IBOOL == 0) THEN 
-          CALL shmem_int8_sum_to_all(nistab_shmem,nistab_shmem,kdim,0,0,
-     $        N$PES,nis1wrk_shmem,nis1sync_shmem)
-        ELSE
-          CALL shmem_int8_sum_to_all(nistab_shmem,nistab_shmem,kdim,0,0,
-     $        N$PES,nis2wrk_shmem,nis2sync_shmem)
-      ENDIF
-      CALL  barrier()
-      IBOOL=IBOOL+1
-      IBOOL=mod(IBOOL,2)
-      DO ji=1,kdim
-        ktab(ji)=nistab_shmem(ji)
-      END DO
-C 
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
       INTEGER ierror
 C
       CALL mpi_allreduce(ktab,kwork,kdim,mpi_integer
@@ -4198,47 +2945,7 @@ C
 
       ktab=kwork
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER ityd
-      INTEGER info,itype,ibuf,iroot
-      EXTERNAL PvmSum
-C
-      itype= 100
-      iroot=0
-      ityd=npvm_tids(npvm_me)
-      IF(jpnij .EQ. 1) RETURN
-      IF(mpprsum_print.ne.0) THEN
-          WRITE(nummpp,*) 'mppisum me=',npvm_me
-     $        ,' ityd=',ityd
-      END IF
-      CALL pvmfreduce(PvmSum, ktab, kdim, jpvmint,
-     $    itype, opaall, iroot, info)
-      IF (iroot .EQ. npvm_me) THEN
-          CALL pvmfinitsend(pvmdataraw, ibuf )
-          CALL pvmfpack(jpvmint,ktab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfpack problem'
-          STOP 'mppisum.f'
-          END IF
-          CALL pvmfbcast(opaall,itype+1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfbcast problem'
-              STOP 'mppisum.f'
-          END IF
-        ELSE
-          CALL pvmfrecv(iroot,itype+1,ibuf)
-          CALL pvmfunpack(jpvmint,ktab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfunpack problem'
-              STOP 'mppisum.f'
-          END IF
-      END IF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-C
-#endif
+
 #endif
       RETURN
       END
@@ -4283,54 +2990,13 @@ C
       INTEGER kdim
       REAL(8) ptab(kdim),pwork(kdim)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      INTEGER ji
-      INTEGER, SAVE :: IBOOL=0
-C
-      IF( kdim .GT. jpmppsum ) THEN
-          WRITE(numout,*) 'mpprisl routine : kdim is too big'
-          WRITE(numout,*) 'change jpmppsum dimension in mpp.h'
-          STOP 'mpprisl'
-      ENDIF
-C
-      DO ji=1,kdim
-        wiltab_shmem(ji)=ptab(ji)
-      END DO
-      CALL  barrier()
-      IF (IBOOL == 0) THEN 
-          CALL shmem_real8_min_to_all (wi1tab_shmem,wiltab_shmem,kdim,0
-     $        ,0,N$PES,wi11wrk_shmem,ni11sync_shmem)
-          CALL shmem_real8_max_to_all (wi2tab_shmem,wiltab_shmem,kdim,0
-     $        ,0,N$PES,wi12wrk_shmem,ni12sync_shmem)
-        ELSE
-          CALL shmem_real8_min_to_all (wi1tab_shmem,wiltab_shmem,kdim,0
-     $        ,0,N$PES,wi21wrk_shmem,ni21sync_shmem)
-          CALL shmem_real8_max_to_all (wi2tab_shmem,wiltab_shmem,kdim,0
-     $        ,0,N$PES,wi22wrk_shmem,ni22sync_shmem)
-      ENDIF
-      CALL  barrier()
-      IBOOL=IBOOL+1
-      IBOOL=mod(IBOOL,2)
-      DO ji=1,kdim
-        IF (wi1tab_shmem(ji).ne.0.) THEN
-            ptab(ji)=wi1tab_shmem(ji)
-          ELSE
-            ptab(ji)=wi2tab_shmem(ji)
-        ENDIF
-      END DO      
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       EXTERNAL lc_isl
       LOGICAL lcommute
@@ -4343,46 +3009,7 @@ C
      $    ,mpi_isl,mpi_comm_world,ierror)
       ptab=pwork
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER ityd
-      INTEGER info,itype,ibuf,iroot
-      EXTERNAL PvmIsl
-C
-      itype= 100
-      iroot=0
-      ityd=npvm_tids(npvm_me)
-      IF(jpnij .EQ. 1) RETURN
-      IF(mpprisl_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mpprisl me=',npvm_me
-     $        ,' ityd=',ityd
-      END IF
-      CALL pvmfreduce(PvmIsl, ptab, kdim, jpvmreal,
-     $    itype, opaall, iroot,info)
-      IF (iroot .EQ. npvm_me) THEN
-          CALL pvmfinitsend(pvmdataraw, ibuf )
-          CALL pvmfpack(jpvmreal,ptab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfpack problem'
-          STOP 'mpprisl.f'
-          END IF
-          CALL pvmfbcast(opaall,itype+1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfbcast problem'
-              STOP 'mpprisl.f'
-          END IF
-        ELSE
-          CALL pvmfrecv(iroot,itype+1,ibuf)
-          CALL pvmfunpack(jpvmreal,ptab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfunpack problem'
-              STOP 'mpprisl.f'
-          END IF
-      ENDIF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-#endif
+
 #endif
       RETURN
       END
@@ -4445,46 +3072,13 @@ C
       INTEGER kdim
       REAL(8) ptab(kdim),pwork(kdim)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      INTEGER ji
-      INTEGER, SAVE :: IBOOL=0
-C
-      IF( kdim .GT. jpmppsum ) THEN
-          WRITE(numout,*) 'mpprmax routine : kdim is too big'
-          WRITE(numout,*) 'change jpmppsum dimension in mpp.h'
-          STOP 'mpprmax'
-      ENDIF
-C
-      DO ji=1,kdim
-        wintab_shmem(ji)=ptab(ji)
-      END DO
-      CALL  barrier()
-      IF (IBOOL == 0) THEN 
-          CALL shmem_real8_max_to_all (wintab_shmem,wintab_shmem,kdim,0
-     $        ,0,N$PES,wi1wrk_shmem,ni1sync_shmem)
-        ELSE
-          CALL shmem_real8_max_to_all (wintab_shmem,wintab_shmem,kdim,0
-     $        ,0,N$PES,wi2wrk_shmem,ni2sync_shmem)
-      ENDIF
-      CALL  barrier()
-      IBOOL=IBOOL+1
-      IBOOL=mod(IBOOL,2)
-      DO ji=1,kdim
-        ptab(ji)=wintab_shmem(ji)
-      END DO      
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       INTEGER ierror
 C
@@ -4492,47 +3086,7 @@ C
      $    ,mpi_max,mpi_comm_world,ierror)
       ptab=pwork
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER ityd
-      INTEGER info,itype,ibuf,iroot
-      EXTERNAL PvmMax
-C
-      itype= 100
-      iroot=0
-      ityd=npvm_tids(npvm_me)
-      IF(jpnij .EQ. 1) RETURN
-      IF(mpprmax_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mpprmax me=',npvm_me
-     $        ,' ityd=',ityd
-      END IF
-      CALL pvmfreduce(PvmMax, ptab, kdim, jpvmreal,
-     $    itype, opaall, iroot, info)
-      IF (iroot .EQ. npvm_me) THEN
-          CALL pvmfinitsend(pvmdataraw, ibuf )
-          CALL pvmfpack(jpvmreal,ptab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfpack problem'
-          STOP 'mpprmax.f'
-          END IF
-          CALL pvmfbcast(opaall,itype+1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfbcast problem'
-              STOP 'mpprmax.f'
-          END IF
-        ELSE
-          CALL pvmfrecv(iroot,itype+1,ibuf)
-          CALL pvmfunpack(jpvmreal,ptab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfunpack problem'
-              STOP 'mpprmax.f'
-          END IF
-      ENDIF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-C
-#endif
+
 #endif
       RETURN
       END
@@ -4577,46 +3131,13 @@ C
       INTEGER kdim
       REAL(8) ptab(kdim),pwork(kdim)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      INTEGER ji
-      INTEGER, SAVE :: IBOOL=0
-C
-      IF( kdim .GT. jpmppsum ) THEN
-          WRITE(numout,*) 'mpprmin routine : kdim is too big'
-          WRITE(numout,*) 'change jpmppsum dimension in mpp.h'
-          STOP 'mpprmin'
-      ENDIF
-C
-      DO ji=1,kdim
-        wintab_shmem(ji)=ptab(ji)
-      END DO
-      CALL  barrier()
-      IF (IBOOL == 0) THEN 
-          CALL shmem_real8_min_to_all (wintab_shmem,wintab_shmem,kdim,0
-     $        ,0,N$PES,wi1wrk_shmem,ni1sync_shmem)
-        ELSE
-          CALL shmem_real8_min_to_all (wintab_shmem,wintab_shmem,kdim,0
-     $        ,0,N$PES,wi2wrk_shmem,ni2sync_shmem)
-      ENDIF
-      CALL  barrier()
-      IBOOL=IBOOL+1
-      IBOOL=mod(IBOOL,2)
-      DO ji=1,kdim
-        ptab(ji)=wintab_shmem(ji)
-      END DO      
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       INTEGER ierror
 C
@@ -4624,47 +3145,7 @@ C
      $    ,mpi_min,mpi_comm_world,ierror)
       ptab=pwork
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER ityd
-      INTEGER info,itype,ibuf,iroot
-      EXTERNAL PvmMin
-C
-      itype= 100
-      iroot=0
-      ityd=npvm_tids(npvm_me)
-      IF(jpnij .EQ. 1) RETURN
-      IF(mpprmin_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mpprmin me=',npvm_me
-     $        ,' ityd=',ityd
-      END IF
-      CALL pvmfreduce(PvmMin, ptab, kdim, jpvmreal,
-     $    itype, opaall, iroot, info)
-      IF (iroot .EQ. npvm_me) THEN
-          CALL pvmfinitsend(pvmdataraw, ibuf )
-          CALL pvmfpack(jpvmreal,ptab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfpack problem'
-          STOP 'mpprmin.f'
-          END IF
-          CALL pvmfbcast(opaall,itype+1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfbcast problem'
-              STOP 'mpprmin.f'
-          END IF
-        ELSE
-          CALL pvmfrecv(iroot,itype+1,ibuf)
-          CALL pvmfunpack(jpvmreal,ptab,kdim,1,info)
-          IF (info.ne.0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfunpack problem'
-              STOP 'mpprmin.f'
-          END IF
-      ENDIF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-C
-#endif
+
 #endif
       RETURN
       END
@@ -4709,46 +3190,12 @@ C
       INTEGER kdim
       REAL(8) ptab(kdim),pwork(kdim)
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-      INTEGER ji
-      INTEGER, SAVE :: IBOOL=0
-C
-      IF( kdim .GT. jpmppsum ) THEN
-          WRITE(numout,*) 'mpprsum routine : kdim is too big'
-          WRITE(numout,*) 'change jpmppsum dimension in mpp.h'
-          STOP 'mpprsum'
-      ENDIF
-C
-      DO ji=1,kdim
-        wrstab_shmem(ji)=ptab(ji)
-      END DO
-      CALL  barrier()
-      IF (IBOOL == 0) THEN 
-          CALL shmem_real8_sum_to_all (wrstab_shmem,wrstab_shmem,kdim,0
-     $        ,0,N$PES,wrs1wrk_shmem,nrs1sync_shmem )
-        ELSE
-          CALL shmem_real8_sum_to_all (wrstab_shmem,wrstab_shmem,kdim,0
-     $        ,0,N$PES,wrs2wrk_shmem,nrs2sync_shmem )
-      ENDIF
-      CALL  barrier()
-      IBOOL=IBOOL+1
-      IBOOL=mod(IBOOL,2)
-      DO ji=1,kdim
-        ptab(ji)=wrstab_shmem(ji)
-      END DO
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
 C
       INTEGER ierror
 C
@@ -4756,47 +3203,7 @@ C
      $    ,mpi_sum,mpi_comm_world,ierror)
       ptab=pwork
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER ityd
-      INTEGER info,itype,ibuf,iroot
-      EXTERNAL PvmSum
-C
-      itype= 100
-      iroot=0
-      ityd=npvm_tids(npvm_me)
-      IF(jpnij .EQ. 1) RETURN
-      IF(mpprsum_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mpprsum me=',npvm_me
-     $        ,' ityd=',ityd
-      END IF
-      CALL pvmfreduce(PvmSum, ptab, kdim, jpvmreal,
-     $    itype, opaall, iroot, info)
-      IF (iroot .EQ. npvm_me) THEN
-          CALL pvmfinitsend(pvmdataraw, ibuf )
-          CALL pvmfpack(jpvmreal,ptab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfpack problem'
-          STOP 'mpprsum.f'
-          END IF
-          CALL pvmfbcast(opaall,itype+1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfbcast problem'
-              STOP 'mpprsum.f'
-          END IF
-        ELSE
-          CALL pvmfrecv(iroot,itype+1,ibuf)
-          CALL pvmfunpack(jpvmreal,ptab,kdim,1,info)
-          IF (info .NE. 0) THEN
-              WRITE(nummpp,*) 'me=',npvm_me,' pvmfunpack problem'
-              STOP 'mpprsum.f'
-          END IF
-      ENDIF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-C
-#endif
+
 #endif
       RETURN
       END
@@ -4830,42 +3237,19 @@ c
 
 C-----------------------------------------------------------------------
 C
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
 
 
 
 C
-#ifdef key_mpp_shmem
-C
-C SHMEM VERSION
-C
-         call barrier()
-C
-#  elif defined key_mpp_mpi
-C
-C MPI VERSION
+
 C
       INTEGER ierror
 C
       CALL mpi_barrier(mpi_comm_world,ierror)
 C
-#  else
-C
-C PVM VERSION
-C
-      INTEGER info
-C
-      IF(jpnij .EQ. 1) RETURN
-      IF(mppsync_print .NE. 0) THEN
-          WRITE(nummpp,*) 'mppsync me=',npvm_me
-      END IF
-      CALL pvmfbarrier(opaall,npvm_nproc,info)
-      IF(info .NE. 0) THEN
-          WRITE(nummpp,*) 'me=',npvm_me,' barrier problem'
-          STOP 'mppsync.f'
-      END IF
-#endif
+
 #endif
       RETURN
       END
@@ -4887,7 +3271,7 @@ CC
 CC local declarations
 CC ==================
       INTEGER info
-#ifdef key_mpp
+#ifdef key_mpp_mpi
 
       CALL mppsync
 #endif
@@ -4899,61 +3283,46 @@ C
       CLOSE( numnam )
 
 
-#if defined key_islands
-      CLOSE( numisl )
-      IF(lwp) CLOSE( numisp )
-#endif
+C
+      IF(lrstar) CLOSE( numrst )
+C
 
+C
+      IF(lwp) THEN
+CMAF          IF( ntopo.EQ.1 ) CLOSE( numbat )
 
-#if defined key_temdta
-      CLOSE( numte1 )
-#endif
+          IF( nmsh .EQ.1 ) CLOSE( nummsh )
+      ENDIF
 C
-#if defined key_saldta
-      CLOSE( numsa1 )
-#endif
+
 C
-#if defined key_icedta
-      IF(lwp) CLOSE( numice )
-#endif
+
 C
-#if defined key_tau && ! defined key_coupled
-      CLOSE( numtau )
-#endif
+
 C
-#if defined key_flx && ! defined key_coupled
-      CLOSE( numfl1 )
-#endif
+
+C
+
 CMAF      CLOSE( numicl )
 
 
 
 CMAF      IF(lwp) CLOSE( numsol )
 C
-#if defined key_diatrdtra || defined key_diatrddyn
-      CLOSE( numtrd )
-#endif
+
 C
-#if defined key_coupled
-      CLOSE( numlhf )
-      CLOSE( numlts )
-#endif
+
 C
-#if defined key_sst
-      CLOSE( numsst )
-#endif
+
 C
 C 2. Mpp synchroneus
 C ------------------
 C
-#ifdef key_mpp
-
       CALL mppsync
-#    ifdef key_mpp_mpi
+#ifdef key_mpp_mpi
+
       CALL mpi_finalize(info)
-#      else
-      CALL pvmfexit( info )
-#    endif
+
 #endif
 C
       RETURN

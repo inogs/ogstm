@@ -71,13 +71,8 @@
       numrst = 209
       numbat = 212
       nummsh = 214 !restget
-      nummpp =  8
        nimpp  = 1
        njmpp  = 1 
-
-#ifdef key_mpp
-      OPEN(UNIT=nummpp,FILE='mpp.output',FORM='FORMATTED')
-#endif
 
 
 ! 0.3 First prints
@@ -208,7 +203,7 @@
 
 !    Run parameters
 !    --------------
-      CALL parcst;  CALL parlec ; CALL parctl ! CALL inipar
+      CALL parcst;  CALL parlec ; CALL parctl
 
 
 ! ... Large domain

@@ -478,11 +478,8 @@ CC----------------------------------------------------------------------
 CC         massively parallel processors
 CC ----------------------------------------------
 CC      lwp              : boolean term for mpp output
-CC      nummpp           : logical unit for mpp test print
-
       LOGICAL lwp
 
-      INTEGER nummpp
 
 #if defined key_mpp || defined key_debug 
 CC      t3ew           : 3d message passing arrays east-west    

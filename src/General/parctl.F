@@ -123,7 +123,7 @@ C     numtke : tke file                unit
 C
 
 C     numout = unit intialize in the main program ogstm < 10
-C     nummpp = unit intialize in the main program ogstm < 10
+
 C     numnam = unit intialize in parlec < 10
       nummsh = 13
 C      numbat = 11 PAS DE BATHY.
@@ -476,10 +476,7 @@ C
 C   ... Output file ( open in the ogstm routine )
       ilu = ilu+1
       iused(1,ilu) = numout
-C
-C   ... mpp output file ( open in the ogstm routine )
-      ilu = ilu+1
-      iused(1,ilu) = nummpp
+
 C
 C   ... namelist file ( open in the parlec routine )
       ilu = ilu+1

@@ -1,4 +1,4 @@
-      PROGRAM modele
+      PROGRAM OGSTM_MAIN
 !
 !                       PROGRAM MAIN
 !                     ******************

@@ -1,4 +1,4 @@
-      SUBROUTINE hdfslp ( ktask, kt )
+      SUBROUTINE hdfslp
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE hdfslp
@@ -29,16 +29,6 @@ CC      macro-tasked on horizontal slab (jk-loop)  (2, jpk-1)
 CC    [slopes already set to zero at level 1, and to zero or the ocean
 CC    bottom slope ('key_s_coord' defined) at level jpk in inihdf]
 CC
-CC   Input :
-CC   ------
-CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
-CC      common
-CC            /comcoh/          : scale factors
-CC            /comask/          : masks, bathymetry
-CC            /comnow/          : now fields 
-CC            /comtsk/          : multitasking
 CC
 CC   Output :
 CC   -------
@@ -58,7 +48,7 @@ CC   External :       mpplnk, mpplnk2  or  lbc
 CC----------------------------------------------------------------------
 CC local declarations
 
-      INTEGER ktask, kt
+      INTEGER ktask
 #if defined key_trahdfiso
       INTEGER ji, jj, jk
 C
@@ -72,36 +62,32 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
+      ktask=1
 
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
-C
-C
 C 0. Local constant initialization
 C --------------------------------
-C
+
       zeps  =  1.e-20
       zmg   = -1.0 / g
       zm05g = -0.5 / g
-C
-C
+
+
 C Vertical slab
 C =============
-C
+
       DO jk = ktask+1, jpkm1
-C
+
         DO jj = 1, jpj
           DO ji = 1, jpi
             zwz(ji,jj) = 0.0
             zww(ji,jj) = 0.0
           END DO
         END DO
-C
+
 C I.  slopes at u and v point
 C ===========================
-C
-C
+
+
 C I.1. Slopes of isopycnal surfaces
 C ---------------------------------
 C uslp = d/di( rdn ) / d/dz( rdn )

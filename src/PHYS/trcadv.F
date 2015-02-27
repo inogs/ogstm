@@ -1,6 +1,4 @@
-C $Id: trcadv.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
-      SUBROUTINE trcadv(ktask,kt)
+      SUBROUTINE trcadv
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trcadv
@@ -19,10 +17,6 @@ CCC     'key_trc_tvd'
 CCC     'key_trc_muscl'
 CCC     'key_trc_ppm'
 CCC
-
-CC   MODIFICATIONS:
-CC   --------------
-CC      original  : 00-10 M.A. Foujols and E. Kestenare
 CC----------------------------------------------------------------------
 CC parameters and commons
 CC ======================
@@ -36,7 +30,6 @@ CC ======================
 
 CC local declarations
 CC ==================
-      INTEGER ktask,kt
 
 
 #if defined key_passivetrc

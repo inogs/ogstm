@@ -142,7 +142,7 @@
 
 
 ! Call Passive tracer model between synchronization for small parallelisation
-        CALL trcstp(TAU) ! se commento questo non fa calcoli
+        CALL trcstp    ! se commento questo non fa calcoli
         call trcave
         ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
         ave_counter_2 = ave_counter_2 +1

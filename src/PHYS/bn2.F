@@ -1,4 +1,4 @@
-      SUBROUTINE bn2 ( ktask, kt )
+      SUBROUTINE bn2
 !---------------------------------------------------------------------
 !
 !                       ROUTINE bn2
@@ -32,8 +32,6 @@
 !
 !   Output :
 !   -------
-!    common
-!          /comnow/ bn2n     : now brunt-vaisala frequency
 !
 !   References :
 !   -----------
@@ -46,7 +44,6 @@
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      INTEGER ktask, kt
       INTEGER ji, jj, jk
 
       REAL(8) zgde3w, zt, zs, zh, zalbet, zbeta

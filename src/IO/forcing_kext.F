@@ -15,10 +15,6 @@
       REAL(8) sec,zweigh
       integer Before, After
       INTEGER iswap
-!      INTEGER iper,iperm1,
-!      INTEGER jtask,kt
-
-
 
       forcing_kext_partTime = MPI_WTIME()
 
@@ -82,11 +78,6 @@
           CASE (1) ! ------------linear interpolation ---------------
              call ACTUALIZE_KEXT(zweigh)
       END SELECT
-
-
-! lb in any case, we need rhopn
-
-!      jtask = 1; kt = 1 ; CALL eos(jtask,kt)
 
 
       forcing_kext_partTime = MPI_WTIME() - forcing_kext_partTime

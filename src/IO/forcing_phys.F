@@ -6,7 +6,7 @@
 !
 !  PURPOSE :
 !  ---------
-!     Prepares dynamics and physics fields from an OPA8 simulation
+!     Prepares dynamics and physics fields
 !     for an off-line simulation for passive tracer
 !                          =======
 !
@@ -16,10 +16,6 @@
 !      READ DATA WHEN needed (example month changement)
 !      computes slopes IF needed
 !      interpolates DATA IF needed
-
-!
-!   EXTERNAL :                   prihre
-!   --------
 !
 !----------------------------------------------------------------------
 ! parameters and commons
@@ -121,13 +117,6 @@
 
 
       END SELECT
-
-
-! lb in any case, we need rhopn
-
-!      jtask = 1; kt = 1 ; CALL eos(jtask,kt)
-
-
 
 
        forcing_phys_partTime = MPI_WTIME() - forcing_phys_partTime
@@ -555,15 +544,13 @@
           END DO
 #endif
 
-!          CALL div(1,kt)
-!          CALL wzv(1,kt)
 #if defined key_trahdfiso
 #if defined key_off_degrad
           CALL slprea(iper)
 #else
           CALL eos()
-          CALL bn2(   1,kt)
-          CALL hdfslp(1,kt)
+          CALL bn2
+          CALL hdfslp
 #endif
 #endif
 #if defined key_trahdfeiv && defined key_off_degrad

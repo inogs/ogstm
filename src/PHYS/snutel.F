@@ -13,22 +13,6 @@ CCC
 CC   METHOD :
 CC   -------
 CC    Must be called between trczdf and trcnxt
-CC
-C
-CC
-CC   OUTPUT :
-CC   ------
-CC
-CC
-CC   EXTERNAL :
-CC   --------
-CC
-CC   REFERENCES :
-CC   ----------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-
 CC----------------------------------------------------------------------
 
        USE myalloc
@@ -37,12 +21,9 @@ CC----------------------------------------------------------------------
 
        IMPLICIT NONE
 
-
 CC----------------------------------------------------------------------
 CC local declarations
-CC ==================
 
-!      INTEGER :: kt,pack_size
 !      INTEGER :: elements,nelements(6),idx_element(14,6)
 ! omp variables
       INTEGER :: mytid, ntids, itid

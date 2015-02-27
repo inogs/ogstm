@@ -1,4 +1,4 @@
-      SUBROUTINE trcstp(kt)
+      SUBROUTINE trcstp
 !---------------------------------------------------------------------
 !
 !                       ROUTINE trcstp
@@ -17,39 +17,17 @@
 !         with horizontal diffusion
 !         with surface boundary condition
 !         with IMPLICIT vertical diffusion
-!
-!   INPUT :
-!   -----
-!      argument
-!              kt              : time step
-!   EXTERNAL :
-!   --------
-!      trc3ad, trcsbc, trczdf, trchdf, trcnxt, trcsms
-!                        passive tracers interface
+
 
        USE myalloc
        IMPLICIT NONE
 
 #include <mpif.h>
 
-
-!     local declarations
-      INTEGER kt
-      INTEGER ktask
-
-
-      ktask = 1
       trcstpparttime = MPI_WTIME() !  F79 cronometer-start
 
-
-! this ROUTINE is called only every ndttrc time step
-      IF (mod(kt,ndttrc) .NE. 0) RETURN
-
-
 ! this part is parallelized tracer  by tracer
-
-
-      CALL trcadv(ktask,kt) ! tracers: advection
+      CALL trcadv ! tracers: advection
 
 
 #    if defined key_trc_dmp
@@ -97,9 +75,6 @@
       INTEGER ji,jj
 
       real(8) sedpoc(2,2), sedcal(2,2), sedsil(2,2) ! *** shoud be defined elsewhere !!!! ***
-
-
-!      if (mod(kt,1095).eq.0) then
 
        zmasspoc = 0.
        zmasscal = 0.

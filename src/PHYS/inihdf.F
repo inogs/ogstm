@@ -36,13 +36,6 @@ CC    profile.
 CC
 CC   Output :
 CC   -------
-CC      common
-CC            /comhdt/ ahtt,ahtu, : lateral eddy diffusivity coef.
-CC                     ahtv,ahtw
-CC          /comdhd/ uslp ,vslp : i- and j- direction of isopycnal or
-CC               wslpi,wslpj  s-surfaces
-CC               wk1, wk2,  : work arrays used in rotated bihar-
-CC               wk3, wk4     monic momentum or tracer operator
 CC
 CC   External :        prihre, mpplnk or lbc
 CC   ---------
@@ -55,7 +48,7 @@ CC      the North Pole singularity, Climate Dynamics, 12, 381-388.
        USE stafun
         IMPLICIT NONE
 CC ==================
-      INTEGER ji, jj, jk
+      INTEGER  jk
 C
 #ifdef  key_trahdfcoef3d
 C    local definition for 3d coefficients

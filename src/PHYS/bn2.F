@@ -48,7 +48,6 @@
 
       REAL(8) zgde3w, zt, zs, zh, zalbet, zbeta
       REAL(8) fsalbt, fsbeta
-      REAL(8) pft, pfh
 !----------------------------------------------------------------------
 ! statement functions
 ! ===================

@@ -553,9 +553,6 @@
           CALL hdfslp
 #endif
 #endif
-#if defined key_trahdfeiv && defined key_off_degrad
-          CALL vgmrea(iper)
-#endif
 
 #if defined key_trahdfiso
           DO jk=1,jpk

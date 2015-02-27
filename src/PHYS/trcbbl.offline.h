@@ -63,8 +63,7 @@ CC----------------------------------------------------------------------
 
 C
       REAL(8) zbtr, zta
-      REAL(8) zki(jpi,jpj), zkj(jpi,jpj)
-      REAL(8) zkw(jpi,jpj), zkx(jpi,jpj), zky(jpi,jpj), zkz(jpi,jpj)
+      REAL(8) zkw(jpi,jpj), zkx(jpi,jpj), zky(jpi,jpj)
       REAL(8) ztbb(jpi,jpj)
 C
 CC----------------------------------------------------------------------

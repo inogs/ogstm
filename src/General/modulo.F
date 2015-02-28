@@ -497,7 +497,6 @@ CCC F79 Namelist does not accept allocatable
           CHARACTER(LEN=20) :: ctrcnm(jptra)
           CHARACTER(LEN=12) :: ctrcun(jptra)
           CHARACTER(LEN=6) :: mycln
-          CHARACTER(LEN=80) ::  ctrcnl(jptra)
           CHARACTER(LEN=20) :: dianm(jptra_dia)
           CHARACTER(LEN=20) :: diaun(jptra_dia)
           INTEGER           :: diahf(jptra_dia)
@@ -507,12 +506,10 @@ CC Common/citctl/ : parameters for the control of passive tracers
 CC --------------------------------------------------------------
 CC
 CC      numnat    : the number of the passive tracer NAMELIST
-CC      lutini    : initialisation from FILE or not (NAMELIST)
 CC      nutini    : FORTRAN LOGICAL UNIT for initialisation file
 CC
       INTEGER numnat
 
-      LOGICAL ::  lutini(jptra)
       INTEGER ::  nutini(jptra)
       REAL(8) ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
@@ -605,7 +602,6 @@ CC----------------------------------------------------------------------
 CC
 CC COMMON/citrst/ : passive tracers restart (input and output)
 CC -----------------------------------------------------------
-CC      nutwrs    : output FILE for passive tracers restart
 CC      lrsttr    : boolean term for restart i/o for passive tracers 
 CC                  (NAMELIST)
 CC      nutrst    : logical unit for restart FILE for passive tracers
@@ -613,7 +609,7 @@ CC      nrsttr    : control of the time step ( 0 or 1 ) for pass. tr.
 CC                  (NAMELIST)
 
       LOGICAL lrsttr
-      INTEGER nutwrs,nutrst,nrsttr
+      INTEGER nutrst,nrsttr
 
 COMMON/cotiso/ : isopycnal sheme for passive tracers 
 CC -----------------------------------------------------------

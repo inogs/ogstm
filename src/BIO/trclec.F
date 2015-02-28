@@ -90,14 +90,6 @@ C 0. initializations
 
 
 
-!      DO ji=1,jptra
-!        WRITE (ctrcnm(ji),'("TR_",I1)') ji
-!       WRITE (ctrcnl(ji),'("TRACER NUMBER ",I1)') ji
-!       ctrcun(ji)='mmole/m3'
-!       lutini(ji)=.FALSE.
-!     END DO
-
-
       REWIND(numnat)
       READ(numnat,nattrc)
 

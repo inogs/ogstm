@@ -20,84 +20,15 @@
 !
 
 
-       USE myalloc
-       USE myalloc_mpp
-       USE IO_mem
-       USE FN_mem
-       USE ADV_mem
-       USE HDF_mem
-       USE ZDF_mem
-       USE OPT_mem
-       USE BC_mem
-       USE BIO_mem
-       USE DIA_mem
-       USE CALENDAR
-       USE time_manager
+#include OGSTM_module_list.h
+
 #ifdef key_trc_bfm
 #include "BFM_module_list.h"
 #endif
 
-! local declarations
-! ==================
-      INTEGER ME
-      INTEGER mynode
-
-! 0. Initializations
-! ==================
-
-      numout=2  ! 0.1 Initialization of unit print
-
-      ! *********************************************
-
-      OPEN(UNIT=numout,FILE='ocean.output',FORM='FORMATTED')
-
-      ME = mynode() !  Nodes selection
-
-      narea = ME+1
-      lwp = narea.EQ.1
 
 
-      call parini(ME)
-
-      call parlec  ! read namelist
-      call time_init
-      call trclec
-
-      ! -------------------------
-      call ALLOC_ALL ! Needs Time_Manager
-      ! -------------------------
-
-      numnam = 208
-       nimpp  = 1
-       njmpp  = 1 
-
-
-! 0.3 First prints
-
-      IF(lwp) THEN
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
-          WRITE(numout,*) '                  Geofisica Sperimentale'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '                           OGS'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '                        OGSTM model'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '  Giorgio Bolzon (gbolzon@ogs.trieste.it)'
-          WRITE(numout,*) '  Paolo Lazzari  (plazzari@ogs.trieste.it)'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-      ENDIF
-
-
-
-
-      CALL INITIALIZING
+      CALL ogstm_initialize
 
 
       CALL step
@@ -106,15 +37,9 @@
 ! 3. Job end
 ! ==========
 
-#ifdef key_mpp
-      write(*,*)'My_Rank=',Rank,'before mpi finalize'
-      CALL mppstop
-      write(*,*)'My_Rank=',Rank,'after mpi finalize'
-#endif
+      CALL ogstm_finalize
 
-      if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
 
-      CLOSE( numout ) ! others units are closed in mppstop
 
       END SUBROUTINE ogstm
 
@@ -125,23 +50,7 @@
 ! ***************************************************************
 ! ***************************************************************
       SUBROUTINE ALLOC_ALL
-
-       USE myalloc
-       USE myalloc_mpp
-       USE IO_mem
-       USE FN_mem
-       USE ADV_mem
-       USE HDF_mem
-       USE ZDF_mem
-       USE OPT_mem
-       USE BC_mem
-       USE BIO_mem
-       USE SED_mem
-       USE DIA_mem
-#ifdef Mem_Monitor
-       USE check_mem
-       USE iso_c_binding
-#endif Mem_Monitor
+#include OGSTM_module_list.h
 
        IMPLICIT NONE
 
@@ -188,27 +97,76 @@
 
 
 ! *************************************************************
-!      SUBROUTINE INITIALIZING
+!      SUBROUTINE ogstm_initialize
 ! *************************************************************
-       SUBROUTINE INITIALIZING
-       USE myalloc
-       USE IO_mem, ONLY : existFilebkp
+       SUBROUTINE ogstm_initialize
+#include OGSTM_module_list.h
        IMPLICIT NONE
+! 0. Initializations
+! ==================
 
+      numout=2  ! 0.1 Initialization of unit print
+
+      ! *********************************************
+
+      OPEN(UNIT=numout,FILE='ocean.output',FORM='FORMATTED')
+
+      ME = mynode() !  Nodes selection
+
+      narea = ME+1
+      lwp = narea.EQ.1
+
+
+      call parini(ME)
+
+      call parlec  ! read namelist
+      call time_init
+      call trclec
+!    Run parameters
+!    --------------
+      CALL parcst
+      CALL parctl
+
+      ! -------------------------
+      call ALLOC_ALL ! Needs Time_Manager
+      ! -------------------------
+
+      numnam = 208
+       nimpp  = 1
+       njmpp  = 1
+
+
+! 0.3 First prints
+
+      IF(lwp) THEN
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
+          WRITE(numout,*) '                  Geofisica Sperimentale'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '                           OGS'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '                        OGSTM model'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '  Giorgio Bolzon (gbolzon@ogs.trieste.it)'
+          WRITE(numout,*) '  Paolo Lazzari  (plazzari@ogs.trieste.it)'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+      ENDIF
 ! 1. Model general initialization
 ! ===============================
 
-!    Run parameters
-!    --------------
-      CALL parcst;  CALL parlec ; CALL parctl
+
 
 
 ! ... Large domain
       IF ( jpni*jpnj.EQ.jpnij ) THEN
           CALL inimpp !   ... standard cutting out
         ELSE
-!   ... eliminate land processors
-!         CALL inimpp2 ! to be tested
          STOP
       ENDIF
 
@@ -252,7 +210,7 @@
       call photo_init
 
 
-      END SUBROUTINE INITIALIZING
+      END SUBROUTINE ogstm_initialize
 
 
 
@@ -351,3 +309,22 @@
 
 
       END SUBROUTINE photo_init
+
+
+! *************************************************************
+!      SUBROUTINE ogstm_finalize
+! *************************************************************
+       SUBROUTINE ogstm_finalize
+#include OGSTM_module_list.h
+       IMPLICIT NONE
+
+      CALL mppstop
+
+      if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
+
+      CLOSE( numout ) ! others units are closed in mppstop
+      CLOSE( numnam )
+
+      END SUBROUTINE ogstm_finalize
+
+

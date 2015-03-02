@@ -3275,19 +3275,12 @@ CC ==================
 
       CALL mppsync
 #endif
-C
-C 1. Unit close
-C -------------
-C
-
-      CLOSE( numnam )
-
 
 C
 C 2. Mpp synchroneus
 C ------------------
 C
-      CALL mppsync
+
 #ifdef key_mpp_mpi
 
       CALL mpi_finalize(info)

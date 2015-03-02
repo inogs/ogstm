@@ -51,9 +51,7 @@
       CALL snutel
       CALL checkValues
       CALL trcnxt ! tracers: fields at next time step
-!      CALL trcrad           ! Correct artificial negative concentrations for isopycnal scheme
-!
-!
+
       trcstpparttime = MPI_WTIME() - trcstpparttime ! F79 cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime
 

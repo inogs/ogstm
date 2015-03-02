@@ -8,31 +8,7 @@ CCC  PURPOSE :
 CCC  ---------
 CCC     initialization for passive tracer
 CCC     for restart or not
-CCC
-CC   METHOD :
-CC   -------
-CC
-CC   INPUT :
-CC   -----
-CC      argument		: no
-CC      COMMON
-CC
-CC   OUTPUT :
-CC   ------
-CC      argument                : no
-CC      COMMON
-CC
-CC   WORKSPACE :
-CC   ---------
-CC      ji jj jk
-CC
-CC
-CC   EXTERNAL :
-CC   --------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-CC----------------------------------------------------------------------
+
 
        USE myalloc
        IMPLICIT NONE
@@ -40,16 +16,11 @@ CC----------------------------------------------------------------------
 
 #if defined key_passivetrc
 
-      INTEGER ji,jj,jk,jn!,jl
+      INTEGER ji,jj,jk,jn
 
 
 #    if defined key_trc_npzd
 #    elif defined key_trc_bfm
-      DO jj=1,jpj
-        DO ji=1,jpi
-          xze(ji,jj)=5.
-        END DO
-      END DO
 
       DO jk=1,jpk
         DO jj=1,jpj

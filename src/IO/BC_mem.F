@@ -24,7 +24,6 @@
 
 
       INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxtglo, riv_idxtglo, atm_idxtglo ! <--domrea
-!     INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxt   , riv_idxt   , atm_idxt
       INTEGER(4), allocatable, DIMENSION(:,:) ::  gib_ridxt  , riv_ridxt  , atm_ridxt   ! <--domrea.ReIndexing()
 !     queste matrici ridotte hanno nel primo indice l'indice globale, negli altri 3 il corrispondente indice i,j,k locale (per cpu)
 
@@ -33,7 +32,7 @@
       REAL(8), allocatable, DIMENSION(:)       :: restocorr
       REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv, atm
       REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm_dtatrc       ! <--bc_gib.load_gib(), bc_tin.
-      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr
+      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr                          !array of restoring coeff. for passive tracers
 ! ----------------------------------------------------------------------
       CONTAINS
 !     *******************************************************************

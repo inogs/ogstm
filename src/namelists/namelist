@@ -10,7 +10,6 @@
 /
 &NAMHDF
    aht0   =  -3.e9,
-   ahtb0  =     0.,
    aeiv0  =  2000.,
 /
 &NAMZDF

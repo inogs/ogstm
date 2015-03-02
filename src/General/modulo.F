@@ -48,8 +48,6 @@ CC      mindi, mindj() : indexes array of the subdomain
 CC----------------------------------------------------------------------
 CC        physical constants
 CC -----------------------------------
-CC      nbiss          : number of days per month (leap-year)
-CC      nobis          : number of days per month (365 days a year)
 CC      rpi              : pi
 CC      rday             : day
 CC      rsiyea           : sideral year
@@ -72,7 +70,6 @@ CC      raass            : number of seconds in one year
 CC      rmoss            : number of seconds in one month
 CC      rjjss            : number of seconds in one day
 
-      INTEGER nbiss(12), nobis(12)
 
 
       REAL(8) rpi, rday, rsiyea, rsiday, omega, ra, g, rtt, rt0, rauw, rad,
@@ -115,9 +112,6 @@ CC
 CC----------------------------------------------------------------------
 CC        horizontal curvilinear coordinate and scale factors
 CC ---------------------------------------------------------------------
-CC      ngrid            : flag to read or compute coordinates
-CC      njpi, njpj       : read dimensions
-CC      rra              : read earth radius
 CC      glamt          : longitude of t-point (degre)
 CC      glamu          : longitude of u-point (degre)
 CC      glamv          : longitude of v-point (degre)
@@ -132,18 +126,11 @@ CC      e1v,e2v        : horizontal scale factors at v-point (m)
 CC      e1f,e2f        : horizontal scale factors at f-point (m)
 CC        ff             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
 
-      INTEGER ngrid, njpi, njpj
 
-
-      REAL(8) rra
       REAL(8), allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf  !, glamt,
       REAL(8), allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
       REAL(8), allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
       REAL(8), allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
-
-#if defined key_off_degrad
-      REAL(8), allocatable :: facvol(:,:,:)
-#endif
 
 CC----------------------------------------------------------------------
 CC       vertical coordinate and scale factors
@@ -226,7 +213,6 @@ CC----------------------------------------------------------------------
 CC      lateral diffusivity (tracers)
 CC ------------------------------------
 CC      aht0             : lateral diffusivity coefficient    (namelist)
-CC      ahtb0            : background diffusivity coefficient (m2/s)
 CC      ahtu, ahtv()   : lateral diffusivity coef. at u-, v-, w- t-pts
 CC      ahtw, ahtt()     (harmonic operator: no rotation, use of u-
 CC                          and v-points; rotation, use of u-, v- w-pts)
@@ -235,31 +221,8 @@ CC                          t-point only)
 CC                         (the arrays used are 3D, 2D, 1D or 0D depen-
 CC                          ding on 'key_trahdfcoef.d' )
 C
-      REAL(8) aht0,ahtb0
-CCC    Paolo 22/4/2004 i killed all options
-#if defined key_trahdfbilap
-C      REAL(8) ahtu, ahtv, ahtw
-C      REAL(8) ahtt
-# else
-#  if defined key_trahdfcoef3d
-C      REAL(8), allocatable :: ahtu(:,:,:), ahtv(:,:,:), ahtw(:,:,:)
-#   elif key_trahdfcoef2d
-C      REAL(8), allocatable :: ahtu(:,:), ahtv(:,:), ahtw(:,:)
-#   elif key_trahdfcoef1d
-C      REAL(8), allocatable :: ahtu(:), ahtv(:), ahtw(:)
-#   else
-#     if defined key_off_degrad
-C      REAL(8), allocatable :: ahtu(:,:,:), ahtv(:,:,:), ahtw(:,:,:)
-#     else
-C      REAL(8) ahtu, ahtv, ahtw
-#     endif
-#  endif
-C      REAL(8) ahtt
-#endif
-
+      REAL(8) aht0
       REAL(8), allocatable :: ahtu(:), ahtv(:), ahtw(:), ahtt(:)
-
-CC
 CC----------------------------------------------------------------------
 CC       direction of lateral diffusion (momentum & tracers)
 CC -----------------------------------------------
@@ -605,27 +568,8 @@ CC    aeivtr0   : eddy induced velocity coefficient (m2/s)
 
       REAL(8) ahtrb0,trcrat,ahtrc0,aeivtr0
 
-CC----------------------------------------------------------------------
-CC
-CC      information for outputs
-CC ------------------------------------------------------------------
-CC
-CC      nwritetrc: time step frequency for concentration outputs (NAMELIST)
+      INTEGER nwritetrc ! time step frequency for concentration outputs (NAMELIST)
 
-      INTEGER nwritetrc
-      REAL(8) djulian
-
-#    if defined key_trc_diaadd
-CC----------------------------------------------------------------------
-CC
-CC          additional 2D/3D outputs
-CC ------------------------------------------------------------------
-CC
-CC      trc3d     : additional 3d outputs
-CC      trc2d     : additional 2d outputs
-CC
-      REAL(8), allocatable :: trc3d(:,:,:,:), trc2d(:,:,:)
-#    endif
 
 #    if defined key_trc_diatrd
 
@@ -644,43 +588,24 @@ CC           9 : Z gent velocity
 #    endif 
 
 
-CC      restotr() : array of restoring coeff. for passive tracers
-
 #    if defined key_trc_dmp 
-
-!      REAL(8), allocatable ::  restoglo(:,:,:), idxtglo(:,:,:)
       INTEGER(4), allocatable ::  idxt(:,:,:),idxt2glo(:,:,:,:)
-
-
-#    else
-CC      no passive tracers DATA at given time step
 #    endif
 
-CC    fotoperiod formulation
-CC    photop      : Fotoperiod formulation if false daylength is 24 h
-      LOGICAL photop
-CC    atlantic buffer biology activation
-      LOGICAL atlantic_bfm
+
+CC    Photoperiod formulation
+      LOGICAL photop       ! Photoperiod formulation if false daylength is 24 h
+      LOGICAL atlantic_bfm ! atlantic buffer biology activation
 
 #    if defined key_trc_bfm
+      REAL(8) vsed                        ! sedimentation speed (NAMELIST)
+      REAL(8) bottom_flux                 ! (NAMELIST)
+      REAL(8), allocatable :: remdmp(:,:) !damping coefficient of passive tracers (depth dependant)
 
-CC      vsed      : sedimentation speed (NAMELIST)
-CC      remdmp()  : damping coefficient of passive tracers (depth dependant)
-
-      REAL(8) vsed,bottom_flux
-      REAL(8), allocatable :: remdmp(:,:)
-
-CC----------------------------------------------------------------------
-CC
 CC     optical parameters
-CC -----------------------------------
-CC      xze       : euphotic layer depth
-CC      xpar      : par (photosynthetic available radiation)
-      REAL(8), allocatable :: xze(:,:)
-      REAL(8), allocatable :: xpar(:,:,:)
-CC----------------------------------------------------------------------
+      REAL(8), allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)
 
-#    endif
+#     endif
 #else
 CC no passive tracer COMMON specification
 #endif
@@ -689,10 +614,7 @@ CC----------------------------------------------------------------------
 #ifdef key_trahdfeiv
       REAL(8), allocatable, dimension(:,:,:) :: zaeiu,zaeiv, zaeiw
 #endif
-#ifdef key_s_coord
-      REAL(8), allocatable ::hbattglo(:,:)    , hbatuglo(:,:)
-      REAL(8), allocatable ::hbatvglo(:,:)    , hbatfglo(:,:)
-#endif
+
       INTEGER ncpu
 
 
@@ -802,9 +724,6 @@ CC----------------------------------------------------------------------
       allocate(e2f(jpi,jpj))            ;e2f      = huge(e2f(1,1))
       allocate(ff (jpi,jpj))            ;ff       = huge(ff(1,1))
 
-#if defined key_off_degrad
-      allocate(facvol(jpi,jpj,jpk))     ;facvol   = huge(facvol(1,1,1))
-#endif
 #ifdef key_s_coord
        allocate(hbatt(jpi,jpj)) ;hbatt = huge(hbatt(1,1))     
        allocate(hbatu(jpi,jpj)) ;hbatu = huge(hbatu(1,1))
@@ -1021,12 +940,6 @@ C     no mpp
        allocate(trb(jpi,jpj,jpk,jptra))              ; trb        = huge(trb(1,1,1,1))
 
 
-
-#    if defined key_trc_diaadd
-       allocate(trc3d(jpi,jpj,jpk,jpdia3d)) ; trc3d  = huge(trc3d(1,1,1,1))
-       allocate(trc2d(jpi,jpj,jpdia2d))     ; trc2d  = huge(trc2d(1,1,1))
-#    endif
-
 #    if defined key_trc_diatrd
 
       allocate(trtrd(jpi,jpj,jpk,jptra,jpdiatrc)) ; trtrd =huge(trtrd(1,1,1,1,1))
@@ -1043,7 +956,6 @@ C     no mpp
 
 #ifdef key_trc_bfm
       allocate(remdmp(jpk,jptra))   ; remdmp = huge(remdmp(1,1))
-      allocate(xze(jpi,jpj))        ; xze  = huge(xze(1,1))
       allocate(xpar(jpi,jpj,jpk))   ; xpar = huge(xpar(1,1,1))
 
 #endif

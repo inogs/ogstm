@@ -42,7 +42,7 @@
       NAMELIST/namrun/ lrstar, calendarType, nsptint
 
       NAMELIST/namdom/ nizoom, njzoom, nacc, atfp, rdt, rdtmin, rdtmax, rdth
-      NAMELIST/namhdf/ aht0, ahtb0, aeiv0
+      NAMELIST/namhdf/ aht0, aeiv0
       NAMELIST/namzdf/ avt0,ntrbbl,atrbbl
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta, rcp
       namelist /natnum/ rsc,rtrn,ncor,ndttrc,crosster,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
@@ -130,7 +130,6 @@
 ! ... Namelist namhdf : horizontal diffusion
 
       aht0   = 2000.
-      ahtb0  = 0.
       aeiv0  = 2000.
 
       REWIND( numnam )
@@ -140,7 +139,6 @@
       WRITE(numout,*) 'namhdf'
       WRITE(numout,*) ' '
       WRITE(numout,*) ' horizontal eddy diffusivity    aht0   = ',aht0
-      WRITE(numout,*) ' background diffusivity         ahtb0  = ',ahtb0
       WRITE(numout,*) ' eddy induced velocity coef.    aeiv0  = ',aeiv0
       WRITE(numout,*) ' '
       ENDIF

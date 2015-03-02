@@ -61,16 +61,6 @@ C 1. OPEN specifier
       cldir='DIRECT'
 
 
-C 3. LOGICAL UNIT initialization for specific files for passive tracer
-C
-C     nutrst : restart FILE  INPUT  UNIT (lrsttr=.TRUE.)
-C     nutini(jptra) : UNIT for initial FILE for tracer
-C
-      nutrst = 83
-      DO jn=1,jptra
-        nutini(jn)= 0
-      END DO 
-
 C 8. Advection scheme option
 C --------------------------
       iadv = 0

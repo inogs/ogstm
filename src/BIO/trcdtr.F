@@ -1,5 +1,3 @@
-C $Id: trcdtr.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
       SUBROUTINE trcdtr
 CCC---------------------------------------------------------------------
 CCC
@@ -9,36 +7,6 @@ CCC
 CCC  PURPOSE :
 CCC  ---------
 CCC     computes or READ initial DATA for passive tracer
-CCC
-CC   METHOD :
-CC   -------
-CC
-CC   INPUT :			  no
-CC   -----
-CC      COMMON
-CC            /comdom/          : domain PARAMETER
-CC            /comcoo/          : orthogonal curvilinear coordinates
-CC                                and scale factors
-CC            /comask/          : masks, bathymetry
-CC
-CC   OUTPUT :
-CC   ------
-CC      argument                : no
-CC      COMMON
-CC            /cottrc/          : passive tracer field now and before
-CC
-CC   WORKSPACE :		  no
-CC   ---------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-CC      original  : 96-11
-CC      additions : 99-9
-CC                : 00-12 (O. Aumont, E. Kestenare) 
-CC                         add for POC in sediments
-CC----------------------------------------------------------------------
-CC parameters and commons
-CC ======================
 
        USE myalloc
        USE stafun
@@ -46,18 +14,12 @@ CC ======================
 
 
 #if defined key_passivetrc
-CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       INTEGER ji,jj,jk,jn
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
 
 
-C 0. initialisations
-C ------------------
-C
+
       IF(lwp) THEN
           WRITE(numout,*) ' '
           WRITE(numout,*) ' *** trcdtr initialisation for '
@@ -113,9 +75,7 @@ da inserire
 
 
 #else
-
 C     no passive tracers
-
 #endif
 
       END SUBROUTINE trcdtr

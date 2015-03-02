@@ -500,17 +500,12 @@ CCC F79 Namelist does not accept allocatable
           CHARACTER(LEN=20) :: dianm(jptra_dia)
           CHARACTER(LEN=20) :: diaun(jptra_dia)
           INTEGER           :: diahf(jptra_dia)
-CC
-CC
-CC Common/citctl/ : parameters for the control of passive tracers
+
+CC    parameters for the control of passive tracers
 CC --------------------------------------------------------------
-CC
 CC      numnat    : the number of the passive tracer NAMELIST
-CC      nutini    : FORTRAN LOGICAL UNIT for initialisation file
-CC
       INTEGER numnat
 
-      INTEGER ::  nutini(jptra)
       REAL(8) ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
       LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
@@ -604,12 +599,11 @@ CC COMMON/citrst/ : passive tracers restart (input and output)
 CC -----------------------------------------------------------
 CC      lrsttr    : boolean term for restart i/o for passive tracers 
 CC                  (NAMELIST)
-CC      nutrst    : logical unit for restart FILE for passive tracers
 CC      nrsttr    : control of the time step ( 0 or 1 ) for pass. tr.
 CC                  (NAMELIST)
 
       LOGICAL lrsttr
-      INTEGER nutrst,nrsttr
+      INTEGER nrsttr
 
 COMMON/cotiso/ : isopycnal sheme for passive tracers 
 CC -----------------------------------------------------------

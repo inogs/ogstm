@@ -16,8 +16,6 @@
 !      the namelist FILE ( UNIT numnat ) :
 !            &nattrc           : general
 !            &nattrc_diag      : general
-!            &natrtd           : dynamical trends
-!            &natadd           : additional arrays for diagnostics
 !
 !   OUTPUT :
 !   ------
@@ -44,17 +42,8 @@
 
 C 0. initializations
 
-      namelist /NATTRC/       ctrcnm, ctrcun, ctrmax,ctr_hf ! BUONO
-      namelist /NATTRC_DIAG/   dianm,  diaun,         diahf ! BUONO
-
-
-#    if defined key_trc_diatrd
-      namelist /natrtd/ luttrd,nwritetrd                      ! dynamical trends
-#    endif
-
-#    if defined key_trc_diaadd
-      namelist /natadd/ ctrc3d,ctrc3l,ctrc2d,ctrc2l, ctrc3u, ctrc2u,nwriteadd    !additional diagnostics
-#    endif
+      namelist /NATTRC/       ctrcnm, ctrcun, ctrmax,ctr_hf
+      namelist /NATTRC_DIAG/   dianm,  diaun,         diahf
 
 
 
@@ -97,9 +86,6 @@ C 0. initializations
           WRITE(numout,*) ' '
           WRITE(numout,*) 'nattrc'
           WRITE(numout,*) ' '
-!          WRITE(numout,*)' frequency of outputs for passive tracers nwritetrc = ',nwritetrc
-!          WRITE(numout,*) ' restart LOGICAL for passive tr. lrsttr = ',lrsttr
-!          WRITE(numout,*) ' control of time step for p. tr. nrsttr = ',nrsttr
           DO ji=1,jptra
             WRITE(numout,*) ' tracer nb: ',ji,' name = ',ctrcnm(ji), ' in unit = ',ctrcun(ji), ' max ',
      +       ctrmax(ji), 'highFreq ', ctr_hf(ji)
@@ -151,80 +137,6 @@ C 0. initializations
           ENDIF
       enddo
 
-
-
-
-
-
-#    if defined key_trc_diatrd
-
-! 1.2 namelist nattrd : passive tracers dynamical trends
-
-      nwritetrd = 10
-
-! default : no dynamical trend recording
-
-      DO ji=1,jptra
-        luttrd(ji) = .FALSE.
-      END DO 
-
-      REWIND(numnat)
-      READ(numnat,natrtd)
-
-      IF(lwp) THEN
-          WRITE(numout,*) 'natrtd'
-          WRITE(numout,*) ' '
-          WRITE(numout,*)' frequency of outputs for dynamical trends nwritetrd = ',nwritetrd
-          DO ji=1,jptra
-            WRITE(numout,*)' keep dynamical trends for tracer number :',ji,luttrd(ji)
-          END DO 
-      ENDIF
-
-
-! 1.3 namelist natadd : passive tracers diagnostics
-
-
-
-      nwriteadd = 10
-
-! default value for 3D output arrays : short and long name, units
-
-      DO ji=1,jpdia3d
-        WRITE (ctrc3d(ji),'("3D_",I1)') ji
-        WRITE (ctrc3l(ji),'("3D DIAGNOSTIC NUMBER ",I2)') ji
-        ctrc3u(ji)=' '
-      END DO 
-
-
-! default value for 2D output arrays : short and long name, units
-
-      DO ji=1,jpdia2d
-        WRITE (ctrc2d(ji),'("2D_",I1)') ji
-        WRITE (ctrc2l(ji),'("2D DIAGNOSTIC NUMBER ",I2)') ji
-        ctrc2u(ji)=' '
-      END DO 
-
-      REWIND(numnat)
-      READ(numnat,natadd)
-
-      IF(lwp) THEN
-          WRITE(numout,*) ' natadd'
-          WRITE(numout,*) ' '
-          WRITE(numout,*)' frequency of outputs for additional arrays nwriteadd = ',nwriteadd
-          DO ji=1,jpdia3d
-            WRITE(numout,*)'name of 3d output field number :',ji,' : ',ctrc3d(ji)
-            WRITE(numout,*) ctrc3l(ji)  
-            WRITE(numout,*) ' in unit = ',ctrc3u(ji)
-          END DO 
-          WRITE(numout,*) ' '
-          DO ji=1,jpdia2d
-            WRITE(numout,*) 'name of 2d output field number :',ji,' : ',ctrc2d(ji)
-            WRITE(numout,*) ctrc2l(ji)  
-            WRITE(numout,*) ' in unit = ',ctrc2u(ji)
-          END DO 
-          WRITE(numout,*) ' '
-      ENDIF
-#    endif
 
 
       CLOSE(numnat)

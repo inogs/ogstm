@@ -48,7 +48,7 @@
       namelist /natnum/ rsc,rtrn,ncor,ndttrc,crosster,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /natnum/ rsc,rtrn,ndttrc,crosster,lhdf,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /dovesiete/  ncor,ahtrb0,trcrat,ahtrc0,aeivtr0
-      NAMELIST/General_IO/   nwritetrc,lrsttr, nrsttr,freq_ave_phys,save_bkp_group2, isCheckLOG
+      NAMELIST/General_IO/   nwritetrc,lrsttr, freq_ave_phys,save_bkp_group2, isCheckLOG
 
 
 
@@ -268,7 +268,6 @@
 
       nwritetrc = 10
       lrsttr    =.FALSE.
-      nrsttr    = 0
 
       REWIND( numnam )
       READ  ( numnam, General_IO )

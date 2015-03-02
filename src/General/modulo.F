@@ -591,21 +591,10 @@ CC      ndttrc      : frequency of step on passive tracers (NAMELIST)
       INTEGER ncor,ndttrc
       LOGICAL lhdf,crosster
 
+      LOGICAL lrsttr ! boolean term for restart i/o for passive tracers (NAMELIST)
 
 
-CC----------------------------------------------------------------------
-CC
-CC COMMON/citrst/ : passive tracers restart (input and output)
-CC -----------------------------------------------------------
-CC      lrsttr    : boolean term for restart i/o for passive tracers 
-CC                  (NAMELIST)
-CC      nrsttr    : control of the time step ( 0 or 1 ) for pass. tr.
-CC                  (NAMELIST)
-
-      LOGICAL lrsttr
-      INTEGER nrsttr
-
-COMMON/cotiso/ : isopycnal sheme for passive tracers 
+!      isopycnal sheme for passive tracers
 CC -----------------------------------------------------------
 CC      ahtrb0    : background diffusivity coefficient (m2/s)
 CC                  for passive tracer
@@ -616,16 +605,12 @@ CC    aeivtr0   : eddy induced velocity coefficient (m2/s)
 
       REAL(8) ahtrb0,trcrat,ahtrc0,aeivtr0
 
-CC
 CC----------------------------------------------------------------------
 CC
 CC      information for outputs
 CC ------------------------------------------------------------------
 CC
 CC      nwritetrc: time step frequency for concentration outputs (NAMELIST)
-CC
-CC    netcdf files and index common
-CC
 
       INTEGER nwritetrc
       REAL(8) djulian
@@ -636,43 +621,14 @@ CC
 CC          additional 2D/3D outputs
 CC ------------------------------------------------------------------
 CC
-CC      ctrc3d    : 3d output field name (NAMELIST)
-CC      ctrc3l    : 3d output field long name (NAMELIST)
-CC      ctrc3u    : 3d output field unit (NAMELIST)
-CC      ctrc2d    : 2d output field name (NAMELIST)
-CC      ctrc2l    : 2d output field long name (NAMELIST)
-CC      ctrc2u    : 2d output field unit (NAMELIST)
 CC      trc3d     : additional 3d outputs
 CC      trc2d     : additional 2d outputs
 CC
-      CHARACTER(LEN=8), allocatable :: ctrc3d(:),ctrc2d(:)
-      CHARACTER(LEN=8), allocatable :: ctrc3u(:),ctrc2u(:)
-      CHARACTER(LEN=80), allocatable :: ctrc3l(:),ctrc2l(:)
       REAL(8), allocatable :: trc3d(:,:,:,:), trc2d(:,:,:)
-
-CC
-CC    netcdf files and index common
-CC
-CC      nwriteadd: frequency of additional arrays outputs (NAMELIST)
-CC      nitd     : id for additional array output FILE
-CC      ndepitd  : id for depth mesh
-CC      nhoritd  : id for horizontal mesh
-CC
-      INTEGER nwriteadd,nitd,ndepitd,nhoritd
 #    endif
 
 #    if defined key_trc_diatrd
-CC----------------------------------------------------------------------
-CC
-CC COMMON/cottrd/ : non conservative trends (biological, ...)
-CC ------------------------------------------------------------------
-CC
-CC      luttrd    : large trends diagnostic to WRITE or not (NAMELIST)
-CC
-      LOGICAL, allocatable ::   luttrd(:)
-CC
-CC    dynamical trends
-CC
+
 CC    trtrd()   : trends of the tracer equations
 CC           1 : X advection
 CC           2 : Y advection
@@ -685,10 +641,6 @@ CC           8 : Y gent velocity
 CC           9 : Z gent velocity
 
       REAL(8), allocatable ::  trtrd(:,:,:,:,:)
-CC      nwritetrd: frequency for dynamical trends output (NAMELIST)
-CC                 one per tracer
-
-      INTEGER nwritetrd
 #    endif 
 
 
@@ -1071,18 +1023,11 @@ C     no mpp
 
 
 #    if defined key_trc_diaadd
-       allocate(ctrc3d(jpdia3d))            ; ctrc3d = huge(ctrc3d(1))
-       allocate(ctrc2d(jpdia2d))            ; ctrc2d = huge(ctrc2d(1))
-       allocate(ctrc3u(jpdia3d))            ; ctrc3u = huge(ctrc3u(1))
-       allocate(ctrc2u(jpdia2d))            ; ctrc2u = huge(ctrc2u(1))
-       allocate(ctrc3l(jpdia3d))            ; ctrc3l = huge(ctrc3l(1))
-       allocate(ctrc2l(jpdia2d))            ; ctrc2l = huge(ctrc2l(1))
        allocate(trc3d(jpi,jpj,jpk,jpdia3d)) ; trc3d  = huge(trc3d(1,1,1,1))
        allocate(trc2d(jpi,jpj,jpdia2d))     ; trc2d  = huge(trc2d(1,1,1))
 #    endif
 
 #    if defined key_trc_diatrd
-      allocate(luttrd(jptra)) ; luttrd = huge(luttrd(1))
 
       allocate(trtrd(jpi,jpj,jpk,jptra,jpdiatrc)) ; trtrd =huge(trtrd(1,1,1,1,1))
 

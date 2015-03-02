@@ -20,24 +20,7 @@
 !
 
 
-!#include OGSTM_module_list.h
-       USE myalloc
-       USE myalloc_mpp
-       USE IO_mem
-       USE FN_mem
-       USE ADV_mem
-       USE HDF_mem
-       USE ZDF_mem
-       USE OPT_mem
-       USE BC_mem
-       USE BIO_mem
-       USE DIA_mem
-       USE CALENDAR
-       USE time_manager
-#ifdef Mem_Monitor
-       USE check_mem
-       USE iso_c_binding
-#endif Mem_Monitor
+#include "OGSTM_module_list.h"
 #ifdef key_trc_bfm
 #include "BFM_module_list.h"
 #endif
@@ -63,7 +46,8 @@
 ! ***************************************************************
 ! ***************************************************************
       SUBROUTINE ALLOC_ALL
-#include OGSTM_module_list.h
+
+#include "OGSTM_module_list.h"
 
        IMPLICIT NONE
 
@@ -113,25 +97,14 @@
 !      SUBROUTINE ogstm_initialize
 ! *************************************************************
        SUBROUTINE ogstm_initialize
-!#include OGSTM_module_list.h
-       USE myalloc
-       USE myalloc_mpp
-       USE IO_mem
-       USE FN_mem
-       USE ADV_mem
-       USE HDF_mem
-       USE ZDF_mem
-       USE OPT_mem
-       USE BC_mem
-       USE BIO_mem
-       USE DIA_mem
-       USE CALENDAR
-       USE time_manager
-#ifdef Mem_Monitor
-       USE check_mem
-       USE iso_c_binding
-#endif Mem_Monitor
+
+#include "OGSTM_module_list.h"
+
        IMPLICIT NONE
+! local declarations
+! ==================
+      INTEGER ME
+      INTEGER mynode
 ! 0. Initializations
 ! ==================
 
@@ -152,14 +125,15 @@
       call parlec  ! read namelist
       call time_init
       call trclec
-!    Run parameters
-!    --------------
-      CALL parcst
-      CALL parctl
 
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager
       ! -------------------------
+
+!    Run parameters
+!    --------------
+      CALL parcst
+      CALL parctl
 
       numnam = 208
        nimpp  = 1
@@ -345,24 +319,9 @@
 !      SUBROUTINE ogstm_finalize
 ! *************************************************************
        SUBROUTINE ogstm_finalize
-!#include OGSTM_module_list.h
-       USE myalloc
-       USE myalloc_mpp
-       USE IO_mem
-       USE FN_mem
-       USE ADV_mem
-       USE HDF_mem
-       USE ZDF_mem
-       USE OPT_mem
-       USE BC_mem
-       USE BIO_mem
-       USE DIA_mem
-       USE CALENDAR
-       USE time_manager
-#ifdef Mem_Monitor
-       USE check_mem
-       USE iso_c_binding
-#endif Mem_Monitor
+
+#include "OGSTM_module_list.h"
+
        IMPLICIT NONE
 
       CALL mppstop

@@ -8,6 +8,7 @@
        USE OPT_mem
        USE BC_mem
        USE BIO_mem
+       USE SED_mem
        USE DIA_mem
        USE CALENDAR
        USE time_manager

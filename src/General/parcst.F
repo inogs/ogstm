@@ -46,10 +46,6 @@ C 1.1 Dimensions of domain
       WRITE(numout,*) ' jpi     : ', jpi
       WRITE(numout,*) ' jpj     : ', jpj
       WRITE(numout,*) ' '
-      WRITE(numout,*) ' jpidta  : ', jpidta
-      WRITE(numout,*) ' jpjdta  : ', jpjdta
-      WRITE(numout,*) ' jpkdta  : ', jpkdta
-      WRITE(numout,*) ' '
       WRITE(numout,*) ' jpim1   : ', jpim1
       WRITE(numout,*) ' jpjm1   : ', jpjm1
       WRITE(numout,*) ' jpkm1   : ', jpkm1

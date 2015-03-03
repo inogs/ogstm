@@ -101,13 +101,7 @@ C     this length depend of 512 for the t3d machine
       call getDimension('meshmask.nc','x',jpiglo)
       call getDimension('meshmask.nc','y',jpjglo)
       call getDimension('meshmask.nc','z',jpk)
-      jpidta = jpiglo
-      jpjdta = jpjglo
-      jpkdta = jpk
       jpkb   = jpk
-      jpilec = jpiglo
-      jpjlec = jpjglo
-      jpklec = jpk
 
 
 
@@ -117,9 +111,6 @@ C     this length depend of 512 for the t3d machine
       WRITE(numout,*) ' jpiglo  : first  dimension of global domain --> i ',jpiglo
       WRITE(numout,*) ' jpjglo  : second dimension of global domain --> j ',jpjglo
       WRITE(numout,*) ' jpk     : number of levels           > or = jpk   ',jpk
-      WRITE(numout,*) ' jpidta  : first  dimension of global domain --> i ',jpidta
-      WRITE(numout,*) ' jpjdta  : second dimension of global domain --> j ',jpjdta
-      WRITE(numout,*) ' jpkdta  : number of levels           > or = jpk   ',jpkdta
       WRITE(numout,*) ' jpkb    : first vertical layers where biology is active > or = jpkb   ',jpkb
       WRITE(numout,*) ' '
       ENDIF
@@ -205,9 +196,6 @@ C ..  Namelist :  Number of fluxes
       WRITE(numout,*) ' jpemp   :  E - P in mm/day',jpemp
       WRITE(numout,*) ' jpqsr   :  solar radiation',jpqsr
       WRITE(numout,*) ' jpkef   :  Extinction Coefficient',jpkef
-      WRITE(numout,*) ' jpilec  : first horizontal dimension > or = jpi ',jpilec
-      WRITE(numout,*) ' jpjlec  : second                     > or = jpj ',jpjlec
-      WRITE(numout,*) ' jpklec  : number of levels           > or = jpk ',jpklec
       WRITE(numout,*) ' '
       ENDIF
 

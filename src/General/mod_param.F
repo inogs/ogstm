@@ -7,7 +7,6 @@ CC
 CC Several domain sizes are parameterized
 CC                                  global      domain   (jpiglo,jpjglo)
 CC                                  computation domain   ( jpi  , jpj  )
-CC                                  data        domain   (jpidta,jpjdta)
 CC
 CC * if we dont use massively parallel computer (parameters jpni=jpnj=1)
 CC      so jpiglo=jpi and jpjglo=jpj
@@ -40,21 +39,9 @@ CC    jpk    : number of vertical levels
 CC
 CC Original data size
 CC ------------------
-CC      jpidta  : first horizontal dimension > or = jpi
-CC      jpjdta  : second                     > or = jpj
-CC      jpkdta  : number of levels           > or = jpk
-CC
 
-CCC 25/2/2004 Paolo  Dimension of Mediterranean Grid
-      INTEGER :: jpiglo,    
-     &           jpjglo,    
-     &           jpk 
+      INTEGER :: jpiglo, jpjglo, jpk
 
-      INTEGER :: jpidta,  
-     &           jpjdta, 
-     &           jpkdta
-CCC
-CC
 CC      jpkmod  : modulo jpk and jpnij
 CC
 CC-CC      INTEGER,parameter :: jpkmod=(1+(jpk-1)/jpnij)
@@ -143,16 +130,6 @@ CC
 
 
 
-CC
-CC Offline dynamic data size
-CC -------------------------
-CC      jpilec  : first horizontal dimension > or = jpi
-CC      jpjlec  : second                     > or = jpj
-CC      jpklec  : number of levels           > or = jpk
-CC
-      INTEGER :: jpilec,
-     &           jpjlec,
-     &           jpklec
 !end include "mod.param.off.h"
 CCC---------------------------------------------------------------------
 CCC
@@ -178,58 +155,14 @@ CC      jptaux  : zonal wind stress
 CC      jptauy  : meridional wind stress
 CC      jpemp   : E - P in mm/day
 CC      jpqsr   : solar radiation
-CC
-CC
-CC
        INTEGER :: jpkef
-CC
-CC Offline dynamic data size
-CC -------------------------
-CC      jpilec  : first horizontal dimension > or = jpi
-CC      jpjlec  : second                     > or = jpj
-CC      jpklec  : number of levels           > or = jpk
-CC
-CC
+
 CC Passive tracers parameter
 CC -------------------------
 CC
 #ifdef key_passivetrc
-CCC---------------------------------------------------------------------
-CCC
-CCC                         PARAMETER passivetrc
-CCC                       ************************
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC     Include parameter FILE for passive tracer
-CCC
-CC   MODIFICATIONS :
-CC   -------------
-CC    original : 96 (M. Levy)
-CC                 07/99 (M. Levy for NNPZDDOM or NPZD model)
-CC                 04/00 (O. Aumont, M.A. Foujols) HAMOCC3 and P3ZD
-CC
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (15/11/96)
-CCC---------------------------------------------------------------------
-CC
-CC passive tracers
-CC ---------------
-CC       jptra  : number of passive tracers
-CC
 #    if defined key_trc_bfm
-CCC---------------------------------------------------------------------
-CCC                         PARAMETER passivetrc.bfm
-CCC                       *****************************
-CCC
-CCC  purpose :
-CCC  ---------
-CCC     INCLUDE PARAMETER FILE for passive tracer BFM model
-CCC
-CCC  --------------
-CC
-CC       jptra  : number of tracers
-CC
+
 
 #include "BFM_var_list.h"
 CC
@@ -245,21 +178,10 @@ CC number of biological trends
 CC ---------------------------
 CC
       INTEGER, parameter :: jpdiabio = -1
-CC      PARAMETER (jpdiabio = -1)
-CC
+
 
 #    elif defined key_test00
-CC    test CASE : nutrient adv-dif without reaction
-      INTEGER, parameter :: jptra = 5
-      INTEGER, parameter :: ppO2o=1, ppN1p=2, ppN3n=3, ppN4n=4, ppN5s=5
-CC productive layer depth
-CC ----------------------
-CC       jpkb   : first vertical layers where biology is active
-CC       jpkbm1 : jpkb - 1
-CC
-      INTEGER :: jpkb ,
-     &           jpkbm1
-
+      INTEGER :: jpkb ,jpkbm1
 #    else
 CC    default CASE : temperature and salinity as passive tracers
       INTEGER, parameter :: jptra = 2

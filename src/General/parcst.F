@@ -63,8 +63,6 @@ C 1.2 Option parameter : island, periodic,...
      $    ' lateral boundary conditions, s-coordinate'
       IF(lwp)WRITE(numout,*) ' '
       IF(lwp)WRITE(numout,*) ' jperio  : ', jperio
-      IF(lwp)WRITE(numout,*) ' jpisl   : ', jpisl 
-      IF(lwp)WRITE(numout,*) ' jpnisl  : ', jpnisl
       IF(lwp)WRITE(numout,*) ' '
 
 C 1.3 Multitasking

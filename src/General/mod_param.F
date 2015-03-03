@@ -94,14 +94,10 @@ CC Domain characteristics
 CC ----------------------
 CC    jperio    : lateral cond. type for the global domain (4, 3, 2, 1
 CC                or 0)  
-CC    jpisl    : number of islands
-CC    jpnisl    : maximum number of points per island
 CC
 CC
 CC
-         INTEGER :: jperio,  
-     &              jpisl,   
-     &              jpnisl 
+         INTEGER :: jperio  
 
 CC
 CC

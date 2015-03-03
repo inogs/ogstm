@@ -29,7 +29,7 @@ CC ==================
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
 
       NAMELIST/MPI_config/ mpi_pack_size
-      NAMELIST/Domain_Characteristic/  jperio, jpisl, jpnisl
+      NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jptaux, jptauy, jpwind, jpemp,jpkef, jpice, jpqsr
 CC----------------------------------------------------------------------
 
@@ -190,8 +190,6 @@ C
       WRITE(numout,*) 'Domain_Characteristic'
       WRITE(numout,*) ' '
       WRITE(numout,*) ' lateral cond. type for the global domain (4, 3, 2, 1 or 0)',jperio
-      WRITE(numout,*) ' jpisl  : number of islands', jpisl
-      WRITE(numout,*) ' jpnisl  : maximum number of points per island', jpnisl
       ENDIF
 
 C ..  Namelist :  Number of fluxes

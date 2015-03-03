@@ -2,9 +2,7 @@
       mpi_pack_size =1
 /
 &Domain_Characteristic
-      jperio=0,  
-      jpisl=9,   
-      jpnisl=800 
+      jperio=0  
 /
 &Number_Fluxes
       jpflx = 13,

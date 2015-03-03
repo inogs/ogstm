@@ -600,7 +600,6 @@ CC    Photoperiod formulation
 #    if defined key_trc_bfm
       REAL(8) vsed                        ! sedimentation speed (NAMELIST)
       REAL(8) bottom_flux                 ! (NAMELIST)
-      REAL(8), allocatable :: remdmp(:,:) !damping coefficient of passive tracers (depth dependant)
 
 CC     optical parameters
       REAL(8), allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)
@@ -955,7 +954,6 @@ C     no mpp
 # endif
 
 #ifdef key_trc_bfm
-      allocate(remdmp(jpk,jptra))   ; remdmp = huge(remdmp(1,1))
       allocate(xpar(jpi,jpj,jpk))   ; xpar = huge(xpar(1,1,1))
 
 #endif

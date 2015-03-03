@@ -76,14 +76,6 @@ C --------------------------
       ENDIF
       iadv = iadv + 1
 #endif
-#if defined key_trc_tvd
-      IF(lwp) THEN
-          WRITE(numout,*) ' horizontal and vertical advection '
-          WRITE(numout,*) ' with TVD scheme'
-          WRITE(numout,*) ' '
-      ENDIF
-      iadv = iadv + 1
-#endif
 #if defined key_trc_muscl
       IF(lwp) THEN
           WRITE(numout,*) ' horizontal and vertical advection '

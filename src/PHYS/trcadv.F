@@ -13,7 +13,6 @@ CCC     Differents schemes are possible depending on the key
 CCC
 CCC     'key_trc_arakawa'
 CCC     'key_trc_smolar'
-CCC     'key_trc_tvd'
 CCC     'key_trc_muscl'
 CCC     'key_trc_ppm'
 CCC
@@ -39,8 +38,6 @@ CC ==================
          call smolar
 #    elif defined key_trc_upstream
 #       include "trcadv.upstream.h"
-#    elif defined key_trc_tvd
-#       include "trcadv.tvd.h"
 #    elif defined key_trc_muscl
 #       include "trcadv.muscl.h"
 #    elif defined key_trc_ppm

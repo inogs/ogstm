@@ -52,11 +52,6 @@
 ! ==================
       INTEGER ME
       INTEGER mynode
-! 0. Initializations
-! ==================
-
-      numout=2  ! 0.1 Initialization of unit print
-
       ! *********************************************
 
       OPEN(UNIT=numout,FILE='ocean.output',FORM='FORMATTED')
@@ -82,7 +77,6 @@
       CALL parcst
       CALL parctl
 
-      numnam = 208
        nimpp  = 1
        njmpp  = 1
 

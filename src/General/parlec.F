@@ -39,12 +39,12 @@
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
 
 
-      NAMELIST/namrun/ lrstar, calendarType, nsptint
+      NAMELIST/namrun/ calendarType, nsptint
 
       NAMELIST/namdom/ nizoom, njzoom, rdt
       NAMELIST/namhdf/ aht0, aeiv0
-      NAMELIST/namzdf/ avt0,ntrbbl,atrbbl
-      NAMELIST/nameos/ neos, rau0, ralpha, rbeta, rcp
+      NAMELIST/namzdf/ ntrbbl,atrbbl
+      NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rsc,rtrn,ncor,ndttrc,crosster,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /natnum/ rsc,rtrn,ndttrc,crosster,lhdf,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /dovesiete/  ncor,ahtrb0,trcrat,ahtrc0,aeivtr0
@@ -132,7 +132,7 @@
 
 ! ... Namelist namzdf : vertical diffusion
 
-      avt0  = 1.e-5
+
       ntrbbl = 0
       atrbbl = 10000.
 
@@ -141,8 +141,6 @@
 
       IF(lwp) THEN
       WRITE(numout,*) 'namzdf'
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' vertical eddy diffusivity      avt0   = ',avt0
       WRITE(numout,*) ' '
       WRITE(numout,*) ' bottom boundary layer ntrbbl   = ',ntrbbl
       WRITE(numout,*) ' '
@@ -157,12 +155,10 @@
       rau0   =  1020.
       ralpha =  2.e-4
       rbeta  =  0.029
-      rcp    =  4.e+3
 
       REWIND( numnam )
       READ  ( numnam, nameos )
 
-      ro0cpr = 1. / ( rau0 * rcp )
 
       IF(lwp) THEN
       WRITE(numout,*) 'nameos'
@@ -171,15 +167,11 @@
       WRITE(numout,*) ' volumic mass of reference      rau0   = ',rau0
       WRITE(numout,*) ' thermal exp. coef. (linear)    ralpha = ',ralpha
       WRITE(numout,*) ' saline exp. coef. (linear)     rbeta  = ',rbeta
-      WRITE(numout,*) ' ocean specific heat            rcp    = ',rcp
-      WRITE(numout,*) '          1. / ( rau0 * rcp ) = ro0cpr = ',ro0cpr
       WRITE(numout,*) ' '
       ENDIF
 
 ! ... Namelist namrun : parameters of the run
 
-
-      lrstar = .FALSE.
 
 
 
@@ -189,7 +181,6 @@
       IF(lwp) THEN
       WRITE(numout,*) 'namrun'
       WRITE(numout,*) ' '
-      WRITE(numout,*) ' restart logical                lrstar = ',lrstar
       WRITE(numout,*) ' leap year calendar (0/1)  calendarType = ',calendarType
       WRITE(numout,*) ' type of interpolation                     nsptint = ', nsptint
 

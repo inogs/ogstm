@@ -57,11 +57,9 @@ CC        neos         : flag of the type of equation of state used
 CC      rau0             : reference volumic mass of the ocean (kg/m3)
 CC      ralpha, rbeta    : thermique and haline expension coef. used
 CC               for linear equation of state (neos=1 or 2)
-CC      rcp              : ocean specific heat
-CC      ro0cpr           : = 1. / ( rau0 * rcp )
 
       INTEGER neos
-      REAL(8) rau0, ralpha, rbeta, rcp, ro0cpr
+      REAL(8) rau0, ralpha, rbeta
       REAL(8)  rdt     ! dynamics time step
 
 CC----------------------------------------------------------------------
@@ -225,37 +223,25 @@ CC       wgm
 #if defined key_trahdfeiv
       REAL(8), allocatable, dimension(:,:,:) :: ugm,vgm,wgm
 #endif
-CC
 CC----------------------------------------------------------------------
 CC         vertical diffusion
 CC -----------------------------------
-CC     avt0            : vertical viscosity and diff. coef. (namelist)
 CC      ntrbbl         : bottom boundary layer (namelist)
 CC      atrbbl         : bottom boundary layer diffusivity (namelist)
 CC     avt             : vertical diffusivity coeff. at w-point
 CC      avtb           : background profile of avm and avt
-C
-C
+
       INTEGER ntrbbl
-      REAL(8) avt0,atrbbl
+      REAL(8) atrbbl
       REAL(8), allocatable :: avt(:,:,:)
       REAL(8), allocatable ::  avtb(:)
       REAL(8), allocatable ::  bblx(:,:),bbly(:,:)
 
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
+
 CC IV. SURFACE FORCING AND DATA
 CC ============================
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
-CC----------------------------------------------------------------------
 CC  surface wind stress at givem time_step
-CC -------------------------------------------------------
 CC    taux, tauy()   : wind stress components in (i,j) referential
-CC    tauxg, tauyg() : zonal and meridian wind stress component used
-CC                       in output (geographical referential)
-
       REAL(8), allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
 
 CC----------------------------------------------------------------------
@@ -267,21 +253,9 @@ CC      emp            : evaporation minus precipitation (mm day-1)
 CC      runoff         : annual run off (mm/day)
 
       REAL(8), allocatable, dimension(:,:) :: qt, q, emp,runoff
+      REAL(8), allocatable :: qsr(:,:) ! penetrative solar radiation (w m-2)
 
-CC
-CC----------------------------------------------------------------------
-CC
-CC      penetrative solar radiation
-CC --------------------------------------------
-CC      qsr     : solar radiation (w m-2)
-
-      REAL(8), allocatable :: qsr(:,:)
-
-CC     dynamic data selection
-CC ---------------------------------------
-CC      nsptint   : TYPE of spatial interpolation (NAMELIST)
-
-      INTEGER nsptint
+      INTEGER nsptint ! YPE of spatial interpolation (NAMELIST)
 
 
 CC      udta,vdta()  : horizontal velocity data array
@@ -321,45 +295,18 @@ CC ---------------------------------------
       REAL(8), allocatable :: wgmdta(:,:,:,:) ! vertical Gent et Mc William speed (w point) data array
 #endif
 
-CC----------------------------------------------------------------------
-
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
 CC V. DIAGNOSTICS
 CC ==============
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
-CC----------------------------------------------------------------------
-CC       parameters for the control
-CC -------------------------------------------
-CC      numnam           : logical unit for namelist
-
-CC      lrstar           : boolean term for restart i/o
-CC      calendarType     : leap years calendar (0/1)
-CC      neuler           : restart euler forward option (0=Euler)
 
 
-
-      INTEGER numnam
-      INTEGER calendarType
-      INTEGER neuler
-      LOGICAL lrstar
+      INTEGER calendarType ! leap years calendar (0/1)
 
       REAL(8), ALLOCATABLE, DIMENSION(:,:) :: DAY_LENGTH
 
-
-CC----------------------------------------------------------------------
-CC         ogstm output
-CC ---------------------------
-CC      numout           : logical unit for output print
-
-
-
-
-      INTEGER numout
-CC      lwp              : boolean term for mpp output
-      LOGICAL lwp
+      INTEGER            :: numnam = 208 ! unit for namelist
+      INTEGER, PARAMETER :: numout = 2   ! unit for output print
+      LOGICAL lwp                        ! boolean term for stdout
+      INTEGER, PARAMETER :: numnat =80   ! the number of the passive tracer NAMELIST
 
 
 #if defined key_mpp || defined key_debug 
@@ -385,31 +332,17 @@ C     no mpp
 
 
 
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
 CC PASSIVE TRACER MODEL
-CC =============
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
-CC----------------------------------------------------------------------
-CC passive tracers Common
-CC ----------------------
-CC
 #if defined key_passivetrc
-CCC F79 Namelist does not accept allocatable
-
           CHARACTER(LEN=20) :: ctrcnm(jptra)
           CHARACTER(LEN=12) :: ctrcun(jptra)
-          CHARACTER(LEN=6) :: mycln
           CHARACTER(LEN=20) :: dianm(jptra_dia)
           CHARACTER(LEN=20) :: diaun(jptra_dia)
           INTEGER           :: diahf(jptra_dia)
 
 CC    parameters for the control of passive tracers
-CC --------------------------------------------------------------
-CC      numnat    : the number of the passive tracer NAMELIST
-      INTEGER numnat
+
+
 
       REAL(8) ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG

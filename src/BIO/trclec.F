@@ -38,10 +38,6 @@
 ! statement functions
 ! ===================
 
-
-
-C 0. initializations
-
       namelist /NATTRC/       ctrcnm, ctrcun, ctrmax,ctr_hf
       namelist /NATTRC_DIAG/   dianm,  diaun,         diahf
 
@@ -67,8 +63,6 @@ C 0. initializations
           WRITE(numout,*) ' ****************************'
           WRITE(numout,*) ' '
       ENDIF
-
-      numnat=80
 
       clname='namelist.passivetrc'
       CALL ctlopn(numnat,clname,clold,clfor,clseq,ilseq,ilu,iused,numout,lwp,1)

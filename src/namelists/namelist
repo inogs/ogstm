@@ -1,12 +1,7 @@
 &NAMDOM
    nizoom =     1,
    njzoom =     1,
-   nacc   =     0,
-   atfp   =   0.025,
    rdt    =  1800,
-   rdtmin =  1800,
-   rdtmax =  1800,
-   rdth   =  1800,
 /
 &NAMHDF
    aht0   =  -3.e9,

@@ -91,23 +91,7 @@ CC      ro0cpr           : = 1. / ( rau0 * rcp )
 
       INTEGER neos
       REAL(8) rau0, ralpha, rbeta, rcp, ro0cpr
-
-
-CC----------------------------------------------------------------------
-CC       time step
-CC ---------------------------------------------------------------------
-CC      nacc             : flag to activate the convergence acceleration
-CC      atfp, atfp1      : asselin time filter param. (atfp1= 1-2*atfp)
-CC      rdt              : dynamics time step
-CC      rdttra         : vertical profile of tracer time step
-CC      rdtmin           : minimum time step on tracers
-CC      rdtmax           : maximum time step on tracers
-CC      rdth             : depth scale for vertically dependent rdttra
-CC
-      INTEGER nacc
-
-      REAL(8) atfp, atfp1, rdt, rdtmin, rdtmax, rdth
-      REAL(8), allocatable :: rdttra(:)
+      REAL(8)  rdt     ! dynamics time step
 
 CC----------------------------------------------------------------------
 CC        horizontal curvilinear coordinate and scale factors
@@ -693,8 +677,6 @@ CC----------------------------------------------------------------------
       allocate(nleit(jpnij))  ;nleit  = huge(nleit(1))
       allocate(nlejt(jpnij))  ;nlejt  = huge(nlejt(1))
 
-
-      allocate(rdttra(jpk))   ;rdttra = huge(rdttra(1))
 
       allocate(totglamt(jpiglo,jpjglo)) ;totglamt = huge(totglamt(1,1))
       allocate(totgphit(jpiglo,jpjglo)) ;totgphit = huge(totgphit(1,1))

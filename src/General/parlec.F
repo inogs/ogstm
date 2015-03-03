@@ -41,7 +41,7 @@
 
       NAMELIST/namrun/ lrstar, calendarType, nsptint
 
-      NAMELIST/namdom/ nizoom, njzoom, nacc, atfp, rdt, rdtmin, rdtmax, rdth
+      NAMELIST/namdom/ nizoom, njzoom, rdt
       NAMELIST/namhdf/ aht0, aeiv0
       NAMELIST/namzdf/ avt0,ntrbbl,atrbbl
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta, rcp
@@ -97,13 +97,7 @@
 
       nizoom =  1
       njzoom =  1
-
-      nacc   = 0
-      atfp   = 0.1
       rdt    = 3600.
-      rdtmin = 3600.
-      rdtmax = 3600.
-      rdth   = 800.
 
       REWIND( numnam )
       READ  ( numnam, namdom )
@@ -115,12 +109,7 @@
       WRITE(numout,*) ' index i domain left bottom   nizoom   = ',nizoom
       WRITE(numout,*) ' index j domain left bottom   njzoom   = ',njzoom
       WRITE(numout,*) ' '
-      WRITE(numout,*) ' acceleration of converge       nacc   = ',nacc
-      WRITE(numout,*) ' asselin time filter parameter  atfp   = ',atfp
       WRITE(numout,*) ' time step                      rdt    = ',rdt
-      WRITE(numout,*) ' minimum time step on tracers   rdtmin = ',rdtmin
-      WRITE(numout,*) ' maximum time step on tracers   rdtmax = ',rdtmax
-      WRITE(numout,*) ' depth variation tracer step    rdth   = ',rdth
       WRITE(numout,*) ' '
 
       ENDIF

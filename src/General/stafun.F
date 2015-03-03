@@ -56,21 +56,7 @@ C
       END FUNCTION fsfzpt
 C
 C-----------------------------------------------------------------------
-C
-C Asselin time filter
-C ===================
-C  fsass: asselin time filter
-C           pfb : previous variable (before)
-C           pfn : present  variable (now)
-C           pfa : next     variable (after)
-C
-      REAL(8) FUNCTION fsass( pfb, pfn, pfa )
-      IMPLICIT NONE
-      REAL(8), INTENT(IN) ::  pfb, pfn, pfa
-      fsass = atfp * ( pfb + pfa ) + atfp1 * pfn
-      END FUNCTION
-C
-C-----------------------------------------------------------------------
+
 C
 C Up Stream Advection Scheme
 C ==========================

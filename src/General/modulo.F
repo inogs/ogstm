@@ -229,18 +229,10 @@ CC -----------------------------------------------
 CC      Slopes ('key_trahdfiso' or 'key_s_coord' defined)
 CC      uslp, wslpi()  : i-direction slope at u-, w-points
 CC      vslp, wslpj()  : j-direction slope at v-, w-points
-CC          wk1, wk2()     : work array used in rotated biharmonic ope-
-CC         wk3, wk4()       rator on momentum and/or tracers
-C
+
 #if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
       REAL(8), allocatable :: uslp (:,:,:), vslp (:,:,:)
       REAL(8), allocatable :: wslpi(:,:,:), wslpj(:,:,:)
-#  if defined key_trahdfbilap
-      REAL(8), allocatable :: wk1(:,:,:), wk2(:,:,:)
-      REAL(8), allocatable :: wk3(:,:,:), wk4(:,:,:)
-#   else
-      REAL(8) wk1, wk2, wk3, wk4
-#  endif
 
 # else
 C     diffusion along model level surfaces: no arrays
@@ -774,14 +766,6 @@ CC----------------------------------------------------------------------
       allocate(wslpi(jpi,jpj,jpk)) ;wslpi = huge(wslpi(1,1,1))
       allocate(wslpj(jpi,jpj,jpk)) ;wslpj = huge(wslpj(1,1,1))
 
-#  if defined key_trahdfbilap
-      allocate(wk1(jpi,jpj,jpk)) ; wk1 = huge(wk1(1,1,1))
-      allocate(wk2(jpi,jpj,jpk)) ; wk2 = huge(wk2(1,1,1))
-      allocate(wk3(jpi,jpj,jpk)) ; wk3 = huge(wk3(1,1,1))
-      allocate(wk4(jpi,jpj,jpk)) ; wk4 = huge(wk4(1,1,1))
-
-#   else
-#  endif
 # else
 C     diffusion along model level surfaces: no arrays
 #endif

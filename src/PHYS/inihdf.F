@@ -165,31 +165,7 @@ C ... mono- or macro-tasking: U-, V-, W-pts, sgn, 3D , no slab
 #    endif
 C
 #  else
-C
 C tracer and momentum diffusion along model coordinates
-C
 #endif
-#if defined key_trahdfbilap
-C
-C 4. Biharmonic initializations
-C -----------------------------
-C
-#    if defined key_trahdfgeop || defined key_trahdfiso
-        DO jk = 1, jpk
-          DO jj = 1, jpj
-            DO ji = 1, jpi
-              wk1(ji,jj,jk) = 0.e0
-              wk2(ji,jj,jk) = 0.e0
-              wk3(ji,jj,jk) = 0.e0
-              wk4(ji,jj,jk) = 0.e0
-            END DO
-          END DO
-        END DO 
-C
-#      else 
-C        No use of wk1, wk2, wk3 and wk4 arrays: no rotation required 
-#    endif 
-C
-#endif 
 
       END SUBROUTINE inihdf

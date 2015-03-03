@@ -25,8 +25,7 @@ CC
 CC   WORKSPACE :
 CC   ---------
 CC      local
-CC           clold,clnew,clfor,clunf,clseq,cldir,clname,
-CC           ildta,ilglo
+CC           clold,clnew,clfor,clunf,clseq,cldir,clname
 CC
 CC   EXTERNAL :
 CC   --------
@@ -39,7 +38,7 @@ CC ==================
 #if defined key_passivetrc
       CHARACTER(LEN=32) clname,clold,clfor,clseq,clnew,cldir,clunf,clunk
       INTEGER iused(1,100)
-      INTEGER iadv,ildta,ilglo,ioptio,istop
+      INTEGER iadv,ioptio,istop
       INTEGER jn
 
 

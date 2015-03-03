@@ -32,7 +32,7 @@ CC ==================
       INTEGER ji, jj,  ilu, ioptio
       INTEGER imulti,  imode, istop, iwarn
       INTEGER iused(1,100), iwork(257), indx(100)
-      INTEGER ildta, ilglo, ibloc, ilseq, ilindta
+      INTEGER ibloc, ilseq
 
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf, clunk
 
@@ -107,9 +107,6 @@ C     computation of the record length for direct access file
 C     this length depend of 512 for the t3d machine
 C
       ibloc = 512
-      ildta = ibloc*((jpidta*jpjdta)/ibloc+1)*jpbyt
-      ilglo = ibloc*((jpiglo*jpjglo)/ibloc+1)*jpbyt
-      ilindta = ibloc*((jpidta*jpjdta)/ibloc+1)*jpbytda
 
 
 
@@ -157,31 +154,6 @@ C
       ENDIF
 
 
-      IF(lwp)WRITE(numout,*) ' '
-      IF(lwp)WRITE(numout,*) '**************************************** '
-      IF(lwp)WRITE(numout,*) '* OPA8.1 OFFLINE                       * '
-      IF(lwp)WRITE(numout,*) '*                                      * '
-      IF(lwp)WRITE(numout,*) '*  global ocean simulation             * '
-      IF(lwp)WRITE(numout,*) '* ------------------------             * '
-      IF(lwp)WRITE(numout,*) '*                                      * '
-      IF(lwp)WRITE(numout,*) '**************************************** '
-      IF(lwp)WRITE(numout,*) '  '
-      IF ( jpiglo.LT.jpidta .OR. jpjglo.LT.jpjdta ) THEN
-          IF(lwp)WRITE(numout,*) ' '
-          IF(lwp)WRITE(numout,*) '*********************************** '
-          IF(lwp)WRITE(numout,*) '*                                 * '
-          IF(lwp)WRITE(numout,*) '* use a subdomain zoom            * '
-          IF(lwp)WRITE(numout,*) '*                                 * '
-          IF(lwp)WRITE(numout,*) '*********************************** '
-          IF(lwp)WRITE(numout,*) ' '
-          IF(lwp)WRITE(numout,*) ' c a u t i o n'
-          IF(lwp)WRITE(numout,*) ' ============='
-          IF(lwp)WRITE(numout,*) 'don t use dist.coast file, compute it'
-          IF(lwp)WRITE(numout,*) 'see island identification in dommba.F'
-          IF(lwp)WRITE(numout,*) 'and diffusivity coef. in inimix.F'
-          IF(lwp)WRITE(numout,*) 'and damping coef. in dtacof.F'
-          IF(lwp)WRITE(numout,*) ' '
-      ENDIF
 C
 C
 C ... coordinates & bathymetry
@@ -239,43 +211,6 @@ C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 
 
-#if defined key_mpp
-      IF(lwp)WRITE(numout,*) '     use of mpp option (cray t3d+pvm): macrotasking is not used '
-      IF ( jpni*jpnj.EQ.jpnij ) THEN
-          IF(lwp)WRITE(numout,*) '     jpni x jpnj = jpnij : standard cutting out'
-        ELSE
-          IF ( jpni*jpnj.LT.jpnij ) THEN
-              IF(lwp)WRITE(numout,9000)
-              IF(lwp)WRITE(numout,*) ' jpnij > jpni x jpnj impossible'
-              istop = istop + 1
-          ENDIF
-          IF(lwp)WRITE(numout,*) '     jpnij < jpni x jpnj : eliminate land processors algorithm'
-      ENDIF
-
-      ioptio = ioptio+1
-#  else
-      IF ( jpni.NE.1 .or. jpnj.NE.1 ) THEN
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*) ' jpni x jpnj not equal to 1. The do-'
-          IF(lwp)WRITE(numout,*) ' main is lay out to do mpp computer'
-          istop = istop + 1
-      ENDIF
-#endif
-      IF ( ioptio.EQ.0 ) THEN
-          imulti = 1
-          IF(lwp)WRITE(numout,*) '     macro-tasking option (default)'
-
-          IF ( 1.GT.jpcpu ) THEN
-              IF(lwp)WRITE(numout,9000)
-              IF(lwp)WRITE(numout,*) ' ncpu=',1,' > ',' jpcpu=',jpcpu
-              istop = istop + 1
-          ENDIF
-        ELSEIF ( ioptio.GT.1 ) THEN
-          IF(lwp)WRITE(numout,9000)
-          IF(lwp)WRITE(numout,*) ' key_monotasking and key_mpp options'
-          IF(lwp)WRITE(numout,*) ' are incompatible'
-          istop = istop + 1
-      ENDIF
 C
 C
 C<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<

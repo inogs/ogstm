@@ -65,11 +65,6 @@ C 1.2 Option parameter : island, periodic,...
       IF(lwp)WRITE(numout,*) ' jperio  : ', jperio
       IF(lwp)WRITE(numout,*) ' '
 
-C 1.3 Multitasking
-
-      IF(lwp)WRITE(numout,*) ' multitasking'
-      IF(lwp)WRITE(numout,*) ' '
-      IF(lwp)WRITE(numout,*) ' jpcpu   : ', jpcpu
 
 C 2. Define constants ( COMMON/comcst/)
 C -------------------

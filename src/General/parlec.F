@@ -33,7 +33,7 @@
       INTEGER ji!,jj,jk
 !      INTEGER iost, ivide1, ivide2
       INTEGER ilu, iused(1,100)
-      INTEGER ilglo, ildta, ibloc, ilseq
+      INTEGER ibloc, ilseq
 
       CHARACTER(LEN=32) clname
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
@@ -66,8 +66,6 @@
 ! ... computation of the record length for direct access file
 !     this length depend of 512 for the t3d machine
       ibloc = 512
-      ildta = ibloc*((jpidta*jpjdta)/ibloc+1)*jpbyt
-      ilglo = ibloc*((jpiglo*jpjglo)/ibloc+1)*jpbyt
       ilu = 0
       DO ji = 1, 100
         iused(1,ji) = 0

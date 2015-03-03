@@ -99,18 +99,6 @@ CC
 CC
          INTEGER :: jperio  
 
-CC
-CC
-CC Multitasking parameter
-CC ----------------------
-CC    jpcpu    : maximum number of tasks
-CC      jpbyt   : number of bytes for floating  4 or 8 
-CC      jpbytda : number of bytes for floating in data files 4 or 8
-CC
-      INTEGER :: jpcpu=8,  
-     &           jpbyt=8,  
-     &           jpbi3e=4, 
-     &           jpbytda=4
 
 CC
 CC Global grid characteristics

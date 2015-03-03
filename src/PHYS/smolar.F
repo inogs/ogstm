@@ -1146,49 +1146,6 @@ C
 #endif
 
 
-
-
-C 4.0 convert the transport trend into advection trend
-C ----------------------------------------------------
-
-#if defined key_trc_diatrd
-
-      DO ju=1, dimen_jarr
-
-          ji = jarr(1, ju)
-          jj = jarr(2, ju)
-          jk = jarr(3, ju)
-
-    !     if(zbtr_arr(ji,jj,jk) .NE. 0) then!              zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk))
-          zbtr =zbtr_arr(ji,jj,jk)
-          zgm =zbtr*trn(ji,jj,jk,B)*(un(ji,jj,jk)*e2u(ji,jj)*fse3u(ji,jj,jk)-un(ji-1,jj,jk)*e2u(ji-1,jj)*fse3u(ji-1,jj,jk))
-          zgz =zbtr*trn(ji,jj,jk,B)*(vn(ji,jj,jk)*e1v(ji,jj)*fse3v(ji,jj,jk)-vn(ji,jj-1,jk)*e1v(ji,jj-1)*fse3v(ji,jj-1,jk))
-          trtrd(ji,jj,jk,B,1) = trtrd(ji,jj,jk,B,1) + zgm
-          trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) + zgz
-          trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3)- trn(ji,jj,jk,B) * hdivn(ji,jj,jk)
-
-      END DO
-
-
-C Lateral boundary conditions on trtrd:
-#   ifdef key_mpp
-
-
-
-        CALL mpplnk( trtrd(1,1,1,B,1), 1, 1 )
-        CALL mpplnk( trtrd(1,1,1,B,2), 1, 1 )
-        CALL mpplnk( trtrd(1,1,1,B,3), 1, 1 )
-
-
-
-#   else
-        CALL lbc( trtrd(1,1,1,B,1), 1, 1, 1, 1, jpk, 1 )
-        CALL lbc( trtrd(1,1,1,B,2), 1, 1, 1, 1, jpk, 1 )
-        CALL lbc( trtrd(1,1,1,B,3), 1, 1, 1, 1, jpk, 1 )
-#   endif
-
-#endif
-
        END DO TRACER_LOOP
 
        trcadvparttime = MPI_WTIME() - trcadvparttime

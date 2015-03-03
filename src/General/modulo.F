@@ -143,14 +143,13 @@ CC----------------------------------------------------------------------
 CC      present fields (now)
 CC -------------------------------------
 CC       un, vn(), wn() : horizontal and vertical velocity (m s-1)
-CC        hdivn          : horizontal divergence
 CC        tn,   sn()     : pot. temperature (celsius), salinity (psu)
 CC      rdn            : in situ density anomalie rdn=(rho-rau0)/rau0
 CC                         (no units)
 CC        rhopn          : potential volumic mass (kg m-3)
 CC      bn2n           : brunt-vaisala frequency (s-2)
 CC
-      REAL(8), allocatable, dimension(:,:,:) :: un, vn, wn, hdivn
+      REAL(8), allocatable, dimension(:,:,:) :: un, vn, wn
       REAL(8), allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho,bn2n
 
 
@@ -420,19 +419,9 @@ CC      numnat    : the number of the passive tracer NAMELIST
 
       INTEGER freq_ave_phys
 
-CC
-CC----------------------------------------------------------------------
-CC
-CC COMMON/cottrc/ : passive tracers fields (before,now,after)
-CC ---------------------------------------
-CC      trai      : initial total tracer
-CC      trn()     : traceur concentration for actual time step
-CC      tra()     : traceur concentration for next time step
-CC      trb()     : traceur concentration for before time step
-CC
 
-      INTEGER flagSMS_Dyn ! Flag time advance SMS or Dyn
-      REAL(8) trai
+
+      INTEGER flagSMS_Dyn                    ! Flag time advance SMS or Dyn
       REAL(8), allocatable ::  trn(:,:,:,:)
       REAL(8), allocatable ::  tra(:,:,:,:)
       REAL(8), allocatable ::  tra_pp(:,:,:,:)
@@ -695,7 +684,6 @@ CC----------------------------------------------------------------------
        allocate(un(jpi,jpj,jpk))    ;un     = huge(un(1,1,1))
        allocate(vn(jpi,jpj,jpk))    ;vn     = huge(vn(1,1,1))
        allocate(wn(jpi,jpj,jpk))    ;wn     = huge(wn(1,1,1))
-       allocate(hdivn(jpi,jpj,jpk)) ;hdivn  = huge(hdivn(1,1,1))
        allocate(tn(jpi,jpj,jpk))    ;tn     = huge(tn(1,1,1))
        allocate(sn(jpi,jpj,jpk))    ;sn     = huge(sn(1,1,1))
        allocate(rdn(jpi,jpj,jpk))   ;rdn    = huge(rdn(1,1,1))

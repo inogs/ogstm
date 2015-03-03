@@ -44,36 +44,7 @@ CC      mindi, mindj() : indexes array of the subdomain
 
       INTEGER npolj
 
-
-CC----------------------------------------------------------------------
-CC        physical constants
-CC -----------------------------------
-CC      rpi              : pi
-CC      rday             : day
-CC      rsiyea           : sideral year
-CC      rsiday           : sideral day  
-CC      omega            : earth rotation parameter
-CC      ra               : earth radius (meter)
-CC      g                : gravity
-CC      rtt              : fusion point
-CC      rt0              : zero celsius
-CC      rauw             : density of pure water kg/m3
-CC      rad              : conversion coeff. from degre into radian
-CC      rcs              : conversion coeff. from millimeter per day
-CC                         into meter per second
-CC      raajj            : number of days in one year
-CC      raamo            : number of months in one year
-CC      rjjhh            : number of hours in one day
-CC      rhhmm            : number of minutes in one hour
-CC      rmmss            : number of seconds in one minute
-CC      raass            : number of seconds in one year
-CC      rmoss            : number of seconds in one month
-CC      rjjss            : number of seconds in one day
-
-
-
-      REAL(8) rpi, rday, rsiyea, rsiday, omega, ra, g, rtt, rt0, rauw, rad,
-     $    rcs, raajj, raamo, rjjhh, rhhmm, rmmss, raass, rmoss, rjjss 
+      REAL(8), PARAMETER ::  g =9.80665  ! gravity
 
 
 
@@ -108,7 +79,7 @@ CC      e1t,e2t        : horizontal scale factors at t-point (m)
 CC      e1u,e2u        : horizontal scale factors at u-point (m)
 CC      e1v,e2v        : horizontal scale factors at v-point (m)
 CC      e1f,e2f        : horizontal scale factors at f-point (m)
-CC        ff             : coriolis factor (2.*omega*sin(yphi) ) (s-1)
+CC        ff             : coriolis factor
 
 
       REAL(8), allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf  !, glamt,
@@ -158,13 +129,9 @@ CC      vmask, fmask()
       INTEGER NBFMPOINTS, NBFMPOINTS_SUP, NWATERPOINTS
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
-CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-CC
+
 CC II. DYNAMICS AND TRACERS
 CC ========================
-CC
-CC<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
-CC
 CC----------------------------------------------------------------------
 CC       previous fields (before)
 CC -----------------------------------------

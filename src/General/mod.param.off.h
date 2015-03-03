@@ -31,10 +31,8 @@ CC
      &           jpice,
      &           jpqsr
       
-CC      PARAMETER(jptaux=1,jptauy=2,jpemp=4,jpqsr=6)
-CC      PARAMETER(jpwind=3,jpice=5)
-CC
-CC
+
+
 CC
 CC Offline dynamic data size
 CC -------------------------
@@ -45,5 +43,4 @@ CC
       INTEGER :: jpilec,
      &           jpjlec,
      &           jpklec
-CC      PARAMETER(jpilec=363,jpjlec=113,jpklec=32)
-CC
+

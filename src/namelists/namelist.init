@@ -1,3 +1,43 @@
+&NAMHDF
+   aht0   =  -3.e9,
+   aeiv0  =  2000.,
+/
+&NAMZDF
+   ntrbbl = 0,
+/
+&NAMEOS
+   neos   =      0,
+   Rau0   =  1020.,
+   ralpha =  2.e-4,
+   rbeta  =  0.001,
+/
+&NAMRUN
+   CalendarType = 1,
+   nsptint = 1, 
+/
+
+&natnum     
+            rdt           =  1800,
+            rsc           =    1.,
+            rtrn          = 1.e-25,
+            ndttrc        = 1,
+            ncor          = 1,
+            lhdf          = .true.,
+            vsed          = 3.0,
+            photop        = .false.
+            atlantic_bfm  = .true.
+            bottom_flux   = 1.
+/
+
+&General_IO
+
+   nwritetrc = 10000,
+   lrsttr = .true.,
+   freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
+   save_bkp_group2      = .true.
+   isCheckLOG = .false.
+/
+
 &MPI_config
       mpi_pack_size =1
 /
@@ -6,8 +46,6 @@
 /
 &Number_Fluxes
       jpflx = 13,
-      jptaux=1,
-      jptauy=2,
       jpwind=3,
       jpemp=4,
       jpice=5,

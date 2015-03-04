@@ -31,7 +31,7 @@
 ! ==================
 
       INTEGER ji
-      INTEGER ilu,iused(1,100),ilseq
+      INTEGER iused(1,100), ilseq,ilu
       CHARACTER(LEN=21) clold,clfor,clseq,clnew,cldir,clunf
       CHARACTER(LEN=32) clname
 !----------------------------------------------------------------------
@@ -44,15 +44,14 @@
 
 
 ! OPEN specifier
-
+      ilseq = 1
+      ilu   = 0
       clold = 'old'
       clnew = 'new'
       clfor = 'formatted'
       clunf = 'unformatted'
       clseq = 'SEQUENTIAL'
       cldir = 'direct'
-      ilseq =  1! SEQUENTIAL value
-      ilu =    0! initialize the number of LOGICAL UNIT used
 
       IF(lwp) THEN
           WRITE(numout,*) ' '

@@ -25,7 +25,6 @@ CC ==================
       INTEGER ji, jj,  ilu, ioptio
       INTEGER imulti,  imode, istop, iwarn
       INTEGER iused(1,100), iwork(257), indx(100)
-      INTEGER ibloc, ilseq
 
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf, clunk
 
@@ -58,10 +57,6 @@ C ... Open specifier
       clseq = 'SEQUENTIAL'
       cldir = 'DIRECT'
 
-      ilseq = 1 ! Sequential value
-C     computation of the record length for direct access file
-C     this length depend of 512 for the t3d machine
-      ibloc = 512
 
 C II. Domain
 C ... Intialization of sub domain index

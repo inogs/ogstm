@@ -6,14 +6,9 @@ CCC                     ******************
 CCC
 CCC  Purpose :
 CCC  --------
-CCC     Read and print options for the run (namelist)
-CC
-CC   Input : 
-CC   ------
-CC      the namelist file ( unit numnam ) :
-CC
-CC   Output :
-CC   -------
+CCC     Reads Domain Decomposition from Dom_Dec_jp?_ascii files
+CCC           Domain size          from meshmask.nc
+
 
        USE myalloc
        USE myalloc_mpp
@@ -22,58 +17,6 @@ CC   -------
 CC local declarations
 CC ==================
       INTEGER ji,jj,nn,ME
-      INTEGER ilu, iused(1,100)
-      INTEGER ibloc, ilseq
-
-      CHARACTER(LEN=32) clname
-      CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
-
-      NAMELIST/MPI_config/ mpi_pack_size
-      NAMELIST/Domain_Characteristic/  jperio
-      NAMELIST/Number_Fluxes/ jpflx, jptaux, jptauy, jpwind, jpemp,jpkef, jpice, jpqsr
-CC----------------------------------------------------------------------
-
-C 0. Initializations
-C ------------------
-
-C ... Open specifier
-      clold = 'OLD'
-      clnew = 'NEW'
-      clfor = 'FORMATTED'
-      clunf = 'UNFORMATTED'
-      clseq = 'SEQUENTIAL'
-      cldir = 'DIRECT'
-
-C ... Sequential value
-      ilseq = 1
-
-C ... computation of the record length for direct access file
-C     this length depend of 512 for the t3d machine
-      ibloc = 512
-      ilu = 0
-      DO ji = 1, 100
-        iused(1,ji) = 0
-      END DO
-
-      IF(lwp) THEN
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' routine parini'
-          WRITE(numout,*) ' **************'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' initialization of Domain'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' namelist.init'
-          WRITE(numout,*) ' ********'
-          WRITE(numout,*) ' '
-      ENDIF
-
-
-      numnam = 1004
-      clname = 'namelist.init'
-      CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
-
 
       call COUNTLINE ('Dom_Dec_jpi.ascii', jpni)
       call COUNTWORDS('Dom_Dec_jpi.ascii', jpnj)
@@ -140,64 +83,13 @@ C     this length depend of 512 for the t3d machine
         endif
       enddo
 
-CC Other dimension parameters
-CC --------------------------
-CC      jpim1   :  jpi - 1
-CC      jpjm1   :  jpj - 1
-CC      jpkm1   :  jpk - 1
-CC      jpij    :  jpi x jpj
-
       jpim1=jpi-1
       jpjm1=jpj-1
       jpkm1=jpk-1
       jpij=jpi*jpj
       jpkbm1=jpkb-1
 
-C ... Namelist :MPI_config
-C     Deafault value
-      mpi_pack_size = 1
 
-      REWIND( numnam )
-      READ  ( numnam, MPI_config )
-
-      IF(lwp) THEN
-      WRITE(numout,*) 'MPI_config'
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' mpi_pack_size  :size of mpi packet -->  ',mpi_pack_size
-      WRITE(numout,*) ' '
-      ENDIF
-
-C
-C ... namelist.init: Domain_Characteristic
-C
-C
-      REWIND( numnam )
-      READ  ( numnam, Domain_Characteristic )
-
-
-      IF(lwp) THEN
-      WRITE(numout,*) 'Domain_Characteristic'
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' lateral cond. type for the global domain (4, 3, 2, 1 or 0)',jperio
-      ENDIF
-
-C ..  Namelist :  Number of fluxes
-
-
-      REWIND( numnam )
-      READ  ( numnam, Number_Fluxes )
-
-      IF(lwp) THEN
-      WRITE(numout,*) 'Number of fluxes'
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' jpflx   : number of fluxes',jpflx
-      WRITE(numout,*) ' jptaux  :  zonal wind stress',jptaux
-      WRITE(numout,*) ' jptauy  :  meridional wind stress',jptauy
-      WRITE(numout,*) ' jpemp   :  E - P in mm/day',jpemp
-      WRITE(numout,*) ' jpqsr   :  solar radiation',jpqsr
-      WRITE(numout,*) ' jpkef   :  Extinction Coefficient',jpkef
-      WRITE(numout,*) ' '
-      ENDIF
 
 
       CLOSE(numnam)

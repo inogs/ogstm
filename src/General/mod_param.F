@@ -115,15 +115,11 @@ CC ----------------
 CC      jpflx   : number of fluxes
 CC
       INTEGER :: jpflx
-CC
-CC    jptaux  : zonal wind stress
-CC    jptauy  : meridional wind stress
+
 CC    jpemp   : E - P in mm/day
 CC    jpqsr   : solar radiation
 CC
-      INTEGER :: jptaux,
-     &           jptauy,
-     &           jpwind,
+      INTEGER :: jpwind,
      &           jpemp,
      &           jpice,
      &           jpqsr
@@ -131,30 +127,7 @@ CC
 
 
 !end include "mod.param.off.h"
-CCC---------------------------------------------------------------------
-CCC
-CCC                         PARAMETER.OFFLINE
-CCC                       ********************
-CCC
-CCC  offline reading parameter
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC     Include parameter FILE for offline specificity
-CCC
-CC   MODIFICATIONS :
-CC   -------------
-CC      original : 00 (O. Aumont M.-A. Foujols)
-CC
-CC Number of fluxes
-CC ----------------
-CC      jpflx   : number of fluxes
-CC
-CC
-CC      jptaux  : zonal wind stress
-CC      jptauy  : meridional wind stress
-CC      jpemp   : E - P in mm/day
-CC      jpqsr   : solar radiation
+
        INTEGER :: jpkef
 
 CC Passive tracers parameter

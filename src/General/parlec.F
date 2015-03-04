@@ -24,13 +24,14 @@
 
 
        USE myalloc
+       USE myalloc_mpp
        IMPLICIT NONE
 
 ! local declarations
 ! ==================
       INTEGER ji
-      INTEGER ilu, iused(1,100)
-      INTEGER ibloc, ilseq
+      INTEGER iused(1,100)
+      INTEGER ilseq,ilu
 
       CHARACTER(LEN=32) clname
       CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
@@ -46,8 +47,13 @@
 !      namelist /dovesiete/  ncor,ahtrb0,trcrat,ahtrc0,aeivtr0
       NAMELIST/General_IO/   nwritetrc,lrsttr, freq_ave_phys,save_bkp_group2, isCheckLOG
 
+      NAMELIST/MPI_config/ mpi_pack_size
+      NAMELIST/Domain_Characteristic/  jperio
+      NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 
 
+      ilseq =1
+      ilu   =0
 ! ... Open specifier
       clold = 'OLD'
       clnew = 'NEW'
@@ -57,12 +63,6 @@
       cldir = 'DIRECT'
 
 
-      ilseq = 1 ! ... Sequential value
-
-! ... computation of the record length for direct access file
-!     this length depend of 512 for the t3d machine
-
-      ilu = 0
       DO ji = 1, 100
         iused(1,ji) = 0
       END DO
@@ -82,7 +82,7 @@
       ENDIF
 
       numnam = 4
-      clname = 'namelist'
+      clname = 'namelist.init'
       CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
 
 
@@ -239,6 +239,54 @@
                endif
           endif
       endif
+
+
+C ... Namelist :MPI_config
+C     Deafault value
+      mpi_pack_size = 1
+
+      REWIND( numnam )
+      READ  ( numnam, MPI_config )
+
+      IF(lwp) THEN
+      WRITE(numout,*) 'MPI_config'
+      WRITE(numout,*) ' '
+      WRITE(numout,*) ' mpi_pack_size  :size of mpi packet -->  ',mpi_pack_size
+      WRITE(numout,*) ' '
+      ENDIF
+
+
+
+C
+C ... namelist.init: Domain_Characteristic
+C
+C
+      REWIND( numnam )
+      READ  ( numnam, Domain_Characteristic )
+
+
+      IF(lwp) THEN
+      WRITE(numout,*) 'Domain_Characteristic'
+      WRITE(numout,*) ' '
+      WRITE(numout,*) ' lateral cond. type for the global domain (4, 3, 2, 1 or 0)',jperio
+      ENDIF
+
+C ..  Namelist :  Number of fluxes
+
+
+      REWIND( numnam )
+      READ  ( numnam, Number_Fluxes )
+
+      IF(lwp) THEN
+      WRITE(numout,*) 'Number of fluxes'
+      WRITE(numout,*) ' '
+      WRITE(numout,*) ' jpflx   : number of fluxes',jpflx
+      WRITE(numout,*) ' jpemp   :  E - P in mm/day',jpemp
+      WRITE(numout,*) ' jpqsr   :  solar radiation',jpqsr
+      WRITE(numout,*) ' jpkef   :  Extinction Coefficient',jpkef
+      WRITE(numout,*) ' '
+      ENDIF
+
 
 
 

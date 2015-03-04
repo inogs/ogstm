@@ -1,8 +1,3 @@
-&NAMDOM
-   nizoom =     1,
-   njzoom =     1,
-   rdt    =  1800,
-/
 &NAMHDF
    aht0   =  -3.e9,
    aeiv0  =  2000.,
@@ -21,9 +16,12 @@
    nsptint = 1, 
 /
 
-&natnum    rsc            =    1.,
+&natnum     
+            rdt           =  1800,
+            rsc           =    1.,
             rtrn          = 1.e-25,
             ndttrc        = 1,
+            ncor          = 1,
             lhdf          = .true.,
             vsed          = 3.0,
             photop        = .false.

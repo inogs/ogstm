@@ -77,9 +77,6 @@ C ... Intialization of sub domain index
        WRITE(numout,*) '*** domain '
        WRITE(numout,*) '    global domain    : jpiglo = ', jpiglo,' jpjglo = ', jpjglo, ' jpk    = ', jpk
        WRITE(numout,*) '    local domain     : jpi    = ', jpi,' jpj    = ', jpj   , ' jpk    = ', jpk
-       WRITE(numout,*)
-       WRITE(numout,*) '    south-west indices','    nizoom = ',nizoom,' njzoom = ',njzoom
-       WRITE(numout,*) ' '
        WRITE(numout,*) '    index in i coordinate '
        WRITE(numout,25) (mindi(ji),ji = 1,jpi)
        WRITE(numout,*) ' '

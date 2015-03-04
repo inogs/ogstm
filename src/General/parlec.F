@@ -15,11 +15,9 @@
 !   ------
 !      the namelist file ( unit numnam ) :
 !            &namrun           : parameters of the run
-!            &namdom           : domain and time parameters
 !            &namhdf           : horizontal diffusion
 !            &namzdf           : vertical diffusion
 !            &nameos           : ocean physical parameters
-!            &namdyn           : offline dynamic selection
 !            &natnum           : numerical schemes
 !            &general_IO       : IO settings
 
@@ -30,8 +28,7 @@
 
 ! local declarations
 ! ==================
-      INTEGER ji!,jj,jk
-!      INTEGER iost, ivide1, ivide2
+      INTEGER ji
       INTEGER ilu, iused(1,100)
       INTEGER ibloc, ilseq
 
@@ -41,11 +38,10 @@
 
       NAMELIST/namrun/ calendarType, nsptint
 
-      NAMELIST/namdom/ nizoom, njzoom, rdt
       NAMELIST/namhdf/ aht0, aeiv0
       NAMELIST/namzdf/ ntrbbl,atrbbl
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
+      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /natnum/ rsc,rtrn,ndttrc,lhdf,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /dovesiete/  ncor,ahtrb0,trcrat,ahtrc0,aeivtr0
       NAMELIST/General_IO/   nwritetrc,lrsttr, freq_ave_phys,save_bkp_group2, isCheckLOG
@@ -65,7 +61,7 @@
 
 ! ... computation of the record length for direct access file
 !     this length depend of 512 for the t3d machine
-      ibloc = 512
+
       ilu = 0
       DO ji = 1, 100
         iused(1,ji) = 0
@@ -93,26 +89,7 @@
 ! 1. Read namlist files
 ! ---------------------
 
-! ... Namelist namdom : space/time domain (bathymetry, mesh, timestep)
 
-      nizoom =  1
-      njzoom =  1
-      rdt    = 3600.
-
-      REWIND( numnam )
-      READ  ( numnam, namdom )
-
-      IF(lwp) THEN
-      WRITE(numout,*) ' '
-      WRITE(numout,*) 'namdom'
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' index i domain left bottom   nizoom   = ',nizoom
-      WRITE(numout,*) ' index j domain left bottom   njzoom   = ',njzoom
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' time step                      rdt    = ',rdt
-      WRITE(numout,*) ' '
-
-      ENDIF
 
 ! ... Namelist namhdf : horizontal diffusion
 
@@ -189,7 +166,7 @@
 
 
 ! 1.1 namelist natnum :
-
+      rdt         = 3600.
       rsc         = 1.
       rtrn        = 1.e-15
       ncor        = 1
@@ -207,10 +184,13 @@
       REWIND(numnam)
       READ(numnam,natnum)
 
+
+
       IF(lwp) THEN
           WRITE(numout,*) ' '
           WRITE(numout,*) 'natnum'
           WRITE(numout,*) ' '
+          WRITE(numout,*) ' time step                      rdt                = ',rdt
           WRITE(numout,*) ' rsc tuning coefficient                            = ' , rsc
           WRITE(numout,*) ' rtrn truncation value                             = ' , rtrn
           WRITE(numout,*) ' ncor number of corrective phase                   = ', ncor

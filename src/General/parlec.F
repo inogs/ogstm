@@ -45,8 +45,8 @@
       NAMELIST/namhdf/ aht0, aeiv0
       NAMELIST/namzdf/ ntrbbl,atrbbl
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rsc,rtrn,ncor,ndttrc,crosster,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
-!      namelist /natnum/ rsc,rtrn,ndttrc,crosster,lhdf,vsed,photop,atlantic_bfm,bottom_flux
+      namelist /natnum/ rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
+!      namelist /natnum/ rsc,rtrn,ndttrc,lhdf,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /dovesiete/  ncor,ahtrb0,trcrat,ahtrc0,aeivtr0
       NAMELIST/General_IO/   nwritetrc,lrsttr, freq_ave_phys,save_bkp_group2, isCheckLOG
 
@@ -194,7 +194,6 @@
       rtrn        = 1.e-15
       ncor        = 1
       ndttrc      = 4
-      crosster    = .FALSE.
       lhdf        = .TRUE.
       ahtrb0      = 0.
       trcrat      = 1.
@@ -216,7 +215,6 @@
           WRITE(numout,*) ' rtrn truncation value                             = ' , rtrn
           WRITE(numout,*) ' ncor number of corrective phase                   = ', ncor
           WRITE(numout,*) ' ndttrc time step freq. for pass. trac.            = ', ndttrc
-          WRITE(numout,*) ' crosster  computes or not crossterms              = ', crosster
           WRITE(numout,*) ' lhdf  calls or not trchdf                         = ', lhdf
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat

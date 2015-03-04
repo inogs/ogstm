@@ -5,7 +5,7 @@
        USE stafun
        USE DIA_mem
           implicit none
-CCC
+
 CCC                      trcadv.smolar.h
 CCC                     ******************
 CCC
@@ -39,29 +39,11 @@ CC            - this advection scheme needs an euler-forward time scheme
 CC
 CC   remarks :
 CC   -------
-CC      IF 'key_trc_diatrd' key is activated, the
-CC      advection trend is saved for futher diagnostics.
 CC
 CC      multitasked on tracer (jn-loop)
+
 CC
-CC      COMMON
-CC            /comcoo/          : orthogonal curvilinear coordinates
-CC                                and scale factors
-CC            /cottrp/          : present and next fields for passive
-CC                              : tracers
-CC            /comtsk/          : multitasking
-CC            /cot3ad/          : smolar advection
-CC
-CC   OUTPUT :
-CC   ------
-CC      COMMON
-CC            /cottrp/ tra      : general tracer trend increased by the
-CC                                now horizontal tracer advection trend
-CC            /cottrd/ trtrd    : now horizontal tracer advection trend
-CC                                (IF 'key_trc_diatrd' key is activated)
-CC
-CC
-CC   EXTERNAL :                  upstream, forkjoin, mpplnk, lbc
+CC   EXTERNAL :                  upstream, mpplnk, lbc
 CC   --------
 CC
 CC   REFERENCES :                piotr k. smolarkiewicz, 1983,
@@ -69,25 +51,12 @@ CC   ----------                  "a simple positive definit advection
 CC                               scheme with small IMPLICIT diffusion"
 CC                               monthly weather review, pp 479-486
 CC
-CC   MODIFICATIONS:
-CC   --------------
-CC      original :  87-06 (pa-dl)
-CC      additions : 91-11 (G. Madec)
-CC      additions : 94-08 (a. czaja)
-CC      modifications : 95-09 (M. Levy) passive tracers
-CC      modifications : 98-03 (M.A. Foujols) lateral boundary conditions
-CC      modifications : 99-02 (M.A. Foujols) lbc in conjonction with ORCA
-CC      modifications : 00-05 (MA Foujols) add lbc for tracer trends
-CC      modifications : 00-10 (MA Foujols and E.Kestenare) INCLUDE instead of routine
-CC      modifications : 01-05 (E.Kestenare) fix bug in trtrd indexes
-CC----------------------------------------------------------------------
       LOGICAL :: MPI_CHECK,l1,l2,l3
       INTEGER ji,jj,jk,jt,jn,jf,ju
       INTEGER jp,pack_size
       REAL(8) zbtr,zdt
       REAL(8) junk, junki, junkj, junkk
       INTEGER A,B
-!      REAL(8) zgm,zgz
 
 
 ! omp variables
@@ -374,8 +343,6 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
        END DO
 
 
-
-
 C     tracer loop parallelized (macrotasking)
 C     =======================================
 
@@ -385,47 +352,9 @@ C     =======================================
 
 C        1. tracer flux in the 3 directions
 C        ----------------------------------
-
 C        1.1 mass flux at u v and t-points and initialization
-
-
-#if defined key_trc_diatrd
-
-!$omp    parallel default(none) private(jk,jj,ji,mytid,B) shared(jpk,jpj,jpi,jn,trtrd)
-
-#ifdef __OPENMP
-         mytid = omp_get_thread_num()  ! take the thread ID
-#else
-         PACK_LOOP3: DO jp=1,ntids
-         mytid=jp-1
-#endif
-
-      if( mytid + jn <= jptra ) then
-      B = mytid+jn
-           DO jk = 1,jpk
-             DO jj = 1,jpj
-               DO ji = 1,jpi
-                 trtrd(ji,jj,jk,B,1) = 0.
-                 trtrd(ji,jj,jk,B,2) = 0.
-                 trtrd(ji,jj,jk,B,3) = 0.
-               END DO
-             END DO
-           END DO
-
-      end if
-
-!$omp    end parallel
-#ifdef __OPENMP
-#else
-      END DO PACK_LOOP3
-      mytid=0
-#endif
-#endif
-
-
 C       1.2 calcul of intermediate field with an upstream advection scheme
 C           and mass fluxes calculated above
-
 C       calcul of tracer flux in the i and j direction
 
 !$omp   parallel default(none) private(jk,jj,ji,mytid,A,B,junk)
@@ -577,11 +506,7 @@ C -----------------------------------------------------------
      $          ( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A)
      $          + zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A)
      $          + zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
-#if defined key_trc_diatrd
-              trtrd(ji,jj,jk,B,1) = trtrd(ji,jj,jk,B,1) -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A) )
-              trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) -zbtr*( zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A) )
-              trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3) -zbtr*( zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
-#endif
+
 
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
                     diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
@@ -767,105 +692,6 @@ C 2.3 calcul of the antidiffusive flux
       mytid=0
 #endif
 
-C---------------------------------------------------------------------------
-C 2.4 cross terms
-C
-CCC          IF (crosster) THEN
-CCC              DO jk = 2,jpkm1
-CCC                DO jj = 2,jpjm1
-CCC                 DO ji = 2,jpim1
-CCC                    zx(ji,jj,jk) = zx(ji,jj,jk)
-CCC     $                  - 0.5*zdt*rsc*zaa(ji,jj,jk)*0.25*
-CCC     $                  (    (zbb(ji  ,jj - 1,jk  ) + zbb(ji + 1,jj - 1
-CCC     $                  ,jk  ) + zbb(ji + 1,jj  ,jk  ) + zbb(ji  ,jj
-CCC     $                  ,jk))* (zti(ji  ,jj + 1,jk  ) + zti(ji + 1,jj +
-CCC     $                  1,jk  ) - zti(ji + 1,jj - 1,jk  ) - zti(ji  ,jj
-CCC     $                  - 1,jk  ))/ (zti(ji  ,jj + 1,jk  ) + zti(ji + 1
-CCC     $                  ,jj + 1,jk  ) + zti(ji + 1,jj - 1,jk  ) + zti(ji
-CCC     $                  ,jj - 1,jk  ) + rtrn) + (zcc(ji  ,jj  ,jk  ) +
-CCC     $                  zcc(ji + 1,jj  ,jk  ) + zcc(ji  ,jj  ,jk + 1) +
-CCC     $                  zcc(ji + 1,jj  ,jk + 1))* (zti(ji  ,jj  ,jk - 1)
-CCC     $                  + zti(ji + 1,jj  ,jk - 1) - zti(ji  ,jj  ,jk + 1
-CCC     $                  )- zti(ji + 1,jj  ,jk + 1))/ (zti(ji  ,jj  ,jk -
-CCC     $                  1) + zti(ji + 1,jj  ,jk - 1) + zti(ji  ,jj  ,jk
-CCC     $                  +1) + zti(ji + 1,jj  ,jk + 1) + rtrn))/(e1u(ji
-CCC     $                  ,jj)*e2u(ji,jj)*fse3u(ji,jj,jk))*vmask(ji  ,jj -
-CCC     $                  1,jk  )*vmask(ji + 1,jj - 1,jk  )*vmask(ji + 1
-CCC     $                  ,jj,jk)*vmask(ji  ,jj  ,jk  )*tmask(ji  ,jj  ,jk
-CCC     $                  )*tmask(ji + 1,jj  ,jk  )*tmask(ji  ,jj  ,jk + 1
-CCC     $                  )*tmask(ji + 1,jj  ,jk + 1)
-CCC                    zy(ji,jj,jk) = zy(ji,jj,jk)
-CCC     $                  - 0.5*zdt*rsc*zbb(ji,jj,jk)*0.25*
-CCC     $                  (    (zaa(ji - 1,jj  ,jk  ) + zaa(ji - 1,jj + 1
-CCC     $                  ,jk  ) + zaa(ji  ,jj  ,jk  ) + zaa(ji  ,jj + 1
-CCC     $                  ,jk))* (zti(ji + 1,jj + 1,jk  ) + zti(ji + 1,jj
-CCC     $                  ,jk  ) - zti(ji - 1,jj + 1,jk  ) - zti(ji - 1,jj
-CCC     $                  ,jk  ))/ (zti(ji + 1,jj + 1,jk  ) + zti(ji + 1
-CCC     $                  ,jj  ,jk  ) + zti(ji - 1,jj + 1,jk  ) + zti(ji
-CCC     $                  - 1,jj  ,jk  ) + rtrn) + (zcc(ji  ,jj  ,jk  )
-CCC     $                  + zcc(ji  ,jj  ,jk + 1) + zcc(ji  ,jj + 1,jk  )
-CCC     $                  + zcc(ji  ,jj + 1,jk + 1))* (zti(ji  ,jj  ,jk -
-CCC     $                  1) + zti(ji  ,jj + 1,jk - 1) - zti(ji  ,jj  ,jk
-CCC     $                  +1) - zti(ji  ,jj + 1,jk + 1))/ (zti(ji  ,jj
-CCC     $                  ,jk- 1) + zti(ji  ,jj + 1,jk - 1) + zti(ji  ,jj
-CCC     $                  ,jk+ 1) + zti(ji  ,jj + 1,jk + 1) + rtrn))
-CCC     $                  /(e1v(ji,jj)*e2v(ji,jj)*fse3v(ji,jj,jk))
-CCC     $                  *umask(ji - 1,jj,jk  )*umask(ji - 1,jj + 1,jk  )
-CCC     $                  *umask(ji  ,jj,jk  )*umask(ji  ,jj + 1,jk  )
-CCC     $                  *tmask(ji  ,jj,jk)*tmask(ji  ,jj  ,jk + 1)
-CCC     $                  *tmask(ji  ,jj + 1,jk)*tmask(ji  ,jj + 1,jk + 1)
-CCC                    zz(ji,jj,jk) = zz(ji,jj,jk)
-CCC    $                  - 0.5*zdt*rsc*zcc(ji,jj,jk)*0.25*
-CCC     $                  (    (zaa(ji - 1,jj  ,jk  ) + zaa(ji  ,jj  ,jk
-CCC     $                  ) + zaa(ji  ,jj  ,jk - 1) + zaa(ji - 1,jj  ,jk -
-CCC     $                  1))*(zti(ji + 1,jj  ,jk - 1) + zti(ji + 1,jj
-CCC     $                  ,jk  ) - zti(ji - 1,jj  ,jk  ) - zti(ji - 1,jj
-CCC     $                  ,jk - 1))/(zti(ji + 1,jj  ,jk - 1) + zti(ji + 1
-CCC     $                  ,jj,jk  ) + zti(ji - 1,jj  ,jk  ) + zti(ji - 1
-CCC     $                  ,jj,jk - 1) + rtrn) + (zbb(ji  ,jj - 1,jk  )
-CCC     $                  + zbb(ji  ,jj  ,jk  ) + zbb(ji  ,jj  ,jk - 1)
-CCC     $                  + zbb(ji  ,jj - 1,jk - 1))*(zti(ji  ,jj + 1,jk -
-CCC     $                  1) + zti(ji  ,jj + 1,jk  ) - zti(ji  ,jj - 1,jk
-CCC     $                  ) - zti(ji  ,jj - 1,jk - 1))/(zti(ji  ,jj + 1,jk
-CCC     $                  - 1) + zti(ji  ,jj + 1,jk  ) + zti(ji  ,jj - 1
-CCC     $                  ,jk  ) + zti(ji  ,jj - 1,jk - 1) + rtrn))
-CCC     $                  /(e1t(ji,jj)*e2t(ji,jj)*fse3w(ji,jj,jk))
-CCC     $                  *umask(ji - 1,jj,jk  )*umask(ji  ,jj  ,jk  )
-CCC     $                  *umask(ji  ,jj,jk- 1)*umask(ji - 1,jj  ,jk - 1)
-CCC     $                  *vmask(ji  ,jj- 1,jk)*vmask(ji  ,jj  ,jk  )
-CCC     $                  *vmask(ji  ,jj  ,jk-1)*vmask(ji  ,jj - 1,jk - 1)
-CCC                  END DO
-CCC               END DO
-CCC              END DO
-CCCC
-CCC              DO jj = 2,jpjm1
-CCC                DO ji = 2,jpim1
-CCC                  zx(ji,jj,1) = zx(ji,jj,1)
-CCC     $                - 0.5*zdt*rsc*zaa(ji,jj,1)*0.25*
-CCC     $                ( (zbb(ji  ,jj - 1,1  ) + zbb(ji + 1,jj - 1,1  )
-CCC     $                + zbb(ji + 1,jj  ,1  ) + zbb(ji  ,jj  ,1  ))
-CCC     $                *(zti(ji  ,jj + 1,1  ) + zti(ji + 1,jj + 1,1  )
-CCC     $                - zti(ji + 1,jj - 1,1  ) - zti(ji  ,jj - 1,1  ))
-CCC     $                /(zti(ji  ,jj + 1,1  ) + zti(ji + 1,jj + 1,1  )
-CCC     $                + zti(ji + 1,jj - 1,1  ) + zti(ji  ,jj - 1,1  ) +
-CCC     $                rtrn))/(e1u(ji,jj)*e2u(ji,jj)*fse3u(ji,jj,1))
-CCC     $                *vmask(ji  ,jj - 1,1  )*vmask(ji + 1,jj - 1,1  )
-CCC     $                *vmask(ji + 1,jj  ,1  )*vmask(ji  ,jj  ,1  )
-CCC                  zy(ji,jj,1) = zy(ji,jj,1)
-CCC     $                - 0.5*zdt*rsc*zbb(ji,jj,1)*0.25*
-CCC     $                ( (zaa(ji - 1,jj  ,1  ) + zaa(ji - 1,jj + 1,1  )
-CCC     $                + zaa(ji  ,jj  ,1  ) + zaa(ji  ,jj + 1,1  ))
-CCC     $                *(zti(ji + 1,jj + 1,1  ) + zti(ji + 1,jj  ,1  )
-CCC     $                - zti(ji - 1,jj + 1,1  ) - zti(ji - 1,jj  ,1  ))
-CCC     $                /(zti(ji + 1,jj + 1,1  ) + zti(ji + 1,jj  ,1  )
-CCC     $                + zti(ji - 1,jj + 1,1  ) + zti(ji - 1,jj  ,1  ) +
-CCC     $                rtrn))/(e1v(ji,jj)*e2v(ji,jj)*fse3v(ji,jj,1))
-CCC     $                *umask(ji - 1,jj  ,1  )*umask(ji - 1,jj + 1,1  )
-CCC     $                *umask(ji  ,jj  ,1  )*umask(ji  ,jj + 1,1  )
-CCC                END DO
-CCC              END DO
-CCC          ENDIF
-C-----------------------------------------------------------------------------
 
 
 
@@ -897,10 +723,10 @@ C  END DO
 
 
 #else
-C
+
 C   ... T-point, 3D array, full local array z[xyz] are initialised
-C
-C
+
+
           DO itid = 1, ntids
          IF( itid - 1 + jn <= jptra ) THEN
                 CALL lbc( zx(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
@@ -908,12 +734,10 @@ C
                 CALL lbc( zz(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
          END IF
       END DO
-C
+
 #endif
-C
-C
+
 C 2.4 reinitialization
-C
 
 !$omp     parallel default(none) private(mytid,A,junk,jk,jj,ji)
 !$omp&      shared(zkx,zky,zkz,zz,zx,zy,zti,jpjm1,jpim1,dimen_jarr1,jarr1,jpi,jpk,jpj,jn)
@@ -928,10 +752,8 @@ C
 
       IF( mytid + jn <= jptra ) THEN
       A=mytid+1
-C
 C            2.5 calcul of the final field:
 C                advection by antidiffusive mass fluxes and an upstream scheme
-C
              jk = 1
              DO jj = 2,jpjm1
                  DO ji = 2,jpim1
@@ -976,10 +798,7 @@ C
 
 C ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
-
 C   ... Mpp : export boundary values to neighboring processors
-
-
 C        DO itid = 1, ntids
 C    IF( itid - 1 + jn <= jptra ) THEN
 C              CALL mpplnk( zkx(:,:,:,itid), 1, 1 )
@@ -995,23 +814,14 @@ C END DO
 
         CALL mpplnk_my(zkx, pack_size,1,1)
         CALL mpplnk_my(zky, pack_size,1,1)
-
-
-!        trcadvparttime = MPI_WTIME() - trcadvparttime
-!        trcadvtottime = trcadvtottime + trcadvparttime
-
 #else
-C
 C   ... T-point, 3D array, full local array zk[xy] are initialised
-C
-C
       DO itid = 1, ntids
         IF( itid - 1 + jn <= jptra ) THEN
                CALL lbc( zkx(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
                CALL lbc( zky(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
         END IF
       END DO
-C
 #endif
 
 !$omp    parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
@@ -1024,7 +834,6 @@ C
         PACK_LOOP9: DO jp=1,ntids
          mytid=jp-1
 #endif
-
 C        2.6. calcul of after field using an upstream advection scheme
 
 
@@ -1043,11 +852,7 @@ C        2.6. calcul of after field using an upstream advection scheme
                   zbtr = zbtr_arr(ji,jj,jk)
                   ztj(ji,jj,jk,A) = -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A)
      $              + zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A)+ zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )+ ztj(ji,jj,jk,A)
-#if defined key_trc_diatrd
-                  trtrd(ji,jj,jk,B,1) = trtrd(ji,jj,jk,B,1) -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A) )
-                  trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) -zbtr*( zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A) )
-                  trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3) -zbtr*( zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
-#endif
+
 !     Save advective fluxes x,y,z
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
                  diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
@@ -1056,8 +861,6 @@ C        2.6. calcul of after field using an upstream advection scheme
               END IF
 
               END DO
-
-
            else
               DO ju=1, dimen_jarr3
 
@@ -1070,11 +873,7 @@ C        2.6. calcul of after field using an upstream advection scheme
                   zbtr = zbtr_arr(ji,jj,jk)
                   ztj(ji,jj,jk,A) = -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A)
      $              + zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A)+ zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
-#if defined key_trc_diatrd
-                  trtrd(ji,jj,jk,B,1) = trtrd(ji,jj,jk,B,1) -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A) )
-                  trtrd(ji,jj,jk,B,2) = trtrd(ji,jj,jk,B,2) -zbtr*( zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A) )
-                  trtrd(ji,jj,jk,B,3) = trtrd(ji,jj,jk,B,3) -zbtr*( zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
-#endif
+
 !     Save advective fluxes x,y,z
                  IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
                     diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
@@ -1082,8 +881,6 @@ C        2.6. calcul of after field using an upstream advection scheme
                     diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
                  END IF
               END DO
-
-
 
            endif
 
@@ -1099,8 +896,6 @@ C        2.6. calcul of after field using an upstream advection scheme
 
 
 C       3. trend due to horizontal and vertical advection of tracer jn
-C       --------------------------------------------------------------
-C
 !$omp   parallel default(none) private(mytid,A,B,ji,jj,jk,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
 
 #ifdef __OPENMP
@@ -1136,20 +931,15 @@ C
            endif
 
       END IF
-
-
 !$omp end parallel
 #ifdef __OPENMP
 #else
       END DO PACK_LOOP10
       mytid=0
 #endif
-
-
        END DO TRACER_LOOP
 
        trcadvparttime = MPI_WTIME() - trcadvparttime
        trcadvtottime = trcadvtottime + trcadvparttime
-
 
       END SUBROUTINE smolar

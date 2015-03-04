@@ -25,7 +25,6 @@
             rtrn          = 1.e-25,
             ndttrc        = 1,
             lhdf          = .true.,
-            crosster      = .false. ,
             vsed          = 3.0,
             photop        = .false.
             atlantic_bfm  = .true.

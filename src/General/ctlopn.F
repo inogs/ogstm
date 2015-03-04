@@ -32,27 +32,14 @@ CC                                =0 file not required (create the file
 CC                                   if does not exist)
 CC
 CC   Output :                     no
-CC   -------
-CC
-CC   Modifications :
-CC   --------------
-CC       original :  95-12 (G. Madec)
-CC----------------------------------------------------------------------
       IMPLICIT NONE
-C
       INTEGER knum, klu, krequ, kout, klengh, iost
       INTEGER kused(1,100)
-C
       CHARACTER(LEN=21) cdacce, cdform, cdstat
       CHARACTER cdfile*(*)
-C
       LOGICAL ldwp
-C
 C 1. Required file
-C ----------------
-C
       IF ( krequ.EQ.1 ) THEN
-C
           iost=0
           IF ( cdacce(1:6).EQ.'DIRECT' )  THEN
               OPEN( UNIT=knum, FILE=cdfile, FORM=cdform, ACCESS=cdacce,
@@ -89,13 +76,9 @@ C
               ENDIF
               STOP 'ctlopn'
           ENDIF
-C
-C
 C 2. Not required, file create if not exist
-C -----------------------------------------
-C
+
         ELSEIF ( krequ.EQ.0 ) THEN
-C
           iost = 0
           IF ( cdacce(1:6).EQ.'DIRECT' ) THEN
               OPEN( UNIT=knum, FILE=cdfile, FORM=cdform, ACCESS=cdacce,
@@ -155,9 +138,9 @@ C
                   stop001
               ENDIF
           ENDIF
-C
+
         ELSE
-C
+
           IF(ldwp) THEN
               WRITE(kout,*)
               WRITE(kout,*) ' ctlopn : invalid option, krequ = ', krequ
@@ -166,7 +149,5 @@ C
           ENDIF
           STOP 'ctlopn'
       ENDIF
-C
-C
-      RETURN
-      END
+
+      END SUBROUTINE ctlopn

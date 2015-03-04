@@ -44,8 +44,8 @@
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /natnum/ rsc,rtrn,ndttrc,lhdf,vsed,photop,atlantic_bfm,bottom_flux
-!      namelist /dovesiete/  ncor,ahtrb0,trcrat,ahtrc0,aeivtr0
-      NAMELIST/General_IO/   nwritetrc,lrsttr, freq_ave_phys,save_bkp_group2, isCheckLOG
+!      namelist /dovesiete/  ahtrb0,trcrat,ahtrc0,aeivtr0
+      NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG
 
       NAMELIST/MPI_config/ mpi_pack_size
       NAMELIST/Domain_Characteristic/  jperio
@@ -110,7 +110,7 @@
 ! ... Namelist namzdf : vertical diffusion
 
 
-      ntrbbl = 0
+      ntrbbl = .false.
       atrbbl = 10000.
 
       REWIND( numnam )
@@ -221,7 +221,6 @@
 ! ************* namelist GENERAL_IO  *****************
 
       nwritetrc = 10
-      lrsttr    =.FALSE.
 
       REWIND( numnam )
       READ  ( numnam, General_IO )

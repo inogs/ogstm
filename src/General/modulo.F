@@ -34,7 +34,7 @@ CC      nleit, nlejt() : first, last indoor index for each j-domain
 CC      mindi, mindj() : indexes array of the subdomain
 
       INTEGER, PARAMETER :: nizoom=1,  njzoom=1
-      INTEGER, PARAMETER :: nimpp=1,   njmpp = 1
+      INTEGER nimpp,njmpp
       INTEGER nperio, narea, nlci, nlcj
       INTEGER nbondi, nbondj, nproc, noea, nowe, noso, nono
       INTEGER nreci, nrecj, nldi, nlei, nldj, nlej
@@ -227,14 +227,12 @@ CC       wgm
 #endif
 CC----------------------------------------------------------------------
 CC         vertical diffusion
-CC -----------------------------------
-CC      ntrbbl         : bottom boundary layer (namelist)
-CC      atrbbl         : bottom boundary layer diffusivity (namelist)
+CC ----------------------------------------------------------------------
 CC     avt             : vertical diffusivity coeff. at w-point
-CC      avtb           : background profile of avm and avt
+CC     avtb            : background profile of avm and avt
 
-      INTEGER ntrbbl
-      REAL(8) atrbbl
+      LOGICAL ntrbbl ! bottom boundary layer (namelist)
+      REAL(8) atrbbl ! bottom boundary layer diffusivity (namelist)
       REAL(8), allocatable :: avt(:,:,:)
       REAL(8), allocatable ::  avtb(:)
       REAL(8), allocatable ::  bblx(:,:),bbly(:,:)
@@ -420,8 +418,6 @@ CC      ndttrc      : frequency of step on passive tracers (NAMELIST)
       INTEGER ncor,ndttrc
       LOGICAL lhdf
 
-      LOGICAL lrsttr ! boolean term for restart i/o for passive tracers (NAMELIST)
-
 
 !      isopycnal sheme for passive tracers
 CC -----------------------------------------------------------
@@ -555,6 +551,9 @@ CC----------------------------------------------------------------------
      
 
       ncpu = 1
+      nimpp=1
+      njmpp=1
+
 
       allocate(mindi(jpi))    ;mindi  = huge(mindi(1))
       allocate(mindj(jpj))    ;mindj  = huge(mindj(1))   

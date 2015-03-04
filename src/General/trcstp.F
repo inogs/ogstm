@@ -24,7 +24,7 @@
 
 #include <mpif.h>
 
-      trcstpparttime = MPI_WTIME() !  F79 cronometer-start
+      trcstpparttime = MPI_WTIME() ! cronometer-start
 
 ! this part is parallelized tracer  by tracer
       CALL trcadv ! tracers: advection
@@ -36,11 +36,11 @@
 !       no passive tracer damping
 #    endif
 
-! tracers: horizontal diffusion IF lhdf is true
+! tracers: horizontal diffusion IF namelist flags are activated
 ! -----------------------------
 
-      IF (lhdf)            CALL trchdf
-      IF ( ntrbbl .EQ. 1 ) CALL trcbbl
+      IF (lhdf)   CALL trchdf
+      IF (ntrbbl) CALL trcbbl
 
 
 ! tracers: sink and source (must be  parallelized on vertical slab)

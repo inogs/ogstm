@@ -3,7 +3,7 @@
    aeiv0  =  2000.,
 /
 &NAMZDF
-   ntrbbl = 0,
+   ntrbbl = .false.,
 /
 &NAMEOS
    neos   =      0,
@@ -32,7 +32,6 @@
 &General_IO
 
    nwritetrc = 10000,
-   lrsttr = .true.,
    freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
    save_bkp_group2      = .true.
    isCheckLOG = .false.

@@ -129,11 +129,7 @@
 
       CALL trcini ! computes some initialisation
 
-      IF(lrsttr) THEN ! restart from a FILE (nutrst)
-          CALL trcrst
-      ELSE
-          CALL trcdtr ! start from anything ELSE
-      ENDIF
+      CALL trcrst ! read restarts
 
 
 

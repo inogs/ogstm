@@ -34,7 +34,8 @@ CC      nleit, nlejt() : first, last indoor index for each j-domain
 CC      mindi, mindj() : indexes array of the subdomain
 
       INTEGER, PARAMETER :: nizoom=1,  njzoom=1
-      INTEGER nimpp, njmpp, nperio, narea, nlci, nlcj
+      INTEGER, PARAMETER :: nimpp=1,   njmpp = 1
+      INTEGER nperio, narea, nlci, nlcj
       INTEGER nbondi, nbondj, nproc, noea, nowe, noso, nono
       INTEGER nreci, nrecj, nldi, nlei, nldj, nlej
       INTEGER, allocatable :: ilcit(:,:), ilcjt(:,:)

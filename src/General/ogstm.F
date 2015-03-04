@@ -64,7 +64,7 @@
 
       call parini(ME)
 
-      call parlec  ! read namelist
+      call parlec      ! read namelist.init
       call time_init
       call trclec
 
@@ -77,11 +77,6 @@
       CALL parcst
       CALL parctl
 
-       nimpp  = 1
-       njmpp  = 1
-
-
-! 0.3 First prints
 
       IF(lwp) THEN
           WRITE(numout,*) ' '

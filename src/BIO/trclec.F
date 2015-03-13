@@ -80,8 +80,9 @@
           WRITE(numout,*) 'nattrc'
           WRITE(numout,*) ' '
           DO ji=1,jptra
-            WRITE(numout,*) ' tracer nb: ',ji,' name = ',ctrcnm(ji), ' in unit = ',ctrcun(ji), ' max ',
-     +       ctrmax(ji), 'highFreq ', ctr_hf(ji)
+            WRITE(numout,250) 'tracer nb: ',ji,' name = ',ctrcnm(ji), ' in unit = ',ctrcun(ji), ' max ',
+     +       ctrmax(ji), ' highFreq ', ctr_hf(ji)
+250   FORMAT (A,I3, A8,A15,A,A,A,ES20.7,A,I1) 
             WRITE(numout,*) ' '
           END DO
           WRITE(numout,*) ' '
@@ -98,9 +99,9 @@
           if (ctr_hf(ji).eq.1) then
               jptra_high = jptra_high + 1
               highfreq_table(jptra_high) = ji
-              WRITE(numout,*) ctrcnm(ji), ' belongs also to high freq group'
+              if (lwp) WRITE(numout,*) ctrcnm(ji), ' belongs also to high freq group'
            else
-               WRITE(numout,*) ctrcnm(ji), ' belongs only to low freq group'
+               if (lwp) WRITE(numout,*) ctrcnm(ji), ' belongs only to low freq group'
            endif
       enddo
 

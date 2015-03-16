@@ -14,7 +14,6 @@
 !   -------
 !      calculates the position of DATA to read
 !      READ DATA WHEN needed (example month changement)
-!      computes slopes IF needed
 !      interpolates DATA IF needed
 !
 !----------------------------------------------------------------------
@@ -33,11 +32,9 @@
 ! ==================
       REAL(8) sec,zweigh
       integer Before, After
-      INTEGER iper,iperm1,iswap
+      INTEGER iswap
 
 
-!     iper   : INTEGER for the period modulo ndtadyn
-!     iperm1 : INTEGER for the precedent period  modulo ndtadyn
 !     iswap  : indicator of swap of dynamic DATA array
 
 
@@ -51,8 +48,6 @@
       call TimeInterpolation(sec,TC_FOR, BEFORE, AFTER, zweigh) ! 3.e-05 sec
 
 
-      iperm1 = 1        ! li tengo buoni solo per la slopes
-      iper = iperm1 + 1 !
       iswap  = 0
 
 
@@ -60,13 +55,29 @@
       IF (datestring.eq.DATESTART) then
 
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%Before)) ! CALL dynrea(iperm1)
-          call SLOPES(iperm1) ! Computes wdta (and slopes if key_trahdfiso)
+
+          DO jk=1,jpk
+            DO jj=1,jpj
+              DO ji=1,jpi
+                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
+                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
+              END DO
+            END DO
+          END DO
           iswap = 1
           call swap_PHYS
 
 
         CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After)) !CALL dynrea(iper)
-        call SLOPES(iper)! Computes wdta (and slopes if key_trahdfiso)
+
+         DO jk=1,jpk
+           DO jj=1,jpj
+              DO ji=1,jpi
+                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
+                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
+              END DO
+            END DO
+          END DO
 
       ENDIF
 
@@ -89,7 +100,15 @@
 
 
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After))
-          CALL SLOPES(iper) !Computes wdta (and slopes if key_trahdfiso)
+          DO jk=1,jpk
+            DO jj=1,jpj
+              DO ji=1,jpi
+                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
+                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
+              END DO
+            END DO
+          END DO
+
 
           IF(lwp) WRITE (numout,*) ' dynamics DATA READ for Time = ', TC_FOR%TimeStrings(TC_FOR%After)
 
@@ -525,11 +544,10 @@
 ! *
 ! *************************************************************
 
-      SUBROUTINE SLOPES(iper)
+      SUBROUTINE SLOPES()
          USE myalloc
          USE OPT_mem
          IMPLICIT NONE
-         INTEGER iper
          INTEGER ji,jj,jk
 
 
@@ -544,27 +562,6 @@
           END DO
 #endif
 
-#if defined key_trahdfiso
-#if defined key_off_degrad
-          CALL slprea(iper)
-#else
-          CALL eos()
-          CALL bn2
-          CALL hdfslp
-#endif
-#endif
 
-#if defined key_trahdfiso
-          DO jk=1,jpk
-            DO jj=1,jpj
-              DO ji=1,jpi
-                 uslpdta(ji,jj,jk,2)= uslp(ji,jj,jk)
-                 vslpdta(ji,jj,jk,2)= vslp(ji,jj,jk)
-                wslpidta(ji,jj,jk,2)=wslpi(ji,jj,jk)
-                wslpjdta(ji,jj,jk,2)=wslpj(ji,jj,jk)
-              END DO
-            END DO
-          END DO
-#endif
 
       END SUBROUTINE SLOPES

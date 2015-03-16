@@ -50,34 +50,11 @@ CCC
        USE stafun_passtrc
 
 #ifdef key_trc_hdfbilap
-#    if defined key_trc_hdfgeop
-#        include "trchdf.bilapgeopot.h"
-#      else
-#        include "trchdf.bilaplacian.h"
-#    endif
-#  else  
-#    if defined key_trc_hdfiso || defined key_trc_hdfgeop
-#        include "trchdf.isopycnal.h"
-#      else
-#        if defined key_trc_hdflap
-#        include "trchdf.laplacian.h"
-#        else
-#          ifdef key_trahdfbilap
-#            if defined key_trahdfgeop
-#        include "trchdf.bilapgeopot.h"
-#            else
-#        include "trchdf.bilaplacian.h"
-#            endif
-#          else  
-#            if defined key_trahdfiso || defined key_trahdfgeop
-#        include "trchdf.isopycnal.h"
-#            else
-#        include "trchdf.laplacian.h"
-#            endif
-#          endif
-#        endif
-#    endif
-#endif
+#include "trchdf.bilaplacian.h"
+# endif
 
+#if defined key_trc_hdflap
+#include "trchdf.laplacian.h"
+# endif
 
       END SUBROUTINE trchdf

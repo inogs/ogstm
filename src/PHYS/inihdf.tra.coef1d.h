@@ -26,28 +26,18 @@ CCC  OPA8, LODYC (1997)
 CCC---------------------------------------------------------------------
 C
       IF(lwp)WRITE(numout,*)
-#ifdef key_trahdfeiv
-      IF(lwp)WRITE(numout,*) ' inihdf: 1D eddy diffusivity and eddy',
-     $                       ' induced velocity coefficients'
-#  else
+
       IF(lwp)WRITE(numout,*) ' inihdf: 1D eddy diffusivity coefficient '
-#endif
       IF(lwp)WRITE(numout,*) ' ======  --'
       IF(lwp)WRITE(numout,*)
 C    
 C ... initialization of the profile
 C
 C   ... ahts, ahtf: surface and bottom values
-      zahts = 2000.
-      zahtf =  500.
-CCC 22/3/2004 Paolo dynamical models Mediterranean Scale Settings
        zahts = aht0
        zahtf = aht0/2.
 CCC 
 C   ... zkah, zahr: depth of the inflection pt and width of inflection
-CCC 22/3/2004 Paolo dynamical models Mediterranean Scale Settings
-CCC       zkah =  -300.
-CCC       zahr =   300.
           zkah =  -150.
           zahr =   150.
 CCC
@@ -64,7 +54,6 @@ C ====================
 C
 C ... set ahtt at T-level
       DO jk = 1, jpk
-CC-CC        ahtt(jk) = zahs + zahf * tanh( (-fsdept(1,1,jk)-zkah) / zahr )
         ahtt(jk) = aht0
       END DO
 C
@@ -112,25 +101,5 @@ C ... control print
       END DO
  9220 FORMAT('  jk      aht          depth w-level ' )
 C
-#    ifdef key_trahdfeiv
-C ... set aeiu = aeiv and set aeiw (here same profile as on aht)
-C
-      DO jk = 1, jpk
-        aeiu(jk) = ahtu(jk)
-        aeiv(jk) = aeiu(jk)
-        aeiw(jk) = ahtw(jk)
-      END DO
-C
-C ... Control print
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,*) '         aeiv profile at T-level : '
-      IF(lwp)WRITE(numout,*)
-      IF(lwp)WRITE(numout,9230)
-      DO jk = 1, jpk
-        IF(lwp)WRITE(numout,9240) jk, aeiu(jk), fsdept(1,1,jk)
-      END DO
- 9230 FORMAT('  jk      aeiv           depth t-level ' )
- 9240 FORMAT(i6,2f12.4)
-#    endif
 C
 #endif

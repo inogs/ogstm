@@ -33,6 +33,7 @@
       REAL(8) sec,zweigh
       integer Before, After
       INTEGER iswap
+      INTEGER ji, jj, jk
 
 
 !     iswap  : indicator of swap of dynamic DATA array

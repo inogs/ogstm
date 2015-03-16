@@ -41,60 +41,25 @@ CC      'key_trc_diatrd' defined: the trend is saved for diagnostics.
 CC
 CC      macro-tasked on tracer slab (jn-loop)
 CC
-CC   INPUT :
-CC   -----
-CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
-CC      common
-CC            /COMCOO/          : scale factors
-CC            /COMASK/          : masks
-CC            /COTTRP/          : passive tracer fields
-CC            /comhdt/          : eddy diffusivity
-CC            /COMTSK/          : multitasking
 CC
 CC   OUTPUT :
 CC   ------
-CC      common
-CC            /COTTRP/ tra      : general passive tracer trend 
-CC                                increased by the
+CC    tra      : general passive tracer trend increased by the
 CC                                horizontal diffusion trend
-CC            /COTRTD/ trtrd    : horizontal tracer diffusion trend
-CC                                ('key_trc_diatrd' defined)
-CC
+CC    trtrd    : horizontal tracer diffusion trend('key_trc_diatrd' defined)
+
 CC   EXTERNAL :      lbc, mpplnk2
-CC   --------
-CC
-CC   MODIFICATIONS:
-CC   --------------
-CC      original : 87-06 (P. Andrich - D. L Hostis)
-CC      addition : 91-11 (G. Madec)
-CC      addition : 93-03 (M. Guyon) symetrical conditions
-CC      addition : 95-11 (G. Madec) suppress volumetric scale factors
-CC      addition : 96-01 (G. Madec) statement function for e3
-CC                                  suppression of common work arrays
-CC      addition : 96-01 (M. Imbard) mpp exchange
-CC      addition : 97-02 (M.A. Foujols) passive tracer modification
-CC      addition : 97-07 (G. Madec) optimization, and fsahtt
-CC      addition : 98-04 keeps trends in X and Y
-CC      addition : 99-02 (M.A. Foujols) lbc in conjonction with ORCA
-CC      modification : 00-05 (MA Foujols) add lbc for tracer trends
-CC      modification : 00-10 (MA Foujols E Kestenare) USE passive tracer
-CC                            coefficient
+
 CC----------------------------------------------------------------------
       USE myalloc
       USE myalloc_mpp
       USE HDF_mem
       USE DIA_mem
-
         IMPLICIT NONE
-
-
-
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER ktask,kt
+
 
 #if defined key_passivetrc 
       LOGICAL l1,l2,l3
@@ -230,15 +195,15 @@ C       dimen_jvhdf3=0
                 END DO
              END DO
        ENDIF
-C
+
 C tracer slab
 C =============
-C
-      TRACER_LOOP: DO  jn = ktask, jptra, ntids
+
+      TRACER_LOOP: DO  jn = 1, jptra, ntids
 
 C 1. Laplacian
 C ------------
-C
+
 C ... First derivative (gradient)
 !$omp  parallel default(none) private(mytid,jv,jk,jj,ji)
 !$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
@@ -312,15 +277,13 @@ C
               CALL lbc( zlt(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
 
            END IF
-
         END DO
-C
+
 #endif
-C
-C
+
 C 2. Bilaplacian
 C --------------
-C
+
 C ... third derivative (gradient)
 !$omp  parallel default(none) private(mytid,jv,jk,jj,ji,jf)
 !$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,zlt,tmask,ztv,zeev,
@@ -348,7 +311,7 @@ C ... third derivative (gradient)
      $        tmask(ji,jj+1,jk) * tmask(ji,jj,jk)
 
           END DO
-C
+
 C ... fourth derivative (divergence) and add to the general tracer trend
 
           DO jv=1, dimen_jvhdf3
@@ -395,8 +358,6 @@ C Lateral boundary conditions on trtrd:
         CALL lbc( trtrd(1,1,1,jn,5), 1, 1, 1, 1, jpk, 1 )
 #         endif
 #      endif
-C
-C
 C End of slab
 C ===========
 
@@ -406,8 +367,6 @@ C ===========
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime
 
 #  else
-
 C       no passive tracers
-
 #endif
 

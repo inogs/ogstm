@@ -31,8 +31,6 @@ CC
 CC   Input :
 CC   -----
 CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
 CC      common
 CC            /comcoo/          : scale factors
 CC            /comask/          : masks
@@ -78,7 +76,6 @@ CC ======================
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER ktask, kt
 #if defined key_passivetrc
       INTEGER ji, jj, jk, jn
       REAL(8) zabe1, zabe2, zbtr, ztra
@@ -87,12 +84,12 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-       trclaphdfparttime = MPI_WTIME() ! F79 cronometer-start
+       trclaphdfparttime = MPI_WTIME() ! cronometer-start
 
 C Tracer slab
 C =============
 C
-      DO 1000 jn = ktask,jptra,ncpu
+      DO 1000 jn = 1,jptra,ncpu
 C
 C 1. Laplacian for passive tracers
 C --------------------------------
@@ -121,10 +118,8 @@ C
 
             END DO
           END DO
-C
 C 2. Second derivative (divergence)
 C --------------------
-C
         DO jj = 2, jpjm1
           DO ji = 2, jpim1
 #if defined key_s_coord
@@ -140,18 +135,15 @@ C
               trtrd(ji,jj,jk,jn,4)=(ztrx(ji,jj)-ztrx(ji-1,jj))*zbtr
               trtrd(ji,jj,jk,jn,5)=(ztry(ji,jj)-ztry(ji,jj-1))*zbtr
 #endif
-C
             END DO
           END DO
-C
         END DO
-C
+
 C END of slab
 C ===========
-C
+
  1000 CONTINUE
 
-CCC 10 11 2004  F79 cronometer-stop
 
        trclaphdfparttime = MPI_WTIME() - trclaphdfparttime
        trclaphdftottime = trclaphdftottime + trclaphdfparttime
@@ -162,7 +154,5 @@ CCC 10 11 2004  F79 cronometer-stop
 CCC
 
 #else
-C
 C     no passive tracers
-C
 #endif

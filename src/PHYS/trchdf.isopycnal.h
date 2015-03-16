@@ -32,8 +32,6 @@ CC
 CC   Input :
 CC   ------
 CC      argument
-CC              ktask           : task identificator
-CC              kt              : time step
 CC      common
 CC            /comcoh/          : scale factors
 CC            /comask/          : masks
@@ -69,7 +67,6 @@ CC ======================
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-      INTEGER ktask, kt
 
 #if defined key_passivetrc
 
@@ -90,7 +87,7 @@ C
 C Passive tracer slab
 C ==================
 C
-      DO 1000 jn = ktask, jptra, ncpu
+      DO 1000 jn = 1, jptra, ncpu
 C
 C Horizontal slab
 C ===============

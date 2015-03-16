@@ -231,8 +231,6 @@ CC ----------------------------------------------------------------------
 CC     avt             : vertical diffusivity coeff. at w-point
 CC     avtb            : background profile of avm and avt
 
-      LOGICAL ntrbbl ! bottom boundary layer (namelist)
-      REAL(8) atrbbl ! bottom boundary layer diffusivity (namelist)
       REAL(8), allocatable :: avt(:,:,:)
       REAL(8), allocatable ::  avtb(:)
       REAL(8), allocatable ::  bblx(:,:),bbly(:,:)

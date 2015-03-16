@@ -2,9 +2,6 @@
    aht0   =  -3.e9,
    aeiv0  =  2000.,
 /
-&NAMZDF
-   ntrbbl = .false.,
-/
 &NAMEOS
    neos   =      0,
    Rau0   =  1020.,

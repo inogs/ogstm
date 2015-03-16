@@ -40,7 +40,6 @@
 ! -----------------------------
 
       IF (lhdf)   CALL trchdf
-      IF (ntrbbl) CALL trcbbl
 
 
 ! tracers: sink and source (must be  parallelized on vertical slab)

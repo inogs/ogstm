@@ -40,7 +40,6 @@
       NAMELIST/namrun/ calendarType, nsptint
 
       NAMELIST/namhdf/ aht0, aeiv0
-      NAMELIST/namzdf/ ntrbbl,atrbbl
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /natnum/ rsc,rtrn,ndttrc,lhdf,vsed,photop,atlantic_bfm,bottom_flux
@@ -104,24 +103,6 @@
       WRITE(numout,*) ' '
       WRITE(numout,*) ' horizontal eddy diffusivity    aht0   = ',aht0
       WRITE(numout,*) ' eddy induced velocity coef.    aeiv0  = ',aeiv0
-      WRITE(numout,*) ' '
-      ENDIF
-
-! ... Namelist namzdf : vertical diffusion
-
-
-      ntrbbl = .false.
-      atrbbl = 10000.
-
-      REWIND( numnam )
-      READ  ( numnam, namzdf )
-
-      IF(lwp) THEN
-      WRITE(numout,*) 'namzdf'
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' bottom boundary layer ntrbbl   = ',ntrbbl
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' bottom boundary layer diff. atrbbl   = ',atrbbl
       WRITE(numout,*) ' '
       ENDIF
 

@@ -172,7 +172,6 @@
            B = writeTemporization("trcadv____", trcadvtottime)
            B = writeTemporization("trcdmp____", trcdmptottime)
            B = writeTemporization("trcbil____", trcbilaphdftottime)
-           B = writeTemporization("trcbbl____", trcbbltottime)
            B = writeTemporization("trcsbc____", trcsbctottime)
            B = writeTemporization("trcsms____", trcsmstottime)
            B = writeTemporization("trczdf____", trczdftottime)

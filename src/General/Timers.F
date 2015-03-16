@@ -22,7 +22,6 @@ CC -----------------------------------
       REAL(8) :: trcdmpparttime       =0.0, trcdmptottime     = 0.0
       REAL(8) :: trclaphdfparttime    =0.0, trclaphdftottime  = 0.0
       REAL(8) :: trcbilaphdfparttime  =0.0, trcbilaphdftottime= 0.0
-      REAL(8) :: trcbblparttime       =0.0, trcbbltottime     = 0.0
       REAL(8) :: trczdfparttime       =0.0, trczdftottime     = 0.0
       REAL(8) :: trcnxtparttime       =0.0, trcnxttottime     = 0.0
       REAL(8) :: trcoptparttime       =0.0, trcopttottime     = 0.0
@@ -56,7 +55,6 @@ CC -----------------------------------
       trcdmptottime        = 0.0
       trclaphdftottime     = 0.0
       trcbilaphdftottime   = 0.0
-      trcbbltottime        = 0.0
       trczdftottime        = 0.0
       trcnxttottime        = 0.0
       trcopttottime        = 0.0

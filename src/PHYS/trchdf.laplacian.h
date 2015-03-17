@@ -76,7 +76,7 @@ CC ======================
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-#if defined key_passivetrc
+
       INTEGER ji, jj, jk, jn
       REAL(8) zabe1, zabe2, zbtr, ztra
       REAL(8) ztrx(jpi,jpj), ztry(jpi,jpj), zwtr(jpi,jpj)
@@ -100,17 +100,11 @@ C 1.1 First derivative (gradient)
 C
         DO jj=1,jpjm1
           DO ji=1,jpim1
-#if defined key_s_coord
-            zabe1 = fsahtru(ji,jj,jk) * umask(ji,jj,jk)
-     $            * e2u(ji,jj) * fse3u(ji,jj,jk) / e1u(ji,jj)
-            zabe2 = fsahtrv(ji,jj,jk) * vmask(ji,jj,jk)
-     $            * e1v(ji,jj) * fse3v(ji,jj,jk) / e2v(ji,jj)
-#  else
+
             zabe1 = fsahtru(ji,jj,jk) * umask(ji,jj,jk)
      $            * e2u(ji,jj) / e1u(ji,jj)
             zabe2 = fsahtrv(ji,jj,jk) * vmask(ji,jj,jk)
      $            * e1v(ji,jj) / e2v(ji,jj)
-#endif
               ztrx(ji,jj) = zabe1
      $                    * (trb(ji+1,jj,jk,jn) - trb(ji,jj,jk,jn))
               ztry(ji,jj) = zabe2
@@ -122,19 +116,11 @@ C 2. Second derivative (divergence)
 C --------------------
         DO jj = 2, jpjm1
           DO ji = 2, jpim1
-#if defined key_s_coord
-            zbtr = 1. / ( e1t(ji,jj) * e2t(ji,jj) * fse3t(ji,jj,jk) )
-#  else
             zbtr = 1. / ( e1t(ji,jj) * e2t(ji,jj) )
-#endif
               ztra = ( ztrx(ji,jj) - ztrx(ji-1, jj )
      $             + ztry(ji,jj) - ztry(ji, jj-1) ) * zbtr
               tra(ji,jj,jk,jn) = tra(ji,jj,jk,jn) + ztra
 C
-#if defined key_trc_diatrd
-              trtrd(ji,jj,jk,jn,4)=(ztrx(ji,jj)-ztrx(ji-1,jj))*zbtr
-              trtrd(ji,jj,jk,jn,5)=(ztry(ji,jj)-ztry(ji,jj-1))*zbtr
-#endif
             END DO
           END DO
         END DO
@@ -152,7 +138,3 @@ C ===========
        write(*,*) "F79T:trclaphdftottime", trclaphdftottime
 
 CCC
-
-#else
-C     no passive tracers
-#endif

@@ -10,12 +10,6 @@ CC   -------
 CC      4th order diffusive operator along model level surfaces evalu-
 CC    ated using before fields (forward time scheme). The horizontal
 CC    diffusive trends of passive tracer is given by:
-CC
-CC       * s-coordinate ('key_s_coord' defined), the vertical scale 
-CC    factors e3. are inside the derivatives:
-CC      Laplacian of trb:
-CC         zlt   = 1/(e1t*e2t*e3t) {  di-1[ e2u*e3u/e1u di(trb) ]
-CC                                  + dj-1[ e1v*e3v/e2v dj(trb) ]  }
 CC    Multiply by the eddy diffusivity coef. and insure lateral bc:
 CC       zlt   = fsahtt * zlt
 CC       call to lbc or mpplnk2
@@ -37,7 +31,6 @@ CC
 CC      Add this trend to the general trend (tra):
 CC         (tra) = (tra) + ( difftr )
 CC
-CC      'key_trc_diatrd' defined: the trend is saved for diagnostics.
 CC
 CC      macro-tasked on tracer slab (jn-loop)
 CC
@@ -46,7 +39,6 @@ CC   OUTPUT :
 CC   ------
 CC    tra      : general passive tracer trend increased by the
 CC                                horizontal diffusion trend
-CC    trtrd    : horizontal tracer diffusion trend('key_trc_diatrd' defined)
 
 CC   EXTERNAL :      lbc, mpplnk2
 
@@ -61,7 +53,6 @@ CC local declarations
 CC ==================
 
 
-#if defined key_passivetrc 
       LOGICAL l1,l2,l3
       INTEGER ji,jj,jk,jn,jv,jf,mytid,ntids,pack_size,jp
       INTEGER myji,myjj
@@ -128,20 +119,10 @@ C ----------------------------------
           DO jk=1,jpkm1
              DO jj = 1, jpjm1
                DO ji = 1, jpim1
-#if defined key_s_coord
-C   ... s-coordinates, vertical scale factor are used
-                  zbtr(ji,jj,jk) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*fse3t(ji,jj,jk)
-     $                        )
-                  zeeu(ji,jj,jk) = e2u(ji,jj) * fse3u(ji,jj,jk) / e1u(ji,jj)
-     $                        * umask(ji,jj,jk)
-                  zeev(ji,jj,jk) = e1v(ji,jj) * fse3v(ji,jj,jk) / e2v(ji,jj)
-     $                        * vmask(ji,jj,jk)
-#else
 C   ... z-coordinates, no vertical scale factors
                   zbtr(ji,jj) = 1. / ( e1t(ji,jj)*e2t(ji,jj) )
                   zeeu(ji,jj,jk) = e2u(ji,jj) / e1u(ji,jj) * umask(ji,jj,jk)
                   zeev(ji,jj,jk) = e1v(ji,jj) / e2v(ji,jj) * vmask(ji,jj,jk)
-#endif
                END DO
              END DO
           END DO
@@ -332,13 +313,6 @@ C   ... add it to the general tracer trends
                  diaflx(jf,jn+mytid,5) = diaflx(jf,jn+mytid,5) + ztu(ji,jj,jk,mytid+1)
                  diaflx(jf,jn+mytid,6) = diaflx(jf,jn+mytid,6) + ztv(ji,jj,jk,mytid+1)
               END IF
-#if defined key_trc_diatrd
-C   ... save the horizontal diffusive trends in X and Y
-              trtrd(ji,jj,jk,jn,4) = (  ztu(ji,jj) - ztu(ji-1,jj) )
-     $                         * zbtr(ji,jj)
-              trtrd(ji,jj,jk,jn,5) = (  ztv(ji,jj) - ztv(ji-1,jj) )
-     $                         * zbtr(ji,jj)
-#endif
 
          END DO
 
@@ -350,14 +324,6 @@ C   ... save the horizontal diffusive trends in X and Y
       mytid =0
 #endif
       
-C Lateral boundary conditions on trtrd:
-#      if defined key_trc_diatrd
-#         ifdef key_mpp
-        CALL mpplnk( trtrd(1,1,1,jn,5), 1, 1 )
-#         else      
-        CALL lbc( trtrd(1,1,1,jn,5), 1, 1, 1, 1, jpk, 1 )
-#         endif
-#      endif
 C End of slab
 C ===========
 
@@ -366,7 +332,4 @@ C ===========
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime
 
-#  else
-C       no passive tracers
-#endif
 

@@ -33,52 +33,31 @@
       REAL(8) sec,zweigh
       integer Before, After
       INTEGER iswap
-      INTEGER ji, jj, jk
+
 
 
 !     iswap  : indicator of swap of dynamic DATA array
 
-
-
-
        forcing_phys_partTime = MPI_WTIME()  ! cronometer-start
-
-
 
       sec=datestring2sec(DATEstring)
       call TimeInterpolation(sec,TC_FOR, BEFORE, AFTER, zweigh) ! 3.e-05 sec
 
-
       iswap  = 0
-
 
 ! ----------------------- INITIALISATION -------------
       IF (datestring.eq.DATESTART) then
 
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%Before)) ! CALL dynrea(iperm1)
 
-          DO jk=1,jpk
-            DO jj=1,jpj
-              DO ji=1,jpi
-                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
-                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
-              END DO
-            END DO
-          END DO
+
           iswap = 1
           call swap_PHYS
 
 
         CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After)) !CALL dynrea(iper)
 
-         DO jk=1,jpk
-           DO jj=1,jpj
-              DO ji=1,jpi
-                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
-                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
-              END DO
-            END DO
-          END DO
+
 
       ENDIF
 
@@ -101,14 +80,7 @@
 
 
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After))
-          DO jk=1,jpk
-            DO jj=1,jpj
-              DO ji=1,jpi
-                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
-                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
-              END DO
-            END DO
-          END DO
+
 
 
           IF(lwp) WRITE (numout,*) ' dynamics DATA READ for Time = ', TC_FOR%TimeStrings(TC_FOR%After)
@@ -319,6 +291,15 @@
 #endif
 
 
+!        could be written for OpenMP
+          DO jk=1,jpk
+            DO jj=1,jpj
+              DO ji=1,jpi
+                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
+                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
+              END DO
+            END DO
+          END DO
 
       END SUBROUTINE LOAD_PHYS
 
@@ -454,7 +435,7 @@
 
 ! *************************************************************
 !      SUBROUTINE SWAP
-! *    copia l'indice 2 nell'indice 1
+! *    copies index 2 in index 1
 ! *************************************************************
 
       SUBROUTINE swap_PHYS
@@ -540,29 +521,4 @@
 
       END SUBROUTINE swap_PHYS
 
-! *************************************************************
-! SUBROUTINE SLOPES
-! *
-! *************************************************************
 
-      SUBROUTINE SLOPES()
-         USE myalloc
-         USE OPT_mem
-         IMPLICIT NONE
-         INTEGER ji,jj,jk
-
-
-#if defined key_off_tra
-          DO jk=1,jpk
-            DO jj=1,jpj
-              DO ji=1,jpi
-                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
-                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
-              END DO
-            END DO
-          END DO
-#endif
-
-
-
-      END SUBROUTINE SLOPES

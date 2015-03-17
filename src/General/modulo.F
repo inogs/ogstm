@@ -91,21 +91,6 @@ CC----------------------------------------------------------------------
 CC       vertical coordinate and scale factors
 CC -------------------------------------------------------
 
-
-#ifdef key_s_coord
-CC                   s-coordinate ('key_s_coord')
-CC                   ----------------------------
-CC      hbatt, hbatu() : ocean depth at the vertical of  t-, u-, v-
-CC      hbatv, hbatf()   and f-point (m)
-CC      gsigt, gsigw() : model level depth coefficient at t-, w-levels
-CC      gsi3w          : model level depth coefficient at w-level
-CC                         defined as the sum of e3w scale factors
-CC      esigt, esigw() : vertical scale factor coef. at t-, w-levels
-
-      REAL(8), allocatable, dimension(:,:) :: hbatt, hbatu, hbatv,hbatf
-      REAL(8), allocatable, dimension(:)   :: gsigt, gsigw, gsi3w, esigt, esigw
-
-#  else
 CC                  z-coordinate (default option)
 CC                  ------------------------------
 CC      gdept, gdepw() : depth of t- and w-points (m)
@@ -113,7 +98,6 @@ CC      e3t, e3w()     : vertical scale factors at t- and w-points (m)
 CC
       REAL(8), allocatable :: gdept(:), gdepw(:), e3t(:), e3w(:)
 
-#endif
 
 CC----------------------------------------------------------------------
 CC        masks, bathymetry
@@ -394,13 +378,6 @@ CC----------------------------------------------------------------------
        aux_mem = get_mem(err) 
 #endif Mem_Monitor
 
-#ifdef key_s_coord
-      allocate(hbattglo(jpiglo,jpjglo)) ; hbattglo = huge(hbattglo(1,1))
-      allocate(hbatuglo(jpiglo,jpjglo)) ; hbatuglo = huge(hbatuglo(1,1))
-      allocate(hbatvglo(jpiglo,jpjglo)) ; hbatvglo = huge(hbatvglo(1,1))
-      allocate(hbatfglo(jpiglo,jpjglo)) ; hbatfglo = huge(hbatfglo(1,1))
-
-#endif
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
@@ -470,24 +447,12 @@ CC----------------------------------------------------------------------
       allocate(e2f(jpi,jpj))            ;e2f      = huge(e2f(1,1))
       allocate(ff (jpi,jpj))            ;ff       = huge(ff(1,1))
 
-#ifdef key_s_coord
-       allocate(hbatt(jpi,jpj)) ;hbatt = huge(hbatt(1,1))     
-       allocate(hbatu(jpi,jpj)) ;hbatu = huge(hbatu(1,1))
-       allocate(hbatv(jpi,jpj)) ;hbatv = huge(hbatv(1,1))
-       allocate(hbatf(jpi,jpj)) ;hbatf = huge(hbatf(1,1))
-       allocate(gsigt(jpk))     ;gsigt = huge(gsigt(1))
-       allocate(gsigw(jpk))     ;gsigw = huge(gsigw(1))
-       allocate(gsi3w(jpk))     ;gsi3w = huge(gsi3w(1))
-       allocate(esigt(jpk))     ;esigt = huge(esigt(1))
-       allocate(esigw(jpk))     ;esigw = huge(esigw(1))
 
-#  else
       allocate(gdept(jpk)) ;gdept = huge(gdept(1))
       allocate(gdepw(jpk)) ;gdepw = huge(gdepw(1))
       allocate(  e3t(jpk)) ;  e3t = huge(e3t(1))
       allocate(  e3w(jpk)) ;  e3w = huge(e3w(1))
 
-#endif
       allocate(mbathy(jpi,jpj)) ; mbathy = huge(mbathy(1,1))
 
       allocate(tmask(jpi,jpj,jpk)) ;tmask = huge(tmask(1,1,1))

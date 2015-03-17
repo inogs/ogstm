@@ -173,58 +173,8 @@ CC                          ding on 'key_trahdfcoef.d' )
 C
       REAL(8) aht0
       REAL(8), allocatable :: ahtu(:), ahtv(:), ahtw(:), ahtt(:)
-CC----------------------------------------------------------------------
-CC       direction of lateral diffusion (momentum & tracers)
-CC -----------------------------------------------
-CC      Slopes ('key_trahdfiso' or 'key_s_coord' defined)
-CC      uslp, wslpi()  : i-direction slope at u-, w-points
-CC      vslp, wslpj()  : j-direction slope at v-, w-points
 
-#if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
-      REAL(8), allocatable :: uslp (:,:,:), vslp (:,:,:)
-      REAL(8), allocatable :: wslpi(:,:,:), wslpj(:,:,:)
 
-# else
-C     diffusion along model level surfaces: no arrays
-#endif
-
-CC----------------------------------------------------------------------
-CC        eddy induced velocity parameterization
-CC -------------------------------------------------------
-CC      aeiv0            : eddy induced velocity coefficient (m2/s)
-CC      aeiu, aeiv()   : eddy induced velocity coef. at u-, v- and
-CC      aeiw             w-points (m2/s). The arrays used are 3D
-CC                         2D, 1D or 0D, depending on 'key_trahdfcoef.d'
-
-      REAL(8) aeiv0
-#if defined key_trahdfeiv
-#  if defined key_trahdfcoef3d
-      REAL(8), allocatable, dimension(:,:,:) :: aeiu, aeiv, aeiw
-#   elif key_trahdfcoef2d
-      REAL(8), allocatable, dimension(:,:)   :: aeiu, aeiv, aeiw
-#   elif key_trahdfcoef1d
-      REAL(8), allocatable, dimension(:)     :: aeiu, aeiv, aeiw
-#   else
-      REAL(8) aeiu, aeiv, aeiw
-#  endif
-# else
-#     if defined key_off_degrad
-      REAL(8), allocatable, dimension(:,:,:) :: aeiu, aeiv, aeiw
-#     else
-      REAL(8) aeiu, aeiv, aeiw
-#     endif
-#endif
-
-CC-------------------------------------------------------------------
-CC      eddy induced velocities (Gent et Mc William)
-CC---------------------------------------------------------------
-CC       ugm  : eddy induced velocity
-CC       vgm
-CC       wgm
-
-#if defined key_trahdfeiv
-      REAL(8), allocatable, dimension(:,:,:) :: ugm,vgm,wgm
-#endif
 CC----------------------------------------------------------------------
 CC         vertical diffusion
 CC ----------------------------------------------------------------------
@@ -261,36 +211,8 @@ CC      avtdta       : avt data array
 CC      flxdta         : additional fluxes
 
       REAL(8), allocatable, dimension(:,:,:,:) :: udta,vdta,wdta,avtdta,flxdta
-      REAL(8), allocatable, dimension(:,:,:)   :: flx, zmxldta
-      REAL(8), allocatable, dimension(:,:)     :: hmld
-
-#if defined key_off_tra
+      REAL(8), allocatable, dimension(:,:,:)   :: flx
       REAL(8), allocatable, dimension(:,:,:,:) :: tdta,sdta ! : temperature and salinity data array
-#endif
-
-#if defined key_trahdfiso
-CC----------------------------------------------------------------------
-CC
-CC      dynamic data selection
-CC ---------------------------------------
-CC      uslpdta      : zonal slope (u point) data array
-CC      vslpdta      : meridian slope (v point) data array
-CC      wslpidta     : zonal slope (t point) data array
-CC      wslpjdta     : meridian slope (t point) data array
-CC
-      REAL(8), allocatable, dimension(:,:,:,:) ::  uslpdta,vslpdta,wslpidta,wslpjdta
-
-#endif
-
-#if defined key_trahdfeiv
-
-CC       dynamic data selection
-CC ---------------------------------------
-
-      REAL(8), allocatable :: ugmdta(:,:,:,:) ! zonal    Gent et Mc William speed (u point) data array
-      REAL(8), allocatable :: vgmdta(:,:,:,:) ! meridian Gent et Mc William speed (v point) data array
-      REAL(8), allocatable :: wgmdta(:,:,:,:) ! vertical Gent et Mc William speed (w point) data array
-#endif
 
 CC V. DIAGNOSTICS
 CC ==============
@@ -306,7 +228,7 @@ CC ==============
       INTEGER, PARAMETER :: numnat =80   ! the number of the passive tracer NAMELIST
 
 
-#if defined key_mpp || defined key_debug 
+#if defined key_mpp 
 CC      t3ew           : 3d message passing arrays east-west    
 CC      t3we           : 3d message passing arrays west-east
 CC      t3ns           : 3d message passing arrays north-south
@@ -426,23 +348,6 @@ CC    aeivtr0   : eddy induced velocity coefficient (m2/s)
       INTEGER nwritetrc ! time step frequency for concentration outputs (NAMELIST)
 
 
-#    if defined key_trc_diatrd
-
-CC    trtrd()   : trends of the tracer equations
-CC           1 : X advection
-CC           2 : Y advection
-CC           3 : Z advection
-CC           4 : X diffusion
-CC           5 : Y diffusion
-CC           6 : Z diffusion
-CC           7 : X gent velocity
-CC           8 : Y gent velocity
-CC           9 : Z gent velocity
-
-      REAL(8), allocatable ::  trtrd(:,:,:,:,:)
-#    endif 
-
-
 #    if defined key_trc_dmp 
       INTEGER(4), allocatable ::  idxt(:,:,:),idxt2glo(:,:,:,:)
 #    endif
@@ -465,10 +370,6 @@ CC no passive tracer COMMON specification
 #endif
 CC----------------------------------------------------------------------
 
-#ifdef key_trahdfeiv
-      REAL(8), allocatable, dimension(:,:,:) :: zaeiu,zaeiv, zaeiw
-#endif
-
       INTEGER ncpu
 
 
@@ -483,12 +384,6 @@ CC----------------------------------------------------------------------
        aux_mem = get_mem(err) 
 #endif Mem_Monitor
 
-#ifdef key_trahdfeiv
-       allocate(zaeiu   (jpiglo,jpjglo,jpk)) ; zaeiu = huge(zaeiu(1,1,1))
-       allocate(zaeiv   (jpiglo,jpjglo,jpk)) ; zaeiv = huge(zaeiv(1,1,1))
-       allocate(zaeiw   (jpiglo,jpjglo,jpk)) ; zaeiw = huge(zaeiw(1,1,1))
-
-#endif
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
@@ -622,50 +517,6 @@ CC----------------------------------------------------------------------
       allocate(ahtw(jpk)) ;ahtw = huge(ahtw(1))
       allocate(ahtt(jpk)) ;ahtt = huge(ahtt(1))
 
-
-#if defined key_trahdfiso || defined key_trahdfgeop || defined key_debug
-      allocate(uslp(jpi,jpj,jpk))  ;uslp  = huge(uslp(1,1,1))
-      allocate(vslp(jpi,jpj,jpk))  ;vslp  = huge(vslp(1,1,1))
-      allocate(wslpi(jpi,jpj,jpk)) ;wslpi = huge(wslpi(1,1,1))
-      allocate(wslpj(jpi,jpj,jpk)) ;wslpj = huge(wslpj(1,1,1))
-
-# else
-C     diffusion along model level surfaces: no arrays
-#endif
-
-#if defined key_trahdfeiv
-#  if defined key_trahdfcoef3d
-       allocate(aeiu(jpi,jpj,jpk)) ; aeiu = huge(aeiu(1,1,1))
-       allocate(aeiv(jpi,jpj,jpk)) ; aeiv = huge(aeiv(1,1,1))
-       allocate(aeiw(jpi,jpj,jpk)) ; aeiw = huge(aeiw(1,1,1))
-
-#   elif key_trahdfcoef2d
-       allocate(aeiu(jpi,jpj)) ; aeiu = huge(aeiu(1,1))
-       allocate(aeiv(jpi,jpj)) ; aeiv = huge(aeiv(1,1))
-       allocate(aeiw(jpi,jpj)) ; aeiw = huge(aeiw(1,1))
- 
-#   elif key_trahdfcoef1d
-       allocate(aeiu(jpk))  ; aeiu = huge(aeiu(1))
-       allocate(aeiv(jpk))  ; aeiv = huge(aeiv(1))
-       allocate(aeiw(jpk))  ; aeiw = huge(aeiw(1))
-
-#   else
-#  endif
-# else
-#     if defined key_off_degrad
-      allocate(aeiu(jpi,jpj,jpk)) ; aeiu = huge(aeiu(1,1,1))
-      allocate(aeiv(jpi,jpj,jpk)) ; aeiv = huge(aeiv(1,1,1))
-      allocate(aeiw(jpi,jpj,jpk)) ; aeiw = huge(aeiw(1,1,1))
-
-#     else
-#     endif
-#endif
-#if defined key_trahdfeiv
-       allocate(ugm(jpi,jpj,jpk)) ; ugm = huge(ugm(1,1,1))
-       allocate(vgm(jpi,jpj,jpk)) ; vgm = huge(vgm(1,1,1))
-       allocate(wgm(jpi,jpj,jpk)) ; wgm = huge(wgm(1,1,1))
-
-#endif
        allocate(avt (jpi,jpj,jpk)) ; avt  = huge(avt(1,1,1))
        allocate(avtb(jpk))         ; avtb = huge(avtb(1))
 
@@ -691,31 +542,11 @@ C     diffusion along model level surfaces: no arrays
        allocate(avtdta (jpi,jpj,jpk,2))   ; avtdta  = huge(avtdta(1,1,1,1))
        allocate(flxdta (jpi,jpj,jpflx,2)) ; flxdta  = huge(flxdta(1,1,1,1))
        allocate(flx    (jpi,jpj,jpflx))   ; flx     = huge(flx(1,1,1))
-       allocate(zmxldta(jpi,jpj,2))       ; zmxldta = huge(zmxldta(1,1,1))
-       allocate(hmld(jpi,jpj))            ; hmld    = huge(hmld(1,1))
-
-
-
-#if defined key_off_tra
        allocate(tdta(jpi,jpj,jpk,2)) ; tdta = huge(tdta(1,1,1,1))
        allocate(sdta(jpi,jpj,jpk,2)) ; sdta = huge(sdta(1,1,1,1))
-
-#endif
-#if defined key_trahdfiso
-       allocate(uslpdta(jpi,jpj,jpk,2))  ; uslpdta  = huge(uslpdta(1,1,1,1))
-       allocate(vslpdta(jpi,jpj,jpk,2))  ; vslpdta  = huge(vslpdta(1,1,1,1))
-       allocate(wslpidta(jpi,jpj,jpk,2)) ; wslpidta = huge(wslpidta(1,1,1,1))
-       allocate(wslpjdta(jpi,jpj,jpk,2)) ; wslpjdta = huge(wslpjdta(1,1,1,1))
-#endif
-#if defined key_trahdfeiv
-       allocate(ugmdta(jpi,jpj,jpk,2)) ; ugmdta = huge(ugmdta(1,1,1,1))
-       allocate(vgmdta(jpi,jpj,jpk,2)) ; vgmdta = huge(vgmdta(1,1,1,1))
-       allocate(wgmdta(jpi,jpj,jpk,2)) ; wgmdta = huge(wgmdta(1,1,1,1))
-
-#endif
 CC----------------------------------------------------------------------
 
-#if defined key_mpp || defined key_debug 
+#if defined key_mpp 
        allocate(t3ns(jpi,jprecj,jpk,2))            ; t3ns     = huge(t3ns(1,1,1,1))
        allocate(t3sn(jpi,jprecj,jpk,2))            ; t3sn     = huge(t3sn(1,1,1,1))
        allocate(t3ew(jpj,jpreci,jpk,2))            ; t3ew     = huge(t3ew(1,1,1,1))
@@ -778,17 +609,11 @@ C     no mpp
        allocate(trb(jpi,jpj,jpk,jptra))              ; trb        = huge(trb(1,1,1,1))
 
 
-#    if defined key_trc_diatrd
-
-      allocate(trtrd(jpi,jpj,jpk,jptra,jpdiatrc)) ; trtrd =huge(trtrd(1,1,1,1,1))
-
-#    endif 
 #    if defined key_trc_dmp 
 
       allocate(idxt(jpi,jpj,jpk))           ; idxt     = huge(idxt(1,1,1))
       allocate(idxt2glo(jpi,jpj,jpk,4))     ; idxt2glo = huge(idxt2glo(1,1,1,1))
 
-#    else
 #    endif
 # endif
 

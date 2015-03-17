@@ -454,11 +454,6 @@
 !$omp end parallel
           END DO
 
-          do jj=1,jpj
-            do ji=1,jpi
-              zmxldta(ji,jj,1) = zmxldta(ji,jj,2)
-            end do
-          end do
 
 
       END SUBROUTINE swap_PHYS

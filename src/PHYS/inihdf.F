@@ -12,7 +12,7 @@ CC   Method :
 CC   -------
 CC
 CC    Eddy diffusivity and eddy induced velocity cefficients:
-CC         default option   : constant coef. aht0, aeiv0 (namelist)
+CC         default option   : constant coef. aht0 (namelist)
 CC        'key_trahdfcoef1d': depth dependent coef. defined in 
 CC                            in 'inihdf.tra.coef3d.h' file
 CC

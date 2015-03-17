@@ -19,6 +19,12 @@ C ==========================
 C  fsx: along i-direction
 C  fsy: along j-direction
 C  fsz: along k-direction
+      USE myalloc
+      IMPLICIT NONE
+
+      PUBLIC
+
+      CONTAINS
 C
       REAL(8) FUNCTION fsx( pfx1, pfx2, pfu )
       IMPLICIT NONE

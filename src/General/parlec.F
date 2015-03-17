@@ -39,9 +39,9 @@
 
       NAMELIST/namrun/ calendarType, nsptint
 
-      NAMELIST/namhdf/ aht0, aeiv0
+      NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,aeivtr0,vsed,photop,atlantic_bfm,bottom_flux
+      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /natnum/ rsc,rtrn,ndttrc,lhdf,vsed,photop,atlantic_bfm,bottom_flux
 !      namelist /dovesiete/  ahtrb0,trcrat,ahtrc0,aeivtr0
       NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG
@@ -93,7 +93,7 @@
 ! ... Namelist namhdf : horizontal diffusion
 
       aht0   = 2000.
-      aeiv0  = 2000.
+
 
       REWIND( numnam )
       READ  ( numnam, namhdf )
@@ -102,7 +102,6 @@
       WRITE(numout,*) 'namhdf'
       WRITE(numout,*) ' '
       WRITE(numout,*) ' horizontal eddy diffusivity    aht0   = ',aht0
-      WRITE(numout,*) ' eddy induced velocity coef.    aeiv0  = ',aeiv0
       WRITE(numout,*) ' '
       ENDIF
 
@@ -156,7 +155,6 @@
       ahtrb0      = 0.
       trcrat      = 1.
       ahtrc0      = aht0
-      aeivtr0     = aeiv0
       vsed        = 3.0
       photop      = .FALSE.
       atlantic_bfm= .FALSE.
@@ -180,7 +178,6 @@
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat
           WRITE(numout,*) ' horizontal eddy diffus. for passive tr            = ', ahtrc0
-          WRITE(numout,*) ' eddy induced veloc. coef. for passive tr          = ', aeivtr0
           WRITE(numout,*) ' detritus sedimentation speed   vsed               =', vsed/86400
           WRITE(numout,*) ' photoperiod scaling photop                        =', photop
           WRITE(numout,*) ' activation of bfm in atlantic buffer              =', atlantic_bfm

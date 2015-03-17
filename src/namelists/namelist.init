@@ -1,6 +1,5 @@
 &NAMHDF
    aht0   =  -3.e9,
-   aeiv0  =  2000.,
 /
 &NAMEOS
    neos   =      0,

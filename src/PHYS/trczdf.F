@@ -86,20 +86,13 @@ C only IMPLICIT scheme
       REAL(8) z2dtt
       REAL(8) delta_tra(jpk),int_tra(jpk)
       REAL(8) Aij
-#if ! defined key_trahdfbilap
-#    if defined key_trahdfiso || defined key_trahdfgeop
-      REAL(8) zcoef0, zcoef3, zcoef4, zcoeg3
-      REAL(8) zbtr, zmku, zmkv, zuwki, zvwki, zuwk, zvwk, ztav
-      REAL(8) ztfw(jpi,jpk), zdit(jpi,jpk), zdjt(jpi,jpk), zdj1t(jpi,jpk)
-      REAL(8) zavt(jpi,jpj,jpk), ztfwg(jpi,jpk)
-#    endif
-#endif
+
 CC---------------------------------------------------------------------
 CC statement functions
 CC ===================
 
 
-      trczdfparttime = MPI_WTIME() ! Cronomeer start
+      trczdfparttime = MPI_WTIME() ! Cronometer start
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
@@ -137,18 +130,6 @@ CC ===================
 
       ENDIF
 
-#    if ! defined key_trahdfbilap
-#        if defined key_trahdfiso || defined key_trahdfgeop
-C 0. SAVE avt in zavt 
-          DO jk = 2, jpkm1
-            DO jj = 2, jpjm1
-              DO ji = 2, jpim1
-                zavt(ji,jj,jk) = avt(ji,jj,jk)
-              END DO 
-            END DO 
-          END DO 
-#        endif
-#    endif
 
 C passive tracer slab
 C ===================
@@ -175,14 +156,6 @@ C vertical slab
 C I. Vertical trends associated with lateral mixing
 C -------------------------------------------------
 C    (excluding the vertical flux proportional to dk[t] )
-#if ! defined key_trahdfbilap
-#    if defined key_trahdfiso || defined key_trahdfgeop
-#    include "trczdf.isopycnal.h"
-#      else
-C    No vertical component associated with isopycnal diffussion
-C    and with geopotential diffusion in s-coordinates
-#    endif
-#endif
 C II. Vertical trend associated with the vertical physics
 C -------------------------------------------------------
 C     (including the vertical flux proportional to dk[t] associated
@@ -216,22 +189,20 @@ C Surface boundary conditions
 
 C II.1. Vertical diffusion on tr
 C ------------------------------
-C
 C Second member construction
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
 C   ... Euler time stepping when starting from rest
-
-
             zwy(jk,mytid+1) = trb(ji,jj,jk,jn+mytid) + z2dtt * tra(ji,jj,jk,jn+mytid)
-
         END DO
+
 C Matrix inversion from the first level
         ikst = 1
 C It is possible to change the maximum bottom value
 C for matrix inversion (see Marina Levy s thesis)
 C That will be done with some more documentation
-C
+
+
 CCC
 CCC        ZDF.MATRIXSOLVER
 CCC      ********************
@@ -257,7 +228,6 @@ C   N.B. the starting vertical index (ikst) is equal to 1 except for
 C   the resolution of tke matrix where surface tke value is prescribed
 C   so that ikstrt=2.
 
-C
         ikstp1=ikst+1
         ikenm2=jpk-2
 
@@ -304,25 +274,8 @@ C
          ENDIF
 
       ENDDO
-C
-#if defined key_trc_diatrd
-C Compute and save the vertical diffusive tracer trends
-         DO jk = 1, jpkm1
-           z2dtt = zdt * rdt
-           ztra  = ( zwx(jk,mytid+1) - trn(ji,jj,jk,jn+mytid) ) / z2dtt
-           ztra1 = ztra - tra(ji,jj,jk,jn+mytid)
-
-C   ... Euler time stepping when starting from rest
 
 
-            ztra = ( zwx(jk,mytid+1) - trb(ji,jj,jk,jn+mytid) ) / z2dtt
-            trtrd(ji,jj,jk,jn+mytid,6) = ztra - tra(ji,jj,jk,jn+mytid)
-#    if defined key_trc_hdfiso
-     $                       + trtrd(ji,jj,jk,jn+mytid,6)
-#    endif
-
-         END DO
-#endif
 
 C Save the masked passive tracer after in tra
 C (c a u t i o n:  tracer not its trend, Leap-frog scheme done
@@ -330,34 +283,15 @@ C                  it will not be done in trcnxt)
          DO jk = 1, jpkm1
             tra(ji,jj,jk,jn+mytid) = zwx(jk,mytid+1) * tmask(ji,jj,jk)
          END DO
-C END of jv loop
-        END DO 
-#  if defined key_trc_diatrd
-#         ifdef key_mpp
-        CALL mpplnk( trtrd(1,1,1,jn,6), 1, 1 )
-#         else      
-        CALL lbc( trtrd(1,1,1,jn,6), 1, 1, 1, 1, jpk, 1 )
-#         endif
-#  endif
+
+        END DO ! jv
+
       end if
 
 !$omp    end parallel
        END DO TRACER_LOOP
 
 
-#    if ! defined key_trahdfbilap
-#        if defined key_trahdfiso || defined key_trahdfgeop
-C III. recover the avt resulting from vertical physics only
-C ---------------------------------------------------------
-          DO jk = 2, jpkm1
-            DO jj = 2, jpjm1
-              DO ji = 2, jpim1
-                avt(ji,jj,jk) = zavt(ji,jj,jk)
-              END DO 
-            END DO 
-          END DO 
-#        endif
-#    endif
 
        trczdfparttime = MPI_WTIME() - trczdfparttime !cronometer-stop
        trczdftottime = trczdftottime + trczdfparttime

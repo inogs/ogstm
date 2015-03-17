@@ -23,35 +23,7 @@ CC                               + dj-1[ ahtt e1v/e2v dj(trb) ] }
 CC
 CC      Add this trend to the general tracer trend (tra):
 CC          (tra) = (tra) + ( difftr )
-CC
-CC      'key_trc_diatrd' defined: the trend is saved for diagnostics.
-CC
 CC      macro-tasked on each tracer (slab) (jn-loop)
-CC
-CC   Input :
-CC   -----
-CC      argument
-CC      common
-CC            /comcoo/          : scale factors
-CC            /comask/          : masks
-CC            /cottrp/          : passive tracer fields 
-CC            /comhdf/          : horizontal diffusion
-CC            /comtsk/          : multitasking
-CC
-CC   Output :
-CC   ------
-CC      common
-CC            /cottrp/ tra      : general tracer trend increased by the
-CC                                before horizontal diffusion trend
-CC            /cotrtd/ trtrd    : now horizontal passive tracer
-CC                                diffusion trend
-CC                                (IF 'key_trc_diatrd' key is activated)
-CC
-CC   External :                   no
-CC   --------
-CC
-CC   References :                 no
-CC   ----------
 CC
 CC   Modifications:
 CC   --------------
@@ -88,16 +60,15 @@ CC ===================
 
 C Tracer slab
 C =============
-C
       DO 1000 jn = 1,jptra,ncpu
-C
+
 C 1. Laplacian for passive tracers
 C --------------------------------
-C
+
         DO jk = 1,jpkm1
-C
+
 C 1.1 First derivative (gradient)
-C
+
         DO jj=1,jpjm1
           DO ji=1,jpim1
 
@@ -120,7 +91,7 @@ C --------------------
               ztra = ( ztrx(ji,jj) - ztrx(ji-1, jj )
      $             + ztry(ji,jj) - ztry(ji, jj-1) ) * zbtr
               tra(ji,jj,jk,jn) = tra(ji,jj,jk,jn) + ztra
-C
+
             END DO
           END DO
         END DO
@@ -134,7 +105,4 @@ C ===========
        trclaphdfparttime = MPI_WTIME() - trclaphdfparttime
        trclaphdftottime = trclaphdftottime + trclaphdfparttime
 
-       write(*,*) "F79T:trclaphdfparttime", trclaphdfparttime
-       write(*,*) "F79T:trclaphdftottime", trclaphdftottime
 
-CCC

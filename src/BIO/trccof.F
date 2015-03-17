@@ -14,20 +14,8 @@ CC   -------
 CC      Arrays defining the damping are computed for each grid
 CC      point for each passive tracer (restotr)
 CC      Damping depends on distance to coast, depth and latitude
-CC
-CC   Input :
-CC   ------
-CC      common
-CC            /cotdmp/          :  passive tracer damping
-CC
-CC   Output :
-CC   -------
-CC      argument                : no
-CC      common
-CC            /cotdmp/          : passive tracer damping
-CC
-CC   External :
-CC   --------- 
+
+
 
        USE myalloc
        USE myalloc_mpp
@@ -38,15 +26,14 @@ CC   ---------
 CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
-C
+
 #if defined key_trc_dmp && defined key_passivetrc
        INTEGER jn, jk, jj, ji, tra_idx
 
 
-C
 C===================================================
 C===================================================
-C
+
       DO jn=1,jptra
         DO jk=1,jpk
           DO jj=1,jpj
@@ -69,9 +56,7 @@ C
         END DO
       END DO
 #  else
-C
 C     No evaluation of restoring coefficients 
-C
 #endif
 
       END SUBROUTINE trccof

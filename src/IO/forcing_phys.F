@@ -274,18 +274,6 @@
          flxdta(:,:,jpemp ,2) = 0.
       endif
 
-
-
-
-
-
-#ifdef key_trahdfeiv
-             udta(:,:,:,2) = udta(:,:,:,2) +zaeiu*umask
-             vdta(:,:,:,2) = vdta(:,:,:,2) +zaeiv*vmask
-             wdta(:,:,:,2) = wdta(:,:,:,2) +zaeiw*tmask
-#endif
-
-
 !        could be written for OpenMP
           DO jk=1,jpk
             DO jj=1,jpj

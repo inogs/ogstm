@@ -313,7 +313,8 @@ CC      lhdf        : logical if true CALL trchdf (NAMELIST)
 CC      ncor        : number of corrective phases (NAMELIST)
 CC      ndttrc      : frequency of step on passive tracers (NAMELIST)
 
-      INTEGER ncor,ndttrc
+      INTEGER ncor
+      REAL(8) ndttrc
       LOGICAL lhdf
 
 

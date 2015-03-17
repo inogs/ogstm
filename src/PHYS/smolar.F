@@ -281,7 +281,7 @@ C                  inv_etot(3,ji,jj,jk) = inv_et(ji,jj,jk)
 
 
 
-      zdt = rdt*float(ndttrc)
+      zdt = rdt*ndttrc
 
 
 !$omp  parallel default(none) private(A,mytid,jk,jj,ji) shared(jpk,jpj,jpi,ztj,zx,zy,zz)

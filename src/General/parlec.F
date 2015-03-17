@@ -126,7 +126,7 @@
       rsc         = 1.
       rtrn        = 1.e-15
       ncor        = 1
-      ndttrc      = 4
+      ndttrc      = 4.0
       lhdf        = .TRUE.
       ahtrb0      = 0.
       trcrat      = 1.

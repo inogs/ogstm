@@ -164,23 +164,18 @@ C II. dk[ avt dk[ (tr) ] ] diffusive trends
 C ==========================================
 
 C 0. initialization
-#if defined key_trc_arakawa || defined key_trc_tvd || defined key_trc_upstream
-      zdt= 2.*float(ndttrc)
-#else
-      zdt= float(ndttrc)
-#endif
+      zdt= ndttrc
+
 
 C II.0 Matrix construction
 C Diagonal, inferior, superior
 C (including the bottom boundary condition via avt masked)
+C   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-C   ... Euler time stepping when starting from rest
-
-      zwi(jk,mytid+1) = - z2dtt * avt(ji,jj,jk  )/( fse3t(ji,jj,jk) * fse3w(ji,jj,jk  ) )
-      zws(jk,mytid+1) = - z2dtt * avt(ji,jj,jk+1)/( fse3t(ji,jj,jk) * fse3w(ji,jj,jk+1) )
-      zwd(jk,mytid+1) = 1. - zwi(jk,mytid+1) - zws(jk,mytid+1)
-
+          zwi(jk,mytid+1) = - z2dtt * avt(ji,jj,jk  )/( fse3t(ji,jj,jk) * fse3w(ji,jj,jk  ) )
+          zws(jk,mytid+1) = - z2dtt * avt(ji,jj,jk+1)/( fse3t(ji,jj,jk) * fse3w(ji,jj,jk+1) )
+          zwd(jk,mytid+1) = 1. - zwi(jk,mytid+1) - zws(jk,mytid+1)
         END DO
 
 C Surface boundary conditions
@@ -190,10 +185,10 @@ C Surface boundary conditions
 C II.1. Vertical diffusion on tr
 C ------------------------------
 C Second member construction
+C   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-C   ... Euler time stepping when starting from rest
-            zwy(jk,mytid+1) = trb(ji,jj,jk,jn+mytid) + z2dtt * tra(ji,jj,jk,jn+mytid)
+          zwy(jk,mytid+1) = trb(ji,jj,jk,jn+mytid) + z2dtt * tra(ji,jj,jk,jn+mytid)
         END DO
 
 C Matrix inversion from the first level
@@ -203,7 +198,7 @@ C for matrix inversion (see Marina Levy s thesis)
 C That will be done with some more documentation
 
 
-CCC
+
 CCC        ZDF.MATRIXSOLVER
 CCC      ********************
 CCC
@@ -293,7 +288,7 @@ C                  it will not be done in trcnxt)
 
 
 
-       trczdfparttime = MPI_WTIME() - trczdfparttime !cronometer-stop
+       trczdfparttime = MPI_WTIME() - trczdfparttime   !cronometer-stop
        trczdftottime = trczdftottime + trczdfparttime
 
 #else

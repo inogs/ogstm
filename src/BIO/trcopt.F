@@ -17,7 +17,7 @@ CC ==================
       REAL(8) conversion
 #if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm
 
-      INTEGER :: ji,jj,jk,jn
+      INTEGER :: ji,jj,jk
       INTEGER :: mytid, ntids! omp variables
 
 #ifdef __OPENMP

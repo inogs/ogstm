@@ -24,7 +24,6 @@ CC ==================
 
 #if defined key_passivetrc
       INTEGER iadv,istop
-      INTEGER jn
 
       istop = 0
 

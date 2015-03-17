@@ -29,7 +29,6 @@
 
 ! local declarations
 ! ==================
-      INTEGER ji
 
       NAMELIST/namrun/ calendarType, nsptint
 

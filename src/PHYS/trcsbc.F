@@ -7,7 +7,7 @@
 
       IMPLICIT NONE
 
-      INTEGER :: mytid, ntids, itid
+      INTEGER :: mytid, ntids
 
 
 #ifdef __OPENMP
@@ -16,7 +16,7 @@
 #endif
 
 
-      INTEGER  :: ji,jj,jn,jb
+      INTEGER  :: ji,jj,jn
       REAL(8)  :: ztra,zse3t
 #include <mpif.h>
 

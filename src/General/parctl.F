@@ -36,9 +36,6 @@ C Initialization
       istop = 0
       iwarn = 0
 9000  FORMAT( /,' ===>>>> : E R R O R',/,'          ===========',/ )
-9100  FORMAT( /,' ===>>>> : W A R N I N G',/,'          ===============',/ )
-
-
 
 C II. Domain
 C ... Intialization of sub domain index

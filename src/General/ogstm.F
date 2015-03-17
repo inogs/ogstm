@@ -152,10 +152,10 @@
 
        IMPLICIT NONE
 
-       INTEGER  mem_all_tot
+       REAL(8)  mem_all_tot
        INTEGER err, ierr
 
-      mem_all_tot=0
+      mem_all_tot=0.
       mem_all=0
 
 #ifdef Mem_Monitor

@@ -26,14 +26,14 @@ CC local declarations
 
 !      INTEGER :: elements,nelements(6),idx_element(14,6)
 ! omp variables
-      INTEGER :: mytid, ntids, itid
+      INTEGER :: mytid, ntids
 
 #ifdef __OPENMP
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn,jv,jnn,gji,gjj
+      INTEGER ji,jj,jk,jn,jv! ,jnn,gji,gjj
       REAL(8) zfact,zdt
 
 CC----------------------------------------------------------------------

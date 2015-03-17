@@ -30,20 +30,12 @@
 ! local declarations
 ! ==================
       INTEGER ji
-      INTEGER iused(1,100)
-      INTEGER ilseq,ilu
-
-      CHARACTER(LEN=32) clname
-      CHARACTER(LEN=21) clold, clfor, clseq, clnew, cldir, clunf
-
 
       NAMELIST/namrun/ calendarType, nsptint
 
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux
-!      namelist /natnum/ rsc,rtrn,ndttrc,lhdf,vsed,photop,atlantic_bfm,bottom_flux
-!      namelist /dovesiete/  ahtrb0,trcrat,ahtrc0,aeivtr0
       NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG
 
       NAMELIST/MPI_config/ mpi_pack_size
@@ -51,20 +43,6 @@
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 
 
-      ilseq =1
-      ilu   =0
-! ... Open specifier
-      clold = 'OLD'
-      clnew = 'NEW'
-      clfor = 'FORMATTED'
-      clunf = 'UNFORMATTED'
-      clseq = 'SEQUENTIAL'
-      cldir = 'DIRECT'
-
-
-      DO ji = 1, 100
-        iused(1,ji) = 0
-      END DO
 
       IF(lwp) THEN
           WRITE(numout,*) ' '
@@ -81,9 +59,7 @@
       ENDIF
 
       numnam = 4
-      clname = 'namelist.init'
-      CALL ctlopn( numnam, clname, clold, clfor, clseq,ilseq, ilu, iused, numout, lwp, 1)
-
+      OPEN(unit=numnam, file='namelist.init', status='OLD')!, 'FORMATTED', 'SEQUENTIAL')
 
 ! 1. Read namlist files
 ! ---------------------

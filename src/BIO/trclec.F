@@ -8,32 +8,21 @@
 !  ---------
 !     READ and PRINT options for the passive tracer run (namelist)
 !
-!   METHOD :                   : no
-!   -------
-!
 !   INPUT :
 !   -----
 !      the namelist FILE ( UNIT numnat ) :
 !            &nattrc           : general
 !            &nattrc_diag      : general
-!
-!   OUTPUT :
-!   ------
-
-
 
        USE myalloc
        IMPLICIT NONE
-
 
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
 
       INTEGER ji
-      INTEGER iused(1,100), ilseq,ilu
-      CHARACTER(LEN=21) clold,clfor,clseq,clnew,cldir,clunf
-      CHARACTER(LEN=32) clname
+
 !----------------------------------------------------------------------
 ! statement functions
 ! ===================
@@ -41,17 +30,6 @@
       namelist /NATTRC/       ctrcnm, ctrcun, ctrmax,ctr_hf
       namelist /NATTRC_DIAG/   dianm,  diaun,         diahf
 
-
-
-! OPEN specifier
-      ilseq = 1
-      ilu   = 0
-      clold = 'old'
-      clnew = 'new'
-      clfor = 'formatted'
-      clunf = 'unformatted'
-      clseq = 'SEQUENTIAL'
-      cldir = 'direct'
 
       IF(lwp) THEN
           WRITE(numout,*) ' '
@@ -63,8 +41,8 @@
           WRITE(numout,*) ' '
       ENDIF
 
-      clname='namelist.passivetrc'
-      CALL ctlopn(numnat,clname,clold,clfor,clseq,ilseq,ilu,iused,numout,lwp,1)
+      OPEN(unit=numnat, file='namelist.passivetrc', status= 'OLD') ! 'FORMATTED', 'SEQUENTIAL')
+
 
 
 

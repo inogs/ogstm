@@ -358,7 +358,7 @@
 
           DO jj=1,jpj,ntids
 !$omp parallel default(none) private(mytid,jk,ji,uj)
-!$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,hmld,zmxldta,
+!$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,
 !$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -373,15 +373,7 @@
               END DO 
             END DO
 
-
-!          do jj=1,jpj
-            do ji=1,jpi
-              hmld(ji,uj)=(Umzweigh * zmxldta(ji,uj,1)+zweigh    * zmxldta(ji,uj,2)) ! Check 
-            end do
-!          end do
-
             DO ji=1,jpi
-!                DO jj=1,jpj
                   vatm(ji,uj)   = flx(ji,uj,jpwind)
                   freeze(ji,uj) = flx(ji,uj,jpice)
                   emp(ji,uj)    = flx(ji,uj,jpemp)

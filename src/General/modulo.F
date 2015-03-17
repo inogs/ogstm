@@ -252,7 +252,6 @@ C     no mpp
 
 
 CC PASSIVE TRACER MODEL
-#if defined key_passivetrc
           CHARACTER(LEN=20) :: ctrcnm(jptra)
           CHARACTER(LEN=12) :: ctrcun(jptra)
           CHARACTER(LEN=20) :: dianm(jptra_dia)
@@ -365,9 +364,6 @@ CC     optical parameters
       REAL(8), allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)
 
 #     endif
-#else
-CC no passive tracer COMMON specification
-#endif
 CC----------------------------------------------------------------------
 
       INTEGER ncpu
@@ -564,10 +560,6 @@ CC----------------------------------------------------------------------
 C     no mpp
 #endif
 
-
-
-#if defined key_passivetrc
-
        allocate(trn(jpi,jpj,jpk,jptra))                    ; trn    = huge(trn(1,1,1,1))
        allocate(tra(jpi,jpj,jpk,jptra))                    ; tra    = huge(trn(1,1,1,1))
        allocate(tra_pp(jpi,jpj,jpk,jptra_dia))             ; tra_pp = huge(tra_pp(1,1,1,1))
@@ -615,7 +607,6 @@ C     no mpp
       allocate(idxt2glo(jpi,jpj,jpk,4))     ; idxt2glo = huge(idxt2glo(1,1,1,1))
 
 #    endif
-# endif
 
 #ifdef key_trc_bfm
       allocate(xpar(jpi,jpj,jpk))   ; xpar = huge(xpar(1,1,1))

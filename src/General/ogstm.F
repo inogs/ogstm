@@ -133,9 +133,6 @@
 
 
 
-      bblxIO    = 0.0
-      bblyIO    = 0.0
-
       un        = 0.0
       vn        = 0.0
       wn        = 0.0

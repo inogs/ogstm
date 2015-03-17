@@ -152,16 +152,6 @@
                empIO (ji,jj)=Miss_val
                qsrIO (ji,jj)=Miss_val
            ENDIF
-           IF(umask(ji,jj,1) .NE. 0.) THEN
-               bblxIO(ji,jj)=(bblxIO(ji,jj)*Realcounter+bblx(ji,jj))*Realcounterp1
-           ELSE
-           bblxIO(ji,jj)=Miss_val
-           ENDIF
-           IF(vmask(ji,jj,1) .NE. 0.) THEN
-               bblyIO(ji,jj)=(bblyIO(ji,jj)*Realcounter+bbly(ji,jj))*Realcounterp1
-           ELSE
-           bblyIO(ji,jj)=Miss_val
-           ENDIF
         END DO
       END DO
 

@@ -89,9 +89,6 @@
       END IF
 
 
-
-
-
 ! compute the DATA at the given time step
 
       SELECT CASE (nsptint)
@@ -278,8 +275,6 @@
       endif
 
 
-      bblxdta = 0.
-      bblydta = 0.
 
 
 
@@ -302,10 +297,6 @@
           END DO
 
       END SUBROUTINE LOAD_PHYS
-
-
-
-
 
 ! ******************************************************
 !     SUBROUTINE ACTUALIZE_PHYS(zweigh)
@@ -366,24 +357,11 @@
 
                 wn(ji,jj,uk) = (Umzweigh*  wdta(ji,jj,uk,1) + zweigh*  wdta(ji,jj,uk,2))
                avt(ji,jj,uk) = (Umzweigh*avtdta(ji,jj,uk,1) + zweigh*avtdta(ji,jj,uk,2))
-#if defined key_off_tra
                 tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
                 sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
-#endif
                 endif ! tmask
 
 
-#if defined key_trahdfiso
-              uslp(ji,jj,uk) = (Umzweigh *  uslpdta(ji,jj,uk,1)+ zweigh*  uslpdta(ji,jj,uk,2))
-              vslp(ji,jj,uk) = (Umzweigh *  vslpdta(ji,jj,uk,1)+ zweigh*  vslpdta(ji,jj,uk,2))
-             wslpi(ji,jj,uk) = (Umzweigh * wslpidta(ji,jj,uk,1)+ zweigh* wslpidta(ji,jj,uk,2))
-             wslpj(ji,jj,uk) = (Umzweigh * wslpjdta(ji,jj,uk,1)+ zweigh* wslpjdta(ji,jj,uk,2))
-#endif
-#if  defined key_trahdfeiv 
-              ugm(ji,jj,uk)  = (Umzweigh *   ugmdta(ji,jj,uk,1)+ zweigh*    ugmdta(ji,jj,uk,2))
-              vgm(ji,jj,uk)  = (Umzweigh *   vgmdta(ji,jj,uk,1)+ zweigh*    vgmdta(ji,jj,uk,2))
-              wgm(ji,jj,uk)  = (Umzweigh *   wgmdta(ji,jj,uk,1)+ zweigh*    wgmdta(ji,jj,uk,2))
-#endif
               END DO 
             END DO
       endif
@@ -392,7 +370,7 @@
 
           DO jj=1,jpj,ntids
 !$omp parallel default(none) private(mytid,jk,ji,uj)
-!$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,bblx,bblxdta,bbly,bblydta,hmld,zmxldta,
+!$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,hmld,zmxldta,
 !$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -410,9 +388,7 @@
 
 !          do jj=1,jpj
             do ji=1,jpi
-              bblx(ji,uj)= Umzweigh * bblxdta(ji,uj,1)+zweigh    * bblxdta(ji,uj,2)
-              bbly(ji,uj)= Umzweigh * bblydta(ji,uj,1)+zweigh    * bblydta(ji,uj,2)
-              hmld(ji,uj)=(Umzweigh * zmxldta(ji,uj,1)+zweigh    * zmxldta(ji,uj,2))
+              hmld(ji,uj)=(Umzweigh * zmxldta(ji,uj,1)+zweigh    * zmxldta(ji,uj,2)) ! Check 
             end do
 !          end do
 
@@ -473,21 +449,9 @@
                   vdta(ji,jj,jdepth,1) =  vdta(ji,jj,jdepth,2)
                   wdta(ji,jj,jdepth,1) =  wdta(ji,jj,jdepth,2)
                 avtdta(ji,jj,jdepth,1) =avtdta(ji,jj,jdepth,2)
-#if defined key_off_tra
                 tdta(ji,jj,jdepth,1) = tdta(ji,jj,jdepth,2)
                 sdta(ji,jj,jdepth,1) = sdta(ji,jj,jdepth,2)
-#endif
-#if defined key_trahdfiso
-                 uslpdta(ji,jj,jdepth,1)=  uslpdta(ji,jj,jdepth,2)
-                 vslpdta(ji,jj,jdepth,1)=  vslpdta(ji,jj,jdepth,2)
-                wslpidta(ji,jj,jdepth,1)= wslpidta(ji,jj,jdepth,2)
-                wslpjdta(ji,jj,jdepth,1)= wslpjdta(ji,jj,jdepth,2)
-#endif
-#if  defined key_trahdfeiv
-                ugmdta(ji,jj,jdepth,1)=ugmdta(ji,jj,jdepth,2)
-                vgmdta(ji,jj,jdepth,1)=vgmdta(ji,jj,jdepth,2)
-                wgmdta(ji,jj,jdepth,1)=wgmdta(ji,jj,jdepth,2)
-#endif
+
               END DO
             END DO
           ENDIF
@@ -512,8 +476,6 @@
 
           do jj=1,jpj
             do ji=1,jpi
-              bblxdta(ji,jj,1) = bblxdta(ji,jj,2)
-              bblydta(ji,jj,1) = bblydta(ji,jj,2)
               zmxldta(ji,jj,1) = zmxldta(ji,jj,2)
             end do
           end do

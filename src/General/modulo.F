@@ -233,7 +233,6 @@ CC     avtb            : background profile of avm and avt
 
       REAL(8), allocatable :: avt(:,:,:)
       REAL(8), allocatable ::  avtb(:)
-      REAL(8), allocatable ::  bblx(:,:),bbly(:,:)
 
 
 CC IV. SURFACE FORCING AND DATA
@@ -262,7 +261,7 @@ CC      avtdta       : avt data array
 CC      flxdta         : additional fluxes
 
       REAL(8), allocatable, dimension(:,:,:,:) :: udta,vdta,wdta,avtdta,flxdta
-      REAL(8), allocatable, dimension(:,:,:)   :: flx, bblxdta, bblydta, zmxldta
+      REAL(8), allocatable, dimension(:,:,:)   :: flx, zmxldta
       REAL(8), allocatable, dimension(:,:)     :: hmld
 
 #if defined key_off_tra
@@ -364,9 +363,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  empIO(:,:) 
       REAL(8), allocatable ::  qsrIO(:,:) 
       REAL(8), allocatable ::  unIO(:,:,:) 
-      REAL(8), allocatable ::  bblxIO(:,:) 
       REAL(8), allocatable ::  vnIO(:,:,:) 
-      REAL(8), allocatable ::  bblyIO(:,:) 
       REAL(8), allocatable ::  wnIO(:,:,:) 
       REAL(8), allocatable ::  avtIO(:,:,:) 
       REAL(8), allocatable ::  tra_ppIO(:,:,:,:)
@@ -382,9 +379,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totempIO(:,:) 
       REAL(8), allocatable ::  totqsrIO(:,:) 
       REAL(8), allocatable ::  totunIO(:,:,:) 
-      REAL(8), allocatable ::  totbblxIO(:,:) 
       REAL(8), allocatable ::  totvnIO(:,:,:) 
-      REAL(8), allocatable ::  totbblyIO(:,:) 
       REAL(8), allocatable ::  totwnIO(:,:,:) 
       REAL(8), allocatable ::  totavtIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
@@ -673,8 +668,6 @@ C     diffusion along model level surfaces: no arrays
 #endif
        allocate(avt (jpi,jpj,jpk)) ; avt  = huge(avt(1,1,1))
        allocate(avtb(jpk))         ; avtb = huge(avtb(1))
-       allocate(bblx(jpi,jpj))     ; bblx = huge(bblx(1,1))
-       allocate(bbly(jpi,jpj))     ; bbly = huge(bbly(1,1))
 
 
        allocate(taux  (jpi,jpj)) ; taux   = huge(taux(1,1))
@@ -698,8 +691,6 @@ C     diffusion along model level surfaces: no arrays
        allocate(avtdta (jpi,jpj,jpk,2))   ; avtdta  = huge(avtdta(1,1,1,1))
        allocate(flxdta (jpi,jpj,jpflx,2)) ; flxdta  = huge(flxdta(1,1,1,1))
        allocate(flx    (jpi,jpj,jpflx))   ; flx     = huge(flx(1,1,1))
-       allocate(bblxdta(jpi,jpj,2))       ; bblxdta = huge(bblxdta(1,1,1))
-       allocate(bblydta(jpi,jpj,2))       ; bblydta = huge(bblydta(1,1,1))
        allocate(zmxldta(jpi,jpj,2))       ; zmxldta = huge(zmxldta(1,1,1))
        allocate(hmld(jpi,jpj))            ; hmld    = huge(hmld(1,1))
 
@@ -758,9 +749,7 @@ C     no mpp
        allocate(empIO(jpi,jpj))                            ; empIO  = huge(empIO(1,1))
        allocate(qsrIO(jpi,jpj))                            ; qsrIO  = huge(qsrIO(1,1))
        allocate(unIO  (jpi,jpj,jpk))                       ; unIO   = huge(unIO(1,1,1))
-       allocate(bblxIO(jpi,jpj))                           ; bblxIO = huge(bblxIO(1,1))
        allocate(vnIO  (jpi,jpj,jpk))                       ; vnIO   = huge(vnIO(1,1,1))
-       allocate(bblyIO(jpi,jpj))                           ; bblyIO        = huge(bblyIO(1,1))   
        allocate(wnIO  (jpi,jpj,jpk))                       ; wnIO          = huge(wnIO(1,1,1))
        allocate(avtIO (jpi,jpj,jpk))                       ; avtIO         = huge(avtIO(1,1,1))
        allocate(buf   (jpi,jpj,jpk))                       ; buf           = huge(buf(1,1,1))
@@ -780,9 +769,7 @@ C     no mpp
        if (lwp)  allocate(totempIO(jpiglo,jpjglo))     ; if (lwp) totempIO  = huge(totempIO(1,1))   
        if (lwp)  allocate(totqsrIO(jpiglo,jpjglo))     ; if (lwp) totqsrIO  = huge(totqsrIO(1,1))   
        if (lwp)  allocate(totunIO(jpiglo,jpjglo,jpk))  ; if (lwp) totunIO   = huge(totunIO(1,1,1))  
-       if (lwp)  allocate(totbblxIO(jpiglo,jpjglo))    ; if (lwp) totbblxIO = huge(totbblxIO(1,1))  
        if (lwp)  allocate(totvnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totvnIO   = huge(totvnIO(1,1,1))  
-       if (lwp)  allocate(totbblyIO(jpiglo,jpjglo))    ; if (lwp) totbblyIO = huge(totbblyIO(1,1))  
        if (lwp)  allocate(totwnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totwnIO   = huge(totwnIO(1,1,1))  
        if (lwp)  allocate(totavtIO(jpiglo,jpjglo,jpk)) ; if (lwp) totavtIO  = huge(totavtIO(1,1,1)) 
        if (lwp)  allocate(tottmaIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottmaIO  = huge(tottmaIO(1,1,1)) 

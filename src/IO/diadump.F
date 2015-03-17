@@ -80,12 +80,9 @@
           totempIO (totistart:totiend, totjstart:totjend)   = empIO   (relistart:reliend, reljstart:reljend)
           totqsrIO (totistart:totiend, totjstart:totjend)   = qsrIO   (relistart:reliend, reljstart:reljend)
           totunIO  (totistart:totiend, totjstart:totjend,:) = unIO    (relistart:reliend, reljstart:reljend, :)
-          totbblxIO(totistart:totiend, totjstart:totjend)   = bblxIO  (relistart:reliend, reljstart:reljend)
           totvnIO  (totistart:totiend, totjstart:totjend,:) = vnIO    (relistart:reliend, reljstart:reljend, :)
-          totbblyIO(totistart:totiend, totjstart:totjend)   = bblyIO  (relistart:reliend, reljstart:reljend)
           totwnIO  (totistart:totiend, totjstart:totjend,:) = wnIO    (relistart:reliend, reljstart:reljend, :)
           totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
-!          totdiaIO (totistart:totiend, totjstart:totjend,:,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,:) ! diagnostic from reaction model
 
           do idrank = 1, size-1
 ! **************  rank 0 is receiving from the others their buffer  ****
@@ -106,12 +103,9 @@
       call MPI_RECV(buffemp ,jpi_rec*jpj_rec              ,mpi_real8,idrank, 14,mpi_comm_world, status, ierr)
       call MPI_RECV(buffqsr ,jpi_rec*jpj_rec              ,mpi_real8,idrank, 15,mpi_comm_world, status, ierr)
       call MPI_RECV(buffun  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 16,mpi_comm_world, status, ierr)
-      call MPI_RECV(buffbblx,jpi_rec*jpj_rec              ,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
-      call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
-      call MPI_RECV(buffbbly,jpi_rec*jpj_rec              ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
-      call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 20,mpi_comm_world, status, ierr)
-      call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 21,mpi_comm_world, status, ierr)
-!      call MPI_RECV(buffpp  ,jpi_rec*jpj_rec*jpk*jptra_dia,mpi_real8,idrank, 22,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
@@ -135,18 +129,6 @@
                 enddo
                enddo
 
-!               do jn=1, jptra_dia
-!                  do jk =1 , jpk ! 3d vars
-!                     do jj =totjstart,totjend
-!                        do ji =totistart,totiend
-!                           ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-!     &                           +(jn-1)*jpk*jpj_rec*jpi_rec
-!                           totdiaIO(ji,jj,jk,jn)= buffpp (ind)
-!                        enddo
-!                     enddo
-!                  enddo
-!               enddo
-
 
                do jj =totjstart,totjend ! and 2d vars
                  do ji =totistart,totiend
@@ -154,8 +136,6 @@
                   totvatmIO (ji,jj)= buffvatm(ind)
                   totempIO  (ji,jj)= buffemp (ind)
                   totqsrIO  (ji,jj)= buffqsr (ind)
-                  totbblxIO (ji,jj)= buffbblx(ind)
-                  totbblyIO (ji,jj)= buffbbly(ind)
              enddo
             enddo
 
@@ -164,17 +144,6 @@
 
       else  ! IF LABEL 1,  if(rank == 0)
 
-
-!           do jn =1 , jptra_dia
-!            do jk =1, jpk
-!             do jj =1 , jpj
-!              do ji =1 , jpi
-!                  ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1) + jpi*jpj*jpk *(jn-1)
-!                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn)
-!              enddo
-!             enddo
-!            enddo
-!           enddo
 
            do jk =1 , jpk
             do jj =1 , jpj
@@ -196,8 +165,6 @@
                buffvatm (ind)= vatmIO(ji,jj)
                buffemp  (ind)= empIO (ji,jj)
                buffqsr  (ind)= qsrIO (ji,jj)
-               buffbblx (ind)= bblxIO(ji,jj)
-               buffbbly (ind)= bblyIO(ji,jj)
               enddo
              enddo
 
@@ -217,11 +184,9 @@
            call MPI_SEND(buffemp , jpi*jpj      ,mpi_real8, 0, 14, mpi_comm_world,ierr)
            call MPI_SEND(buffqsr , jpi*jpj      ,mpi_real8, 0, 15, mpi_comm_world,ierr)
            call MPI_SEND(buffun  , jpi*jpj*jpk  ,mpi_real8, 0, 16, mpi_comm_world,ierr)
-           call MPI_SEND(buffbblx, jpi*jpj      ,mpi_real8, 0, 17, mpi_comm_world,ierr)
-           call MPI_SEND(buffvn  , jpi*jpj*jpk  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
-           call MPI_SEND(buffbbly, jpi*jpj      ,mpi_real8, 0, 19, mpi_comm_world,ierr)
-           call MPI_SEND(buffwn  , jpi*jpj*jpk  ,mpi_real8, 0, 20, mpi_comm_world,ierr)
-           call MPI_SEND(buffavt , jpi*jpj*jpk  ,mpi_real8, 0, 21, mpi_comm_world,ierr)
+           call MPI_SEND(buffvn  , jpi*jpj*jpk  ,mpi_real8, 0, 17, mpi_comm_world,ierr)
+           call MPI_SEND(buffwn  , jpi*jpj*jpk  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
+           call MPI_SEND(buffavt , jpi*jpj*jpk  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
 
 
 
@@ -383,9 +348,7 @@
           empIO    = 0.
           qsrIO    = 0.
           unIO     = 0.
-          bblxIO   = 0.
           vnIO     = 0.
-          bblyIO   = 0.
           wnIO     = 0.
           avtIO    = 0.
       endif

@@ -14,8 +14,6 @@
 
        public
 
-C
-C
       INTEGER :: goodpoints, allpoints, tpoints
       INTEGER :: dimen_jarr, dimen_jarr1, dimen_jarr2, dimen_jarr3, dimen_jarrt 
       INTEGER :: myji, myjj, myjk, locsum
@@ -48,7 +46,7 @@ CC----------------------------------------------------------------------
 #endif
 
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

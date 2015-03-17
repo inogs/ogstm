@@ -42,7 +42,7 @@ CC      mindi, mindj() : indexes array of the subdomain
       INTEGER, allocatable :: mindi(:), mindj(:)
       INTEGER, allocatable :: nimppt(:), njmppt(:), nlcit(:), nlcjt(:)
       INTEGER, allocatable ::  nldit(:),  nldjt(:), nleit(:), nlejt(:)
-      INTEGER  mem_all
+      REAL(8)  mem_all
 
       INTEGER npolj
 
@@ -359,7 +359,7 @@ CC----------------------------------------------------------------------
 ! *******************************************************************
       subroutine myalloc_DYN()
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
@@ -373,7 +373,7 @@ CC----------------------------------------------------------------------
 ! *******************************************************************
       subroutine myalloc_DR()
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
@@ -389,7 +389,7 @@ CC----------------------------------------------------------------------
 
        subroutine myalloc_BFM()
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
@@ -406,7 +406,7 @@ CC----------------------------------------------------------------------
       subroutine alloc_tot()
 
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
 #endif Mem_Monitor

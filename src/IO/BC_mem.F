@@ -44,7 +44,7 @@
       USE myalloc_mpp
 
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
       CHARACTER(LEN=50) atmfile, rivfile, gibfile
 
@@ -143,7 +143,7 @@
        USE iso_c_binding
 #endif Mem_Monitor
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
@@ -176,7 +176,7 @@
        USE iso_c_binding
 #endif Mem_Monitor
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
@@ -205,7 +205,7 @@
        USE iso_c_binding
 #endif Mem_Monitor
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

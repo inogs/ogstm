@@ -44,7 +44,7 @@
 
       subroutine myalloc_IO()
       INTEGER  :: err
-      INTEGER  :: aux_mem
+      REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

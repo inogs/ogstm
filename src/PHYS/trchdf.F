@@ -47,7 +47,6 @@ CCC              differents keys for passive tracer
 CCC
 
        USE stafun
-       USE stafun_passtrc
 
 #ifdef key_trc_hdfbilap
 #include "trchdf.bilaplacian.h"

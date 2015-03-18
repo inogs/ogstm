@@ -356,35 +356,8 @@ CC----------------------------------------------------------------------
 
 
       CONTAINS
-! *******************************************************************
-      subroutine myalloc_DYN()
-      INTEGER  :: err
-      REAL(8)  :: aux_mem
-
-#ifdef Mem_Monitor
-       aux_mem = get_mem(err) 
-#endif
 
 
-#ifdef Mem_Monitor
-      mem_all=get_mem(err) - aux_mem
-#endif
-      END subroutine myalloc_DYN
-! *******************************************************************
-      subroutine myalloc_DR()
-      INTEGER  :: err
-      REAL(8)  :: aux_mem
-
-#ifdef Mem_Monitor
-       aux_mem = get_mem(err) 
-#endif
-
-
-#ifdef Mem_Monitor
-      mem_all=get_mem(err) - aux_mem
-#endif
-
-      END subroutine myalloc_DR
 ! *******************************************************************
 
        subroutine myalloc_BFM()

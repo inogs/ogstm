@@ -165,12 +165,11 @@
       write(*,*)'My_Rank=',Rank,': Memory Allocation - Basal - (MB):',  mem_all ; mem_all_tot=mem_all_tot+mem_all
 
       call   alloc_tot() ; write(*,*)'My_Rank:',Rank,'alloc_init (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call  myalloc_DR() ; write(*,*)'My_Rank:',Rank,'alloc_DR   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
       call myalloc_OPT() ; write(*,*)'My_Rank:',Rank,'alloc_OPT  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
       call myalloc_ADV() ; write(*,*)'My_Rank:',Rank,'alloc_ADV  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
       call myalloc_HDF() ; write(*,*)'My_Rank:',Rank,'alloc_HDF  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
       call myalloc_ZDF() ; write(*,*)'My_Rank:',Rank,'alloc_ZDF  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_DYN() ; write(*,*)'My_Rank:',Rank,'alloc_DYN  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+
 
 #ifdef key_trc_dmp
 !     needs Time_Manager

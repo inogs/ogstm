@@ -172,8 +172,8 @@ C (including the bottom boundary condition via avt masked)
 C   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwi(jk,mytid+1) = - z2dtt * avt(ji,jj,jk  )/( fse3t(ji,jj,jk) * fse3w(ji,jj,jk  ) )
-          zws(jk,mytid+1) = - z2dtt * avt(ji,jj,jk+1)/( fse3t(ji,jj,jk) * fse3w(ji,jj,jk+1) )
+          zwi(jk,mytid+1) = - z2dtt * avt(ji,jj,jk  )/( e3t(jk) * e3w(jk  ) )
+          zws(jk,mytid+1) = - z2dtt * avt(ji,jj,jk+1)/( e3t(jk) * e3w(jk+1) )
           zwd(jk,mytid+1) = 1. - zwi(jk,mytid+1) - zws(jk,mytid+1)
         END DO
 

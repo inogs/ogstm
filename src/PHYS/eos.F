@@ -147,7 +147,7 @@ C   ... now potential temperature and salinity
             zs = sn(ji,jj,jk+mytid)
 #endif
 C   ... depth
-            zh = fsdept(ji,jj,jk+mytid)
+            zh = gdept(jk+mytid)
 C   ... square root salinity
             zsr= sqrt( abs( zs ) )
 C   ... compute volumic mass pure water at atm pressure

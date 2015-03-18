@@ -25,14 +25,10 @@
 
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
-! this part is parallelized tracer  by tracer
       CALL trcadv ! tracers: advection
 
-
 #    if defined key_trc_dmp
-        CALL trcdmp ! tracers: damping for passive tracers
-#    else
-!       no passive tracer damping
+      CALL trcdmp ! tracers: damping for passive tracers
 #    endif
 
 ! tracers: horizontal diffusion IF namelist flags are activated

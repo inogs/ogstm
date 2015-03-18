@@ -42,8 +42,8 @@ C   ... zkah, zahr: depth of the inflection pt and width of inflection
           zahr =   150.
 CCC
 C   ... computation coefficients
-      za00 = tanh( (-fsdept(1,1,1  )-zkah) / zahr )
-      za01 = tanh( (-fsdept(1,1,jpk)-zkah) / zahr )
+      za00 = tanh( (-gdept(1  )-zkah) / zahr )
+      za01 = tanh( (-gdept(jpk)-zkah) / zahr )
       zahf = ( zahts-zahtf ) / ( za00 - za01 )
       zahs = zahts - zahf * za00
 C
@@ -64,7 +64,7 @@ C ... control print
           WRITE(numout,*)
           WRITE(numout,9200)
           DO jk = 1, jpk
-            WRITE(numout,9210) jk, ahtt(jk), fsdept(1,1,jk)
+            WRITE(numout,9210) jk, ahtt(jk), gdept(jk)
           END DO
       ENDIF
  9200 FORMAT(' level    aht          depth t-level ' )
@@ -77,9 +77,9 @@ C ==================
 C
 C ... set ahtu = ahtv at T-level, and ahtw at w-level
       DO jk = 1, jpk
-        ahtu(jk) = zahs + zahf * tanh( (-fsdept(1,1,jk)-zkah) / zahr )
+        ahtu(jk) = zahs + zahf * tanh( (-gdept(jk)-zkah) / zahr )
         ahtv(jk) = ahtu(jk)
-        ahtw(jk) = zahs + zahf * tanh( (-fsdepw(1,1,jk)-zkah) / zahr )
+        ahtw(jk) = zahs + zahf * tanh( (-gdepw(jk)-zkah) / zahr )
       END DO
 C
 C ... control print
@@ -88,7 +88,7 @@ C ... control print
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,9200)
       DO jk = 1, jpk
-        IF(lwp)WRITE(numout,9210) jk, ahtu(jk), fsdept(1,1,jk)
+        IF(lwp)WRITE(numout,9210) jk, ahtu(jk), gdept(jk)
       END DO
  9200 FORMAT(' level    aht          depth t-level ' )
  9210 FORMAT(i6,2f12.4)
@@ -97,7 +97,7 @@ C ... control print
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,9220)
       DO jk = 1, jpk
-        IF(lwp)WRITE(numout,9210) jk, ahtw(jk), fsdepw(1,1,jk)
+        IF(lwp)WRITE(numout,9210) jk, ahtw(jk), gdepw(jk)
       END DO
  9220 FORMAT('  jk      aht          depth w-level ' )
 C

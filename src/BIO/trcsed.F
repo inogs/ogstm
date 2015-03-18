@@ -193,7 +193,7 @@ C 1.3 tracer flux divergence at t-point added to the general trend
               DO  jk = 1,jpkm1
                  jf=  jarr_sed_flx(jv+mytid,jk)
 
-                 ze3tr = 1./fse3t(ji,jj,jk)
+                 ze3tr = 1./e3t(jk)
 
                  DO js =1,21
                     ztra(js,mytid+1) = -ze3tr * (zwork(js,jk,mytid+1) - zwork(js,jk + 1,mytid+1))

@@ -8,9 +8,6 @@ CCC  PURPOSE :
 CCC  ---------
 CCC     Statement function file: to be include in all routines
 
-
-
-
 C-----------------------------------------------------------------------
 
 C

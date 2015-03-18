@@ -217,7 +217,7 @@ C ... Second derivative (divergence)
              zlt(ji,jj,jk,mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
      $             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj)
 C ... Multiply by the eddy diffusivity coefficient
-             zlt(ji,jj,jk,mytid+1) = fsahtrt(ji,jj,jk) * zlt(ji,jj,jk,mytid+1)
+             zlt(ji,jj,jk,mytid+1) = trcrat * ahtt(jk) * zlt(ji,jj,jk,mytid+1)
 
           END DO
 

@@ -72,9 +72,9 @@ C 1.1 First derivative (gradient)
         DO jj=1,jpjm1
           DO ji=1,jpim1
 
-            zabe1 = fsahtru(ji,jj,jk) * umask(ji,jj,jk)
+            zabe1 = trcrat * ahtu(jk) * umask(ji,jj,jk)
      $            * e2u(ji,jj) / e1u(ji,jj)
-            zabe2 = fsahtrv(ji,jj,jk) * vmask(ji,jj,jk)
+            zabe2 = trcrat * ahtv(jk) * vmask(ji,jj,jk)
      $            * e1v(ji,jj) / e2v(ji,jj)
               ztrx(ji,jj) = zabe1
      $                    * (trb(ji+1,jj,jk,jn) - trb(ji,jj,jk,jn))

@@ -43,7 +43,6 @@ CC
 CC      multitasked on tracer (jn-loop)
 
 CC
-CC   EXTERNAL :                  upstream, mpplnk, lbc
 CC   --------
 CC
 CC   REFERENCES :                piotr k. smolarkiewicz, 1983,
@@ -432,19 +431,6 @@ C ... Lateral boundary conditions on zk[xy]
 C   ... Mpp : export boundary values to neighboring processors
 
 
-
-C       DO itid = 1, ntids
-
-C  IF( itid - 1 + jn <= jptra ) THEN
-
-
-C           CALL mpplnk( zkx(:,:,:,itid), 1, 1 )
-C           CALL mpplnk( zky(:,:,:,itid), 1, 1 )
-
-C  END IF
-
-C       END DO
-
       IF( ntids - 1 + jn <= jptra ) THEN
        pack_size = ntids
         ELSE
@@ -597,13 +583,6 @@ C   ... Mpp : export boundary values to neighboring processors
 
 
 
-
-C        DO itid = 1, ntids
-C    IF( itid - 1 + jn <= jptra ) THEN
-C              CALL mpplnk( zti(:,:,:,itid), 1, 1 )
-C     END IF
-C         END DO
-
         IF( ntids - 1 + jn <= jptra ) THEN
            pack_size = ntids
         ELSE
@@ -701,16 +680,6 @@ C ... Lateral boundary conditions on z[xyz]
 C   ... Mpp : export boundary values to neighboring processors
 
 
-
-
-C         DO itid = 1, ntids
-C     IF( itid - 1 + jn <= jptra ) THEN
-C               CALL mpplnk( zx(:,:,:,itid), 1, 1 )
-C               CALL mpplnk( zy(:,:,:,itid), 1, 1 )
-C               CALL mpplnk( zz(:,:,:,itid), 1, 1 )
-C     END IF
-C  END DO
-
       IF( ntids - 1 + jn <= jptra ) THEN
        pack_size = ntids
         ELSE
@@ -799,12 +768,7 @@ C                advection by antidiffusive mass fluxes and an upstream scheme
 C ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
 C   ... Mpp : export boundary values to neighboring processors
-C        DO itid = 1, ntids
-C    IF( itid - 1 + jn <= jptra ) THEN
-C              CALL mpplnk( zkx(:,:,:,itid), 1, 1 )
-C              CALL mpplnk( zky(:,:,:,itid), 1, 1 )
-C    END IF
-C END DO
+
 
         IF( ntids - 1 + jn <= jptra ) THEN
            pack_size = ntids

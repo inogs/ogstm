@@ -434,8 +434,8 @@ C
        ENDIF
 C
 #  else
-C      mpp computation the lateral boundary conditions is insured by
-C      routines mpplnk and mpplnk2
+C      mpp computation the lateral boundary conditions
+C
 C
 #endif
 C

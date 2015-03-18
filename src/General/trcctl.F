@@ -69,7 +69,7 @@ C 11. SMS model
 #    endif
           WRITE(numout,*) ' '
 
-      ENDIF
+
 
 
 C      E r r o r  control
@@ -89,6 +89,8 @@ C      E r r o r  control
           IF(lwp)WRITE(numout,*) '**************************'
           IF(lwp)WRITE(numout,*)
           STOP 'trcctl'
+      ENDIF
+
       ENDIF
 
 

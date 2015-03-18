@@ -11,7 +11,6 @@ CC      4th order diffusive operator along model level surfaces evalu-
 CC    ated using before fields (forward time scheme). The horizontal
 CC    diffusive trends of passive tracer is given by:
 CC    Multiply by the eddy diffusivity coef. and insure lateral bc:
-CC       zlt   = fsahtt * zlt
 CC      Bilaplacian (laplacian of zlt):
 CC         difft = 1/(e1t*e2t*e3t) {  di-1[ e2u*e3u/e1u di(zlt) ]
 CC                                  + dj-1[ e1v*e3v/e2v dj(zlt) ]  }
@@ -21,7 +20,6 @@ CC      Laplacian of trb:
 CC         zlt   = 1/(e1t*e2t) {  di-1[ e2u/e1u di(trb) ]
 CC                              + dj-1[ e1v/e2v dj(trb) ] }
 CC    Multiply by the eddy diffusivity coef. and insure lateral bc:
-CC       zlt   = fsahtt * zlt
 CC      Bilaplacian (laplacian of zlt):
 CC         difft = 1/(e1t*e2t) {  di-1[ e2u/e1u di(zlt) ]
 CC                              + dj-1[ e1v/e2v dj(zlt) ]  }

@@ -160,7 +160,7 @@
 
 #ifdef Mem_Monitor
        mem_all = get_mem(err)
-#endif Mem_Monitor
+#endif
 
       write(*,*)'My_Rank=',Rank,': Memory Allocation - Basal - (MB):',  mem_all ; mem_all_tot=mem_all_tot+mem_all
 

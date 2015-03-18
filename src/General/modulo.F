@@ -6,7 +6,7 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
 
        IMPLICIT NONE
 
@@ -363,12 +363,12 @@ CC----------------------------------------------------------------------
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
-#endif Mem_Monitor
+#endif
 
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
       END subroutine myalloc_DYN
 ! *******************************************************************
       subroutine myalloc_DR()
@@ -377,12 +377,12 @@ CC----------------------------------------------------------------------
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
-#endif Mem_Monitor
+#endif
 
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END subroutine myalloc_DR
 ! *******************************************************************
@@ -393,13 +393,13 @@ CC----------------------------------------------------------------------
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
-#endif Mem_Monitor
+#endif
 
        allocate(BFMpoints(3,NBFMPOINTS)) ; BFMpoints = huge(BFMpoints(1,1))
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
        end subroutine myalloc_BFM
 
@@ -409,7 +409,7 @@ CC----------------------------------------------------------------------
       REAL(8)  :: aux_mem
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
-#endif Mem_Monitor
+#endif
      
 
       ncpu = 1
@@ -584,7 +584,7 @@ CC    photoperiod
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
   
         END subroutine alloc_tot
 

@@ -7,7 +7,7 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
 
        IMPLICIT NONE
 
@@ -50,7 +50,7 @@
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 !      CHARACTER(LEN=9)  nomedim0
 !      CHARACTER(LEN=13) nomedim1
 !
@@ -129,7 +129,7 @@
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END SUBROUTINE alloc_DTATRC
 
@@ -141,13 +141,13 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
       INTEGER  :: err
       REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 
 
        if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
@@ -159,7 +159,7 @@
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END SUBROUTINE alloc_DTATRC_local_gib
 
@@ -174,13 +174,13 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
       INTEGER  :: err
       REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 
 
        allocate(riv_ridxt (4, Rsize       )) ; riv_ridxt  = huge(riv_ridxt(1,1))
@@ -190,7 +190,7 @@
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END SUBROUTINE alloc_DTATRC_local_riv
 
@@ -203,13 +203,13 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
       INTEGER  :: err
       REAL(8)  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 
 
        allocate(atm_ridxt (4, Asize        )) ; atm_ridxt  = huge(atm_ridxt(1,1))
@@ -219,7 +219,7 @@
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
       END SUBROUTINE alloc_DTATRC_local_atm
 
       END MODULE 

@@ -7,7 +7,7 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
 
 
        IMPLICIT NONE
@@ -39,7 +39,7 @@ CC----------------------------------------------------------------------
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads
@@ -85,7 +85,7 @@ CC----------------------------------------------------------------------
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END subroutine myalloc_SED
 

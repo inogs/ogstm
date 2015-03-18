@@ -6,7 +6,7 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
 
        IMPLICIT NONE
 
@@ -48,7 +48,7 @@
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 
        allocate(buffglamt (jpi_max* jpj_max))      ; buffglamt = huge(buffglamt(1))
        allocate(buffgphit (jpi_max* jpj_max))      ; buffgphit = huge(buffgphit(1))
@@ -74,7 +74,7 @@
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END subroutine myalloc_IO
 

@@ -6,7 +6,7 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
 
        IMPLICIT NONE
 
@@ -40,7 +40,7 @@
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 
       dimen_jvsnu = 0
       SMALL=0.00000000001
@@ -66,7 +66,7 @@
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END subroutine myalloc_FN
 

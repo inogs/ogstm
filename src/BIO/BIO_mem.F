@@ -7,7 +7,7 @@
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
-#endif Mem_Monitor
+#endif
 
 
        IMPLICIT NONE
@@ -20,7 +20,7 @@
       REAL(8), allocatable :: sediPI(:,:,:,:)
       REAL(8), allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
       REAL(8), allocatable :: opa_co2(:,:), co2_IO(:,:,:)
-      REAL(8):: opa_ice!, opa_co2, opa_co2_start, opa_co2_end
+      REAL(8):: opa_ice
 
 
 CC----------------------------------------------------------------------
@@ -33,7 +33,7 @@ CC----------------------------------------------------------------------
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
-#endif Mem_Monitor
+#endif
 
 !$omp parallel default(none)
        allocate(bfm_trn(jptra))        ; bfm_trn   = huge(bfm_trn(1))
@@ -47,12 +47,10 @@ CC----------------------------------------------------------------------
        PH=8.0
 
        opa_ice=0
-       !opa_co2_start=290.0
-       !opa_co2_end=370.0
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
-#endif Mem_Monitor
+#endif
 
       END subroutine myalloc_BIO
 

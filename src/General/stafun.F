@@ -62,8 +62,7 @@ C                defined from 1d fields;
 C  fsdept, fsdepw  : depth of model level at t- and w-points
 C  fse3t, fse3u,   : factors at t-, u-, v-, f-, w-,  uw-, vw-points
 C  fse3v, fse3f,     z-coordinates (default option) 
-C  fse3w, fse3uw,
-C  fse3vw 
+C  fse3w
 C  (kfi,kfj,kfk)   : indexes of the position
 C
       REAL(8) FUNCTION fsdept( kfi, kfj, kfk )
@@ -96,29 +95,14 @@ C
       fse3v = e3t(kfk)
       END FUNCTION fse3v
 
-      REAL(8) FUNCTION fse3f( kfi, kfj, kfk )
-      IMPLICIT NONE
-      INTEGER, INTENT(IN) ::  kfi, kfj, kfk
-      fse3f = e3t(kfk)
-      END FUNCTION fse3f
-
       REAL(8) FUNCTION fse3w( kfi, kfj, kfk )
       IMPLICIT NONE
       INTEGER, INTENT(IN) ::  kfi, kfj, kfk
       fse3w = e3w(kfk)
       END FUNCTION fse3w
 
-      REAL(8) FUNCTION fse3uw( kfi, kfj, kfk )
-      IMPLICIT NONE
-      INTEGER, INTENT(IN) ::  kfi, kfj, kfk
-      fse3uw = e3w(kfk)
-      END FUNCTION fse3uw
 
-      REAL(8) FUNCTION fse3vw( kfi, kfj, kfk )
-      IMPLICIT NONE
-      INTEGER, INTENT(IN) ::  kfi, kfj, kfk
-      fse3vw = e3w(kfk)
-      END FUNCTION fse3vw
+
 
 C
 CC----------------------------------------------------------------------

@@ -20,18 +20,8 @@
 !       The trend is computed either throughout the water column
 !       (nlmdmptrc=0) or in area of weak vertical mixing (nlmdmptrc=1) or
 !       below the well mixed layer (nlmdmptrc=2)
-!     DIAGNOSTIC DUMP
-!     Diagnostic output written in the flux file with number jptra_dia (*F[jptra_dia].nc)
-!     Each level (or couple of levels) of the 3D matrix contains different variables
-!     1   evapo rate --> O3c (refer to trcsbc.F)
-!     2   evapo rate --> O3h (refer to trcsbc.F)
-!     (3-4)   Rivers --> N1p
-!     (5-6)   Rivers --> N3n
-!     (7-8)   Rivers --> N5s
-!     (9-10)  Rivers --> O3c
-!     (11-12) Rivers --> O3h
-!     13  Atmosphere --> N1p
-!     14  Atmosphere --> N3n
+
+
 
        USE myalloc
        USE myalloc_mpp
@@ -44,7 +34,6 @@
 
       INTEGER ji, jj, jk, jn
       INTEGER tra_idx
-      INTEGER nmldmp_gib,nmldmp_riv,nmldmp_atm
       INTEGER(4) jv
       INTEGER shift
       REAL(8)  ztra
@@ -63,18 +52,7 @@
 #endif
 
 
-       trcdmpparttime = MPI_WTIME() ! F79 cronometer-start
-
-
-
-!      tra_matrix(1) = ppO2o
-!      tra_matrix(2) = ppN1p
-!      tra_matrix(3) = ppN3n
-!      tra_matrix(4) = ppN5s
-
-      nmldmp_gib = 0
-      nmldmp_riv = 1
-      nmldmp_atm = 1
+      trcdmpparttime = MPI_WTIME() ! cronometer-start
 
 
 ! Boundary conditions fo Gib area
@@ -121,37 +99,13 @@
              ji = riv_ridxt(2,jv)
              jj = riv_ridxt(3,jv)
              jk = riv_ridxt(4,jv)
-             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + riv(jv,jn+mytid) ! since nmldmp_riv=1
+             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + riv(jv,jn+mytid)
           ENDDO
 
-           !output diagnostic on jptra_dia
-             if (tra_idx .EQ. ppN1p) shift = 2
-             if (tra_idx .EQ. ppN3n) shift = 4
-             if (tra_idx .EQ. ppN5s) shift = 6
-             if (tra_idx .EQ. ppO3c) shift = 8
-             if (tra_idx .EQ. ppO3h) shift = 10
-
-             DO jv=1, Rsize
-
-                ji = riv_ridxt(2,jv)
-                jj = riv_ridxt(3,jv)
-                jk = riv_ridxt(4,jv) + shift
-
-                tra_pp(ji,jj,jk,jptra_dia) = riv(jv,jn+mytid) ! since nmldmp_riv=1
-
-             ENDDO
 
         ENDIF
 !$omp end parallel
 
-c           ztra = 0
-c           IF ( nmldmp_riv.EQ.0 ) THEN
-c             ztra = restotr(ji,jj,jk,tra_idx)* ( riv(jv,jn)-trb(ji,jj,jk,tra_idx) )
-c           ENDIF
-c           IF ( nmldmp_riv.EQ.1 ) THEN
-c             ztra = riv(jv,jn)
-c           ENDIF
-c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
 
          ENDDO
 
@@ -175,34 +129,13 @@ c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
              ji = atm_ridxt(2,jv)
              jj = atm_ridxt(3,jv)
              jk = atm_ridxt(4,jv)
-             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + atm(jv,jn+mytid) ! since nmldmp_atm=1
+             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + atm(jv,jn+mytid)
          ENDDO
 
-                 !output diagnostic on jptra_dia
-             if (tra_idx .EQ. ppN1p) shift = 12
-             if (tra_idx .EQ. ppN3n) shift = 13
 
-
-             DO jv=1, Asize
-
-                ji = atm_ridxt(2,jv)
-                jj = atm_ridxt(3,jv)
-                jk = atm_ridxt(4,jv) + shift
-
-                tra_pp(ji,jj,jk,jptra_dia) = atm(jv,jn+mytid) ! since nmldmp_riv=1
-
-             ENDDO
       ENDIF
 !$omp end parallel
 
-!            ztra = 0 ************ DEFAULT CASE
-!           IF ( nmldmp_atm.EQ.0 ) THEN
-!             ztra = restotr(ji,jj,jk,tra_idx)* ( atm(jv,jn)-trb(ji,jj,jk,tra_idx) )
-!           ENDIF
-!           IF ( nmldmp_atm.EQ.1 ) THEN
-!             ztra = atm(jv,jn)
-!           ENDIF
-!             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
 
          ENDDO
 
@@ -211,7 +144,7 @@ c             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
 
 
 
-       trcdmpparttime = MPI_WTIME() - trcdmpparttime ! F79 cronometer-stop
+       trcdmpparttime = MPI_WTIME() - trcdmpparttime ! cronometer-stop
        trcdmptottime  = trcdmptottime + trcdmpparttime
 
 

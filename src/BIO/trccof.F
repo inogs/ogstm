@@ -27,7 +27,7 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
 
-#if defined key_trc_dmp && defined key_passivetrc
+#if defined key_trc_dmp 
        INTEGER jn, jk, jj, ji, tra_idx
 
 

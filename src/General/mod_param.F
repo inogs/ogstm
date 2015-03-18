@@ -52,8 +52,7 @@ CC    jpqsr   : solar radiation
 
 
 CC Passive tracers parameter
-#ifdef key_passivetrc
-#    if defined key_trc_bfm
+#if defined key_trc_bfm
 
 
 #include "BFM_var_list.h"
@@ -63,7 +62,6 @@ CC productive layer depth
       INTEGER :: jpkb , ! : first vertical layers where biology is active
      &           jpkbm1 !  jpkb - 1
 
-#     endif
 #endif
 
 

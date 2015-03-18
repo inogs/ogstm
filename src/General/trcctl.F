@@ -22,7 +22,6 @@ CC   --------
 CC local declarations
 CC ==================
 
-#if defined key_passivetrc
       INTEGER iadv,istop
 
       istop = 0
@@ -92,7 +91,5 @@ C      E r r o r  control
           STOP 'trcctl'
       ENDIF
 
-
-#endif
 
       END SUBROUTINE TRCCTL

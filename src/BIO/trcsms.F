@@ -25,7 +25,6 @@ CC      trcbio, trcsed, trcopt for NPZD or NNPZDDOM models
 
 #include <mpif.h>
 
-#if defined key_passivetrc
 
 C this ROUTINE is called only every ndttrc time step
 
@@ -41,11 +40,6 @@ C trcsed no updated for time step advancing
 #if  defined key_trc_sed
        CALL trcsed ! tracers: sedimentation model
 # endif
-
-C no passive tracers
-
-#endif
-
 
        trcsmsparttime = MPI_WTIME() - trcsmsparttime ! cronometer-stop
        trcsmstottime = trcsmstottime + trcsmsparttime

@@ -68,7 +68,6 @@ CC local declarations
 CC ==================
 
 
-#if defined key_passivetrc
       LOGICAL l1,l2,l3
       INTEGER ji, jj, jk, jn, jv, jf
 ! omp variables
@@ -291,7 +290,4 @@ C                  it will not be done in trcnxt)
        trczdfparttime = MPI_WTIME() - trczdfparttime   !cronometer-stop
        trczdftottime = trczdftottime + trczdfparttime
 
-#else
-C no passive tracers
-#endif
       END SUBROUTINE trczdf

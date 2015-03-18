@@ -81,10 +81,8 @@ C VI. Data and surface forcing dynamic and physic input file
           WRITE(numout,*)
           WRITE(numout,*)
           WRITE(numout,*) ' *** dynamic and physics file'
-#if defined key_off_tra
           WRITE(numout,*) ' *** we USE temp. and salinity fields'
           WRITE(numout,*)
-#endif
 
           WRITE(numout,*)
           WRITE(numout,*)

@@ -134,18 +134,10 @@ C -------------------------------------------
         if (jk+mytid.le.jpk) then
         DO jj = 1, jpj
           DO ji = 1, jpi
-#ifdef key_hpgimplicit
-C   ... time filtered potential temperature and salinity
-            zt = ta(ji,jj,jk+mytid)
-            zs = sa(ji,jj,jk+mytid)
-C   ... reset ta and sa to zero
-            ta(ji,jj,jk+mytid) = 0.e0
-            sa(ji,jj,jk+mytid) = 0.e0
-#  else
+
 C   ... now potential temperature and salinity
             zt = tn(ji,jj,jk+mytid)
             zs = sn(ji,jj,jk+mytid)
-#endif
 C   ... depth
             zh = gdept(jk+mytid)
 C   ... square root salinity
@@ -197,16 +189,9 @@ C -----------------------------------
 
         DO jj = 1, jpj
           DO ji = 1, jpi
-#ifdef key_hpgimplicit
-C   ... time filtered potential temperature
-            zt = ta(ji,jj,jk)
-C   ... reset ta to zero
-            ta(ji,jj,jk) = 0.e0
-            sa(ji,jj,jk) = 0.e0
-#  else
+
 C   ... now potential temperature and salinity
             zt = tn(ji,jj,jk)
-#endif
 C   ... density and potential volumic mass
             rdn(ji,jj,jk) = ( 0.028 - ralpha * zt ) * tmask(ji,jj,jk)
             rhopn(ji,jj,jk) = ( rau0 * rdn(ji,jj,jk) + rau0 )* tmask(ji,jj,jk)
@@ -221,18 +206,11 @@ C ------------------------------------
 
         DO jj = 1, jpj
           DO ji = 1, jpi
-#ifdef key_hpgimplicit
-C   ... time filtered potential temperature and salinity
-            zt = ta(ji,jj,jk)
-            zs = sa(ji,jj,jk)
-C   ... reset ta and sa to zero
-            ta(ji,jj,jk) = 0.e0
-            sa(ji,jj,jk) = 0.e0
-#  else
+
 C   ... now potential temperature and salinity
             zt = tn(ji,jj,jk)
             zs = sn(ji,jj,jk)
-#endif
+
 C   ... density and potential volumic mass
             rdn(ji,jj,jk) = (   rbeta  * zs - ralpha * zt - 1. )* tmask(ji,jj,jk)
             rhopn(ji,jj,jk) = ( rau0 * rdn(ji,jj,jk) + rau0 )   * tmask(ji,jj,jk)

@@ -87,6 +87,7 @@ CC                : 99-02 (G. Madec, N. Grima) 'key_hdfimplicit'
 CC----------------------------------------------------------------------
 
        USE myalloc
+       USE myalloc_mpp
        USE stafun
        IMPLICIT NONE
 
@@ -104,7 +105,6 @@ CC ==================
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-#include <mpif.h>
       density_partTime = MPI_WTIME()
 
 #ifdef __OPENMP

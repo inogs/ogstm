@@ -3,6 +3,7 @@
 ! Computes surface boundary conditions on passive tracers
 
       USE myalloc
+      USE myalloc_mpp
       USE stafun
 
       IMPLICIT NONE
@@ -18,7 +19,6 @@
 
       INTEGER  :: ji,jj,jn
       REAL(8)  :: ztra,zse3t
-#include <mpif.h>
 
 #ifdef __OPENMP
       ntids = omp_get_max_threads() ! take the number of threads

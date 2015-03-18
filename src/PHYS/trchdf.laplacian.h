@@ -42,7 +42,7 @@ CC ======================
 
 
       USE myalloc
-#include <mpif.h>
+      USE myalloc_mpp
         IMPLICIT NONE
 
 CC----------------------------------------------------------------------

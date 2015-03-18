@@ -21,9 +21,8 @@ CC      trcbio, trcsed, trcopt for NPZD or NNPZDDOM models
 
 
        USE myalloc
+       USE myalloc_mpp
        IMPLICIT NONE
-
-#include <mpif.h>
 
 
 C this ROUTINE is called only every ndttrc time step

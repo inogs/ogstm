@@ -20,9 +20,8 @@
 
 
        USE myalloc
+       USE myalloc_mpp
        IMPLICIT NONE
-
-#include <mpif.h>
 
       trcstpparttime = MPI_WTIME() ! cronometer-start
 

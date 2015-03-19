@@ -33,11 +33,9 @@ CC Original data size
 CC ------------------
 
       INTEGER :: jpiglo, jpjglo, jpk
-      INTEGER :: jpkmod
+
 
 CC Matrix size
-CC-CC      INTEGER,parameter :: jpi=(jpiglo-2*jpreci + (jpni-1))/jpni + 2*jpreci
-CC-CC      INTEGER,parameter :: jpj=(jpjglo-2*jprecj + (jpnj-1))/jpnj + 2*jprecj
       INTEGER :: jpi,jpj
       INTEGER :: jpim1,  jpjm1,  jpkm1,  jpij
 CC Domain characteristics

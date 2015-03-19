@@ -58,9 +58,6 @@ CC ==================
       WRITE(numout,*) ' '
       ENDIF
 
-      jpkmod=(1+(jpk-1)/jpnij)
-
-
 
       allocate(ilcit(jpni, jpnj)) ; ilcit = huge(ilcit(1,1))
       allocate(ilcjt(jpni, jpnj)) ; ilcjt = huge(ilcjt(1,1))

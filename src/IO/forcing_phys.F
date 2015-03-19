@@ -294,7 +294,6 @@
       SUBROUTINE ACTUALIZE_PHYS(zweigh)
          USE myalloc
          USE OPT_mem
-         USE stafun
          IMPLICIT NONE
          REAL(8) zweigh, Umzweigh
 

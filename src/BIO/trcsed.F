@@ -49,7 +49,6 @@ CC   ----------
        USE myalloc
        USE BIO_mem
        USE SED_mem
-       USE stafun
        USE DIA_mem
        IMPLICIT NONE
 

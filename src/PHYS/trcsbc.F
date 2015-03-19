@@ -4,7 +4,6 @@
 
       USE myalloc
       USE myalloc_mpp
-      USE stafun
 
       IMPLICIT NONE
 

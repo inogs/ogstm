@@ -34,7 +34,6 @@ CC
 CCC   MODIFICATIONS:
 CC   --------------
 
-      USE STAFUN
       USE myalloc
       USE myalloc_mpp
       USE BIO_mem

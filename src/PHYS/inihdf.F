@@ -27,7 +27,6 @@ CC   ----------
 CC      Madec, G. and M. Imbard, 1996, A global ocean mesh to overcome
 CC      the North Pole singularity, Climate Dynamics, 12, 381-388.
        USE myalloc
-       USE stafun
         IMPLICIT NONE
 CC ==================
       INTEGER  jk

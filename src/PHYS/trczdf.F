@@ -60,7 +60,6 @@ CC
        USE myalloc_mpp
        USE ZDF_mem
        USE DIA_mem
-       USE stafun
         IMPLICIT NONE
 
 CC---------------------------------------------------------------------

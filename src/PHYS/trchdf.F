@@ -46,7 +46,6 @@ CCC     MODIFICATION : 00-11 (M.A.Foujols E. Kestenare)
 CCC              differents keys for passive tracer
 CCC
 
-       USE stafun
 
 #ifdef key_trc_hdfbilap
 #include "trchdf.bilaplacian.h"

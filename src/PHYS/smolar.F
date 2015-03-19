@@ -2,7 +2,6 @@
        USE myalloc
        USE myalloc_mpp
        USE ADV_mem
-       USE stafun
        USE DIA_mem
           implicit none
 

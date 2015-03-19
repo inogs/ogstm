@@ -61,23 +61,6 @@
       narea = ME+1
       lwp = narea.EQ.1
 
-
-      call parini(ME)
-
-      call parlec      ! read namelist.init
-      call time_init
-      call trclec
-
-      ! -------------------------
-      call ALLOC_ALL ! Needs Time_Manager
-      ! -------------------------
-
-!    Run parameters
-!    --------------
-      CALL parcst
-      CALL parctl
-
-
       IF(lwp) THEN
           WRITE(numout,*) ' '
           WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
@@ -97,11 +80,24 @@
           WRITE(numout,*) ' '
           WRITE(numout,*) ' '
       ENDIF
+
+      call parini(ME)
+
+      call parlec      ! read namelist.init
+      call time_init
+      call trclec
+
+      ! -------------------------
+      call ALLOC_ALL ! Needs Time_Manager
+      ! -------------------------
+
+!    Run parameters
+!    --------------
+      CALL parcst
+      CALL parctl ! controls consistency between parameters, cpp key and namelists
+
 ! 1. Model general initialization
 ! ===============================
-
-
-
 
 ! ... Large domain
       IF ( jpni*jpnj.EQ.jpnij ) THEN
@@ -115,19 +111,16 @@
       CALL inihdf   !   diffusion horizontal coefficient
 
 !    Passive tracers
-
-
       IF(lwp) THEN
           WRITE(numout,*) ' '
           WRITE(numout,*) ' *** number of passive tracer jptra = ',jptra
           WRITE(numout,*) ' '
       ENDIF
 
-      CALL trcctl ! control consistency between parameters, cpp key and namelists
 
       call trccof ! initialisation of data fields
 
-      CALL trcini ! computes some initialisation
+      CALL trcini ! computes tracer initialisation
 
       CALL trcrst ! read restarts
 

@@ -39,7 +39,7 @@
 
        if(lwp)write(*,*) 'trcwri ------------  rank =',rank,' datestring = ',  datestring
 
-       trcwriparttime = MPI_WTIME() ! F79 cronometer-start
+       trcwriparttime = MPI_WTIME() ! cronometer-start
 
       call mppsync()
 
@@ -170,8 +170,6 @@
         endif ! if rank = 0
       END DO ! DO jn=1,jptra
 
-
-!      qui scriveva il date.step
 
        trcwriparttime = MPI_WTIME() - trcwriparttime
        trcwritottime = trcwritottime + trcwriparttime

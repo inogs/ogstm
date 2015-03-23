@@ -97,7 +97,7 @@
 !      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
 
 
-! F79 Initialization of mbathy
+!      Initialization of mbathy
       mbathy(:,:) = 0
       NWATERPOINTS=0
       do jj=1, jpj

@@ -110,6 +110,13 @@
       enddo
 
 
-
       CLOSE(numnat)
+
+
+      IF(lwp) THEN
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' *** number of passive tracer jptra = ',jptra
+          WRITE(numout,*) ' '
+      ENDIF
+
       END SUBROUTINE trclec

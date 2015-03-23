@@ -99,24 +99,10 @@
 ! 1. Model general initialization
 ! ===============================
 
-! ... Large domain
-      IF ( jpni*jpnj.EQ.jpnij ) THEN
-          CALL inimpp !   ... standard cutting out
-        ELSE
-         STOP
-      ENDIF
-
+      CALL inimpp
 
       CALL domrea   !   Domain
       CALL inihdf   !   diffusion horizontal coefficient
-
-!    Passive tracers
-      IF(lwp) THEN
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' *** number of passive tracer jptra = ',jptra
-          WRITE(numout,*) ' '
-      ENDIF
-
 
       call trccof ! initialisation of data fields
 

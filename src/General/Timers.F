@@ -4,7 +4,7 @@ CC----------------------------------------------------------------------
 CC      cronometer for function calls
 CC -----------------------------------
 
-!      REAL(8) :: dayparttime         =0.0,  daytottime       = 0.0
+
       REAL(8) :: forcing_phys_partTime=0.0, forcing_phys_TotTime = 0.0
       REAL(8) :: forcing_kext_partTime=0.0, forcing_kext_TotTime = 0.0
       REAL(8) :: bc_Co2_partTime      =0.0, bc_Co2_TotTime       = 0.0

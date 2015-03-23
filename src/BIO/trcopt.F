@@ -91,7 +91,7 @@ C
 !$omp end parallel
       END DO
 
-       trcoptparttime = MPI_WTIME() - trcoptparttime !F79 cronometer-stop
+       trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop
        trcopttottime = trcopttottime + trcoptparttime
 
 #    else

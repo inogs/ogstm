@@ -46,7 +46,7 @@
       CALL checkValues
       CALL trcnxt ! tracers: fields at next time step
 
-      trcstpparttime = MPI_WTIME() - trcstpparttime ! F79 cronometer-stop
+      trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime
 
       END SUBROUTINE trcstp

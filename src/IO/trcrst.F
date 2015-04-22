@@ -109,14 +109,14 @@
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,dianm(jn), tra_ppIO(:,:,:,jn) )
+             CALL readnc_slice_double(bkpname,dianm(jn), tra_DIA_IO(:,:,:,jn) )
              if (.not.bkp2hasbeenread) then
                 call get_att_int( bkpname,'ave_counter', ave_counter_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
           else
-             tra_ppIO(:,:,:,jn) = 0.0
+             tra_DIA_IO(:,:,:,jn) = 0.0
           endif
 
           IF (diahf(jn).eq.1)  THEN
@@ -125,14 +125,14 @@
            INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_ppIO_HIGH(:,:,:,jn_high) )
+             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_IO_HIGH(:,:,:,jn_high) )
                     if (.not.bkp1hasbeenread) then
                       call get_att_int( bkpname,'ave_counter', ave_counter_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
            else
-              tra_ppIO_HIGH(:,:,:,jn_high) = 0.0
+              tra_DIA_IO_HIGH(:,:,:,jn_high) = 0.0
            endif
 
           ENDIF

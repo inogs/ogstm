@@ -165,7 +165,7 @@
       DO jn=1, jptra_dia,ntids
 
 !$omp parallel default(none) private(jk,jj,ji,mytid)
-!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_ppIO,tra_pp,Miss_val,Realcounter,Realcounterp1)
+!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
 
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
@@ -176,10 +176,10 @@
             DO jj=1, jpj
                DO ji=1, jpi
                   IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                    tra_ppIO(ji,jj,jk,jn+mytid)=(tra_ppIO(ji,jj,jk,jn+mytid)*Realcounter+
-     &              tra_pp(ji,jj,jk,jn+mytid))*Realcounterp1
+                    tra_DIA_IO(ji,jj,jk,jn+mytid)=(tra_DIA_IO(ji,jj,jk,jn+mytid)*Realcounter+
+     &              tra_DIA(ji,jj,jk,jn+mytid))*Realcounterp1
                   ELSE
-                    tra_ppIO(ji,jj,jk,jn+mytid)=Miss_val
+                    tra_DIA_IO(ji,jj,jk,jn+mytid)=Miss_val
                   ENDIF
                END DO
             END DO
@@ -199,7 +199,7 @@
       DO jn_high=1, jptra_dia_high,ntids
 
 !$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
-!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_ppIO_HIGH,tra_pp,Miss_val,
+!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_DIA_IO_HIGH,tra_DIA,Miss_val,
 !$omp&   Realcounter,Realcounterp1)
 
 #ifdef __OPENMP
@@ -214,10 +214,10 @@
              DO jj=1, jpj
              DO ji=1, jpi
                 IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                   tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=
-     &            (tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_pp(ji,jj,jk,jn_on_all))*Realcounterp1
+                   tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)=
+     &            (tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_DIA(ji,jj,jk,jn_on_all))*Realcounterp1
                 ELSE
-                   tra_ppIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                   tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
                 ENDIF
              END DO
              END DO

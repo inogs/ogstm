@@ -87,7 +87,7 @@
        IF (Rsize .NE. 0) THEN
          DO jn=1, jn_riv,ntids
 !$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx,shift)
-!$omp&                         shared(jn,tra, riv,Rsize, riv_ridxt,tra_matrix_riv,jn_riv,tra_pp)
+!$omp&                         shared(jn,tra, riv,Rsize, riv_ridxt,tra_matrix_riv,jn_riv,tra_DIA)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -117,7 +117,7 @@
        IF (Asize .NE. 0) THEN
          DO jn=1, jn_atm, ntids
 !$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx,shift)
-!$omp&                         shared(jn,tra,atm,Asize, atm_ridxt,tra_matrix_atm,jn_atm,tra_pp)
+!$omp&                         shared(jn,tra,atm,Asize, atm_ridxt,tra_matrix_atm,jn_atm,tra_DIA)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif

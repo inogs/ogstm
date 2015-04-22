@@ -233,9 +233,9 @@
              reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
       if (FREQ_GROUP.eq.1) then
-      tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO_HIGH(relistart:reliend,reljstart:reljend, :,jn_high)
+      tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO_HIGH(relistart:reliend,reljstart:reljend, :,jn_high)
       else
-      tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_ppIO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
+      tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
       endif
              do idrank = 1, size-1
 ! **************  rank 0 is receiving from the others their buffer  ****
@@ -280,7 +280,7 @@
              do jj =1 , jpj
               do ji =1 , jpi
                   ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                  buffpp(ind) = tra_ppIO(ji,jj, jk,jn)
+                  buffpp(ind) = tra_DIA_IO(ji,jj, jk,jn)
               enddo
              enddo
             enddo
@@ -289,7 +289,7 @@
              do jj =1 , jpj
               do ji =1 , jpi
                   ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                  buffpp(ind) = tra_ppIO_HIGH(ji,jj, jk,jn_high)
+                  buffpp(ind) = tra_DIA_IO_HIGH(ji,jj, jk,jn_high)
               enddo
              enddo
             enddo
@@ -333,9 +333,9 @@
       end if ! IF LABEL 4  if(rank == 0)
          if (.not.IsBackup) then
              if (FREQ_GROUP.eq.2) then
-                tra_ppIO(:,:,:,jn) = 0.
+                tra_DIA_IO(:,:,:,jn) = 0.
               else
-                tra_ppIO_HIGH(:,:,:,jn_high) = 0.
+                tra_DIA_IO_HIGH(:,:,:,jn_high) = 0.
               endif
           endif
       enddo  ! loop in jn

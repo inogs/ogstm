@@ -104,7 +104,7 @@ C
          ENDDO
 
          DO jn=1, jptra_dia, ntids
-!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_pp,jpi,jpj,jpk,jn)
+!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_DIA,jpi,jpj,jpk,jn)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -112,7 +112,7 @@ C
             do jk=1,jpk
             do jj=1,jpj
             do ji=1,jpi
-               tra_pp(ji,jj,jk,jn+mytid)=0.
+               tra_DIA(ji,jj,jk,jn+mytid)=0.
             end do
             end do
             end do
@@ -127,7 +127,7 @@ C
 !$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_pp,tra,rho,opa_ice,opa_co2,idxt2glo)
+!$omp&             sediPI,PH,tra_DIA,tra,rho,opa_ice,opa_co2,idxt2glo)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -179,7 +179,7 @@ C
 ! Last record (jptra_dia) for evaporation rates
 
                           DO jtr=1,jptra_dia
-                             tra_pp(ji,jj,jk,jtr) = d(jtr) ! diagnostic
+                             tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
                           PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined

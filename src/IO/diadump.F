@@ -240,16 +240,16 @@
              do idrank = 1, size-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
-                call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 22,mpi_comm_world, status, ierr) !* first info to know where idrank is working
-                call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 23,mpi_comm_world, status, ierr)
-                call MPI_RECV(istart     , 1,                 mpi_integer, idrank, 24,mpi_comm_world, status, ierr)
-                call MPI_RECV(jstart     , 1,                 mpi_integer, idrank, 25,mpi_comm_world, status, ierr)
-                call MPI_RECV(iPe        , 1,                 mpi_integer, idrank, 26,mpi_comm_world, status, ierr)
-                call MPI_RECV(jPe        , 1,                 mpi_integer, idrank, 27,mpi_comm_world, status, ierr)
-                call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 28,mpi_comm_world, status, ierr)
-                call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 29,mpi_comm_world, status, ierr)
+                call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 32,mpi_comm_world, status, ierr) !* first info to know where idrank is working
+                call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 33,mpi_comm_world, status, ierr)
+                call MPI_RECV(istart     , 1,                 mpi_integer, idrank, 34,mpi_comm_world, status, ierr)
+                call MPI_RECV(jstart     , 1,                 mpi_integer, idrank, 35,mpi_comm_world, status, ierr)
+                call MPI_RECV(iPe        , 1,                 mpi_integer, idrank, 36,mpi_comm_world, status, ierr)
+                call MPI_RECV(jPe        , 1,                 mpi_integer, idrank, 37,mpi_comm_world, status, ierr)
+                call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 38,mpi_comm_world, status, ierr)
+                call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 39,mpi_comm_world, status, ierr)
 
-                call MPI_RECV(buffDIA2d,jpi_rec*jpj_rec      ,mpi_real8,idrank, 67,mpi_comm_world, status, ierr)
+                call MPI_RECV(buffDIA2d,jpi_rec*jpj_rec      ,mpi_real8,idrank, 40,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
@@ -265,6 +265,7 @@
                   tottrnIO2d (ji,jj)= buffDIA2d(ind)
                  enddo
                 enddo
+
              enddo !idrank = 1, size-1
 
       ELSE ! ranks 1 --> size-1
@@ -286,17 +287,16 @@
              enddo
       endif
 
-              call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
-              call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
-              call MPI_SEND(nimpp, 1,mpi_integer, 0, 3, mpi_comm_world,ierr)
-              call MPI_SEND(njmpp, 1,mpi_integer, 0, 4, mpi_comm_world,ierr)
-              call MPI_SEND(nlei , 1,mpi_integer, 0, 5, mpi_comm_world,ierr)
-              call MPI_SEND(nlej , 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
-              call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
-              call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
+              call MPI_SEND(jpi  , 1,mpi_integer, 0, 32, mpi_comm_world,ierr)
+              call MPI_SEND(jpj  , 1,mpi_integer, 0, 33, mpi_comm_world,ierr)
+              call MPI_SEND(nimpp, 1,mpi_integer, 0, 34, mpi_comm_world,ierr)
+              call MPI_SEND(njmpp, 1,mpi_integer, 0, 35, mpi_comm_world,ierr)
+              call MPI_SEND(nlei , 1,mpi_integer, 0, 36, mpi_comm_world,ierr)
+              call MPI_SEND(nlej , 1,mpi_integer, 0, 37, mpi_comm_world,ierr)
+              call MPI_SEND(nldi , 1,mpi_integer, 0, 38, mpi_comm_world,ierr)
+              call MPI_SEND(nldj , 1,mpi_integer, 0, 39, mpi_comm_world,ierr)
 
-
-             call MPI_SEND(buffDIA2d, jpi*jpj      ,mpi_real8, 0, 67, mpi_comm_world,ierr)
+             call MPI_SEND(buffDIA2d, jpi*jpj   ,mpi_real8, 0, 40, mpi_comm_world,ierr)
 
       ENDIF
 
@@ -314,6 +314,7 @@
 
               endif
       end if ! if(rank == 0)
+
          if (.not.IsBackup) then
              if (FREQ_GROUP.eq.2) then
                 tra_DIA_2d_IO(:,:,jn) = 0.

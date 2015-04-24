@@ -347,3 +347,13 @@
 
 / 
 
+&NATTRC_DIAG_2D
+   dianm_2d(1)="EpCO2air"
+   diaun_2d(1)="mg C/m3/d"
+   diahf_2d(1)=1 
+
+   dianm_2d(2)="kpp"
+   diaun_2d(2)="mg C/m3/d"
+   diahf_2d(2)=0 
+
+/

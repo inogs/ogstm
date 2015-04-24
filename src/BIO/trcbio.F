@@ -120,6 +120,7 @@ C
 !$omp end parallel
          ENDDO
 
+      tra_DIA_2d=0.
 
       MAIN_LOOP: DO  jb = 1, NBFMPOINTS, ntids
 

@@ -157,6 +157,9 @@
 
 !     *****************  END PHYS *************************************************
 
+
+!     *****************  DIAGNOSTICS **********************************************
+
 !     FIRST, LOW FREQUENCY
 
       Realcounter   =    REAL(ave_counter_2  , 8)
@@ -187,6 +190,22 @@
       ENDIF
 
 !$omp    end parallel
+      END DO
+
+!     *********************  DIAGNOSTICS 2D **********
+      DO jn=1, jptra_dia_2d
+
+            DO jj=1, jpj
+               DO ji=1, jpi
+                  IF(tmask(ji,jj,1) .NE. 0.) THEN ! Warning ! Tested only for surface
+                    tra_DIA_2d_IO(ji,jj,jn)=(tra_DIA_2d_IO(ji,jj,jn)*Realcounter+
+     &              tra_DIA_2d(ji,jj,jn))*Realcounterp1
+                  ELSE
+                    tra_DIA_2d_IO(ji,jj,jn)=Miss_val
+                  ENDIF
+               END DO
+            END DO
+
       END DO
 
 
@@ -227,6 +246,23 @@
 !$omp    end parallel
       END DO
 
+!     *********************  DIAGNOSTICS 2D **********
+
+      DO jn_high=1, jptra_dia2d_high
+             jn_on_all = highfreq_table_dia2d(jn_high)
+
+             DO jj=1, jpj
+             DO ji=1, jpi
+                IF(tmask(ji,jj,1) .NE. 0.) THEN
+                   tra_DIA_2d_IO_HIGH(ji,jj,jn_high)=
+     &            (tra_DIA_2d_IO_HIGH(ji,jj,jn_high)*Realcounter+tra_DIA_2d(ji,jj,jn_on_all))*Realcounterp1
+                ELSE
+                   tra_DIA_2d_IO_HIGH(ji,jj,jn_high)=Miss_val
+                ENDIF
+             END DO
+             END DO
+
+      END DO
 
 
       ave_partTime = MPI_WTIME() - ave_partTime

@@ -29,7 +29,7 @@
 
       namelist /NATTRC/       ctrcnm, ctrcun, ctrmax,ctr_hf
       namelist /NATTRC_DIAG/   dianm,  diaun,         diahf
-
+      namelist /NATTRC_DIAG_2d/   dianm_2d,  diaun_2d,  diahf_2d
 
       IF(lwp) THEN
           WRITE(numout,*) ' '
@@ -108,6 +108,36 @@
             if (lwp) WRITE(numout,*) dianm(ji), ' belongs only to low freq group'
           ENDIF
       enddo
+
+
+
+
+!      ***********  namelist nattrc_diag_2d DIAGNOSTIC VARIABLES surface or bottom:
+
+      REWIND(numnat)
+      READ(numnat,nattrc_diag_2d)
+
+      jptra_dia2d_high= 0
+      do ji =1, jptra_dia_2d
+          IF (diahf_2d(ji).eq.1) jptra_dia2d_high = jptra_dia2d_high + 1
+      ENDDO
+
+      if (lwp) write(*,*) 'High freq diagnostics number 2d:', jptra_dia2d_HIGH
+      allocate(highfreq_table_dia2d(jptra_dia2d_HIGH))
+
+      jptra_dia2d_high = 0
+
+      do ji =1, jptra_dia_2d
+          IF (diahf_2d(ji).eq.1) then
+            jptra_dia2d_high = jptra_dia2d_high + 1
+            highfreq_table_dia2d(jptra_dia2d_high) = ji
+            if (lwp) WRITE(numout,*) dianm_2d(ji), ' belongs also to high freq group'
+          ELSE
+            if (lwp) WRITE(numout,*) dianm_2d(ji), ' belongs only to low freq group'
+          ENDIF
+      enddo
+
+
 
 
       CLOSE(numnat)

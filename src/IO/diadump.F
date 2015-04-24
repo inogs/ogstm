@@ -208,7 +208,123 @@
       endif !if ( freq_ave_phys.eq.FREQ_GROUP)
 
 
-! ******************  DIAGNOSTIC OUTPUT   *******************
+
+
+! ******************  DIAGNOSTIC OUTPUT   2D *******************
+      DO jn = 1, JPTRA_DIA_2D
+
+          if (.not.is_time_to_save(jn,FREQ_GROUP)) CYCLE
+          if (FREQ_GROUP.eq.1) jn_high = jn_high+1
+      if (rank == 0) then
+  ! ******* rank 0 sets indexes of tot matrix where to place its own part
+
+             iPd    = nldi
+             iPe    = nlei
+             jPd    = nldj
+             jPe    = nlej
+             istart = nimpp
+             jstart = njmpp
+             irange    = iPe - iPd + 1
+             jrange    = jPe - jPd + 1
+             totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
+             totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
+             relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
+             reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+
+              if (FREQ_GROUP.eq.1) then
+              tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO_HIGH(relistart:reliend,reljstart:reljend,jn_high)
+              else
+              tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO(     relistart:reliend,reljstart:reljend,jn)
+              endif
+
+             do idrank = 1, size-1
+! **************  rank 0 is receiving from the others their buffer  ****
+
+                call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 22,mpi_comm_world, status, ierr) !* first info to know where idrank is working
+                call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 23,mpi_comm_world, status, ierr)
+                call MPI_RECV(istart     , 1,                 mpi_integer, idrank, 24,mpi_comm_world, status, ierr)
+                call MPI_RECV(jstart     , 1,                 mpi_integer, idrank, 25,mpi_comm_world, status, ierr)
+                call MPI_RECV(iPe        , 1,                 mpi_integer, idrank, 26,mpi_comm_world, status, ierr)
+                call MPI_RECV(jPe        , 1,                 mpi_integer, idrank, 27,mpi_comm_world, status, ierr)
+                call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 28,mpi_comm_world, status, ierr)
+                call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 29,mpi_comm_world, status, ierr)
+
+                call MPI_RECV(buffDIA2d,jpi_rec*jpj_rec      ,mpi_real8,idrank, 67,mpi_comm_world, status, ierr)
+
+! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
+                irange    = iPe - iPd + 1
+                jrange    = jPe - jPd + 1
+                totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
+                totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
+                relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
+                reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+
+                do jj =totjstart,totjend ! only 2d vars
+                 do ji =totistart,totiend
+                  ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart -1)*jpi_rec
+                  tottrnIO2d (ji,jj)= buffDIA2d(ind)
+                 enddo
+                enddo
+             enddo !idrank = 1, size-1
+
+      ELSE ! ranks 1 --> size-1
+
+
+      if (FREQ_GROUP.eq.2) then
+            do jj =1 , jpj
+             do ji =1 , jpi
+               ind           = ji + jpi * (jj-1)
+               buffDIA2d (ind)= tra_DIA_2d_IO(ji,jj,jn)
+              enddo
+             enddo
+      else
+            do jj =1 , jpj
+             do ji =1 , jpi
+               ind           = ji + jpi * (jj-1)
+               buffDIA2d (ind)= tra_DIA_2d_IO_high(ji,jj,jn_high)
+              enddo
+             enddo
+      endif
+
+              call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
+              call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
+              call MPI_SEND(nimpp, 1,mpi_integer, 0, 3, mpi_comm_world,ierr)
+              call MPI_SEND(njmpp, 1,mpi_integer, 0, 4, mpi_comm_world,ierr)
+              call MPI_SEND(nlei , 1,mpi_integer, 0, 5, mpi_comm_world,ierr)
+              call MPI_SEND(nlej , 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
+              call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
+              call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
+
+
+             call MPI_SEND(buffDIA2d, jpi*jpj      ,mpi_real8, 0, 67, mpi_comm_world,ierr)
+
+      ENDIF
+
+      if (rank == 0) then
+              var        =  dianm_2d(jn)
+              bkpname     = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
+              dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
+
+              if (IsBackup) then
+                 !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
+                 CALL WRITE_AVE_2d_BKP(bkpname,datefrom, dateTo,tottrnIO2d, ave_counter);
+              else
+                 d2f2d = REAL(tottrnIO2d(:,:),4)
+                 CALL WRITE_AVE_2d(dia_file_nc,datefrom,dateTo, d2f2d);
+
+              endif
+      end if ! if(rank == 0)
+         if (.not.IsBackup) then
+             if (FREQ_GROUP.eq.2) then
+                tra_DIA_2d_IO(:,:,jn) = 0.
+              else
+                tra_DIA_2d_IO_HIGH(:,:,jn_high) = 0.
+              endif
+          endif
+
+      ENDDO ! on jn
+
+! ******************  3D DIAGNOSTIC OUTPUT   *******************
       DO jn =1 , jptra_dia
 
           if (.not.is_time_to_save(jn,FREQ_GROUP)) CYCLE
@@ -249,7 +365,7 @@
                 call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 28,mpi_comm_world, status, ierr)
                 call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 29,mpi_comm_world, status, ierr)
 
-                call MPI_RECV(buffpp  ,jpi_rec*jpj_rec*jpk*jptra_dia,mpi_real8,idrank, 30,mpi_comm_world, status, ierr)
+                call MPI_RECV(buffDIA  ,jpi_rec*jpj_rec*jpk*jptra_dia,mpi_real8,idrank, 30,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
@@ -264,7 +380,7 @@
                      do jj =totjstart,totjend
                         do ji =totistart,totiend
                            ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-                           tottrnIO(ji,jj,jk)= buffpp (ind)
+                           tottrnIO(ji,jj,jk)= buffDIA (ind)
                         enddo
                      enddo
                   enddo
@@ -280,7 +396,7 @@
              do jj =1 , jpj
               do ji =1 , jpi
                   ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                  buffpp(ind) = tra_DIA_IO(ji,jj, jk,jn)
+                  buffDIA(ind) = tra_DIA_IO(ji,jj, jk,jn)
               enddo
              enddo
             enddo
@@ -289,7 +405,7 @@
              do jj =1 , jpj
               do ji =1 , jpi
                   ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                  buffpp(ind) = tra_DIA_IO_HIGH(ji,jj, jk,jn_high)
+                  buffDIA(ind) = tra_DIA_IO_HIGH(ji,jj, jk,jn_high)
               enddo
              enddo
             enddo
@@ -306,7 +422,7 @@
               call MPI_SEND(nldi , 1,mpi_integer, 0, 28, mpi_comm_world,ierr)
               call MPI_SEND(nldj , 1,mpi_integer, 0, 29, mpi_comm_world,ierr)
 
-              call MPI_SEND(buffpp  , jpi*jpj*jpk,mpi_real8, 0, 30, mpi_comm_world,ierr)
+              call MPI_SEND(buffDIA  , jpi*jpj*jpk,mpi_real8, 0, 30, mpi_comm_world,ierr)
 
 
 

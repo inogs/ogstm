@@ -101,6 +101,8 @@
 
       END DO
 
+
+! ******************** 3D DIAGNOSTICS  ***********************************
       jn_high=0
       DO jn=1, jptra_dia
 
@@ -136,10 +138,54 @@
            endif
 
           ENDIF
+      END DO
+
+
+! ******************** 2D DIAGNOSTICS  ***********************************
+
+      jn_high=0
+      DO jn=1, jptra_dia_2d
+
+          bkpname    = 'AVE_FREQ_2/ave.'//DateStart//'.'//trim(dianm_2d(jn))//'.nc.bkp'
+          INQUIRE(FILE=bkpname, EXIST=existFile)
+
+          if (existFile) then
+             if (lwp) write(*,*) 'reading ', bkpname
+             CALL readnc_slice_double(bkpname,dianm_2d(jn), tra_DIA_2d_IO(:,:,jn) )
+             if (.not.bkp2hasbeenread) then
+                call get_att_int( bkpname,'ave_counter', ave_counter_2)
+                call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
+                bkp2hasbeenread=.true.
+             endif
+          else
+             tra_DIA_2d_IO(:,:,jn) = 0.0
+          endif
+
+          IF (diahf_2d(jn).eq.1)  THEN
+           jn_high = jn_high + 1
+           bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm_2d(jn))//'.nc.bkp'
+           INQUIRE(FILE=bkpname, EXIST=existFile)
+           if (existFile) then
+             if (lwp) write(*,*) 'reading ', bkpname
+             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_2d_IO_HIGH(:,:,jn_high) )
+                    if (.not.bkp1hasbeenread) then
+                      call get_att_int( bkpname,'ave_counter', ave_counter_1)
+                      call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
+                      bkp1hasbeenread=.true.
+                    endif
+           else
+              tra_DIA_2d_IO_HIGH(:,:,jn_high) = 0.0
+           endif
+
+          ENDIF
 
 
 
       END DO
+
+
+
+
 
       bkpname    = 'AVE_PHYS/ave.'//DateStart//'.phys.nc.bkp'
       INQUIRE(FILE=bkpname, EXIST=existFilebkp)

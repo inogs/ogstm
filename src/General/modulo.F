@@ -32,6 +32,7 @@ CC      nlcit, nlcjt() : dimensions of every subdomain
 CC      nldit, nldjt() : first, last indoor index for each i-domain
 CC      nleit, nlejt() : first, last indoor index for each j-domain
 CC      mindi, mindj() : indexes array of the subdomain
+      INTEGER, PARAMETER :: jptra_dia_2d = 2 ! Temporary ! It will be soon in an include file
 
       INTEGER, PARAMETER :: nizoom=1,  njzoom=1
       INTEGER nimpp,njmpp
@@ -241,6 +242,9 @@ CC PASSIVE TRACER MODEL
           CHARACTER(LEN=20) :: dianm(jptra_dia)
           CHARACTER(LEN=20) :: diaun(jptra_dia)
           INTEGER           :: diahf(jptra_dia)
+          CHARACTER(LEN=20) :: dianm_2d(jptra_dia_2d)
+          CHARACTER(LEN=20) :: diaun_2d(jptra_dia_2d)
+          INTEGER           :: diahf_2d(jptra_dia_2d)
 
 CC    parameters for the control of passive tracers
 
@@ -249,7 +253,7 @@ CC    parameters for the control of passive tracers
       REAL(8) ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
       LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
-      INTEGER :: jptra_high, jptra_dia_high
+      INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
       INTEGER :: ctr_hf(jptra)
 
       INTEGER freq_ave_phys
@@ -260,6 +264,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  trn(:,:,:,:)
       REAL(8), allocatable ::  tra(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA(:,:,:,:)
+      REAL(8), allocatable ::  tra_DIA_2d(:,:,:)
       REAL(8), allocatable ::  traIO(:,:,:,:)
       REAL(8), allocatable ::  traIO_HIGH(:,:,:,:)
       REAL(8), allocatable ::  snIO(:,:,:) 
@@ -273,10 +278,13 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  avtIO(:,:,:) 
       REAL(8), allocatable ::  tra_DIA_IO(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
+      REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
+      REAL(8), allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
       REAL(8), allocatable :: tottrn(:,:,:)
       REAL(8), allocatable :: tottrb(:,:,:)
 
       REAL(8), allocatable ::  tottrnIO(:,:,:) ! matrix for i/o writing(trcdit.F)
+      REAL(8), allocatable ::  tottrnIO2d(:,:)
       REAL(8), allocatable ::  tottrbIO(:,:,:)
       REAL(8), allocatable ::  totsnIO(:,:,:) 
       REAL(8), allocatable ::  tottnIO(:,:,:) 
@@ -293,7 +301,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  trb(:,:,:,:)
       REAL(8), allocatable ::  buf(:,:,:)
       REAL(8), allocatable ::  buf2(:,:)
-      INTEGER, allocatable, dimension(:) :: highfreq_table,highfreq_table_dia
+      INTEGER, allocatable, dimension(:) :: highfreq_table,highfreq_table_dia, highfreq_table_dia2d
 
 CC----------------------------------------------------------------------
 CC
@@ -502,6 +510,7 @@ C     no mpp
        allocate(trn(jpi,jpj,jpk,jptra))                    ; trn    = huge(trn(1,1,1,1))
        allocate(tra(jpi,jpj,jpk,jptra))                    ; tra    = huge(trn(1,1,1,1))
        allocate(tra_DIA(jpi,jpj,jpk,jptra_dia))            ; tra_DIA= huge(tra_DIA(1,1,1,1))
+       allocate(tra_DIA_2d(jpi,jpj,jptra_dia_2d))          ; tra_DIA_2d= huge(tra_DIA_2d(1,1,1))
        if (lwp) allocate(tottrn(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrn = huge(tottrn(1,1,1)) 
        if (lwp) allocate(tottrb(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrb = huge(tottrb(1,1,1))
        allocate(traIO(jpi,jpj,jpk,jptra))                  ; traIO  = huge(traIO(1,1,1,1)) 
@@ -516,10 +525,12 @@ C     no mpp
        allocate(avtIO (jpi,jpj,jpk))                       ; avtIO         = huge(avtIO(1,1,1))
        allocate(buf   (jpi,jpj,jpk))                       ; buf           = huge(buf(1,1,1))
        allocate(buf2   (jpi,jpj))                          ; buf2          = huge(buf2(1,1))
-       allocate(tra_DIA_IO(jpi,jpj,jpk,jptra_dia))         ; tra_DIA_IO      = huge(tra_DIA_IO(1,1,1,1))
+       allocate(tra_DIA_IO(jpi,jpj,jpk,jptra_dia))         ; tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
        allocate(traIO_HIGH(   jpi,jpj,jpk,jptra_HIGH))     ; traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
        allocate(tra_DIA_IO_HIGH(jpi,jpj,jpk,jptra_dia_HIGH));tra_DIA_IO_HIGH = huge(tra_DIA_IO_HIGH(1,1,1,1))
 
+       allocate(tra_DIA_2d_IO(jpi,jpj,jptra_dia_2d))       ; tra_DIA_2d_IO    = huge(tra_DIA_2d_IO(1,1,1))
+       allocate(tra_DIA_2d_IO_HIGH(jpi,jpj,jptra_dia2d_HIGH));tra_DIA_2d_IO_HIGH = huge(tra_DIA_2d_IO_HIGH(1,1,1))
 
 
 
@@ -535,7 +546,7 @@ C     no mpp
        if (lwp)  allocate(totwnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totwnIO   = huge(totwnIO(1,1,1))  
        if (lwp)  allocate(totavtIO(jpiglo,jpjglo,jpk)) ; if (lwp) totavtIO  = huge(totavtIO(1,1,1)) 
        if (lwp)  allocate(tottmaIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottmaIO  = huge(tottmaIO(1,1,1)) 
-
+       if (lwp)  allocate(tottrnIO2d(jpiglo,jpjglo))   ; if (lwp) tottrnIO2d= huge(tottrnIO2d(1,1))
 
        allocate(trb(jpi,jpj,jpk,jptra))              ; trb        = huge(trb(1,1,1,1))
 

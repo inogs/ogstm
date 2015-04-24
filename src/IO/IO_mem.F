@@ -36,7 +36,8 @@
       REAL(8), allocatable :: buffavt(:)
       REAL(8), allocatable :: bufftma(:)
       REAL(8), allocatable :: bufftrIO(:)
-      REAL(8), allocatable :: buffpp(:)
+      REAL(8), allocatable :: buffDIA(:)
+      REAL(8), allocatable :: buffDIA2d(:)
       REAL(4), allocatable :: d2f3d(:,:,:)
       REAL(4), allocatable :: d2f2d(:,:)
 !----------------------------------------------------------------------
@@ -65,7 +66,8 @@
        allocate(buffavt   (jpi_max* jpj_max* jpk)) ; buffavt   = huge(buffavt(1))
        allocate(bufftma   (jpi_max* jpj_max* jpk)) ; bufftma   = huge(bufftma(1))
        allocate(bufftrIO  (jpi_max* jpj_max* jpk)) ; bufftrIO  = huge(bufftrIO(1))
-       allocate(buffpp    (jpi_max* jpj_max* jpk)) ; buffpp    = huge(buffpp(1))
+       allocate(buffDIA   (jpi_max* jpj_max* jpk)) ; buffDIA   = huge(buffDIA(1))
+       allocate(buffDIA2d (jpi_max* jpj_max     )) ; buffDIA2d = huge(buffDIA2d(1))
 
        if (lwp) then
        allocate(d2f3d     (jpiglo,jpjglo,jpk))     ; d2f3d     = huge(d2f3d(1,1,1))

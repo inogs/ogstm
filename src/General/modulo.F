@@ -32,7 +32,6 @@ CC      nlcit, nlcjt() : dimensions of every subdomain
 CC      nldit, nldjt() : first, last indoor index for each i-domain
 CC      nleit, nlejt() : first, last indoor index for each j-domain
 CC      mindi, mindj() : indexes array of the subdomain
-      INTEGER, PARAMETER :: jptra_dia_2d = 2 ! Temporary ! It will be soon in an include file
 
       INTEGER, PARAMETER :: nizoom=1,  njzoom=1
       INTEGER nimpp,njmpp

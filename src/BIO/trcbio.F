@@ -46,7 +46,7 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       LOGICAL sur,bot
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10)
+      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
@@ -125,7 +125,7 @@ C
       MAIN_LOOP: DO  jb = 1, NBFMPOINTS, ntids
 
 
-!$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,er)
+!$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
 !$omp&             sediPI,PH,tra_DIA,tra,rho,opa_ice,opa_co2,idxt2glo)
@@ -167,7 +167,11 @@ C
 
                           call EcologyDynamics()
 
-                          call BFM0D_Output_EcologyDynamics(b, c, d)
+                          if (sur) then
+                             call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2)
+                           else
+                              call BFM0D_Output_EcologyDynamics(b, c, d)
+                           endif
 
                           DO jtr=1, jtrmax
                              tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend
@@ -182,6 +186,13 @@ C
                           DO jtr=1,jptra_dia
                              tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
+
+                          if (sur) then
+                              DO jtr=1,jptra_dia_2d
+                                 write(*,*) 'SURF = ', d2(jtr)
+                                 tra_DIA_2d(ji,jj,jtr) = d2(jtr) ! diagnostic
+                              END DO
+                          endif
 
                           PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 

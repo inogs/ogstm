@@ -1,22 +1,5 @@
 
-&natnum    rsc            =    1.,
-            rtrn          = 1.e-25,
-            ndttrc        = 1,
-            lhdf          = .true.,
-            crosster      = .false. ,
-            vsed          = 3.0,
-            photop        = .false.
-            atlantic_bfm  = .true.
-            bottom_flux   = 1.
-/
-
-
-
-&NATTRC
-   nwritetrc = 100,
-   lrsttr = .true.,
-   nrsttr = 0 ,
-   
+&NATTRC   
    ctrcnm(1)="O2o"
    ctrcun(1)="mmol O2/m3"
    ctrcnm(2)="N1p"
@@ -354,8 +337,13 @@
 
 /
 
-&NATISO
-   ahtrb0 =     0. ,
+
+&NATTRC_DIAG_2D   
+   dianm(1)="EPCO2air"
+   diaun(1)="C"
+   dianm(2)="CO2airflux"
+   diaun(2)="-"
 /
+
 
 

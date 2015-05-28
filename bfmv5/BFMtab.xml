@@ -174,4 +174,18 @@
 <var name="resMIZ2c"     highfreq="false" ></var> 
 </Diagnostics>
 
+
+<Diagnostics_2D>
+<var name="EPCO2air"   highfreq="false" ></var>
+<var name="CO2airflux" highfreq="false" ></var>
+<var name="Area2d"   highfreq="false" ></var>
+<var name="ThereIsLight" highfreq="false" ></var>
+<var name="SUNQ" highfreq="false" ></var>
+<var name="totsysc" highfreq="false" ></var>
+<var name="totsysn" highfreq="false" ></var>
+<var name="EWIND" highfreq="false" ></var>
+<var name="totsysp" highfreq="false" ></var>
+<var name="totsyss" highfreq="false" ></var>
+<var name="EICE" highfreq="false" ></var>
+</Diagnostics_2D>
 </root>

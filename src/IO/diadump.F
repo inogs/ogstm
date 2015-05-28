@@ -45,7 +45,6 @@
          forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc'
       endif
 
-      jn_high = 0
 
       SELECT CASE (FREQ_GROUP)
         CASE (1) ; ave_counter=ave_counter_1 ; DIR='AVE_FREQ_1/'
@@ -209,11 +208,12 @@
 
 
 
+      jn_high = 0
 
 ! ******************  DIAGNOSTIC OUTPUT   2D *******************
       DO jn = 1, JPTRA_DIA_2D
 
-          if (.not.is_time_to_save(jn,FREQ_GROUP)) CYCLE
+          if (.not.is_time_to_save(jn,FREQ_GROUP,2)) CYCLE
           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
       if (rank == 0) then
   ! ******* rank 0 sets indexes of tot matrix where to place its own part
@@ -325,10 +325,12 @@
 
       ENDDO ! on jn
 
+
+      jn_high = 0
 ! ******************  3D DIAGNOSTIC OUTPUT   *******************
       DO jn =1 , jptra_dia
 
-          if (.not.is_time_to_save(jn,FREQ_GROUP)) CYCLE
+          if (.not.is_time_to_save(jn,FREQ_GROUP,3)) CYCLE
           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
           if (rank == 0) then                    ! IF LABEL 1
@@ -473,19 +475,20 @@
 
       CONTAINS
 
-      LOGICAL FUNCTION IS_TIME_TO_SAVE(jn,FREQ_GROUP)
+      LOGICAL FUNCTION IS_TIME_TO_SAVE(jn,FREQ_GROUP,ndims)
       IMPLICIT NONE
 
-      integer jn, FREQ_GROUP
+      integer jn, FREQ_GROUP,ndims
 
       IF (FREQ_GROUP.eq.2) then
          IS_TIME_TO_SAVE = .true.
       ELSE
-        IF (diahf(jn).eq.1) then
-            IS_TIME_TO_SAVE = .true.
+        IS_TIME_TO_SAVE = .false.
+        IF (ndims==3) then
+            IF (diahf(jn).eq.1)   IS_TIME_TO_SAVE = .true.
         ELSE
-           IS_TIME_TO_SAVE = .false.
-         ENDIF
+           IF (diahf_2d(jn).eq.1) IS_TIME_TO_SAVE = .true.
+        ENDIF
       ENDIF
       END FUNCTION IS_TIME_TO_SAVE
 

@@ -297,63 +297,54 @@
    diaun(10)="uatm"
    diahf(10)=0 
 
-   dianm(11)="CO2airflux"
-   diaun(11)="mmolC/m2/d"
+   dianm(11)="dALK_NO3_PO4"
+   diaun(11)="mmol eq/m3/d"
    diahf(11)=0 
 
-   dianm(12)="dALK_NO3_PO4"
+   dianm(12)="dALK_NH4"
    diaun(12)="mmol eq/m3/d"
    diahf(12)=0 
 
-   dianm(13)="dALK_NH4"
-   diaun(13)="mmol eq/m3/d"
+   dianm(13)="resPPY1c"
+   diaun(13)="mg C/m3/d"
    diahf(13)=0 
 
-   dianm(14)="resPPY1c"
+   dianm(14)="resPPY2c"
    diaun(14)="mg C/m3/d"
    diahf(14)=0 
 
-   dianm(15)="resPPY2c"
+   dianm(15)="resPPY3c"
    diaun(15)="mg C/m3/d"
    diahf(15)=0 
 
-   dianm(16)="resPPY3c"
+   dianm(16)="resPPY4c"
    diaun(16)="mg C/m3/d"
    diahf(16)=0 
 
-   dianm(17)="resPPY4c"
+   dianm(17)="resPBAc"
    diaun(17)="mg C/m3/d"
    diahf(17)=0 
 
-   dianm(18)="resPBAc"
+   dianm(18)="resMIZ1c"
    diaun(18)="mg C/m3/d"
    diahf(18)=0 
 
-   dianm(19)="resMIZ1c"
+   dianm(19)="resMIZ2c"
    diaun(19)="mg C/m3/d"
    diahf(19)=0 
 
-   dianm(20)="resMIZ2c"
+   dianm(20)="resMEZ1c"
    diaun(20)="mg C/m3/d"
    diahf(20)=0 
 
-   dianm(21)="resMEZ1c"
+   dianm(21)="resMEZ2c"
    diaun(21)="mg C/m3/d"
    diahf(21)=0 
-
-   dianm(22)="resMEZ2c"
-   diaun(22)="mg C/m3/d"
-   diahf(22)=0 
 
 / 
 
 &NATTRC_DIAG_2D
-   dianm_2d(1)="EpCO2air"
-   diaun_2d(1)="mg C/m3/d"
+   dianm_2d(1)="CO2airflux"
+   diaun_2d(1)="mmol/m2/d"
    diahf_2d(1)=1 
-
-   dianm_2d(2)="kpp"
-   diaun_2d(2)="mg C/m3/d"
-   diahf_2d(2)=0 
-
 /

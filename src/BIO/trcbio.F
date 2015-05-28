@@ -189,7 +189,6 @@ C
 
                           if (sur) then
                               DO jtr=1,jptra_dia_2d
-                                 write(*,*) 'SURF = ', d2(jtr)
                                  tra_DIA_2d(ji,jj,jtr) = d2(jtr) ! diagnostic
                               END DO
                           endif

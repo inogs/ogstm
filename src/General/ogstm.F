@@ -20,6 +20,7 @@
 !
 
 
+
 #include "OGSTM_module_list.h"
 #ifdef key_trc_bfm
 #include "BFM_module_list.h"
@@ -27,13 +28,13 @@
 
 
 
-      CALL ogstm_initialize
+      call ogstm_initialize()
 
 
-      CALL step
+      call step
 
 
-      CALL ogstm_finalize
+      call ogstm_finalize()
 
 
 
@@ -43,7 +44,7 @@
 ! *************************************************************
 !      SUBROUTINE ogstm_initialize
 ! *************************************************************
-       SUBROUTINE ogstm_initialize
+       SUBROUTINE ogstm_initialize()
 
 #include "OGSTM_module_list.h"
 
@@ -93,33 +94,31 @@
 
 !    Run parameters
 !    --------------
-      CALL parcst
-      CALL parctl ! controls consistency between parameters, cpp key and namelists
+      call parcst
+      call parctl ! controls consistency between parameters, cpp key and namelists
 
 ! 1. Model general initialization
 ! ===============================
 
-      CALL inimpp
+      call inimpp
 
-      CALL domrea   !   Domain
-      CALL inihdf   !   diffusion horizontal coefficient
+      call domrea        !   Domain
 
-      call trccof ! initialisation of data fields
+      call inihdf        !   diffusion horizontal coefficient
 
-      CALL trcini ! computes tracer initialisation
+      call trccof        ! initialisation of data fields
 
-      CALL trcrst ! read restarts
+      call set_to_zero() ! set to zero some data arrays
 
+      call trcrst        ! read restarts
 
-
-      un        = 0.0
-      vn        = 0.0
-      wn        = 0.0
-      avt       = 0.0
-      tn        = 0.0
-      sn        = 0.0
       call photo_init
 
+! Initialization of Biogeochemical recator with 0D approach
+
+      call BFM0D_NO_BOXES(1,1,1,1,1)
+
+      call Initialize()
 
       END SUBROUTINE ogstm_initialize
 
@@ -266,11 +265,30 @@
 
       END SUBROUTINE photo_init
 
+      SUBROUTINE set_to_zero()
+#include "OGSTM_module_list.h"
+
+       IMPLICIT NONE
+! Physical arrays set to zero
+
+      un        = 0.0
+      vn        = 0.0
+      wn        = 0.0
+      avt       = 0.0
+      tn        = 0.0
+      sn        = 0.0
+! Passive tracers arrays set to zero
+
+      xpar      = 0.0
+      trn       = 0.0
+      tra       = 0.0
+
+      END SUBROUTINE set_to_zero
 
 ! *************************************************************
 !      SUBROUTINE ogstm_finalize
 ! *************************************************************
-       SUBROUTINE ogstm_finalize
+       SUBROUTINE ogstm_finalize()
 
 #include "OGSTM_module_list.h"
 

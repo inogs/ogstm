@@ -37,7 +37,6 @@
       CONTAINS
 !     *******************************************************************
 !     SUBROUTINE alloc_DTATRC
-!     called by myOPA()
 !     *******************************************************************
       SUBROUTINE alloc_DTATRC
       USE TIME_MANAGER

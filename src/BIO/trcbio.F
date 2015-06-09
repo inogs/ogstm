@@ -128,7 +128,7 @@ C
 !$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_DIA,tra,rho,opa_ice,opa_co2,idxt2glo)
+!$omp&             sediPI,PH,tra_DIA,tra,rho,ice,co2,idxt2glo)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -153,8 +153,8 @@ C
                           er(1)  = tn (ji,jj,jk)
                           er(2)  = sn (ji,jj,jk)
                           er(3)  = rho(ji,jj,jk)
-                          er(4)  = opa_ice
-                          er(5)  = opa_co2(ji,jj)
+                          er(4)  = ice
+                          er(5)  = co2(ji,jj)
                           er(6)  = xpar(ji,jj,jk)
                           er(7)  = DAY_LENGTH(ji,jj)
                           er(8)  = e3t(jk)
@@ -180,8 +180,6 @@ C
                           DO jtr=1,4
                              sediPI(ji,jj,jk,jtr) = c(jtr) ! sedimentation velocities
                           END DO
-
-! Last record (jptra_dia) for evaporation rates
 
                           DO jtr=1,jptra_dia
                              tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic

@@ -128,7 +128,7 @@
 
         DO ji=1,jpi
           DO jj=1,jpj
-             opa_co2(ji,jj) = ( (1. - zweigh) * co2_IO(ji,jj,1)+ zweigh     * co2_IO(ji,jj,2) )
+             co2(ji,jj) = ( (1. - zweigh) * co2_IO(ji,jj,1)+ zweigh     * co2_IO(ji,jj,2) )
           END DO
         END DO
 

@@ -146,20 +146,20 @@ C
                           bot = .FALSE.
 
                           DO jtr=1, jtrmax
-                             a(jtr) = trn(ji,jj,jk,jtr)
+                             a(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations
                           END DO
 ! Environmental regulating factors (er)
 
-                          er(1)  = tn (ji,jj,jk)
-                          er(2)  = sn (ji,jj,jk)
-                          er(3)  = rho(ji,jj,jk)
-                          er(4)  = ice
-                          er(5)  = co2(ji,jj)
-                          er(6)  = xpar(ji,jj,jk)
-                          er(7)  = DAY_LENGTH(ji,jj)
-                          er(8)  = e3t(jk)
-                          er(9)  = vatm(ji,jj) * surf_mask(jk)
-                          er(10) = PH(ji,jj,jk)
+                          er(1)  = tn (ji,jj,jk)        ! Temperature (Celsius)
+                          er(2)  = sn (ji,jj,jk)        ! Salinity PSU
+                          er(3)  = rho(ji,jj,jk)        ! Density Kg/m3
+                          er(4)  = ice                  ! from 0 to 1 adimensional
+                          er(5)  = co2(ji,jj)           ! CO2 Mixing Ratios (ppm)  390
+                          er(6)  = xpar(ji,jj,jk)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          er(7)  = DAY_LENGTH(ji,jj)    ! fotoperiod expressed in hours
+                          er(8)  = e3t(jk)              ! depth in meters of the given cell
+                          er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)
+                          er(10) = PH(ji,jj,jk)         ! PH
 
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
@@ -178,7 +178,7 @@ C
                           END DO
 
                           DO jtr=1,4
-                             sediPI(ji,jj,jk,jtr) = c(jtr) ! sedimentation velocities
+                             sediPI(ji,jj,jk,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
                           END DO
 
                           DO jtr=1,jptra_dia

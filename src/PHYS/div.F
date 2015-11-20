@@ -1,6 +1,5 @@
-CC $Header: /cvsroot/opatm-bfm/opa_model/OPA/div.F,v 1.2 2009-09-11 09:20:55 cvsogs01 Exp $
 
-      SUBROUTINE div ( ktask, kt )
+      SUBROUTINE div ()
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE div
@@ -53,12 +52,10 @@ CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
 
-#include "stafun.h"
-
 C Horizontal slab
 C ===============
 
-      DO jk = ktask, jpkm1
+      DO jk = 1, jpkm1
 
 
 C 1. Horizontal fluxes
@@ -103,7 +100,7 @@ C ---------------------------------=======
 #ifdef key_mpp
 C
 C ... Mpp : export boundary values to neighboring processors
-      CALL mpplnk( hdivn, 1, 1 )
+      CALL mpplnk_my( hdivn,1, 1, 1 )
 #  else
 C
 C ... mono or macro-tasking: T-point, 3D array, jk-slab

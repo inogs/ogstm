@@ -135,6 +135,7 @@ CC      bn2n           : brunt-vaisala frequency (s-2)
 CC
       REAL(8), allocatable, dimension(:,:,:) :: un, vn, wn
       REAL(8), allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho,bn2n
+      REAL(8), allocatable, dimension(:,:,:) :: hdivn
 
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -453,6 +454,7 @@ CC----------------------------------------------------------------------
        allocate(rhopn(jpi,jpj,jpk)) ;rhopn  = huge(rhopn(1,1,1))
        allocate(rho(jpi,jpj,jpk))   ;rho    = huge(rho(1,1,1))
        allocate(bn2n(jpi,jpj,jpk))  ;bn2n   = huge(bn2n(1,1,1))
+       allocate(hdivn(jpi,jpj,jpk)) ;hdivn  = huge(hdivn(1,1,1))
 
       allocate(ahtu(jpk)) ;ahtu = huge(ahtu(1))
       allocate(ahtv(jpk)) ;ahtv = huge(ahtv(1))

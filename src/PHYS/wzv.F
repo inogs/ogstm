@@ -1,6 +1,4 @@
-! $Header: /cvsroot/opatm-bfm/opa_model/OPA/wzv.F,v 1.2 2009-09-11 09:20:56 cvsogs01 Exp $
-
-      SUBROUTINE wzv ( ktask, kt )
+      SUBROUTINE wzv ()
 !---------------------------------------------------------------------
 !
 !                       ROUTINE wzv
@@ -41,14 +39,12 @@
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      INTEGER ktask, kt
       INTEGER ji, jj, jk
-#include "stafun.h"
 
 ! Vertical slab
 ! =============
 
-      DO jj = ktask, jpj
+      DO jj = 1, jpj
 
 ! 1. Surface and bottom boundary condition: w=0 (rigid lid and no flux)
 ! ----------------------------------------
@@ -64,7 +60,7 @@
 
         DO jk = jpkm1, 1, -1
           DO ji = 1, jpi
-            wn(ji,jj,jk) = wn(ji,jj,jk+1) - fse3t(ji,jj,jk)*hdivn(ji,jj,jk)
+            wn(ji,jj,jk) = wn(ji,jj,jk+1) - e3t(jk)*hdivn(ji,jj,jk)
           END DO 
         END DO
 

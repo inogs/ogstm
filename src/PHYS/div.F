@@ -67,8 +67,8 @@ C
             zwu(ji,jj) = e2u(ji,jj) * fse3u(ji,jj,jk) * un(ji,jj,jk)
             zwv(ji,jj) = e1v(ji,jj) * fse3v(ji,jj,jk) * vn(ji,jj,jk)
 #  else
-            zwu(ji,jj) = e2u(ji,jj) * un(ji,jj,jk)
-            zwv(ji,jj) = e1v(ji,jj) * vn(ji,jj,jk)
+            zwu(ji,jj) = e2u(ji,jj) * e3u(ji,jj,jk) * un(ji,jj,jk)
+            zwv(ji,jj) = e1v(ji,jj) * e3v(ji,jj,jk) * vn(ji,jj,jk)
 #endif
           END DO
         END DO
@@ -79,7 +79,7 @@ C ------------------------
 C
         DO jj = 2, jpjm1
           DO ji = 2, jpim1
-            zbt = e1t(ji,jj) * e2t(ji,jj)
+            zbt = e1t(ji,jj) * e2t(ji,jj) * e3t(ji,jj,jk)
 #if defined key_s_coord
      $                                    * fse3t(ji,jj,jk)
 #endif

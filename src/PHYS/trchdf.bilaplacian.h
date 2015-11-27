@@ -115,9 +115,9 @@ C ----------------------------------
              DO jj = 1, jpjm1
                DO ji = 1, jpim1
 C   ... z-coordinates, no vertical scale factors
-                  zbtr(ji,jj) = 1. / ( e1t(ji,jj)*e2t(ji,jj) )
-                  zeeu(ji,jj,jk) = e2u(ji,jj) / e1u(ji,jj) * umask(ji,jj,jk)
-                  zeev(ji,jj,jk) = e1v(ji,jj) / e2v(ji,jj) * vmask(ji,jj,jk)
+                  zbtr(ji,jj) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk) )
+                  zeeu(ji,jj,jk) = e2u(ji,jj)*e3u(ji,jj,jk) / e1u(ji,jj) * umask(ji,jj,jk)
+                  zeev(ji,jj,jk) = e1v(ji,jj)*e3v(ji,jj,jk) / e2v(ji,jj) * vmask(ji,jj,jk)
                END DO
              END DO
           END DO

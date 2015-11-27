@@ -60,7 +60,7 @@
 
         DO jk = jpkm1, 1, -1
           DO ji = 1, jpi
-            wn(ji,jj,jk) = wn(ji,jj,jk+1) - e3t(jk)*hdivn(ji,jj,jk)
+            wn(ji,jj,jk) = wn(ji,jj,jk+1) - e3t(ji,jj,jk)*hdivn(ji,jj,jk)
           END DO 
         END DO
 

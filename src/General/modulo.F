@@ -94,10 +94,10 @@ CC -------------------------------------------------------
 CC                  z-coordinate (default option)
 CC                  ------------------------------
 CC      gdept, gdepw() : depth of t- and w-points (m)
-CC      e3t, e3w()     : vertical scale factors at t- and w-points (m)
+CC      e3t_0, e3w_0()     : vertical scale factors at t- and w-points (m)
 CC
-      REAL(8), allocatable :: gdept(:), gdepw(:), e3t(:), e3w(:)
-
+      REAL(8), allocatable :: gdept(:), gdepw(:), e3t_0(:), e3w_0(:)
+      REAL(8), allocatable :: e3t(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
 
 CC----------------------------------------------------------------------
 CC        masks, bathymetry
@@ -430,10 +430,15 @@ CC----------------------------------------------------------------------
       allocate(ff (jpi,jpj))            ;ff       = huge(ff(1,1))
 
 
-      allocate(gdept(jpk)) ;gdept = huge(gdept(1))
-      allocate(gdepw(jpk)) ;gdepw = huge(gdepw(1))
-      allocate(  e3t(jpk)) ;  e3t = huge(e3t(1))
-      allocate(  e3w(jpk)) ;  e3w = huge(e3w(1))
+      allocate(gdept(jpk)) ;  gdept = huge(gdept(1))
+      allocate(gdepw(jpk)) ;  gdepw = huge(gdepw(1))
+      allocate(e3t_0(jpk)) ;  e3t_0 = huge(e3t_0(1))
+      allocate(e3w_0(jpk)) ;  e3w_0 = huge(e3w_0(1))
+
+      allocate(e3t(jpi,jpj,jpk)) ;  e3t = huge(e3t(1,1,1))
+      allocate(e3u(jpi,jpj,jpk)) ;  e3u = huge(e3u(1,1,1))
+      allocate(e3v(jpi,jpj,jpk)) ;  e3v = huge(e3v(1,1,1))
+      allocate(e3w(jpi,jpj,jpk)) ;  e3w = huge(e3w(1,1,1))
 
       allocate(mbathy(jpi,jpj)) ; mbathy = huge(mbathy(1,1))
 

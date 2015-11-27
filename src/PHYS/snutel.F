@@ -133,8 +133,8 @@ C Frequency of correction if plus module of kt
 !          DO jnn=1, nelements(jn)
 !
 !               DO jk = 1,jpk
-!                  TOT(   jv+mytid,jn)=TOT(   jv+mytid,jn) +   tra(ji,jj,jk,idx_element(jnn,jn))*e3t(jk)
-!                  TOT_FN(jv+mytid,jn)=TOT_FN(jv+mytid,jn) +tra_FN(ji,jj,jk,idx_element(jnn,jn))*e3t(jk)
+!                  TOT(   jv+mytid,jn)=TOT(   jv+mytid,jn) +   tra(ji,jj,jk,idx_element(jnn,jn))*e3t(ji,jj,jk)
+!                  TOT_FN(jv+mytid,jn)=TOT_FN(jv+mytid,jn) +tra_FN(ji,jj,jk,idx_element(jnn,jn))*e3t(ji,jj,jk)
 !               END DO
 !           END DO
 !           END DO

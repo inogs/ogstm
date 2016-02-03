@@ -111,8 +111,6 @@
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
-      CALL div          ()               ! Horizontal divergence
-      CALL wzv          ()               ! vertical velocity
 
 
       if (IsAnAveDump(DATEstring,1)) then

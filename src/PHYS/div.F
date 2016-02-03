@@ -64,11 +64,11 @@ C
         DO jj = 1, jpjm1
           DO ji = 1, jpim1
 #if defined key_s_coord 
-            zwu(ji,jj) = e2u(ji,jj) * fse3u(ji,jj,jk) * un(ji,jj,jk)
-            zwv(ji,jj) = e1v(ji,jj) * fse3v(ji,jj,jk) * vn(ji,jj,jk)
+            zwu(ji,jj) = e2u(ji,jj) * fse3u(ji,jj,jk) * udta(ji,jj,jk,2)
+            zwv(ji,jj) = e1v(ji,jj) * fse3v(ji,jj,jk) * vdta(ji,jj,jk,2)
 #  else
-            zwu(ji,jj) = e2u(ji,jj) * e3u(ji,jj,jk) * un(ji,jj,jk)
-            zwv(ji,jj) = e1v(ji,jj) * e3v(ji,jj,jk) * vn(ji,jj,jk)
+            zwu(ji,jj) = e2u(ji,jj) * e3u(ji,jj,jk) * udta(ji,jj,jk,2)
+            zwv(ji,jj) = e1v(ji,jj) * e3v(ji,jj,jk) * vdta(ji,jj,jk,2)
 #endif
           END DO
         END DO
@@ -100,11 +100,11 @@ C ---------------------------------=======
 #ifdef key_mpp
 C
 C ... Mpp : export boundary values to neighboring processors
-      CALL mpplnk_my( hdivn,1, 1, 1 )
+!     CALL mpplnk_my( hdivn,1, 1, 1 )
 #  else
 C
 C ... mono or macro-tasking: T-point, 3D array, jk-slab
-      CALL lbc( hdivn, 1, 1, 1, ktask, jpkm1, 1 )
+!     CALL lbc( hdivn, 1, 1, 1, ktask, jpkm1, 1 )
 #endif
 C
 C

@@ -50,8 +50,8 @@
 ! ----------------------------------------
 
         DO ji = 1, jpi
-          wn(ji,jj, 1 ) = 0.e0
-          wn(ji,jj,jpk) = 0.e0
+          wdta(ji,jj, 1 ,2) = 0.e0
+          wdta(ji,jj,jpk,2) = 0.e0
         END DO  
 
 
@@ -60,7 +60,8 @@
 
         DO jk = jpkm1, 1, -1
           DO ji = 1, jpi
-            wn(ji,jj,jk) = wn(ji,jj,jk+1) - e3t(ji,jj,jk)*hdivn(ji,jj,jk)
+            wdta(ji,jj,jk,2) = wdta(ji,jj,jk+1,2) - e3t(ji,jj,jk)*hdivn(ji,jj,jk)
+!           wn(ji,jj,jk) = wn(ji,jj,jk+1) - e3t(ji,jj,jk)*hdivn(ji,jj,jk)
           END DO 
         END DO
 

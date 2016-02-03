@@ -59,6 +59,7 @@
 
 
 
+
       ENDIF
 
 
@@ -80,6 +81,7 @@
 
 
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After))
+
 
 
 
@@ -196,23 +198,9 @@
 
 
 ! W *********************************************************
-      nomefile = 'FORCINGS/W'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'vovecrtz',buf);
-      DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,wdta,tmask,buf)
-#ifdef __OPENMP
-        mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-         IF (jk+mytid <=jpk) then
-            DO jj= 1,jpj
-            DO ji= 1,jpi
-              wdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
-            ENDDO
-            ENDDO
-         ENDIF
-!$omp end parallel
-      END DO
+     
 
+      nomefile = 'FORCINGS/W'//datestring//'.nc'
       call readnc_slice_float(nomefile,'votkeavt',buf);
       DO jk=1,jpk,ntids!avtdta(:,:,:,2) = buf*tmask;
 !$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf)
@@ -273,6 +261,14 @@
          if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
          flxdta(:,:,jpemp ,2) = 0.
       endif
+      call readnc_slice_float_2d(nomefile,'sossheiu',buf2); flxdta(:,:,8 ,2) = buf2*umask(:,:,1);
+      call readnc_slice_float_2d(nomefile,'sossheiv',buf2); flxdta(:,:,9 ,2) = buf2*vmask(:,:,1);
+      call readnc_slice_float_2d(nomefile,'sossheit',buf2); flxdta(:,:,9 ,2) = buf2*tmask(:,:,1);
+      e3u(:,:,1) = flxdta(:,:,8 ,2);
+      e3v(:,:,1) = flxdta(:,:,9 ,2);
+      e3t(:,:,1) = flxdta(:,:,10 ,2);
+      CALL div()               ! Horizontal divergence
+      CALL wzv()               ! vertical velocity
 
 !        could be written for OpenMP
           DO jk=1,jpk
@@ -283,6 +279,7 @@
               END DO
             END DO
           END DO
+
 
       END SUBROUTINE LOAD_PHYS
 
@@ -377,6 +374,8 @@
                   freeze(ji,uj) = flx(ji,uj,jpice)
                   emp(ji,uj)    = flx(ji,uj,jpemp)
                   qsr(ji,uj)    = flx(ji,uj,jpqsr)
+                  e3u(ji,uj,1)  = flx(ji,uj,8)
+                  e3v(ji,uj,1)  = flx(ji,uj,9)
             END DO
 
         endif

@@ -131,8 +131,8 @@ CC
          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3t(ji,jj,jk) )
-                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3t(ji,jj,jk) )
+                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3u(ji,jj,jk) )
+                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3v(ji,jj,jk) )
                END DO
             END DO
          END DO
@@ -319,8 +319,8 @@ CC
        if (jk+mytid.le.jpk) then
           DO jj = 1,jpj
              DO ji = 1,jpi
-                zaa(ji,jj,jk+mytid) = e2u(ji,jj)*e3t(ji,jj,jk+mytid) * un(ji,jj,jk+mytid)
-                zbb(ji,jj,jk+mytid) = e1v(ji,jj)*e3t(ji,jj,jk+mytid) * vn(ji,jj,jk+mytid)
+                zaa(ji,jj,jk+mytid) = e2u(ji,jj)*e3u(ji,jj,jk+mytid) * un(ji,jj,jk+mytid)
+                zbb(ji,jj,jk+mytid) = e1v(ji,jj)*e3v(ji,jj,jk+mytid) * vn(ji,jj,jk+mytid)
                 zcc(ji,jj,jk+mytid) = e1t(ji,jj)*e2t(ji,jj)      * wn(ji,jj,jk+mytid)
                 big_fact_zaa(ji,jj,jk+mytid) = ( abs(zaa(ji,jj,jk+mytid)) - zdt*zaa(ji,jj,jk+mytid)**2*inv_eu(ji,jj,jk+mytid) )!/(e1u(ji,jj)*e2u(ji,jj)*e3t(ji,jj,jk+mytid) ) )
                 big_fact_zbb(ji,jj,jk+mytid) = ( abs(zbb(ji,jj,jk+mytid)) - zdt*zbb(ji,jj,jk+mytid)**2*inv_ev(ji,jj,jk+mytid) )!/(e1v(ji,jj)*e2v(ji,jj)*e3t(ji,jj,jk+mytid) ) )
@@ -378,7 +378,8 @@ C       calcul of tracer flux in the k direction
 C
            DO jj = 1,jpj
              DO ji = 1,jpi
-               zkz(ji,jj,1,A) = 0.
+!              zkz(ji,jj,1,A) = 0.
+               zkz(ji,jj,1,A) = fsz(trn(ji,jj,1,B),trn(ji,jj,1,B),zcc(ji,jj,1))
              END DO
            END DO
 

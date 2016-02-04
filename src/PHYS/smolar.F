@@ -274,6 +274,28 @@ CC
 
       endif ! end initialization phase
 
+         jk=1
+            DO jj = 2,jpjm1
+               DO ji = 2,jpim1
+                  zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk))
+               END DO
+            END DO
+
+            DO jj = 2,jpjm1
+               DO ji = 2,jpim1
+                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3u(ji,jj,jk) )
+                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3v(ji,jj,jk) )
+               END DO
+            END DO
+
+            DO jj = 2,jpjm1
+               DO ji = 2,jpim1
+                  inv_et(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3w(ji,jj,jk) )
+               END DO
+            END DO
+
+
+
 
 
       zdt = rdt*ndttrc
@@ -637,6 +659,16 @@ C 2.3 calcul of the antidiffusive flux
               END DO
             END DO
 !          END DO
+!!!!!!!!!!!!!!!!! To be checked
+!!          DO jj = 2,jpjm1
+!!            DO ji = 2,jpim1
+!!                junk  = zti(ji,jj,2,A)
+!!                junkk = zti(ji,jj,1,A)
+!!                zz(ji,jj,1,A) = big_fact_zaa(ji,jj,1)*(junk - junkk)/(junk + junkk + rtrn)* rsc*(-1.)
+
+!!            END DO
+!!          END DO
+!!!!!!!!!!!!!!!!! 
 
 !                 if(advmask(ji,jj,jk) .NE. 0) then
 
@@ -723,6 +755,7 @@ C                advection by antidiffusive mass fluxes and an upstream scheme
                    junk  = zti(ji,jj,jk,A)
                    zkx(ji,jj,jk,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
                    zky(ji,jj,jk,A) = fsy(junk,zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
+!!!!!! To be checked   zkz(ji,jj,jk,A) = fsz(junk,junk,zz(ji,jj,jk,A))
                  END DO
               END DO
 

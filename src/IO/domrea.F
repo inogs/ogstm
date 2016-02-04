@@ -127,6 +127,11 @@
       CALL readnc_slice_double (maskfile,'e3v', e3v )
       CALL readnc_slice_double (maskfile,'e3w', e3w )
 
+      flxdta(:,:,8 ,2)  = e3u(:,:,1)
+      flxdta(:,:,9 ,2)  = e3v(:,:,1)
+      flxdta(:,:,10 ,2) = e3t(:,:,1)
+
+
 !       Restoration Mask ****************
 
 

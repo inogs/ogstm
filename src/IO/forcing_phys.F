@@ -261,9 +261,25 @@
          if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
          flxdta(:,:,jpemp ,2) = 0.
       endif
-      call readnc_slice_float_2d(nomefile,'sossheiu',buf2); flxdta(:,:,8 ,2) = buf2*umask(:,:,1);
-      call readnc_slice_float_2d(nomefile,'sossheiv',buf2); flxdta(:,:,9 ,2) = buf2*vmask(:,:,1);
-      call readnc_slice_float_2d(nomefile,'sossheit',buf2); flxdta(:,:,9 ,2) = buf2*tmask(:,:,1);
+
+      call readnc_slice_float_2d(nomefile,'sossheiu',buf2) 
+      DO jj=1,jpj
+         DO ji=1,jpi
+            if (umask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,8 ,2) = buf2(ji,jj);
+         END DO
+      END DO
+      call readnc_slice_float_2d(nomefile,'sossheiv',buf2)
+      DO jj=1,jpj
+         DO ji=1,jpi
+            if (vmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,9 ,2) = buf2(ji,jj);
+         END DO
+      END DO
+      call readnc_slice_float_2d(nomefile,'sossheit',buf2)
+      DO jj=1,jpj
+         DO ji=1,jpi
+            if (tmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,10 ,2) = buf2(ji,jj);
+         END DO
+      END DO
       e3u(:,:,1) = flxdta(:,:,8 ,2);
       e3v(:,:,1) = flxdta(:,:,9 ,2);
       e3t(:,:,1) = flxdta(:,:,10 ,2);
@@ -376,6 +392,7 @@
                   qsr(ji,uj)    = flx(ji,uj,jpqsr)
                   e3u(ji,uj,1)  = flx(ji,uj,8)
                   e3v(ji,uj,1)  = flx(ji,uj,9)
+                  e3t(ji,uj,1)  = flx(ji,uj,10)
             END DO
 
         endif

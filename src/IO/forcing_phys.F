@@ -271,6 +271,7 @@
             if (umask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,8 ,2) = buf2(ji,jj);
            END DO
          END DO
+      e3u(:,:,1) = flxdta(:,:,8 ,2);
       else
 !     Do nothing leave the init value --> domrea
       endif
@@ -284,6 +285,7 @@
                if (vmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,9 ,2) = buf2(ji,jj);
             END DO
          END DO
+      e3v(:,:,1) = flxdta(:,:,9 ,2);
       else
 !     Do nothing leave the init value --> domrea
       endif
@@ -297,15 +299,13 @@
                if (tmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,10 ,2) = buf2(ji,jj);
             END DO
          END DO
+      e3t(:,:,1) = flxdta(:,:,10 ,2);
       else
 !     Do nothing leave the init value --> domrea
       endif
 !!!!!!!!!!!!!!!!!
 
 
-      e3u(:,:,1) = flxdta(:,:,8 ,2);
-      e3v(:,:,1) = flxdta(:,:,9 ,2);
-      e3t(:,:,1) = flxdta(:,:,10 ,2);
       CALL div()               ! Horizontal divergence
       CALL wzv()               ! vertical velocity
 

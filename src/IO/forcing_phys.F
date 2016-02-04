@@ -261,25 +261,48 @@
          if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
          flxdta(:,:,jpemp ,2) = 0.
       endif
+!!!!!!!!!!!!!!!!!
 
-      call readnc_slice_float_2d(nomefile,'sossheiu',buf2) 
-      DO jj=1,jpj
-         DO ji=1,jpi
+      call EXISTVAR(nomefile,'sossheiu',B)
+      if (B) then
+         call readnc_slice_float_2d(nomefile,'sossheiu',buf2)
+         DO jj=1,jpj
+           DO ji=1,jpi
             if (umask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,8 ,2) = buf2(ji,jj);
+           END DO
          END DO
-      END DO
-      call readnc_slice_float_2d(nomefile,'sossheiv',buf2)
-      DO jj=1,jpj
-         DO ji=1,jpi
-            if (vmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,9 ,2) = buf2(ji,jj);
+      else
+!     Do nothing leave the init value --> domrea
+      endif
+!!!!!!!!!!!!!!!!!
+
+      call EXISTVAR(nomefile,'sossheiv',B)
+      if (B) then
+         call readnc_slice_float_2d(nomefile,'sossheiv',buf2)
+         DO jj=1,jpj
+            DO ji=1,jpi
+               if (vmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,9 ,2) = buf2(ji,jj);
+            END DO
          END DO
-      END DO
-      call readnc_slice_float_2d(nomefile,'sossheit',buf2)
-      DO jj=1,jpj
-         DO ji=1,jpi
-            if (tmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,10 ,2) = buf2(ji,jj);
+      else
+!     Do nothing leave the init value --> domrea
+      endif
+!!!!!!!!!!!!!!!!!
+
+      call EXISTVAR(nomefile,'sossheit',B)
+      if (B) then
+         call readnc_slice_float_2d(nomefile,'sossheit',buf2)
+         DO jj=1,jpj
+            DO ji=1,jpi
+               if (tmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,10 ,2) = buf2(ji,jj);
+            END DO
          END DO
-      END DO
+      else
+!     Do nothing leave the init value --> domrea
+      endif
+!!!!!!!!!!!!!!!!!
+
+
       e3u(:,:,1) = flxdta(:,:,8 ,2);
       e3v(:,:,1) = flxdta(:,:,9 ,2);
       e3t(:,:,1) = flxdta(:,:,10 ,2);

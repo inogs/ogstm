@@ -277,6 +277,7 @@
       avt       = 0.0
       tn        = 0.0
       sn        = 0.0
+      hdivn     = 0.0
 ! Passive tracers arrays set to zero
 
       xpar      = 0.0

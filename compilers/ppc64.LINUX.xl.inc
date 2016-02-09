@@ -5,6 +5,9 @@
     AR=ar
     ARFLAGS=-r
     CPPFLAGS=
+    DA_INC=/fermi/home/userexternal/gbolzon0/CODE_RA_16/3d_var
+    DA_LIB=$(DA_INC)
+    LIBDIR=/fermi/home/userexternal/gbolzon0/DEV/lib/xl/
 # F Flags
     FFLAGS_OPT=-O3 -qstrict -qarch=qp -qtune=qp -g -qdpc=e -qalias=noaryovrlp:nointptr -qalign=linuxppc -qsmp=noauto:omp
 #   FFLAGS_DBG=-C

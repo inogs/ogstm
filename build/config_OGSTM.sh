@@ -54,6 +54,6 @@ ls ${OGSTMDIR}/src/IO/*.[Fhc]     >> OGSTM.lst
 ls ${OGSTMDIR}/src/MPI/*.[Fhc]    >> OGSTM.lst
 ls ${OGSTMDIR}/src/PHYS/*.[Fhc]   >> OGSTM.lst
 ls ${OGSTMDIR}/src/BIO/*.[Fhc]    >> OGSTM.lst
-
+ls ${OGSTMDIR}/src/DA/*.[Fhc]     >> OGSTM.lst
 
 ${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p ${exe} OGSTM.lst

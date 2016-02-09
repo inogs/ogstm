@@ -4,6 +4,9 @@
     AR=ar
     ARFLAGS=-r
     CPPFLAGS=
+    DA_INC=/pico/scratch/userexternal/gbolzon0/Carbonatic-01/CODE/3d_var
+    DA_LIB=$(DA_INC)
+    FE_LIB=$(DA_INC) # where libf_exit.a has been copied
 # F Flags
     MPILIB= -L $(MPI_LIB)/lib -lmpi_f90    
     FFLAGS_OPT= -fno-math-errno -unroll=3 -opt-subscript-in-range -align all  -cpp -heap-arrays

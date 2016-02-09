@@ -31,6 +31,7 @@ CC -----------------------------------
       REAL(8) :: snutelparttime       =0.0, snuteltottime     = 0.0
       REAL(8) :: trcsbcparttime       =0.0, trcsbctottime     = 0.0
       REAL(8) :: checkVparttime       =0.0, checkVtottime     = 0.0
+      REAL(8) :: DAparttime           =0.0, DAtottime         = 0.0
       CONTAINS
 
 

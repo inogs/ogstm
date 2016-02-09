@@ -43,6 +43,7 @@
       INTEGER TAU, indic
 
       character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
+      character(LEN=17)  date_aveforDA, datefuture
       REAL(8) sec
       LOGICAL B, isFIRST
 
@@ -137,6 +138,21 @@
          if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
+
+!     We assume we assimilate at 12:00
+      call tau2datestring(TAU+24, datefuture)
+      if (IsaDataAssimilation(datefuture)) then
+          traIO_HIGH=0.0
+          ave_counter_1   = 0   !  reset the counter
+          TauAVEfrom_1    = TAU
+          if (lwp) write(*,*) 'RESET THE COUNTER'
+      endif
+
+      if (IsaDataAssimilation(DATEstring)) then
+        call tau2datestring(TauAVEfrom_1, datefrom_1)
+        CALL mainAssimilation(DATEstring, datefrom_1)
+         if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
+      endif
 
 
 

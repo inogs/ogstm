@@ -41,6 +41,7 @@
 
       TYPE (DUMP_CONTAINER) :: RESTARTS
       TYPE (DUMP_CONTAINER) :: AVE_FREQ1, AVE_FREQ2
+      TYPE (DUMP_CONTAINER) :: DA_TIMES
 
 
       CHARACTER(LEN=17) :: DATESTART
@@ -93,6 +94,35 @@
 
 
       END FUNCTION IsaRestart
+
+      ! *************************************************
+      ! ** true if the datestring is in the restart list
+      ! *************************************************
+      LOGICAL FUNCTION IsaDataAssimilation(datestring)
+      IMPLICIT NONE
+      CHARACTER(LEN=17), INTENT(IN) :: datestring
+          ! LOCAL
+          INTEGER I
+
+          IsaDataAssimilation = .false.
+
+
+
+
+          DO I=1, DA_TIMES%N
+        if (datestring.eq.DA_TIMES%TimeStrings(I)) then
+            IsaDataAssimilation = .true.
+            CYCLE
+        endif
+          ENDDO
+
+!         if (datestring.eq.DATESTART) IsaRestart = .false.
+
+
+
+
+
+      END FUNCTION IsaDataAssimilation
 
       ! *************************************************
       ! ** true if the datestring is in the ave list
@@ -301,6 +331,7 @@
 
       AVE_FREQ1%Filename       = '1.aveTimes'
       AVE_FREQ2%Filename       = '2.aveTimes'
+      DA_TIMES%Filename        = 'daTimes'
       TC_LEX%Filename    = 'kextTimes'
 
       FileName = 'Start_End_Times'
@@ -320,7 +351,7 @@
       call Load_Dump_container(RESTARTS)
       call Load_Dump_container(AVE_FREQ1)
       call Load_Dump_container(AVE_FREQ2)
-
+      call Load_Dump_container(DA_TIMES)
 
       END SUBROUTINE Load_Timestrings
 

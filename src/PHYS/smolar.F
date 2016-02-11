@@ -308,7 +308,7 @@ CC
        DO jk = 1,jpk,ntids
 !$omp parallel default(none) private(mytid, ji,jj)
 !$omp&         shared(jk, jpi, jpj, jpk,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,
-!$omp&                un,vn,wn,e2u,e1v,e1t,e2t,zdt )
+!$omp&                un,vn,wn,e2u,e1v,e1t,e2t,e3t,zdt )
 #ifdef __OPENMP
        mytid = omp_get_thread_num()  ! take the thread ID
 #else

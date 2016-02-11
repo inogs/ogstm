@@ -122,7 +122,7 @@ CC ==================
 !$omp parallel default(none) private(mytid,jj,ji,
 !$omp&                 zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw,
 !$omp&                   zb, zd, zc, zaw, za, zb1, za1, zkw, zk0)
-!$omp&                   shared(jpi,jpj,jpk,jk,tn,sn,rau0,rhopn,rdn,rho,tmask)
+!$omp&                   shared(jpi,jpj,jpk,jk,tn,sn,rau0,rhopn,rdn,rho,tmask,gdept)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif

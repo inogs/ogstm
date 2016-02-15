@@ -25,10 +25,10 @@
       CONTAINS
 
       SUBROUTINE DA_INIT
-      varlistDA( 1)='P1i'
-      varlistDA( 2)='P2i'
-      varlistDA( 3)='P3i'
-      varlistDA( 4)='P4i'
+      varlistDA( 1)='P1l'
+      varlistDA( 2)='P2l'
+      varlistDA( 3)='P3l'
+      varlistDA( 4)='P4l'
 
       varlistDA( 5)='P1n'
       varlistDA( 6)='P2n'

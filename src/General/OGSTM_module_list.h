@@ -12,6 +12,7 @@
        USE DIA_mem
        USE CALENDAR
        USE time_manager
+       USE DA_mem
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding

@@ -48,6 +48,7 @@
         DO Itype=1,4
 
            write(ctype, '(i1)') Itype
+           write(*,*) 'chiamata NEWCORRFACTOR', Itype
            CALL NEWCORRFACTOR(datestr,ctype)
 
         ENDDO
@@ -108,7 +109,7 @@
 
         PVar='P'//CTYPE//'p'
         NVar='P'//CTYPE//'n'
-        IVar='P'//CTYPE//'i'
+        IVar='P'//CTYPE//'l'
         CVar='P'//CTYPE//'c'
         if (CTYPE.eq.'1')then
         SVar='P'//CTYPE//'s'
@@ -116,7 +117,7 @@
 
 
          write(*,*) Pvar, ' ' , Nvar, ' ', Cvar,  ' ', Ivar
-        AVEFILE = 'DA__FREQ_1/ave.'//datestr//'.P1i.nc'
+        AVEFILE = 'DA__FREQ_1/ave.'//datestr//'.P1l.nc'
         AVEFILE(34:36) = PVar ; call readNetCDF_3dvar(AVEFILE,PVar, Pfraction    )
         AVEFILE(34:36) = NVar ; call readNetCDF_3dvar(AVEFILE,NVar, Nfraction    )
         AVEFILE(34:36) = IVar ; call readNetCDF_3dvar(AVEFILE,IVar, CHLfraction  )

@@ -113,6 +113,7 @@
       call trcrst        ! read restarts
 
       call photo_init
+      call DA_INIT
 
 ! Initialization of Biogeochemical recator with 0D approach
 

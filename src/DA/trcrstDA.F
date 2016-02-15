@@ -37,7 +37,7 @@
 
 
          varname  = 'TRN'//ctrcnm(jn)
-         filename = 'RESTARTS/RST.'//datestring//'.'//ctrcnm(jn)//'.nc'
+         filename = 'RESTARTS/RST.'//datestring//'.'//trim(ctrcnm(jn))//'.nc'
          if (lwp) write(*,*) 'reading ', filename
          CALL readnc_slice_double(filename,varname, trn(:,:,:,jn) )
 

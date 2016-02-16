@@ -125,7 +125,7 @@ C
       MAIN_LOOP: DO jv=1,dimen_jvsed,ntids
 
 !$omp    parallel default(none) private(ji,jj,jk,js,mytid,jf,bottom)
-!$omp&                           shared(jv,dimen_jvsed,jarr_sed,
+!$omp&                           shared(jv,dimen_jvsed,jarr_sed,jpk, 
 !$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
 !$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
 !$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx,

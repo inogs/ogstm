@@ -1,0 +1,12 @@
+30.10.2013
+
+I)  set up the ogstm-bfm code in the directory <code-directory>;
+
+II) rename or copy the file TEST_LIST.dat_template in TEST_LIST.dat
+
+III) edit the file TEST_LIST.dat to configure your TEST: at the moment
+    the number of vertical levels should not be changed, on the 
+    "Code" column insert the path of <code-directory>;
+
+IV) launch the generator script:
+     python Main_create_TEST.py

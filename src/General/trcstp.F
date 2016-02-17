@@ -43,6 +43,7 @@
       CALL trcsms
       CALL trczdf ! tracers: vertical diffusion
       CALL snutel
+      CALL hard_tissue_pump
       CALL checkValues
       CALL trcnxt ! tracers: fields at next time step
 

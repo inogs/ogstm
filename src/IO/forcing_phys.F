@@ -268,7 +268,7 @@
                                                             flxdta(:,:,jpice ,2) = 0.
       call EXISTVAR(nomefile,'sowaflcd',B)
       if (B) then
-      call readnc_slice_float_2d(nomefile,'sowaflcd',buf2); flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1);
+      call readnc_slice_float_2d(nomefile,'sowaflcd',buf2); flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1)*0.5;
       else
          if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
          flxdta(:,:,jpemp ,2) = 0.

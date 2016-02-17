@@ -110,7 +110,7 @@
           nomefile = 'BC/GIB_'//datestring//'.nc'
           if(lwp) write(*,'(A,I4,A,A)') "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
 
-          DO jn = 1, jn_gib
+          DO jn = 1,  4
               nomevar = 'gib_'//ctrcnm(tra_matrix_gib(jn))
               if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
               !CALL ioogsnc_bc_1d2(nomefile,nomevar, Gsizeglo,gib_aux)
@@ -120,6 +120,25 @@
                  gib_dtatrc(jv,2,jn) = gib_aux(gib_ridxt(1,jv))
               ENDDO
           ENDDO
+
+          DO jn = 5,  6
+              nomevar = 'gib_'//ctrcnm(tra_matrix_gib(jn))
+              if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
+              CALL readnc_double_1d(nomefile,nomevar, GsizegloALK,gib_auxALK)
+
+              DO jv=1,GsizeALK
+                 gib_dtatrcALK(jv,2,jn) = gib_auxALK(gib_ridxtALK(1,jv))
+              ENDDO
+          ENDDO
+
+          jn = 7
+              nomevar = 'gib_'//ctrcnm(tra_matrix_gib(jn))
+              if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
+              CALL readnc_double_1d(nomefile,nomevar, Gsizeglo,gib_aux)
+
+              DO jv=1,Gsize
+                 gib_dtatrc(jv,2,jn) = gib_aux(gib_ridxt(1,jv))
+              ENDDO
 
 
       END SUBROUTINE LOAD_GIB
@@ -135,11 +154,22 @@
 !         local
          INTEGER jn, jv
 
-         DO jn=1, jn_gib
+         DO jn=1, 4
              DO jv=1, Gsize
                  gib(jv,jn) = (1. - zweigh) * gib_dtatrc(jv,1,jn) + zweigh * gib_dtatrc(jv,2,jn)
              ENDDO
          ENDDO
+
+         DO jn=5, 6
+             DO jv=1, GsizeALK
+                 gibALK(jv,jn) = (1. - zweigh) * gib_dtatrcALK(jv,1,jn) + zweigh * gib_dtatrcALK(jv,2,jn)
+             ENDDO
+         ENDDO
+
+         jn=7
+             DO jv=1, Gsize
+                 gib(jv,jn) = (1. - zweigh) * gib_dtatrc(jv,1,jn) + zweigh * gib_dtatrc(jv,2,jn)
+             ENDDO
 
 
       END SUBROUTINE actualize_GIB
@@ -154,10 +184,21 @@
 !         local
           INTEGER jn, jv
 
-          DO jn=1, jn_gib
+          DO jn=1, 4
               DO jv=1, Gsize
                   gib_dtatrc(jv,1,jn)=gib_dtatrc(jv,2,jn)
               ENDDO
           ENDDO
+
+          DO jn=5, 6
+              DO jv=1, GsizeALK
+                  gib_dtatrcALK(jv,1,jn)=gib_dtatrcALK(jv,2,jn)
+              ENDDO
+          ENDDO
+
+       jn=7
+              DO jv=1, Gsize
+                  gib_dtatrc(jv,1,jn)=gib_dtatrc(jv,2,jn)
+              ENDDO
 
       END SUBROUTINE swap_GIB

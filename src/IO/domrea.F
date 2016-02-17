@@ -161,13 +161,17 @@
        if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
 
       CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
+      CALL readnc_int_1d(filename, 'gib_idxt_O3h', GsizegloALK, gib_idxtgloALK)
 
       if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
       if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
+      if (lwp) write(*,*) 'domrea->GsizegloALK', GsizegloALK
 
       Gsize = COUNT_InSubDomain(Gsizeglo, gib_idxtglo)
+      GsizeALK = COUNT_InSubDomain(GsizegloALK, gib_idxtgloALK)
 
       write(*,*) 'domrea->Gsize   : ', Gsize, 'rank=', rank
+      write(*,*) 'domrea->GsizeALK   : ', GsizeALK, 'rank=', rank
 
 
       if (Gsize.NE.0) then
@@ -175,6 +179,14 @@
           call alloc_DTATRC_local_gib
 
           B=GIBRe_indexing()
+
+      endif
+
+      if (GsizeALK.NE.0) then
+          if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_gib'
+          call alloc_DTATRC_local_gib
+
+          B=GIBRe_indexingALK()
 
       endif
 
@@ -327,6 +339,37 @@
 
       GIBRE_Indexing= .true.
       END FUNCTION GIBRE_Indexing
+! *************************************************************************
+      LOGICAL FUNCTION GIBRE_IndexingALK()
+          IMPLICIT NONE
+
+          ! local
+          INTEGER ii,jj,kk,jv
+          INTEGER counter,junk
+
+
+          counter=0
+           do kk =1, jpk
+            do jj =1, jpj
+             do ii =1, jpi
+                junk = idxt(ii,jj,kk)
+                do jv =1, GsizegloALK
+                   if ( junk.EQ.gib_idxtgloALK(jv) )  then
+                      counter = counter + 1
+                      gib_ridxtALK(1,counter) = jv
+                      gib_ridxtALK(2,counter) = ii
+                      gib_ridxtALK(3,counter) = jj
+                      gib_ridxtALK(4,counter) = kk
+                   endif
+              enddo
+             enddo
+            enddo
+           enddo
+
+
+      GIBRE_IndexingALK= .true.
+      END FUNCTION GIBRE_IndexingALK
+
 
 
 

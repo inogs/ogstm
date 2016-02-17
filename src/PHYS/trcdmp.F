@@ -82,7 +82,36 @@
  
        ENDIF
 
+! Boundary conditions fo Gib area
+       IF (GsizeALK .NE. 0) THEN
+         DO jn=5,6
+          tra_idx=tra_matrix_gib(jn)
+          DO jv=1, GsizeALK
+             ji = gib_ridxtALK(2,jv)
+             jj = gib_ridxtALK(3,jv)
+             jk = gib_ridxtALK(4,jv)
+             ztra = restotr(ji,jj,jk,tra_idx) * ( gibALK(jv,jn)-trb(ji,jj,jk,tra_idx) )
+             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
+          ENDDO
 
+         ENDDO
+
+       ENDIF
+
+! Boundary conditions fo Gib area
+       IF (Gsize .NE. 0) THEN
+         jn=7
+          tra_idx=tra_matrix_gib(jn)
+          DO jv=1, Gsize
+             ji = gib_ridxt(2,jv)
+             jj = gib_ridxt(3,jv)
+             jk = gib_ridxt(4,jv)
+             ztra = restotr(ji,jj,jk,tra_idx) * ( gib(jv,jn)-trb(ji,jj,jk,tra_idx) )
+             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
+
+         ENDDO
+
+       ENDIF
 
 ! Boundary conditions for rivers
        IF (Rsize .NE. 0) THEN

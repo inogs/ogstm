@@ -7,6 +7,7 @@
       INTEGER jn
       INTEGER ji, jj, jk
       REAL(8) maxV
+      REAL(8) minV
       CHARACTER*3 varname
       CHARACTER*55  STR
 
@@ -62,6 +63,39 @@
 
 !$omp end parallel
       ENDDO
+      jn = 50
+      maxV = 32000.
+      minV = 26000.
+         DO jk = 1,jpk
+         DO jj = 1,jpj
+         DO ji = 1,jpi
+            if (tra(ji,jj,jk,jn).gt.maxV) THEN
+                tra(ji,jj,jk,jn) = maxV * tmask(ji,jj,jk)
+            else
+                if (tra(ji,jj,jk,jn).lt.minV)  THEN
+                  tra(ji,jj,jk,jn) = minV * tmask(ji,jj,jk)
+                endif
+            endif
+         ENDDO
+         ENDDO
+         ENDDO
+
+      jn = 51
+      minV = 2300.
+      maxV = 3000.
+         DO jk = 1,jpk
+         DO jj = 1,jpj
+         DO ji = 1,jpi
+            if (tra(ji,jj,jk,jn).gt.maxV) THEN
+                tra(ji,jj,jk,jn) = maxV * tmask(ji,jj,jk)
+            else
+                if (tra(ji,jj,jk,jn).lt.minV) THEN
+                  tra(ji,jj,jk,jn) = minV * tmask(ji,jj,jk)
+                endif
+            endif
+         ENDDO
+         ENDDO
+         ENDDO
 
 320   FORMAT (A,I3, I3, I3, A, I3, A,A)
 !321   FORMAT (A,I3, I3, I3, A, I3, A,A)

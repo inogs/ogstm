@@ -20,6 +20,7 @@
       REAL(8)              :: SMALL
       REAL(8), allocatable :: tra_FN(:,:,:,:)
       REAL(8), allocatable :: TOT(:,:),TOT_FN(:,:),FN_CORR(:,:)
+      REAL(8), allocatable :: TOTcalc(:)
 
 
       REAL(8), allocatable :: cou_FN(:,:,:)
@@ -53,7 +54,7 @@
       !allocate(TOT    (jpj*jpi,elements)) ; TOT        = huge(TOT(1,1))        ! elements is the number of element considered (C,P,N,...)
       !allocate(TOT_FN (jpj*jpi,elements)) ; TOT_FN     = huge(TOT_FN(1,1))
       !allocate(FN_CORR(jpj*jpi,elements)) ; FN_CORR    = huge(FN_CORR(1,1))
-
+      allocate(TOTcalc(jpj*jpi))
 
       allocate(cou_FN(jpi,jpj,jpk))       ; cou_FN     = huge(cou_FN(1,1,1))
       allocate(FN_ranking(jptra))         ; FN_ranking = huge(FN_ranking(1))

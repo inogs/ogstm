@@ -19,8 +19,9 @@
       REAL(8), allocatable :: surf_mask(:)
       REAL(8), allocatable :: sediPI(:,:,:,:)
       REAL(8), allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
+      REAL(8), allocatable :: NPPF2(:,:,:) 
       REAL(8), allocatable :: co2(:,:), co2_IO(:,:,:)
-      REAL(8):: ice
+      REAL(8):: ice!, opa_co2, opa_co2_start, opa_co2_end
 
 
 CC----------------------------------------------------------------------
@@ -39,11 +40,12 @@ CC----------------------------------------------------------------------
        allocate(bfm_trn(jptra))        ; bfm_trn   = huge(bfm_trn(1))
        allocate(bfm_tra(jptra))        ; bfm_tra   = huge(bfm_tra(1))
 !$omp end parallel
-       allocate(surf_mask(jpk))        ; surf_mask = huge(surf_mask(1))
-       allocate(co2(jpi,jpj))          ; co2       = huge(co2(1,1))
-       allocate(co2_IO(jpi,jpj,2))     ; co2_IO    = huge(co2_IO(1,1,1))
-       allocate(sediPI(jpi,jpj,jpk,4)) ; sediPI    = huge(sediPI(1,1,1,1))
-       allocate(PH(jpi,jpj,jpk))       ; PH        = huge(PH(1,1,1))
+       allocate(surf_mask(jpk))
+       allocate(co2(jpi,jpj))
+       allocate(co2_IO(jpi,jpj,2))
+       allocate(sediPI(jpi,jpj,jpk,4))
+       allocate(PH(jpi,jpj,jpk))
+       allocate(NPPF2(jpi,jpj,jpk))
        PH=8.0
 
        ice=0

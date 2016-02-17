@@ -19,20 +19,23 @@
       INTEGER jn_gib, jn_riv, jn_atm
       INTEGER(4) Gsizeglo, Rsizeglo, Asizeglo
       INTEGER(4) Gsize, Rsize, Asize
+      INTEGER(4) GsizegloALK, GsizeALK
 
       INTEGER(4), allocatable, DIMENSION(:) ::  tra_matrix_gib, tra_matrix_riv, tra_matrix_atm
 
 
-      INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxtglo, riv_idxtglo, atm_idxtglo ! <--domrea
-      INTEGER(4), allocatable, DIMENSION(:,:) ::  gib_ridxt  , riv_ridxt  , atm_ridxt   ! <--domrea.ReIndexing()
+      INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxtglo, riv_idxtglo, atm_idxtglo, gib_idxtgloALK ! <--domrea
+!     INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxt   , riv_idxt   , atm_idxt
+      INTEGER(4), allocatable, DIMENSION(:,:) ::  gib_ridxt  , riv_ridxt  , atm_ridxt, gib_ridxtALK   ! <--domrea.ReIndexing()
+
 !     queste matrici ridotte hanno nel primo indice l'indice globale, negli altri 3 il corrispondente indice i,j,k locale (per cpu)
 
 
-      REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux,atm_aux
+      REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux,atm_aux,gib_auxALK
       REAL(8), allocatable, DIMENSION(:)       :: restocorr
-      REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv, atm
-      REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm_dtatrc       ! <--bc_gib.load_gib(), bc_tin.
-      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr                          !array of restoring coeff. for passive tracers
+      REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv, atm,gibALK
+      REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm_dtatrc,gib_dtatrcALK       ! <--bc_gib.load_gib(), bc_tin.
+      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr
 ! ----------------------------------------------------------------------
       CONTAINS
 !     *******************************************************************
@@ -62,6 +65,7 @@
 
          call getDimension(atmfile,'atm_idxt'    ,Asizeglo)
          call getDimension(gibfile,'gib_idxt_N1p',Gsizeglo)
+         call getDimension(gibfile,'gib_idxt_O3h',GsizegloALK)
          call getDimension(rivfile,'riv_idxt'    ,Rsizeglo)
 
 !           nomedim1(1:12)='gib_idxt_N1p'; CALL ioogsnc_idx(gibfile,nomedim1,Gsizeglo)
@@ -70,6 +74,7 @@
 
 
                write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' rank = ',rank
+               write(*,*) 'Size of vector GibALK to allocate -->', GsizegloALK, ' rank = ',rank
            if (lwp) then
                write(*,*) 'Size of vector Riv to allocate -->', Rsizeglo
                write(*,*) 'Size of vector Atm to allocate -->', Asizeglo
@@ -102,6 +107,10 @@
           tra_matrix_gib(5) = ppO3c; restocorr(5)=2. ! Dic
           tra_matrix_gib(6) = ppO3h; restocorr(6)=2. ! Alk
           tra_matrix_gib(7) = ppN6r; restocorr(7)=2. ! N6r
+       ENDIF
+       IF (GsizegloALK .NE. 0) THEN
+           allocate(gib_auxALK(       GsizegloALK))
+           allocate(gib_idxtgloALK(   GsizegloALK))
        ENDIF
        
        IF (Rsizeglo .NE. 0) THEN
@@ -148,6 +157,9 @@
        aux_mem = get_mem(err)
 #endif
 
+       allocate(gib_ridxt (4, Gsize        ))
+       allocate(gib_dtatrc(Gsize, 2, jn_gib))
+       allocate(gib       (Gsize,    jn_gib))
 
        if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
 
@@ -155,6 +167,7 @@
        allocate(gib_dtatrc(Gsize, 2, jn_gib)) ; gib_dtatrc = huge(gib_dtatrc(1,1,1))
        allocate(gib       (Gsize,    jn_gib)) ; gib        = huge(gib(1,1))
 
+       if(lwp) write(*,*) 'BC_mem -> GsizeALK : ', GsizeALK
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem

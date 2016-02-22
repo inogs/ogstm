@@ -4,6 +4,7 @@ OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
 DEBUG=
 DEBUG=.dbg
+BFM_PRESET=OGS_PELAGIC
 #DEBUG=   # for production
 ISFLUXUS=false
 
@@ -93,7 +94,7 @@ else
    # in-place replace the entire ARCH line
    sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
    cd $BFMDIR/build
-   ./bfm_configure.sh -gc -o ../lib/libbfm.a -p OGS_PELAGIC
+   ./bfm_configure.sh -gc -o ../lib/libbfm.a -p $BFM_PRESET
    if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 fi
 
@@ -123,13 +124,13 @@ if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 
 if [ $BFMversion == bfmv5 ] ; then
-   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
+   cp ${BFMDIR}/build/tmp/${BFM_PRESET}/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
    python ogstm_namelist_gen.py #generates namelist.passivetrc_new
 
-   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/ 
-   cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
-   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
+   cp ${OGSTMDIR}/src/namelists/namelist*      ${OGSTMDIR}/ready_for_model_namelists/ 
+   cp namelist.passivetrc_new                  ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
+   cp ${BFMDIR}/build/tmp/${BFM_PRESET}/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
 else
    #V2
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/

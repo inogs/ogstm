@@ -341,6 +341,14 @@
    diaun(21)="mg C/m3/d"
    diahf(21)=0 
 
+   dianm(22)="CaCO3flux_dic"
+   diaun(22)="mg C/m3/d"
+   diahf(22)=0
+
+   dianm(23)="CaCO3flux_alk"
+   diaun(23)="mmol alk /m3/d"
+   diahf(23)=0
+
 / 
 
 &NATTRC_DIAG_2D

@@ -110,8 +110,8 @@ c           dAlk= 2./12.*RR_P2*NPPF2(ji,jj,jk)*rdt/86400.*e3t(jk)*tmask(ji,jj,jk
            dAlk= 2./12.*RR_P2*NPPF2(ji,jj,jk)*rdt/86400.*tmask(ji,jj,jk)
            tra(ji,jj,jk,ppO3c) = tra(ji,jj,jk,ppO3c) - dDic
            tra(ji,jj,jk,ppO3h) = tra(ji,jj,jk,ppO3h) - dAlk
-!           tra_pp(ji,jj,jk,21) = - dDic
-!           tra_pp(ji,jj,jk,22) = - dAlk
+           tra_DIA(ji,jj,jk,22) = - dDic
+           tra_DIA(ji,jj,jk,23) = - dAlk
 
           END DO
 
@@ -126,10 +126,11 @@ c           dAlk= 2./12.*RR_P2*NPPF2(ji,jj,jk)*rdt/86400.*e3t(jk)*tmask(ji,jj,jk
               
               dDic= (SinkCa(jk-1)-SinkCa(jk))/e3t(jk)* tmask(ji,jj,jk)
               dAlk= 2./12.*dDic* tmask(ji,jj,jk)
+
               tra(ji,jj,jk,ppO3c) = tra(ji,jj,jk,ppO3c) + dDic 
               tra(ji,jj,jk,ppO3h) = tra(ji,jj,jk,ppO3h) + dAlk 
-!              tra_pp(ji,jj,jk,21) = tra_pp(ji,jj,jk,21) + dDic
-!              tra_pp(ji,jj,jk,22) = tra_pp(ji,jj,jk,22) + dAlk
+              tra_DIA(ji,jj,jk,22) = tra_DIA(ji,jj,jk,22) + dDic
+              tra_DIA(ji,jj,jk,23) = tra_DIA(ji,jj,jk,23) + dAlk
 
           END DO
 

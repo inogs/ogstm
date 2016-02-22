@@ -181,7 +181,7 @@ C
                              sediPI(ji,jj,jk,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
                           END DO
 
-                          DO jtr=1,jptra_dia
+                          DO jtr=1,jptra_dia -2
                              tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 

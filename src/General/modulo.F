@@ -280,7 +280,6 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
       REAL(8), allocatable :: tottrn(:,:,:)
-      REAL(8), allocatable ::  tra_pp(:,:,:,:)
       REAL(8), allocatable :: tottrb(:,:,:)
 
       REAL(8), allocatable ::  tottrnIO(:,:,:) ! matrix for i/o writing(trcdit.F)

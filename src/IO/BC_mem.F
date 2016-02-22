@@ -163,11 +163,6 @@
 
        if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
 
-       allocate(gib_ridxt (4, Gsize        )) ; gib_ridxt  = huge(gib_ridxt(1,1))
-       allocate(gib_dtatrc(Gsize, 2, jn_gib)) ; gib_dtatrc = huge(gib_dtatrc(1,1,1))
-       allocate(gib       (Gsize,    jn_gib)) ; gib        = huge(gib(1,1))
-
-       if(lwp) write(*,*) 'BC_mem -> GsizeALK : ', GsizeALK
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
@@ -175,6 +170,34 @@
 
       END SUBROUTINE alloc_DTATRC_local_gib
 
+
+!     ****************************************
+!     SUBROUTINE alloc_DTATRC_local_gibALK
+!     called by domrea
+!     ****************************************
+      SUBROUTINE alloc_DTATRC_local_gibALK()
+#ifdef Mem_Monitor
+       USE check_mem
+       USE iso_c_binding
+#endif
+      INTEGER  :: err
+      REAL(8)  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif
+
+       allocate(gib_ridxtALK (4, GsizeALK        )) ; gib_ridxtALK  =huge(gib_ridxtALK(1,1))
+       allocate(gib_dtatrcALK(GsizeALK, 2, jn_gib)) ; gib_dtatrcALK =huge(gib_dtatrcALK(1,1,1))
+       allocate(gibALK       (GsizeALK,    jn_gib)) ; gibALK        =huge(gibALK(1,1))
+
+       if(lwp) write(*,*) 'BC_mem -> GsizeALK : ', GsizeALK
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif
+
+      END SUBROUTINE alloc_DTATRC_local_gibALK
 
 
 !     ****************************************

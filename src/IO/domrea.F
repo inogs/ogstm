@@ -184,7 +184,7 @@
 
       if (GsizeALK.NE.0) then
           if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_gib'
-          call alloc_DTATRC_local_gib
+          call alloc_DTATRC_local_gibALK
 
           B=GIBRe_indexingALK()
 

@@ -4,14 +4,14 @@
     AR=ar
     ARFLAGS=-r
     CPPFLAGS=
-    DA_INC=/pico/scratch/userexternal/gbolzon0/Carbonatic-01/CODE/3d_var
+    DA_INC=/pico/scratch/userexternal/gbolzon0/TRANSITION/carbonatic_part/Code/3d_var
     DA_LIB=$(DA_INC)
-    FE_LIB=$(DA_INC) # where libf_exit.a has been copied
+    FE_LIB=$(DA_INC)/libfexit # where libf_exit.a has been copied
 # F Flags
     MPILIB= -L $(MPI_LIB)/lib -lmpi_f90    
     FFLAGS_OPT= -fno-math-errno -unroll=3 -opt-subscript-in-range -align all  -cpp -heap-arrays
-    FFLAGS= $(FFLAGS_OPT)  -I$(NETCDF_INC)  -I$(OPENMPI_HOME)/include -I$(BFM_INC) -extend_source
-    LDFLAGS= -L $(NETCDF_LIB) -lnetcdff -lnetcdf -L $(BFM_LIB) -lbfm
+    FFLAGS= $(FFLAGS_OPT)  -I$(NETCDF_INC)  -I$(OPENMPI_HOME)/include -I$(BFM_INC) -I$(DA_INC) -extend_source
+    LDFLAGS= -L $(NETCDF_LIB) -lnetcdff -lnetcdf -L $(BFM_LIB) -lbfm  -L$(DA_LIB) -lvar_3d  -L$(FE_LIB) -lf_exit
 # C Flags
     CFLAGS_DBG=
     CFLAGS=  ${CFLAGS_DBG} -I$(NETCDF_INC) -I$(OPENMPI_HOME)/include

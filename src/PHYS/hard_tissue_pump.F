@@ -86,7 +86,7 @@ C Compute vertical integral
 
 !$omp   parallel default(none) private(mytid,ji,jj,jk,jn,g1,SinkCa,dDic,dAlk)
 !$omp&  shared(dimen_jvsnu,jarr_snu,jv,jpk,tmask,TOTcalc,tra,e3t,RR_P2,NORM_1,dCa,jpe,
-!$omp&        jpf,g0,gdepw,NPPF2,rdt,tra_pp)      
+!$omp&        jpf,g0,gdepw,NPPF2,rdt,tra_DIA)      
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -110,8 +110,8 @@ c           dAlk= 2./12.*RR_P2*NPPF2(ji,jj,jk)*rdt/86400.*e3t(jk)*tmask(ji,jj,jk
            dAlk= 2./12.*RR_P2*NPPF2(ji,jj,jk)*rdt/86400.*tmask(ji,jj,jk)
            tra(ji,jj,jk,ppO3c) = tra(ji,jj,jk,ppO3c) - dDic
            tra(ji,jj,jk,ppO3h) = tra(ji,jj,jk,ppO3h) - dAlk
-           tra_pp(ji,jj,jk,21) = - dDic
-           tra_pp(ji,jj,jk,22) = - dAlk
+!           tra_pp(ji,jj,jk,21) = - dDic
+!           tra_pp(ji,jj,jk,22) = - dAlk
 
           END DO
 
@@ -128,8 +128,8 @@ c           dAlk= 2./12.*RR_P2*NPPF2(ji,jj,jk)*rdt/86400.*e3t(jk)*tmask(ji,jj,jk
               dAlk= 2./12.*dDic* tmask(ji,jj,jk)
               tra(ji,jj,jk,ppO3c) = tra(ji,jj,jk,ppO3c) + dDic 
               tra(ji,jj,jk,ppO3h) = tra(ji,jj,jk,ppO3h) + dAlk 
-              tra_pp(ji,jj,jk,21) = tra_pp(ji,jj,jk,21) + dDic
-              tra_pp(ji,jj,jk,22) = tra_pp(ji,jj,jk,22) + dAlk
+!              tra_pp(ji,jj,jk,21) = tra_pp(ji,jj,jk,21) + dDic
+!              tra_pp(ji,jj,jk,22) = tra_pp(ji,jj,jk,22) + dAlk
 
           END DO
 

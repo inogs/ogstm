@@ -1,11 +1,9 @@
         CC=mpiicc
         FC=mpiifort $(OPENMP_FLAG)
         LD=mpiifort $(OPENMP_FLAG)
-        NETCDF_INC=/home/epascolo/netcdf/include
-        NETCDF_LIB=/home/epascolo/netcdf/lib
-	DA_INC=/home/epascolo/Ogstm_work/3d_var
+	DA_INC=/pico/scratch/userexternal/gbolzon0/TRANSITION/carbonatic_part/Code/3d_var
   DA_LIB=$(DA_INC)
-  FE_LIB=/home/epascolo/Ogstm_work/3d_var/libfexit
+  FE_LIB=$(DA_INC)/libfexit
   AR=ar
 	ARFLAGS=-r
 	CPPFLAGS=

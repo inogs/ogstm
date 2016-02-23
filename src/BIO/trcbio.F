@@ -46,7 +46,7 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       LOGICAL sur,bot
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
+      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia-2),er(10),d2(jptra_dia_2d)
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx

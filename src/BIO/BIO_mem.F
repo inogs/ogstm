@@ -37,15 +37,21 @@ CC----------------------------------------------------------------------
 #endif
 
 !$omp parallel default(none)
-       allocate(bfm_trn(jptra))        ; bfm_trn   = huge(bfm_trn(1))
-       allocate(bfm_tra(jptra))        ; bfm_tra   = huge(bfm_tra(1))
+       allocate(bfm_trn(jptra))         
+       bfm_trn   = huge(bfm_trn(1))
+       allocate(bfm_tra(jptra))         
+       bfm_tra   = huge(bfm_tra(1))
 !$omp end parallel
-       allocate(surf_mask(jpk))
-       allocate(co2(jpi,jpj))
-       allocate(co2_IO(jpi,jpj,2))
-       allocate(sediPI(jpi,jpj,jpk,4))
-       allocate(PH(jpi,jpj,jpk))
-       allocate(NPPF2(jpi,jpj,jpk))
+       allocate(surf_mask(jpk))         
+       surf_mask = huge(surf_mask(1))  
+       allocate(co2(jpi,jpj))           
+       co2       = huge(co2(1,1))  
+       allocate(co2_IO(jpi,jpj,2))      
+       co2_IO    = huge(co2_IO(1,1,1)) 
+       allocate(sediPI(jpi,jpj,jpk,4))  
+       sediPI    = huge(sediPI(1,1,1,1)) 
+       allocate(PH(jpi,jpj,jpk))        
+       PH        = huge(PH(1,1,1)) 
        PH=8.0
 
        ice=0

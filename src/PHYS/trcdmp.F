@@ -57,13 +57,13 @@
 
 ! Boundary conditions fo Gib area
        IF (Gsize .NE. 0) THEN
-         DO jn=1, jn_gib, ntids
+         DO jn=1, 4, ntids
 !$omp   parallel default(none) private(mytid,ji,jj,jk,ztra,jv,tra_idx)
 !$omp&                         shared(jn,tra,trb,gib, Gsize, gib_ridxt,restotr,tra_matrix_gib,jn_gib)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-      IF( mytid + jn <= jn_gib ) THEN
+      IF( mytid + jn <= 4 ) THEN
 
           tra_idx=tra_matrix_gib(jn+mytid)
           DO jv=1, Gsize

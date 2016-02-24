@@ -128,7 +128,7 @@ C
 !$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
+!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo,NPPF2)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -192,6 +192,8 @@ C
                           endif
 
                           PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
+			  NPPF2(ji,jj,jk)=d(ppF05) ! Flagellate production 
+
 
 
              ENDIF

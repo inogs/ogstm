@@ -62,5 +62,12 @@ CC productive layer depth
 
 #endif
 
+#if defined key_trc_benthic
+
+#include "benthic_var_list.h"
+
+#endif
+
+
 
       END MODULE modul_param

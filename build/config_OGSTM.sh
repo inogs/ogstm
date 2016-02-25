@@ -19,11 +19,11 @@ export OGSTMDIR=$PWD/..
 #----------------- User configuration -----------------
 archfile="${OGSTMDIR}/compilers/compiler.inc"
 if [ $OPA_ARCH == 'ppc64' ] ; then
-   cppdefs="-WF,-Dkey_trahdfcoef1d,-Dkey_trahdfbilap,-Dkey_mpp,-Dkey_mpp_mpi,-Dkey_trc_smolar,-Dkey_trc_hdfbilap,-Dkey_trc_dmp,-Dkey_kef,-Dkey_trc_sed,-Dkey_trc_bfm,-Dkey_INCLUDE_BFM_PELCO2"
+   cppdefs="-WF,-Dkey_trahdfcoef1d,-Dkey_trahdfbilap,-Dkey_mpp,-Dkey_mpp_mpi,-Dkey_trc_smolar,-Dkey_trc_hdfbilap,-Dkey_trc_dmp,-Dkey_kef,-Dkey_trc_sed,-Dkey_trc_bfm,-Dkey_INCLUDE_BFM_PELCO2,-Dkey_trc_benthic "
 
    if [ $OPENMP_FLAG ] ; then cppdefs+=",-D__OPENMP"; fi
 else
-   cppdefs="-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_trc_smolar  -Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2 -DMem_Monitor"
+   cppdefs="-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_trc_smolar  -Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2 -DMem_Monitor -Dkey_trc_benthic"
    if [ $OPENMP_FLAG ] ; then cppdefs+=" -D__OPENMP"; fi
 fi
 exe=${OGSTMDIR}/bin/ogstm.xx
@@ -54,6 +54,7 @@ ls ${OGSTMDIR}/src/IO/*.[Fhc]     >> OGSTM.lst
 ls ${OGSTMDIR}/src/MPI/*.[Fhc]    >> OGSTM.lst
 ls ${OGSTMDIR}/src/PHYS/*.[Fhc]   >> OGSTM.lst
 ls ${OGSTMDIR}/src/BIO/*.[Fhc]    >> OGSTM.lst
+ls ${OGSTMDIR}/src/BENTHIC/*.[Fhc]    >> OGSTM.lst
 
 
 ${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p ${exe} OGSTM.lst

@@ -102,7 +102,9 @@
 
       call inimpp
 
-      call domrea        !   Domain
+      call domrea         !   Domain
+
+      call domrea_benthic !   Domain
 
       call inihdf        !   diffusion horizontal coefficient
 

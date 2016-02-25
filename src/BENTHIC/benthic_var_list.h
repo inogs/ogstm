@@ -1,3 +1,5 @@
+      INTEGER, parameter :: jpk_ben = 100
+
       INTEGER, parameter :: jptra_b = 1
 
       INTEGER, parameter :: jptra_var_b    = 1

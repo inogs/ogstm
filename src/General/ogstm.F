@@ -160,6 +160,11 @@
 
       call myalloc_FN()  ; write(*,*)'My_Rank:',Rank,'alloc_FN   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
+#ifdef key_trc_benthic
+      call myalloc_BIOBEN()  ; write(*,*)'My_Rank:',Rank,'alloc_BIOBEN (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+#endif
+
+
 
       call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
       call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)

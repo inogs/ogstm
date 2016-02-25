@@ -251,6 +251,21 @@ def create_meshmask_nc(test):
         for jj in range(jpj):
             for ji in range(jpi):
                 e3w[0,jk,jj,ji]   = e3wTOT[jk];
+
+#   double e3t_ben(time, z, y, x) ;
+    e3t_ben        = np.zeros((time,100,jpj,jpi),np.double);
+    for jk in range(100):
+        for jj in range(jpj):
+            for ji in range(jpi):
+                e3t_ben[0,jk,jj,ji]   = 0.001;  # one millimeter layers
+
+#   double e3w_ben(time, z, y, x) ;
+    e3w_ben        = np.zeros((time,100,jpj,jpi),np.double);
+    for jk in range(100):
+        for jj in range(jpj):
+            for ji in range(jpi):
+                e3w_ben[0,jk,jj,ji]   = 0.001;  # one millimeter layers
+
     
 #    double tmask(time, z, y, x) ;
     tmask = np.ones((time,jpk,jpj,jpi),np.double);
@@ -291,6 +306,7 @@ def create_meshmask_nc(test):
     ncOUT.createDimension('x',jpi);
     ncOUT.createDimension('y',jpj);
     ncOUT.createDimension('z',jpk);
+    ncOUT.createDimension('z_ben',100);
     ncOUT.createDimension('time',time)
     
     ncOUT.createDimension('x_a',x_a);
@@ -312,6 +328,8 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('e3u'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3u   ;
     ncvar    = ncOUT.createVariable('e3v'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3v   ;
     ncvar    = ncOUT.createVariable('e3w'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3w   ;     
+    ncvar    = ncOUT.createVariable('e3t_ben','d',('time','z_ben', 'y', 'x')); ncvar[:] = e3t_ben;
+    ncvar    = ncOUT.createVariable('e3w_ben','d',('time','z_ben', 'y', 'x')); ncvar[:] = e3w_ben;
     ncvar    = ncOUT.createVariable('ff'    ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = ff    ;      
     ncvar    = ncOUT.createVariable('fmask' ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = fmask ;    
     ncvar    = ncOUT.createVariable('gdept' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = gdept ;

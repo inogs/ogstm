@@ -345,6 +345,9 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('nav_lat','f',('y','x'))               ; ncvar[:] = nav_lat;
     ncvar    = ncOUT.createVariable('nav_lev' ,'f',('z',)) ; ncvar[:] = nav_lev;
     ncvar    = ncOUT.createVariable('nav_lon','f',('y','x'))                 ; ncvar[:] = nav_lon;
+    ncvar    = ncOUT.createVariable('nav_lev_ben' ,'f',('z_ben',)) ; ncvar[:] = np.arange(-0.05,-10.05,-0.1);
+    ncvar    = ncOUT.createVariable('gdept_ben' ,'d',('z_ben',)) ; ncvar[:] = np.arange(-0.05,-10.05,-0.1).astype(np.double) ;
+    ncvar    = ncOUT.createVariable('gdepw_ben' ,'d',('z_ben',)) ; ncvar[:] = np.arange(0,-10,-0.1).astype(np.double) ;
 #	float time(time) ;
 #	short time_steps(time) ;
     ncvar    = ncOUT.createVariable('tmask' ,'d',('time','z', 'y', 'x') )    ; ncvar[:] = tmask 

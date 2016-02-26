@@ -211,6 +211,7 @@ CC ==============
       INTEGER, PARAMETER :: numout = 2   ! unit for output print
       LOGICAL lwp                        ! boolean term for stdout
       INTEGER, PARAMETER :: numnat =80   ! the number of the passive tracer NAMELIST
+      INTEGER, PARAMETER :: numben =81   ! the number of the passive tracer NAMELIST
 
 
 #if defined key_mpp 

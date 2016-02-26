@@ -24,6 +24,8 @@ import create_extinction_nc as c_ext
 
 import create_init_nc as c_init
 
+import create_init_benthic_nc as c_init_benthic
+
 import create_forcings_nc as c_for
 
 import create_bc_nc as c_bc
@@ -55,6 +57,8 @@ for test in TEST_LIST:
     c_bc.create_bc_nc(test)
     
     c_init.create_init_nc(test)
+
+    c_init_benthic.create_init_benthic_nc(test)
 
     d_code.deploy_code(test)
 

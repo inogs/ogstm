@@ -1,4 +1,4 @@
-      INTEGER, parameter :: jpk_ben = 100
+!     INTEGER, parameter :: jpk_ben = 100
 
       INTEGER, parameter :: jptra_b = 1
 

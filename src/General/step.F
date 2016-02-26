@@ -144,6 +144,7 @@
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp    ! se commento questo non fa calcoli
         call trcave
+        call trcave_benthic()
         ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
         ave_counter_2 = ave_counter_2 +1
 

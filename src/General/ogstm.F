@@ -86,7 +86,8 @@
 
       call parlec      ! read namelist.init
       call time_init
-      call trclec
+      call trclec      ! benthic
+      call benlec      ! pelagic
 
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager
@@ -113,6 +114,8 @@
       call set_to_zero() ! set to zero some data arrays
 
       call trcrst        ! read restarts
+
+      call trcrst_benthic! read restarts benthic
 
       call photo_init
 

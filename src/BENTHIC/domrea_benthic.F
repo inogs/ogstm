@@ -26,8 +26,19 @@
 ! To read only one meshmask.nc
 
       maskfile        = 'meshmask.nc'
-      CALL readnc_slice_double (maskfile,'e3t_ben', e3t_ben )
-      CALL readnc_slice_double (maskfile,'e3w_ben', e3w_ben )
+      call EXISTVAR(maskfile,'e3t_ben',B)
+      if (B) then
+         CALL readnc_slice_double (maskfile,'e3t_ben', e3t_ben )
+      else
+         if(lwp) write(*,*) 'e3t_ben not found'
+      endif      
+
+      call EXISTVAR(maskfile,'e3w_ben',B)
+      if (B) then
+         CALL readnc_slice_double (maskfile,'e3w_ben', e3w_ben )
+      else
+         if(lwp) write(*,*) 'e3w_ben not found'
+      endif      
 
 
       END SUBROUTINE domrea_benthic

@@ -1,0 +1,24 @@
+&NATBEN 
+   cbennm(1)="Q11c"
+   cbenun(1)="mmol C/m3"
+   cbemax(1)=1.000000e+03 
+   cbe_hf(1)=1 
+/ 
+
+&NATBEN_DIAG
+   dibnm(1)="DIA_B_1"
+   dibun(1)="-"
+   dibhf(1)=0 
+
+   dibnm(2)="DIA_B_2"
+   dibun(2)="-"
+   dibhf(2)=0 
+/ 
+
+&NATBEN_DIAG_2D
+   dibnm_2d(1)="DIA__2D_B_1"
+   dibun_2d(1)="-"
+   dibhf_2d(1)=0 
+
+/ 
+

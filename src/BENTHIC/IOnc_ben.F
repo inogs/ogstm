@@ -386,7 +386,7 @@
 
         s = nf90_put_var(nc, idLon,  totglamt); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idLat,  totgphit); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idLev,     gdept); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLev, gdept_ben); call handle_err1(s,counter,fileNetCDF)
 
         s = nf90_put_var(nc, idTim,    julian); call handle_err1(s,counter,fileNetCDF)
 
@@ -469,7 +469,7 @@
 
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idgdept,  REAL(   gdept,     4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept,  REAL(gdept_ben         ,4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idVAR  ,  M )                    ; call handle_err1(s,counter,fileNetCDF)
 
 
@@ -615,7 +615,7 @@
 
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept,  REAL(gdept_ben,         4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idVAR  ,                          M  ); call handle_err1(s,counter,fileNetCDF)
 
 

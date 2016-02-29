@@ -54,7 +54,6 @@
              DO jj=1, jpj
                 DO ji=1, jpi
                IF(tmask(ji,jj,1) .NE. 0.) THEN
-                  write(*,*) " benIO -->",  benIO(ji,jj,jk,jn+mytid)
                   benIO(ji,jj,jk,jn+mytid)=(benIO(ji,jj,jk,jn+mytid)*Realcounter+trn_ben(ji,jj,jk,jn+mytid))*Realcounterp1
                ELSE
                   benIO(ji,jj,jk,jn+mytid)=Miss_val

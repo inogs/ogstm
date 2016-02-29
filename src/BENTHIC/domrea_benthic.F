@@ -40,5 +40,19 @@
          if(lwp) write(*,*) 'e3w_ben not found'
       endif      
 
+      call EXISTVAR(maskfile,'gdept_ben',B)
+      if (B) then
+         CALL readmask_double_1d_ben(maskfile,'gdept_ben', gdept_ben )
+      else
+         if(lwp) write(*,*) 'gdept_ben not found'
+      endif      
+
+      call EXISTVAR(maskfile,'gdepw_ben',B)
+      if (B) then
+         CALL readmask_double_1d_ben(maskfile,'gdepw_ben', gdepw_ben )
+      else
+         if(lwp) write(*,*) 'gdepw_ben not found'
+      endif      
+
 
       END SUBROUTINE domrea_benthic

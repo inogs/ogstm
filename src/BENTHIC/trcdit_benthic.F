@@ -189,8 +189,8 @@
           CALL WRITE_AVE_BKP_ben(bkpname,datefrom, dateTo,totbenIO,ave_counter);
 
         else
-          d2f3d = REAL(totbenIO,4)
-          CALL WRITE_AVE_ben(output_file_nc,datefrom, dateTo, d2f3d);
+          d2f3d_ben = REAL(totbenIO,4)
+          CALL WRITE_AVE_ben(output_file_nc,datefrom, dateTo, d2f3d_ben);
          endif
 
 

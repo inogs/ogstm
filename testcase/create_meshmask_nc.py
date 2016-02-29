@@ -32,6 +32,8 @@ def create_meshmask_nc(test):
     
     dx=test['dx']
     dy=test['dy']
+
+    jpk_ben=100
     
 #    double coastp(y, x) ;
     coastp = np.zeros((jpj,jpi),np.double)
@@ -49,12 +51,24 @@ def create_meshmask_nc(test):
     gdeptTOT           = np.loadtxt(filein, dtype=np.double);
     gdept              = np.zeros((time,jpk,y_a,x_a),np.double);
     gdept[0,0:jpk,0,0] = gdeptTOT[0:jpk];
+    
+#    double gdept_ben(time, z, y_a, x_a) ;
+#    filein             = 'KB'+'/gdept' + 'KB' + '.dat'
+#    gdeptTOT           = np.loadtxt(filein, dtype=np.double);
+    gdept_ben                  = np.zeros((time,jpk_ben,y_a,x_a),np.double);
+    gdept_ben[0,0:jpk_ben,0,0] = np.arange(-0.05,-10.05,-0.1).astype(np.double) ;
 
 #    double gdepw(time, z, y_a, x_a) ;
     filein             = 'KB' + '/gdepw' + 'KB' + '.dat'
     gdepwTOT           = np.loadtxt(filein, dtype=np.double);
     gdepw              = np.zeros((time,jpk,y_a,x_a),np.double);
     gdepw[0,0:jpk,0,0] = gdepwTOT[0:jpk];
+
+#    double gdepw(time, z, y_a, x_a) ;
+#   filein             = 'KB' + '/gdepw' + 'KB' + '.dat'
+#   gdepwTOT           = np.loadtxt(filein, dtype=np.double);
+    gdepw_ben              = np.zeros((time,jpk_ben,y_a,x_a),np.double);
+    gdepw_ben[0,0:jpk_ben,0,0] = np.arange(0,-10,-0.1).astype(np.double) ;
     
 
 #    double glamt(time, z_a, y, x) ;
@@ -253,15 +267,15 @@ def create_meshmask_nc(test):
                 e3w[0,jk,jj,ji]   = e3wTOT[jk];
 
 #   double e3t_ben(time, z, y, x) ;
-    e3t_ben        = np.zeros((time,100,jpj,jpi),np.double);
-    for jk in range(100):
+    e3t_ben        = np.zeros((time,jpk_ben,jpj,jpi),np.double);
+    for jk in range(jpk_ben):
         for jj in range(jpj):
             for ji in range(jpi):
                 e3t_ben[0,jk,jj,ji]   = 0.001;  # one millimeter layers
 
 #   double e3w_ben(time, z, y, x) ;
-    e3w_ben        = np.zeros((time,100,jpj,jpi),np.double);
-    for jk in range(100):
+    e3w_ben        = np.zeros((time,jpk_ben,jpj,jpi),np.double);
+    for jk in range(jpk_ben):
         for jj in range(jpj):
             for ji in range(jpi):
                 e3w_ben[0,jk,jj,ji]   = 0.001;  # one millimeter layers
@@ -306,7 +320,7 @@ def create_meshmask_nc(test):
     ncOUT.createDimension('x',jpi);
     ncOUT.createDimension('y',jpj);
     ncOUT.createDimension('z',jpk);
-    ncOUT.createDimension('z_ben',100);
+    ncOUT.createDimension('z_ben',jpk_ben);
     ncOUT.createDimension('time',time)
     
     ncOUT.createDimension('x_a',x_a);
@@ -346,8 +360,8 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('nav_lev' ,'f',('z',)) ; ncvar[:] = nav_lev;
     ncvar    = ncOUT.createVariable('nav_lon','f',('y','x'))                 ; ncvar[:] = nav_lon;
     ncvar    = ncOUT.createVariable('nav_lev_ben' ,'f',('z_ben',)) ; ncvar[:] = np.arange(-0.05,-10.05,-0.1);
-    ncvar    = ncOUT.createVariable('gdept_ben' ,'d',('z_ben',)) ; ncvar[:] = np.arange(-0.05,-10.05,-0.1).astype(np.double) ;
-    ncvar    = ncOUT.createVariable('gdepw_ben' ,'d',('z_ben',)) ; ncvar[:] = np.arange(0,-10,-0.1).astype(np.double) ;
+    ncvar    = ncOUT.createVariable('gdept_ben' ,'d',('time','z_ben','y_a', 'x_a')) ; ncvar[:] = gdept_ben
+    ncvar    = ncOUT.createVariable('gdepw_ben' ,'d',('time','z_ben','y_a', 'x_a')) ; ncvar[:] = gdepw_ben
 #	float time(time) ;
 #	short time_steps(time) ;
     ncvar    = ncOUT.createVariable('tmask' ,'d',('time','z', 'y', 'x') )    ; ncvar[:] = tmask 

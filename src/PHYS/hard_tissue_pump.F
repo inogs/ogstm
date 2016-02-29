@@ -43,8 +43,6 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
 
-!      INTEGER :: kt,pack_size
-!      INTEGER :: elements,nelements(6),idx_element(14,6)
 ! omp variables
       INTEGER :: mytid, ntids, itid
 
@@ -53,7 +51,7 @@ CC ==================
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn,jv,jnn,gji,gjj
+      INTEGER ji,jj,jk,jn,jv
       INTEGER jpe,jpf
       REAL(8) RR_P2
       REAL(8) NORM_1, dCa
@@ -78,7 +76,6 @@ CC ===================
       jpe    = 26
       jpf    = 2 ! CaCO3 dissolution along the whole water column  
       RR_P2  = 0.2   ![]
-c      dCa    = 3500. ![m]
       dCa    = 1500. ![m]   Mediterranean Sea mean depth
       SinkCa = 0.
 C Compute vertical integral

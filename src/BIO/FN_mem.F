@@ -54,7 +54,7 @@
       !allocate(TOT    (jpj*jpi,elements)) ; TOT        = huge(TOT(1,1))        ! elements is the number of element considered (C,P,N,...)
       !allocate(TOT_FN (jpj*jpi,elements)) ; TOT_FN     = huge(TOT_FN(1,1))
       !allocate(FN_CORR(jpj*jpi,elements)) ; FN_CORR    = huge(FN_CORR(1,1))
-      allocate(TOTcalc(jpj*jpi))
+      allocate(TOTcalc(jpj*jpi))          ; TOTcalc    =huge(TOTcalc(1))
 
       allocate(cou_FN(jpi,jpj,jpk))       ; cou_FN     = huge(cou_FN(1,1,1))
       allocate(FN_ranking(jptra))         ; FN_ranking = huge(FN_ranking(1))

@@ -192,7 +192,7 @@ C
                           endif
 
                           PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
-			  NPPF2(ji,jj,jk)=d(ppF05) ! Flagellate production 
+                          NPPF2(ji,jj,jk)=d(ppF05) ! Flagellate production 
 
 
 

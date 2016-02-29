@@ -53,6 +53,9 @@ CC----------------------------------------------------------------------
        allocate(PH(jpi,jpj,jpk))        
        PH        = huge(PH(1,1,1)) 
        PH=8.0
+       allocate(NPPF2(jpi,jpj,jpk))
+       NPPF2 = 0.0 ! nut huge, because it will be assigned only in trcBIO in BFMpoints 
+                   ! and used in hard_tissue_pump.F also in land points
 
        ice=0
 

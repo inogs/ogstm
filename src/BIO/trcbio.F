@@ -37,6 +37,7 @@ CC   --------------
       USE myalloc
       USE myalloc_mpp
       USE BIO_mem
+      USE BIOBEN_mem
       USE BC_mem
 
        IMPLICIT NONE
@@ -47,6 +48,7 @@ CC local declarations
 CC ==================
       LOGICAL sur,bot
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
+      REAL(8) a_b(jptra_b),b_b(jptra_b)
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
@@ -143,11 +145,16 @@ C
 
 
                           sur = (jk .eq. 1)
-                          bot = .FALSE.
+                          bot = (jk .eq. 42)
 
                           DO jtr=1, jtrmax
                              a(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations
                           END DO
+                          IF (bot) then ! benthic state variables
+                             DO jtr=1, jptra_b
+                                a_b(jtr) = trn_ben(ji,jj,1,jtr) !  benthic 1 layer
+                             END DO
+                          ENDIF
 ! Environmental regulating factors (er)
 
                           er(1)  = tn (ji,jj,jk)        ! Temperature (Celsius)
@@ -162,6 +169,10 @@ C
                           er(10) = PH(ji,jj,jk)         ! PH
 
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
+                          if (bot) then 
+                             call BFM0D_Input_EcologyDynamics_benthic(a_b,jptra_b,er)
+                          endif
+
 
                           call BFM0D_reset()
 
@@ -176,6 +187,14 @@ C
                           DO jtr=1, jtrmax
                              tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend
                           END DO
+
+                          if (bot) then 
+                             call BFM0D_output_EcologyDynamics_benthic(b_b)
+                             DO jtr=1, jptra_b
+                                tra_ben(ji,jj,1,jtr)=b_b(jtr) !  benthic 1 layer
+                                write(*,*) 'ogstm -->', tra_ben(ji,jj,1,jtr)
+                             END DO
+                          endif
 
                           DO jtr=1,4
                              sediPI(ji,jj,jk,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)

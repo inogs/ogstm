@@ -2,6 +2,8 @@
 
 import numpy as np
 
+jpk_ben=1
+
 test_conf=np.dtype([('jpi'   ,np.int)  ,('jpj',np.int)     ,('jpk',np.int),\
                     ('nprocx',np.int)  ,('nprocy',np.int)  ,\
                     ('lon0'  ,np.float),('lat0',np.float)  ,\

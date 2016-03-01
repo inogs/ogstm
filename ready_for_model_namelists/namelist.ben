@@ -1,24 +1,1010 @@
 &NATBEN 
-   cbennm(1)="Q11c"
-   cbenun(1)="mmol C/m3"
-   cbemax(1)=1.000000e+03 
-   cbe_hf(1)=1 
-/ 
 
-&NATBEN_DIAG
-   dibnm(1)="DIA_B_1"
-   dibun(1)="-"
-   dibhf(1)=0 
+   cbennm(1)="G3c" 
+   cbenun(1)="mg C/m2" 
+   cbemax(1)=1000.00001
+   cbe_hf(1)=1
 
-   dibnm(2)="DIA_B_2"
-   dibun(2)="-"
-   dibhf(2)=0 
-/ 
+   cbennm(2)="G3h" 
+   cbenun(2)="mmol eq/m2" 
+   cbemax(2)=1000.00001
+   cbe_hf(2)=1
 
-&NATBEN_DIAG_2D
-   dibnm_2d(1)="DIA__2D_B_1"
-   dibun_2d(1)="-"
-   dibhf_2d(1)=0 
+   cbennm(3)="G13c" 
+   cbenun(3)="mg C/m2" 
+   cbemax(3)=1000.00001
+   cbe_hf(3)=1
 
-/ 
+   cbennm(4)="G13h" 
+   cbenun(4)="mmol eq/m2" 
+   cbemax(4)=1000.00001
+   cbe_hf(4)=1
 
+   cbennm(5)="G23c" 
+   cbenun(5)="mg C/m2" 
+   cbemax(5)=1000.00001
+   cbe_hf(5)=1
+
+   cbennm(6)="G23h" 
+   cbenun(6)="mmol eq/m2" 
+   cbemax(6)=1000.00001
+   cbe_hf(6)=1
+
+   cbennm(7)="Y1c" 
+   cbenun(7)="mg C/m2" 
+   cbemax(7)=1000.00001
+   cbe_hf(7)=1
+
+   cbennm(8)="Y1n" 
+   cbenun(8)="mmol N/m2" 
+   cbemax(8)=1000.00001
+   cbe_hf(8)=1
+
+   cbennm(9)="Y1p" 
+   cbenun(9)="mmol P/m2" 
+   cbemax(9)=1000.00001
+   cbe_hf(9)=1
+
+   cbennm(10)="Y2c" 
+   cbenun(10)="mg C/m2" 
+   cbemax(10)=1000.00001
+   cbe_hf(10)=1
+
+   cbennm(11)="Y2n" 
+   cbenun(11)="mmol N/m2" 
+   cbemax(11)=1000.00001
+   cbe_hf(11)=1
+
+   cbennm(12)="Y2p" 
+   cbenun(12)="mmol P/m2" 
+   cbemax(12)=1000.00001
+   cbe_hf(12)=1
+
+   cbennm(13)="Y3c" 
+   cbenun(13)="mg C/m2" 
+   cbemax(13)=1000.00001
+   cbe_hf(13)=1
+
+   cbennm(14)="Y3n" 
+   cbenun(14)="mmol N/m2" 
+   cbemax(14)=1000.00001
+   cbe_hf(14)=1
+
+   cbennm(15)="Y3p" 
+   cbenun(15)="mmol P/m2" 
+   cbemax(15)=1000.00001
+   cbe_hf(15)=1
+
+   cbennm(16)="Y4c" 
+   cbenun(16)="mg C/m2" 
+   cbemax(16)=1000.00001
+   cbe_hf(16)=1
+
+   cbennm(17)="Y4n" 
+   cbenun(17)="mmol N/m2" 
+   cbemax(17)=1000.00001
+   cbe_hf(17)=1
+
+   cbennm(18)="Y4p" 
+   cbenun(18)="mmol P/m2" 
+   cbemax(18)=1000.00001
+   cbe_hf(18)=1
+
+   cbennm(19)="Y5c" 
+   cbenun(19)="mg C/m2" 
+   cbemax(19)=1000.00001
+   cbe_hf(19)=1
+
+   cbennm(20)="Y5n" 
+   cbenun(20)="mmol N/m2" 
+   cbemax(20)=1000.00001
+   cbe_hf(20)=1
+
+   cbennm(21)="Y5p" 
+   cbenun(21)="mmol P/m2" 
+   cbemax(21)=1000.00001
+   cbe_hf(21)=1
+
+   cbennm(22)="Q6c" 
+   cbenun(22)="mg C/m2" 
+   cbemax(22)=1000.00001
+   cbe_hf(22)=1
+
+   cbennm(23)="Q6n" 
+   cbenun(23)="mmol N/m2" 
+   cbemax(23)=1000.00001
+   cbe_hf(23)=1
+
+   cbennm(24)="Q6p" 
+   cbenun(24)="mmol P/m2" 
+   cbemax(24)=1000.00001
+   cbe_hf(24)=1
+
+   cbennm(25)="Q6s" 
+   cbenun(25)="mmol Si/m2" 
+   cbemax(25)=1000.00001
+   cbe_hf(25)=1
+
+   cbennm(26)="Q5c" 
+   cbenun(26)="mg C/m2" 
+   cbemax(26)=1000.00001
+   cbe_hf(26)=1
+
+   cbennm(27)="Q5n" 
+   cbenun(27)="mmol N/m2" 
+   cbemax(27)=1000.00001
+   cbe_hf(27)=1
+
+   cbennm(28)="Q5p" 
+   cbenun(28)="mmol P/m2" 
+   cbemax(28)=1000.00001
+   cbe_hf(28)=1
+
+   cbennm(29)="Q1c" 
+   cbenun(29)="mg C/m2" 
+   cbemax(29)=1000.00001
+   cbe_hf(29)=1
+
+   cbennm(30)="Q1n" 
+   cbenun(30)="mmol N/m2" 
+   cbemax(30)=1000.00001
+   cbe_hf(30)=1
+
+   cbennm(31)="Q1p" 
+   cbenun(31)="mmol P/m2" 
+   cbemax(31)=1000.00001
+   cbe_hf(31)=1
+
+   cbennm(32)="Q11c" 
+   cbenun(32)="mg C/m2" 
+   cbemax(32)=1000.00001
+   cbe_hf(32)=1
+
+   cbennm(33)="Q11n" 
+   cbenun(33)="mmol N/m2" 
+   cbemax(33)=1000.00001
+   cbe_hf(33)=1
+
+   cbennm(34)="Q11p" 
+   cbenun(34)="mmol P/m2" 
+   cbemax(34)=1000.00001
+   cbe_hf(34)=1
+
+   cbennm(35)="H1c" 
+   cbenun(35)="mg C/m2" 
+   cbemax(35)=1000.00001
+   cbe_hf(35)=1
+
+   cbennm(36)="H1n" 
+   cbenun(36)="mmol N/m2" 
+   cbemax(36)=1000.00001
+   cbe_hf(36)=1
+
+   cbennm(37)="H1p" 
+   cbenun(37)="mmol P/m2" 
+   cbemax(37)=1000.00001
+   cbe_hf(37)=1
+
+   cbennm(38)="H2c" 
+   cbenun(38)="mg C/m2" 
+   cbemax(38)=1000.00001
+   cbe_hf(38)=1
+
+   cbennm(39)="H2n" 
+   cbenun(39)="mmol N/m2" 
+   cbemax(39)=1000.00001
+   cbe_hf(39)=1
+
+   cbennm(40)="H2p" 
+   cbenun(40)="mmol P/m2" 
+   cbemax(40)=1000.00001
+   cbe_hf(40)=1
+
+   cbennm(41)="K1p" 
+   cbenun(41)="mmol P/m2" 
+   cbemax(41)=1000.00001
+   cbe_hf(41)=1
+
+   cbennm(42)="K11p" 
+   cbenun(42)="mmol P/m2" 
+   cbemax(42)=1000.00001
+   cbe_hf(42)=1
+
+   cbennm(43)="K21p" 
+   cbenun(43)="mmol P/m2" 
+   cbemax(43)=1000.00001
+   cbe_hf(43)=1
+
+   cbennm(44)="K4n" 
+   cbenun(44)="mmol N/m2" 
+   cbemax(44)=1000.00001
+   cbe_hf(44)=1
+
+   cbennm(45)="K14n" 
+   cbenun(45)="mmol N/m2" 
+   cbemax(45)=1000.00001
+   cbe_hf(45)=1
+
+   cbennm(46)="K24n" 
+   cbenun(46)="mmol N/m2" 
+   cbemax(46)=1000.00001
+   cbe_hf(46)=1
+
+   cbennm(47)="K6r" 
+   cbenun(47)="mmol S--/m2" 
+   cbemax(47)=1000.00001
+   cbe_hf(47)=1
+
+   cbennm(48)="K16r" 
+   cbenun(48)="mmol S--/m2" 
+   cbemax(48)=1000.00001
+   cbe_hf(48)=1
+
+   cbennm(49)="K26r" 
+   cbenun(49)="mmol S--/m2" 
+   cbemax(49)=1000.00001
+   cbe_hf(49)=1
+
+   cbennm(50)="K3n" 
+   cbenun(50)="mmol N/m2" 
+   cbemax(50)=1000.00001
+   cbe_hf(50)=1
+
+   cbennm(51)="K5s" 
+   cbenun(51)="mmol Si/m2" 
+   cbemax(51)=1000.00001
+   cbe_hf(51)=1
+
+   cbennm(52)="G2o" 
+   cbenun(52)="mmol O2/m2" 
+   cbemax(52)=1000.00001
+   cbe_hf(52)=1
+
+   cbennm(53)="G4n" 
+   cbenun(53)="mmol N/m2" 
+   cbemax(53)=1000.00001
+   cbe_hf(53)=1
+
+   cbennm(54)="D1m" 
+   cbenun(54)="m" 
+   cbemax(54)=1000.00001
+   cbe_hf(54)=1
+
+   cbennm(55)="D2m" 
+   cbenun(55)="m" 
+   cbemax(55)=1000.00001
+   cbe_hf(55)=1
+
+   cbennm(56)="D6m" 
+   cbenun(56)="m" 
+   cbemax(56)=1000.00001
+   cbe_hf(56)=1
+
+   cbennm(57)="D7m" 
+   cbenun(57)="m" 
+   cbemax(57)=1000.00001
+   cbe_hf(57)=1
+
+   cbennm(58)="D8m" 
+   cbenun(58)="m" 
+   cbemax(58)=1000.00001
+   cbe_hf(58)=1
+
+   cbennm(59)="D9m" 
+   cbenun(59)="m" 
+   cbemax(59)=1000.00001
+   cbe_hf(59)=15
+
+/
+
+  &NATBEN_DIAG
+   dibnm(1)="DIA_B_1" 
+   dibun(1)="-" 
+   dibhf(1)=0
+
+/
+
+  &NATBEN_DIAG_2D
+   dibnm_2d(1)="sidiss" 
+   dibun_2d(1)="-" 
+   dibhf_2d(1)=0
+
+   dibnm_2d(2)="M1p" 
+   dibun_2d(2)="-" 
+   dibhf_2d(2)=0
+
+   dibnm_2d(3)="M11p" 
+   dibun_2d(3)="-" 
+   dibhf_2d(3)=0
+
+   dibnm_2d(4)="M21p" 
+   dibun_2d(4)="-" 
+   dibhf_2d(4)=0
+
+   dibnm_2d(5)="M4n" 
+   dibun_2d(5)="-" 
+   dibhf_2d(5)=0
+
+   dibnm_2d(6)="M14n" 
+   dibun_2d(6)="-" 
+   dibhf_2d(6)=0
+
+   dibnm_2d(7)="M24n" 
+   dibun_2d(7)="-" 
+   dibhf_2d(7)=0
+
+   dibnm_2d(8)="M3n" 
+   dibun_2d(8)="-" 
+   dibhf_2d(8)=0
+
+   dibnm_2d(9)="M5s" 
+   dibun_2d(9)="-" 
+   dibhf_2d(9)=0
+
+   dibnm_2d(10)="M6r" 
+   dibun_2d(10)="-" 
+   dibhf_2d(10)=0
+
+   dibnm_2d(11)="RI_Fc" 
+   dibun_2d(11)="-" 
+   dibhf_2d(11)=0
+
+   dibnm_2d(12)="RI_Fn" 
+   dibun_2d(12)="-" 
+   dibhf_2d(12)=0
+
+   dibnm_2d(13)="RI_Fp" 
+   dibun_2d(13)="-" 
+   dibhf_2d(13)=0
+
+   dibnm_2d(14)="RI_Fs" 
+   dibun_2d(14)="-" 
+   dibhf_2d(14)=0
+
+   dibnm_2d(15)="ZI_Fc" 
+   dibun_2d(15)="-" 
+   dibhf_2d(15)=0
+
+   dibnm_2d(16)="ZI_Fn" 
+   dibun_2d(16)="-" 
+   dibhf_2d(16)=0
+
+   dibnm_2d(17)="ZI_Fp" 
+   dibun_2d(17)="-" 
+   dibhf_2d(17)=0
+
+   dibnm_2d(18)="ZI_Fs" 
+   dibun_2d(18)="-" 
+   dibhf_2d(18)=0
+
+   dibnm_2d(19)="jZIY3c" 
+   dibun_2d(19)="-" 
+   dibhf_2d(19)=0
+
+   dibnm_2d(20)="jRIY3c" 
+   dibun_2d(20)="-" 
+   dibhf_2d(20)=0
+
+   dibnm_2d(21)="jRIY3n" 
+   dibun_2d(21)="-" 
+   dibhf_2d(21)=0
+
+   dibnm_2d(22)="jRIY3p" 
+   dibun_2d(22)="-" 
+   dibhf_2d(22)=0
+
+   dibnm_2d(23)="jRIY3s" 
+   dibun_2d(23)="-" 
+   dibhf_2d(23)=0
+
+   dibnm_2d(24)="Depth_Ben" 
+   dibun_2d(24)="-" 
+   dibhf_2d(24)=0
+
+   dibnm_2d(25)="ETW_Ben" 
+   dibun_2d(25)="-" 
+   dibhf_2d(25)=0
+
+   dibnm_2d(26)="ERHO_Ben" 
+   dibun_2d(26)="-" 
+   dibhf_2d(26)=0
+
+   dibnm_2d(27)="ESW_Ben" 
+   dibun_2d(27)="-" 
+   dibhf_2d(27)=0
+
+   dibnm_2d(28)="O2o_Ben" 
+   dibun_2d(28)="-" 
+   dibhf_2d(28)=0
+
+   dibnm_2d(29)="N1p_Ben" 
+   dibun_2d(29)="-" 
+   dibhf_2d(29)=0
+
+   dibnm_2d(30)="N3n_Ben" 
+   dibun_2d(30)="-" 
+   dibhf_2d(30)=0
+
+   dibnm_2d(31)="N4n_Ben" 
+   dibun_2d(31)="-" 
+   dibhf_2d(31)=0
+
+   dibnm_2d(32)="N5s_Ben" 
+   dibun_2d(32)="-" 
+   dibhf_2d(32)=0
+
+   dibnm_2d(33)="N6r_Ben" 
+   dibun_2d(33)="-" 
+   dibhf_2d(33)=0
+
+   dibnm_2d(34)="sediR6_Ben" 
+   dibun_2d(34)="-" 
+   dibhf_2d(34)=0
+
+   dibnm_2d(35)="jK4K3n" 
+   dibun_2d(35)="-" 
+   dibhf_2d(35)=0
+
+   dibnm_2d(36)="jK3G4n" 
+   dibun_2d(36)="-" 
+   dibhf_2d(36)=0
+
+   dibnm_2d(37)="jK31K21p" 
+   dibun_2d(37)="-" 
+   dibhf_2d(37)=0
+
+   dibnm_2d(38)="jK34K24n" 
+   dibun_2d(38)="-" 
+   dibhf_2d(38)=0
+
+   dibnm_2d(39)="jK13K3n" 
+   dibun_2d(39)="-" 
+   dibhf_2d(39)=0
+
+   dibnm_2d(40)="jK15K5s" 
+   dibun_2d(40)="-" 
+   dibhf_2d(40)=0
+
+   dibnm_2d(41)="jK36K26r" 
+   dibun_2d(41)="-" 
+   dibhf_2d(41)=0
+
+   dibnm_2d(42)="DICae" 
+   dibun_2d(42)="-" 
+   dibhf_2d(42)=0
+
+   dibnm_2d(43)="DICan" 
+   dibun_2d(43)="-" 
+   dibhf_2d(43)=0
+
+   dibnm_2d(44)="O3c_Ben" 
+   dibun_2d(44)="-" 
+   dibhf_2d(44)=0
+
+   dibnm_2d(45)="O3h_Ben" 
+   dibun_2d(45)="-" 
+   dibhf_2d(45)=0
+
+   dibnm_2d(46)="Acae" 
+   dibun_2d(46)="-" 
+   dibhf_2d(46)=0
+
+   dibnm_2d(47)="Acan" 
+   dibun_2d(47)="-" 
+   dibhf_2d(47)=0
+
+   dibnm_2d(48)="pHae" 
+   dibun_2d(48)="-" 
+   dibhf_2d(48)=0
+
+   dibnm_2d(49)="pHan" 
+   dibun_2d(49)="-" 
+   dibhf_2d(49)=0
+
+   dibnm_2d(50)="pCO2ae" 
+   dibun_2d(50)="-" 
+   dibhf_2d(50)=0
+
+   dibnm_2d(51)="pCO2an" 
+   dibun_2d(51)="-" 
+   dibhf_2d(51)=0
+
+   dibnm_2d(52)="totbenc" 
+   dibun_2d(52)="-" 
+   dibhf_2d(52)=0
+
+   dibnm_2d(53)="totbenn" 
+   dibun_2d(53)="-" 
+   dibhf_2d(53)=0
+
+   dibnm_2d(54)="totbenp" 
+   dibun_2d(54)="-" 
+   dibhf_2d(54)=0
+
+   dibnm_2d(55)="totbens" 
+   dibun_2d(55)="-" 
+   dibhf_2d(55)=0
+
+   dibnm_2d(56)="rrBTo" 
+   dibun_2d(56)="-" 
+   dibhf_2d(56)=0
+
+   dibnm_2d(57)="rrATo" 
+   dibun_2d(57)="-" 
+   dibhf_2d(57)=0
+
+   dibnm_2d(58)="reBTn" 
+   dibun_2d(58)="-" 
+   dibhf_2d(58)=0
+
+   dibnm_2d(59)="reBTp" 
+   dibun_2d(59)="-" 
+   dibhf_2d(59)=0
+
+   dibnm_2d(60)="reATn" 
+   dibun_2d(60)="-" 
+   dibhf_2d(60)=0
+
+   dibnm_2d(61)="reATp" 
+   dibun_2d(61)="-" 
+   dibhf_2d(61)=0
+
+   dibnm_2d(62)="turenh" 
+   dibun_2d(62)="-" 
+   dibhf_2d(62)=0
+
+   dibnm_2d(63)="irrenh" 
+   dibun_2d(63)="-" 
+   dibhf_2d(63)=0
+
+   dibnm_2d(64)="shiftD1m" 
+   dibun_2d(64)="-" 
+   dibhf_2d(64)=0
+
+   dibnm_2d(65)="shiftD2m" 
+   dibun_2d(65)="-" 
+   dibhf_2d(65)=0
+
+   dibnm_2d(66)="jG2K3o" 
+   dibun_2d(66)="-" 
+   dibhf_2d(66)=0
+
+   dibnm_2d(67)="jG2K7o" 
+   dibun_2d(67)="-" 
+   dibhf_2d(67)=0
+
+   dibnm_2d(68)="pdenit" 
+   dibun_2d(68)="-" 
+   dibhf_2d(68)=0
+
+   dibnm_2d(69)="pnit" 
+   dibun_2d(69)="-" 
+   dibhf_2d(69)=0
+
+   dibnm_2d(70)="panox" 
+   dibun_2d(70)="-" 
+   dibhf_2d(70)=0
+
+   dibnm_2d(71)="psid" 
+   dibun_2d(71)="-" 
+   dibhf_2d(71)=0
+
+   dibnm_2d(72)="pdepo" 
+   dibun_2d(72)="-" 
+   dibhf_2d(72)=0
+
+   dibnm_2d(73)="cmin" 
+   dibun_2d(73)="-" 
+   dibhf_2d(73)=0
+
+   dibnm_2d(74)="nmin" 
+   dibun_2d(74)="-" 
+   dibhf_2d(74)=0
+
+   dibnm_2d(75)="pmin" 
+   dibun_2d(75)="-" 
+   dibhf_2d(75)=0
+
+/
+
+   dibnm_2d(76)="jsurO2o" 
+   dibun_2d(76)="-"
+   dibhf_2d(76)=0 
+
+   dibnm_2d(77)="jsurN1p" 
+   dibun_2d(77)="-"
+   dibhf_2d(77)=0 
+
+   dibnm_2d(78)="jsurN3n" 
+   dibun_2d(78)="-"
+   dibhf_2d(78)=0 
+
+   dibnm_2d(79)="jsurN4n" 
+   dibun_2d(79)="-"
+   dibhf_2d(79)=0 
+
+   dibnm_2d(80)="jsurO4n" 
+   dibun_2d(80)="-"
+   dibhf_2d(80)=0 
+
+   dibnm_2d(81)="jsurN5s" 
+   dibun_2d(81)="-"
+   dibhf_2d(81)=0 
+
+   dibnm_2d(82)="jsurN6r" 
+   dibun_2d(82)="-"
+   dibhf_2d(82)=0 
+
+   dibnm_2d(83)="jsurB1c" 
+   dibun_2d(83)="-"
+   dibhf_2d(83)=0 
+
+   dibnm_2d(84)="jsurB1n" 
+   dibun_2d(84)="-"
+   dibhf_2d(84)=0 
+
+   dibnm_2d(85)="jsurB1p" 
+   dibun_2d(85)="-"
+   dibhf_2d(85)=0 
+
+   dibnm_2d(86)="jsurP1c" 
+   dibun_2d(86)="-"
+   dibhf_2d(86)=0 
+
+   dibnm_2d(87)="jsurP1n" 
+   dibun_2d(87)="-"
+   dibhf_2d(87)=0 
+
+   dibnm_2d(88)="jsurP1p" 
+   dibun_2d(88)="-"
+   dibhf_2d(88)=0 
+
+   dibnm_2d(89)="jsurP1l" 
+   dibun_2d(89)="-"
+   dibhf_2d(89)=0 
+
+   dibnm_2d(90)="jsurP1s" 
+   dibun_2d(90)="-"
+   dibhf_2d(90)=0 
+
+   dibnm_2d(91)="jsurP2c" 
+   dibun_2d(91)="-"
+   dibhf_2d(91)=0 
+
+   dibnm_2d(92)="jsurP2n" 
+   dibun_2d(92)="-"
+   dibhf_2d(92)=0 
+
+   dibnm_2d(93)="jsurP2p" 
+   dibun_2d(93)="-"
+   dibhf_2d(93)=0 
+
+   dibnm_2d(94)="jsurP2l" 
+   dibun_2d(94)="-"
+   dibhf_2d(94)=0 
+
+   dibnm_2d(95)="jsurP3c" 
+   dibun_2d(95)="-"
+   dibhf_2d(95)=0 
+
+   dibnm_2d(96)="jsurP3n" 
+   dibun_2d(96)="-"
+   dibhf_2d(96)=0 
+
+   dibnm_2d(97)="jsurP3p" 
+   dibun_2d(97)="-"
+   dibhf_2d(97)=0 
+
+   dibnm_2d(98)="jsurP3l" 
+   dibun_2d(98)="-"
+   dibhf_2d(98)=0 
+
+   dibnm_2d(99)="jsurP4c" 
+   dibun_2d(99)="-"
+   dibhf_2d(99)=0 
+
+   dibnm_2d(100)="jsurP4n" 
+   dibun_2d(100)="-"
+   dibhf_2d(100)=0 
+
+   dibnm_2d(101)="jsurP4p" 
+   dibun_2d(101)="-"
+   dibhf_2d(101)=0 
+
+   dibnm_2d(102)="jsurP4l" 
+   dibun_2d(102)="-"
+   dibhf_2d(102)=0 
+
+   dibnm_2d(103)="jsurZ3c" 
+   dibun_2d(103)="-"
+   dibhf_2d(103)=0 
+
+   dibnm_2d(104)="jsurZ3n" 
+   dibun_2d(104)="-"
+   dibhf_2d(104)=0 
+
+   dibnm_2d(105)="jsurZ3p" 
+   dibun_2d(105)="-"
+   dibhf_2d(105)=0 
+
+   dibnm_2d(106)="jsurZ4c" 
+   dibun_2d(106)="-"
+   dibhf_2d(106)=0 
+
+   dibnm_2d(107)="jsurZ4n" 
+   dibun_2d(107)="-"
+   dibhf_2d(107)=0 
+
+   dibnm_2d(108)="jsurZ4p" 
+   dibun_2d(108)="-"
+   dibhf_2d(108)=0 
+
+   dibnm_2d(109)="jsurZ5c" 
+   dibun_2d(109)="-"
+   dibhf_2d(109)=0 
+
+   dibnm_2d(110)="jsurZ5n" 
+   dibun_2d(110)="-"
+   dibhf_2d(110)=0 
+
+   dibnm_2d(111)="jsurZ5p" 
+   dibun_2d(111)="-"
+   dibhf_2d(111)=0 
+
+   dibnm_2d(112)="jsurZ6c" 
+   dibun_2d(112)="-"
+   dibhf_2d(112)=0 
+
+   dibnm_2d(113)="jsurZ6n" 
+   dibun_2d(113)="-"
+   dibhf_2d(113)=0 
+
+   dibnm_2d(114)="jsurZ6p" 
+   dibun_2d(114)="-"
+   dibhf_2d(114)=0 
+
+   dibnm_2d(115)="jsurR1c" 
+   dibun_2d(115)="-"
+   dibhf_2d(115)=0 
+
+   dibnm_2d(116)="jsurR1n" 
+   dibun_2d(116)="-"
+   dibhf_2d(116)=0 
+
+   dibnm_2d(117)="jsurR1p" 
+   dibun_2d(117)="-"
+   dibhf_2d(117)=0 
+
+   dibnm_2d(118)="jsurR2c" 
+   dibun_2d(118)="-"
+   dibhf_2d(118)=0 
+
+   dibnm_2d(119)="jsurR3c" 
+   dibun_2d(119)="-"
+   dibhf_2d(119)=0 
+
+   dibnm_2d(120)="jsurR6c" 
+   dibun_2d(120)="-"
+   dibhf_2d(120)=0 
+
+   dibnm_2d(121)="jsurR6n" 
+   dibun_2d(121)="-"
+   dibhf_2d(121)=0 
+
+   dibnm_2d(122)="jsurR6p" 
+   dibun_2d(122)="-"
+   dibhf_2d(122)=0 
+
+   dibnm_2d(123)="jsurR6s" 
+   dibun_2d(123)="-"
+   dibhf_2d(123)=0 
+
+   dibnm_2d(124)="jsurO3c" 
+   dibun_2d(124)="-"
+   dibhf_2d(124)=0 
+
+   dibnm_2d(125)="jsurO3h" 
+   dibun_2d(125)="-"
+   dibhf_2d(125)=0 
+
+   dibnm_2d(126)="jbotO2o" 
+   dibun_2d(126)="-"
+   dibhf_2d(126)=0 
+
+   dibnm_2d(127)="jbotN1p" 
+   dibun_2d(127)="-"
+   dibhf_2d(127)=0 
+
+   dibnm_2d(128)="jbotN3n" 
+   dibun_2d(128)="-"
+   dibhf_2d(128)=0 
+
+   dibnm_2d(129)="jbotN4n" 
+   dibun_2d(129)="-"
+   dibhf_2d(129)=0 
+
+   dibnm_2d(130)="jbotO4n" 
+   dibun_2d(130)="-"
+   dibhf_2d(130)=0 
+
+   dibnm_2d(131)="jbotN5s" 
+   dibun_2d(131)="-"
+   dibhf_2d(131)=0 
+
+   dibnm_2d(132)="jbotN6r" 
+   dibun_2d(132)="-"
+   dibhf_2d(132)=0 
+
+   dibnm_2d(133)="jbotB1c" 
+   dibun_2d(133)="-"
+   dibhf_2d(133)=0 
+
+   dibnm_2d(134)="jbotB1n" 
+   dibun_2d(134)="-"
+   dibhf_2d(134)=0 
+
+   dibnm_2d(135)="jbotB1p" 
+   dibun_2d(135)="-"
+   dibhf_2d(135)=0 
+
+   dibnm_2d(136)="jbotP1c" 
+   dibun_2d(136)="-"
+   dibhf_2d(136)=0 
+
+   dibnm_2d(137)="jbotP1n" 
+   dibun_2d(137)="-"
+   dibhf_2d(137)=0 
+
+   dibnm_2d(138)="jbotP1p" 
+   dibun_2d(138)="-"
+   dibhf_2d(138)=0 
+
+   dibnm_2d(139)="jbotP1l" 
+   dibun_2d(139)="-"
+   dibhf_2d(139)=0 
+
+   dibnm_2d(140)="jbotP1s" 
+   dibun_2d(140)="-"
+   dibhf_2d(140)=0 
+
+   dibnm_2d(141)="jbotP2c" 
+   dibun_2d(141)="-"
+   dibhf_2d(141)=0 
+
+   dibnm_2d(142)="jbotP2n" 
+   dibun_2d(142)="-"
+   dibhf_2d(142)=0 
+
+   dibnm_2d(143)="jbotP2p" 
+   dibun_2d(143)="-"
+   dibhf_2d(143)=0 
+
+   dibnm_2d(144)="jbotP2l" 
+   dibun_2d(144)="-"
+   dibhf_2d(144)=0 
+
+   dibnm_2d(145)="jbotP3c" 
+   dibun_2d(145)="-"
+   dibhf_2d(145)=0 
+
+   dibnm_2d(146)="jbotP3n" 
+   dibun_2d(146)="-"
+   dibhf_2d(146)=0 
+
+   dibnm_2d(147)="jbotP3p" 
+   dibun_2d(147)="-"
+   dibhf_2d(147)=0 
+
+   dibnm_2d(148)="jbotP3l" 
+   dibun_2d(148)="-"
+   dibhf_2d(148)=0 
+
+   dibnm_2d(149)="jbotP4c" 
+   dibun_2d(149)="-"
+   dibhf_2d(149)=0 
+
+   dibnm_2d(150)="jbotP4n" 
+   dibun_2d(150)="-"
+   dibhf_2d(150)=0 
+
+   dibnm_2d(151)="jbotP4p" 
+   dibun_2d(151)="-"
+   dibhf_2d(151)=0 
+
+   dibnm_2d(152)="jbotP4l" 
+   dibun_2d(152)="-"
+   dibhf_2d(152)=0 
+
+   dibnm_2d(153)="jbotZ3c" 
+   dibun_2d(153)="-"
+   dibhf_2d(153)=0 
+
+   dibnm_2d(154)="jbotZ3n" 
+   dibun_2d(154)="-"
+   dibhf_2d(154)=0 
+
+   dibnm_2d(155)="jbotZ3p" 
+   dibun_2d(155)="-"
+   dibhf_2d(155)=0 
+
+   dibnm_2d(156)="jbotZ4c" 
+   dibun_2d(156)="-"
+   dibhf_2d(156)=0 
+
+   dibnm_2d(157)="jbotZ4n" 
+   dibun_2d(157)="-"
+   dibhf_2d(157)=0 
+
+   dibnm_2d(158)="jbotZ4p" 
+   dibun_2d(158)="-"
+   dibhf_2d(158)=0 
+
+   dibnm_2d(159)="jbotZ5c" 
+   dibun_2d(159)="-"
+   dibhf_2d(159)=0 
+
+   dibnm_2d(160)="jbotZ5n" 
+   dibun_2d(160)="-"
+   dibhf_2d(160)=0 
+
+   dibnm_2d(161)="jbotZ5p" 
+   dibun_2d(161)="-"
+   dibhf_2d(161)=0 
+
+   dibnm_2d(162)="jbotZ6c" 
+   dibun_2d(162)="-"
+   dibhf_2d(162)=0 
+
+   dibnm_2d(163)="jbotZ6n" 
+   dibun_2d(163)="-"
+   dibhf_2d(163)=0 
+
+   dibnm_2d(164)="jbotZ6p" 
+   dibun_2d(164)="-"
+   dibhf_2d(164)=0 
+
+   dibnm_2d(165)="jbotR1c" 
+   dibun_2d(165)="-"
+   dibhf_2d(165)=0 
+
+   dibnm_2d(166)="jbotR1n" 
+   dibun_2d(166)="-"
+   dibhf_2d(166)=0 
+
+   dibnm_2d(167)="jbotR1p" 
+   dibun_2d(167)="-"
+   dibhf_2d(167)=0 
+
+   dibnm_2d(168)="jbotR2c" 
+   dibun_2d(168)="-"
+   dibhf_2d(168)=0 
+
+   dibnm_2d(169)="jbotR3c" 
+   dibun_2d(169)="-"
+   dibhf_2d(169)=0 
+
+   dibnm_2d(170)="jbotR6c" 
+   dibun_2d(170)="-"
+   dibhf_2d(170)=0 
+
+   dibnm_2d(171)="jbotR6n" 
+   dibun_2d(171)="-"
+   dibhf_2d(171)=0 
+
+   dibnm_2d(172)="jbotR6p" 
+   dibun_2d(172)="-"
+   dibhf_2d(172)=0 
+
+   dibnm_2d(173)="jbotR6s" 
+   dibun_2d(173)="-"
+   dibhf_2d(173)=0 
+
+   dibnm_2d(174)="jbotO3c" 
+   dibun_2d(174)="-"
+   dibhf_2d(174)=0 
+
+   dibnm_2d(175)="jbotO3h" 
+   dibun_2d(175)="-"
+   dibhf_2d(175)=0 
+
+/

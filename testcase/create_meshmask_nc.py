@@ -1,4 +1,5 @@
 #! /usr/bin/python
+    
 
 # LOAD PACKAGES
 import os,sys
@@ -33,8 +34,6 @@ def create_meshmask_nc(test):
     dx=test['dx']
     dy=test['dy']
 
-    jpk_ben=100
-    
 #    double coastp(y, x) ;
     coastp = np.zeros((jpj,jpi),np.double)
     
@@ -56,7 +55,7 @@ def create_meshmask_nc(test):
 #    filein             = 'KB'+'/gdept' + 'KB' + '.dat'
 #    gdeptTOT           = np.loadtxt(filein, dtype=np.double);
     gdept_ben                  = np.zeros((time,jpk_ben,y_a,x_a),np.double);
-    gdept_ben[0,0:jpk_ben,0,0] = np.arange(-0.05,-10.05,-0.1).astype(np.double) ;
+    gdept_ben[0,0:jpk_ben,0,0] = np.arange(-0.05,-10.05,-0.1).astype(np.double)[0:jpk_ben] ;
 
 #    double gdepw(time, z, y_a, x_a) ;
     filein             = 'KB' + '/gdepw' + 'KB' + '.dat'
@@ -68,7 +67,7 @@ def create_meshmask_nc(test):
 #   filein             = 'KB' + '/gdepw' + 'KB' + '.dat'
 #   gdepwTOT           = np.loadtxt(filein, dtype=np.double);
     gdepw_ben              = np.zeros((time,jpk_ben,y_a,x_a),np.double);
-    gdepw_ben[0,0:jpk_ben,0,0] = np.arange(0,-10,-0.1).astype(np.double) ;
+    gdepw_ben[0,0:jpk_ben,0,0] = np.arange(0,-10,-0.1).astype(np.double)[0:jpk_ben] ;
     
 
 #    double glamt(time, z_a, y, x) ;
@@ -359,7 +358,7 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('nav_lat','f',('y','x'))               ; ncvar[:] = nav_lat;
     ncvar    = ncOUT.createVariable('nav_lev' ,'f',('z',)) ; ncvar[:] = nav_lev;
     ncvar    = ncOUT.createVariable('nav_lon','f',('y','x'))                 ; ncvar[:] = nav_lon;
-    ncvar    = ncOUT.createVariable('nav_lev_ben' ,'f',('z_ben',)) ; ncvar[:] = np.arange(-0.05,-10.05,-0.1);
+    ncvar    = ncOUT.createVariable('nav_lev_ben' ,'f',('z_ben',)) ; ncvar[:] = np.arange(-0.05,-10.05,-0.1)[0:jpk_ben];
     ncvar    = ncOUT.createVariable('gdept_ben' ,'d',('time','z_ben','y_a', 'x_a')) ; ncvar[:] = gdept_ben
     ncvar    = ncOUT.createVariable('gdepw_ben' ,'d',('time','z_ben','y_a', 'x_a')) ; ncvar[:] = gdepw_ben
 #	float time(time) ;

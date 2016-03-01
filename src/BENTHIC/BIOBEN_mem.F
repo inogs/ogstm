@@ -25,10 +25,10 @@
 
       CHARACTER(LEN=20) :: cbennm(jptra_b)
       CHARACTER(LEN=12) :: cbenun(jptra_b)
+      INTEGER           :: cbe_hf(jptra_b)
       CHARACTER(LEN=20) :: dibnm(jptra_dia_b)
       CHARACTER(LEN=20) :: dibun(jptra_dia_b)
       INTEGER           :: dibhf(jptra_dia_b)
-      INTEGER           :: cbe_hf(jptra_dia_b)
       REAL(8)           :: cbemax(jptra_b)
       CHARACTER(LEN=20) :: dibnm_2d(jptra_dia_b_2d)
       CHARACTER(LEN=20) :: dibun_2d(jptra_dia_b_2d)

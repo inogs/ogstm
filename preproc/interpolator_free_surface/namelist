@@ -1,0 +1,21 @@
+&INPUTS
+MASKFILE_16              = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/mesh_mask_V1INGV.nc'
+MASKFILE_OUT             = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/meshmask.nc'
+
+ORIG_DIR                 = '/pico/scratch/userexternal/gbolzon0/Carbonatic-01/FORCINGS/PHYS/UNZIPPED/'
+
+OUT_DIR                  = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/FORCINGS/OUTPUT_16/'
+
+PS                       = .true.
+PS16FILE_U               = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/grid.U_PS.nc'
+PS16FILE_V               = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/grid.V_PS.nc'
+
+NUDGFILE_U               = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/SPONGE_U.nc'
+NUDGFILE_V               = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/SPONGE_V.nc'
+NUDGFILE_W               = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/SPONGE_W.nc'
+NUDGFILE_T               = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/SPONGE_T.nc'
+
+EVAPO_DIR                = '/pico/scratch/userexternal/plazzari/FREE-SURFACE/STATIC_DATA/'
+/
+
+

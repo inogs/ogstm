@@ -4,8 +4,8 @@
 	AR=ar
 	ARFLAGS=-r
 	CPPFLAGS=
-    DA_INC=/home/epascolo/TryCompile/3d_var
     DA_LIB=$(DA_INC)
+    FE_LIB=$(DA_INC)/libfexit
 # F Flags
         FFLAGS_DBG= -O0 -g -Wall -Wextra -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -ffixed-line-length-132
 	FFLAGS= $(FFLAGS_DBG)  -I$(NETCDF_INC)  -I$(OPENMPI_HOME)/include   -I$(BFM_INC)  -I$(DA_INC) -fno-underscoring

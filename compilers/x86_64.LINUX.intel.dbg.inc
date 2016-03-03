@@ -1,9 +1,8 @@
         CC=mpiicc
         FC=mpiifort $(OPENMP_FLAG)
         LD=mpiifort $(OPENMP_FLAG)
-	DA_INC=/pico/scratch/userexternal/gbolzon0/TRANSITION/carbonatic_part/Code/3d_var
-  DA_LIB=$(DA_INC)
-  FE_LIB=$(DA_INC)/libfexit
+        DA_LIB=$(DA_INC)
+        FE_LIB=$(DA_INC)/libfexit
   AR=ar
 	ARFLAGS=-r
 	CPPFLAGS=

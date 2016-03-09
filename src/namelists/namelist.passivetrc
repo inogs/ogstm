@@ -355,5 +355,15 @@
 &NATTRC_DIAG_2D
    dianm_2d(1)="CO2airflux"
    diaun_2d(1)="mmol/m2/d"
-   diahf_2d(1)=1 
+   diahf_2d(1)=1
+
+! Last two are not managed by bfm
+   dianm_2d(2)="O3c_concdilu_flux"
+   diaun_2d(2)="mg C/m3/s"
+   diahf_2d(2)=0
+
+   dianm_2d(3)="O3h_concdilu_flux"
+   diaun_2d(3)="mmol alk /m3/s"
+   diahf_2d(3)=0
+ 
 /

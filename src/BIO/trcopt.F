@@ -61,7 +61,7 @@ C
           zpar100(ji)         = zpar0m(ji)*0.01
           xpar(ji,mytid+jj,1) = zpar0m(ji)
           zpar(ji,1)          = zpar0m(1)
-          xEPS(ji,1)          = 0 !kef(ji,mytid+jj)
+          xEPS(ji,1)          = kef(ji,mytid+jj)
 
         END DO
 C

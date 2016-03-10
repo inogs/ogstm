@@ -49,11 +49,11 @@
       allocate(jarr_snu(2, jpi*jpj))      ; jarr_snu = huge(jarr_snu(1,1))
       allocate(tra_FN(jpi,jpj,jpk,jptra)) ; tra_FN   = huge(tra_FN(1,1,1,1))
 
-      !CALL OPA_elements(elements,nelements,idx_element)
+      CALL BFM0D_elements(elements,nelements,idx_element)
 
-      !allocate(TOT    (jpj*jpi,elements)) ; TOT        = huge(TOT(1,1))        ! elements is the number of element considered (C,P,N,...)
-      !allocate(TOT_FN (jpj*jpi,elements)) ; TOT_FN     = huge(TOT_FN(1,1))
-      !allocate(FN_CORR(jpj*jpi,elements)) ; FN_CORR    = huge(FN_CORR(1,1))
+      allocate(TOT    (jpj*jpi,elements)) ; TOT        = huge(TOT(1,1))        ! elements is the number of element considered (C,P,N,...)
+      allocate(TOT_FN (jpj*jpi,elements)) ; TOT_FN     = huge(TOT_FN(1,1))
+      allocate(FN_CORR(jpj*jpi,elements)) ; FN_CORR    = huge(FN_CORR(1,1))
       allocate(TOTcalc(jpj*jpi))          ; TOTcalc    =huge(TOTcalc(1))
 
       allocate(cou_FN(jpi,jpj,jpk))       ; cou_FN     = huge(cou_FN(1,1,1))

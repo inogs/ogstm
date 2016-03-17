@@ -67,22 +67,22 @@
           WRITE(numout,*) ' '
       ENDIF
 
-!     jptra_high = 0
-!     do ji =1,jptra_b
-!         if (cbe_hf(ji).eq.1) jptra_high = jptra_high + 1
-!     enddo
-!     allocate(highfreq_table(jptra_HIGH)) ; highfreq_table = huge(highfreq_table(1))
+      jptra_high_ben = 0
+      do ji =1,jptra_b
+          if (cbe_hf(ji).eq.1) jptra_high_ben = jptra_high_ben + 1
+      enddo
+      allocate(highfreq_table_ben(jptra_high_ben)) ; highfreq_table_ben = huge(highfreq_table_ben(1))
 
-!     jptra_high = 0
-!     do ji =1,jptra
-!         if (ctr_hf(ji).eq.1) then
-!             jptra_high = jptra_high + 1
-!             highfreq_table(jptra_high) = ji
-!             if (lwp) WRITE(numout,*) crcnm(ji), ' belongs also to high freq group'
-!          else
-!              if (lwp) WRITE(numout,*) ctrcnm(ji), ' belongs only to low freq group'
-!          endif
-!     enddo
+      jptra_high_ben = 0
+      do ji =1,jptra_b
+          if (cbe_hf(ji).eq.1) then
+              jptra_high_ben = jptra_high_ben + 1
+              highfreq_table_ben(jptra_high_ben) = ji
+              if (lwp) WRITE(numout,*) cbennm(ji), ' belongs also to high freq group'
+           else
+               if (lwp) WRITE(numout,*) cbennm(ji), ' belongs only to low freq group'
+           endif
+      enddo
 
 
 !      ***********  namelist natben_diag DIAGNOSTIC VARIABLES:
@@ -90,25 +90,25 @@
       REWIND(numben)
       READ(numben,natben_diag)
 
-!     jptra_dia_high= 0
-!     do ji =1, jptra_dia
-!         IF (diahf(ji).eq.1) jptra_dia_high = jptra_dia_high + 1
-!     ENDDO
+      jptra_dia_high_ben= 0
+      do ji =1, jptra_dia_b
+          IF (dibhf(ji).eq.1) jptra_dia_high_ben = jptra_dia_high_ben + 1
+      ENDDO
 
-!     if (lwp) write(*,*) 'High freq diagnostics number :', jptra_dia_HIGH
-!     allocate(highfreq_table_dia(jptra_dia_HIGH))
+      if (lwp) write(*,*) 'High freq diagnostics number :',  jptra_dia_high_ben
+      allocate(highfreq_table_dia_ben(jptra_dia_high_ben))
 
-!     jptra_dia_high = 0
+      jptra_dia_high_ben = 0
 
-!     do ji =1, jptra_dia
-!         IF (diahf(ji).eq.1) then
-!           jptra_dia_high = jptra_dia_high + 1
-!           highfreq_table_dia(jptra_dia_high) = ji
-!           if (lwp) WRITE(numout,*) dianm(ji), ' belongs also to high freq group'
-!         ELSE
-!           if (lwp) WRITE(numout,*) dianm(ji), ' belongs only to low freq group'
-!         ENDIF
-!     enddo
+      do ji =1, jptra_dia_b
+          IF (dibhf(ji).eq.1) then
+            jptra_dia_high_ben = jptra_dia_high_ben + 1
+            highfreq_table_dia_ben(jptra_dia_high_ben) = ji
+            if (lwp) WRITE(numout,*) dibnm(ji), ' belongs also to high freq group'
+          ELSE
+            if (lwp) WRITE(numout,*) dibnm(ji), ' belongs only to low freq group'
+          ENDIF
+      enddo
 
 
 
@@ -118,25 +118,25 @@
       REWIND(numben)
       READ(numben,natben_diag_2d)
 
-!     jptra_dia2d_high= 0
-!     do ji =1, jptra_dia_2d
-!         IF (diahf_2d(ji).eq.1) jptra_dia2d_high = jptra_dia2d_high + 1
-!     ENDDO
+      jptra_dia2d_high_ben= 0
+      do ji =1, jptra_dia_b_2d
+          IF (dibhf_2d(ji).eq.1) jptra_dia2d_high_ben = jptra_dia2d_high_ben + 1
+      ENDDO
 
-!     if (lwp) write(*,*) 'High freq diagnostics number 2d:', jptra_dia2d_HIGH
-!     allocate(highfreq_table_dia2d(jptra_dia2d_HIGH))
+      if (lwp) write(*,*) 'High freq diagnostics number 2d:', jptra_dia2d_high_ben
+      allocate(highfreq_table_dia2d_ben(jptra_dia2d_high_ben))
 
-!     jptra_dia2d_high = 0
+      jptra_dia2d_high_ben = 0
 
-!     do ji =1, jptra_dia_2d
-!         IF (diahf_2d(ji).eq.1) then
-!           jptra_dia2d_high = jptra_dia2d_high + 1
-!           highfreq_table_dia2d(jptra_dia2d_high) = ji
-!           if (lwp) WRITE(numout,*) dianm_2d(ji), ' belongs also to high freq group'
-!         ELSE
-!           if (lwp) WRITE(numout,*) dianm_2d(ji), ' belongs only to low freq group'
-!         ENDIF
-!     enddo
+      do ji =1, jptra_dia_b_2d
+          IF (dibhf_2d(ji).eq.1) then
+            jptra_dia2d_high_ben = jptra_dia2d_high_ben + 1
+            highfreq_table_dia2d_ben(jptra_dia2d_high_ben) = ji
+            if (lwp) WRITE(numout,*) dibnm_2d(ji), ' belongs also to high freq group'
+          ELSE
+            if (lwp) WRITE(numout,*) dibnm_2d(ji), ' belongs only to low freq group'
+          ENDIF
+      enddo
 
 
 

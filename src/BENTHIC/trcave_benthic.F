@@ -69,9 +69,9 @@
 
 
 
-!!-!!      Realcounter   =    REAL(ave_counter_1  , 8)! ****************** HIGH FREQUENCY
-!!-!!      Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
-!!-!!      DO jn_high=1 ,jptra_high,ntids
+           Realcounter   =    REAL(ave_counter_1  , 8)! ****************** HIGH FREQUENCY
+           Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+           DO jn_high=1 ,jptra_high_ben,ntids
 
 !$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
 !$omp& shared(jpk,jpj,jpi,jn_high,jptra_high,highfreq_table,tmask,traIO_HIGH,trn,Miss_val,Realcounter,Realcounterp1)
@@ -79,59 +79,59 @@
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-!!-!!       IF( mytid + jn_high <= jptra_high ) then
-!!-!!          jn_on_all = highfreq_table(jn_high+mytid)
-!!-!!          DO jk=1, jpk_ben
-!!-!!             DO jj=1, jpj
-!!-!!                DO ji=1, jpi
-!!-!!               IF(tmask(ji,jj,jk) .NE. 0.) THEN
-!!-!!                  benIO_HIGH(ji,jj,jk,jn_high+mytid)=
-!!-!!     &           (benIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+trn(ji,jj,jk,jn_on_all))*Realcounterp1
-!!-!!               ELSE
-!!-!!                  benIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
-!!-!!               ENDIF
-!!-!!                END DO
-!!-!!             END DO
-!!-!!          END DO
-!!-!!       ENDIF
+            IF( mytid + jn_high <= jptra_high_ben ) then
+               jn_on_all = highfreq_table_ben(jn_high+mytid)
+               DO jk=1, jpk_ben
+                  DO jj=1, jpj
+                     DO ji=1, jpi
+                    IF(tmask(ji,jj,1) .NE. 0.) THEN
+                       benIO_HIGH(ji,jj,jk,jn_high+mytid)= 
+     &              (benIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+trn_ben(ji,jj,jk,jn_on_all))*Realcounterp1
+                    ELSE
+                       benIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                    ENDIF
+                     END DO
+                  END DO
+               END DO
+            ENDIF
 !$omp    end parallel
 
-!!-!!      END DO
+           END DO
 
 
 !     *****************  DIAGNOSTICS **********************************************
 
 !     FIRST, LOW FREQUENCY
 
-!!-!!      Realcounter   =    REAL(ave_counter_2  , 8)
-!!-!!      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+           Realcounter   =    REAL(ave_counter_2  , 8)
+           Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
 
-!!-!!      DO jn=1, jptra_dia_ben,ntids
+           DO jn=1, jptra_dia_b,ntids
 
 !$omp parallel default(none) private(jk,jj,ji,mytid)
-!$omp&   shared(jpk_ben,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
+!$omp&   shared(jpk_ben,jpj,jpi,jn,tmask,ben_DIA_IO,ben_DIA,Miss_val,Realcounter,Realcounterp1)
 
 #ifdef __OPENMP
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-!!-!!      IF( mytid + jn .LE. jptra_dia ) then
+           IF( mytid + jn .LE. jptra_dia_b ) then
 
-!!-!!         DO jk=1, jpk_ben
-!!-!!            DO jj=1, jpj
-!!-!!               DO ji=1, jpi
-!!-!!                  IF(tmask(ji,jj,jk) .NE. 0.) THEN
-!!-!!                    ben_DIA_IO(ji,jj,jk,jn+mytid)=(tra_DIA_IO(ji,jj,jk,jn+mytid)*Realcounter+
-!!-!!     &              tra_DIA(ji,jj,jk,jn+mytid))*Realcounterp1
-!!-!!                  ELSE
-!!-!!                    tra_DIA_IO(ji,jj,jk,jn+mytid)=Miss_val
-!!-!!                  ENDIF
-!!-!!               END DO
-!!-!!            END DO
-!!-!!         END DO
-!!-!!      ENDIF
+              DO jk=1, jpk_ben
+                 DO jj=1, jpj
+                    DO ji=1, jpi
+                       IF(tmask(ji,jj,1) .NE. 0.) THEN
+                         ben_DIA_IO(ji,jj,jk,jn+mytid)=(ben_DIA_IO(ji,jj,jk,jn+mytid)*Realcounter+
+     &              ben_DIA(ji,jj,jk,jn+mytid))*Realcounterp1
+                       ELSE
+                         ben_DIA_IO(ji,jj,jk,jn+mytid)=Miss_val
+                       ENDIF
+                    END DO
+                 END DO
+              END DO
+           ENDIF
 
 !$omp    end parallel
-!!-!!      END DO
+           END DO
 
 !     *********************  DIAGNOSTICS 2D **********
 !!-!!      DO jn=1, jptra_dia_2d
@@ -173,7 +173,7 @@
 !!-!!             DO jk=1, jpk
 !!-!!             DO jj=1, jpj
 !!-!!             DO ji=1, jpi
-!!-!!                IF(tmask(ji,jj,jk) .NE. 0.) THEN
+!!-!!                IF(tmask(ji,jj,1) .NE. 0.) THEN
 !!-!!                   tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)=
 !!-!!     &            (tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_DIA(ji,jj,jk,jn_on_all))*Realcounterp1
 !!-!!                ELSE

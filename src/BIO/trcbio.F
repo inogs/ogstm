@@ -47,8 +47,10 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       LOGICAL sur,bot
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
-      REAL(8) a_b(jptra_b),b_b(jptra_b)
+      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d) ! Pelagic
+      REAL(8) a_b(jptra_b),b_b(jptra_b),d_b(jptra_dia_b)  ! Benthic                 
+      REAL(8) d2_b(jptra_dia_b_2d)
+      REAL(8) d2_jsur(jptra), d2_jbot(jptra)
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
@@ -123,6 +125,7 @@ C
          ENDDO
 
       tra_DIA_2d=0.
+      ben_DIA   =0. 
 
       MAIN_LOOP: DO  jb = 1, NBFMPOINTS, ntids
 
@@ -166,7 +169,7 @@ C
                           er(7)  = DAY_LENGTH(ji,jj)    ! Photoperiod expressed in hours
                           er(8)  = e3t(ji,jj,jk)        ! depth in meters of the given cell
                           er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)
-                          er(10) = PH(ji,jj,jk)         ! PH
+                          er(10) = PH(ji,jj,jk)         ! pH
 
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
                           if (bot) then 
@@ -179,7 +182,7 @@ C
                           call EcologyDynamics()
 
                           if (sur) then
-                             call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2)
+                             call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2, d2_jsur)
                            else
                               call BFM0D_Output_EcologyDynamics(b, c, d)
                            endif
@@ -189,7 +192,8 @@ C
                           END DO
 
                           if (bot) then 
-                             call BFM0D_output_EcologyDynamics_benthic(b_b)
+                             call BFM0D_Output_EcologyDynamics_bot(b, c, d ,d2, d2_jbot)
+                             call BFM0D_output_EcologyDynamics_benthic(b_b,d_b)
                              DO jtr=1, jptra_b
                                 tra_ben(ji,jj,1,jtr)=b_b(jtr) !  benthic 1 layer
                                 write(*,*) 'ogstm -->', tra_ben(ji,jj,1,jtr)
@@ -204,10 +208,22 @@ C
                              tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
 
+                          if (bot) then 
+                             DO jtr=1,jptra_dia_b
+                                ben_DIA(ji,jj,1,jtr) = d_b(jtr) ! diagnostic benthic
+                             END DO
+                             DO jtr=1,jptra
+                                write(*,*) d2_jbot(jtr) ! diagnostic pelagic/benthic
+                             END DO
+                          endif
+
                           if (sur) then
                               DO jtr=1,jptra_dia_2d
-                                 tra_DIA_2d(ji,jj,jtr) = d2(jtr) ! diagnostic
+                                 tra_DIA_2d(ji,jj,jtr) = d2(jtr) ! diagnostic pelagic 2d
                               END DO
+                             DO jtr=1,jptra
+                                write(*,*) d2_jsur(jtr) ! diagnostic benthic
+                             END DO
                           endif
 
                           PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined

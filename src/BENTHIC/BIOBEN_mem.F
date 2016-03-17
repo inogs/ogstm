@@ -33,9 +33,14 @@
       CHARACTER(LEN=20) :: dibnm_2d(jptra_dia_b_2d)
       CHARACTER(LEN=20) :: dibun_2d(jptra_dia_b_2d)
       INTEGER           :: dibhf_2d(jptra_dia_b_2d)
+      INTEGER           :: jptra_high_ben,jptra_dia_high_ben,jptra_dia2d_high_ben
+      INTEGER, allocatable, dimension(:) :: highfreq_table_ben,highfreq_table_dia_ben
+      INTEGER, allocatable, dimension(:) :: highfreq_table_dia2d_ben
 
 ! IO
       REAL(8), allocatable :: totbenIO(:,:,:), benIO_HIGH(:,:,:,:),benIO(:,:,:,:),buffben(:)
+      REAL(8), allocatable :: ben_DIA_IO(:,:,:,:),  ben_DIA_IO_HIGH(:,:,:,:)
+      REAL(8), allocatable :: ben_DIA(:,:,:,:),  benDIA_HIGH(:,:,:,:)
       REAL(4), allocatable :: d2f3d_ben(:,:,:)
 
 
@@ -64,8 +69,10 @@ CC----------------------------------------------------------------------
 
        allocate(totbenIO(jpi,jpj,jpk_ben))               ; totbenIO   = huge(totbenIO(1,1,1))
 
-       allocate(benIO_HIGH(jpi,jpj,jpk_ben,jptra_b))     ; benIO_HIGH = huge(benIO_HIGH(1,1,1,1))
+       allocate(benIO_HIGH(jpi,jpj,jpk_ben,jptra_high_ben)); benIO_HIGH = huge(benIO_HIGH(1,1,1,1))
        allocate(benIO(jpi,jpj,jpk_ben,jptra_b))          ; benIO      = huge(benIO(1,1,1,1))
+       allocate(ben_DIA(jpi,jpj,jpk_ben,jptra_b))        ; ben_DIA  = huge(ben_DIA(1,1,1,1))
+       allocate(ben_DIA_IO(jpi,jpj,jpk_ben,jptra_b))     ; ben_DIA_IO = huge(ben_DIA_IO(1,1,1,1))
 
        allocate(buffben(jpi_max* jpj_max* jpk_ben))      ; buffben    = huge(buffben(1))
 

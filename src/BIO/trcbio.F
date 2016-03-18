@@ -47,10 +47,10 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       LOGICAL sur,bot
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d) ! Pelagic
-      REAL(8) a_b(jptra_b),b_b(jptra_b),d_b(jptra_dia_b)  ! Benthic                 
-      REAL(8) d2_b(jptra_dia_b_2d)
-      REAL(8) d2_jsur(jptra), d2_jbot(jptra)
+      REAL(8) st(jptra),so(jptra),sv(4),di(jptra_dia),er(10),di2(jptra_dia_2d) ! Pelagic
+      REAL(8) st_b(jptra_b),so_b(jptra_b),di_b(jptra_dia_b)  ! Benthic                 
+      REAL(8) di2_b(jptra_dia_b_2d)
+      REAL(8) di2_jsur(jptra), di2_jbot(jptra)
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
@@ -151,11 +151,12 @@ C
                           bot = (jk .eq. 42)
 
                           DO jtr=1, jtrmax
-                             a(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations
+                             st(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations
                           END DO
+
                           IF (bot) then ! benthic state variables
                              DO jtr=1, jptra_b
-                                a_b(jtr) = trn_ben(ji,jj,1,jtr) !  benthic 1 layer
+                                st_b(jtr) = trn_ben(ji,jj,1,jtr) !  benthic 1 layer
                              END DO
                           ENDIF
 ! Environmental regulating factors (er)
@@ -171,10 +172,9 @@ C
                           er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)
                           er(10) = PH(ji,jj,jk)         ! pH
 
-                          call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
-                          if (bot) then 
-                             call BFM0D_Input_EcologyDynamics_benthic(a_b,jptra_b,er)
-                          endif
+                          call BFM0D_Input_EcologyDynamics(sur,bot,st,jtrmax,er)
+
+                          if (bot) call BFM0D_Input_EcologyDynamics_benthic(st_b,jptra_b,er)
 
 
                           call BFM0D_reset()
@@ -182,51 +182,54 @@ C
                           call EcologyDynamics()
 
                           if (sur) then
-                             call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2, d2_jsur)
-                           else
-                              call BFM0D_Output_EcologyDynamics(b, c, d)
-                           endif
-
-                          DO jtr=1, jtrmax
-                             tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend
-                          END DO
-
-                          if (bot) then 
-                             call BFM0D_Output_EcologyDynamics_bot(b, c, d ,d2, d2_jbot)
-                             call BFM0D_output_EcologyDynamics_benthic(b_b,d_b)
-                             DO jtr=1, jptra_b
-                                tra_ben(ji,jj,1,jtr)=b_b(jtr) !  benthic 1 layer
-                                write(*,*) 'ogstm -->', tra_ben(ji,jj,1,jtr)
-                             END DO
+                             call BFM0D_Output_EcologyDynamics_surf(so, sv, di ,di2, di2_jsur)
+                          elseif(bot) then
+                             call BFM0D_Output_EcologyDynamics_bot(so, sv, di ,di2, di2_jbot)
+                             call BFM0D_output_EcologyDynamics_benthic(so_b,di_b,di2_b)
+                          else
+                             call BFM0D_Output_EcologyDynamics(so, sv, di)
                           endif
 
-                          DO jtr=1,4
-                             sediPI(ji,jj,jk,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
-                          END DO
+!                         DO jtr=1, jtrmax
+!                            tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +so(jtr) ! trend
+!                         END DO
+                          tra(ji,jj,jk,:) =tra(ji,jj,jk,:) +so(:) ! trend
 
-                          DO jtr=1,jptra_dia
-                             tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic
-                          END DO
+!                         DO jtr=1,4
+!                            sediPI(ji,jj,jk,jtr) = sv(jtr) ! BFM output of sedimentation speed (m/d)
+!                         END DO
+                          sediPI(ji,jj,jk,:) = sv(:) ! BFM output of sedimentation speed (m/d)
 
-                          if (bot) then 
-                             DO jtr=1,jptra_dia_b
-                                ben_DIA(ji,jj,1,jtr) = d_b(jtr) ! diagnostic benthic
-                             END DO
-                             DO jtr=1,jptra
-                                write(*,*) d2_jbot(jtr) ! diagnostic pelagic/benthic
-                             END DO
-                          endif
+!                         DO jtr=1,jptra_dia
+!                            tra_DIA(ji,jj,jk,jtr) = di(jtr) ! diagnostic
+!                         END DO
+                          tra_DIA(ji,jj,jk,:) = di(:) ! diagnostic
 
                           if (sur) then
-                              DO jtr=1,jptra_dia_2d
-                                 tra_DIA_2d(ji,jj,jtr) = d2(jtr) ! diagnostic pelagic 2d
-                              END DO
+!                             DO jtr=1,jptra_dia_2d
+!                                tra_DIA_2d(ji,jj,jtr) = di2(jtr) !  diagnostic pelagic 2d
+!                             END DO
+                             tra_DIA_2d(ji,jj,:) = di2(:) !  diagnostic pelagic 2d
                              DO jtr=1,jptra
-                                write(*,*) d2_jsur(jtr) ! diagnostic benthic
+                                write(*,*) di2_jsur(jtr) ! surface fluxes
                              END DO
                           endif
 
-                          PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
+                          if (bot) then 
+                             DO jtr=1, jptra_b
+                                tra_ben(ji,jj,1,jtr)=so_b(jtr) !  benthic 1 layer
+                                write(*,*) 'ogstm -->', tra_ben(ji,jj,1,jtr)
+                             END DO
+                             DO jtr=1,jptra_dia_b
+                                ben_DIA(ji,jj,1,jtr) = di_b(jtr) ! diagnostic benthic
+                             END DO
+                             DO jtr=1,jptra
+                                write(*,*) di2_jbot(jtr) ! diagnostic pelagic/benthic
+                             END DO
+                             ben_DIA_2d(ji,jj,:) = di2_b(:) 
+                          endif
+
+                          PH(ji,jj,jk)=di(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 
 
              ENDIF

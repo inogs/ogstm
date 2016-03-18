@@ -306,7 +306,7 @@
               dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
 
               if (IsBackup) then
-                 !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
+                 write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
                  CALL WRITE_AVE_2d_BKP(bkpname,datefrom, dateTo,tottrnIO2d, ave_counter);
               else
                  d2f2d = REAL(tottrnIO2d(:,:),4)

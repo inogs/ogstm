@@ -38,7 +38,10 @@
       INTEGER, allocatable, dimension(:) :: highfreq_table_dia2d_ben
 
 ! IO
-      REAL(8), allocatable :: totbenIO(:,:,:), benIO_HIGH(:,:,:,:),benIO(:,:,:,:),buffben(:)
+      REAL(8), allocatable :: totbenIO(:,:,:), benIO_HIGH(:,:,:,:),benIO(:,:,:,:)
+      REAL(8), allocatable :: tottrn_ben(:,:,:),tottrb_ben(:,:,:)
+      REAL(8), allocatable :: buffben(:),buffben3D(:,:,:)
+      REAL(8), allocatable :: bufftrn_ben(:),bufftrb_ben(:)
       REAL(8), allocatable :: ben_DIA_IO(:,:,:,:),  ben_DIA_IO_HIGH(:,:,:,:)
       REAL(8), allocatable :: ben_DIA(:,:,:,:),  benDIA_HIGH(:,:,:,:)
       REAL(8), allocatable :: ben_DIA_2d(:,:,:)
@@ -75,6 +78,12 @@ CC----------------------------------------------------------------------
        allocate(benIO(jpi,jpj,jpk_ben,jptra_b))          ; benIO      = huge(benIO(1,1,1,1))
        allocate(benIO_HIGH(jpi,jpj,jpk_ben,jptra_high_ben)); benIO_HIGH = huge(benIO_HIGH(1,1,1,1))
 
+       allocate(bufftrn_ben(jpi_max* jpj_max* jpk_ben))      ; bufftrn_ben    = huge(bufftrn_ben(1))
+       allocate(bufftrb_ben(jpi_max* jpj_max* jpk_ben))      ; bufftrb_ben    = huge(bufftrb_ben(1))
+
+       if (lwp) allocate(tottrn_ben(jpiglo, jpjglo, jpk_ben))  ;  if (lwp) tottrn_ben = huge(tottrn_ben(1,1,1)) 
+       if (lwp) allocate(tottrb_ben(jpiglo, jpjglo, jpk_ben))  ;  if (lwp) tottrb_ben = huge(tottrb_ben(1,1,1))
+
        allocate(ben_DIA(jpi,jpj,jpk_ben,jptra_b))        ; ben_DIA  = huge(ben_DIA(1,1,1,1))
        allocate(ben_DIA_IO(jpi,jpj,jpk_ben,jptra_b))     ; ben_DIA_IO = huge(ben_DIA_IO(1,1,1,1))
        allocate(ben_DIA_IO_HIGH(jpi,jpj,jpk_ben,jptra_high_ben)); ben_DIA_IO_HIGH = huge(ben_DIA_IO_HIGH(1,1,1,1))
@@ -84,6 +93,7 @@ CC----------------------------------------------------------------------
        allocate(ben_DIA_2d_IO_HIGH(jpi,jpj,jptra_dia_b_2d))  ; ben_DIA_2d_IO_HIGH = huge(ben_DIA_2d_IO_HIGH(1,1,1))
 
        allocate(buffben(jpi_max* jpj_max* jpk_ben))      ; buffben    = huge(buffben(1))
+       allocate(buffben3D(jpi, jpj, jpk_ben))            ; buffben3D  = huge(buffben3D(1,1,1))
 
        allocate(d2f3d_ben  (jpiglo,jpjglo,jpk_ben))      ; d2f3d_ben  = huge(d2f3d_ben(1,1,1))
 

@@ -79,6 +79,7 @@
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
+            CALL trcwri_benthic(DATEstring) ! writes the restart files
 
 
 

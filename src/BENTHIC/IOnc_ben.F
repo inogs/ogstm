@@ -390,8 +390,8 @@
 
         s = nf90_put_var(nc, idTim,    julian); call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_var(nc, idB,      tottrb); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idN,      tottrn); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idB,      tottrb_ben); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idN,      tottrn_ben); call handle_err1(s,counter,fileNetCDF)
 
         s =nf90_close(nc)
 

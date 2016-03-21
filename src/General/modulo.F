@@ -281,6 +281,9 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
+      REAL(8), allocatable ::  D2_FLUX_SURF(:,:,:),D2_FLUX_BOT(:,:,:)
+      REAL(8), allocatable ::  D2_FLUX_SURF_IO(:,:,:),D2_FLUX_BOT_IO(:,:,:)
+      REAL(8), allocatable ::  D2_FLUX_SURF_IO_HIGH(:,:,:),D2_FLUX_BOT_IO_HIGH(:,:,:)
       REAL(8), allocatable :: tottrn(:,:,:)
       REAL(8), allocatable :: tottrb(:,:,:)
 
@@ -297,6 +300,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totwnIO(:,:,:) 
       REAL(8), allocatable ::  totavtIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
+      REAL(8), allocatable ::  totD2_FLUX_SURF_IO(:,:),totD2_FLUX_BOT_IO(:,:)
 
 
       REAL(8), allocatable ::  trb(:,:,:,:)
@@ -519,7 +523,9 @@ C     no mpp
        allocate(tra_DIA(jpi,jpj,jpk,jptra_dia))            ; tra_DIA= huge(tra_DIA(1,1,1,1))
        allocate(tra_DIA_2d(jpi,jpj,jptra_dia_2d))          ; tra_DIA_2d= huge(tra_DIA_2d(1,1,1))
        if (lwp) allocate(tottrn(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrn = huge(tottrn(1,1,1)) 
-       if (lwp) allocate(tottrb(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrb = huge(tottrb(1,1,1))
+       if (lwp) allocate(tottrb(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrb = huge(tottrb(1,1,1)) 
+       if (lwp) allocate(totD2_FLUX_SURF_IO(jpiglo, jpjglo))  ;  if (lwp) totD2_FLUX_SURF_IO = huge(totD2_FLUX_SURF_IO(1,1))
+       if (lwp) allocate(totD2_FLUX_BOT_IO(jpiglo, jpjglo))   ;  if (lwp) totD2_FLUX_BOT_IO  = huge(totD2_FLUX_BOT_IO(1,1))
        allocate(traIO(jpi,jpj,jpk,jptra))                  ; traIO  = huge(traIO(1,1,1,1)) 
        allocate(snIO(jpi,jpj,jpk))                         ; snIO   = huge(snIO(1,1,1))
        allocate(tnIO(jpi,jpj,jpk))                         ; tnIO   = huge(tnIO(1,1,1))
@@ -539,6 +545,14 @@ C     no mpp
        allocate(tra_DIA_2d_IO(jpi,jpj,jptra_dia_2d))       ; tra_DIA_2d_IO    = huge(tra_DIA_2d_IO(1,1,1))
        allocate(tra_DIA_2d_IO_HIGH(jpi,jpj,jptra_dia2d_HIGH));tra_DIA_2d_IO_HIGH = huge(tra_DIA_2d_IO_HIGH(1,1,1))
 
+       allocate(D2_FLUX_SURF(jpi,jpj,jptra))                ;D2_FLUX_SURF  = huge(D2_FLUX_SURF(1,1,1))
+       allocate(D2_FLUX_BOT(jpi,jpj,jptra))                 ;D2_FLUX_BOT   = huge(D2_FLUX_BOT(1,1,1))
+
+       allocate(D2_FLUX_SURF_IO(jpi,jpj,jptra))             ;D2_FLUX_SURF_IO = huge(D2_FLUX_SURF_IO(1,1,1))
+       allocate(D2_FLUX_BOT_IO(jpi,jpj,jptra))              ;D2_FLUX_BOT_IO  = huge(D2_FLUX_BOT_IO(1,1,1))
+
+       allocate(D2_FLUX_SURF_IO_HIGH(jpi,jpj,jptra))        ;D2_FLUX_SURF_IO_HIGH = huge(D2_FLUX_SURF_IO_HIGH(1,1,1))
+       allocate(D2_FLUX_BOT_IO_HIGH(jpi,jpj,jptra))         ;D2_FLUX_BOT_IO_HIGH  = huge(D2_FLUX_BOT_IO_HIGH(1,1,1))
 
 
        if (lwp)  allocate(tottrnIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottrnIO  = huge(tottrnIO(1,1,1)) 

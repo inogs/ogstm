@@ -213,6 +213,7 @@ C
 !!!                          DO jtr=1,jptra
 !!!                             write(*,*) di2_jsur(jtr) ! surface fluxes
 !!!                          END DO
+                             D2_FLUX_SURF(ji,jj,:) = di2_jsur(:) !  surface fluxes
                           endif
 
                           if (bot) then 
@@ -227,6 +228,7 @@ C
 !!!                             write(*,*) di2_jbot(jtr) ! diagnostic pelagic/benthic
                              END DO
                              ben_DIA_2d(ji,jj,:) = di2_b(:) 
+                             D2_FLUX_BOT(ji,jj,:) = di2_jbot(:) !  diagnostic pelagic/benthic fluxes
                           endif
 
                           PH(ji,jj,jk)=di(pppH) ! Follows solver guess, put 8.0 if pppH is not defined

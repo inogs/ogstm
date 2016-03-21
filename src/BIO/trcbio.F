@@ -210,21 +210,21 @@ C
 !                                tra_DIA_2d(ji,jj,jtr) = di2(jtr) !  diagnostic pelagic 2d
 !                             END DO
                              tra_DIA_2d(ji,jj,:) = di2(:) !  diagnostic pelagic 2d
-                             DO jtr=1,jptra
-                                write(*,*) di2_jsur(jtr) ! surface fluxes
-                             END DO
+!!!                          DO jtr=1,jptra
+!!!                             write(*,*) di2_jsur(jtr) ! surface fluxes
+!!!                          END DO
                           endif
 
                           if (bot) then 
                              DO jtr=1, jptra_b
                                 tra_ben(ji,jj,1,jtr)=so_b(jtr) !  benthic 1 layer
-                                write(*,*) 'ogstm -->', tra_ben(ji,jj,1,jtr)
+!!!                             write(*,*) 'ogstm -->', tra_ben(ji,jj,1,jtr)
                              END DO
                              DO jtr=1,jptra_dia_b
                                 ben_DIA(ji,jj,1,jtr) = di_b(jtr) ! diagnostic benthic
                              END DO
                              DO jtr=1,jptra
-                                write(*,*) di2_jbot(jtr) ! diagnostic pelagic/benthic
+!!!                             write(*,*) di2_jbot(jtr) ! diagnostic pelagic/benthic
                              END DO
                              ben_DIA_2d(ji,jj,:) = di2_b(:) 
                           endif

@@ -3,11 +3,11 @@
 
       INTEGER, parameter :: jptra_var_b    = 1
 
-      INTEGER, parameter :: jptra_flux_b   = 1
+      INTEGER, parameter :: jptra_flux_b   = 0
 
       INTEGER, parameter :: jptra_dia_b    = jptra_var_b + jptra_flux_b
 
-      INTEGER, parameter :: jptra_dia_b_2d = 175
+      INTEGER, parameter :: jptra_dia_b_2d = 103
 
 
 C State variables
@@ -185,78 +185,6 @@ C       diagnostic 2D indexes
      &   ppjsurP4n=100,
      &   ppjsurP4p=101,
      &   ppjsurP4l=102,
-     &   ppjsurZ3c=103,
-     &   ppjsurZ3n=104,
-     &   ppjsurZ3p=105,
-     &   ppjsurZ4c=106,
-     &   ppjsurZ4n=107,
-     &   ppjsurZ4p=108,
-     &   ppjsurZ5c=109,
-     &   ppjsurZ5n=110,
-     &   ppjsurZ5p=111,
-     &   ppjsurZ6c=112,
-     &   ppjsurZ6n=113,
-     &   ppjsurZ6p=114,
-     &   ppjsurR1c=115,
-     &   ppjsurR1n=116,
-     &   ppjsurR1p=117,
-     &   ppjsurR2c=118,
-     &   ppjsurR3c=119,
-     &   ppjsurR6c=120,
-     &   ppjsurR6n=121,
-     &   ppjsurR6p=122,
-     &   ppjsurR6s=123,
-     &   ppjsurO3c=124,
-     &   ppjsurO3h=125,
-     &   ppjbotO2o=126,
-     &   ppjbotN1p=127,
-     &   ppjbotN3n=128,
-     &   ppjbotN4n=129,
-     &   ppjbotO4n=130,
-     &   ppjbotN5s=131,
-     &   ppjbotN6r=132,
-     &   ppjbotB1c=133,
-     &   ppjbotB1n=134,
-     &   ppjbotB1p=135,
-     &   ppjbotP1c=136,
-     &   ppjbotP1n=137,
-     &   ppjbotP1p=138,
-     &   ppjbotP1l=139,
-     &   ppjbotP1s=140,
-     &   ppjbotP2c=141,
-     &   ppjbotP2n=142,
-     &   ppjbotP2p=143,
-     &   ppjbotP2l=144,
-     &   ppjbotP3c=145,
-     &   ppjbotP3n=146,
-     &   ppjbotP3p=147,
-     &   ppjbotP3l=148,
-     &   ppjbotP4c=149,
-     &   ppjbotP4n=150,
-     &   ppjbotP4p=151,
-     &   ppjbotP4l=152,
-     &   ppjbotZ3c=153,
-     &   ppjbotZ3n=154,
-     &   ppjbotZ3p=155,
-     &   ppjbotZ4c=156,
-     &   ppjbotZ4n=157,
-     &   ppjbotZ4p=158,
-     &   ppjbotZ5c=159,
-     &   ppjbotZ5n=160,
-     &   ppjbotZ5p=161,
-     &   ppjbotZ6c=162,
-     &   ppjbotZ6n=163,
-     &   ppjbotZ6p=164,
-     &   ppjbotR1c=165,
-     &   ppjbotR1n=166,
-     &   ppjbotR1p=167,
-     &   ppjbotR2c=168,
-     &   ppjbotR3c=169,
-     &   ppjbotR6c=170,
-     &   ppjbotR6n=171,
-     &   ppjbotR6p=172,
-     &   ppjbotR6s=173,
-     &   ppjbotO3c=174,
-     &   ppjbotO3h=175
+     &   ppjsurZ3c=103
 
 

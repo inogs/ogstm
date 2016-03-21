@@ -47,7 +47,9 @@
       REAL(8), allocatable :: ben_DIA_2d(:,:,:)
       REAL(8), allocatable :: ben_DIA_2d_IO(:,:,:)
       REAL(8), allocatable :: ben_DIA_2d_IO_HIGH(:,:,:)
-      REAL(4), allocatable :: d2f3d_ben(:,:,:)
+      REAL(8), allocatable :: buffben2D(:),buffben_dia(:)
+      REAL(8), allocatable :: totbenIO2d(:,:)
+      REAL(4), allocatable :: d2f2d_ben(:,:),d2f3d_ben(:,:,:)
 
 
 CC----------------------------------------------------------------------
@@ -91,11 +93,15 @@ CC----------------------------------------------------------------------
        allocate(ben_DIA_2d(jpi,jpj,jptra_dia_b_2d))     ; ben_DIA_2d    = huge(ben_DIA_2d(1,1,1))
        allocate(ben_DIA_2d_IO(jpi,jpj,jptra_dia_b_2d))  ; ben_DIA_2d_IO = huge(ben_DIA_2d_IO(1,1,1))
        allocate(ben_DIA_2d_IO_HIGH(jpi,jpj,jptra_dia_b_2d))  ; ben_DIA_2d_IO_HIGH = huge(ben_DIA_2d_IO_HIGH(1,1,1))
+       allocate(totbenIO2d(jpi,jpj))                    ; totbenIO2d  = huge(totbenIO2d(1,1))
 
-       allocate(buffben(jpi_max* jpj_max* jpk_ben))      ; buffben    = huge(buffben(1))
-       allocate(buffben3D(jpi, jpj, jpk_ben))            ; buffben3D  = huge(buffben3D(1,1,1))
+       allocate(buffben_dia(jpi_max*jpj_max*jpk_ben)) ; buffben_dia= huge(buffben_dia(1))
+       allocate(buffben(jpi_max* jpj_max* jpk_ben))               ; buffben    = huge(buffben(1))
+       allocate(buffben2D(jpi_max* jpj_max))                      ; buffben2D  = huge(buffben2D(1))
+       allocate(buffben3D(jpi, jpj, jpk_ben))                     ; buffben3D  = huge(buffben3D(1,1,1))
 
        allocate(d2f3d_ben  (jpiglo,jpjglo,jpk_ben))      ; d2f3d_ben  = huge(d2f3d_ben(1,1,1))
+       allocate(d2f2d_ben  (jpiglo,jpjglo))              ; d2f2d_ben  = huge(d2f2d_ben(1,1))
 
 #ifdef Mem_Monitor
        mem_all=get_mem(err) - aux_mem

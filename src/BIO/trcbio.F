@@ -148,7 +148,8 @@ C
 
 
                           sur = (jk .eq. 1)
-                          bot = (jk .eq. 42)
+                          write(*,*) 'mbathy', mbathy(ji,jj)
+                          bot = (jk .eq. mbathy(ji,jj))
 
                           DO jtr=1, jtrmax
                              st(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations

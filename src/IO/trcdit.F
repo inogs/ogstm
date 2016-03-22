@@ -258,9 +258,9 @@
           d2f3d = REAL(tottrnIO,4)
           CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
           d2f2d = REAL(totD2_FLUX_SURF_IO,4)
-          CALL WRITE_AVE_2D(output_file_nc_sur,datefrom, dateTo, d2f3d);
+          CALL WRITE_AVE_2D(output_file_nc_sur,datefrom, dateTo, d2f2d);
           d2f2d = REAL(totD2_FLUX_BOT_IO,4)
-          CALL WRITE_AVE_2D(output_file_nc_bot,datefrom, dateTo, d2f3d);
+          CALL WRITE_AVE_2D(output_file_nc_bot,datefrom, dateTo, d2f2d);
          endif
 
 

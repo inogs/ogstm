@@ -193,7 +193,7 @@ C
 !                         DO jtr=1, jtrmax
 !                            tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +so(jtr) ! trend
 !                         END DO
-                          tra(ji,jj,jk,:) =tra(ji,jj,jk,:) +so(:) ! trend
+                          tra(ji,jj,jk,:) =tra(ji,jj,jk,:) +so(:) ! trend --> add source
 
 !                         DO jtr=1,4
 !                            sediPI(ji,jj,jk,jtr) = sv(jtr) ! BFM output of sedimentation speed (m/d)
@@ -210,9 +210,9 @@ C
 !                                tra_DIA_2d(ji,jj,jtr) = di2(jtr) !  diagnostic pelagic 2d
 !                             END DO
                              tra_DIA_2d(ji,jj,:) = di2(:) !  diagnostic pelagic 2d
-!!!                          DO jtr=1,jptra
-!!!                             write(*,*) di2_jsur(jtr) ! surface fluxes
-!!!                          END DO
+                             DO jtr=1,jptra
+!                               write(*,*) 'sur->',jtr,di2_jsur(jtr) ! surface fluxes
+                             END DO
                              D2_FLUX_SURF(ji,jj,:) = di2_jsur(:) !  surface fluxes
                           endif
 
@@ -225,7 +225,7 @@ C
                                 ben_DIA(ji,jj,1,jtr) = di_b(jtr) ! diagnostic benthic
                              END DO
                              DO jtr=1,jptra
-!!!                             write(*,*) di2_jbot(jtr) ! diagnostic pelagic/benthic
+!                               write(*,*) 'bot->',jtr, di2_jbot(jtr) ! diagnostic pelagic/benthic
                              END DO
                              ben_DIA_2d(ji,jj,:) = di2_b(:) 
                              D2_FLUX_BOT(ji,jj,:) = di2_jbot(:) !  diagnostic pelagic/benthic fluxes

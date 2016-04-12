@@ -131,8 +131,16 @@ if [ $BFMversion == bfmv5 ] ; then
    cp ${OGSTMDIR}/src/namelists/namelist*      ${OGSTMDIR}/ready_for_model_namelists/ 
    cp namelist.passivetrc_new                  ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
    cp ${BFMDIR}/build/tmp/${BFM_PRESET}/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
+
+   cp ${BFMDIR}/build/tmp/${BFM_PRESET}/namelist.ben.0 ${OGSTMDIR}/bfmv5/
+   cd ${OGSTMDIR}/bfmv5/
+   python ogstm_namelist.ben_gen.py #generates namelist.ben_new                                                                                         
+   cp namelist.ben_new                         ${OGSTMDIR}/ready_for_model_namelists/namelist.ben #overwriting
 else
    #V2
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/
    cp ${BFMDIR}/src/namelist/*.nml           ${OGSTMDIR}/ready_for_model_namelists/
 fi
+
+
+

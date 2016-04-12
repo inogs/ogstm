@@ -4,7 +4,7 @@ OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
 DEBUG=
 DEBUG=.dbg
-BFM_PRESET=OGS_PELAGIC
+BFM_PRESET=OGSTM_BENTHIC.B1B
 #DEBUG=   # for production
 ISFLUXUS=false
 
@@ -15,11 +15,11 @@ export OPENMP_FLAG=     #-fopenmp
 usage() {
 echo "SYNOPSYS"
 echo "Build BFM and ogstm model"
-echo "ogstm_builder.sh [ BFMDIR ] [ OGSTMDIR ]"
+echo "ogstm_bfm_builder.sh [ BFMDIR ] [ OGSTMDIR ]"
 echo ""
 echo " Dirs have to be expressed as full paths "
 echo "EXAMPLE"
-echo " ./ogstm_builder.sh $PWD/bfm $PWD/ogstm "
+echo " ./ogstm_bfm_builder.sh $PWD/bfm $PWD/ogstm "
 
 }
 

@@ -3,11 +3,11 @@
 
       INTEGER, parameter :: jptra_var_b    = 1
 
-      INTEGER, parameter :: jptra_flux_b   = 0
+      INTEGER, parameter :: jptra_flux_b   = 0 
 
       INTEGER, parameter :: jptra_dia_b    = jptra_var_b + jptra_flux_b
 
-      INTEGER, parameter :: jptra_dia_b_2d = 103
+      INTEGER, parameter :: jptra_dia_b_2d = 102
 
 
 C State variables
@@ -158,33 +158,33 @@ C       diagnostic 2D indexes
      &   ppcmin=73,
      &   ppnmin=74,
      &   pppmin=75,
-     &   ppjsurO2o=76,
-     &   ppjsurN1p=77,
-     &   ppjsurN3n=78,
-     &   ppjsurN4n=79,
-     &   ppjsurO4n=80,
-     &   ppjsurN5s=81,
-     &   ppjsurN6r=82,
-     &   ppjsurB1c=83,
-     &   ppjsurB1n=84,
-     &   ppjsurB1p=85,
-     &   ppjsurP1c=86,
-     &   ppjsurP1n=87,
-     &   ppjsurP1p=88,
-     &   ppjsurP1l=89,
-     &   ppjsurP1s=90,
-     &   ppjsurP2c=91,
-     &   ppjsurP2n=92,
-     &   ppjsurP2p=93,
-     &   ppjsurP2l=94,
-     &   ppjsurP3c=95,
-     &   ppjsurP3n=96,
-     &   ppjsurP3p=97,
-     &   ppjsurP3l=98,
-     &   ppjsurP4c=99,
-     &   ppjsurP4n=100,
-     &   ppjsurP4p=101,
-     &   ppjsurP4l=102,
-     &   ppjsurZ3c=103
+     &   pp=75,
+     &   ppjP1Y3c=76,
+     &   ppjP2Y3c=77,
+     &   ppjP3Y3c=78,
+     &   ppjP4Y3c=79,
+     &   ppppP1_Benc=80,
+     &   ppppP2_Benc=81,
+     &   ppppP3_Benc=82,
+     &   ppppP4_Benc=83,
+     &   ppppP1_Benn=84,
+     &   ppppP2_Benn=85,
+     &   ppppP3_Benn=86,
+     &   ppppP4_Benn=87,
+     &   ppppP1_Benp=88,
+     &   ppppP2_Benp=89,
+     &   ppppP3_Benp=90,
+     &   ppppP4_Benp=91,
+     &   ppppP1_Bens=92,
+     &   ppppP2_Bens=93,
+     &   ppppP3_Bens=94,
+     &   ppppP4_Bens=95,
+     &   ppppsediPP1_Ben=96,
+     &   ppppsediPP2_Ben=97,
+     &   ppppsediPP3_Ben=98,
+     &   ppppruH1=99,
+     &   ppppruH2=100,
+     &   ppppreH1=101,
+     &   ppppreH2=102
 
 

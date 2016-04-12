@@ -1,0 +1,9 @@
+#!/bin/bash
+
+module load nco
+
+for filename in ./$1/*.nc; do
+    ncks -A $filename $1/$1.nc
+done
+
+#mv $1.nc ./$1/

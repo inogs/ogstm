@@ -148,7 +148,7 @@ C
 
 
                           sur = (jk .eq. 1)
-                          write(*,*) 'mbathy', mbathy(ji,jj)
+!                          write(*,*) 'mbathy', mbathy(ji,jj)
                           bot = (jk .eq. mbathy(ji,jj))
 
                           DO jtr=1, jtrmax

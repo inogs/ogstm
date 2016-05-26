@@ -1,71 +1,97 @@
 #! /bin/bash
+
+#         ogstm_bfm_builder.sh
+
+#      Edit sections 1,2,3,4 in order to configure compilation and linking.
+
+################################################################### 
+#  Section 1. Choose the *.inc file, with the definition of compiler flags, to be included in Makefile
+#             
+#             This is a machine dependent operation, flags for
+#             most popular compilers (gnu, intel, xl) are provided.
+#             In the following example user will select the file x86_64.LINUX.intel.dbg.inc
+#             both in bfm/compilers/ and ogstm/compilers 
+
 OGSTM_ARCH=x86_64
 OGSTM_OS=LINUX
 OGSTM_COMPILER=intel
-DEBUG=
-DEBUG=.dbg
-BFM_PRESET=OGS_PELAGIC
-#DEBUG=   # for production
-ISFLUXUS=false
+DEBUG=       # this is the choice for production flags 
+DEBUG=.dbg   # this is the one for debug flags
 
-export OPENMP_FLAG=     #-fopenmp
+
+################################################################### 
+#  Section 2. Use of OpenMP threads, to improve the parallelization of ogstm.
+# Just comment one of thes lines:
+export OPENMP_FLAG=-fopenmp  # OpenMP activated
+export OPENMP_FLAG=          # OpenMP deactivated
+
+
+
+###################################################################
+# Section 3.  Module loads (and set of environment variables)
+
+# This is a machine dependent operation. Modules are usually used on clusters.
+# User can write his module file, in the directory below there are some examples.
+# Warning : this choice must be consistent with Section 1. 
+
+# Just comment the two following lines you are not using modules. 
+export MODULEFILE=$PWD/ogstm/compilers/machine_modules/pico.intel
+source $MODULEFILE
+
+
+
+###################################################################
+# Section 4.  Oceanvar inclusion in model
+# Set OCEANVAR=true         to include oceanvar.
+#     DEBUG_OCEANVAR=.dbg   to use debug flags
+
+OCEANVAR=false
+DEBUG_OCEANVAR=
+###################################################################
+
 
 
 
 usage() {
 echo "SYNOPSYS"
 echo "Build BFM and ogstm model"
-echo "ogstm_builder.sh [ BFMDIR ] [ OGSTMDIR ]"
+echo "ogstm_bfm_builder.sh [ BFMDIR ] [ OGSTMDIR ]"
 echo ""
 echo " Dirs have to be expressed as full paths "
 echo "EXAMPLE"
-echo " ./ogstm_builder.sh $PWD/bfm $PWD/ogstm "
+echo " ./ogstm_bfm_builder.sh $PWD/bfm $PWD/ogstm "
 
 }
 
-if [ $# -lt 2 ] ; then
+if [ $# -eq 1 ] || [ $# -gt 2 ]; then
    usage
    exit 1
 fi
 
-BFMDIR=$1
-OGSTMDIR=$2
-
-
-############### MODULES AND ENVIRONMENT VARIABLES
-
-if [[ $OGSTM_COMPILER == gfortran ]] ; then
-   if [ $ISFLUXUS == true ] ; then
-       module purge
-       module load openmpi-x86_64
-   else
-       module load autoload openmpi/1.4.4--gnu--4.5.2 netcdf/4.1.3--gnu--4.5.2 #plx
-   fi
-
+if [ $# -eq 2 ] ; then
+   BFMDIR=$1
+   OGSTMDIR=$2
 else
-   if [[ $OGSTM_ARCH == ppc64 ]] ; then
-       module load profile/advanced
-       module load bgq-xl/1.0  netcdf/4.1.3--bgq-xl--1.0
-       module load hdf5/1.8.9_ser--bgq-xl--1.0 szip/2.1--bgq-xl--1.0 zlib/1.2.7--bgq-gnu--4.4.6
-   fi
-   if [[ $OGSTM_ARCH == x86_64 ]] ; then
-      if  [ $ISFLUXUS == true ] ; then
-         module purge
-         module load intel-openmpi
-         export NETCDF_INC=/usr/local/intel/include
-         export NETCDF_LIB=/usr/local/intel/lib
-
-      else
-         module load profile/advanced
-         module load intel/cs-xe-2015--binary intelmpi/5.0.1--binary
-         module load hdf5/1.8.13_ser--intel--cs-xe-2015--binary netcdf/4.1.3--intel--cs-xe-2015--binary
-      fi
-   fi
+   BFMDIR=$PWD/bfm
+   OGSTMDIR=$PWD/ogstm
 fi
 
-##############################################################
 
 
+
+
+
+
+# -------------- 3d_var _____
+if [ $OCEANVAR == true ] ; then
+   cd 3d_var
+   INC_FILE=${OGSTM_ARCH}.${OGSTM_OS}.${OGSTM_COMPILER}${DEBUG_OCEANVAR}.inc
+   cp $INC_FILE compiler.inc
+   gmake
+   if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
+   export DA_INC=$PWD
+   echo DA_INC= $DA_INC
+fi
 
 # ----------- BFM library ---------------------
 cd $BFMDIR
@@ -94,7 +120,7 @@ else
    # in-place replace the entire ARCH line
    sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
    cd $BFMDIR/build
-   ./bfm_configure.sh -gc -o ../lib/libbfm.a -p $BFM_PRESET
+   ./bfm_configure.sh -gc -o ../lib/libbfm.a -p OGS_PELAGIC
    if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 fi
 
@@ -124,13 +150,13 @@ if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi
 mkdir -p ${OGSTMDIR}/ready_for_model_namelists/
 
 if [ $BFMversion == bfmv5 ] ; then
-   cp ${BFMDIR}/build/tmp/${BFM_PRESET}/namelist.passivetrc ${OGSTMDIR}/bfmv5/
+   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/namelist.passivetrc ${OGSTMDIR}/bfmv5/
    cd ${OGSTMDIR}/bfmv5/
    python ogstm_namelist_gen.py #generates namelist.passivetrc_new
 
-   cp ${OGSTMDIR}/src/namelists/namelist*      ${OGSTMDIR}/ready_for_model_namelists/ 
-   cp namelist.passivetrc_new                  ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
-   cp ${BFMDIR}/build/tmp/${BFM_PRESET}/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
+   cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/ 
+   cp namelist.passivetrc_new                ${OGSTMDIR}/ready_for_model_namelists/namelist.passivetrc #overwriting
+   cp ${BFMDIR}/build/tmp/OGS_PELAGIC/*.nml  ${OGSTMDIR}/ready_for_model_namelists/
 else
    #V2
    cp ${OGSTMDIR}/src/namelists/namelist*    ${OGSTMDIR}/ready_for_model_namelists/

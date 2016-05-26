@@ -50,7 +50,7 @@
 
          filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))//'.nc'
          CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
-         CALL readnc_slice_double(filename, 'TRB'//trim(ctrcnm(jn)), trb(:,:,:,jn) )
+         CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trb(:,:,:,jn) )
 
 
 

@@ -147,7 +147,7 @@
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
-         call readnc_slice_double('bounmask.nc',nomevar01,resto(:,:,:,jn));
+         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn));
 
       enddo
       ELSE

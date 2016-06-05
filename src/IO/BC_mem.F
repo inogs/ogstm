@@ -1,6 +1,6 @@
        MODULE BC_mem
 
-       USE modul_param 
+       USE modul_param
        USE myalloc
        USE myalloc_mpp
 
@@ -18,21 +18,22 @@
 !  ---------------------------------------------------------------------
       INTEGER jn_gib, jn_riv, jn_atm
       INTEGER(4) Gsizeglo, Rsizeglo, Asizeglo
-      INTEGER(4) Gsize, Rsize, Asize
+      INTEGER(4) Gsize, Rsize, Asize, lat, lon
 
       INTEGER(4), allocatable, DIMENSION(:) ::  tra_matrix_gib, tra_matrix_riv, tra_matrix_atm
 
 
-      INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxtglo, riv_idxtglo, atm_idxtglo ! <--domrea
-      INTEGER(4), allocatable, DIMENSION(:,:) ::  gib_ridxt  , riv_ridxt  , atm_ridxt   ! <--domrea.ReIndexing()
+      INTEGER(4), allocatable, DIMENSION(:)   ::  gib_idxtglo, riv_idxtglo  ! <--domrea
+      INTEGER(4), allocatable, DIMENSION(:,:) ::  gib_ridxt, riv_ridxt,atm_idxtglo   ! <--domrea.ReIndexing()
+      INTEGER(4), allocatable, DIMENSION(:,:,:) ::  atm_ridxt
 !     queste matrici ridotte hanno nel primo indice l'indice globale, negli altri 3 il corrispondente indice i,j,k locale (per cpu)
 
 
-      REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux,atm_aux
+      REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux
       REAL(8), allocatable, DIMENSION(:)       :: restocorr
-      REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv, atm
-      REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm_dtatrc       ! <--bc_gib.load_gib(), bc_tin.
-      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr                          !array of restoring coeff. for passive tracers
+      REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv,atm_aux
+      REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm       ! <--bc_gib.load_gib(), bc_tin.
+      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr,atm_dtatrc        !array of restoring coeff. for passive tracers
 ! ----------------------------------------------------------------------
       CONTAINS
 !     *******************************************************************
@@ -60,7 +61,9 @@
         gibfile='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'!//char(0);
         rivfile='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'!//char(0);
 
-         call getDimension(atmfile,'atm_idxt'    ,Asizeglo)
+         call getDimension(atmfile,'lat',lat)
+         call getDimension(atmfile,'lon',lon)
+         print *,lat,lon
          call getDimension(gibfile,'gib_idxt_N1p',Gsizeglo)
          call getDimension(rivfile,'riv_idxt'    ,Rsizeglo)
 
@@ -72,7 +75,7 @@
                write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' rank = ',rank
            if (lwp) then
                write(*,*) 'Size of vector Riv to allocate -->', Rsizeglo
-               write(*,*) 'Size of vector Atm to allocate -->', Asizeglo
+               write(*,*) 'Size of vector Atm to allocate -->', lat,lon
            endif
 
 !     We consider nudging of N1p O2o N3n Slca
@@ -80,7 +83,7 @@
 !     N1p jn = 2 phophates        (seasonal)
 !     N3n jn = 3 nitrates         (climatological)
 !     N5s jn = 4 Silicates        (seasonal)
-      
+
       jn_gib  = 7
       jn_riv  = 5
       jn_atm  = 2
@@ -103,7 +106,7 @@
           tra_matrix_gib(6) = ppO3h; restocorr(6)=2. ! Alk
           tra_matrix_gib(7) = ppN6r; restocorr(7)=2. ! N6r
        ENDIF
-       
+
        IF (Rsizeglo .NE. 0) THEN
            allocate(tra_matrix_riv(jn_riv))   ; tra_matrix_riv = huge(tra_matrix_riv(1))
            allocate(riv_aux(       Rsizeglo)) ; riv_aux        = huge(riv_aux(1))
@@ -115,11 +118,11 @@
           tra_matrix_riv(4) = ppO3c ! Dic
           tra_matrix_riv(5) = ppO3h ! Alk
        ENDIF
-       
-       IF (Asizeglo .NE. 0) THEN
+
+       IF ((lat .NE. 0) .AND. (lon .NE. 0)) THEN
            allocate(tra_matrix_atm(jn_atm))    ; tra_matrix_atm = huge(tra_matrix_atm(1))
-           allocate(atm_aux(       Asizeglo))  ; atm_aux        = huge(atm_aux(1))
-           allocate(atm_idxtglo(   Asizeglo))  ; atm_idxtglo    = huge(atm_idxtglo(1))
+           allocate(atm_aux(lon,lat))  ; atm_aux        = huge(atm_aux(1,1))
+           allocate(atm_idxtglo(   lon,lat))  ; atm_idxtglo    = huge(atm_idxtglo(1,1))
 
           tra_matrix_atm(1) = ppN1p ! phosphates
           tra_matrix_atm(2) = ppN3n ! nitrates
@@ -211,9 +214,10 @@
 #endif
 
 
-       allocate(atm_ridxt (4, Asize        )) ; atm_ridxt  = huge(atm_ridxt(1,1))
-       allocate(atm_dtatrc(Asize, 2, jn_atm)) ; atm_dtatrc = huge(atm_dtatrc(1,1,1))
-       allocate(atm       (Asize,    jn_atm)) ; atm        = huge(atm(1,1))
+
+       !allocate(atm_ridxt (4,lon,lat        )) ;  atm_ridxt  = huge(atm_ridxt(1,1,1))
+       allocate(atm_dtatrc(lon,lat, 2, jn_atm)) ; atm_dtatrc = huge(atm_dtatrc(1,1,1,1))
+       allocate(atm       (lon,lat,    jn_atm)) ; atm        = huge(atm(1,1,1))
 
 
 #ifdef Mem_Monitor
@@ -221,4 +225,4 @@
 #endif
       END SUBROUTINE alloc_DTATRC_local_atm
 
-      END MODULE 
+      END MODULE

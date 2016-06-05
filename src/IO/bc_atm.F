@@ -97,7 +97,8 @@
 !         local
           character(LEN=7)  nomevar
           character(LEN=27) nomefile
-          INTEGER(4) jn,jv
+          INTEGER(4) jn,jv,i,j
+          real(8) M1(lon,lat)
 
           nomevar= '1234567'
           nomefile='BC/ATM_yyyy0107-00:00:00.nc'
@@ -113,13 +114,19 @@
 
 
           DO jn = 1, jn_atm
-
+              M1 = 0
               nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
-              CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
-              DO jv=1,Asize
-                 atm_dtatrc(jv,2,jn) = atm_aux(atm_ridxt(1,jv))
+              print *,"c  ",nomevar,"\n"
+              call readnc_slice_float_2d(nomefile,nomevar,M1);
+              print *,nomevar
+
+            CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
+            DO i=1,lon
+              DO j =1,lat
+                 atm_dtatrc(i,j,2,jn) = M1(i,j)
               ENDDO
+            ENDDO
           ENDDO
 
 
@@ -134,12 +141,14 @@
 
          REAL(8), INTENT(IN) :: zweigh
 !         local
-         INTEGER jn, jv
+         INTEGER jn, jv,i,j
 
          DO jn=1, jn_atm
-             DO jv=1, Asize
-                 atm(jv,jn) = (1. - zweigh) * atm_dtatrc(jv,1,jn) + zweigh * atm_dtatrc(jv,2,jn)
+           DO i=1,lon
+             DO j =1,lat
+                 atm(i,j,jn) = (1. - zweigh) * atm_dtatrc(i,j,1,jn) + zweigh * atm_dtatrc(i,j,2,jn)
              ENDDO
+           ENDDO
          ENDDO
 
 
@@ -153,12 +162,14 @@
           IMPLICIT NONE
 
 !         local
-          INTEGER jn, jv
+          INTEGER jn, jv,i,j
 
           DO jn=1, jn_atm
-              DO jv=1, Asize
-                  atm_dtatrc(jv,1,jn)=atm_dtatrc(jv,2,jn)
+            DO i=1,lon
+              DO j =1,lat
+                  atm_dtatrc(i,j,1,jn)=atm_dtatrc(i,j,2,jn)
               ENDDO
+            ENDDO
           ENDDO
 
       END SUBROUTINE swap_ATM

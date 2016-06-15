@@ -83,7 +83,7 @@
           totwnIO  (totistart:totiend, totjstart:totjend,:) = wnIO    (relistart:reliend, reljstart:reljend, :)
           totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
 
-          do idrank = 1, size-1
+          do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
               call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
@@ -237,7 +237,7 @@
               tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO(     relistart:reliend,reljstart:reljend,jn)
               endif
 
-             do idrank = 1, size-1
+             do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
                 call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 32,mpi_comm_world, status, ierr) !* first info to know where idrank is working
@@ -356,7 +356,7 @@
       else
       tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
       endif
-             do idrank = 1, size-1
+             do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
                 call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 22,mpi_comm_world, status, ierr) !* first info to know where idrank is working

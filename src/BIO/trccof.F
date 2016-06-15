@@ -1,4 +1,4 @@
-      SUBROUTINE trccof 
+      SUBROUTINE trccof
 CCC---------------------------------------------------------------------
 CCC
 CCC                       ROUTINE trccof
@@ -27,7 +27,7 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
 
-#if defined key_trc_dmp 
+#if defined key_trc_dmp
        INTEGER jn, jk, jj, ji, tra_idx
 
 
@@ -44,19 +44,21 @@ C===================================================
         END DO
       END DO
 
+      print *,allocated(restotr),allocated(restocorr),allocated(resto)
 
       DO jn=1,jn_gib
         tra_idx=tra_matrix_gib(jn)
         DO jk=1,jpk
           DO jj=1,jpj
             DO ji=1,jpi
+              !print *,ji,jj,jk,tra_idx,jn,restocorr(jn),resto(ji,jj,jk,jn)
               restotr(ji,jj,jk,tra_idx)=restocorr(jn)*resto(ji,jj,jk,jn)
             END DO
           END DO
         END DO
       END DO
 #  else
-C     No evaluation of restoring coefficients 
+C     No evaluation of restoring coefficients
 #endif
 
       END SUBROUTINE trccof

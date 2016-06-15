@@ -4,13 +4,13 @@
 
        public
 
-CC 
+CC
 #include <mpif.h>
-CC 
+CC
 CC    size : number of process
 CC    rank : process number  [ 0 - size-1 ]
 CC
-      INTEGER  :: size,rank
+      INTEGER  :: mpi_size_comm,rank
       INTEGER  :: mpi_pack_size =18
 
 

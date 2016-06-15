@@ -198,7 +198,7 @@
 
 
 ! W *********************************************************
-     
+
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
       call readnc_slice_float(nomefile,'votkeavt',buf);
@@ -385,7 +385,7 @@
                 endif ! tmask
 
 
-              END DO 
+              END DO
             END DO
       endif
 !$omp end parallel
@@ -405,7 +405,7 @@
             DO jk=1,jpflx
               DO ji=1,jpi
                 flx(ji,uj,jk) = ( Umzweigh * flxdta(ji,uj,jk,1)+ zweigh     * flxdta(ji,uj,jk,2) )
-              END DO 
+              END DO
             END DO
 
             DO ji=1,jpi
@@ -495,5 +495,3 @@
 
 
       END SUBROUTINE swap_PHYS
-
-

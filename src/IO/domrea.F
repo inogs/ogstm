@@ -147,7 +147,7 @@
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
-         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn));
+         call readnc_slice_double('bounmask.nc',nomevar01,resto(:,:,:,jn));
 
       enddo
       ELSE
@@ -208,7 +208,7 @@
       ! Asize = COUNT_InSubDomain(Asizeglo,atm_idxtglo)
 
       ! if (Asize.NE. 0) then
-      !    call alloc_DTATRC_local_atm
+      call alloc_DTATRC_local_atm
       !    write(*,*) 'domrea->ATMRE_Indexing ATM iniziata, rank=', rank
       !    B=ATMRe_Indexing()
       !    write(*,*) 'domrea->ATMRE_Indexing ATM finita, rank=', rank
@@ -348,7 +348,7 @@
       !     ! local
       !     INTEGER ii,jj,kk,jv
       !     INTEGER counter,junk
-      ! 
+      !
       !
       !     counter=0
       !      do kk =1, jpk

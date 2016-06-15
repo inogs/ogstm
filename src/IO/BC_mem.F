@@ -121,8 +121,8 @@
 
        IF ((lat .NE. 0) .AND. (lon .NE. 0)) THEN
            allocate(tra_matrix_atm(jn_atm))    ; tra_matrix_atm = huge(tra_matrix_atm(1))
-           allocate(atm_aux(lon,lat))  ; atm_aux        = huge(atm_aux(1,1))
-           allocate(atm_idxtglo(   lon,lat))  ; atm_idxtglo    = huge(atm_idxtglo(1,1))
+           allocate(atm_aux(jpi,jpj))  ; atm_aux        = huge(atm_aux(1,1))
+           allocate(atm_idxtglo(   jpi,jpj))  ; atm_idxtglo    = huge(atm_idxtglo(1,1))
 
           tra_matrix_atm(1) = ppN1p ! phosphates
           tra_matrix_atm(2) = ppN3n ! nitrates
@@ -214,10 +214,10 @@
 #endif
 
 
-
-       !allocate(atm_ridxt (4,lon,lat        )) ;  atm_ridxt  = huge(atm_ridxt(1,1,1))
-       allocate(atm_dtatrc(lon,lat, 2, jn_atm)) ; atm_dtatrc = huge(atm_dtatrc(1,1,1,1))
-       allocate(atm       (lon,lat,    jn_atm)) ; atm        = huge(atm(1,1,1))
+      print *,"!!!!!!!!!!!!!!!!!!!!!!",jpi,jpj
+      !allocate(atm_ridxt (4,lon,lat        )) ;  atm_ridxt  = huge(atm_ridxt(1,1,1))
+      allocate(atm_dtatrc(jpi,jpj, 2, jn_atm)) ; atm_dtatrc = huge(atm_dtatrc(1,1,1,1))
+      allocate(atm       (jpi,jpj,    jn_atm)) ; atm        = huge(atm(1,1,1))
 
 
 #ifdef Mem_Monitor

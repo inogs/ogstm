@@ -67,7 +67,7 @@
 
          NOW_datestring = DATEstring ! update time manager module
          NOW_sec        = sec
-
+         NOW_timestep   = TAU
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates

@@ -47,12 +47,14 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       LOGICAL sur,bot
-      REAL(8) st(jptra),so(jptra),sv(4),di(jptra_dia),er(10),di2(jptra_dia_2d) ! Pelagic
+      REAL(8) st(jptra),so(jptra),sv(4),di(jptra_dia),er(11),di2(jptra_dia_2d) ! Pelagic
+!      REAL(8) st(jptra),so(jptra),sv(4),di(jptra_dia),er(10),di2(jptra_dia_2d) ! Pelagic
       REAL(8) st_b(jptra_b),so_b(jptra_b),di_b(jptra_dia_b)  ! Benthic                 
       REAL(8) di2_b(jptra_dia_b_2d)
       REAL(8) di2_jsur(jptra), di2_jbot(jptra)
 
       INTEGER ji,jj,jk,jb,jn
+      integer julianday
       INTEGER jtr,jtrmax,tra_idx
 
 ! omp variables
@@ -127,13 +129,15 @@ C
       tra_DIA_2d=0.
       ben_DIA   =0. 
 
+      call tau2julianday(NOW_timestep, deltaT, julianday)
+
       MAIN_LOOP: DO  jb = 1, NBFMPOINTS, ntids
 
 
 !$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
+!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo, julianday)
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -148,7 +152,6 @@ C
 
 
                           sur = (jk .eq. 1)
-!                          write(*,*) 'mbathy', mbathy(ji,jj)
                           bot = (jk .eq. mbathy(ji,jj))
 
                           DO jtr=1, jtrmax
@@ -172,6 +175,7 @@ C
                           er(8)  = e3t(ji,jj,jk)        ! depth in meters of the given cell
                           er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)
                           er(10) = PH(ji,jj,jk)         ! pH
+                          er(11) = .04+.02*cos(2.*3.1416*julianday/186.)!bottomstress(ji,jj)  ! bottomstress
 
                           call BFM0D_Input_EcologyDynamics(sur,bot,st,jtrmax,er)
 
@@ -225,9 +229,9 @@ C
                              DO jtr=1,jptra_dia_b
                                 ben_DIA(ji,jj,1,jtr) = di_b(jtr) ! diagnostic benthic
                              END DO
-                             DO jtr=1,jptra
-!                               write(*,*) 'bot->',jtr, di2_jbot(jtr) ! diagnostic pelagic/benthic
-                             END DO
+!                             DO jtr=1,jptra
+!                                 write(*,*) 'bot->',1, di2_jbot(1) ! diagnostic pelagic/benthic
+!                             END DO
                              ben_DIA_2d(ji,jj,:) = di2_b(:) 
                              D2_FLUX_BOT(ji,jj,:) = di2_jbot(:) !  diagnostic pelagic/benthic fluxes
                           endif

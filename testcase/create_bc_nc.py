@@ -117,8 +117,8 @@ def create_bc_nc(test):
         ncOUT.createDimension('atm_idxt'    ,atm_idxt);
         
         ncvar = ncOUT.createVariable('atm_idxt'     ,'i',('atm_idxt',)                   ); ncvar[:] = atm_index;
-        ncvar = ncOUT.createVariable('atm_N1p'      ,'d',('atm_idxt',)                   ); ncvar[:] = 3.75866672509673e-09;
-        ncvar = ncOUT.createVariable('atm_N3n'      ,'d',('atm_idxt',)                   ); ncvar[:] = 2.24183651189621e-07;
+        ncvar = ncOUT.createVariable('atm_N1p'      ,'d',('atm_idxt',)                   ); ncvar[:] = 0.0#;3.75866672509673e-09;
+        ncvar = ncOUT.createVariable('atm_N3n'      ,'d',('atm_idxt',)                   ); ncvar[:] = 0.0;#2.24183651189621e-07;
         ncOUT.close()
 
 # Atmosphere CO2
@@ -182,11 +182,11 @@ def create_bc_nc(test):
             		riv_index[tin_idxt]=index[jk,jj,ji]
             		tin_idxt += 1
 
-    riv_N1p=np.zeros(tin_idxt,dtype=float); riv_N1p[0]=0.35*10**(-5)
-    riv_N3n=np.zeros(tin_idxt,dtype=float); riv_N3n[0]=0.2*10**(-3)
-    riv_N5s=np.zeros(tin_idxt,dtype=float); riv_N5s[0]=1.0*10**(-4)
-    riv_O3c=np.zeros(tin_idxt,dtype=float); riv_O3c[0]=0.35
-    riv_O3h=np.zeros(tin_idxt,dtype=float); riv_O3h[0]=0.01
+    riv_N1p=np.zeros(tin_idxt,dtype=float); riv_N1p[0]=0.0#0.35*10**(-5)
+    riv_N3n=np.zeros(tin_idxt,dtype=float); riv_N3n[0]=0.0#0.2*10**(-3)
+    riv_N5s=np.zeros(tin_idxt,dtype=float); riv_N5s[0]=0.0#1.0*10**(-4)
+    riv_O3c=np.zeros(tin_idxt,dtype=float); riv_O3c[0]=0.0#0.35
+    riv_O3h=np.zeros(tin_idxt,dtype=float); riv_O3h[0]=0.0#0.01
 
     for date in TIN_DATE:
         # Create RIV file

@@ -13,7 +13,7 @@ ci=jpi/2
 cj=jpj/2
 
 #extract data
-vrn      = 'P1l'
+vrn      = 'O2o'
 filename = 'ave.' + vrn + '.nc'
 
 M=NC.netcdf_file(filename,"r",mmap=False)
@@ -32,6 +32,8 @@ gs.update(wspace = 0, hspace = 0,bottom=0.38)
 
 ax1=plt.subplot(gs[0]) # Histogram
 data2plot= (masked_array*e3t[0,:,cj,ci]).sum(1) # compute integral
+#ax1.bar(np.arange(0,12), data2plot, alpha=0.4, color='black')
+#ax1.set_xlim((0, 12))
 ax1.bar(np.arange(0,12), data2plot, alpha=0.4, color='black')
 ax1.set_xlim((0, 12))
 ax1.axis('off')
@@ -51,8 +53,8 @@ plt.axis([0, 12, 250., 0.])
 plt.title(vrn, fontsize=20, y=1.1)
 plt.xlabel('month', fontsize=16)
 plt.ylabel('depth [m]', fontsize=16)
-labels=['J','F','M','A','M','J','J','A','S','O','N','D']
-plt.xticks(np.arange(0.,12.)+0.5, labels)
+#labels=['J','F','M','A','M','J','J','A','S','O','N','D']
+#plt.xticks(np.arange(0.,12.)+0.5, labels)
 
 theOutputFile= "prova.png"
 fig.savefig(theOutputFile)

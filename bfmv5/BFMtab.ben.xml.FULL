@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<ModelVars>
+<var name="G3c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="G3h" maxvalue="1000.0001" highfreq="false" ></var>
+<var name="G13c" maxvalue="1000.0001" highfreq="false" ></var>
+<var name="G13h" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="G23c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="G23h" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y1c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y1n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y1p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y2c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y2n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y2p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y3c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y3n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y3p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y4c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y4n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y4p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y5c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y5n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Y5p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q6c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q6n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q6p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q6s" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q5c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q5n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q5p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q1c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q1n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q1p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q11c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q11n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="Q11p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="H1c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="H1n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="H1p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="H2c" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="H2n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="H2p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K1p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K11p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K21p" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K4n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K14n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K24n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K6r" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K16r" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K26r" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K3n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="K5s" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="G2o" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="G4n" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="D1m" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="D2m" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="D6m" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="D7m" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="D8m" maxvalue="1000.0001" highfreq="true" ></var>
+<var name="D9m" maxvalue="1000.0001" highfreq="true" ></var>
+</ModelVars>
+
+
+<Diagnostics>
+<var name="DIA_B_1" highfreq="true" ></var>
+</Diagnostics>
+
+<Diagnostics_2D>
+<var name="sidiss" highfreq="true" ></var>
+<var name="M1p" highfreq="true" ></var>
+<var name="M11p" highfreq="true" ></var>
+<var name="M21p" highfreq="true" ></var>
+<var name="M4n" highfreq="true" ></var>
+<var name="M14n" highfreq="true" ></var>
+<var name="M24n" highfreq="true" ></var>
+<var name="M3n" highfreq="true" ></var>
+<var name="M5s" highfreq="true" ></var>
+<var name="M6r" highfreq="true" ></var>
+<var name="RI_Fc" highfreq="true" ></var>
+<var name="RI_Fn" highfreq="true" ></var>
+<var name="RI_Fp" highfreq="true" ></var>
+<var name="RI_Fs" highfreq="true" ></var>
+<var name="ZI_Fc" highfreq="true" ></var>
+<var name="ZI_Fn" highfreq="true" ></var>
+<var name="ZI_Fp" highfreq="true" ></var>
+<var name="ZI_Fs" highfreq="true" ></var>
+<var name="jZIY3c" highfreq="true" ></var>
+<var name="jRIY3c" highfreq="true" ></var>
+<var name="jRIY3n" highfreq="true" ></var>
+<var name="jRIY3p" highfreq="true" ></var>
+<var name="jRIY3s" highfreq="true" ></var>
+<var name="Depth_Ben" highfreq="true" ></var>
+<var name="ETW_Ben" highfreq="true" ></var>
+<var name="ERHO_Ben" highfreq="true" ></var>
+<var name="ESW_Ben" highfreq="true" ></var>
+<var name="O2o_Ben" highfreq="true" ></var>
+<var name="N1p_Ben" highfreq="true" ></var>
+<var name="N3n_Ben" highfreq="true" ></var>
+<var name="N4n_Ben" highfreq="true" ></var>
+<var name="N5s_Ben" highfreq="true" ></var>
+<var name="N6r_Ben" highfreq="true" ></var>
+<var name="sediR6_Ben" highfreq="true" ></var>
+<var name="jK4K3n" highfreq="true" ></var>
+<var name="jK3G4n" highfreq="true" ></var>
+<var name="jK31K21p" highfreq="true" ></var>
+<var name="jK34K24n" highfreq="true" ></var>
+<var name="jK13K3n" highfreq="true" ></var>
+<var name="jK15K5s" highfreq="true" ></var>
+<var name="jK36K26r" highfreq="true" ></var>
+<var name="DICae" highfreq="true" ></var>
+<var name="DICan" highfreq="true" ></var>
+<var name="O3c_Ben" highfreq="true" ></var>
+<var name="O3h_Ben" highfreq="true" ></var>
+<var name="Acae" highfreq="true" ></var>
+<var name="Acan" highfreq="true" ></var>
+<var name="pHae" highfreq="true" ></var>
+<var name="pHan" highfreq="true" ></var>
+<var name="pCO2ae" highfreq="true" ></var>
+<var name="pCO2an" highfreq="true" ></var>
+<var name="totbenc" highfreq="true" ></var>
+<var name="totbenn" highfreq="true" ></var>
+<var name="totbenp" highfreq="true" ></var>
+<var name="totbens" highfreq="true" ></var>
+<var name="rrBTo" highfreq="true" ></var>
+<var name="rrATo" highfreq="true" ></var>
+<var name="reBTn" highfreq="true" ></var>
+<var name="reBTp" highfreq="true" ></var>
+<var name="reATn" highfreq="true" ></var>
+<var name="reATp" highfreq="true" ></var>
+<var name="turenh" highfreq="true" ></var>
+<var name="irrenh" highfreq="true" ></var>
+<var name="shiftD1m" highfreq="true" ></var>
+<var name="shiftD2m" highfreq="true" ></var>
+<var name="jG2K3o" highfreq="true" ></var>
+<var name="jG2K7o" highfreq="true" ></var>
+<var name="pdenit" highfreq="true" ></var>
+<var name="pnit" highfreq="true" ></var>
+<var name="panox" highfreq="true" ></var>
+<var name="psid" highfreq="true" ></var>
+<var name="pdepo" highfreq="true" ></var>
+<var name="cmin" highfreq="true" ></var>
+<var name="nmin" highfreq="true" ></var>
+<var name="pmin" highfreq="true" ></var>
+<var name="jP1Y3c" highfreq="true" ></var>
+<var name="jP2Y3c" highfreq="true" ></var>
+<var name="jP3Y3c" highfreq="true" ></var>
+<var name="jP4Y3c" highfreq="true" ></var>
+<var name="ppP1_Benc" highfreq="true" ></var>
+<var name="ppP2_Benc" highfreq="true" ></var>
+<var name="ppP3_Benc" highfreq="true" ></var>
+<var name="ppP4_Benc" highfreq="true" ></var>
+<var name="ppP1_Benn" highfreq="true" ></var>
+<var name="ppP2_Benn" highfreq="true" ></var>
+<var name="ppP3_Benn" highfreq="true" ></var>
+<var name="ppP4_Benn" highfreq="true" ></var>
+<var name="ppP1_Benp" highfreq="true" ></var>
+<var name="ppP2_Benp" highfreq="true" ></var>
+<var name="ppP3_Benp" highfreq="true" ></var>
+<var name="ppP4_Benp" highfreq="true" ></var>
+<var name="ppP1_Bens" highfreq="true" ></var>
+<var name="ppP2_Bens" highfreq="true" ></var>
+<var name="ppP3_Bens" highfreq="true" ></var>
+<var name="ppP4_Bens" highfreq="true" ></var>
+<var name="ppsediPP1_Ben" highfreq="true" ></var>
+<var name="ppsediPP2_Ben" highfreq="true" ></var>
+<var name="ppsediPP3_Ben" highfreq="true" ></var>
+<var name="ppruH1" highfreq="true" ></var>
+<var name="ppruH2" highfreq="true" ></var>
+<var name="ppreH1" highfreq="true" ></var>
+<var name="ppreH2" highfreq="true" ></var>
+</Diagnostics_2D>
+</root>

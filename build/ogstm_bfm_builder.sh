@@ -31,6 +31,9 @@ fi
 BFMDIR=$1
 OGSTMDIR=$2
 
+rm  $BFMDIR/lib/libbfm.a
+rm  $OGSTMDIR/build/BLD_OGSTM/*
+rm  $OGSTMDIR/bin/ogstm.xx
 
 ############### MODULES AND ENVIRONMENT VARIABLES
 
@@ -92,7 +95,7 @@ if [ $BFMversion == BFMv2 ] ; then
 
 else
    # in-place replace the entire ARCH line
-   sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/OGS_PELAGIC/configuration
+   sed -i "s/.*ARCH.*/        ARCH    = '$INC_FILE'  /"  build/configurations/${BFM_PRESET}/configuration
    cd $BFMDIR/build
    ./bfm_configure.sh -gc -o ../lib/libbfm.a -p $BFM_PRESET
    if [ $? -ne 0 ] ; then  echo  ERROR; exit 1 ; fi

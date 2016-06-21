@@ -175,6 +175,24 @@
 !$omp end parallel
       END DO
 
+      call readnc_slice_float(nomefile,'e3u',buf);
+
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3udta,umask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              e3udta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*umask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
+
 
 
 ! V *********************************************************
@@ -196,11 +214,47 @@
 !$omp end parallel
       END DO
 
+      call readnc_slice_float(nomefile,'e3v',buf);
+
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3vdta,vmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              e3vdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*vmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
+
 
 ! W *********************************************************
 
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
+
+      call readnc_slice_float(nomefile,'vovecrtz',buf);
+      DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask;
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              wdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
+
       call readnc_slice_float(nomefile,'votkeavt',buf);
       DO jk=1,jpk,ntids!avtdta(:,:,:,2) = buf*tmask;
 !$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf)
@@ -216,6 +270,25 @@
          ENDIF
 !$omp end parallel
       END DO
+
+
+      nomefile = 'FORCINGS/W'//datestring//'.nc'
+      call readnc_slice_float(nomefile,'e3w',buf);
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3wdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              e3wdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
@@ -250,6 +323,24 @@
          ENDIF
 !$omp end parallel
       END DO
+
+      call readnc_slice_float(nomefile,'e3t',buf);
+      DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask;
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3tdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              e3tdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
+
 
       call readnc_slice_float_2d(nomefile,'sowindsp',buf2); flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1);
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
@@ -306,8 +397,8 @@
 !!!!!!!!!!!!!!!!!
 
 
-      CALL div()               ! Horizontal divergence
-      CALL wzv()               ! vertical velocity
+!     CALL div()               ! Horizontal divergence
+!     CALL wzv()               ! vertical velocity
 
 !        could be written for OpenMP
           DO jk=1,jpk
@@ -369,19 +460,24 @@
               DO ji=1,jpi
 
                 if (umask(ji,jj,uk). NE . 0.0) then
-                un(ji,jj,uk) = (Umzweigh*  udta(ji,jj,uk,1) + zweigh*  udta(ji,jj,uk,2))
+                un(ji,jj,uk)  = (Umzweigh*  udta(ji,jj,uk,1) + zweigh*  udta(ji,jj,uk,2))
+                e3u(ji,jj,uk) = (Umzweigh*  e3udta(ji,jj,uk,1) + zweigh*  e3udta(ji,jj,uk,2))
                 endif
 
                 if (vmask(ji,jj,uk). NE . 0.0) then
-                vn(ji,jj,uk) = (Umzweigh*  vdta(ji,jj,uk,1) + zweigh*  vdta(ji,jj,uk,2))
+                vn(ji,jj,uk)  = (Umzweigh*  vdta(ji,jj,uk,1) + zweigh*  vdta(ji,jj,uk,2))
+                e3v(ji,jj,uk) = (Umzweigh*  e3vdta(ji,jj,uk,1) + zweigh*  e3vdta(ji,jj,uk,2))
                 endif
 
                 if (tmask(ji,jj,uk). NE . 0.0) then
 
-                wn(ji,jj,uk) = (Umzweigh*  wdta(ji,jj,uk,1) + zweigh*  wdta(ji,jj,uk,2))
-               avt(ji,jj,uk) = (Umzweigh*avtdta(ji,jj,uk,1) + zweigh*avtdta(ji,jj,uk,2))
-                tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
-                sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
+                 wn(ji,jj,uk) = (Umzweigh*  wdta(ji,jj,uk,1) + zweigh*  wdta(ji,jj,uk,2))
+                avt(ji,jj,uk) = (Umzweigh*avtdta(ji,jj,uk,1) + zweigh*avtdta(ji,jj,uk,2))
+                e3w(ji,jj,uk) = (Umzweigh*  e3wdta(ji,jj,uk,1) + zweigh*  e3wdta(ji,jj,uk,2))
+       
+                 tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
+                 sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
+                e3t(ji,jj,uk) = (Umzweigh*  e3tdta(ji,jj,uk,1) + zweigh*  e3tdta(ji,jj,uk,2))
                 endif ! tmask
 
 
@@ -413,9 +509,9 @@
                   freeze(ji,uj) = flx(ji,uj,jpice)
                   emp(ji,uj)    = flx(ji,uj,jpemp)
                   qsr(ji,uj)    = flx(ji,uj,jpqsr)
-                  e3u(ji,uj,1)  = flx(ji,uj,8)
-                  e3v(ji,uj,1)  = flx(ji,uj,9)
-                  e3t(ji,uj,1)  = flx(ji,uj,10)
+!                 e3u(ji,uj,1)  = flx(ji,uj,8)
+!                 e3v(ji,uj,1)  = flx(ji,uj,9)
+!                 e3t(ji,uj,1)  = flx(ji,uj,10)
             END DO
 
         endif
@@ -463,12 +559,16 @@
 
             DO jj=1,jpj
               DO ji=1,jpi
-                  udta(ji,jj,jdepth,1) =  udta(ji,jj,jdepth,2)
-                  vdta(ji,jj,jdepth,1) =  vdta(ji,jj,jdepth,2)
-                  wdta(ji,jj,jdepth,1) =  wdta(ji,jj,jdepth,2)
-                avtdta(ji,jj,jdepth,1) =avtdta(ji,jj,jdepth,2)
-                tdta(ji,jj,jdepth,1) = tdta(ji,jj,jdepth,2)
-                sdta(ji,jj,jdepth,1) = sdta(ji,jj,jdepth,2)
+                  udta(ji,jj,jdepth,1)   =  udta(ji,jj,jdepth,2)
+                  e3udta(ji,jj,jdepth,1) =  e3udta(ji,jj,jdepth,2)
+                  vdta(ji,jj,jdepth,1)   =  vdta(ji,jj,jdepth,2)
+                  e3vdta(ji,jj,jdepth,1) =  e3vdta(ji,jj,jdepth,2)
+                  wdta(ji,jj,jdepth,1)   =  wdta(ji,jj,jdepth,2)
+                  e3wdta(ji,jj,jdepth,1) =  e3wdta(ji,jj,jdepth,2)
+                  avtdta(ji,jj,jdepth,1) = avtdta(ji,jj,jdepth,2)
+                    tdta(ji,jj,jdepth,1) = tdta(ji,jj,jdepth,2)
+                    sdta(ji,jj,jdepth,1) = sdta(ji,jj,jdepth,2)
+                  e3tdta(ji,jj,jdepth,1) =  e3tdta(ji,jj,jdepth,2)
 
               END DO
             END DO

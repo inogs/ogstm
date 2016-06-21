@@ -198,6 +198,7 @@ CC      flxdta         : additional fluxes
       REAL(8), allocatable, dimension(:,:,:,:) :: udta,vdta,wdta,avtdta,flxdta
       REAL(8), allocatable, dimension(:,:,:)   :: flx
       REAL(8), allocatable, dimension(:,:,:,:) :: tdta,sdta ! : temperature and salinity data array
+      REAL(8), allocatable, dimension(:,:,:,:) :: e3tdta,e3udta,e3vdta,e3wdta ! : temperature and salinity data array
 
 CC V. DIAGNOSTICS
 CC ==============
@@ -491,8 +492,13 @@ CC----------------------------------------------------------------------
        allocate(avtdta (jpi,jpj,jpk,2))   ; avtdta  = huge(avtdta(1,1,1,1))
        allocate(flxdta (jpi,jpj,jpflx,2)) ; flxdta  = huge(flxdta(1,1,1,1))
        allocate(flx    (jpi,jpj,jpflx))   ; flx     = huge(flx(1,1,1))
-       allocate(tdta(jpi,jpj,jpk,2)) ; tdta = huge(tdta(1,1,1,1))
-       allocate(sdta(jpi,jpj,jpk,2)) ; sdta = huge(sdta(1,1,1,1))
+       allocate(tdta(jpi,jpj,jpk,2))      ; tdta    = huge(tdta(1,1,1,1))
+       allocate(sdta(jpi,jpj,jpk,2))      ; sdta    = huge(sdta(1,1,1,1))
+       allocate(e3tdta(jpi,jpj,jpk,2))    ; e3tdta  = huge(e3tdta(1,1,1,1))
+       allocate(e3udta(jpi,jpj,jpk,2))    ; e3udta  = huge(e3udta(1,1,1,1))
+       allocate(e3vdta(jpi,jpj,jpk,2))    ; e3vdta  = huge(e3vdta(1,1,1,1))
+       allocate(e3wdta(jpi,jpj,jpk,2))    ; e3wdta  = huge(e3wdta(1,1,1,1))
+
 CC----------------------------------------------------------------------
 
 #if defined key_mpp 

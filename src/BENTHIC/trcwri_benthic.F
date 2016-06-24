@@ -104,7 +104,6 @@
               call MPI_RECV(bufftrn_ben,jpi_rec*jpj_rec*jpk_ben, mpi_real8, idrank, 11,mpi_comm_world, status, ierr)
               call MPI_RECV(bufftrb_ben,jpi_rec*jpj_rec*jpk_ben, mpi_real8, idrank, 12,mpi_comm_world, status, ierr)
 
-              write(*,*) "in trcwri_benthic.F: idrank", idrank , "jpi_rec*jpj_rec*jpk_ben",jpi_rec*jpj_rec*jpk_ben 
 
               irange    = iPe - iPd + 1
               jrange    = jPe - jPd + 1

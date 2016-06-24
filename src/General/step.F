@@ -34,6 +34,7 @@
        USE myalloc_mpp
        USE TIME_MANAGER
        USE BC_mem
+       USE BIOBEN_mem
        USE IO_mem, only: ave_counter_1, ave_counter_2
        IMPLICIT NONE
 
@@ -143,6 +144,7 @@
 
 
 ! Call Passive tracer model between synchronization for small parallelisation
+
         CALL trcstp    ! se commento questo non fa calcoli
         call trcave
         call trcave_benthic()

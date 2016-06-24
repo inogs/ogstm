@@ -95,7 +95,6 @@
 
                 call MPI_RECV(buffben2D,jpi_rec*jpj_rec      ,mpi_real8,idrank, 40,mpi_comm_world, status, ierr)
 
-                write(*,*) "in diawri_benthic : idrank",idrank, "jpi_rec*jpj_rec",jpi_rec*jpj_rec
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
@@ -216,7 +215,6 @@
 
                 call MPI_RECV(buffben_dia ,jpi_rec*jpj_rec*jpk_ben,mpi_real8,idrank, 30,mpi_comm_world, status, ierr)
 
-                write(*,*) "in diawri_benthic : idrank",idrank, "jpi_rec*jpj_rec*jpk_ben", jpi_rec*jpj_rec*jpk_ben
 
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank

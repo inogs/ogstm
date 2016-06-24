@@ -53,6 +53,7 @@
 
 
 
+
 ! ********************   we put initial undef to 0
           do jk =1,jpk_ben
              do jj =1,jpj
@@ -79,7 +80,7 @@
 !              bkp2hasbeenread=.true.
 !            endif
           else
-             benIO(:,:,:,jn) = trn_ben(:,:,:,jn)
+!            benIO(:,:,:,jn) = trn_ben(:,:,:,jn)
           endif
 
 

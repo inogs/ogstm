@@ -39,6 +39,7 @@
       Realcounter   =    REAL(ave_counter_2  , 8)
       Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
 
+
       DO jn=1 ,jptra_b,ntids
 
 !$omp parallel default(none) private(jk,jj,ji,mytid)

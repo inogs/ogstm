@@ -108,7 +108,7 @@
               call MPI_RECV(iPe        , 1,                 mpi_integer, idrank, 5,mpi_comm_world, status, ierr)
               call MPI_RECV(jPe        , 1,                 mpi_integer, idrank, 6,mpi_comm_world, status, ierr)
               call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 7,mpi_comm_world, status, ierr)
-              call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
+              call MPI_RECV(jPd        , 1,                 mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
               call MPI_RECV(buffben    ,jpi_rec*jpj_rec*jpk_ben,  mpi_real8, idrank, 9,mpi_comm_world, status, ierr) ! ** then tracer buffer
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
@@ -160,8 +160,6 @@
         endif
 
 
-
-
 ! ******  2.send buffer to rank 0
           call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
           call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
@@ -191,7 +189,7 @@
         else
           d2f3d_ben = REAL(totbenIO,4)
           CALL WRITE_AVE_ben(output_file_nc,datefrom, dateTo, d2f3d_ben);
-         endif
+        endif
 
 
       end if ! IF LABEL 4  if(rank == 0)

@@ -48,13 +48,13 @@ C 1. Lateral boundary conditions on tra (1,1,1,jn)
 
 C   ... Mpp : export boundary values to neighboring processors
 
-        IF( ntids - 1 + jn <= jptra ) THEN
+        IF( ntids - 1 + jn <= jptra_b ) THEN
            pack_size = ntids
         ELSE
-           pack_size = ntids - (ntids - 1 + jn - jptra)
+           pack_size = ntids - (ntids - 1 + jn - jptra_b)
         END IF
 
-        CALL mpplnk_my(tra_ben(1,1,1,jn), pack_size,1,1)
+         CALL mpplnk_ben(tra_ben(1,1,1,jn), pack_size,1,1)
 
 #  else
 

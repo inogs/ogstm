@@ -118,7 +118,7 @@
               reljend   = reljstart + jrange - 1
 
 
-              do jk =1 , jpk
+              do jk =1 , jpk_ben
                   do jj =totjstart,totjend
                   ind1=(                   relistart +(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
                   ind2=((totiend-totistart+relistart)+(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)

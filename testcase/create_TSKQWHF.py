@@ -52,20 +52,20 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
     for jk in np.arange(jpk):
         if s[jk] == 0:
             idx =jk 
+            s_f[idx:jpk]=s[idx-1] 
             break
-    s_f[idx:jpk]=s[idx-1] 
 
     for jk in np.arange(jpk):
         if t[jk] == 0:
             idx =jk 
+            t_f[idx:jpk]=t[idx-1] 
             break
-    t_f[idx:jpk]=t[idx-1] 
 
     for jk in np.arange(jpk):
         if k[jk] == 0:
             idx =jk 
+            k_f[idx:jpk]=k[idx-1] 
             break
-    k_f[idx:jpk]=k[idx-1] 
       
 ##############################
 

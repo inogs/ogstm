@@ -11,7 +11,7 @@ def getDepthIndex(nav_lev, lev_mask):
 
 
 
-maskfile    = "../TEST02/wrkdir/MODEL/"  + "meshmask.nc"
+maskfile    = "../TEST01/wrkdir/MODEL/"  + "meshmask.nc"
 #maskfile    = os.getenv("MODDIR") + "meshmask.nc"
 
 M=NC.netcdf_file(maskfile,"r")

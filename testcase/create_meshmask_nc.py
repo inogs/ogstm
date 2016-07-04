@@ -204,53 +204,17 @@ def create_meshmask_nc(test):
     e2v[0,0,:,-1] =e2v[0,0,:,-2]
     e2v[0,0,-1,:] =e2v[0,0,-2,:]
     
-#    double e3t_0(time, z, y_a, x_a) ;
+#    double e3t(time, z, y_a, x_a) ;
     filein             = 'KB'+'/e3t' + 'KB' + '.dat'
     e3tTOT             = np.loadtxt(filein, dtype=np.double);
-    e3t_0                = np.zeros((time,jpk,y_a,x_a),np.double);
-    e3t_0[0,0:jpk,0,0]   = e3tTOT[0:jpk];
+    e3t                = np.zeros((time,jpk,y_a,x_a),np.double);
+    e3t[0,0:jpk,0,0]   = e3tTOT[0:jpk];
     
-#    double e3w_0(time, z, y_a, x_a) ;
+#    double e3w(time, z, y_a, x_a) ;
     filein             = 'KB'+'/e3w' + 'KB' + '.dat'
     e3wTOT             = np.loadtxt(filein, dtype=np.double);
-    e3w_0              = np.zeros((time,jpk,y_a,x_a),np.double);
-    e3w_0[0,0:jpk,0,0] = e3wTOT[0:jpk];
-    
-#   double e3t(time, z, y, x) ;
-    filein             = 'KB'+'/e3t' + 'KB' + '.dat'
-    e3tTOT             = np.loadtxt(filein, dtype=np.double);
-    e3t                = np.zeros((time,jpk,jpj,jpi),np.double);
-    for jk in range(jpk):
-        for jj in range(jpj):
-            for ji in range(jpi):
-                e3t[0,jk,jj,ji]   = e3tTOT[jk];
-    
-#   double e3u(time, z, y, x) ;
-    filein             = 'KB'+'/e3t' + 'KB' + '.dat'
-    e3tTOT             = np.loadtxt(filein, dtype=np.double);
-    e3u                = np.zeros((time,jpk,jpj,jpi),np.double);
-    for jk in range(jpk):
-        for jj in range(jpj):
-            for ji in range(jpi):
-                e3u[0,jk,jj,ji]   = e3tTOT[jk];
-    
-#   double e3v(time, z, y, x) ;
-    filein             = 'KB'+'/e3t' + 'KB' + '.dat'
-    e3tTOT             = np.loadtxt(filein, dtype=np.double);
-    e3v                = np.zeros((time,jpk,jpj,jpi),np.double);
-    for jk in range(jpk):
-        for jj in range(jpj):
-            for ji in range(jpi):
-                e3v[0,jk,jj,ji]   = e3tTOT[jk];
-    
-#   double e3w(time, z, y_a, x_a) ;
-    filein             = 'KB'+'/e3w' + 'KB' + '.dat'
-    e3wTOT             = np.loadtxt(filein, dtype=np.double);
-    e3w                = np.zeros((time,jpk,jpj,jpi),np.double);
-    for jk in range(jpk):
-        for jj in range(jpj):
-            for ji in range(jpi):
-                e3w[0,jk,jj,ji]   = e3wTOT[jk];
+    e3w                = np.zeros((time,jpk,y_a,x_a),np.double);
+    e3w[0,0:jpk,0,0]   = e3wTOT[0:jpk];
     
 #    double tmask(time, z, y, x) ;
     tmask = np.ones((time,jpk,jpj,jpi),np.double);
@@ -306,12 +270,8 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('e2t'   ,'d',('time','z_a', 'y', 'x')  ) ; ncvar[:] = e2t   ;
     ncvar    = ncOUT.createVariable('e2u'   ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = e2u   ;
     ncvar    = ncOUT.createVariable('e2v'   ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = e2v   ;     
-    ncvar    = ncOUT.createVariable('e3t_0' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3t_0 ;
-    ncvar    = ncOUT.createVariable('e3w_0' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3w_0 ;     
-    ncvar    = ncOUT.createVariable('e3t'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3t   ;
-    ncvar    = ncOUT.createVariable('e3u'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3u   ;
-    ncvar    = ncOUT.createVariable('e3v'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3v   ;
-    ncvar    = ncOUT.createVariable('e3w'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3w   ;     
+    ncvar    = ncOUT.createVariable('e3t'   ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3t   ;
+    ncvar    = ncOUT.createVariable('e3w'   ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3w   ;     
     ncvar    = ncOUT.createVariable('ff'    ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = ff    ;      
     ncvar    = ncOUT.createVariable('fmask' ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = fmask ;    
     ncvar    = ncOUT.createVariable('gdept' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = gdept ;

@@ -8,6 +8,9 @@ import scipy.io.netcdf as NC
 
 import pickle
 
+import datetime
+
+from scipy.interpolate import interp1d
 
 def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
 
@@ -26,55 +29,51 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
 
     M.close()
 
-    forcfile= "KB/FORCINGS/" +  "ave." + date + ".stat_profiles.nc"
+    forcfileT= "COPERNICUS/FORCINGS/DYFAMED/HFCLIM/" +  "DYFAMED_T.nc"
+    forcfileW= "COPERNICUS/FORCINGS/DYFAMED/HFCLIM/" +  "DYFAMED_W.nc"
 
-    DATA=NC.netcdf_file(forcfile,"r")
+    DATA_T=NC.netcdf_file(forcfileT,"r")
+    DATA_W=NC.netcdf_file(forcfileW,"r")
 
-#   sub___list = "alb, sww, swe, nwm, tyr, adn, ads, aeg, ion, lev, med" ;
-#   stat__list = "Mean, Std, p25, p50, p75" ;
-#   coast_list = "coast, open_sea, everywhere" ;
+#   getting Julian date for present simulation
+    mm    = date[4:6]
+    dd    = date[6:8]
+    s0    = mm+'.'+dd
+    fmt   = '%m.%d'
+    dt    = datetime.datetime.strptime(s0,fmt)
+    tt    = dt.timetuple()
+    j_day = tt.tm_yday -1 # from 1 to 365 scaled to 0 364
 
-#   float votemper(sub, coast, z, stat) ;
+    s_0=DATA_T.variables['vosaline'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
+    t_0=DATA_T.variables['votemper'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
+    k_0=DATA_W.variables['votkeavt'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
+    q  =DATA_T.variables['soshfldo'].data[j_day,0,0].copy();
+    w  =1.
+#   w  =DATA_T.variables['sowindsp'].data[j_day,0,0].copy();
+    h  =0.;
+    f  =0.;
+#   f  =DATA_T.variables['sowaflcd'].data[j_day,0,0].copy();
 
-    s=DATA.variables['vosaline'].data[3,1,:,0].copy();
-    t=DATA.variables['votemper'].data[3,1,:,0].copy();
-    k=DATA.variables['votkeavt'].data[3,1,:,0].copy();
-    q=DATA.variables['soshfldo'].data[3,1,0,0].copy();
-    w=DATA.variables['sowindsp'].data[3,1,0,0].copy();
-    h=0.;#DATA.variables['sosheigh'].data[3,1,0,0].copy();
-    f=DATA.variables['sowaflcd'].data[3,1,0,0].copy();
+# Interpolating from original vertical grid to high resolution one
+    filein             = 'COPERNICUS' + '/gdept' + 'COPERNICUS' + '.dat'
+    gdeptTOT           = np.loadtxt(filein, dtype=np.double);
 
-# filling zero values
-    s_f =s.copy()
-    t_f =t.copy()
-    k_f =k.copy()
+    t_int = interp1d(gdeptTOT,t_0,fill_value='extrapolate'); t = t_int(gdept)
+    s_int = interp1d(gdeptTOT,s_0,fill_value='extrapolate'); s = s_int(gdept) 
+    
+   
+    filein             = 'COPERNICUS' + '/gdepw' + 'COPERNICUS' + '.dat'
+    gdepwTOT           = np.loadtxt(filein, dtype=np.double);
+    k_int = interp1d(gdepwTOT,k_0,fill_value='extrapolate'); k = k_int(gdepw)
 
-    for jk in np.arange(jpk):
-        if s[jk] == 0:
-            idx =jk 
-            s_f[idx:jpk]=s[idx-1] 
-            break
-
-    for jk in np.arange(jpk):
-        if t[jk] == 0:
-            idx =jk 
-            t_f[idx:jpk]=t[idx-1] 
-            break
-
-    for jk in np.arange(jpk):
-        if k[jk] == 0:
-            idx =jk 
-            k_f[idx:jpk]=k[idx-1] 
-            break
-      
 ##############################
 
     for jk in np.arange(jpk):
        for jj in np.arange(jpj):
            for ji in np.arange(jpi):
-               D3S[0,jk,jj,ji] = s_f[jk]
-               D3T[0,jk,jj,ji] = t_f[jk]
-               D3K[0,jk,jj,ji] = k_f[jk]
+               D3S[0,jk,jj,ji] = s[jk]
+               D3T[0,jk,jj,ji] = t[jk]
+               D3K[0,jk,jj,ji] = k[jk]
 
     for jj in np.arange(jpj):
         for ji in np.arange(jpi):
@@ -83,4 +82,5 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
             D2H[0,jj,ji] = 0.
             D2F[0,jj,ji] = f
 
-    DATA.close()
+    DATA_T.close()
+    DATA_W.close()

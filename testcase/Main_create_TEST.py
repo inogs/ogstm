@@ -42,7 +42,7 @@ for test in TEST_LIST:
 
     print test['Dir']
 
-    DA.create_dataset(test)
+#   DA.create_dataset(test)
 
     c_dom.create_Dom_Dec(test)
     

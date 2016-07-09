@@ -84,7 +84,7 @@ def create_bc_nc(test):
 # Atmosphere NUT
     ATM_DATE=[]
 
-    filein=file('KB/atm_date')
+    filein=file('COPERNICUS/atm_date')
 
     for var in filein:
         ATM_DATE.append(var[:-1])
@@ -114,18 +114,18 @@ def create_bc_nc(test):
         outfile = test['Dir'] + '/BC/ATM_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
-        ncOUT.createDimension('atm_idxt'    ,atm_idxt);
+        ncOUT.createDimension('lon'    ,jpi);
+        ncOUT.createDimension('lat'    ,jpj);
         
-        ncvar = ncOUT.createVariable('atm_idxt'     ,'i',('atm_idxt',)                   ); ncvar[:] = atm_index;
-        ncvar = ncOUT.createVariable('atm_N1p'      ,'d',('atm_idxt',)                   ); ncvar[:] = 0.;#3.75866672509673e-09;
-        ncvar = ncOUT.createVariable('atm_N3n'      ,'d',('atm_idxt',)                   ); ncvar[:] = 0.;#2.24183651189621e-07;
+        ncvar = ncOUT.createVariable('atm_N1p'      ,'f',('lat','lon')                   ); ncvar[:] = 3.75866672509673e-09;
+        ncvar = ncOUT.createVariable('atm_N3n'      ,'f',('lat','lon')                   ); ncvar[:] = 2.24183651189621e-07;
         ncOUT.close()
 
 # Atmosphere CO2
  
     CO2_DATE=[]
 
-    filein=file('KB/co2_date')
+    filein=file('COPERNICUS/co2_date')
 
     for var in filein:
         CO2_DATE.append(var[:-1])
@@ -150,7 +150,7 @@ def create_bc_nc(test):
 # TIN 
     TIN_DATE=[]
 
-    filein=file('KB/tin_date')
+    filein=file('COPERNICUS/tin_date')
 
     for var in filein:
         TIN_DATE.append(var[:-1])
@@ -196,18 +196,18 @@ def create_bc_nc(test):
         ncOUT.createDimension('riv_idxt'    ,tin_idxt);
         
         ncvar = ncOUT.createVariable('riv_idxt'     ,'i',('riv_idxt',) ); ncvar[:] = riv_index;
-        ncvar = ncOUT.createVariable('riv_N1p'      ,'d',('riv_idxt',) ); ncvar[:] = 0.;#riv_N1p;
-        ncvar = ncOUT.createVariable('riv_N3n'      ,'d',('riv_idxt',) ); ncvar[:] = 0.;#riv_N3n;
-        ncvar = ncOUT.createVariable('riv_N5s'      ,'d',('riv_idxt',) ); ncvar[:] = 0.;#riv_N5s;
-        ncvar = ncOUT.createVariable('riv_O3c'      ,'d',('riv_idxt',) ); ncvar[:] = 0.;#riv_O3c;
-        ncvar = ncOUT.createVariable('riv_O3h'      ,'d',('riv_idxt',) ); ncvar[:] = 0.;#riv_O3h;
+        ncvar = ncOUT.createVariable('riv_N1p'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N1p;
+        ncvar = ncOUT.createVariable('riv_N3n'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N3n;
+        ncvar = ncOUT.createVariable('riv_N5s'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N5s;
+        ncvar = ncOUT.createVariable('riv_O3c'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3c;
+        ncvar = ncOUT.createVariable('riv_O3h'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3h;
 
         ncOUT.close()
 
 # GIB 
     GIB_DATE=[]
 
-    filein=file('KB/gib_date')
+    filein=file('COPERNICUS/gib_date')
 
     for var in filein:
         GIB_DATE.append(var[:-1])

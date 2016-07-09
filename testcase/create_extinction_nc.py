@@ -9,7 +9,7 @@ import scipy.io.netcdf as NC
 import pickle
 
 def create_extinction_nc(test):
-    indata   = np.loadtxt('KB/KextF.dat', dtype=ext_data)
+    indata   = np.loadtxt('COPERNICUS/KextF.dat', dtype=ext_data)
 
     jpi=test['jpi']
     jpj=test['jpj']

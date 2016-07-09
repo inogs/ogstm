@@ -45,16 +45,18 @@ def create_meshmask_nc(test):
     fmask[0,:,0,-1]    = 0.;
     
 #    double gdept(time, z, y_a, x_a) ;
-    filein             = 'KB'+'/gdept' + 'KB' + '.dat'
-    gdeptTOT           = np.loadtxt(filein, dtype=np.double);
     gdept              = np.zeros((time,jpk,y_a,x_a),np.double);
-    gdept[0,0:jpk,0,0] = gdeptTOT[0:jpk];
+    gdept[0,0:jpk,0,0] = np.arange(0.5,400.5,1)
+#   gdept[0,0:jpk,0,0] = gdeptTOT[0:jpk];
+    e3t_0              = np.zeros((time,jpk,y_a,x_a),np.double);
+    e3t_0[0,0:jpk,0,0] = 1.
 
 #    double gdepw(time, z, y_a, x_a) ;
-    filein             = 'KB' + '/gdepw' + 'KB' + '.dat'
-    gdepwTOT           = np.loadtxt(filein, dtype=np.double);
     gdepw              = np.zeros((time,jpk,y_a,x_a),np.double);
-    gdepw[0,0:jpk,0,0] = gdepwTOT[0:jpk];
+    gdepw[0,0:jpk,0,0] = np.arange(0.,400.,1)
+#   gdepw[0,0:jpk,0,0] = gdepwTOT[0:jpk];
+    e3w_0              = np.zeros((time,jpk,y_a,x_a),np.double);
+    e3w_0[0,0:jpk,0,0] = 1.
     
 
 #    double glamt(time, z_a, y, x) ;
@@ -205,16 +207,18 @@ def create_meshmask_nc(test):
     e2v[0,0,-1,:] =e2v[0,0,-2,:]
     
 #    double e3t(time, z, y_a, x_a) ;
-    filein             = 'KB'+'/e3t' + 'KB' + '.dat'
-    e3tTOT             = np.loadtxt(filein, dtype=np.double);
-    e3t                = np.zeros((time,jpk,y_a,x_a),np.double);
-    e3t[0,0:jpk,0,0]   = e3tTOT[0:jpk];
+    e3t                = np.zeros((time,jpk,jpj,jpi),np.double);
+    e3u                = np.zeros((time,jpk,jpj,jpi),np.double);
+    e3v                = np.zeros((time,jpk,jpj,jpi),np.double);
+    e3t[0,0:jpk,:,:]   = 1.;
+    e3u[0,0:jpk,:,:]   = 1.;
+    e3v[0,0:jpk,:,:]   = 1.;
+#   e3t[0,0:jpk,:,:]   = e3tTOT[0:jpk];
     
 #    double e3w(time, z, y_a, x_a) ;
-    filein             = 'KB'+'/e3w' + 'KB' + '.dat'
-    e3wTOT             = np.loadtxt(filein, dtype=np.double);
-    e3w                = np.zeros((time,jpk,y_a,x_a),np.double);
-    e3w[0,0:jpk,0,0]   = e3wTOT[0:jpk];
+    e3w                = np.zeros((time,jpk,jpj,jpi),np.double);
+    e3w[0,0:jpk,:,:]   = 1.;
+#   e3w[0,0:jpk,:,:]   = e3wTOT[0:jpk];
     
 #    double tmask(time, z, y, x) ;
     tmask = np.ones((time,jpk,jpj,jpi),np.double);
@@ -270,12 +274,16 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('e2t'   ,'d',('time','z_a', 'y', 'x')  ) ; ncvar[:] = e2t   ;
     ncvar    = ncOUT.createVariable('e2u'   ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = e2u   ;
     ncvar    = ncOUT.createVariable('e2v'   ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = e2v   ;     
-    ncvar    = ncOUT.createVariable('e3t'   ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3t   ;
-    ncvar    = ncOUT.createVariable('e3w'   ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3w   ;     
+    ncvar    = ncOUT.createVariable('e3t'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3t   ;
+    ncvar    = ncOUT.createVariable('e3u'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3u   ;
+    ncvar    = ncOUT.createVariable('e3v'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3v   ;
+    ncvar    = ncOUT.createVariable('e3w'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3w   ;     
     ncvar    = ncOUT.createVariable('ff'    ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = ff    ;      
     ncvar    = ncOUT.createVariable('fmask' ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = fmask ;    
     ncvar    = ncOUT.createVariable('gdept' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = gdept ;
     ncvar    = ncOUT.createVariable('gdepw' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = gdepw ;
+    ncvar    = ncOUT.createVariable('e3t_0' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3t_0 ;
+    ncvar    = ncOUT.createVariable('e3w_0' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3w_0 ;
     ncvar    = ncOUT.createVariable('glamf'   ,'d',('time','z_a', 'y', 'x')) ; ncvar[:] = glamf ;     
     ncvar    = ncOUT.createVariable('glamt'   ,'d',('time','z_a', 'y', 'x')) ; ncvar[:] = glamt ;
     ncvar    = ncOUT.createVariable('glamu'   ,'d',('time','z_a', 'y', 'x')) ; ncvar[:] = glamu ;     

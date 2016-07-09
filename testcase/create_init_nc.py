@@ -8,6 +8,7 @@ import scipy.io.netcdf as NC
 
 import pickle
 
+from scipy.interpolate import interp1d
 
 
 def create_init_nc(test):
@@ -49,13 +50,18 @@ def create_init_nc(test):
     os.system("mkdir -p " + test['Dir'] + "/AVE_FREQ_2/")    
     os.system("mkdir -p " + test['Dir'] + "/AVE_PHYS/")    
     
+    filein             = 'COPERNICUS' + '/gdept' + 'COPERNICUS' + '.dat'
+    gdeptTOT           = np.loadtxt(filein, dtype=np.double);
+
     for var in initVARS:
-        filename = "KB/INIT_NWM_KB/init." + var
+        filename = "COPERNICUS/INIT_NWM_COPERNICUS/init." + var
         datain = np.loadtxt(filename)     
+        data_int = interp1d(gdeptTOT,datain,fill_value='extrapolate')
+
         for jk in range(jpk):
-            rst[0,jk,:,:] = datain[jk]
+            rst[0,jk,:,:]=  data_int(Lev[jk])
             for jj in range(jpj/2):
-                rst[0,jk,jj,:] = datain[jk]*0.75
+                rst[0,jk,jj,:] = data_int(Lev[jk])*0.75
 #       WRITE NetCDF restart file
         outfile = test['Dir'] + '/RESTARTS/RST.' + test['Start'] + '.' + var + '.nc'
         ncOUT   = NC.netcdf_file(outfile,"w");

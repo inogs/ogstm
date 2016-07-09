@@ -25,7 +25,7 @@
 
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
-      CALL trcadv ! tracers: advection
+!     CALL trcadv ! tracers: advection
 
 #    if defined key_trc_dmp
       CALL trcdmp ! tracers: damping for passive tracers

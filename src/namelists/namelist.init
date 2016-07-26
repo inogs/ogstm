@@ -22,7 +22,7 @@
             vsed          = 3.0,
             photop        = .false.
             atlantic_bfm  = .true.
-            bottom_flux   = 1.
+            bottom_flux   = 0.
 /
 
 &General_IO

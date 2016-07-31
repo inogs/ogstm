@@ -692,7 +692,7 @@
         integer s, nc, counter
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
-        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE
+        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE,idPa
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -720,6 +720,7 @@
         s = nf90_def_var(nc,'vomecrty' ,     nf90_float, (/xid,yid,depid,timid/),   idV)
         s = nf90_def_var(nc,'vovecrtz' ,     nf90_float, (/xid,yid,depid,timid/),   idW)
         s = nf90_def_var(nc,'votkeavt' ,     nf90_float, (/xid,yid,depid,timid/),idEddy)
+        s = nf90_def_var(nc,'par'      ,     nf90_float, (/xid,yid,depid,timid/),idPa)
 
         s = nf90_def_var(nc,'soshfldo' ,     nf90_float, (/xid,yid,      timid/),   idR)
         s = nf90_def_var(nc,'sowindsp' ,     nf90_float, (/xid,yid,      timid/),  idWs)
@@ -759,6 +760,10 @@
         s = nf90_put_att(nc,idEddy, 'units'        ,'m/s')
         s = nf90_put_att(nc,idEddy, 'missing_value',1.e+20)
 
+        s = nf90_put_att(nc,idPa, 'long_name'    ,'Photosynthetic Available Radiation')
+        s = nf90_put_att(nc,idPa, 'units'        ,'umoles/m2/s')
+        s = nf90_put_att(nc,idPa, 'missing_value',1.e+20)
+
 !       2D
         s = nf90_put_att(nc,idR   , 'long_name'    ,'Short_Wave_Radiation')
         s = nf90_put_att(nc,idR   , 'units'        ,'W/m2')
@@ -786,6 +791,7 @@
         d2f3d = REAL(totvnIO,4) ; s = nf90_put_var(nc, idV,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
         d2f3d = REAL(totwnIO,4) ; s = nf90_put_var(nc, idW,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
         d2f3d = REAL(totavtIO,4); s = nf90_put_var(nc, idEddy, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totxparIO,4); s = nf90_put_var(nc, idPa, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
         d2f2d =REAL(totvatmIO,4); s = nf90_put_var(nc, idWs,   d2f2d) ; call handle_err1(s,counter,fileNetCDF)
@@ -815,7 +821,7 @@
         integer s, nc, counter
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
-        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE
+        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE,idPa
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -844,6 +850,7 @@
         s = nf90_def_var(nc,'vomecrty' ,     nf90_double, (/xid,yid,depid,timid/),   idV)
         s = nf90_def_var(nc,'vovecrtz' ,     nf90_double, (/xid,yid,depid,timid/),   idW)
         s = nf90_def_var(nc,'votkeavt' ,     nf90_double, (/xid,yid,depid,timid/),idEddy)
+        s = nf90_def_var(nc,'par'      ,     nf90_double, (/xid,yid,depid,timid/),idPa)
 
         s = nf90_def_var(nc,'soshfldo' ,     nf90_double, (/xid,yid,      timid/),   idR)
         s = nf90_def_var(nc,'sowindsp' ,     nf90_double, (/xid,yid,      timid/),  idWs)
@@ -883,6 +890,10 @@
         s = nf90_put_att(nc,idEddy, 'units'        ,'m/s')
         s = nf90_put_att(nc,idEddy, 'missing_value',1.e+20)
 
+        s = nf90_put_att(nc,idPa, 'long_name'    ,'Photosynthetic Available Radiation')
+        s = nf90_put_att(nc,idPa, 'units'        ,'umoles/m2/s')
+        s = nf90_put_att(nc,idPa, 'missing_value',1.e+20)
+
 !       2D
         s = nf90_put_att(nc,idR   , 'long_name'    ,'Short_Wave_Radiation')
         s = nf90_put_att(nc,idR   , 'units'        ,'W/m2')
@@ -910,6 +921,7 @@
         s = nf90_put_var(nc, idV,    totvnIO) ;  call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idW,    totwnIO) ;  call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idEddy,totavtIO) ;  call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idPa  ,totxparIO);  call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
         s = nf90_put_var(nc, idWs,  totvatmIO) ; call handle_err1(s,counter,fileNetCDF)

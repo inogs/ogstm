@@ -277,6 +277,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  vnIO(:,:,:) 
       REAL(8), allocatable ::  wnIO(:,:,:) 
       REAL(8), allocatable ::  avtIO(:,:,:) 
+      REAL(8), allocatable ::  xparIO(:,:,:) 
       REAL(8), allocatable ::  tra_DIA_IO(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
@@ -296,6 +297,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totvnIO(:,:,:) 
       REAL(8), allocatable ::  totwnIO(:,:,:) 
       REAL(8), allocatable ::  totavtIO(:,:,:) 
+      REAL(8), allocatable ::  totxparIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
 
 
@@ -535,6 +537,7 @@ C     no mpp
        allocate(vnIO  (jpi,jpj,jpk))                       ; vnIO   = huge(vnIO(1,1,1))
        allocate(wnIO  (jpi,jpj,jpk))                       ; wnIO          = huge(wnIO(1,1,1))
        allocate(avtIO (jpi,jpj,jpk))                       ; avtIO         = huge(avtIO(1,1,1))
+       allocate(xparIO (jpi,jpj,jpk))                      ; xparIO        = huge(xparIO(1,1,1))
        allocate(buf   (jpi,jpj,jpk))                       ; buf           = huge(buf(1,1,1))
        allocate(buf2   (jpi,jpj))                          ; buf2          = huge(buf2(1,1))
        allocate(tra_DIA_IO(jpi,jpj,jpk,jptra_dia))         ; tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
@@ -557,6 +560,7 @@ C     no mpp
        if (lwp)  allocate(totvnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totvnIO   = huge(totvnIO(1,1,1))  
        if (lwp)  allocate(totwnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totwnIO   = huge(totwnIO(1,1,1))  
        if (lwp)  allocate(totavtIO(jpiglo,jpjglo,jpk)) ; if (lwp) totavtIO  = huge(totavtIO(1,1,1)) 
+       if (lwp)  allocate(totxparIO(jpiglo,jpjglo,jpk)) ; if (lwp) totxparIO= huge(totxparIO(1,1,1)) 
        if (lwp)  allocate(tottmaIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottmaIO  = huge(tottmaIO(1,1,1)) 
        if (lwp)  allocate(tottrnIO2d(jpiglo,jpjglo))   ; if (lwp) tottrnIO2d= huge(tottrnIO2d(1,1))
 

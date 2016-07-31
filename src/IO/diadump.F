@@ -73,15 +73,16 @@
           relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
           reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
 
-          totsnIO  (totistart:totiend, totjstart:totjend,:) = snIO    (relistart:reliend, reljstart:reljend, :)
-          tottnIO  (totistart:totiend, totjstart:totjend,:) = tnIO    (relistart:reliend, reljstart:reljend, :)
-          totvatmIO(totistart:totiend, totjstart:totjend)   = vatmIO  (relistart:reliend, reljstart:reljend)
-          totempIO (totistart:totiend, totjstart:totjend)   = empIO   (relistart:reliend, reljstart:reljend)
-          totqsrIO (totistart:totiend, totjstart:totjend)   = qsrIO   (relistart:reliend, reljstart:reljend)
-          totunIO  (totistart:totiend, totjstart:totjend,:) = unIO    (relistart:reliend, reljstart:reljend, :)
-          totvnIO  (totistart:totiend, totjstart:totjend,:) = vnIO    (relistart:reliend, reljstart:reljend, :)
-          totwnIO  (totistart:totiend, totjstart:totjend,:) = wnIO    (relistart:reliend, reljstart:reljend, :)
-          totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
+          totsnIO  (totistart:totiend, totjstart:totjend,:)  = snIO    (relistart:reliend, reljstart:reljend, :)
+          tottnIO  (totistart:totiend, totjstart:totjend,:)  = tnIO    (relistart:reliend, reljstart:reljend, :)
+          totvatmIO(totistart:totiend, totjstart:totjend)    = vatmIO  (relistart:reliend, reljstart:reljend)
+          totempIO (totistart:totiend, totjstart:totjend)    = empIO   (relistart:reliend, reljstart:reljend)
+          totqsrIO (totistart:totiend, totjstart:totjend)    = qsrIO   (relistart:reliend, reljstart:reljend)
+          totunIO  (totistart:totiend, totjstart:totjend,:)  = unIO    (relistart:reliend, reljstart:reljend, :)
+          totvnIO  (totistart:totiend, totjstart:totjend,:)  = vnIO    (relistart:reliend, reljstart:reljend, :)
+          totwnIO  (totistart:totiend, totjstart:totjend,:)  = wnIO    (relistart:reliend, reljstart:reljend, :)
+          totavtIO (totistart:totiend, totjstart:totjend,:)  = avtIO   (relistart:reliend, reljstart:reljend, :)
+          totxparIO (totistart:totiend, totjstart:totjend,:) = xparIO  (relistart:reliend, reljstart:reljend, :)
 
           do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
@@ -105,6 +106,7 @@
       call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
       call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffxpar,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 20,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
@@ -124,6 +126,7 @@
                      totvnIO (ji,jj,jk)= buffvn (ind)
                      totwnIO (ji,jj,jk)= buffwn (ind)
                      totavtIO(ji,jj,jk)= buffavt(ind)
+                     totxparIO(ji,jj,jk)= buffxpar(ind)
                  enddo
                 enddo
                enddo
@@ -154,6 +157,7 @@
                    buffvn (ind)= vnIO (ji,jj,jk)
                    buffwn (ind)= wnIO (ji,jj,jk)
                    buffavt(ind)= avtIO(ji,jj,jk)
+                   buffxpar(ind)= xparIO(ji,jj,jk)
               enddo
              enddo
             enddo
@@ -186,6 +190,7 @@
            call MPI_SEND(buffvn  , jpi*jpj*jpk  ,mpi_real8, 0, 17, mpi_comm_world,ierr)
            call MPI_SEND(buffwn  , jpi*jpj*jpk  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
            call MPI_SEND(buffavt , jpi*jpj*jpk  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
+           call MPI_SEND(buffxpar, jpi*jpj*jpk  ,mpi_real8, 0, 20, mpi_comm_world,ierr)
 
 
 
@@ -470,6 +475,7 @@
           vnIO     = 0.
           wnIO     = 0.
           avtIO    = 0.
+          xparIO   = 0.
       endif
 
 

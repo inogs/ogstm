@@ -29,8 +29,10 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
 
     M.close()
 
-    forcfileT= "COPERNICUS/FORCINGS/DYFAMED/HFCLIM/" +  "DYFAMED_T.nc"
-    forcfileW= "COPERNICUS/FORCINGS/DYFAMED/HFCLIM/" +  "DYFAMED_W.nc"
+    Area=test['Area']
+
+    forcfileT= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_T.nc"
+    forcfileW= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_W.nc"
 
     DATA_T=NC.netcdf_file(forcfileT,"r")
     DATA_W=NC.netcdf_file(forcfileW,"r")
@@ -58,13 +60,13 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
     filein             = 'COPERNICUS' + '/gdept' + 'COPERNICUS' + '.dat'
     gdeptTOT           = np.loadtxt(filein, dtype=np.double);
 
-    t_int = interp1d(gdeptTOT,t_0,fill_value='extrapolate'); t = t_int(gdept)
-    s_int = interp1d(gdeptTOT,s_0,fill_value='extrapolate'); s = s_int(gdept) 
+    t_int = interp1d(gdeptTOT,t_0,kind='nearest',fill_value='extrapolate'); t = t_int(gdept)
+    s_int = interp1d(gdeptTOT,s_0,kind='nearest',fill_value='extrapolate'); s = s_int(gdept) 
     
    
     filein             = 'COPERNICUS' + '/gdepw' + 'COPERNICUS' + '.dat'
     gdepwTOT           = np.loadtxt(filein, dtype=np.double);
-    k_int = interp1d(gdepwTOT,k_0,fill_value='extrapolate'); k = k_int(gdepw)
+    k_int = interp1d(gdepwTOT,k_0,kind='nearest',fill_value='extrapolate'); k = k_int(gdepw)
 
 ##############################
 
@@ -73,7 +75,11 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
            for ji in np.arange(jpi):
                D3S[0,jk,jj,ji] = s[jk]
                D3T[0,jk,jj,ji] = t[jk]
-               D3K[0,jk,jj,ji] = k[jk]
+               if jk > 4 :
+                   D3K[0,jk,jj,ji] = np.amin([k[jk],D3K[0,jk-1,jj,ji]])
+                   D3K[0,jk,jj,ji] = np.amax([D3K[0,jk,jj,ji],0.00000001])
+               else:
+                   D3K[0,jk,jj,ji] = np.amax([k[jk],0.00000001])
 
     for jj in np.arange(jpj):
         for ji in np.arange(jpi):

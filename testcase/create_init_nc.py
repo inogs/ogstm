@@ -54,7 +54,7 @@ def create_init_nc(test):
     gdeptTOT           = np.loadtxt(filein, dtype=np.double);
 
     for var in initVARS:
-        filename = "COPERNICUS/INIT_NWM_COPERNICUS/init." + var
+        filename = "COPERNICUS/INIT/"+ test['Area'] + "/init." + var
         datain = np.loadtxt(filename)     
         data_int = interp1d(gdeptTOT,datain,fill_value='extrapolate')
 

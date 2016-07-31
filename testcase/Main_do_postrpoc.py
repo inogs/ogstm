@@ -17,6 +17,8 @@ import scipy.io.netcdf as NC
 import pickle
 
 import do_big_ave as dba
+import do_big_ave_phys as dbap
+import plot_hovmoeller_PTSW as plot_PTSW
 
 
 # MAIN PROGRAM
@@ -27,5 +29,7 @@ for test in TEST_LIST:
 
     print test['Dir']
 
-    dba.do_big_ave(test)
+#   dba.do_big_ave(test)
+    dbap.do_big_ave_phys(test)
+    plot_PTSW.plot_hovmoeller_PTSW(test)
 

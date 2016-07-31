@@ -10,7 +10,7 @@ import pickle
 
 import datetime
 
-def do_big_ave(test):
+def do_big_ave_phys(test):
 
     jpi=test['jpi'];
     jpj=test['jpj'];
@@ -28,33 +28,20 @@ def do_big_ave(test):
     M.close()
 
 # Retrieving state variables names from model namelist
-    CODEPATH = test['Code'] + "/ogstm/"
-    CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
-    filename = CODEPATH +  "ready_for_model_namelists/namelist.passivetrc"
-    NAMELIST = file2stringlist(filename)
-    VARS=[]
-    for line in NAMELIST:
-         if line.find("ctrcnm") != -1:
-            quote_1=line.find("\"")
-            quote_2=line.find("\"",quote_1+1)
-            varname=line[quote_1+1:quote_2]
-            VARS.append(varname)
-
+    VARS=['vosaline','votemper','vozocrtx','vomecrty','vovecrtz','votkeavt','par']
     nvars=len(VARS)
     check_bool = 0
     for v,var in enumerate(VARS):
-         DIR_DATA          = test['Dir'] + '/AVE_FREQ_1/'
-         print DIR_DATA 
-#/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase
-#        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/' + 'AVE_FREQ_1/'
-         filenames         = DIR_DATA + 'ave.2001*' + var +'.nc'
+         DIR_DATA          = test['Dir'] + '/AVE_PHYS/'
+#        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/AVE_PHYS/'
+         filenames         = DIR_DATA + 'ave.2001*.phys.nc'
          SingleVar_filelist= glob.glob(filenames)
          SingleVar_filelist.sort()
          if check_bool == 0:
              ntimes=len(SingleVar_filelist)
              matrix=np.zeros((ntimes,jpk))
              #       WRITE NetCDF restart file
-             outfile = 'POSTPROC/' + test['Area'] + '.nc'
+             outfile = 'POSTPROC/'+ test['Area'] + '_phys.nc'
              ncOUT   = NC.netcdf_file(outfile,"w");
         
              ncOUT.createDimension('depth',jpk);
@@ -67,14 +54,4 @@ def do_big_ave(test):
          ncvar = ncOUT.createVariable(var       ,'f',('time','depth')); ncvar[:] = matrix; 
          setattr(ncOUT.variables[var]   ,'missing_value',1e+20                              );     
     ncOUT.close()
-
-
-#   getting Julian date for present simulation
-#   mm    = date[4:6]
-#   dd    = date[6:8]
-#   s0    = mm+'.'+dd
-#   fmt   = '%m.%d'
-#   dt    = datetime.datetime.strptime(s0,fmt)
-#   tt    = dt.timetuple()
-#   j_day = tt.tm_yday -1 # from 1 to 365 scaled to 0 364
 

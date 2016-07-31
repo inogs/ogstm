@@ -4,7 +4,7 @@ import numpy as np
 
 test_conf=np.dtype([('jpi'   ,np.int)  ,('jpj',np.int)     ,('jpk',np.int),\
                     ('nprocx',np.int)  ,('nprocy',np.int)  ,\
-                    ('lon0'  ,np.float),('lat0',np.float)  ,\
+                    ('lon0'  ,np.float),('lat0',np.float)  , ('Area','S100'),\
                     ('dx'    ,np.float),('dy'    ,np.float),\
                     ('Start' ,'S100')  ,('End'   ,'S100')  ,\
                     ('Dir','S100'),('Code','S100')])

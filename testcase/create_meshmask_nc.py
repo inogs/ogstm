@@ -46,14 +46,14 @@ def create_meshmask_nc(test):
     
 #    double gdept(time, z, y_a, x_a) ;
     gdept              = np.zeros((time,jpk,y_a,x_a),np.double);
-    gdept[0,0:jpk,0,0] = np.arange(0.5,400.5,1)
+    gdept[0,0:jpk,0,0] = np.arange(0.5,jpk+0.5,1)
 #   gdept[0,0:jpk,0,0] = gdeptTOT[0:jpk];
     e3t_0              = np.zeros((time,jpk,y_a,x_a),np.double);
     e3t_0[0,0:jpk,0,0] = 1.
 
 #    double gdepw(time, z, y_a, x_a) ;
     gdepw              = np.zeros((time,jpk,y_a,x_a),np.double);
-    gdepw[0,0:jpk,0,0] = np.arange(0.,400.,1)
+    gdepw[0,0:jpk,0,0] = np.arange(0.,jpk +0.0,1)
 #   gdepw[0,0:jpk,0,0] = gdepwTOT[0:jpk];
     e3w_0              = np.zeros((time,jpk,y_a,x_a),np.double);
     e3w_0[0,0:jpk,0,0] = 1.

@@ -147,7 +147,7 @@
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
-         call readnc_slice_double('bounmask.nc',nomevar01,resto(:,:,:,jn));
+         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn));
 
       enddo
       ELSE
@@ -230,7 +230,11 @@
 
       if (Fsize.NE.0) then
          call alloc_DIA_local_flx
-         if (rank ==0) call alloc_DIA_GLOBAL_flx()
+      end if
+
+      if (rank ==0) call alloc_DIA_GLOBAL_flx()
+
+      if (Fsize.NE.0) then
          B=FLXRe_Indexing()
          write(*,*) 'domrea->FLXRE_Indexing finita, rank=', rank
 

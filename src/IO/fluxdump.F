@@ -47,7 +47,8 @@
           s = nf90_def_var(nc,'index' ,   nf90_int, (/nid/),   IndID)
 
           DO jn=1,jptra
-             s = nf90_def_var(nc,ctrcnm(jn) ,   nf90_float, (/tid,nid/),   IDS(jn))
+             s = nf90_def_var(nc,ctrcnm(jn) ,   nf90_double, (/tid,nid/),   IDS(jn))
+!            s = nf90_def_var(nc,ctrcnm(jn) ,   nf90_float, (/tid,nid/),   IDS(jn))
           ENDDO
 
           s =nf90_enddef(nc)
@@ -152,8 +153,9 @@
       !************************ now, put var
 
           MflxDumpGlo = MflxDumpGlo * Realcounter ! we store average flux
-          MflxDumpGlo_FLOAT = real(MflxDumpGlo,4)
-          s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo_FLOAT)
+          s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo)
+!         MflxDumpGlo_FLOAT = real(MflxDumpGlo,4)
+!         s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo_FLOAT)
 
           ENDDO ! loop on tracers
 

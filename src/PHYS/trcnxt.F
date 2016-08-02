@@ -127,6 +127,7 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
           DO jj = 1,jpj
             DO ji = 1,jpi
 
+            tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*e3t_back(ji,jj,jk)/e3t(ji,jj,jk)
             trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
             trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
             tra(ji,jj,jk,jn+mytid) = 0.e0
@@ -142,15 +143,6 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
       END DO PACK_LOOP1
       mytid =0
 #endif
-
-      DO jj = 1,jpj
-         DO ji = 1,jpi
-!           e3t(ji,jj,1) = max(0.3, e3t(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3u(ji,jj,1) = max(0.3, e3u(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3v(ji,jj,1) = max(0.3, e3v(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3w(ji,jj,1) = max(0.3, e3w(ji,jj,1) + wn(ji,jj,1) * rdt)
-         END DO
-      END DO
 
 
 C END of tracer slab

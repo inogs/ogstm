@@ -99,7 +99,7 @@
              ji = riv_ridxt(2,jv)
              jj = riv_ridxt(3,jv)
              jk = riv_ridxt(4,jv)
-             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + riv(jv,jn+mytid)
+!!!!            tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + riv(jv,jn+mytid)
           ENDDO
 
 
@@ -129,7 +129,7 @@
           !    ji = atm_ridxt(2,jv)
           !    jj = atm_ridxt(3,jv)
           !    jk = atm_ridxt(4,jv)
-             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + atm(ji,jj,jn+mytid)
+!!!!           tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + atm(ji,jj,jn+mytid)
         !  ENDDO
 
 

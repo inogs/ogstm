@@ -477,6 +477,7 @@
        
                  tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
                  sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
+                e3t_back(ji,jj,uk) = e3t(ji,jj,uk)
                 e3t(ji,jj,uk) = (Umzweigh*  e3tdta(ji,jj,uk,1) + zweigh*  e3tdta(ji,jj,uk,2))
                 endif ! tmask
 

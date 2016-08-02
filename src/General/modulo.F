@@ -97,7 +97,7 @@ CC      gdept, gdepw() : depth of t- and w-points (m)
 CC      e3t_0, e3w_0()     : vertical scale factors at t- and w-points (m)
 CC
       REAL(8), allocatable :: gdept(:), gdepw(:), e3t_0(:), e3w_0(:)
-      REAL(8), allocatable :: e3t(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
+      REAL(8), allocatable :: e3t(:,:,:), e3t_back(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
 
 CC----------------------------------------------------------------------
 CC        masks, bathymetry
@@ -277,6 +277,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  vnIO(:,:,:) 
       REAL(8), allocatable ::  wnIO(:,:,:) 
       REAL(8), allocatable ::  avtIO(:,:,:) 
+      REAL(8), allocatable ::  e3tIO(:,:,:) 
       REAL(8), allocatable ::  tra_DIA_IO(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
@@ -296,6 +297,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totvnIO(:,:,:) 
       REAL(8), allocatable ::  totwnIO(:,:,:) 
       REAL(8), allocatable ::  totavtIO(:,:,:) 
+      REAL(8), allocatable ::  tote3tIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
 
 
@@ -437,6 +439,7 @@ CC----------------------------------------------------------------------
       allocate(e3w_0(jpk)) ;  e3w_0 = huge(e3w_0(1))
 
       allocate(e3t(jpi,jpj,jpk)) ;  e3t = huge(e3t(1,1,1))
+      allocate(e3t_back(jpi,jpj,jpk)) ;  e3t_back = huge(e3t_back(1,1,1))
       allocate(e3u(jpi,jpj,jpk)) ;  e3u = huge(e3u(1,1,1))
       allocate(e3v(jpi,jpj,jpk)) ;  e3v = huge(e3v(1,1,1))
       allocate(e3w(jpi,jpj,jpk)) ;  e3w = huge(e3w(1,1,1))
@@ -535,6 +538,7 @@ C     no mpp
        allocate(vnIO  (jpi,jpj,jpk))                       ; vnIO   = huge(vnIO(1,1,1))
        allocate(wnIO  (jpi,jpj,jpk))                       ; wnIO          = huge(wnIO(1,1,1))
        allocate(avtIO (jpi,jpj,jpk))                       ; avtIO         = huge(avtIO(1,1,1))
+       allocate(e3tIO (jpi,jpj,jpk))                       ; e3tIO         = huge(e3tIO(1,1,1))
        allocate(buf   (jpi,jpj,jpk))                       ; buf           = huge(buf(1,1,1))
        allocate(buf2   (jpi,jpj))                          ; buf2          = huge(buf2(1,1))
        allocate(tra_DIA_IO(jpi,jpj,jpk,jptra_dia))         ; tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
@@ -557,6 +561,7 @@ C     no mpp
        if (lwp)  allocate(totvnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totvnIO   = huge(totvnIO(1,1,1))  
        if (lwp)  allocate(totwnIO(jpiglo,jpjglo,jpk))  ; if (lwp) totwnIO   = huge(totwnIO(1,1,1))  
        if (lwp)  allocate(totavtIO(jpiglo,jpjglo,jpk)) ; if (lwp) totavtIO  = huge(totavtIO(1,1,1)) 
+       if (lwp)  allocate(tote3tIO(jpiglo,jpjglo,jpk)) ; if (lwp) tote3tIO  = huge(tote3tIO(1,1,1)) 
        if (lwp)  allocate(tottmaIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottmaIO  = huge(tottmaIO(1,1,1)) 
        if (lwp)  allocate(tottrnIO2d(jpiglo,jpjglo))   ; if (lwp) tottrnIO2d= huge(tottrnIO2d(1,1))
 

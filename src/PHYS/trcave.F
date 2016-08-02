@@ -116,11 +116,13 @@
                 tnIO (ji,jj,jk)=(tnIO (ji,jj,jk)*Realcounter+tn (ji,jj,jk))*Realcounterp1
                 wnIO (ji,jj,jk)=(wnIO (ji,jj,jk)*Realcounter+wn (ji,jj,jk))*Realcounterp1
                 avtIO(ji,jj,jk)=(avtIO(ji,jj,jk)*Realcounter+avt(ji,jj,jk))*Realcounterp1
+                e3tIO(ji,jj,jk)=(e3tIO(ji,jj,jk)*Realcounter+e3t(ji,jj,jk))*Realcounterp1
              ELSE
                 snIO (ji,jj,jk)=Miss_val
                 tnIO (ji,jj,jk)=Miss_val
                 wnIO (ji,jj,jk)=Miss_val
                 avtIO(ji,jj,jk)=Miss_val
+                e3tIO(ji,jj,jk)=Miss_val
              ENDIF
 
 

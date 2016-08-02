@@ -165,7 +165,7 @@ C
 
                           call BFM0D_reset()
 
-                          call EcologyDynamics()
+!                         call EcologyDynamics()
 
                           if (sur) then
                              call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2)

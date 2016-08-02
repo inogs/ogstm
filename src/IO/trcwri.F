@@ -165,7 +165,7 @@
             varname=ctrcnm(jn)
             filename = 'RESTARTS/RST.'//datestring//'.'//varname//'.nc'
 
-        CALL write_restart(filename,julian)
+        CALL write_restart(filename,varname,julian)
 
         endif ! if rank = 0
       END DO ! DO jn=1,jptra

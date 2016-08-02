@@ -185,11 +185,11 @@
 
 
         if (IsBackup) then
-          CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO,ave_counter);
+          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter);
 
         else
           d2f3d = REAL(tottrnIO,4)
-          CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
+          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, d2f3d);
          endif
 
 

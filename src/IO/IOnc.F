@@ -325,7 +325,7 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE write_restart(fileNetCDF, julian)
+       SUBROUTINE write_restart(fileNetCDF,VAR, julian)
        USE netcdf
        USE myalloc
 
@@ -342,9 +342,9 @@
        integer idB, idN, idLon, idLat, idLev, idTim
 
        TimeString =fileNetCDF(14:30)
-       istart=index(fileNetCDF,'00.')+3
-       iend  =index(fileNetCDF,'.nc')-1
-       VAR        =fileNetCDF(istart:iend)
+!      istart=index(fileNetCDF,'00.')+3
+!      iend  =index(fileNetCDF,'.nc')-1
+!      VAR        =fileNetCDF(istart:iend)
 
 
       s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -391,7 +391,7 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE WRITE_AVE(fileNetCDF, datefrom, dateTo,M)
+       SUBROUTINE WRITE_AVE(fileNetCDF,VAR, datefrom, dateTo,M)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
@@ -411,49 +411,50 @@
          lat_actual_range=(/30.5   , 44.5   /)
        depth_actual_range=(/ 4.9991,4450.068/)
 
-       istart=index(fileNetCDF,'00.')+3
-       iend  =index(fileNetCDF,'.nc')-1
-       VAR        =fileNetCDF(istart:iend)
-
-
-        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
-        ! *********** GLOBAL ********************
-        s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
-        s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
-        s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo)
-
-        ! *********** DIMENSIONS ****************
-        s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
-        s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
-        s= nf90_def_dim(nc,'depth'         , jpk   ,depid)
-        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
-
-        ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
-        s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept)
-        s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
-        s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
-
-       s = nf90_def_var(nc,trim(VAR) ,        nf90_float, (/xid,yid,depid,timid/),  idVAR)
-
-        s = nf90_put_att(nc,idgdept,'units'        ,'meter')
-        s = nf90_put_att(nc,idgdept,'positive'     ,'down')
-        s = nf90_put_att(nc,idgdept,'actual_range' ,depth_actual_range)
-
-        s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north')
-        s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude')
-        s = nf90_put_att(nc,idphit,'actual_range' ,lat_actual_range)
-
-        s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east')
-        s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude')
-        s = nf90_put_att(nc,idlamt,'actual_range' ,lon_actual_range)
-
-        s = nf90_put_att(nc,idVAR, 'long_name'    ,VAR)
-        s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20)
-
-        s =nf90_enddef(nc)
+!      istart=index(fileNetCDF,'00.')+3
+!      istart=index(fileNetCDF,'.nc')-3
+!      iend  =index(fileNetCDF,'.nc')-1
+!      VAR        =fileNetCDF(istart:iend)
 
         counter=0
+
+        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc); call handle_err1(s,counter,fileNetCDF)
+        ! *********** GLOBAL ********************
+        s = nf90_put_att(nc, nf90_global, 'Convenctions' ,'COARDS');call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo); call handle_err1(s,counter,fileNetCDF)
+
+        ! *********** DIMENSIONS ****************
+        s= nf90_def_dim(nc,'lon'           , jpiglo,  xid); call handle_err1(s,counter,fileNetCDF)
+        s= nf90_def_dim(nc,'lat'           , jpjglo,  yid); call handle_err1(s,counter,fileNetCDF)
+        s= nf90_def_dim(nc,'depth'         , jpk   ,depid); call handle_err1(s,counter,fileNetCDF)
+        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid); call handle_err1(s,counter,fileNetCDF)
+
+        ! ********** VARIABLES *****************
+        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt); call handle_err1(s,counter,fileNetCDF)
+   
+        s = nf90_def_var(nc,trim(VAR) ,        nf90_float, (/xid,yid,depid,timid/),  idVAR); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_att(nc,idgdept,'units'        ,'meter'); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idgdept,'positive'     ,'down'); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idgdept,'actual_range' ,depth_actual_range); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north'); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude'); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idphit,'actual_range' ,lat_actual_range); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east'); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude'); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idlamt,'actual_range' ,lon_actual_range); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_att(nc,idVAR, 'long_name'    ,VAR); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20); call handle_err1(s,counter,fileNetCDF)
+
+        s =nf90_enddef(nc); call handle_err1(s,counter,fileNetCDF)
+
 
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
@@ -461,11 +462,11 @@
         s = nf90_put_var(nc, idVAR  ,  M )                    ; call handle_err1(s,counter,fileNetCDF)
 
 
-        s =nf90_close(nc)
+        s =nf90_close(nc); call handle_err1(s,counter,fileNetCDF)
 
        END SUBROUTINE WRITE_AVE
 
-       SUBROUTINE WRITE_AVE_2D(fileNetCDF, datefrom, dateTo,M)
+       SUBROUTINE WRITE_AVE_2D(fileNetCDF,VAR, datefrom, dateTo,M)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
@@ -485,9 +486,9 @@
          lat_actual_range=(/30.5   , 44.5   /)
 
 
-       istart=index(fileNetCDF,'00.')+3
-       iend  =index(fileNetCDF,'.nc')-1
-       VAR        =fileNetCDF(istart:iend)
+!      istart=index(fileNetCDF,'00.')+3
+!      iend  =index(fileNetCDF,'.nc')-1
+!      VAR        =fileNetCDF(istart:iend)
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -536,7 +537,7 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, datefrom, dateTo,M, ave_counter)
+       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, VAR,datefrom, dateTo,M, ave_counter)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
@@ -555,9 +556,9 @@
        integer idvartime,idgdept,idphit,idlamt,idVAR
 
 
-       istart=index(fileNetCDF,'00.')+3
-       iend  =index(fileNetCDF,'.nc')-1
-       VAR        =fileNetCDF(istart:iend)
+!      istart=index(fileNetCDF,'00.')+3
+!      iend  =index(fileNetCDF,'.nc')-1
+!      VAR        =fileNetCDF(istart:iend)
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -609,7 +610,7 @@
 
        END SUBROUTINE WRITE_AVE_BKP
 
-      SUBROUTINE WRITE_AVE_2d_BKP(fileNetCDF, datefrom, dateTo,M, ave_counter)
+      SUBROUTINE WRITE_AVE_2d_BKP(fileNetCDF,VAR, datefrom, dateTo,M, ave_counter)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
@@ -628,9 +629,9 @@
        integer idvartime,idgdept,idphit,idlamt,idVAR
 
 
-       istart=index(fileNetCDF,'00.')+3
-       iend  =index(fileNetCDF,'.nc')-1
-       VAR        =fileNetCDF(istart:iend)
+!      istart=index(fileNetCDF,'00.')+3
+!      iend  =index(fileNetCDF,'.nc')-1
+!      VAR        =fileNetCDF(istart:iend)
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -692,7 +693,7 @@
         integer s, nc, counter
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
-        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE
+        integer idT, idS, idU, idV, idW, idEddy,ide3t, idR, idWs, idE
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -720,6 +721,7 @@
         s = nf90_def_var(nc,'vomecrty' ,     nf90_float, (/xid,yid,depid,timid/),   idV)
         s = nf90_def_var(nc,'vovecrtz' ,     nf90_float, (/xid,yid,depid,timid/),   idW)
         s = nf90_def_var(nc,'votkeavt' ,     nf90_float, (/xid,yid,depid,timid/),idEddy)
+        s = nf90_def_var(nc,'e3t'      ,     nf90_double, (/xid,yid,depid,timid/), ide3t)
 
         s = nf90_def_var(nc,'soshfldo' ,     nf90_float, (/xid,yid,      timid/),   idR)
         s = nf90_def_var(nc,'sowindsp' ,     nf90_float, (/xid,yid,      timid/),  idWs)
@@ -759,6 +761,10 @@
         s = nf90_put_att(nc,idEddy, 'units'        ,'m/s')
         s = nf90_put_att(nc,idEddy, 'missing_value',1.e+20)
 
+        s = nf90_put_att(nc,ide3t , 'long_name'    ,'Vartical scale factor')
+        s = nf90_put_att(nc,ide3t , 'units'        ,'m')
+        s = nf90_put_att(nc,ide3t , 'missing_value',1.e+20)
+
 !       2D
         s = nf90_put_att(nc,idR   , 'long_name'    ,'Short_Wave_Radiation')
         s = nf90_put_att(nc,idR   , 'units'        ,'W/m2')
@@ -786,6 +792,8 @@
         d2f3d = REAL(totvnIO,4) ; s = nf90_put_var(nc, idV,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
         d2f3d = REAL(totwnIO,4) ; s = nf90_put_var(nc, idW,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
         d2f3d = REAL(totavtIO,4); s = nf90_put_var(nc, idEddy, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, ide3t, tote3tIO) ;  call handle_err1(s,counter,fileNetCDF)
+!       d2f3d = REAL(tote3tIO,4); s = nf90_put_var(nc, ide3t, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
         d2f2d =REAL(totvatmIO,4); s = nf90_put_var(nc, idWs,   d2f2d) ; call handle_err1(s,counter,fileNetCDF)
@@ -815,7 +823,7 @@
         integer s, nc, counter
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
-        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE
+        integer idT, idS, idU, idV, idW, idEddy, ide3t, idR, idWs, idE
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -844,6 +852,7 @@
         s = nf90_def_var(nc,'vomecrty' ,     nf90_double, (/xid,yid,depid,timid/),   idV)
         s = nf90_def_var(nc,'vovecrtz' ,     nf90_double, (/xid,yid,depid,timid/),   idW)
         s = nf90_def_var(nc,'votkeavt' ,     nf90_double, (/xid,yid,depid,timid/),idEddy)
+        s = nf90_def_var(nc,'e3t'      ,     nf90_double, (/xid,yid,depid,timid/), ide3t)
 
         s = nf90_def_var(nc,'soshfldo' ,     nf90_double, (/xid,yid,      timid/),   idR)
         s = nf90_def_var(nc,'sowindsp' ,     nf90_double, (/xid,yid,      timid/),  idWs)
@@ -883,6 +892,10 @@
         s = nf90_put_att(nc,idEddy, 'units'        ,'m/s')
         s = nf90_put_att(nc,idEddy, 'missing_value',1.e+20)
 
+        s = nf90_put_att(nc,ide3t , 'long_name'    ,'Vertical scale factor')
+        s = nf90_put_att(nc,ide3t , 'units'        ,'m')
+        s = nf90_put_att(nc,ide3t , 'missing_value',1.e+20)
+
 !       2D
         s = nf90_put_att(nc,idR   , 'long_name'    ,'Short_Wave_Radiation')
         s = nf90_put_att(nc,idR   , 'units'        ,'W/m2')
@@ -896,7 +909,7 @@
         s = nf90_put_att(nc,idE   , 'units'        ,'kg/m*2/s')
         s = nf90_put_att(nc,idE   , 'missing_value',1.e+20)
 
-        s =nf90_enddef(nc)
+        s =nf90_enddef(nc); call handle_err1(s,counter,fileNetCDF)
 
         counter=0
 
@@ -910,6 +923,7 @@
         s = nf90_put_var(nc, idV,    totvnIO) ;  call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idW,    totwnIO) ;  call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idEddy,totavtIO) ;  call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, ide3t ,tote3tIO) ;  call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
         s = nf90_put_var(nc, idWs,  totvatmIO) ; call handle_err1(s,counter,fileNetCDF)

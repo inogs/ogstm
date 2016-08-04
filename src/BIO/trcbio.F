@@ -136,7 +136,7 @@ C
 
 !$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
-!$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
+!$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,botwastr,surf_mask,DAY_LENGTH,
 !$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo, julianday)
 
 #ifdef __OPENMP
@@ -175,7 +175,8 @@ C
                           er(8)  = e3t(ji,jj,jk)        ! depth in meters of the given cell
                           er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)
                           er(10) = PH(ji,jj,jk)         ! pH
-                          er(11) = .04+.02*cos(2.*3.1416*julianday/186.)!bottomstress(ji,jj)  ! bottomstress
+                          er(11) = botwastr(ji,jj)
+!                          er(11) = .04+.02*cos(2.*3.1416*julianday/186.) !bottomstress(ji,jj)  ! bottomstress
 
                           call BFM0D_Input_EcologyDynamics(sur,bot,st,jtrmax,er)
 

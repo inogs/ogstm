@@ -174,7 +174,7 @@ CC IV. SURFACE FORCING AND DATA
 CC ============================
 CC  surface wind stress at givem time_step
 CC    taux, tauy()   : wind stress components in (i,j) referential
-      REAL(8), allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
+      REAL(8), allocatable, dimension(:,:) :: taux, tauy, vatm, freeze, botwastr
 
 CC----------------------------------------------------------------------
 CC     surface fluxes
@@ -271,6 +271,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  snIO(:,:,:) 
       REAL(8), allocatable ::  tnIO(:,:,:) 
       REAL(8), allocatable ::  vatmIO(:,:) 
+      REAL(8), allocatable ::  botwastrIO(:,:)
       REAL(8), allocatable ::  empIO(:,:) 
       REAL(8), allocatable ::  qsrIO(:,:) 
       REAL(8), allocatable ::  unIO(:,:,:) 
@@ -293,6 +294,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totsnIO(:,:,:) 
       REAL(8), allocatable ::  tottnIO(:,:,:) 
       REAL(8), allocatable ::  totvatmIO(:,:) 
+      REAL(8), allocatable ::  totbotwastrIO(:,:)
       REAL(8), allocatable ::  totempIO(:,:) 
       REAL(8), allocatable ::  totqsrIO(:,:) 
       REAL(8), allocatable ::  totunIO(:,:,:) 
@@ -478,6 +480,7 @@ CC----------------------------------------------------------------------
        allocate(taux  (jpi,jpj)) ; taux   = huge(taux(1,1))
        allocate(tauy  (jpi,jpj)) ; tauy   = huge(tauy(1,1))
        allocate(vatm  (jpi,jpj)) ; vatm   = huge(vatm(1,1))
+       allocate(botwastr(jpi,jpj)) ; botwastr  = huge(botwastr(1,1))
        allocate(freeze(jpi,jpj)) ; freeze = huge(freeze(1,1))
 
 
@@ -530,6 +533,7 @@ C     no mpp
        allocate(snIO(jpi,jpj,jpk))                         ; snIO   = huge(snIO(1,1,1))
        allocate(tnIO(jpi,jpj,jpk))                         ; tnIO   = huge(tnIO(1,1,1))
        allocate(vatmIO(jpi,jpj))                           ; vatmIO = huge(vatmIO(1,1))
+       allocate(botwastrIO(jpi,jpj))                       ; botwastrIO = huge(botwastrIO(1,1)) 
        allocate(empIO(jpi,jpj))                            ; empIO  = huge(empIO(1,1))
        allocate(qsrIO(jpi,jpj))                            ; qsrIO  = huge(qsrIO(1,1))
        allocate(unIO  (jpi,jpj,jpk))                       ; unIO   = huge(unIO(1,1,1))
@@ -560,6 +564,7 @@ C     no mpp
        if (lwp)  allocate(totsnIO (jpiglo,jpjglo,jpk)) ; if (lwp) totsnIO   = huge(totsnIO(1,1,1))  
        if (lwp)  allocate(tottnIO (jpiglo,jpjglo,jpk)) ; if (lwp) tottnIO   = huge(tottnIO(1,1,1))  
        if (lwp)  allocate(totvatmIO(jpiglo,jpjglo))    ; if (lwp) totvatmIO = huge(totvatmIO(1,1))  
+       if (lwp)  allocate(totbotwastrIO(jpiglo,jpjglo)); if (lwp) totbotwastrIO = huge(totbotwastrIO(1,1))  
        if (lwp)  allocate(totempIO(jpiglo,jpjglo))     ; if (lwp) totempIO  = huge(totempIO(1,1))   
        if (lwp)  allocate(totqsrIO(jpiglo,jpjglo))     ; if (lwp) totqsrIO  = huge(totqsrIO(1,1))   
        if (lwp)  allocate(totunIO(jpiglo,jpjglo,jpk))  ; if (lwp) totunIO   = huge(totunIO(1,1,1))  

@@ -171,10 +171,12 @@
         DO ji=1, jpi
            IF (tmask(ji,jj,1) .NE. 0.) THEN
                vatmIO(ji,jj)=(vatmIO(ji,jj)*Realcounter+vatm(ji,jj))*Realcounterp1
+               botwastrIO(ji,jj)=(botwastrIO(ji,jj)*Realcounter+botwastr(ji,jj))*Realcounterp1
                empIO (ji,jj)=(empIO (ji,jj)*Realcounter+emp (ji,jj))*Realcounterp1
                qsrIO (ji,jj)=(qsrIO (ji,jj)*Realcounter+qsr (ji,jj))*Realcounterp1
            ELSE
                vatmIO(ji,jj)=Miss_val
+               botwastrIO(ji,jj)=Miss_val
                empIO (ji,jj)=Miss_val
                qsrIO (ji,jj)=Miss_val
            ENDIF

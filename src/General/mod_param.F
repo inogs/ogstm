@@ -46,7 +46,7 @@ CC ----------------------
 
 CC    jpemp   : E - P in mm/day
 CC    jpqsr   : solar radiation
-      INTEGER :: jpwind,jpemp,jpice,jpqsr,jpkef
+      INTEGER :: jpwind,jpemp,jpice,jpqsr,jpkef, jpbotwastr
 
 
 CC Passive tracers parameter

@@ -39,7 +39,7 @@
 
       NAMELIST/MPI_config/ mpi_pack_size
       NAMELIST/Domain_Characteristic/  jperio
-      NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
+      NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr, jpbotwastr
 
 
 

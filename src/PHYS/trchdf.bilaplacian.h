@@ -115,7 +115,7 @@ C ----------------------------------
              DO jj = 1, jpjm1
                DO ji = 1, jpim1
 C   ... z-coordinates, no vertical scale factors
-                  zbtr(ji,jj) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk) )
+                  zbtr(ji,jj,jk) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk) )
                   zeeu(ji,jj,jk) = e2u(ji,jj)*e3u(ji,jj,jk) / e1u(ji,jj) * umask(ji,jj,jk)
                   zeev(ji,jj,jk) = e1v(ji,jj)*e3v(ji,jj,jk) / e2v(ji,jj) * vmask(ji,jj,jk)
                END DO
@@ -215,7 +215,7 @@ C ... Second derivative (divergence)
              jk = jarr_hdf(3,jv,2)
 
              zlt(ji,jj,jk,mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
-     $             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj)
+     $             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
 C ... Multiply by the eddy diffusivity coefficient
              zlt(ji,jj,jk,mytid+1) = trcrat * ahtt(jk) * zlt(ji,jj,jk,mytid+1)
 
@@ -299,7 +299,7 @@ C ... fourth derivative (divergence) and add to the general tracer trend
 
 C   ... horizontal diffusive trends
              zta(mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
-     $            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj)
+     $            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
 C   ... add it to the general tracer trends
               tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid) + zta(mytid+1)
 

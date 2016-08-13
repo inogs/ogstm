@@ -50,17 +50,21 @@ def plot_hovmoeller_PTSW(test):
 	fig=plt.figure(figsize=(10, 10))
 # PAR
         vrn='PAR'
+#       vrn_unit = '(umoles/m2/s)'
+        vrn_unit = '(W/m2)'
         ax2=plt.subplot(2, 2, 1)
 
         t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
         z= np.tile(np.flipud(gdept),(365, 1))
 
-        data2plot= np.transpose( np.flipud(masked_array_P.T) ) # matrix must be tranposed wr2 t and z
-        plt.pcolormesh(t,z,data2plot, cmap = 'BuGn', edgecolors = 'None')
+        data2plot= np.transpose( np.flipud(masked_array_P.T*0.217) ) # matrix must be tranposed wr2 t and z
+#       data2plot= np.transpose( np.flipud(masked_array_P.T) ) # matrix must be tranposed wr2 t and z
+	plt.pcolormesh(t,z,data2plot, norm=LogNorm(vmin=data2plot.max()/1000., vmax=data2plot.max()),cmap = 'PuBu', edgecolors = 'None')
+#       plt.pcolormesh(t,z,data2plot, cmap = 'PuBu', edgecolors = 'None')
 
         plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
         plt.axis([0, 365, 400., 0.])
-        plt.title(vrn, fontsize=20, y=1.1)
+        plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
         plt.xlabel('month', fontsize=16)
         plt.ylabel('depth [m]', fontsize=16)
         labels=['J','F','M','A','M','J','J','A','S','O','N','D']
@@ -75,17 +79,18 @@ def plot_hovmoeller_PTSW(test):
 
 # Temperature
 	vrn='Temperature'
+        vrn_unit = '(Degrees Celsius)'
 	ax2=plt.subplot(2, 2, 2)
 
 	t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
 	z= np.tile(np.flipud(gdept),(365, 1))
 
 	data2plot= np.transpose( np.flipud(masked_array_T.T) ) # matrix must be tranposed wr2 t and z
-	plt.pcolormesh(t,z,data2plot, cmap = 'BuGn', edgecolors = 'None')
+	plt.pcolormesh(t,z,data2plot, cmap = 'Reds', edgecolors = 'None')
 
 	plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
 	plt.axis([0, 365, 400., 0.])
-	plt.title(vrn, fontsize=20, y=1.1)
+        plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
 	plt.xlabel('month', fontsize=16)
 	plt.ylabel('depth [m]', fontsize=16)
 	labels=['J','F','M','A','M','J','J','A','S','O','N','D']
@@ -99,17 +104,18 @@ def plot_hovmoeller_PTSW(test):
 
 # Salinity
 	vrn='Salinity'
+        vrn_unit = '(PSU)'
 	ax2=plt.subplot(2, 2, 3)
 
 	t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
 	z= np.tile(np.flipud(gdept),(365, 1))
 
 	data2plot= np.transpose( np.flipud(masked_array_S.T) ) # matrix must be tranposed wr2 t and z
-	plt.pcolormesh(t,z,data2plot, cmap = 'BuGn', edgecolors = 'None')
+	plt.pcolormesh(t,z,data2plot, cmap = 'Purples', edgecolors = 'None')
 
 	plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
 	plt.axis([0, 365, 400., 0.])
-	plt.title(vrn, fontsize=20, y=1.1)
+        plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
 	plt.xlabel('month', fontsize=16)
 	plt.ylabel('depth [m]', fontsize=16)
 	labels=['J','F','M','A','M','J','J','A','S','O','N','D']
@@ -123,6 +129,7 @@ def plot_hovmoeller_PTSW(test):
 
 # vertical Eddy Diffusivity
 	vrn='Vert. Eddy diff.'
+        vrn_unit = '(m2/s)'
 	ax2=plt.subplot(2, 2, 4)
 
 	t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
@@ -133,7 +140,7 @@ def plot_hovmoeller_PTSW(test):
 
 	plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
 	plt.axis([0, 365, 400., 0.])
-	plt.title(vrn, fontsize=20, y=1.1)
+        plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
 	plt.xlabel('month', fontsize=16)
 	plt.ylabel('depth [m]', fontsize=16)
 	labels=['J','F','M','A','M','J','J','A','S','O','N','D']

@@ -30,11 +30,16 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
     M.close()
 
     Area=test['Area']
+#   Area='DYFAMED'
 
     forcfileT= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_T.nc"
+    forcfileU= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_U.nc"
+    forcfileV= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_V.nc"
     forcfileW= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_W.nc"
 
     DATA_T=NC.netcdf_file(forcfileT,"r")
+    DATA_U=NC.netcdf_file(forcfileU,"r")
+    DATA_V=NC.netcdf_file(forcfileV,"r")
     DATA_W=NC.netcdf_file(forcfileW,"r")
 
 #   getting Julian date for present simulation
@@ -46,11 +51,18 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
     tt    = dt.timetuple()
     j_day = tt.tm_yday -1 # from 1 to 365 scaled to 0 364
 
-    s_0=DATA_T.variables['vosaline'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
-    t_0=DATA_T.variables['votemper'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
-    k_0=DATA_W.variables['votkeavt'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
-    q  =DATA_T.variables['soshfldo'].data[j_day,0,0].copy();
-    w  =1.
+    s_0  = DATA_T.variables['vosaline'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
+    t_0  = DATA_T.variables['votemper'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
+    k_0  = DATA_W.variables['votkeavt'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
+    q    = DATA_T.variables['soshfldo'].data[j_day,0,0].copy();
+    taux = DATA_U.variables['sozotaux'].data[j_day,0,0].copy();
+    tauy = DATA_V.variables['sometauy'].data[j_day,0,0].copy();
+
+    rho   = 1.3 # kg/m3
+    Cdrag = 1.5 * 0.001
+    K     = np.sqrt(1./(rho*Cdrag))
+    w     = (taux**2 + tauy**2)**0.25 * K
+
 #   w  =DATA_T.variables['sowindsp'].data[j_day,0,0].copy();
     h  =0.;
     f  =0.;

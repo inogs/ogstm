@@ -172,14 +172,14 @@
 <var name="resMEZ2c"     highfreq="false" ></var> 
 <var name="resMIZ1c"     highfreq="false" ></var> 
 <var name="resMIZ2c"     highfreq="false" ></var> 
-<var name="ruPPY1c"      highfreq="false" ></var> 
-<var name="ruPPY2c"      highfreq="false" ></var> 
-<var name="ruPPY3c"      highfreq="false" ></var> 
-<var name="ruPPY4c"      highfreq="false" ></var> 
-<var name="loPPY1c"      highfreq="false" ></var> 
-<var name="loPPY2c"      highfreq="false" ></var> 
-<var name="loPPY3c"      highfreq="false" ></var> 
-<var name="loPPY4c"      highfreq="false" ></var> 
+<var name="ruPPY1c"      highfreq="true" ></var> 
+<var name="ruPPY2c"      highfreq="true" ></var> 
+<var name="ruPPY3c"      highfreq="true" ></var> 
+<var name="ruPPY4c"      highfreq="true" ></var> 
+<var name="loPPY1c"      highfreq="true" ></var> 
+<var name="loPPY2c"      highfreq="true" ></var> 
+<var name="loPPY3c"      highfreq="true" ></var> 
+<var name="loPPY4c"      highfreq="true" ></var> 
 </Diagnostics>
 
 

@@ -2,6 +2,7 @@
 
 import os,sys, getopt
 import glob
+import datetime
 import numpy  as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -96,24 +97,34 @@ def plot_RL_NP_movie(test):
                 ax[d].add_line(N_P_lines[d])
                 ax[d].set_xlim([0,0.15])
                 ax[d].set_ylim([0,2.5])
+
                 for label in (ax[d].get_xticklabels() + ax[d].get_yticklabels()):
                      label.set_fontsize(7) 
+
                 for i in range(4):
                     ax[d].plot([rp[i,d],rp[i,d]],[rn[i,d],    2.5], line_cs[i], lw=2)
                     ax[d].plot([rp[i,d],0.15   ],[rn[i,d],rn[i,d]], line_cs[i], lw=2)
+
                 if depth <= 70:
                    ax[d].set_xticklabels([])  
                 else:
                    for label in (ax[d].get_xticklabels()):
                        label.set_fontsize(7) 
                        label.set_rotation('vertical') 
+
                 ax[d].set_title(str(depth),fontsize=7)
 
 
             self.lines = N_P_lines
 
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino ' 
-            plt.suptitle(main_title)
+            date = datetime.datetime(2003, 1, 1) + datetime.timedelta(0)  
+            mm   = date.strftime('%m')
+            dd   = date.strftime('%d')
+            
+            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+            self.main_title=plt.suptitle(main_title)
+
+            self.ax=ax
 
             animation.TimedAnimation.__init__(self, fig, interval=50, blit=True,repeat=False)       
 
@@ -124,8 +135,16 @@ def plot_RL_NP_movie(test):
                  x=self.data[0:i,depth]['N1p']
                  y=self.data[0:i,depth]['N3n']+self.data[0:i,depth]['N4n']
                  self.lines[d].set_data(x, y)
+                 self.lines[d].set_label(str(i))
 
-            self._drawn_artists = self.lines
+            date = datetime.datetime(2003, 1, 1) + datetime.timedelta(i)  
+            mm   = date.strftime('%m')
+            dd   = date.strftime('%d')
+            
+            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+
+#           self._drawn_artists = self.lines
+            self.main_title = plt.suptitle(main_title)
 
         def new_frame_seq(self):
             return iter(range(0,365))
@@ -135,9 +154,9 @@ def plot_RL_NP_movie(test):
                 l.set_data([], [])
 
     ani = SubplotAnimation()
-#   fileout="POSTPROC/MOVIE/TIL" + test['Area'] + ".mp4"
-#   ani.save(fileout)
-    plt.show()
+    fileout="POSTPROC/MOVIE/TIL" + test['Area'] + ".mp4"
+    ani.save(fileout)
+#   plt.show()
 
 
 

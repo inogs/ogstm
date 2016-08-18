@@ -2,6 +2,7 @@
 
 import os,sys, getopt
 import glob
+import datetime
 import numpy  as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -160,6 +161,6 @@ def plot_BIOc_movie(test):
                 for ld in l: 
                     ld.set_data([], [])
     ani = SubplotAnimation()
-#   fileout="POSTPROC/MOVIE/TIL" + test['Area'] + ".mp4"
-#   ani.save(fileout)
-    plt.show()
+    fileout="POSTPROC/MOVIE/BIOc" + test['Area'] + ".mp4"
+    ani.save(fileout)
+#   plt.show()

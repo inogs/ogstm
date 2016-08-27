@@ -11,7 +11,7 @@ from matplotlib.lines import Line2D
 import matplotlib.animation as animation
 
 
-def plot_BIOc_movie(test):
+def plot_PHYloss_movie(test):
 #   Domain paramters
     jpi=test['jpi'];
     jpj=test['jpj'];
@@ -29,7 +29,8 @@ def plot_BIOc_movie(test):
     M.close()
 
 #define derived type to store informations
-    mydtype = [('P1c','f4')    ,('P2c','f4')    ,('P3c','f4')    ,('P4c','f4')]
+    mydtype = [ ('P1c','f4')    ,('P2c','f4')    ,('P3c','f4')    ,('P4c','f4')    , ('B1c','f4'),
+                ('loPPY1c','f4'),('loPPY2c','f4'),('loPPY3c','f4'),('loPPY4c','f4'), ('loBAc','f4')]
 
     filename     = 'POSTPROC/' + test['Area'] + '.nc'
     filename_dia = 'POSTPROC/' + test['Area'] + '_dia.nc'
@@ -45,10 +46,13 @@ def plot_BIOc_movie(test):
     mydata=np.zeros((ntime,jpk),dtype=mydtype)
 
 
-    for var in mydata.dtype.names[0:3]:
+    for var in mydata.dtype.names[0:5]:
        mydata[:,:][var]=M.variables[var].data[:,:].copy()
 
-    line_cs=['r','g','c','b'];
+    for var in mydata.dtype.names[5:9]:
+       mydata[:,:][var]=M_dia.variables[var].data[:,:].copy()
+
+    line_cs=['r','g','c','b','k'];
 
     class SubplotAnimation(animation.TimedAnimation):
         def __init__(self):
@@ -58,6 +62,7 @@ def plot_BIOc_movie(test):
             BIO1_lines=[]
             BIO2_lines=[]
             BIO3_lines=[]
+            BIO4_lines=[]
 
             self.data=mydata
 
@@ -68,14 +73,16 @@ def plot_BIOc_movie(test):
                 BIO1_lines.append(Line2D([], [], color=line_cs[1]))
                 BIO2_lines.append(Line2D([], [], color=line_cs[2]))
                 BIO3_lines.append(Line2D([], [], color=line_cs[3]))
+                BIO4_lines.append(Line2D([], [], color=line_cs[3]))
 
                 ax[d].add_line(BIO0_lines[d])
                 ax[d].add_line(BIO1_lines[d])
                 ax[d].add_line(BIO2_lines[d])
                 ax[d].add_line(BIO3_lines[d])
+                ax[d].add_line(BIO4_lines[d])
 
                 ax[d].set_xlim([0,365])
-                ax[d].set_ylim([0,30])
+                ax[d].set_ylim([0,1])
 
                 for label in (ax[d].get_xticklabels() + ax[d].get_yticklabels()):
                      label.set_fontsize(7) 
@@ -85,27 +92,17 @@ def plot_BIOc_movie(test):
                    ax[d].set_xticklabels([])  
                 else:
                    for label in (ax[d].get_xticklabels()):
-                       label.set_fontsize(10) 
+                       label.set_fontsize(7) 
                        label.set_rotation('vertical') 
-                   ax[d].set_xlabel('time - days')
 
-                my_title = str(depth) + ' m'
-
-                if d%5 == 0:
-                   for label in (ax[d].get_yticklabels()):
-                       label.set_fontsize(10)
-                   ax[d].set_ylabel('mg C/m3')
-                else:
-                   ax[d].set_yticklabels([])
-
-
-                ax[d].set_title(my_title,fontsize=10)
+                ax[d].set_title(str(depth),fontsize=7)
 
 
             self.BIO0_lines = BIO0_lines
             self.BIO1_lines = BIO1_lines
             self.BIO2_lines = BIO2_lines
             self.BIO3_lines = BIO3_lines
+            self.BIO4_lines = BIO4_lines
 
 #           annotation = ax[0].annotate(JD,xy=(0.5,0.5))
 #           annotation.set_animated(True)
@@ -129,16 +126,18 @@ def plot_BIOc_movie(test):
 
                  x =np.arange(i)
 
-                 y0=self.data[0:i,depth]['P1c']
-                 y1=self.data[0:i,depth]['P2c']
-                 y2=self.data[0:i,depth]['P3c']
-                 y3=self.data[0:i,depth]['P4c']
+                 y0=self.data[0:i,depth]['loPPY1c']/self.data[0:i,depth]['P1c']
+                 y1=self.data[0:i,depth]['loPPY2c']/self.data[0:i,depth]['P2c']
+                 y2=self.data[0:i,depth]['loPPY3c']/self.data[0:i,depth]['P3c']
+                 y3=self.data[0:i,depth]['loPPY4c']/self.data[0:i,depth]['P4c']
+                 y4=self.data[0:i,depth]['loBAc']/  self.data[0:i,depth]['B1c']
 
                  self.BIO0_lines[d].set_data(x, y0)
                  self.BIO0_lines[d].set_label(str(i))
                  self.BIO1_lines[d].set_data(x, y1)
                  self.BIO2_lines[d].set_data(x, y2)
                  self.BIO3_lines[d].set_data(x, y3)
+                 self.BIO4_lines[d].set_data(x, y4)
 
             line_list =[]
 
@@ -147,6 +146,7 @@ def plot_BIOc_movie(test):
                 line_list.append(self.BIO1_lines[d])
                 line_list.append(self.BIO2_lines[d])
                 line_list.append(self.BIO3_lines[d])
+                line_list.append(self.BIO4_lines[d])
               
 
 #           self._drawn_artists =line_list
@@ -159,7 +159,7 @@ def plot_BIOc_movie(test):
             mm   = date.strftime('%m')
             dd   = date.strftime('%d')
 
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino, Black-->Bact date: ' + 'm: ' + mm + ' - d: ' + dd
 
             self.big_title=plt.suptitle(main_title)
 
@@ -167,11 +167,11 @@ def plot_BIOc_movie(test):
             return iter(range(0,365))
 
         def _init_draw(self):
-            lines= [self.BIO0_lines, self.BIO1_lines, self.BIO2_lines, self.BIO3_lines]
+            lines= [self.BIO0_lines, self.BIO1_lines, self.BIO2_lines, self.BIO3_lines, self.BIO4_lines]
             for l in lines:
                 for ld in l: 
                     ld.set_data([], [])
     ani = SubplotAnimation()
-    fileout="POSTPROC/MOVIE/BIOc" + test['Area'] + ".mp4"
+    fileout="POSTPROC/MOVIE/PHYloss" + test['Area'] + ".mp4"
     ani.save(fileout)
 #   plt.show()

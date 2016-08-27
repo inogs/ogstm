@@ -16,6 +16,11 @@ def compute_R(mydata,depth,mu,loss,bio,alphaN,Q):
     bb     = mydata[:,depth][loss].mean(0)/mydata[:,depth][bio].mean(0)
     return  Q/ alphaN * (aa*bb)/(aa-bb)
 
+def compute_R2(mydata,depth,mu,loss,bioC,bioN,alphaN,Q):
+    aa     = mydata[:,depth][loss]/mydata[:,depth][bioC]
+    bb     = mydata[:,depth][bioN]/mydata[:,depth][bioC]
+    return  (aa*bb).min(0)/alphaN
+
 def plot_RL_NP_movie(test):
 #   Domain paramters
     jpi=test['jpi'];
@@ -35,9 +40,11 @@ def plot_RL_NP_movie(test):
 
 #define derived type to store informations
     mydtype = [('N1p','f4')    ,('N3n','f4')    ,('N4n','f4'),
-               ('P1c','f4')    ,('P2c','f4')    ,('P3c','f4')    ,('P4c','f4'),
-               ('ruPPY1c','f4'),('ruPPY2c','f4'),('ruPPY3c','f4'),('ruPPY4c','f4'),
-               ('loPPY1c','f4'),('loPPY2c','f4'),('loPPY3c','f4'),('loPPY4c','f4')]          
+               ('P1c','f4')    ,('P2c','f4')    ,('P3c','f4')    ,('P4c','f4'), ('B1c','f4'),
+               ('P1p','f4')    ,('P2p','f4')    ,('P3p','f4')    ,('P4p','f4'), ('B1p','f4'),
+               ('P1n','f4')    ,('P2n','f4')    ,('P3n','f4')    ,('P4n','f4'), ('B1n','f4'),
+               ('ruPPY1c','f4'),('ruPPY2c','f4'),('ruPPY3c','f4'),('ruPPY4c','f4'), ('ruPBAc','f4'),
+               ('loPPY1c','f4'),('loPPY2c','f4'),('loPPY3c','f4'),('loPPY4c','f4'), ('loBAc','f4')]          
 
     filename     = 'POSTPROC/' + test['Area'] + '.nc'
     filename_dia = 'POSTPROC/' + test['Area'] + '_dia.nc'
@@ -53,35 +60,37 @@ def plot_RL_NP_movie(test):
     mydata=np.zeros((ntime,jpk),dtype=mydtype)
 
 
-    for var in mydata.dtype.names[0:7]:
+    for var in mydata.dtype.names[0:18]:
        mydata[:,:][var]=M.variables[var].data[:,:].copy()
-    for var in mydata.dtype.names[7:]:
+    for var in mydata.dtype.names[18:]:
        mydata[:,:][var]=M_dia.variables[var].data[:,:].copy()
 
-    alpha_p=[0.025, 0.025, 0.25, 0.025];#m3/mgC/d
-    alpha_n=[0.025, 0.025, 0.25, 0.025];#m3/mgC/d
+    alpha_p=[0.0025, 0.0025, 0.0025, 0.0025,0.0025];#m3/mgC/d
+    alpha_n=[0.025, 0.025, 0.25, 0.025,0.0025];#m3/mgC/d
 
-    Qpcmin =[1.80e-4,   1.80e-4,  1.80e-4, 4.29e-4];#mmolP/mgC 
-    Qncmin =[4.193e-3, 4.193e-3, 4.193e-3, 0.00687];#mmolN/mgC 
+    Qpcmin =[1.80e-4,   1.80e-4,  1.80e-4, 4.29e-4, 0.00095];#mmolP/mgC 
+    Qncmin =[4.193e-3, 4.193e-3, 4.193e-3, 0.00687, 0.0085];#mmolN/mgC 
 
 #   depth=getDepthIndex(nav_lev, 0.)
 # R --> PO4 
-    rp = np.zeros((4,20),dtype='float32')
-    rn = np.zeros((4,20),dtype='float32')
+    rp = np.zeros((5,20),dtype='float32')
+    rn = np.zeros((5,20),dtype='float32')
 
     for d,depth in enumerate(np.arange(0,100,5)):
 
-       rp[0,d] =  max(0.,compute_R(mydata,depth,'ruPPY1c','loPPY1c','P1c',alpha_p[0],Qpcmin[0]))
-       rp[1,d] =  max(0.,compute_R(mydata,depth,'ruPPY2c','loPPY2c','P2c',alpha_p[1],Qpcmin[1]))
-       rp[2,d] =  max(0.,compute_R(mydata,depth,'ruPPY3c','loPPY3c','P3c',alpha_p[2],Qpcmin[2]))
-       rp[3,d] =  max(0.,compute_R(mydata,depth,'ruPPY4c','loPPY4c','P4c',alpha_p[3],Qpcmin[3]))
+       rp[0,d] =  max(0.,compute_R2(mydata,depth,'ruPPY1c','loPPY1c','P1c','P1p',alpha_p[0],Qpcmin[0]))
+       rp[1,d] =  max(0.,compute_R2(mydata,depth,'ruPPY2c','loPPY2c','P2c','P2p',alpha_p[1],Qpcmin[1]))
+       rp[2,d] =  max(0.,compute_R2(mydata,depth,'ruPPY3c','loPPY3c','P3c','P3p',alpha_p[2],Qpcmin[2]))
+       rp[3,d] =  max(0.,compute_R2(mydata,depth,'ruPPY4c','loPPY4c','P4c','P4p',alpha_p[3],Qpcmin[3]))
+       rp[4,d] =  max(0.,compute_R2(mydata,depth,'ruPBAc',  'loBAc','B1c','B1p',alpha_p[4],Qpcmin[4]))
 
-       rn[0,d] =  max(0.,compute_R(mydata,depth,'ruPPY1c','loPPY1c','P1c',alpha_n[0],Qncmin[0]))
-       rn[1,d] =  max(0.,compute_R(mydata,depth,'ruPPY2c','loPPY2c','P2c',alpha_n[1],Qncmin[1]))
-       rn[2,d] =  max(0.,compute_R(mydata,depth,'ruPPY3c','loPPY3c','P3c',alpha_n[2],Qncmin[2]))
-       rn[3,d] =  max(0.,compute_R(mydata,depth,'ruPPY4c','loPPY4c','P4c',alpha_n[3],Qncmin[3]))
+       rn[0,d] =  max(0.,compute_R2(mydata,depth,'ruPPY1c','loPPY1c','P1c','P1n',alpha_n[0],Qncmin[0]))
+       rn[1,d] =  max(0.,compute_R2(mydata,depth,'ruPPY2c','loPPY2c','P2c','P2n',alpha_n[1],Qncmin[1]))
+       rn[2,d] =  max(0.,compute_R2(mydata,depth,'ruPPY3c','loPPY3c','P3c','P3n',alpha_n[2],Qncmin[2]))
+       rn[3,d] =  max(0.,compute_R2(mydata,depth,'ruPPY4c','loPPY4c','P4c','P4n',alpha_n[3],Qncmin[3]))
+       rn[4,d] =  max(0.,compute_R2(mydata,depth,'ruPBAc','loBAc','B1c','B1n',alpha_n[4],Qncmin[4]))
 
-       line_cs=['r--','g--','c--','b--'];
+       line_cs=['r--','g--','c--','b--','k--'];
 
     class SubplotAnimation(animation.TimedAnimation):
         def __init__(self):
@@ -95,24 +104,37 @@ def plot_RL_NP_movie(test):
                 ax.append(fig.add_subplot(4, 5, d+1))
                 N_P_lines.append(Line2D([], [], color='black'))
                 ax[d].add_line(N_P_lines[d])
-                ax[d].set_xlim([0,0.15])
-                ax[d].set_ylim([0,2.5])
+                ax[d].set_xscale('log')
+                ax[d].set_yscale('log')
+                ax[d].set_xlim([0.005,0.30])
+                ax[d].set_ylim([0.005,5.])
 
                 for label in (ax[d].get_xticklabels() + ax[d].get_yticklabels()):
                      label.set_fontsize(7) 
 
-                for i in range(4):
-                    ax[d].plot([rp[i,d],rp[i,d]],[rn[i,d],    2.5], line_cs[i], lw=2)
-                    ax[d].plot([rp[i,d],0.15   ],[rn[i,d],rn[i,d]], line_cs[i], lw=2)
+                for i in range(5):
+                    ax[d].plot([rp[i,d],rp[i,d]],[rn[i,d],    5], line_cs[i], lw=2)
+                    ax[d].plot([rp[i,d],0.30   ],[rn[i,d],rn[i,d]], line_cs[i], lw=2)
 
                 if depth <= 70:
                    ax[d].set_xticklabels([])  
                 else:
                    for label in (ax[d].get_xticklabels()):
-                       label.set_fontsize(7) 
+                       label.set_fontsize(10) 
                        label.set_rotation('vertical') 
+                   ax[d].set_xlabel('mmol P/m3')  
 
-                ax[d].set_title(str(depth),fontsize=7)
+                if d%5 == 0:
+                   for label in (ax[d].get_yticklabels()):
+                       label.set_fontsize(10) 
+#                      label.set_rotation('vertical') 
+                   ax[d].set_ylabel('mmol N/m3')  
+                else:
+                   ax[d].set_yticklabels([])  
+
+                my_title = str(depth) + ' m'
+
+                ax[d].set_title(my_title,fontsize=10)
 
 
             self.lines = N_P_lines
@@ -122,6 +144,7 @@ def plot_RL_NP_movie(test):
             dd   = date.strftime('%d')
             
             main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+#           main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino, Black-->Bact date: ' + 'm: ' + mm + ' - d: ' + dd
             self.main_title=plt.suptitle(main_title)
 
             self.ax=ax
@@ -142,6 +165,7 @@ def plot_RL_NP_movie(test):
             dd   = date.strftime('%d')
             
             main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+#           main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino, Black-->Bact date: ' + 'm: ' + mm + ' - d: ' + dd
 
 #           self._drawn_artists = self.lines
             self.main_title = plt.suptitle(main_title)

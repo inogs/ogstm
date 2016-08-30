@@ -347,7 +347,7 @@
 !      VAR        =fileNetCDF(istart:iend)
 
 
-      s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+      s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
 
       s = nf90_put_att(nc, nf90_global, 'TimeString'     , TimeString)
         ! *********** DIMENSIONS ****************
@@ -363,7 +363,7 @@
        s = nf90_def_var(nc,'nav_lon', nf90_double,  (/xid,yid/), idLon)
        s = nf90_def_var(nc,'nav_lat', nf90_double,  (/xid,yid/), idLat)
        s = nf90_def_var(nc,'nav_lev', nf90_double,  (/depid/)  , idLev)
-       s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
+       !s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
 
         s = nf90_def_var(nc,'TRB'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idB)
         s = nf90_def_var(nc,'TRN'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idN)
@@ -418,7 +418,9 @@
 
         counter=0
 
-        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc); call handle_err1(s,counter,fileNetCDF)
+        !s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc);
+        s = nf90_create(fileNetCDF,or(or(nf90_clobber,NF90_HDF5),NF90_HDF5),nc)
+        call handle_err1(s,counter,fileNetCDF)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions' ,'COARDS');call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom); call handle_err1(s,counter,fileNetCDF)
@@ -431,7 +433,7 @@
         s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid); call handle_err1(s,counter,fileNetCDF)
 
         ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime); call handle_err1(s,counter,fileNetCDF)
+        !!s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime); call handle_err1(s,counter,fileNetCDF)
         s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept); call handle_err1(s,counter,fileNetCDF)
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit); call handle_err1(s,counter,fileNetCDF)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt); call handle_err1(s,counter,fileNetCDF)
@@ -491,7 +493,7 @@
 !      VAR        =fileNetCDF(istart:iend)
 
 
-        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
@@ -503,7 +505,7 @@
         s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
 
         ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+        !s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
 
@@ -561,7 +563,7 @@
 !      VAR        =fileNetCDF(istart:iend)
 
 
-        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
@@ -575,7 +577,7 @@
         s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
 
         ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+        !s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
         s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept)
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
@@ -634,7 +636,7 @@
 !      VAR        =fileNetCDF(istart:iend)
 
 
-        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
@@ -647,7 +649,7 @@
         s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
 
         ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+        !s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
 
@@ -696,7 +698,7 @@
         integer idT, idS, idU, idV, idW, idEddy,ide3t, idR, idWs, idE
 
 
-        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
@@ -710,7 +712,7 @@
 
 
         ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time_counter',  nf90_double,(/timid/),           idvartime)
+        !s = nf90_def_var(nc,'time_counter',  nf90_double,(/timid/),           idvartime)
         s = nf90_def_var(nc,'deptht',        nf90_float, (/depid/),             idgdept)
         s = nf90_def_var(nc,'nav_lat',       nf90_float, (/yid/),                idphit)
         s = nf90_def_var(nc,'nav_lon',       nf90_float, (/xid/),                idlamt)
@@ -826,7 +828,7 @@
         integer idT, idS, idU, idV, idW, idEddy, ide3t, idR, idWs, idE
 
 
-        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,   'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)

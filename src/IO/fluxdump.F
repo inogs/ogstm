@@ -34,7 +34,7 @@
 !     flux.20021216-12:00:00.nc
           flux_file= 'flux.'//datemean//'.nc'
 
-          s = nf90_create(flux_file, NF90_CLOBBER, nc)
+          s = nf90_create(flux_file, or(nf90_clobber,NF90_HDF5), nc)
 
           s = nf90_put_att(nc, nf90_global, 'Time_Start'     , datefrom)
           s = nf90_put_att(nc, nf90_global, 'Time___End'     ,  dateend)

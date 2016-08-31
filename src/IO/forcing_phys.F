@@ -240,7 +240,7 @@
 
       call readnc_slice_float(nomefile,'vovecrtz',buf);
       DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf)
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf,wdta)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -449,7 +449,7 @@
           DO jk=1,jpk, ntids
 !$omp parallel default(none) private(mytid,jj,ji,uk)
 !$omp&                       shared(jpi,jpj,jpk,jk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
-!$omp&                              zweigh,Umzweigh,tmask,umask,vmask)
+!$omp&                       zweigh,Umzweigh,tmask,umask,vmask,e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta,e3t_back)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -552,6 +552,7 @@
 
           DO jk=1,jpk,ntids
 !$omp parallel default(None) private(mytid,ji,jj,jdepth) shared(jpi,jpj,jpk,jk,udta,vdta,wdta,avtdta,tdta,sdta)
+!$omp&           shared(e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif

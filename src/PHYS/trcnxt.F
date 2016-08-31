@@ -112,7 +112,7 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 
 
 !$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) 
+!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,e3t,e3t_back) 
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID

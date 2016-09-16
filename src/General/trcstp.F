@@ -39,11 +39,11 @@
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
 ! ------------------------
-!     CALL trcsbc ! surface cell processes
+      CALL trcsbc ! surface cell processes
       CALL trcsms
       CALL trczdf ! tracers: vertical diffusion
       CALL snutel
-!      CALL checkValues
+      CALL checkValues
       CALL trcnxt ! tracers: fields at next time step
       CALL trcnxt_benthic ! tracers benthic: fields at next time step
 

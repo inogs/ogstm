@@ -183,6 +183,43 @@
 
 
 ! ************************************************************
+      SUBROUTINE readnc_slice_int_2d_ben(fileNetCDF,varname, M)
+      USE myalloc
+      USE BIOBEN_mem
+      USE myalloc_mpp
+      USE netcdf
+      implicit none
+
+
+      character fileNetCDF*(*) ,varname*(*)
+      integer ncid, stat, VARid
+
+      integer counter
+      integer thecount(3), start(3)
+      integer M(jpi,jpj)
+
+
+      counter = 0;
+      start    = (/nimpp, njmpp,  1/)
+      thecount = (/jpi,     jpj,  1/)
+
+
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,M,start, thecount);
+      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+
+
+
+
+      END SUBROUTINE readnc_slice_int_2d_ben
+
+
+! ********************************************************************************************
+! ********************************************************************************************
+! ********************************************************************************************
+
       SUBROUTINE readnc_global_double_ben(fileNetCDF,varname, M)
       USE myalloc
       USE BIOBEN_mem

@@ -201,6 +201,23 @@
      
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
+
+      call readnc_slice_float(nomefile,'vovecrtz',buf);
+      DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask;
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,wdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              wdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
       call readnc_slice_float(nomefile,'votkeavt',buf);
       DO jk=1,jpk,ntids!avtdta(:,:,:,2) = buf*tmask;
 !$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf)
@@ -316,9 +333,6 @@
 !!!!!!!!!!!!!!!!!
 
 
-      CALL div()               ! Horizontal divergence
-      CALL wzv()               ! vertical velocity
-
 !        could be written for OpenMP
           DO jk=1,jpk
             DO jj=1,jpj
@@ -424,9 +438,6 @@
                   freeze(ji,uj) = flx(ji,uj,jpice)
                   emp(ji,uj)    = flx(ji,uj,jpemp)
                   qsr(ji,uj)    = flx(ji,uj,jpqsr)
-                  e3u(ji,uj,1)  = flx(ji,uj,8)
-                  e3v(ji,uj,1)  = flx(ji,uj,9)
-                  e3t(ji,uj,1)  = flx(ji,uj,10)
             END DO
 
         endif

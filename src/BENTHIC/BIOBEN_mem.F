@@ -20,6 +20,7 @@
       REAL(8), allocatable :: e3t_ben(:,:,:),   e3w_ben(:,:,:) 
 ! Domain
       REAL(8), allocatable :: gdept_ben(:), gdepw_ben(:)
+      INTEGER, allocatable :: calcbenmask(:,:)
 
 ! Namelist parameters
 
@@ -71,6 +72,8 @@ CC----------------------------------------------------------------------
 
        allocate(e3t_ben(jpi,jpj,jpk_ben))                ; e3t_ben    = huge(e3t_ben(1,1,1))
        allocate(e3w_ben(jpi,jpj,jpk_ben))                ; e3w_ben    = huge(e3w_ben(1,1,1))
+       allocate(calcbenmask(jpi,jpj))                    ; calcbenmask= huge(calcbenmask(1,1))
+
 
        allocate(gdept_ben(jpk_ben))                      ; gdept_ben  = huge(gdept_ben(1))
        allocate(gdepw_ben(jpk_ben))                      ; gdepw_ben  = huge(gdepw_ben(1))

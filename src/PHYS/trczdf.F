@@ -132,16 +132,15 @@ CC ===================
 C passive tracer slab
 C ===================
 
-      TRACER_LOOP: DO  jn = 1, jptra, ntids
-!$omp    parallel default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij)
-!$omp&                           shared(jn,dimen_jvzdf,jarr_zdf,ndttrc,rdt,jpk,jpkm1,avt,zwi,
+!$omp    parallel do default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij,jn)
+!$omp&                           shared(dimen_jvzdf,jarr_zdf,ndttrc,rdt,jpk,jpkm1,avt,zwi,
 !$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e1t,e2t,e3t,e3w,jarr_zdf_flx,Fsize,
 !$omp&                                   diaflx)
+      TRACER_LOOP: DO  jn = 1, jptra
 
-#ifdef __OPENMP
-         mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-      if( mytid + jn <= jptra ) then
+!$         mytid = omp_get_thread_num()  ! take the thread ID
+
+!      if( mytid + jn <= jptra ) then
         ztavg = 0.e0
 C vertical slab
 
@@ -186,7 +185,7 @@ C Second member construction
 C   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwy(jk,mytid+1) = trb(ji,jj,jk,jn+mytid) + z2dtt * tra(ji,jj,jk,jn+mytid)
+          zwy(jk,mytid+1) = trb(ji,jj,jk,jn) + z2dtt * tra(ji,jj,jk,jn)
         END DO
 
 C Matrix inversion from the first level
@@ -262,7 +261,7 @@ C   so that ikstrt=2.
 
          IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
 
-                  diaflx(jf,jn+mytid,7) = int_tra(jk)
+                  diaflx(jf,jn,7) = int_tra(jk)
 
          ENDIF
 
@@ -274,15 +273,15 @@ C Save the masked passive tracer after in tra
 C (c a u t i o n:  tracer not its trend, Leap-frog scheme done
 C                  it will not be done in trcnxt)
          DO jk = 1, jpkm1
-            tra(ji,jj,jk,jn+mytid) = zwx(jk,mytid+1) * tmask(ji,jj,jk)
+            tra(ji,jj,jk,jn) = zwx(jk,mytid+1) * tmask(ji,jj,jk)
          END DO
 
         END DO ! jv
 
-      end if
+!      end if
 
-!$omp    end parallel
        END DO TRACER_LOOP
+!$omp    end parallel do
 
 
 

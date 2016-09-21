@@ -122,25 +122,26 @@ C
 C vertical slab
 C =============
 C
-      MAIN_LOOP: DO jv=1,dimen_jvsed,ntids
 
-!$omp    parallel default(none) private(ji,jj,jk,js,mytid,jf,bottom)
-!$omp&                           shared(jv,dimen_jvsed,jarr_sed,jpk, 
+!$omp    parallel do default(none) private(jv,ji,jj,jk,js,mytid,jf,bottom)
+!$omp&                           shared(dimen_jvsed,jarr_sed,jpk, 
 !$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
 !$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
 !$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx,
 !$omp&                                  mbathy,bottom_flux)
 
+      MAIN_LOOP: DO jv=1,dimen_jvsed
+
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-      if( mytid + jv <=  dimen_jvsed) then
+c      if( mytid + jv <=  dimen_jvsed) then
 C 1. sedimentation of detritus  : upstream scheme
 C -----------------------------------------------
 C 1.1 initialisation needed for bottom and surface value
 C
-           ji = jarr_sed(1,jv+mytid)
-           jj = jarr_sed(2,jv+mytid)
+           ji = jarr_sed(1,jv)
+           jj = jarr_sed(2,jv)
 
               DO  jk = 1,jpk
 
@@ -190,7 +191,7 @@ C                Dinoflagellates
 C 1.3 tracer flux divergence at t-point added to the general trend
 
               DO  jk = 1,jpkm1
-                 jf=  jarr_sed_flx(jv+mytid,jk)
+                 jf=  jarr_sed_flx(jv,jk)
 
                  ze3tr = 1./e3t(ji,jj,jk)
 
@@ -212,12 +213,12 @@ CCC  d2s convert speed from (m/day) to  (m/s)
 
 
                 END DO
-        ENDIF
+c        ENDIF
 
-!$omp    end parallel
 
       END DO MAIN_LOOP
 
+!$omp    end parallel do
 
 
 #    else

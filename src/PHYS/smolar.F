@@ -400,8 +400,8 @@ C       calcul of tracer flux in the k direction
 C
            DO jj = 1,jpj
              DO ji = 1,jpi
-               zkz(ji,jj,1,A) = 0.
-!               zkz(ji,jj,1,A) = fsz(trn(ji,jj,1,B),trn(ji,jj,1,B),zcc(ji,jj,1))
+!               zkz(ji,jj,1,A) = 0.
+               zkz(ji,jj,1,A) = fsz(trn(ji,jj,1,B),trn(ji,jj,1,B),zcc(ji,jj,1))
              END DO
            END DO
 

@@ -16,7 +16,7 @@
 ! omp variables
       INTEGER :: mytid, ntids
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -25,7 +25,7 @@
 
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -40,11 +40,11 @@
 
       DO jn=1 ,jptra,ntids
 
-!$omp parallel default(none) private(jk,jj,ji,mytid)
-!$omp&                       shared(jpk,jpj,jpi,jn,tmask,traIO,trn,Miss_val,Realcounter,Realcounterp1)
+!!!$omp parallel default(none) private(jk,jj,ji,mytid)
+!!!$omp&                       shared(jpk,jpj,jpi,jn,tmask,traIO,trn,Miss_val,Realcounter,Realcounterp1)
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
        IF( mytid + jn <= jptra ) then
@@ -61,7 +61,7 @@
              END DO
           END DO
        ENDIF
-!$omp    end parallel
+!!!$omp    end parallel
 
       END DO
 
@@ -72,10 +72,10 @@
       Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
       DO jn_high=1 ,jptra_high,ntids
 
-!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
-!$omp& shared(jpk,jpj,jpi,jn_high,jptra_high,highfreq_table,tmask,traIO_HIGH,trn,Miss_val,Realcounter,Realcounterp1)
+!!!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
+!!!$omp& shared(jpk,jpj,jpi,jn_high,jptra_high,highfreq_table,tmask,traIO_HIGH,trn,Miss_val,Realcounter,Realcounterp1)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
        IF( mytid + jn_high <= jptra_high ) then
@@ -93,7 +93,7 @@
              END DO
           END DO
        ENDIF
-!$omp    end parallel
+!!!$omp    end parallel
 
       END DO
 
@@ -169,10 +169,10 @@
 
       DO jn=1, jptra_dia,ntids
 
-!$omp parallel default(none) private(jk,jj,ji,mytid)
-!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
+!!!$omp parallel default(none) private(jk,jj,ji,mytid)
+!!!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
       IF( mytid + jn .LE. jptra_dia ) then
@@ -191,7 +191,7 @@
          END DO
       ENDIF
 
-!$omp    end parallel
+!!!$omp    end parallel
       END DO
 
 !     *********************  DIAGNOSTICS 2D **********
@@ -219,11 +219,11 @@
 
       DO jn_high=1, jptra_dia_high,ntids
 
-!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
-!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_DIA_IO_HIGH,tra_DIA,Miss_val,
-!$omp&   Realcounter,Realcounterp1)
+!!!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
+!!!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_DIA_IO_HIGH,tra_DIA,Miss_val,
+!!!$omp&   Realcounter,Realcounterp1)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
            mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
@@ -245,7 +245,7 @@
              END DO
           ENDIF
       ENDIF
-!$omp    end parallel
+!!!$omp    end parallel
       END DO
 
 !     *********************  DIAGNOSTICS 2D **********

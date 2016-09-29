@@ -60,7 +60,7 @@ CC
 ! omp variables
       INTEGER :: mytid, ntids, itid
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -69,7 +69,7 @@ CC
 
       MPI_CHECK = .FALSE.
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 
@@ -80,8 +80,8 @@ CC
 
       if(allpoints .EQ. 0) then  ! INIT phase
 
-!$omp parallel default(shared) private(mytid,A)
-#ifdef __OPENMP
+!!!$omp parallel default(shared) private(mytid,A)
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #else
       PACK_LOOP0: DO jp=1,ntids
@@ -97,8 +97,8 @@ CC
          zx(:,:,:,A)   = 0.
          zy(:,:,:,A)   = 0.
          zz(:,:,:,A)   = 0.
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP0
       mytid =0
@@ -301,8 +301,8 @@ CC
       zdt = rdt*ndttrc
 
 
-!$omp  parallel default(none) private(A,mytid,jk,jj,ji) shared(jpk,jpj,jpi,ztj,zx,zy,zz)
-#ifdef __OPENMP
+!!!$omp  parallel default(none) private(A,mytid,jk,jj,ji) shared(jpk,jpj,jpi,ztj,zx,zy,zz)
+#ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
 #else
       PACK_LOOP1: DO jp=1,ntids
@@ -320,18 +320,18 @@ CC
              END DO
           END DO
        END DO
-!$omp  end parallel
-#ifdef __OPENMP
+!!!$omp  end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP1
       mytid =0
 #endif
 
        DO jk = 1,jpk,ntids
-!$omp parallel default(none) private(mytid, ji,jj)
-!$omp&         shared(jk, jpi, jpj, jpk,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,
-!$omp&                un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,zdt )
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid, ji,jj)
+!!!$omp&         shared(jk, jpi, jpj, jpk,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,
+!!!$omp&                un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,zdt )
+#ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
 #else
       PACK_LOOP2: DO jp=1,ntids
@@ -351,8 +351,8 @@ CC
           END DO
 
          endif
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP2
       mytid =0
@@ -374,10 +374,10 @@ C       1.2 calcul of intermediate field with an upstream advection scheme
 C           and mass fluxes calculated above
 C       calcul of tracer flux in the i and j direction
 
-!$omp   parallel default(none) private(jk,jj,ji,mytid,A,B,junk)
-!$omp&      shared(jpk,jpj,jpi,zkx,zky,zbb,zaa,zcc,jarr1,dimen_jarr1,jn,zkz,trn,jpjm1,jpim1)
+!!!$omp   parallel default(none) private(jk,jj,ji,mytid,A,B,junk)
+!!!$omp&      shared(jpk,jpj,jpi,zkx,zky,zbb,zaa,zcc,jarr1,dimen_jarr1,jn,zkz,trn,jpjm1,jpim1)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #else
         PACK_LOOP4: DO jp=1,ntids
@@ -437,8 +437,8 @@ C
 
       end if
 
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP4
       mytid=0
@@ -484,11 +484,11 @@ C 2. calcul of after field using an upstream advection scheme
 C -----------------------------------------------------------
 
 
-!$omp   parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
-!$omp&      shared(zkx,zky,zkz,zti,jpim1,jpjm1,trn,zdt,jn,jpkm1,zbtr_arr,e1t,e2t,ztj,jarr3,ncor,dimen_jarr3,
-!$omp&             jarr_adv_flx,Fsize,diaflx)
+!!!$omp   parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
+!!!$omp&      shared(zkx,zky,zkz,zti,jpim1,jpjm1,trn,zdt,jn,jpkm1,zbtr_arr,e1t,e2t,ztj,jarr3,ncor,dimen_jarr3,
+!!!$omp&             jarr_adv_flx,Fsize,diaflx)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #else
         PACK_LOOP5: DO jp=1,ntids
@@ -522,8 +522,8 @@ C -----------------------------------------------------------
             END DO
       END IF
 
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP5
       mytid=0
@@ -536,10 +536,10 @@ C 2.1 start of antidiffusive correction loop
 C 2.2 calcul of intermediary field zti
 
 
-!$omp     parallel default(none) private(mytid,A,B,ji,jj,jk)
-!$omp&       shared(jt,jn,ncor,jpkm1,jpjm1,jpim1,zti,ztj,trn,zdt,zbuf)
+!!!$omp     parallel default(none) private(mytid,A,B,ji,jj,jk)
+!!!$omp&       shared(jt,jn,ncor,jpkm1,jpjm1,jpim1,zti,ztj,trn,zdt,zbuf)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
           mytid = omp_get_thread_num()  ! take the thread ID
 #else
         PACK_LOOP6: DO jp=1,ntids
@@ -585,8 +585,8 @@ C 2.2 calcul of intermediary field zti
 
       END IF
 
-!$omp     end parallel
-#ifdef __OPENMP
+!!!$omp     end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP6
       mytid=0
@@ -627,11 +627,11 @@ C   ... T-point, 3D array, full local array zti is initialised
 
 C 2.3 calcul of the antidiffusive flux
 
-!$omp     parallel default(none) private(mytid,A,junk, junki, junkj, junkk, ji,jj,jk)
-!$omp&       shared(jn,jpkm1,jpjm1,jpim1,zti,ztj,zy,zx,zz,jarr2,big_fact_zbb,
-!$omp&              big_fact_zaa,big_fact_zcc,dimen_jarr2,rtrn,rsc)
+!!!$omp     parallel default(none) private(mytid,A,junk, junki, junkj, junkk, ji,jj,jk)
+!!!$omp&       shared(jn,jpkm1,jpjm1,jpim1,zti,ztj,zy,zx,zz,jarr2,big_fact_zbb,
+!!!$omp&              big_fact_zaa,big_fact_zcc,dimen_jarr2,rtrn,rsc)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
           mytid = omp_get_thread_num()  ! take the thread ID
 #else
         PACK_LOOP7: DO jp=1,ntids
@@ -690,8 +690,8 @@ C 2.3 calcul of the antidiffusive flux
 
           END IF
 
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP7
       mytid=0
@@ -734,10 +734,10 @@ C   ... T-point, 3D array, full local array z[xyz] are initialised
 
 C 2.4 reinitialization
 
-!$omp     parallel default(none) private(mytid,A,junk,jk,jj,ji)
-!$omp&      shared(zkx,zky,zkz,zz,zx,zy,zti,jpjm1,jpim1,dimen_jarr1,jarr1,jpi,jpk,jpj,jn)
+!!!$omp     parallel default(none) private(mytid,A,junk,jk,jj,ji)
+!!!$omp&      shared(zkx,zky,zkz,zz,zx,zy,zti,jpjm1,jpim1,dimen_jarr1,jarr1,jpi,jpk,jpj,jn)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
           mytid = omp_get_thread_num()  ! take the thread ID
 #else
         PACK_LOOP8: DO jp=1,ntids
@@ -784,8 +784,8 @@ C                advection by antidiffusive mass fluxes and an upstream scheme
 
       END IF
 
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP8
       mytid=0
@@ -815,11 +815,11 @@ C   ... T-point, 3D array, full local array zk[xy] are initialised
       END DO
 #endif
 
-!$omp    parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
-!$omp&      shared(zkx,zky,zkz,zbtr_arr,e1t,e2t,ztj,dimen_jarr3,jarr3,ncor,jn,
-!$omp&             jarr_adv_flx,Fsize,diaflx)
+!!!$omp    parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
+!!!$omp&      shared(zkx,zky,zkz,zbtr_arr,e1t,e2t,ztj,dimen_jarr3,jarr3,ncor,jn,
+!!!$omp&             jarr_adv_flx,Fsize,diaflx)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #else
         PACK_LOOP9: DO jp=1,ntids
@@ -877,8 +877,8 @@ C        2.6. calcul of after field using an upstream advection scheme
 
       END IF
 
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP9
       mytid=0
@@ -887,9 +887,9 @@ C        2.6. calcul of after field using an upstream advection scheme
 
 
 C       3. trend due to horizontal and vertical advection of tracer jn
-!$omp   parallel default(none) private(mytid,A,B,ji,jj,jk,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
+!!!$omp   parallel default(none) private(mytid,A,B,ji,jj,jk,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #else
         PACK_LOOP10: DO jp=1,ntids
@@ -922,8 +922,8 @@ C       3. trend due to horizontal and vertical advection of tracer jn
            endif
 
       END IF
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP10
       mytid=0

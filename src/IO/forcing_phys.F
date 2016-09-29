@@ -136,7 +136,7 @@
 ! omp variables
             INTEGER :: mytid, ntids
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
             INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
             EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -144,7 +144,7 @@
       character(LEN=30) nomefile
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -161,8 +161,8 @@
       call readnc_slice_float(nomefile,'vozocrtx',buf);
 
       DO jk=1,jpk,ntids!udta(:,:,:,2) = buf*umask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,udta,umask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,udta,umask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -172,14 +172,14 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
       call readnc_slice_float(nomefile,'e3u',buf);
 
       DO jk=1,jpk,ntids
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3udta,umask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3udta,umask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -189,7 +189,7 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
 
@@ -200,8 +200,8 @@
       call readnc_slice_float(nomefile,'vomecrty',buf);
 
       DO jk=1,jpk,ntids!vdta(:,:,:,2) = buf*vmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,vdta,vmask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,vdta,vmask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -211,14 +211,14 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
       call readnc_slice_float(nomefile,'e3v',buf);
 
       DO jk=1,jpk,ntids
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3vdta,vmask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3vdta,vmask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -228,7 +228,7 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
 
@@ -240,8 +240,8 @@
 
       call readnc_slice_float(nomefile,'vovecrtz',buf);
       DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf,wdta)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf,wdta)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -251,14 +251,14 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
 
       call readnc_slice_float(nomefile,'votkeavt',buf);
       DO jk=1,jpk,ntids!avtdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,avtdta,tmask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -268,15 +268,15 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
       call readnc_slice_float(nomefile,'e3w',buf);
       DO jk=1,jpk,ntids
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3wdta,tmask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3wdta,tmask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -286,7 +286,7 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
 
@@ -294,8 +294,8 @@
       nomefile = 'FORCINGS/T'//datestring//'.nc'
       call readnc_slice_float(nomefile,'votemper',buf);
       DO jk=1,jpk,ntids!tdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,tdta,tmask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,tdta,tmask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -305,13 +305,13 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
       call readnc_slice_float(nomefile,'vosaline',buf);
       DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,sdta,tmask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,sdta,tmask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -321,13 +321,13 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
       call readnc_slice_float(nomefile,'e3t',buf);
       DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3tdta,tmask,buf)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3tdta,tmask,buf)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
@@ -337,7 +337,7 @@
             ENDDO
             ENDDO
          ENDIF
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
 
@@ -429,13 +429,13 @@
 
       INTEGER :: mytid, ntids! omp variables
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 
@@ -447,10 +447,10 @@
       Umzweigh  = 1.0 - zweigh
 
           DO jk=1,jpk, ntids
-!$omp parallel default(none) private(mytid,jj,ji,uk)
-!$omp&                       shared(jpi,jpj,jpk,jk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
-!$omp&                       zweigh,Umzweigh,tmask,umask,vmask,e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta,e3t_back)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,jj,ji,uk)
+!!!$omp&                       shared(jpi,jpj,jpk,jk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
+!!!$omp&                       zweigh,Umzweigh,tmask,umask,vmask,e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta,e3t_back)
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
         if (mytid+jk.le.jpk) then
@@ -485,14 +485,14 @@
               END DO
             END DO
       endif
-!$omp end parallel
+!!!$omp end parallel
           END DO
 
           DO jj=1,jpj,ntids
-!$omp parallel default(none) private(mytid,jk,ji,uj)
-!$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,
-!$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,jk,ji,uj)
+!!!$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,
+!!!$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
@@ -516,7 +516,7 @@
             END DO
 
         endif
-!$omp end parallel
+!!!$omp end parallel
        END DO
 
 
@@ -535,13 +535,13 @@
          INTEGER ji,jj,jk,jdepth
          INTEGER :: mytid, ntids! omp variables
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 
@@ -551,9 +551,9 @@
 #endif
 
           DO jk=1,jpk,ntids
-!$omp parallel default(None) private(mytid,ji,jj,jdepth) shared(jpi,jpj,jpk,jk,udta,vdta,wdta,avtdta,tdta,sdta)
-!$omp&           shared(e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta)
-#ifdef __OPENMP
+!!!$omp parallel default(None) private(mytid,ji,jj,jdepth) shared(jpi,jpj,jpk,jk,udta,vdta,wdta,avtdta,tdta,sdta)
+!!!$omp&           shared(e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta)
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          jdepth=jk+mytid
@@ -575,13 +575,13 @@
               END DO
             END DO
           ENDIF
-!$omp end parallel
+!!!$omp end parallel
 
           END DO
 
           DO jk=1,jpflx,ntids
-!$omp parallel default(None) private(mytid,ji,jj) shared(jk,jpi,jpj,jpflx,flxdta)
-#ifdef __OPENMP
+!!!$omp parallel default(None) private(mytid,ji,jj) shared(jk,jpi,jpj,jpflx,flxdta)
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
            if (jk+mytid.le.jpflx) then
@@ -591,7 +591,7 @@
               END DO
             END DO
            endif
-!$omp end parallel
+!!!$omp end parallel
           END DO
 
 

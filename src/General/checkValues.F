@@ -14,12 +14,12 @@
       INTEGER :: mytid, ntids
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -35,10 +35,10 @@
 
 
       DO jn=1, jptra, ntids
-!$omp parallel default(none) private(mytid, ji,jj,jk,varname,maxV)
-!$omp&         shared(jn, jpi, jpj, jpk, tra, rank, tmask,ctrcnm,STR,ctrmax,isCheckLOG)
+!!!$omp parallel default(none) private(mytid, ji,jj,jk,varname,maxV)
+!!!$omp&         shared(jn, jpi, jpj, jpk, tra, rank, tmask,ctrcnm,STR,ctrmax,isCheckLOG)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
@@ -60,7 +60,7 @@
          ENDDO
       END IF
 
-!$omp end parallel
+!!!$omp end parallel
       ENDDO
 
 320   FORMAT (A,I3, I3, I3, A, I3, A,A)

@@ -72,7 +72,7 @@ CC ==================
 ! omp variables
       INTEGER :: mytid, ntids
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -91,7 +91,7 @@ CC ===================
 
 
       trczdfparttime = MPI_WTIME() ! Cronometer start
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -132,13 +132,13 @@ CC ===================
 C passive tracer slab
 C ===================
 
-!$omp    parallel do default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij,jn)
-!$omp&                           shared(dimen_jvzdf,jarr_zdf,ndttrc,rdt,jpk,jpkm1,avt,zwi,
-!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e1t,e2t,e3t,e3w,jarr_zdf_flx,Fsize,
-!$omp&                                   diaflx)
+!!!$omp    parallel do default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij,jn)
+!!!$omp&                           shared(dimen_jvzdf,jarr_zdf,ndttrc,rdt,jpk,jpkm1,avt,zwi,
+!!!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e1t,e2t,e3t,e3w,jarr_zdf_flx,Fsize,
+!!!$omp&                                   diaflx)
       TRACER_LOOP: DO  jn = 1, jptra
 
-!$         mytid = omp_get_thread_num()  ! take the thread ID
+!!!$         mytid = omp_get_thread_num()  ! take the thread ID
 
 !      if( mytid + jn <= jptra ) then
         ztavg = 0.e0
@@ -281,7 +281,7 @@ C                  it will not be done in trcnxt)
 !      end if
 
        END DO TRACER_LOOP
-!$omp    end parallel do
+!!!$omp    end parallel do
 
 
 

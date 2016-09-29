@@ -67,7 +67,7 @@ CC ==================
 ! omp variables
       INTEGER :: mytid, ntids
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -80,7 +80,7 @@ CC ===================
 
       d2s=1./3600./24.  ! speed from (m/day) to  (m/s)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -123,16 +123,16 @@ C vertical slab
 C =============
 C
 
-!$omp    parallel do default(none) private(jv,ji,jj,jk,js,mytid,jf,bottom)
-!$omp&                           shared(dimen_jvsed,jarr_sed,jpk, 
-!$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
-!$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
-!$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx,
-!$omp&                                  mbathy,bottom_flux)
+!!!$omp    parallel do default(none) private(jv,ji,jj,jk,js,mytid,jf,bottom)
+!!!$omp&                           shared(dimen_jvsed,jarr_sed,jpk, 
+!!!$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
+!!!$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
+!!!$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx,
+!!!$omp&                                  mbathy,bottom_flux)
 
       MAIN_LOOP: DO jv=1,dimen_jvsed
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 c      if( mytid + jv <=  dimen_jvsed) then
@@ -218,7 +218,7 @@ c        ENDIF
 
       END DO MAIN_LOOP
 
-!$omp    end parallel do
+!!!$omp    end parallel do
 
 
 #    else

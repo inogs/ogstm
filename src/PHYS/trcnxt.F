@@ -60,7 +60,7 @@ CC ==================
       INTEGER :: mytid, ntids
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -68,7 +68,7 @@ CC ==================
       INTEGER ji,jj,jk,jn,jp
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -111,10 +111,10 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 #endif
 
 
-!$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,e3t,e3t_back) 
+!!!$omp   parallel default(none) private(mytid,ji,jj,jk)
+!!!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,e3t,e3t_back) 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #else
       PACK_LOOP1: DO jp=1,ntids
@@ -137,8 +137,8 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
         END DO
 
       END IF
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP1
       mytid =0

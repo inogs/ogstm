@@ -15,7 +15,7 @@
        public
 
       REAL(8), allocatable :: bfm_trn(:), bfm_tra(:)
-!$omp  threadprivate(bfm_trn,bfm_tra)
+!!!$omp  threadprivate(bfm_trn,bfm_tra)
       REAL(8), allocatable :: surf_mask(:)
       REAL(8), allocatable :: sediPI(:,:,:,:)
       REAL(8), allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
@@ -35,10 +35,10 @@ CC----------------------------------------------------------------------
        aux_mem = get_mem(err)
 #endif
 
-!$omp parallel default(none)
+!!!$omp parallel default(none)
        allocate(bfm_trn(jptra))        ; bfm_trn   = huge(bfm_trn(1))
        allocate(bfm_tra(jptra))        ; bfm_tra   = huge(bfm_tra(1))
-!$omp end parallel
+!!!$omp end parallel
        allocate(surf_mask(jpk))        ; surf_mask = huge(surf_mask(1))
        allocate(co2(jpi,jpj))          ; co2       = huge(co2(1,1))
        allocate(co2_IO(jpi,jpj,2))     ; co2_IO    = huge(co2_IO(1,1,1))

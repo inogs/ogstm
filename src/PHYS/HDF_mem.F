@@ -25,7 +25,7 @@ CC----------------------------------------------------------------------
 
       subroutine myalloc_HDF()
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER :: ntids, omp_get_max_threads
       EXTERNAL :: omp_get_max_threads
 #else
@@ -38,7 +38,7 @@ CC----------------------------------------------------------------------
        aux_mem = get_mem(err)
 #endif
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
 #else
       ntids = mpi_pack_size

@@ -49,7 +49,7 @@ C         -------------
 C         Enroll in MPI
 C         -------------
 C
-      CALL mpi_init(ierr)
+
       CALL mpi_comm_rank(mpi_comm_world,rank,ierr)
       CALL mpi_comm_size(mpi_comm_world,mpi_size_comm,ierr)
 
@@ -165,7 +165,7 @@ C
 ! omp variables
       INTEGER :: mytid, ntids!, itid
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -183,7 +183,7 @@ C ...
           zsgn =  1.
       ENDIF
 C OPENMP settings
-#ifdef __OPENMP
+#ifdef __OPENMP11
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -196,9 +196,9 @@ C      trcadvparttime = MPI_WTIME()
 
 
 
-!$omp   parallel default(none) private(jn,jk,jj,ji,mytid,iihom,ijhom)
-!$omp&      shared(packsize,nbondi,nperio,jpk,jpj,jpi,ptab,jpim1,ktype,nlci,jpreci,nlcj,jprecj)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,jj,ji,mytid,iihom,ijhom)
+!!!!!$omp&      shared(packsize,nbondi,nperio,jpk,jpj,jpi,ptab,jpim1,ktype,nlci,jpreci,nlcj,jprecj)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -264,9 +264,9 @@ C
       ENDIF
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP1
 #endif
@@ -277,9 +277,9 @@ C ------------------------------------
 C
 C 2.1 Read Dirichlet lateral conditions
 C
-!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
-!$omp&      shared(packsize,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
+!!!!!$omp&      shared(packsize,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -298,9 +298,9 @@ C
             END DO
           END DO
       ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP2
 #endif
@@ -337,9 +337,9 @@ C
 C 2.3 Write Dirichlet lateral conditions
 C
 C      trcadvparttime = MPI_WTIME()
-!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
-!$omp&      shared(packsize,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
+!!!!!$omp&      shared(packsize,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -367,9 +367,9 @@ C
             END DO
           END DO
       ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP3
 #endif
@@ -385,9 +385,9 @@ C
 C 3.1 Read Dirichlet lateral conditions
 C
 C        trcadvparttime = MPI_WTIME()
-!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
-!$omp&      shared(packsize,nbondj,nlcj,nrecj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
+!!!!!$omp&      shared(packsize,nbondj,nlcj,nrecj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -408,9 +408,9 @@ C
           END DO
       ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP4
 #endif
@@ -447,9 +447,9 @@ C 3.3 Write Dirichlet lateral conditions
 C
 C        trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
-!$omp&      shared(packsize,nbondj,nlcj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
+!!!!!$omp&      shared(packsize,nbondj,nlcj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -477,9 +477,9 @@ C
           END DO
       ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP5
 #endif
@@ -493,9 +493,9 @@ C 4.1 treatment without exchange (jpni odd)
 C
 C      trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
-!$omp&      shared(packsize,npolj,jpiglo,nimpp,ktype,jpk,nlci,zsgn,ptab,nlcj)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
+!!!!!$omp&      shared(packsize,npolj,jpiglo,nimpp,ktype,jpk,nlci,zsgn,ptab,nlcj)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -545,9 +545,9 @@ C      trcadvparttime = MPI_WTIME()
           ENDIF
       ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP6
 #endif
@@ -558,9 +558,9 @@ C
 C ... sign ans sort are taken into account in the sender processor
 C
 
-!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
-!$omp&      shared(packsize,npolj,jpiglo,nimpp,nimppt,nono,ktype,jpk,jpi,t3p1_my1,t3p2_my1,zsgn,ptab,nlcj)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
+!!!!!$omp&      shared(packsize,npolj,jpiglo,nimpp,nimppt,nono,ktype,jpk,jpi,t3p1_my1,t3p2_my1,zsgn,ptab,nlcj)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -624,9 +624,9 @@ C
           ENDIF
         ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP7
 #endif
@@ -655,9 +655,9 @@ C
 C 4.3 Write north fold conditions
 C
 
-!$omp   parallel default(none) private(jn,jk,ji,mytid)
-!$omp&      shared(packsize,npolj,ktype,jpk,nlci,ptab,t3p1_my1,nimpp,nlcj,t3p2_my1,jpjglo)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,mytid)
+!!!!!$omp&      shared(packsize,npolj,ktype,jpk,nlci,ptab,t3p1_my1,nimpp,nlcj,t3p2_my1,jpjglo)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -707,9 +707,9 @@ C
               END DO
           ENDIF
       ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP8
 #endif
@@ -720,9 +720,9 @@ C 5. East and west directions exchange
 C ------------------------------------
 C
 
-!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
-!$omp&      shared(packsize,npolj,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
+!!!!!$omp&      shared(packsize,npolj,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -746,9 +746,9 @@ C Check the following
               END DO
           ENDIF
          ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP9
 #endif
@@ -788,9 +788,9 @@ C
 C 5.3 Write Dirichlet lateral conditions
 C
 
-!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
-!$omp&      shared(packsize,npolj,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
+!!!!!$omp&      shared(packsize,npolj,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -820,9 +820,9 @@ C
               END DO
           ENDIF
       ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP10
 #endif
@@ -1558,7 +1558,7 @@ CC ==================
 
       CALL mppsync
 
-      CALL mpi_finalize(info)
+
 
 #endif
 

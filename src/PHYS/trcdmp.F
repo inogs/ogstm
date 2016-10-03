@@ -124,14 +124,16 @@
 
       IF( mytid + jn <= jn_atm ) THEN
           tra_idx=tra_matrix_atm(jn+mytid)
+        DO jj=1,jpj
+          DO ji=1,jpi
           ! DO jv=1, Asize
           !
           !    ji = atm_ridxt(2,jv)
           !    jj = atm_ridxt(3,jv)
           !    jk = atm_ridxt(4,jv)
-!!!!           tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + atm(ji,jj,jn+mytid)
-        !  ENDDO
-
+        tra(ji,jj,1,tra_idx) = tra(ji,jj,1,tra_idx) + atm(ji,jj,jn+mytid)
+         ENDDO
+         ENDDO
 
       ENDIF
 !!!$omp end parallel

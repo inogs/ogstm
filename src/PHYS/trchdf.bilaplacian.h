@@ -52,7 +52,7 @@ CC ==================
       INTEGER ji,jj,jk,jn,jv,jf,mytid,ntids,pack_size,jp
       INTEGER myji,myjj
       INTEGER locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -62,7 +62,7 @@ CC ===================
 
        trcbilaphdfparttime = MPI_WTIME()
 CCC OpenMP
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -115,7 +115,7 @@ C ----------------------------------
              DO jj = 1, jpjm1
                DO ji = 1, jpim1
 C   ... z-coordinates, no vertical scale factors
-                  zbtr(ji,jj) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk) )
+                  zbtr(ji,jj,jk) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk) )
                   zeeu(ji,jj,jk) = e2u(ji,jj)*e3u(ji,jj,jk) / e1u(ji,jj) * umask(ji,jj,jk)
                   zeev(ji,jj,jk) = e1v(ji,jj)*e3v(ji,jj,jk) / e2v(ji,jj) * vmask(ji,jj,jk)
                END DO
@@ -181,10 +181,10 @@ C 1. Laplacian
 C ------------
 
 C ... First derivative (gradient)
-!$omp  parallel default(none) private(mytid,jv,jk,jj,ji)
-!$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
-!$omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
-#ifdef __OPENMP
+!!!$omp  parallel default(none) private(mytid,jv,jk,jj,ji)
+!!!$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
+!!!$omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
+#ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
 #else
       PACK_LOOP1: DO jp=1,ntids
@@ -215,15 +215,15 @@ C ... Second derivative (divergence)
              jk = jarr_hdf(3,jv,2)
 
              zlt(ji,jj,jk,mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
-     $             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj)
+     $             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
 C ... Multiply by the eddy diffusivity coefficient
              zlt(ji,jj,jk,mytid+1) = trcrat * ahtt(jk) * zlt(ji,jj,jk,mytid+1)
 
           END DO
 
        ENDIF
-!$omp  end parallel
-#ifdef __OPENMP
+!!!$omp  end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP1
       mytid =0
@@ -261,10 +261,10 @@ C 2. Bilaplacian
 C --------------
 
 C ... third derivative (gradient)
-!$omp  parallel default(none) private(mytid,jv,jk,jj,ji,jf)
-!$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,zlt,tmask,ztv,zeev,
-!$omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
-#ifdef __OPENMP
+!!!$omp  parallel default(none) private(mytid,jv,jk,jj,ji,jf)
+!!!$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,zlt,tmask,ztv,zeev,
+!!!$omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
+#ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
 #else
       PACK_LOOP2: DO jp=1,ntids
@@ -299,7 +299,7 @@ C ... fourth derivative (divergence) and add to the general tracer trend
 
 C   ... horizontal diffusive trends
              zta(mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
-     $            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj)
+     $            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
 C   ... add it to the general tracer trends
               tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid) + zta(mytid+1)
 
@@ -312,8 +312,8 @@ C   ... add it to the general tracer trends
          END DO
 
       ENDIF
-!$omp  end parallel
-#ifdef __OPENMP
+!!!$omp  end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP2
       mytid =0

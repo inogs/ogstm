@@ -98,7 +98,7 @@
           endif
 
 
-          do idrank = 1, size-1
+          do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
               call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
               call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
@@ -170,7 +170,7 @@
           call MPI_SEND(nlej , 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
           call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
           call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
-          call MPI_SEND(bufftrn, jpi * jpj * jpk,mpi_real8  , 0, 9, mpi_comm_world,ierr)
+          call MPI_SEND(bufftrn, jpi * jpj * jpk,MPI_DOUBLE_PRECISION, 0, 9, mpi_comm_world,ierr)
 
 
 
@@ -185,11 +185,11 @@
 
 
         if (IsBackup) then
-          CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO,ave_counter);
+          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter);
 
         else
           d2f3d = REAL(tottrnIO,4)
-          CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
+          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, d2f3d);
          endif
 
 
@@ -233,8 +233,3 @@
       END FUNCTION IS_TIME_TO_SAVE
 
       END SUBROUTINE trcdit
-
-
-
-
-

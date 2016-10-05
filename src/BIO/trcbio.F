@@ -54,7 +54,7 @@ CC ==================
 ! omp variables
             INTEGER :: mytid, ntids
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
             INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
             EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -70,7 +70,7 @@ C   | --------------|
 C
         BIOparttime = MPI_WTIME()
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -86,8 +86,8 @@ C
 
 ! ---------------- Fuori dai punti BFM
          DO jn=1,4,ntids
-!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(sediPI,jpi,jpj,jpk,jn)
-#ifdef __OPENMP
+!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(sediPI,jpi,jpj,jpk,jn)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
         IF (mytid+jn <= 4) then
@@ -100,12 +100,12 @@ C
             end do
         ENDIF
 
-!$omp end parallel
+!!$omp end parallel
          ENDDO
 
          DO jn=1, jptra_dia, ntids
-!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_DIA,jpi,jpj,jpk,jn)
-#ifdef __OPENMP
+!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_DIA,jpi,jpj,jpk,jn)
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
         IF (mytid+jn <= jptra_dia) then
@@ -117,29 +117,31 @@ C
             end do
             end do
         ENDIF
-!$omp end parallel
+!!$omp end parallel
          ENDDO
 
-      tra_DIA_2d=0.
+      sediPI     = 0.
+      tra_DIA    = 0.
+      tra_DIA_2d = 0.
 
-      MAIN_LOOP: DO  jb = 1, NBFMPOINTS, ntids
 
 
-!$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
-!$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
-!$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
+! $omp   parallel do default(none)  private(jb,ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
+! $omp&      shared(NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
+! $omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
+! $omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
 
-#ifdef __OPENMP
+      MAIN_LOOP: DO  jb = 1, NBFMPOINTS
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
-                 IF( mytid + jb <= NBFMPOINTS ) THEN
+                 !IF( mytid + jb <= NBFMPOINTS ) THEN
 
 
-                 ji = BFMpoints(1, mytid+jb)
-                 jj = BFMpoints(2, mytid+jb)
-                 jk = BFMpoints(3, mytid+jb)
+                 ji = BFMpoints(1, jb)
+                 jj = BFMpoints(2, jb)
+                 jk = BFMpoints(3, jb)
 
 
                           sur = (jk .eq. 1)
@@ -165,7 +167,7 @@ C
 
                           call BFM0D_reset()
 
-                          call EcologyDynamics()
+                         call EcologyDynamics()
 
                           if (sur) then
                              call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2)
@@ -194,11 +196,11 @@ C
                           PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 
 
-             ENDIF
-
-!$omp end parallel
+             !ENDIF
 
                 END DO MAIN_LOOP
+
+! $omp end parallel do
 
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime

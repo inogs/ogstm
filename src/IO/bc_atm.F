@@ -95,10 +95,12 @@
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 !         local
-          character(LEN=7)  nomevar
-          character(LEN=27) nomefile
-          INTEGER(4) jn,jv
+          character(LEN=7) :: nomevar
+          character(LEN=27) :: nomefile
+          INTEGER(4) jn,jv,i,j
+          real(8),allocatable,dimension(:,:) :: M1
 
+          allocate(M1(jpi,jpj))
           nomevar= '1234567'
           nomefile='BC/ATM_yyyy0107-00:00:00.nc'
 
@@ -108,21 +110,24 @@
          nomefile(1:27)='BC/ATM_'//datestring//'.nc'
          if(lwp) write(*,'(A,I4,A,A)') "LOAD_ATM --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
 
-
-
-
-
           DO jn = 1, jn_atm
-
+              M1 = 0
               nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
-              CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
-              DO jv=1,Asize
-                 atm_dtatrc(jv,2,jn) = atm_aux(atm_ridxt(1,jv))
+              print *,"c  ",nomevar,"\n"
+              call readnc_slice_float_2d(nomefile,nomevar,M1);
+              print *,nomevar
+
+            !CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
+            print *,jpi,jpj,"2",jn_atm, allocated(atm_dtatrc),allocated(M1)
+            DO i=1,jpi
+              DO j =1,jpj
+                 atm_dtatrc(i,j,2,jn) = M1(i,j)
               ENDDO
+            ENDDO
           ENDDO
 
-
+          !call exit
       END SUBROUTINE LOAD_ATM
 
 ! ****************************************************
@@ -134,12 +139,14 @@
 
          REAL(8), INTENT(IN) :: zweigh
 !         local
-         INTEGER jn, jv
+         INTEGER jn, jv,i,j
 
          DO jn=1, jn_atm
-             DO jv=1, Asize
-                 atm(jv,jn) = (1. - zweigh) * atm_dtatrc(jv,1,jn) + zweigh * atm_dtatrc(jv,2,jn)
+           DO i=1,jpi
+             DO j =1,jpj
+                 atm(i,j,jn) = (1. - zweigh) * atm_dtatrc(i,j,1,jn) + zweigh * atm_dtatrc(i,j,2,jn)
              ENDDO
+           ENDDO
          ENDDO
 
 
@@ -153,12 +160,14 @@
           IMPLICIT NONE
 
 !         local
-          INTEGER jn, jv
+          INTEGER jn, jv,i,j
 
           DO jn=1, jn_atm
-              DO jv=1, Asize
-                  atm_dtatrc(jv,1,jn)=atm_dtatrc(jv,2,jn)
+            DO i=1,jpi
+              DO j =1,jpj
+                  atm_dtatrc(i,j,1,jn)=atm_dtatrc(i,j,2,jn)
               ENDDO
+            ENDDO
           ENDDO
 
       END SUBROUTINE swap_ATM

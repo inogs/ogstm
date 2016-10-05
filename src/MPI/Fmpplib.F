@@ -49,9 +49,9 @@ C         -------------
 C         Enroll in MPI
 C         -------------
 C
-      CALL mpi_init(ierr)
+
       CALL mpi_comm_rank(mpi_comm_world,rank,ierr)
-      CALL mpi_comm_size(mpi_comm_world,size,ierr)
+      CALL mpi_comm_size(mpi_comm_world,mpi_size_comm,ierr)
 
       mynode=rank
       RETURN
@@ -101,15 +101,15 @@ CC                    nlci   : first dimension of the local subdomain
 CC                    nlcj   : second dimension of the local subdomain
 CC                    nbondi : mark for "east-west local boundary"
 CC                    nbondj : mark for "north-south local boundary"
-CC                    noea   : number for local neighboring processors 
+CC                    noea   : number for local neighboring processors
 CC                    nowe   : number for local neighboring processors
 CC                    noso   : number for local neighboring processors
 CC                    nono   : number for local neighboring processors
 CC            /COMMPP/ : massively parallel processors
-CC                    t3ew() : message passing arrays east-west    
+CC                    t3ew() : message passing arrays east-west
 CC                    t3we() : message passing arrays west-east
 CC                    t3ns() : message passing arrays north-south
-CC                    t3sn() : message passing arrays south-north 
+CC                    t3sn() : message passing arrays south-north
 CC
 CC   Output :
 CC   ------
@@ -127,7 +127,7 @@ CC   External :
 CC   --------
 CC             mppsend,mpprecv
 CC       or    shmem_put barrier shmem_udcflush
-CC             
+CC
 CC
 CC   References :                 no
 CC   ----------
@@ -165,7 +165,7 @@ C
 ! omp variables
       INTEGER :: mytid, ntids!, itid
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -176,29 +176,29 @@ C 0. Initialization
 C -----------------
 C
 C Sign setting
-C ... 
+C ...
       IF (ksgn.EQ.0) THEN
           zsgn = -1.
       ELSE
           zsgn =  1.
       ENDIF
 C OPENMP settings
-#ifdef __OPENMP
+#ifdef __OPENMP11
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
       ntids = 1
       mytid = 0
 #endif
-    
+
 
 C      trcadvparttime = MPI_WTIME()
 
 
 
-!$omp   parallel default(none) private(jn,jk,jj,ji,mytid,iihom,ijhom)
-!$omp&      shared(packsize,nbondi,nperio,jpk,jpj,jpi,ptab,jpim1,ktype,nlci,jpreci,nlcj,jprecj)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,jj,ji,mytid,iihom,ijhom)
+!!!!!$omp&      shared(packsize,nbondi,nperio,jpk,jpj,jpi,ptab,jpim1,ktype,nlci,jpreci,nlcj,jprecj)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -239,8 +239,8 @@ C ... closed
                   END DO
               ENDIF
           ENDIF
-      ENDIF 
-C 
+      ENDIF
+C
 C North-South boundary conditions
 C
       IF( ktype .NE. 11 .and. ktype .NE. 14 ) THEN
@@ -262,24 +262,24 @@ C
               END DO
           ENDIF
       ENDIF
-      
 
-#ifdef __OPENMP
+
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP1
 #endif
-C 
-C 
+C
+C
 C 2. East and west directions exchange
 C ------------------------------------
 C
 C 2.1 Read Dirichlet lateral conditions
 C
-!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
-!$omp&      shared(packsize,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
+!!!!!$omp&      shared(packsize,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -298,9 +298,9 @@ C
             END DO
           END DO
       ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP2
 #endif
@@ -337,9 +337,9 @@ C
 C 2.3 Write Dirichlet lateral conditions
 C
 C      trcadvparttime = MPI_WTIME()
-!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
-!$omp&      shared(packsize,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
+!!!!!$omp&      shared(packsize,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -367,9 +367,9 @@ C
             END DO
           END DO
       ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP3
 #endif
@@ -385,9 +385,9 @@ C
 C 3.1 Read Dirichlet lateral conditions
 C
 C        trcadvparttime = MPI_WTIME()
-!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
-!$omp&      shared(packsize,nbondj,nlcj,nrecj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
+!!!!!$omp&      shared(packsize,nbondj,nlcj,nrecj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -408,9 +408,9 @@ C
           END DO
       ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP4
 #endif
@@ -447,9 +447,9 @@ C 3.3 Write Dirichlet lateral conditions
 C
 C        trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
-!$omp&      shared(packsize,nbondj,nlcj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
+!!!!!$omp&      shared(packsize,nbondj,nlcj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -477,9 +477,9 @@ C
           END DO
       ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP5
 #endif
@@ -490,19 +490,19 @@ C 4. north fold treatment
 C -----------------------
 C
 C 4.1 treatment without exchange (jpni odd)
-C   
+C
 C      trcadvparttime = MPI_WTIME()
 
-!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
-!$omp&      shared(packsize,npolj,jpiglo,nimpp,ktype,jpk,nlci,zsgn,ptab,nlcj)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
+!!!!!$omp&      shared(packsize,npolj,jpiglo,nimpp,ktype,jpk,nlci,zsgn,ptab,nlcj)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
 #else
       PACK_LOOP6: DO jn=1,packsize
 #endif
-      IF (npolj.eq.4) THEN 
+      IF (npolj.eq.4) THEN
           iloc=jpiglo-2*(nimpp-1)
           IF ( ktype.EQ.1 .OR. ktype.EQ.11 ) THEN
               DO jk = 1, jpk
@@ -514,13 +514,13 @@ C      trcadvparttime = MPI_WTIME()
                   ijt=iloc-ji+2
                   ptab(ji,nlcj-1,jk,jn+mytid) = zsgn * ptab(ijt,nlcj-1,jk,jn+mytid)
                 END DO
-              END DO 
+              END DO
           ELSEIF ( ktype.EQ.2 ) THEN
               DO jk = 1, jpk
                 DO ji = 1, nlci-1
                   iju=iloc-ji+1
                   ptab(ji,nlcj,jk,jn+mytid) = zsgn * ptab(iju,nlcj-2,jk,jn+mytid)
-                END DO 
+                END DO
                 DO ji = nlci/2, nlci-1
                   iju=iloc-ji+1
                   ptab(ji,nlcj-1,jk,jn+mytid) = zsgn * ptab(iju,nlcj-1,jk,jn+mytid)
@@ -532,7 +532,7 @@ C      trcadvparttime = MPI_WTIME()
                   ijt=iloc-ji+2
                   ptab(ji,nlcj-1,jk,jn+mytid) = zsgn * ptab(ijt,nlcj-2,jk,jn+mytid)
                   ptab(ji,nlcj  ,jk,jn+mytid) = zsgn * ptab(ijt,nlcj-3,jk,jn+mytid)
-                END DO 
+                END DO
               END DO
           ELSEIF ( ktype.EQ.4 .OR. ktype.EQ.14 ) THEN
               DO jk = 1, jpk
@@ -541,26 +541,26 @@ C      trcadvparttime = MPI_WTIME()
                   ptab(ji,nlcj-1,jk,jn+mytid) = ptab(iju,nlcj-2,jk,jn+mytid)
                   ptab(ji,nlcj  ,jk,jn+mytid) = ptab(iju,nlcj-3,jk,jn+mytid)
                 END DO
-              END DO 
+              END DO
           ENDIF
       ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP6
 #endif
 
 C
 C 4.1 treatment with exchange (jpni greater than 1)
-C 
+C
 C ... sign ans sort are taken into account in the sender processor
 C
 
-!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
-!$omp&      shared(packsize,npolj,jpiglo,nimpp,nimppt,nono,ktype,jpk,jpi,t3p1_my1,t3p2_my1,zsgn,ptab,nlcj)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,ijt,iju,mytid,iloc)
+!!!!!$omp&      shared(packsize,npolj,jpiglo,nimpp,nimppt,nono,ktype,jpk,jpi,t3p1_my1,t3p2_my1,zsgn,ptab,nlcj)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -607,7 +607,7 @@ C
                      t3p2_my1(ji,1,jk,jn+mytid,1) = zsgn * ptab(ijt+jpi,nlcj-3-1,jk,jn+mytid)
                   endif
                 END DO
-              END DO 
+              END DO
           ELSEIF ( ktype.EQ.4 .OR. ktype.EQ.14 ) THEN
               DO jk=1,jpk
                 DO ji = 1, jpi-1
@@ -620,13 +620,13 @@ C
                      t3p2_my1(ji,1,jk,jn+mytid,1) = ptab(iju+jpi,nlcj-3-1,jk,jn+mytid)
                   endif
                 END DO
-              END DO 
+              END DO
           ENDIF
         ENDIF
 
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP7
 #endif
@@ -655,9 +655,9 @@ C
 C 4.3 Write north fold conditions
 C
 
-!$omp   parallel default(none) private(jn,jk,ji,mytid)
-!$omp&      shared(packsize,npolj,ktype,jpk,nlci,ptab,t3p1_my1,nimpp,nlcj,t3p2_my1,jpjglo)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jk,ji,mytid)
+!!!!!$omp&      shared(packsize,npolj,ktype,jpk,nlci,ptab,t3p1_my1,nimpp,nlcj,t3p2_my1,jpjglo)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -670,14 +670,14 @@ C
                 DO ji = 2, nlci
                   ptab(ji,nlcj,jk,jn+mytid) = t3p1_my1(ji,1,jk,jn+mytid,2)
                 END DO
-              END DO 
+              END DO
               IF(nimpp+nlcj/2 .gt. jpjglo/2) THEN
                   DO jk = 1, jpk
                     DO ji = 2, nlci
                       ptab(ji,nlcj-1,jk,jn+mytid) = t3p2_my1(ji,1,jk,jn+mytid,2)
                     END DO
                   END DO
-              ENDIF  
+              ENDIF
           ELSEIF ( ktype.EQ.2 ) THEn
               DO jk = 1, jpk
                 DO ji = 1, nlci-1
@@ -696,7 +696,7 @@ C
                 DO ji = 2, nlci
                   ptab(ji,nlcj-1,jk,jn+mytid) = t3p1_my1(ji,1,jk,jn+mytid,2)
                   ptab(ji,nlcj  ,jk,jn+mytid) = t3p2_my1(ji,1,jk,jn+mytid,2)
-                END DO 
+                END DO
               END DO
           ELSEIF ( ktype .EQ.4 .or. ktype .EQ.14 ) THEN
               DO jk = 1, jpk
@@ -706,10 +706,10 @@ C
                 END DO
               END DO
           ENDIF
-      ENDIF 
-#ifdef __OPENMP
+      ENDIF
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP8
 #endif
@@ -720,9 +720,9 @@ C 5. East and west directions exchange
 C ------------------------------------
 C
 
-!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
-!$omp&      shared(packsize,npolj,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
+!!!!!$omp&      shared(packsize,npolj,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -746,9 +746,9 @@ C Check the following
               END DO
           ENDIF
          ENDIF
-#ifdef __OPENMP
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP9
 #endif
@@ -765,7 +765,7 @@ C
               CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs1)
               CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
               CALL mppwait(reqs1)
-              CALL mppwait(reqr1)             
+              CALL mppwait(reqr1)
           ELSE IF(nbondi.eq.0) THEN
               CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
               CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs2)
@@ -788,9 +788,9 @@ C
 C 5.3 Write Dirichlet lateral conditions
 C
 
-!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
-!$omp&      shared(packsize,npolj,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP
+!!!!!$omp   parallel default(none) private(jn,jl,jk,jj,mytid,iihom)
+!!!!!$omp&      shared(packsize,npolj,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
+#ifdef __OPENMP11
         mytid = omp_get_thread_num()  ! take the thread ID
         jn=1
         IF(mytid +1 <= packsize) THEN
@@ -819,10 +819,10 @@ C
                 END DO
               END DO
           ENDIF
-      ENDIF 
-#ifdef __OPENMP
+      ENDIF
+#ifdef __OPENMP11
       END IF
-!$omp    end parallel
+!!!!!$omp    end parallel
 #else
       END DO PACK_LOOP10
 #endif
@@ -858,7 +858,7 @@ CC   -----
 CC      argument
 CC              ptab            : variable array
 CC              ktype           : define the nature of the grid-point
-CC                                at which ptab is defined for 0 
+CC                                at which ptab is defined for 0
 CC                                initialization
 CC                                initialization
 CC                                = 1 ,  T- and W-points
@@ -878,15 +878,15 @@ CC                    nlci   : first dimension of the local subdomain
 CC                    nlcj   : second dimension of the local subdomain
 CC                    nbondi : mark for "east-west local boundary"
 CC                    nbondj : mark for "north-south local boundary"
-CC                    noea   : number for local neighboring processors 
+CC                    noea   : number for local neighboring processors
 CC                    nowe   : number for local neighboring processors
 CC                    noso   : number for local neighboring processors
 CC                    nono   : number for local neighboring processors
 CC            /COMMPP/ : massively parallel processors
-CC                    t2ew() : message passing arrays east-west    
+CC                    t2ew() : message passing arrays east-west
 CC                    t2we() : message passing arrays west-east
 CC                    t2ns() : message passing arrays north-south
-CC                    t2sn() : message passing arrays south-north 
+CC                    t2sn() : message passing arrays south-north
 CC
 CC   Output :
 CC   ------
@@ -943,7 +943,7 @@ C 0. Initialization
 C -----------------
 C
 C Sign setting
-C ... 
+C ...
       IF (ksgn.EQ.0) THEN
           zsgn = -1.
       ELSE
@@ -979,8 +979,8 @@ C ... closed
                   END DO
               ENDIF
           ENDIF
-      ENDIF 
-C 
+      ENDIF
+C
 C North-South boundary conditions
 C
       IF( ktype .NE. 11 .and. ktype .NE. 14 ) THEN
@@ -999,7 +999,7 @@ C
           ENDIF
       ENDIF
 C
-C 
+C
 C 2. East and west directions
 C ---------------------------
 C
@@ -1132,14 +1132,14 @@ C 4. north fold treatment
 C -----------------------
 C
 C 4.1 treatment without exchange (jpni odd)
-C   
-      IF (npolj.eq.4) THEN 
+C
+      IF (npolj.eq.4) THEN
           iloc=jpiglo-2*(nimpp-1)
           IF ( ktype.EQ.1 .OR. ktype.EQ.11 ) THEN
               DO ji = 2, nlci
                 ijt=iloc-ji+2
                 ptab(ji,nlcj) = zsgn * ptab(ijt,nlcj-2)
-              END DO 
+              END DO
               DO ji = nlci/2+1, nlci
                 ijt=iloc-ji+2
                 ptab(ji,nlcj-1) = zsgn * ptab(ijt,nlcj-1)
@@ -1164,7 +1164,7 @@ C
                 iju=iloc-ji+1
                 ptab(ji,nlcj-1) = ptab(iju,nlcj-2)
                 ptab(ji,nlcj  ) = ptab(iju,nlcj-3)
-              END DO 
+              END DO
           ENDIF
       ENDIF
 C
@@ -1247,16 +1247,16 @@ C
                   DO ji = 2, nlci
                     ptab(ji,nlcj-1) = t2p2(ji,1,2)
                   END DO
-              ENDIF  
+              ENDIF
           ELSEIF ( ktype.EQ.2 ) THEN
               DO ji = 1, nlci-1
                 ptab(ji,nlcj) = t2p1(ji,1,2)
-              END DO 
+              END DO
               IF(nimpp+nlcj/2 .gt. jpjglo/2) THEN
                   DO ji = 1, nlci-1
                     ptab(ji,nlcj-1) = t2p2(ji,1,2)
                   END DO
-              ENDIF  
+              ENDIF
           ELSEIF ( ktype .EQ.3 ) THEN
               DO ji = 2, nlci
                 ptab(ji,nlcj-1) = t2p1(ji,1,2)
@@ -1337,7 +1337,7 @@ C
                 END DO
               END DO
           ENDIF
-      ENDIF 
+      ENDIF
 #  else
 C
 C      No mpp computation
@@ -1421,9 +1421,9 @@ CCC     Receive messag passing array
 CC
 CC   Input :
 CC   -----
-CC      argument                
+CC      argument
 CC                   ktyp    -> Tag of the recevied message
-CC                   pmess   -> array of real(8)  
+CC                   pmess   -> array of real(8)
 CC                   kbytes  -> suze of the array pmess
 
 
@@ -1478,7 +1478,7 @@ CCC     Wait message passing isend/irecv
 CC
 CC   Input :
 CC   -----
-CC      argument                
+CC      argument
 C-----------------------------------------------------------------------
 
       USE myalloc
@@ -1494,10 +1494,10 @@ C-----------------------------------------------------------------------
 
 
 #ifdef key_mpp_mpi
-      call MPI_WAIT(req, istatus, ierr)  
+      call MPI_WAIT(req, istatus, ierr)
 #endif
       RETURN
-      END        
+      END
 
       SUBROUTINE mppsync()
 CCC---------------------------------------------------------------------
@@ -1558,7 +1558,7 @@ CC ==================
 
       CALL mppsync
 
-      CALL mpi_finalize(info)
+
 
 #endif
 

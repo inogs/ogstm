@@ -114,11 +114,12 @@ def create_bc_nc(test):
         outfile = test['Dir'].decode() + '/BC/ATM_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
-        ncOUT.createDimension('atm_idxt'    ,atm_idxt);
 
-        ncvar = ncOUT.createVariable('atm_idxt'     ,'i',('atm_idxt',)                   ); ncvar[:] = atm_index;
-        ncvar = ncOUT.createVariable('atm_N1p'      ,'d',('atm_idxt',)                   ); ncvar[:] = 3.75866672509673e-09;
-        ncvar = ncOUT.createVariable('atm_N3n'      ,'d',('atm_idxt',)                   ); ncvar[:] = 2.24183651189621e-07;
+        ncOUT.createDimension('lon'    ,jpi);
+        ncOUT.createDimension('lat'    ,jpj);        
+        ncvar = ncOUT.createVariable('atm_N1p'      ,'f',('lat','lon')                   ); ncvar[:] = 3.75866672509673e-09;
+        ncvar = ncOUT.createVariable('atm_N3n'      ,'f',('lat','lon')                   ); ncvar[:] = 2.24183651189621e-07;
+
         ncOUT.close()
 
 # Atmosphere CO2

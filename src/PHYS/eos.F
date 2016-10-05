@@ -99,14 +99,14 @@ CC ==================
 
       INTEGER :: mytid, ntids! omp variables
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
       density_partTime = MPI_WTIME()
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 
@@ -119,11 +119,11 @@ CC ==================
       DO jk = 1, jpkm1, ntids
 
         IF ( neos.EQ.0 ) THEN
-!$omp parallel default(none) private(mytid,jj,ji,
-!$omp&                 zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw,
-!$omp&                   zb, zd, zc, zaw, za, zb1, za1, zkw, zk0)
-!$omp&                   shared(jpi,jpj,jpk,jk,tn,sn,rau0,rhopn,rdn,rho,tmask,gdept)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,jj,ji,
+!!!$omp&                 zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw,
+!!!$omp&                   zb, zd, zc, zaw, za, zb1, za1, zkw, zk0)
+!!!$omp&                   shared(jpi,jpj,jpk,jk,tn,sn,rau0,rhopn,rdn,rho,tmask,gdept)
+#ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
 
@@ -179,7 +179,7 @@ C   ... masked in situ density
           END DO
         END DO
       endif
-!$omp end parallel
+!!!$omp end parallel
           ELSEIF( neos.EQ.1 ) THEN
 
 

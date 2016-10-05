@@ -45,7 +45,7 @@
       character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
       REAL(8) sec
       LOGICAL B, isFIRST
-
+      double precision :: timess,timesw
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
 !++++++++++++++++++++++++++++++c
@@ -61,7 +61,7 @@
       DO TAU = TimeStepStart, TimeStep__End
 
          stpparttime = MPI_WTIME()  ! stop cronomether
-
+         timess = MPI_WTIME()
          call tau2datestring(TAU, DATEstring)
          sec=datestring2sec(DATEstring)
 
@@ -112,6 +112,7 @@
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
 
+      timesw = MPI_WTIME()
 
       if (IsAnAveDump(DATEstring,1)) then
          call MIDDLEDATE(TauAVEfrom_1, TAU, datemean)
@@ -137,7 +138,7 @@
          if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
-
+      timesw = MPI_WTIME() - timesw
 
 
 
@@ -150,7 +151,10 @@
 
        stpparttime = MPI_WTIME() - stpparttime
        stptottime  = stptottime  + stpparttime
-
+       timess = MPI_WTIME() - timess
+       if (lwp) then
+       print *,"TIME STEP s =",timess,stptottime
+       endif
 ! OGSTM TEMPORIZATION
        IF (TAU.GT.TimeStepStart) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN

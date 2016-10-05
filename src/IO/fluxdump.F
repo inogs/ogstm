@@ -34,7 +34,7 @@
 !     flux.20021216-12:00:00.nc
           flux_file= 'flux.'//datemean//'.nc'
 
-          s = nf90_create(flux_file, NF90_CLOBBER, nc)
+          s = nf90_create(flux_file, or(nf90_clobber,NF90_HDF5), nc)
 
           s = nf90_put_att(nc, nf90_global, 'Time_Start'     , datefrom)
           s = nf90_put_att(nc, nf90_global, 'Time___End'     ,  dateend)
@@ -47,7 +47,8 @@
           s = nf90_def_var(nc,'index' ,   nf90_int, (/nid/),   IndID)
 
           DO jn=1,jptra
-             s = nf90_def_var(nc,ctrcnm(jn) ,   nf90_float, (/tid,nid/),   IDS(jn))
+             s = nf90_def_var(nc,ctrcnm(jn) ,   nf90_double, (/tid,nid/),   IDS(jn))
+!            s = nf90_def_var(nc,ctrcnm(jn) ,   nf90_float, (/tid,nid/),   IDS(jn))
           ENDDO
 
           s =nf90_enddef(nc)
@@ -79,7 +80,7 @@
           endif
 
 
-          do idrank = 1, size-1
+          do idrank = 1, mpi_size_comm-1
 
               call MPI_RECV(INDflxBuff    , FsizeMax,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr)
 
@@ -127,7 +128,7 @@
 
               endif
 
-              DO idrank = 1, size-1
+              DO idrank = 1, mpi_size_comm-1
 
                   call MPI_RECV(INDflxBuff    , FsizeMax,    mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
                   call MPI_RECV(diaflxBuff    , FsizeMax*7,  mpi_real8,   idrank, 3,mpi_comm_world, status, ierr)
@@ -152,8 +153,9 @@
       !************************ now, put var
 
           MflxDumpGlo = MflxDumpGlo * Realcounter ! we store average flux
-          MflxDumpGlo_FLOAT = real(MflxDumpGlo,4)
-          s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo_FLOAT)
+          s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo)
+!         MflxDumpGlo_FLOAT = real(MflxDumpGlo,4)
+!         s = nf90_put_var(nc,IDS(jn) ,  MflxDumpGlo_FLOAT)
 
           ENDDO ! loop on tracers
 

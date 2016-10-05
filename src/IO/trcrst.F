@@ -50,13 +50,12 @@
 
          filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))//'.nc'
          CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
-         CALL readnc_slice_double(filename, 'TRB'//trim(ctrcnm(jn)), trb(:,:,:,jn) )
 
 
 
 ! ********************   we put initial undef to 0
-          trb(:,:,:,jn) = trb(:,:,:,jn) * tmask;
           trn(:,:,:,jn) = trn(:,:,:,jn) * tmask;
+          trb = trn
 
 !         SECTION AVE backup
 !         rsttrn var is used instead of to define another one
@@ -197,6 +196,7 @@
           call readnc_slice_double(   bkpname,'vomecrty',  vnIO)
           call readnc_slice_double(   bkpname,'vovecrtz',  wnIO)
           call readnc_slice_double(   bkpname,'votkeavt', avtIO)
+          call readnc_slice_double(   bkpname,'e3t', e3tIO)
 
           call readnc_slice_double_2d(bkpname,'soshfldo', qsrIO)
           call readnc_slice_double_2d(bkpname,'sowindsp',vatmIO)
@@ -211,6 +211,7 @@
           vnIO      = 0.0
           wnIO      = 0.0
           avtIO     = 0.0
+          e3tIO     = 0.0
       endif
 
       if (lwp) write(*,*) 'trcrst avecounter_1 = ', ave_counter_1, ' avecounter_2 = ', ave_counter_2

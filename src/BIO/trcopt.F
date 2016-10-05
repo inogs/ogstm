@@ -20,13 +20,13 @@ CC ==================
       INTEGER :: ji,jj,jk
       INTEGER :: mytid, ntids! omp variables
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 
@@ -45,9 +45,9 @@ C vertical slab
 C ===============
 
       DO jj = 1,jpj,ntids
-!$omp parallel default(none) private(mytid,ji,jk)
-!$omp&                       shared(jj,jpi,jpj,jpk,xpar,conversion,kef,e3t,qsr)
-#ifdef __OPENMP
+!!!$omp parallel default(none) private(mytid,ji,jk)
+!!!$omp&                       shared(jj,jpi,jpj,jpk,xpar,conversion,kef,e3t,qsr)
+#ifdef __OPENMP1
          mytid  = omp_get_thread_num()  ! take the thread ID
 #endif
       if (mytid+jj.le.jpj) then
@@ -88,7 +88,7 @@ C
         END DO
 
       endif
-!$omp end parallel
+!!!$omp end parallel
       END DO
 
        trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop

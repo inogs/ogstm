@@ -7,7 +7,10 @@
 !
       write(*,*) "Starting ..."
 
+!$OMP PARALLEL
+!$OMP MASTER
       CALL ogstm()
+!$OMP END MASTER
+!$OMP END PARALLEL
 
-      STOP
-      END    
+      END PROGRAM OGSTM_MAIN

@@ -36,7 +36,7 @@
       CHARACTER(LEN=3), DIMENSION(7) :: var_nc
       CHARACTER(LEN=5) nomevar01
       LOGICAL B
-      
+
 ! -------------------
 ! To read only one meshmask.nc
 
@@ -101,7 +101,7 @@
       mbathy(:,:) = 0
       NWATERPOINTS=0
       do jj=1, jpj
-       do ii=1, jpi          
+       do ii=1, jpi
         do kk=1, jpk
          if (tmask(ii, jj, kk).NE.0.) then
             mbathy(ii,jj) = mbathy(ii,jj) +1
@@ -147,7 +147,7 @@
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
-         call readnc_slice_double('bounmask.nc',nomevar01,resto(:,:,:,jn));
+         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn));
 
       enddo
       ELSE
@@ -204,15 +204,15 @@
 
 ! ******************************************* Atmospherical inputs
       filename       = 'BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'
-      CALL readnc_int_1d(filename, 'atm_idxt',Asizeglo,atm_idxtglo)
-      Asize = COUNT_InSubDomain(Asizeglo,atm_idxtglo)
+      ! CALL readnc_int_1d(filename, 'atm_idxt',Asizeglo,atm_idxtglo)
+      ! Asize = COUNT_InSubDomain(Asizeglo,atm_idxtglo)
 
-      if (Asize.NE. 0) then
-         call alloc_DTATRC_local_atm
-         write(*,*) 'domrea->ATMRE_Indexing ATM iniziata, rank=', rank
-         B=ATMRe_Indexing()
-         write(*,*) 'domrea->ATMRE_Indexing ATM finita, rank=', rank
-      endif
+      ! if (Asize.NE. 0) then
+      call alloc_DTATRC_local_atm
+      !    write(*,*) 'domrea->ATMRE_Indexing ATM iniziata, rank=', rank
+      !    B=ATMRe_Indexing()
+      !    write(*,*) 'domrea->ATMRE_Indexing ATM finita, rank=', rank
+      ! endif
 
 
 
@@ -230,7 +230,11 @@
 
       if (Fsize.NE.0) then
          call alloc_DIA_local_flx
-         if (rank ==0) call alloc_DIA_GLOBAL_flx()
+      end if
+
+      if (rank ==0) call alloc_DIA_GLOBAL_flx()
+
+      if (Fsize.NE.0) then
          B=FLXRe_Indexing()
          write(*,*) 'domrea->FLXRE_Indexing finita, rank=', rank
 
@@ -341,34 +345,34 @@
 
 ! *************************************************************************
 
-          LOGICAL FUNCTION  ATMRE_Indexing()
-
-          IMPLICIT NONE
-
-          ! local
-          INTEGER ii,jj,kk,jv
-          INTEGER counter,junk
-
-
-          counter=0
-           do kk =1, jpk
-            do jj =1, jpj
-             do ii =1, jpi
-                junk = idxt(ii,jj,kk)
-                do jv =1, AsizeGLO
-                   if ( junk.EQ.atm_idxtglo(jv) )  then
-                      counter = counter + 1
-                      atm_ridxt(1,counter) = jv
-                      atm_ridxt(2,counter) = ii
-                      atm_ridxt(3,counter) = jj
-                      atm_ridxt(4,counter) = kk
-                   endif
-              enddo
-             enddo
-            enddo
-           enddo
-        ATMRE_Indexing =.true.
-      END FUNCTION ATMRE_Indexing
+      !     LOGICAL FUNCTION  ATMRE_Indexing()
+      !
+      !     IMPLICIT NONE
+      !
+      !     ! local
+      !     INTEGER ii,jj,kk,jv
+      !     INTEGER counter,junk
+      !
+      !
+      !     counter=0
+      !      do kk =1, jpk
+      !       do jj =1, jpj
+      !        do ii =1, jpi
+      !           junk = idxt(ii,jj,kk)
+      !           do jv =1, AsizeGLO
+      !              if ( junk.EQ.atm_idxtglo(jv) )  then
+      !                 counter = counter + 1
+      !                 atm_ridxt(1,counter) = jv
+      !                 atm_ridxt(2,counter) = ii
+      !                 atm_ridxt(3,counter) = jj
+      !                 atm_ridxt(4,counter) = kk
+      !              endif
+      !         enddo
+      !        enddo
+      !       enddo
+      !      enddo
+      !   ATMRE_Indexing =.true.
+      ! END FUNCTION ATMRE_Indexing
 
 ! *************************************************************************
       LOGICAL FUNCTION  FLXRE_Indexing()

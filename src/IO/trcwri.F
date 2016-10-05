@@ -90,7 +90,7 @@
 
 
 
-           do idrank = 1, size-1
+           do idrank = 1, mpi_size_comm-1
 
               call MPI_RECV(jpi_rec , 1,                  mpi_integer, idrank,  1,mpi_comm_world, status, ierr)
               call MPI_RECV(jpj_rec , 1,                  mpi_integer, idrank,  2,mpi_comm_world, status, ierr)
@@ -165,7 +165,7 @@
             varname=ctrcnm(jn)
             filename = 'RESTARTS/RST.'//datestring//'.'//varname//'.nc'
 
-        CALL write_restart(filename,julian)
+        CALL write_restart(filename,varname,julian)
 
         endif ! if rank = 0
       END DO ! DO jn=1,jptra

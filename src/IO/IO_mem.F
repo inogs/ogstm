@@ -34,6 +34,7 @@
       REAL(8), allocatable :: buffvn(:)
       REAL(8), allocatable :: buffwn(:)
       REAL(8), allocatable :: buffavt(:)
+      REAL(8), allocatable :: buffe3t(:)
       REAL(8), allocatable :: bufftma(:)
       REAL(8), allocatable :: bufftrIO(:)
       REAL(8), allocatable :: buffDIA(:)
@@ -50,7 +51,7 @@
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
 #endif
-
+       print *,"-IO MEM 53-",jpi_max," ",jpj_max," ",jpk
        allocate(buffglamt (jpi_max* jpj_max))      ; buffglamt = huge(buffglamt(1))
        allocate(buffgphit (jpi_max* jpj_max))      ; buffgphit = huge(buffgphit(1))
        allocate(bufftrn   (jpi_max* jpj_max* jpk)) ; bufftrn   = huge(bufftrn(1))
@@ -64,6 +65,7 @@
        allocate(buffvn    (jpi_max* jpj_max* jpk)) ; buffvn    = huge(buffvn(1))
        allocate(buffwn    (jpi_max* jpj_max* jpk)) ; buffwn    = huge(buffwn(1))
        allocate(buffavt   (jpi_max* jpj_max* jpk)) ; buffavt   = huge(buffavt(1))
+       allocate(buffe3t   (jpi_max* jpj_max* jpk)) ; buffe3t   = huge(buffe3t(1))
        allocate(bufftma   (jpi_max* jpj_max* jpk)) ; bufftma   = huge(bufftma(1))
        allocate(bufftrIO  (jpi_max* jpj_max* jpk)) ; bufftrIO  = huge(bufftrIO(1))
        allocate(buffDIA   (jpi_max* jpj_max* jpk)) ; buffDIA   = huge(buffDIA(1))

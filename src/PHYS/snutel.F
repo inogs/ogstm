@@ -28,7 +28,7 @@ CC local declarations
 ! omp variables
       INTEGER :: mytid, ntids
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -41,7 +41,7 @@ CC statement functions
 CC ===================
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -73,10 +73,10 @@ CC ===================
 
 C 3. swap of arrays
 C -----------------
-!$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,tra,tmask,tra_FN,SMALL)
+!!!$omp   parallel default(none) private(mytid,ji,jj,jk)
+!!!$omp&      shared(jn,jpk,jpj,jpi,tra,tmask,tra_FN,SMALL)
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF( mytid + jn <= jptra ) THEN
@@ -99,7 +99,7 @@ C -----------------
             END DO
 
          END IF
-!$omp end parallel
+!!!$omp end parallel
 
       END DO TRACER_LOOP
 
@@ -118,7 +118,7 @@ C Frequency of correction if plus module of kt
 ! $omp   parallel default(none) private(mytid,ji,jj,jk,jn,jnn)
 ! $omp&      shared(dimen_jvsnu,jarr_snu,jv,jpk,elements,nelements,TOT,TOT_FN,tra,tra_FN,idx_element,e3t,FN_CORR)
 !
-!#ifdef __OPENMP
+!#ifdef __OPENMP1
 !        mytid = omp_get_thread_num()  ! take the thread ID
 !#endif
 !      IF( mytid + jv <= dimen_jvsnu ) THEN

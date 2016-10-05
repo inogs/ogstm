@@ -82,8 +82,9 @@
           totvnIO  (totistart:totiend, totjstart:totjend,:) = vnIO    (relistart:reliend, reljstart:reljend, :)
           totwnIO  (totistart:totiend, totjstart:totjend,:) = wnIO    (relistart:reliend, reljstart:reljend, :)
           totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
+          tote3tIO (totistart:totiend, totjstart:totjend,:) = e3tIO   (relistart:reliend, reljstart:reljend, :)
 
-          do idrank = 1, size-1
+          do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
               call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
@@ -105,6 +106,7 @@
       call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
       call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffe3t ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
@@ -124,6 +126,7 @@
                      totvnIO (ji,jj,jk)= buffvn (ind)
                      totwnIO (ji,jj,jk)= buffwn (ind)
                      totavtIO(ji,jj,jk)= buffavt(ind)
+                     tote3tIO(ji,jj,jk)= buffe3t(ind)
                  enddo
                 enddo
                enddo
@@ -154,6 +157,7 @@
                    buffvn (ind)= vnIO (ji,jj,jk)
                    buffwn (ind)= wnIO (ji,jj,jk)
                    buffavt(ind)= avtIO(ji,jj,jk)
+                   buffe3t(ind)= e3tIO(ji,jj,jk)
               enddo
              enddo
             enddo
@@ -186,6 +190,7 @@
            call MPI_SEND(buffvn  , jpi*jpj*jpk  ,mpi_real8, 0, 17, mpi_comm_world,ierr)
            call MPI_SEND(buffwn  , jpi*jpj*jpk  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
            call MPI_SEND(buffavt , jpi*jpj*jpk  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
+           call MPI_SEND(buffe3t , jpi*jpj*jpk  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
 
 
 
@@ -237,7 +242,7 @@
               tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO(     relistart:reliend,reljstart:reljend,jn)
               endif
 
-             do idrank = 1, size-1
+             do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
                 call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 32,mpi_comm_world, status, ierr) !* first info to know where idrank is working
@@ -307,10 +312,10 @@
 
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
-                 CALL WRITE_AVE_2d_BKP(bkpname,datefrom, dateTo,tottrnIO2d, ave_counter);
+                 CALL WRITE_AVE_2d_BKP(bkpname,var,datefrom, dateTo,tottrnIO2d, ave_counter);
               else
                  d2f2d = REAL(tottrnIO2d(:,:),4)
-                 CALL WRITE_AVE_2d(dia_file_nc,datefrom,dateTo, d2f2d);
+                 CALL WRITE_AVE_2d(dia_file_nc,var,datefrom,dateTo, d2f2d);
 
               endif
       end if ! if(rank == 0)
@@ -356,7 +361,7 @@
       else
       tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
       endif
-             do idrank = 1, size-1
+             do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
 
                 call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 22,mpi_comm_world, status, ierr) !* first info to know where idrank is working
@@ -441,10 +446,10 @@
 
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
-                 CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO(:,:,:),ave_counter);
+                 CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO(:,:,:),ave_counter);
               else
                  d2f3d = REAL(tottrnIO(:,:,:),4)
-                 CALL WRITE_AVE(dia_file_nc,datefrom,dateTo, d2f3d);
+                 CALL WRITE_AVE(dia_file_nc,var,datefrom,dateTo, d2f3d);
 
               endif
 

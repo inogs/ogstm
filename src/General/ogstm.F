@@ -17,6 +17,8 @@
 !*********************************************************************
 !
       SUBROUTINE ogstm()
+
+    
 !
 
 
@@ -25,8 +27,10 @@
 #ifdef key_trc_bfm
 #include "BFM_module_list.h"
 #endif
-
-
+      integer :: info,ierr
+      double precision :: timetosolution
+      CALL mpi_init(ierr)
+      timetosolution = MPI_Wtime()
 
       call ogstm_initialize()
 
@@ -36,8 +40,10 @@
 
       call ogstm_finalize()
 
+      timetosolution = MPI_Wtime() - timetosolution
+      print*,"TIME TO SOLUTION =",timetosolution
 
-
+      CALL mpi_finalize(info)
       END SUBROUTINE ogstm
 
 
@@ -117,6 +123,9 @@
 ! Initialization of Biogeochemical recator with 0D approach
 
       call BFM0D_NO_BOXES(1,1,1,1,1)
+
+!     call BFM0D_INIT_IO_CHANNELS()
+
       call Initialize()
 
       END SUBROUTINE ogstm_initialize

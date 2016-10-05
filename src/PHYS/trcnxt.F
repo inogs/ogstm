@@ -60,7 +60,7 @@ CC ==================
       INTEGER :: mytid, ntids
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
@@ -68,7 +68,7 @@ CC ==================
       INTEGER ji,jj,jk,jn,jp
 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
@@ -111,10 +111,10 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 #endif
 
 
-!$omp   parallel default(none) private(mytid,ji,jj,jk)
-!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask) 
+!!!$omp   parallel default(none) private(mytid,ji,jj,jk)
+!!!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,e3t,e3t_back) 
 
-#ifdef __OPENMP
+#ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #else
       PACK_LOOP1: DO jp=1,ntids
@@ -127,6 +127,7 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
           DO jj = 1,jpj
             DO ji = 1,jpi
 
+            tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*e3t_back(ji,jj,jk)/e3t(ji,jj,jk)
             trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
             trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
             tra(ji,jj,jk,jn+mytid) = 0.e0
@@ -136,21 +137,12 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
         END DO
 
       END IF
-!$omp end parallel
-#ifdef __OPENMP
+!!!$omp end parallel
+#ifdef __OPENMP1
 #else
       END DO PACK_LOOP1
       mytid =0
 #endif
-
-      DO jj = 1,jpj
-         DO ji = 1,jpi
-!           e3t(ji,jj,1) = max(0.3, e3t(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3u(ji,jj,1) = max(0.3, e3u(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3v(ji,jj,1) = max(0.3, e3v(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3w(ji,jj,1) = max(0.3, e3w(ji,jj,1) + wn(ji,jj,1) * rdt)
-         END DO
-      END DO
 
 
 C END of tracer slab

@@ -22,8 +22,8 @@ def create_Dom_Dec(test):
     for ji in range(nPx):
         nx[ji]  = jpi/nPx + 2; # 2 ghost cell
 
-    nx[0] +=         -1 # first and last only one ghost cell    
-    nx[-1]+= jpi%nPx -1 
+    nx[0] +=         -1 # first and last only one ghost cell
+    nx[-1]+= jpi%nPx -1
 
     for jj in range(nPy):
         ny[jj]  = jpj/nPy + 2; # 2 ghost cell
@@ -31,13 +31,13 @@ def create_Dom_Dec(test):
     ny[0] +=         -1
     ny[-1]+= jpj%nPy -1
 
-    os.system("mkdir -p " + test['Dir'])
+    os.system("mkdir -p " + test['Dir'].decode())
 
-    filename01 = test['Dir'] + '/Dom_Dec_jpi.ascii'
-    filename02 = test['Dir'] + '/Dom_Dec_jpj.ascii'
+    filename01 = test['Dir'].decode() + '/Dom_Dec_jpi.ascii'
+    filename02 = test['Dir'].decode() + '/Dom_Dec_jpj.ascii'
 
-    f01 = open(filename01,'wb')
-    f02 = open(filename02,'wb')
+    f01 = open(filename01,'w')
+    f02 = open(filename02,'w')
 
     for ji in range(nPx):
         for jj in range(nPy):
@@ -45,13 +45,10 @@ def create_Dom_Dec(test):
             s1 = str(nx[ji])  + ' '
             s2 = str(ny[jj])  + ' '
             f01.write(s1)
-            f02.write(s2) 
+            f02.write(s2)
 
         f01.write("\n")
         f02.write("\n")
 
     f01.close()
     f02.close()
-
-    
-    

@@ -8,6 +8,7 @@ import scipy.io.netcdf as NC
 
 import pickle
 
+from interpolation43 import interpolate
 
 def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
 
@@ -15,7 +16,7 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
     jpj=test['jpj'];
     jpk=test['jpk'];
     time = 1
-    maskfile=test['Dir'] + '/meshmask.nc'
+    maskfile=test['Dir'].decode() + '/meshmask.nc'
 
     M=NC.netcdf_file(maskfile,"r")
 
@@ -36,13 +37,19 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
 
 #   float votemper(sub, coast, z, stat) ;
 
-    s=DATA.variables['vosaline'].data[3,1,:,0].copy();
-    t=DATA.variables['votemper'].data[3,1,:,0].copy();
-    k=DATA.variables['votkeavt'].data[3,1,:,0].copy();
+    s1=DATA.variables['vosaline'].data[3,1,:,0].copy();
+    s = interpolate(s1, jpk)
+    t1=DATA.variables['votemper'].data[3,1,:,0].copy();
+    t = interpolate(t1, jpk)
+    k1=DATA.variables['votkeavt'].data[3,1,:,0].copy();
+    k = interpolate(k1, jpk)
     q=DATA.variables['soshfldo'].data[3,1,0,0].copy();
+    #q = interpolate(q1, jpk)
     w=DATA.variables['sowindsp'].data[3,1,0,0].copy();
+    #w = interpolate(w1, jpk)
     h=0.;#DATA.variables['sosheigh'].data[3,1,0,0].copy();
     f=DATA.variables['sowaflcd'].data[3,1,0,0].copy();
+    #f = interpolate(f1, jpk)
 
 # filling zero values
     s_f =s.copy()
@@ -51,22 +58,22 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
 
     for jk in np.arange(jpk):
         if s[jk] == 0:
-            idx =jk 
+            idx =jk
             break
-    s_f[idx:jpk]=s[idx-1] 
+    s_f[idx:jpk]=s[idx-1]
 
     for jk in np.arange(jpk):
         if t[jk] == 0:
-            idx =jk 
+            idx =jk
             break
-    t_f[idx:jpk]=t[idx-1] 
+    t_f[idx:jpk]=t[idx-1]
 
     for jk in np.arange(jpk):
         if k[jk] == 0:
-            idx =jk 
+            idx =jk
             break
-    k_f[idx:jpk]=k[idx-1] 
-      
+    k_f[idx:jpk]=k[idx-1]
+
 ##############################
 
     for jk in np.arange(jpk):

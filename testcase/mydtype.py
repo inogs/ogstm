@@ -14,11 +14,8 @@ ext_data =np.dtype([('date','S17'),('kext',np.float)])
 
 def file2stringlist(filename):
     LIST=[]
-    filein=file(filename)
+    filein=open(filename)
     for line in filein:
         LIST.append(line[:-1])
     filein.close()
     return LIST
-
-
-

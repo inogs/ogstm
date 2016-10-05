@@ -16,9 +16,9 @@ import scipy.io.netcdf as NC
 
 import pickle
 
-import create_meshmask_nc as c_mask 
+import create_meshmask_nc as c_mask
 
-import create_Dom_Dec as c_dom 
+import create_Dom_Dec as c_dom
 
 import create_extinction_nc as c_ext
 
@@ -40,20 +40,20 @@ TEST_LIST=np.loadtxt('TEST_LIST.dat', dtype=test_conf,skiprows=1,ndmin=1)
 
 for test in TEST_LIST:
 
-    print test['Dir']
+    print(test['Dir'])
 
     DA.create_dataset(test)
 
     c_dom.create_Dom_Dec(test)
-    
+
     c_mask.create_meshmask_nc(test)
-    
+
     c_for.create_forcings_nc(test)
-    
+
     c_ext.create_extinction_nc(test)
-    
+
     c_bc.create_bc_nc(test)
-    
+
     c_init.create_init_nc(test)
 
     d_code.deploy_code(test)

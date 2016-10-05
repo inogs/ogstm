@@ -13,8 +13,8 @@ def create_extinction_nc(test):
 
     jpi=test['jpi']
     jpj=test['jpj']
-    
-    maskfile=test['Dir'] + '/meshmask.nc'
+
+    maskfile=test['Dir'].decode() + '/meshmask.nc'
     M=NC.netcdf_file(maskfile,"r")
     Lon     =  M.variables['glamt'].data[0,0,:,:].copy()
     Lat     =  M.variables['gphit'].data[0,0,:,:].copy()
@@ -23,11 +23,11 @@ def create_extinction_nc(test):
 
     kextfact=np.ones((jpj,jpi),np.float);
 
-    os.system("mkdir -p " + test['Dir'] + '/FORCINGS')
+    os.system("mkdir -p " + test['Dir'].decode() + '/FORCINGS')
 
     for dd in indata:
-        
-        outfile = test['Dir'] + '/FORCINGS/KextF_' + dd['date'] + '.nc'
+
+        outfile = test['Dir'].decode() + '/FORCINGS/KextF_' + dd['date'].decode() + '.nc'
 #        print 'creating' + outfile
         ncOUT   = NC.netcdf_file(outfile,"w")
 
@@ -43,8 +43,8 @@ def create_extinction_nc(test):
         setattr(ncOUT.variables['kextfact'],'missing_value',1e+20                    );
         setattr(ncOUT                      ,'Author'       ,'Echo group'             );
         setattr(ncOUT                      ,'Mesh'         ,'TEST_CASE'              );
-        setattr(ncOUT                      ,'Origin'       ,'GOS'                    ); 
+        setattr(ncOUT                      ,'Origin'       ,'GOS'                    );
         setattr(ncOUT                      ,'Description'  ,'Extinction factor+30.0%');
         setattr(ncOUT                      ,'Units'        ,'m^(-1)'                 );
-   
+
         ncOUT.close()

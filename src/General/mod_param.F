@@ -5,7 +5,7 @@
       public
 
 CC Several domain sizes are parameterized
-CC                                  global      domain   (jpiglo,jpjglo)
+CC                                  global      domain   (jpjglo,jpiglo)
 CC                                  computation domain   ( jpi  , jpj  )
 CC
 CC
@@ -32,7 +32,7 @@ CC
 CC Original data size
 CC ------------------
 
-      INTEGER :: jpiglo, jpjglo, jpk
+      INTEGER :: jpk, jpjglo, jpiglo
 
 
 CC Matrix size

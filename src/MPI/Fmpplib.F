@@ -150,7 +150,7 @@ CC----------------------------------------------------------------------
 C
       INTEGER ktype, ksgn
       INTEGER packsize
-      REAL(8) ptab(jpi,jpj,jpk,packsize)
+      REAL(8) ptab(jpk,jpj,jpi,packsize)
 
       REAL(8) t3p1_my1(jpi,1,jpk,packsize,2)
       REAL(8) t3p2_my1(jpi,1,jpk,packsize,2)

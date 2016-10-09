@@ -4,7 +4,7 @@
        IMPLICIT NONE
 
        public
-        integer jpi16,jpj16,jpk16
+        integer jpj16,jpi16,jpk16
         integer mem_all, rea_len, int_len
 
 
@@ -151,27 +151,27 @@
       mem_all = mem_all + int_len*jpk16 
 !     write(*,*) 'Mem_allocated:', mem_all
 !
-        allocate(glamt16(jpi16,jpj16))
-        allocate(glamu16(jpi16,jpj16)) 
-        allocate(glamv16(jpi16,jpj16))
-        allocate(glamf16(jpi16,jpj16))
-        allocate(gphit16(jpi16,jpj16)) 
-        allocate(gphiu16(jpi16,jpj16)) 
-        allocate(gphiv16(jpi16,jpj16))
-        allocate(gphif16(jpi16,jpj16))
-        allocate(e1t16(jpi16,jpj16)) 
-        allocate(e1u16(jpi16,jpj16)) 
-        allocate(e1v16(jpi16,jpj16)) 
-        allocate(e1f16(jpi16,jpj16))
-        allocate(e2t16(jpi16,jpj16)) 
-        allocate(e2u16(jpi16,jpj16)) 
-        allocate(e2v16(jpi16,jpj16)) 
-        allocate(e2f16(jpi16,jpj16))
-        allocate(ff16(jpi16,jpj16))
-        allocate(dso16(jpi16,jpj16))
-        allocate(dse16(jpi16,jpj16))
-        allocate(dno16(jpi16,jpj16))
-        allocate(dne16(jpi16,jpj16))
+        allocate(glamt16(jpj16,jpi16))
+        allocate(glamu16(jpj16,jpi16)) 
+        allocate(glamv16(jpj16,jpi16))
+        allocate(glamf16(jpj16,jpi16))
+        allocate(gphit16(jpj16,jpi16)) 
+        allocate(gphiu16(jpj16,jpi16)) 
+        allocate(gphiv16(jpj16,jpi16))
+        allocate(gphif16(jpj16,jpi16))
+        allocate(e1t16(jpj16,jpi16)) 
+        allocate(e1u16(jpj16,jpi16)) 
+        allocate(e1v16(jpj16,jpi16)) 
+        allocate(e1f16(jpj16,jpi16))
+        allocate(e2t16(jpj16,jpi16)) 
+        allocate(e2u16(jpj16,jpi16)) 
+        allocate(e2v16(jpj16,jpi16)) 
+        allocate(e2f16(jpj16,jpi16))
+        allocate(ff16(jpj16,jpi16))
+        allocate(dso16(jpj16,jpi16))
+        allocate(dse16(jpj16,jpi16))
+        allocate(dno16(jpj16,jpi16))
+        allocate(dne16(jpj16,jpi16))
         mem_all = mem_all + rea_len*(+21*jpi16*jpj16) 
 !     write(*,*) 'Mem_allocated:', mem_all
 
@@ -188,10 +188,10 @@
 !C
       allocate(gdept16(jpk16)) 
       allocate(gdepw16(jpk16))
-      allocate(e3t16(jpi16,jpj16,jpk16))
-      allocate(e3u16(jpi16,jpj16,jpk16))
-      allocate(e3v16(jpi16,jpj16,jpk16))
-      allocate(e3w16(jpi16,jpj16,jpk16))
+      allocate(e3t16(jpj16,jpi16,jpk16))
+      allocate(e3u16(jpj16,jpi16,jpk16))
+      allocate(e3v16(jpj16,jpi16,jpk16))
+      allocate(e3w16(jpj16,jpi16,jpk16))
        mem_all = mem_all + rea_len*(4*jpk16) 
 !     write(*,*) 'Mem_allocated:', mem_all
 !
@@ -204,10 +204,10 @@
 !C      tmask16(), umask16() : land/ocean mask at t-, u-, v- and f-points
 !C      vmask16(), fmask16()
 !
-      allocate(tmask16(jpi16,jpj16,jpk16))
-      allocate(fmask16(jpi16,jpj16,jpk16))
-      allocate(umask16(jpi16,jpj16,jpk16))
-      allocate(vmask16(jpi16,jpj16,jpk16))
+      allocate(tmask16(jpj16,jpi16,jpk16))
+      allocate(fmask16(jpj16,jpi16,jpk16))
+      allocate(umask16(jpj16,jpi16,jpk16))
+      allocate(vmask16(jpj16,jpi16,jpk16))
       mem_all = mem_all + int_len*jpi16*jpj16 + rea_len*4*jpi16*jpj16*jpk16  
 !     write(*,*) 'Mem_allocated:', mem_all
 !
@@ -226,15 +226,15 @@
 !C	rhopn16()          : potential volumic mass (kg m-3)
 !C      bn2n16()           : brun16t-vaisala frequency (s-2)
 !C
-       allocate(un16(jpi16,jpj16,jpk16))
-       allocate(vn16(jpi16,jpj16,jpk16))
-       allocate(wn16(jpi16,jpj16,jpk16))
-       allocate(hdivn16(jpi16,jpj16,jpk16))
-       allocate(tn16(jpi16,jpj16,jpk16))
-       allocate(sn16(jpi16,jpj16,jpk16))
-       allocate(rdn16(jpi16,jpj16,jpk16))
-       allocate(rhopn16(jpi16,jpj16,jpk16))
-       allocate(bn2n16(jpi16,jpj16,jpk16))
+       allocate(un16(jpj16,jpi16,jpk16))
+       allocate(vn16(jpj16,jpi16,jpk16))
+       allocate(wn16(jpj16,jpi16,jpk16))
+       allocate(hdivn16(jpj16,jpi16,jpk16))
+       allocate(tn16(jpj16,jpi16,jpk16))
+       allocate(sn16(jpj16,jpi16,jpk16))
+       allocate(rdn16(jpj16,jpi16,jpk16))
+       allocate(rhopn16(jpj16,jpi16,jpk16))
+       allocate(bn2n16(jpj16,jpi16,jpk16))
        mem_all = mem_all +  rea_len*9*jpi16*jpj16*jpk16  
 !     write(*,*) 'Mem_allocated:', mem_all
 !
@@ -277,10 +277,10 @@
 !C	avtb16()           : backgroun16d profile of avm and avt16
 !
 !
-       allocate(avt16(jpi16,jpj16,jpk16))
+       allocate(avt16(jpj16,jpi16,jpk16))
        allocate(avtb16(jpk16))
-       allocate(bblx16(jpi16,jpj16))
-       allocate(bbly16(jpi16,jpj16))
+       allocate(bblx16(jpj16,jpi16))
+       allocate(bbly16(jpj16,jpi16))
        mem_all = mem_all +  rea_len*(jpi16*jpj16*jpk16+ jpk16 +2*jpi16*jpj16) 
 !     write(*,*) 'Mem_allocated:', mem_all
 !
@@ -300,24 +300,24 @@
 !C	taux16g(), tauy16g() : zonal and meridian wind stress component used
 !C	                   in output (geographical referential)
 !
-       allocate(taux16(jpi16,jpj16))
-       allocate(tauy16(jpi16,jpj16))
-       allocate(aux16(jpi16,jpj16))
-       allocate(auy16(jpi16,jpj16))
-       allocate(aux16_01(jpi16,jpj16))
-       allocate(auy16_01(jpi16,jpj16))
-       allocate(aux16_02(jpi16,jpj16))
-       allocate(auy16_02(jpi16,jpj16))
-       allocate(aux16_03(jpi16,jpj16))
-       allocate(auy16_03(jpi16,jpj16))
-       allocate(aux16_04(jpi16,jpj16))
-       allocate(auy16_04(jpi16,jpj16))
-       allocate(aux16_05(jpi16,jpj16))
-       allocate(auy16_05(jpi16,jpj16))
-       allocate(aux16_06(jpi16,jpj16))
-       allocate(auy16_06(jpi16,jpj16))
-       allocate(vatm16(jpi16,jpj16))
-       allocate(frezze16(jpi16,jpj16))
+       allocate(taux16(jpj16,jpi16))
+       allocate(tauy16(jpj16,jpi16))
+       allocate(aux16(jpj16,jpi16))
+       allocate(auy16(jpj16,jpi16))
+       allocate(aux16_01(jpj16,jpi16))
+       allocate(auy16_01(jpj16,jpi16))
+       allocate(aux16_02(jpj16,jpi16))
+       allocate(auy16_02(jpj16,jpi16))
+       allocate(aux16_03(jpj16,jpi16))
+       allocate(auy16_03(jpj16,jpi16))
+       allocate(aux16_04(jpj16,jpi16))
+       allocate(auy16_04(jpj16,jpi16))
+       allocate(aux16_05(jpj16,jpi16))
+       allocate(auy16_05(jpj16,jpi16))
+       allocate(aux16_06(jpj16,jpi16))
+       allocate(auy16_06(jpj16,jpi16))
+       allocate(vatm16(jpj16,jpi16))
+       allocate(frezze16(jpj16,jpi16))
        mem_all = mem_all +  rea_len*(5*jpi16*jpj16) 
 !     write(*,*) 'Mem_allocated:', mem_all
 !
@@ -330,10 +330,10 @@
 !C      emp16()            : evaporation minus precipitation (mm day-1)
 !C      runoff16()         : annual run16 off16 (mm/day)
 !
-       allocate(qt16(jpi16,jpj16)) 
-       allocate(q16(jpi16,jpj16)) 
-       allocate(emp16(jpi16,jpj16))
-       allocate(runoff16(jpi16,jpj16))
+       allocate(qt16(jpj16,jpi16)) 
+       allocate(q16(jpj16,jpi16)) 
+       allocate(emp16(jpj16,jpi16))
+       allocate(runoff16(jpj16,jpi16))
        mem_all = mem_all +  rea_len*(4*jpi16*jpj16) 
 !     write(*,*) 'Mem_allocated:', mem_all
 !
@@ -344,13 +344,13 @@
 !C --------------------------------------------
 !C      qsr16()     : solar radiation (w m-2)
 !C
-       allocate(qsr16(jpi16,jpj16))
-       allocate(wsp16(jpi16,jpj16))
-       allocate(ssh16(jpi16,jpj16))
-       allocate(ssh16_R8(jpi16,jpj16))
-       allocate(ssh16x_R8(jpi16,jpj16))
-       allocate(ssh16y_R8(jpi16,jpj16))
-       allocate(flp16(jpi16,jpj16))
+       allocate(qsr16(jpj16,jpi16))
+       allocate(wsp16(jpj16,jpi16))
+       allocate(ssh16(jpj16,jpi16))
+       allocate(ssh16_R8(jpj16,jpi16))
+       allocate(ssh16x_R8(jpj16,jpi16))
+       allocate(ssh16y_R8(jpj16,jpi16))
+       allocate(flp16(jpj16,jpi16))
        mem_all = mem_all +  rea_len*(4*jpi16*jpj16)
 !     write(*,*) 'Mem_allocated:', mem_all
 !C

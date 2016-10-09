@@ -88,9 +88,9 @@
 !
         DO jj16 = 1,jpj16
           DO ji16 = 1,jpi16
-               ssh16_R8(ji16,jj16)  = REAL(e3t16(ji16,jj16,1),8)
-               ssh16x_R8(ji16,jj16) = REAL(e3t16(ji16,jj16,1),8)
-               ssh16y_R8(ji16,jj16) = REAL(e3t16(ji16,jj16,1),8)
+               ssh16_R8(ji16,jj16)  = REAL(e3t16(1,jj16,ji16),8)
+               ssh16x_R8(ji16,jj16) = REAL(e3t16(1,jj16,ji16),8)
+               ssh16y_R8(ji16,jj16) = REAL(e3t16(1,jj16,ji16),8)
           END DO  
         END DO  
 !
@@ -102,10 +102,10 @@
           DO ji16 = jpi16m1,2,-1
 
 ! Compute the optimal flux needed
-!           zwu16    = REAL(e2u16(ji16,jj16) * ssh16x_R8(ji16+1,jj16) * un16(ji16,jj16,1),8)
-!           zwv16    = REAL(e1v16(ji16,jj16) * ssh16y_R8(ji16,jj16+1) * vn16(ji16,jj16,1),8)
-            zwu16    = REAL(e2u16(ji16,jj16) * 3. * un16(ji16,jj16,1),8)
-            zwv16    = REAL(e1v16(ji16,jj16) * 3. * vn16(ji16,jj16,1),8)
+!           zwu16    = REAL(e2u16(ji16,jj16) * ssh16x_R8(ji16+1,jj16) * un16(1,jj16,ji16),8)
+!           zwv16    = REAL(e1v16(ji16,jj16) * ssh16y_R8(jj16+1,ji16) * vn16(1,jj16,ji16),8)
+            zwu16    = REAL(e2u16(ji16,jj16) * 3. * un16(1,jj16,ji16),8)
+            zwv16    = REAL(e1v16(ji16,jj16) * 3. * vn16(1,jj16,ji16),8)
             zww16    = REAL(e1t16(ji16,jj16) * e2t16(ji16,jj16)       * wn16(ji16,jj16,2),8)
 
             a        = -REAL(e2u16(ji16-1,jj16) ,8)
@@ -182,12 +182,12 @@
                endif
             enddo
 
-            e3u16(ji16,jj16,1)   = min(12.,max ( 0.1,REAL(ssh16x_R8(ji16+1,jj16),4) ))
-            e3v16(ji16,jj16,1)   = min(12.,max ( 0.1,REAL(ssh16y_R8(ji16,jj16+1),4) ))
-            e3t16(ji16,jj16,1)   = 0.25*(e3u16(ji16,jj16,1)+e3u16(ji16+1,jj16,1) + e3v16(ji16,jj16,1)+e3v16(ji16,jj16+1,1))
-            ssh16(ji16,jj16)     = e3u16(ji16,jj16,1)
+            e3u16(1,jj16,ji16)   = min(12.,max ( 0.1,REAL(ssh16x_R8(ji16+1,jj16),4) ))
+            e3v16(1,jj16,ji16)   = min(12.,max ( 0.1,REAL(ssh16y_R8(jj16+1,ji16),4) ))
+            e3t16(1,jj16,ji16)   = 0.25*(e3u16(1,jj16,ji16)+e3u16(ji16+1,jj16,1) + e3v16(1,jj16,ji16)+e3v16(1,jj16+1,ji16))
+            ssh16(ji16,jj16)     = e3u16(1,jj16,ji16)
 
-!           write(*,*) a*a+b*b, e3u16(ji16,jj16,1),e3v16(ji16,jj16,1)
+!           write(*,*) a*a+b*b, e3u16(1,jj16,ji16),e3v16(1,jj16,ji16)
 
 
           END DO  

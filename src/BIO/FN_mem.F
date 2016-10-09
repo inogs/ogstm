@@ -46,7 +46,7 @@
       SMALL=0.00000000001
 
       allocate(jarr_snu(2, jpi*jpj))      ; jarr_snu = huge(jarr_snu(1,1))
-      allocate(tra_FN(jpi,jpj,jpk,jptra)) ; tra_FN   = huge(tra_FN(1,1,1,1))
+      allocate(tra_FN(jpk,jpj,jpi,jptra)) ; tra_FN   = huge(tra_FN(1,1,1,1))
 
       !CALL OPA_elements(elements,nelements,idx_element)
 
@@ -55,7 +55,7 @@
       !allocate(FN_CORR(jpj*jpi,elements)) ; FN_CORR    = huge(FN_CORR(1,1))
 
 
-      allocate(cou_FN(jpi,jpj,jpk))       ; cou_FN     = huge(cou_FN(1,1,1))
+      allocate(cou_FN(jpk,jpj,jpi))       ; cou_FN     = huge(cou_FN(1,1,1))
       allocate(FN_ranking(jptra))         ; FN_ranking = huge(FN_ranking(1))
 
 

@@ -72,8 +72,8 @@
        allocate(buffDIA2d (jpi_max* jpj_max     )) ; buffDIA2d = huge(buffDIA2d(1))
 
        if (lwp) then
-       allocate(d2f3d     (jpiglo,jpjglo,jpk))     ; d2f3d     = huge(d2f3d(1,1,1))
-       allocate(d2f2d     (jpiglo,jpjglo))         ; d2f2d     = huge(d2f2d(1,1))
+       allocate(d2f3d     (jpk,jpjglo,jpiglo))     ; d2f3d     = huge(d2f3d(1,1,1))
+       allocate(d2f2d     (jpjglo,jpiglo))         ; d2f2d     = huge(d2f2d(1,1))
        endif
 
 #ifdef Mem_Monitor

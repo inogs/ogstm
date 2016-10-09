@@ -61,7 +61,7 @@
       INTEGER jpi16m1,jpj16m1,jpk16m1
 !
       REAL(4) zbt
-      REAL(4) zwu16(jpi16,jpj16), zwv16(jpi16,jpj16)
+      REAL(4) zwu16(jpj16,jpi16), zwv16(jpj16,jpi16)
 !C----------------------------------------------------------------------
 !C statement functions
 !C ===================
@@ -84,11 +84,11 @@
 !
         DO jj16 = 1, jpj16m1
           DO ji16 = 1, jpi16m1
-!C-CC            zwu16(ji16,jj16) = e2u16(ji16,jj16) * fse3u16(ji16,jj16,jk) * un16(ji16,jj16,jk)
-!C-CC            zwv16(ji16,jj16) = e1v16(ji16,jj16) * fse3v16(ji16,jj16,jk) * vn16(ji16,jj16,jk)
+!C-CC            zwu16(ji16,jj16) = e2u16(ji16,jj16) * fse3u16(jk,jj16,ji16) * un16(jk,jj16,ji16)
+!C-CC            zwv16(ji16,jj16) = e1v16(ji16,jj16) * fse3v16(jk,jj16,ji16) * vn16(jk,jj16,ji16)
 
-            zwu16(ji16,jj16) = e2u16(ji16,jj16) * e3u16(ji16,jj16,jk) * un16(ji16,jj16,jk)
-            zwv16(ji16,jj16) = e1v16(ji16,jj16) * e3v16(ji16,jj16,jk) * vn16(ji16,jj16,jk)
+            zwu16(ji16,jj16) = e2u16(ji16,jj16) * e3u16(jk,jj16,ji16) * un16(jk,jj16,ji16)
+            zwv16(ji16,jj16) = e1v16(ji16,jj16) * e3v16(jk,jj16,ji16) * vn16(jk,jj16,ji16)
 
           END DO
         END DO
@@ -99,8 +99,8 @@
 !
         DO jj16 = 2, jpj16m1
           DO ji16 = 2, jpi16m1
-            zbt = e1t16(ji16,jj16) * e2t16(ji16,jj16)* e3t16(ji16,jj16,jk)
-            hdivn16(ji16,jj16,jk) = (  zwu16(ji16,jj16) - zwu16(ji16-1,jj16  )  &
+            zbt = e1t16(ji16,jj16) * e2t16(ji16,jj16)* e3t16(jk,jj16,ji16)
+            hdivn16(jk,jj16,ji16) = (  zwu16(ji16,jj16) - zwu16(ji16-1,jj16  )  &
                                 + zwv16(ji16,jj16) - zwv16(ji16  ,jj16 -1)  ) / zbt
           END DO  
         END DO  

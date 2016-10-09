@@ -111,8 +111,8 @@
     if (PS) then
         allocate(PS16_U(jpi16, jpj16, jpk16))
         allocate(PS16_V(jpi16, jpj16, jpk16))
-        call readNetCDF_3dvar(PS16FILE_U,'vozocrtx',jpi16,jpj16,jpk16, PS16_U  )
-        call readNetCDF_3dvar(PS16FILE_V,'vomecrty',jpi16,jpj16,jpk16, PS16_V  )
+        call readNetCDF_3dvar(PS16FILE_U,'vozocrtx',jpj16,jpi16,jpk16, PS16_U  )
+        call readNetCDF_3dvar(PS16FILE_V,'vomecrty',jpj16,jpi16,jpk16, PS16_V  )
     end if
 
     !--------   Reading Nudg 16 -----------------------------------
@@ -269,9 +269,9 @@
 
         call alloc_tot_16()
 
-        allocate(Btmask16(jpi16,jpj16,jpk16))
-        allocate(Bumask16(jpi16,jpj16,jpk16))
-        allocate(Bvmask16(jpi16,jpj16,jpk16))
+        allocate(Btmask16(jpj16,jpi16,jpk16))
+        allocate(Bumask16(jpj16,jpi16,jpk16))
+        allocate(Bvmask16(jpj16,jpi16,jpk16))
 
 
         !------------------------------------------------
@@ -781,7 +781,7 @@
             enddo
         enddo
 
-      call PURE_WIND_SPEED(taux16,tauy16,jpi16,jpj16,wsp16);
+      call PURE_WIND_SPEED(taux16,tauy16,jpj16,jpi16,wsp16);
 
 !        C1=1/(1.3*1.5*0.001)
 !        do jj=2,jpj16
@@ -1041,7 +1041,7 @@
                     enddo
                 enddo
 
-                call PURE_WIND_SPEED(taux16,tauy16,jpi16,jpj16,wsp16);
+                call PURE_WIND_SPEED(taux16,tauy16,jpj16,jpi16,wsp16);
 !                C1=1/(1.3*1.5*0.001)
 !                do jj=2,jpj16
 !                    do ji=2,jpi16

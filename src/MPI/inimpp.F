@@ -79,7 +79,7 @@ C  1. Dimension arrays for subdomains
 C -----------------------------------
 C
 C  Computation of local domain sizes ilcit() ilcjt()
-C  These dimensions depend on global sizes jpni,jpnj and jpiglo,jpjglo
+C  These dimensions depend on global sizes jpni,jpnj and jpjglo,jpiglo
 C  The subdomains are squares leeser than or equal to the global
 C  dimensions divided by the number of processors minus the overlap
 C  array.

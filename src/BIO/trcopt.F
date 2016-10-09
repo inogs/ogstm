@@ -46,7 +46,7 @@ C ===============
 
       DO jj = 1,jpj,ntids
 !!!$omp parallel default(none) private(mytid,ji,jk)
-!!!$omp&                       shared(jj,jpi,jpj,jpk,xpar,conversion,kef,e3t,qsr)
+!!!$omp&                       shared(jj,jpk,jpj,jpi,xpar,conversion,kef,e3t,qsr)
 #ifdef __OPENMP1
          mytid  = omp_get_thread_num()  ! take the thread ID
 #endif

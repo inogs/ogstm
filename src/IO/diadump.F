@@ -181,16 +181,16 @@
               call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
               call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
 
-           call MPI_SEND(buffsn  , jpi*jpj*jpk  ,mpi_real8, 0, 11, mpi_comm_world,ierr)
-           call MPI_SEND(bufftn  , jpi*jpj*jpk  ,mpi_real8, 0, 12, mpi_comm_world,ierr)
+           call MPI_SEND(buffsn  , jpk*jpj*jpi  ,mpi_real8, 0, 11, mpi_comm_world,ierr)
+           call MPI_SEND(bufftn  , jpk*jpj*jpi  ,mpi_real8, 0, 12, mpi_comm_world,ierr)
            call MPI_SEND(buffvatm, jpi*jpj      ,mpi_real8, 0, 13, mpi_comm_world,ierr)
            call MPI_SEND(buffemp , jpi*jpj      ,mpi_real8, 0, 14, mpi_comm_world,ierr)
            call MPI_SEND(buffqsr , jpi*jpj      ,mpi_real8, 0, 15, mpi_comm_world,ierr)
-           call MPI_SEND(buffun  , jpi*jpj*jpk  ,mpi_real8, 0, 16, mpi_comm_world,ierr)
-           call MPI_SEND(buffvn  , jpi*jpj*jpk  ,mpi_real8, 0, 17, mpi_comm_world,ierr)
-           call MPI_SEND(buffwn  , jpi*jpj*jpk  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
-           call MPI_SEND(buffavt , jpi*jpj*jpk  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
-           call MPI_SEND(buffe3t , jpi*jpj*jpk  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
+           call MPI_SEND(buffun  , jpk*jpj*jpi  ,mpi_real8, 0, 16, mpi_comm_world,ierr)
+           call MPI_SEND(buffvn  , jpk*jpj*jpi  ,mpi_real8, 0, 17, mpi_comm_world,ierr)
+           call MPI_SEND(buffwn  , jpk*jpj*jpi  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
+           call MPI_SEND(buffavt , jpk*jpj*jpi  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
+           call MPI_SEND(buffe3t , jpk*jpj*jpi  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
 
 
 
@@ -430,7 +430,7 @@
               call MPI_SEND(nldi , 1,mpi_integer, 0, 28, mpi_comm_world,ierr)
               call MPI_SEND(nldj , 1,mpi_integer, 0, 29, mpi_comm_world,ierr)
 
-              call MPI_SEND(buffDIA  , jpi*jpj*jpk,mpi_real8, 0, 30, mpi_comm_world,ierr)
+              call MPI_SEND(buffDIA  , jpk*jpj*jpi,mpi_real8, 0, 30, mpi_comm_world,ierr)
 
 
 

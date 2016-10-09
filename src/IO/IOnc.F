@@ -35,7 +35,7 @@
 
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpi,jpj,jpk)
+      real(8) M(jpk,jpj,jpi)
 
       counter = 0;
       start    = (/nimpp, njmpp,  1,  1/)
@@ -64,8 +64,8 @@
 
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpi,jpj,jpk)
-      real(4) F(jpi,jpj,jpk)
+      real(8) M(jpk,jpj,jpi)
+      real(4) F(jpk,jpj,jpi)
 
       counter = 0;
       start    = (/nimpp, njmpp,  1,  1/)
@@ -93,7 +93,7 @@
 
       integer counter
       integer thecount(4), start(4)
-      integer M(jpi,jpj,jpk)
+      integer M(jpk,jpj,jpi)
       counter = 0;
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
@@ -189,11 +189,12 @@
 
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpiglo,jpjglo,jpk)
+      real(8) M(jpk,jpjglo,jpiglo)
 
       counter = 0;
       start    = (/1,       1,       1,  1/)
-      thecount = (/jpiglo,  jpjglo, jpk, 1/)
+! epascolo warning
+      thecount = (/jpk, jpjglo,  jpiglo,1/)
 
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
@@ -217,11 +218,12 @@
 
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpiglo,jpjglo)
+      real(8) M(jpjglo,jpiglo)
 
       counter = 0;
       start    = (/1,       1,      1, 1/)
-      thecount = (/jpiglo,  jpjglo, 1, 1/)
+! epascolo warning      
+      thecount = (/1, jpjglo,  jpiglo, 1/)
 
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
@@ -398,7 +400,7 @@
 
        CHARACTER*(*) fileNetCDF
        character(LEN=17) datefrom, dateTo
-       real(4) M(jpiglo, jpjglo, jpk)
+       real(4) M(jpk, jpjglo, jpiglo)
 
        character(LEN=20) VAR
        integer istart,iend
@@ -458,8 +460,8 @@
         s =nf90_enddef(nc); call handle_err1(s,counter,fileNetCDF)
 
 
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idgdept,  REAL(   gdept,     4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idVAR  ,  M )                    ; call handle_err1(s,counter,fileNetCDF)
 
@@ -475,7 +477,7 @@
 
        CHARACTER*(*) fileNetCDF
        character(LEN=17) datefrom, dateTo
-       real(4) M(jpiglo, jpjglo)
+       real(4) M(jpjglo, jpiglo)
 
        character(LEN=20) VAR
        integer istart,iend
@@ -525,9 +527,9 @@
         s =nf90_enddef(nc)
 
         counter=0
-
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        ! epascolo warning
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idVAR  ,  M )                    ; call handle_err1(s,counter,fileNetCDF)
 
 
@@ -546,7 +548,7 @@
 
        CHARACTER*(*) fileNetCDF
        character(LEN=17) datefrom, dateTo
-       real(8) M(jpiglo, jpjglo, jpk)
+       real(8) M(jpk, jpjglo, jpiglo)
        integer ave_counter
 
        !local
@@ -601,9 +603,9 @@
 
         counter=0
 
-
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        ! epascolo warning
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idVAR  ,                          M  ); call handle_err1(s,counter,fileNetCDF)
 
@@ -619,7 +621,7 @@
 
        CHARACTER*(*) fileNetCDF
        character(LEN=17) datefrom, dateTo
-       real(8) M(jpiglo, jpjglo)
+       real(8) M(jpjglo, jpiglo)
        integer ave_counter
 
        !local
@@ -670,8 +672,8 @@
         counter=0
 
 
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(:,jpjglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(jpiglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idVAR  ,                          M  ); call handle_err1(s,counter,fileNetCDF)
 
 
@@ -784,8 +786,8 @@
 
         counter=0
 
-        s = nf90_put_var(nc, idlamt,  REAL(totglamt(:,jpjglo),4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,  REAL(totgphit(jpiglo,:),4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4)  ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  ); call handle_err1(s,counter,fileNetCDF)
 !      3D vars
         d2f3d = REAL(totsnIO,4) ; s = nf90_put_var(nc, idS,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
@@ -915,8 +917,8 @@
 
         counter=0
 
-        s = nf90_put_var(nc, idlamt,  REAL(totglamt(:,jpjglo),4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,  REAL(totgphit(jpiglo,:),4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4)  ); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  ); call handle_err1(s,counter,fileNetCDF)
 !      3D vars
         s = nf90_put_var(nc, idS,    totsnIO) ;  call handle_err1(s,counter,fileNetCDF)

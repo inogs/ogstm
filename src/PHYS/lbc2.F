@@ -29,7 +29,7 @@ CC                  changed at the boundaries
 CC              kdoloop         : = 1  macrostaked on jk-slabs for
 CC                       2D or 3D arrays
 CC                                = 2  macrostaked on jj-slabs for
-CC                       a 3D array (jpi,jpj,jpk)
+CC                       a 3D array (jpk,jpj,jpi)
 CC                                = 3  macrostaked on jj-slabs for
 CC                       a 2D array (jpi,jpj)
 CC        kjstart        : starting index of multitasked do-loop

@@ -86,7 +86,7 @@ C
 
 ! ---------------- Fuori dai punti BFM
          DO jn=1,4,ntids
-!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(sediPI,jpi,jpj,jpk,jn)
+!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(sediPI,jpk,jpj,jpi,jn)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -104,7 +104,7 @@ C
          ENDDO
 
          DO jn=1, jptra_dia, ntids
-!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_DIA,jpi,jpj,jpk,jn)
+!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_DIA,jpk,jpj,jpi,jn)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif

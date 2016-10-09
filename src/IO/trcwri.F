@@ -154,8 +154,8 @@
             call MPI_SEND(nlej     , 1         ,mpi_integer, 0,  6, mpi_comm_world,ierr)
             call MPI_SEND(nldi     , 1         ,mpi_integer, 0,  7, mpi_comm_world,ierr)
             call MPI_SEND(nldj     , 1         ,mpi_integer, 0,  8, mpi_comm_world,ierr)
-            call MPI_SEND(bufftrn  ,jpi*jpj*jpk,  mpi_real8, 0, 11, mpi_comm_world,ierr)
-            call MPI_SEND(bufftrb  ,jpi*jpj*jpk,  mpi_real8, 0, 12, mpi_comm_world,ierr)
+            call MPI_SEND(bufftrn  ,jpk*jpj*jpi,  mpi_real8, 0, 11, mpi_comm_world,ierr)
+            call MPI_SEND(bufftrb  ,jpk*jpj*jpi,  mpi_real8, 0, 12, mpi_comm_world,ierr)
 
         endif ! if rank = 0
 

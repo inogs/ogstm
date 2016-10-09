@@ -253,7 +253,7 @@
 !     in the subdomain of the current processor
 ! *****************************************************************
       INTEGER FUNCTION COUNT_InSubDomain(sizeGLO,idxtGLOBAL)
-          USE modul_param , ONLY: jpi, jpj, jpk
+          USE modul_param , ONLY: jpk,jpj,jpi
           USE myalloc     , ONLY: idxt
           USE myalloc_mpp , ONLY: rank
 

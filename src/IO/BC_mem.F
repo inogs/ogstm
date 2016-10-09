@@ -88,8 +88,8 @@
       jn_riv  = 5
       jn_atm  = 2
 
-       allocate(resto(jpi,jpj,jpk,jn_gib))   ; resto   = huge(resto(1,1,1,1))
-       allocate(restotr(jpi,jpj,jpk,jptra))  ; restotr = huge(restotr(1,1,1,1))
+       allocate(resto(jpk,jpj,jpi,jn_gib))   ; resto   = huge(resto(1,1,1,1))
+       allocate(restotr(jpk,jpj,jpi,jptra))  ; restotr = huge(restotr(1,1,1,1))
 
        IF (Gsizeglo .NE. 0) THEN
 

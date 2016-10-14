@@ -49,11 +49,16 @@ ls ${OGSTMDIR}/src/General/get_mem_mod.F90 >> OGSTM.lst
 ${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p libNotUsed.a OGSTM.lst
 mv Makefile MakeLib
 
-ls ${OGSTMDIR}/src/General/*.[Fhc] >  OGSTM.lst
-ls ${OGSTMDIR}/src/IO/*.[Fhc]     >> OGSTM.lst
-ls ${OGSTMDIR}/src/MPI/*.[Fhc]    >> OGSTM.lst
-ls ${OGSTMDIR}/src/PHYS/*.[Fhc]   >> OGSTM.lst
-ls ${OGSTMDIR}/src/BIO/*.[Fhc]    >> OGSTM.lst
+
+for file in $(find $OGSTMDIR/src -iregex ".*\.F[0-9]*" -o -iregex ".*\.for" -o -iregex ".*\.c" -o -iregex ".*\.h" -o -iregex ".*\.fpp");do
+  echo "$file" >> OGSTM.lst
+done
+
+#ls ${OGSTMDIR}/src/General/*.[Fhc] >  OGSTM.lst
+#ls ${OGSTMDIR}/src/IO/*.[Fhc]     >> OGSTM.lst
+#ls ${OGSTMDIR}/src/MPI/*.[Fhc]    >> OGSTM.lst
+#ls ${OGSTMDIR}/src/PHYS/*.[Fhc]   >> OGSTM.lst
+#ls ${OGSTMDIR}/src/BIO/*.[Fhc]    >> OGSTM.lst
 
 
 ${MKMF} -c "${cppdefs}" -o "${oflags}" -t ${archfile} -p ${exe} OGSTM.lst

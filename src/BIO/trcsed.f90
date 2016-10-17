@@ -1,50 +1,50 @@
       SUBROUTINE trcsed
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE trcsed
-CCC                     *******************
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC     compute the now trend due to the vertical sedimentation of
-CCC     detritus and add it to the general trend of detritus equations.
-CCC
-CCC
-CC   METHOD :
-CC   -------
-CC      this ROUTINE compute not exactly the advection but the
-CC      transport term, i.e.  dz(wt) and dz(ws)., dz(wtr)
-CC      using an upstream scheme
-CC
-CC    the now vertical advection of tracers is given by:
-CC
-CC          dz(trn wn) = 1/bt dk+1( e1t e2t vsed (trn) )
-CC
-CC    add this trend now to the general trend of tracer (ta,sa,tra):
-CC
-CC                     tra = tra + dz(trn wn)
-CC
-CC      IF 'key_trc_diabio' key is activated, the now vertical advection
-CC      trend of passive tracers is saved for futher diagnostics.
-CC
-CC    multitasked on vertical slab (jj-loop)
-CC
-CC
-CC
-CC   OUTPUT :
-CC   ------
-CC
-CC   WORKSPACE :
-CC   ---------
-CC    local
-CC    ze1e2w, ze3tr, ztra
-CC      COMMON
-CC
-CC   EXTERNAL :                   no
-CC   --------
-CC
-CC   REFERENCES :                 no
-CC   ----------
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE trcsed
+!!!                     *******************
+!!!
+!!!  PURPOSE :
+!!!  ---------
+!!!     compute the now trend due to the vertical sedimentation of
+!!!     detritus and add it to the general trend of detritus equations.
+!!!
+!!!
+!!   METHOD :
+!!   -------
+!!      this ROUTINE compute not exactly the advection but the
+!!      transport term, i.e.  dz(wt) and dz(ws)., dz(wtr)
+!!      using an upstream scheme
+!!
+!!    the now vertical advection of tracers is given by:
+!!
+!!          dz(trn wn) = 1/bt dk+1( e1t e2t vsed (trn) )
+!!
+!!    add this trend now to the general trend of tracer (ta,sa,tra):
+!!
+!!                     tra = tra + dz(trn wn)
+!!
+!!      IF 'key_trc_diabio' key is activated, the now vertical advection
+!!      trend of passive tracers is saved for futher diagnostics.
+!!
+!!    multitasked on vertical slab (jj-loop)
+!!
+!!
+!!
+!!   OUTPUT :
+!!   ------
+!!
+!!   WORKSPACE :
+!!   ---------
+!!    local
+!!    ze1e2w, ze3tr, ztra
+!!      COMMON
+!!
+!!   EXTERNAL :                   no
+!!   --------
+!!
+!!   REFERENCES :                 no
+!!   ----------
 
        USE myalloc
        USE BIO_mem
@@ -53,12 +53,12 @@ CC   ----------
        IMPLICIT NONE
 
 
-CC----------------------------------------------------------------------
-CC local declarations
-CC ==================
+!!----------------------------------------------------------------------
+!! local declarations
+!! ==================
 
 
-#   if defined key_trc_bfm
+#ifdef key_trc_bfm
 
       LOGICAL :: l1,l2,l3
       INTEGER :: ji,jj,jk,jv,jf,js
@@ -71,9 +71,9 @@ CC ==================
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
+!!----------------------------------------------------------------------
+!! statement functions
+!! ===================
 
 
 
@@ -117,11 +117,10 @@ CC ===================
 
       ENDIF ! End initialization phase (once at the beginning)
 
-C
-C
-C vertical slab
-C =============
-C
+
+! vertical slab
+! =============
+
 
 !!!$omp    parallel do default(none) private(jv,ji,jj,jk,js,mytid,jf,bottom)
 !!!$omp&                           shared(dimen_jvsed,jarr_sed,jpk, 
@@ -135,11 +134,11 @@ C
 #ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
-c      if( mytid + jv <=  dimen_jvsed) then
-C 1. sedimentation of detritus  : upstream scheme
-C -----------------------------------------------
-C 1.1 initialisation needed for bottom and surface value
-C
+!      if( mytid + jv <=  dimen_jvsed) then
+! 1. sedimentation of detritus  : upstream scheme
+! -----------------------------------------------
+! 1.1 initialisation needed for bottom and surface value
+
            ji = jarr_sed(1,jv)
            jj = jarr_sed(2,jv)
 
@@ -152,33 +151,33 @@ C
                  END DO
 
               END DO
-C
-C 1.2 tracer flux at w-point: we use -vsed (downward flux)
-C with simplification : no e1*e2
-C
+
+! 1.2 tracer flux at w-point: we use -vsed (downward flux)
+! with simplification : no e1*e2
+
               DO  jk = 2,jpkm1
 
-C                Particulate
+!                Particulate
                  DO js =1,4
                     zwork(js,jk,mytid+1) = -vsed * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
-C                Diatoms
+!                Diatoms
                  DO js =5,9
                     zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,1) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
-C                Flagellates
+!                Flagellates
                  DO js =10,13
                     zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,2) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
-C                Picophytoplankton
+!                Picophytoplankton
                  DO js =14,17
                     zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,3) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
 
-C                Dinoflagellates
+!                Dinoflagellates
                  DO js =18,21
                     zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,4) * trn(ji,jj,jk - 1, sed_idx(js))
                  END DO
@@ -188,7 +187,7 @@ C                Dinoflagellates
                bottom = mbathy(ji,jj) + 1
                zwork(:,bottom,mytid+1) = bottom_flux * zwork(:,bottom,mytid+1) ! bottom_flux = 0 -> no flux in the sea floor
 
-C 1.3 tracer flux divergence at t-point added to the general trend
+! 1.3 tracer flux divergence at t-point added to the general trend
 
               DO  jk = 1,jpkm1
                  jf=  jarr_sed_flx(jv,jk)
@@ -203,17 +202,17 @@ C 1.3 tracer flux divergence at t-point added to the general trend
                  END DO
 
                  DO js =1,21
-CCC  d2s convert speed from (m/day) to  (m/s)
+!!!  d2s convert speed from (m/day) to  (m/s)
                     tra(ji,jj,jk,sed_idx(js)) = tra(ji,jj,jk,sed_idx(js)) + ztra(js,mytid+1)*d2s
                  END DO
 
-#            if defined key_trc_diabio
+#ifdef key_trc_diabio
                   trbio(ji,jj,jk,8) = ztra
-#            endif
+#endif
 
 
                 END DO
-c        ENDIF
+#ENDIF
 
 
       END DO MAIN_LOOP
@@ -221,10 +220,10 @@ c        ENDIF
 !!!$omp    end parallel do
 
 
-#    else
+!#else
 
-C       no Sedimentation
+!       no Sedimentation
 
-#    endif
+!#endif
 
       END SUBROUTINE trcsed

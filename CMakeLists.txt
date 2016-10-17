@@ -26,14 +26,16 @@ set (CMAKE_INSTALL_PREFIX ${default_prefix} CACHE STRING
 
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
+add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_trc_smolar)
+add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2)
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
   set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -g -cpp -unroll=3 -qopt-subscript-in-range -align all -heap-arrays")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -traceback -fp-stack-check -check bounds -fpe0")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -traceback -cpp -fp-stack-check -check bounds -fpe0")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -ffixed-line-length-132")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -ffixed-line-length-132")
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
@@ -53,24 +55,10 @@ file(GLOB TMP src/${FOLDER}/*)
 #message(" tmp ->${TMP}<--" )
 list (APPEND FORTRAN_SOURCES ${TMP})
 endforeach()
-message(" pippo ->${FORTRAN_SOURCES}<--" )
 
-#set(CMAKE_Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}/modules)
+#message(" FILE TO COMPILE ->${FORTRAN_SOURCES}<--" )
 
+#compile
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-
 target_link_libraries( ogstm.xx ogstm_lib ${NETCDF_LIBRARY})
-#set (EXECUTABLES "ogstm.xx" ${NMPROGRAMS})
-#set (SCRIPTS "gen_pert.sh" "pert_multi_mode.sh")
-
-#add_executable ("NORMA.exe" "NORMA.f")
-#foreach (p ${NMPROGRAMS})
-#  add_executable (${p} "${p}.f")
-#endforeach (p)
-
-# install executables and scripts
-#install (TARGETS ${EXECUTABLES}
-#         RUNTIME DESTINATION "bin")
-#install (PROGRAMS ${SCRIPTS}
-#         DESTINATION "bin")

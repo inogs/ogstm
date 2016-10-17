@@ -55,8 +55,10 @@
 
       indic=1  ! 1 for indic to initialize output files (first call)
 
-      TauAVEfrom_1 = TimeStepStart ; if (IsStartBackup_1) TauAVEfrom_1 = datestringToTAU(BKPdatefrom_1)
-      TauAVEfrom_2 = TimeStepStart ; if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
+      TauAVEfrom_1 = TimeStepStart 
+       if (IsStartBackup_1) TauAVEfrom_1 = datestringToTAU(BKPdatefrom_1)
+      TauAVEfrom_2 = TimeStepStart 
+       if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
 
       DO TAU = TimeStepStart, TimeStep__End
 

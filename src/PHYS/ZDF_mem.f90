@@ -19,7 +19,7 @@
       REAL(8), allocatable :: zwx(:,:), zwy(:,:), zwz(:,:), zwt(:,:)
 
 
-CC----------------------------------------------------------------------
+!!----------------------------------------------------------------------
       CONTAINS
 
       subroutine myalloc_ZDF()
@@ -42,15 +42,24 @@ CC----------------------------------------------------------------------
 #endif
        dimen_jvzdf=0
 
-       allocate(jarr_zdf(2, jpi*jpj))      ; jarr_zdf     = huge(jarr_zdf(1,1))
-       allocate(jarr_zdf_flx(jpi*jpj,jpk)) ; jarr_zdf_flx = huge(jarr_zdf_flx(1,1))
-       allocate(zwd(jpk, ntids))           ; zwd          = huge(zwd(1,1))
-       allocate(zws(jpk, ntids))           ; zws          = huge(zws(1,1))
-       allocate(zwi(jpk, ntids))           ; zwi          = huge(zwi(1,1))
-       allocate(zwx(jpk, ntids))           ; zwx          = huge(zwx(1,1))
-       allocate(zwy(jpk, ntids))           ; zwy          = huge(zwy(1,1))
-       allocate(zwz(jpk, ntids))           ; zwz          = huge(zwz(1,1))
-       allocate(zwt(jpk, ntids))           ; zwt          = huge(zwt(1,1))
+       allocate(jarr_zdf(2, jpi*jpj))      
+        jarr_zdf     = huge(jarr_zdf(1,1))
+       allocate(jarr_zdf_flx(jpi*jpj,jpk)) 
+        jarr_zdf_flx = huge(jarr_zdf_flx(1,1))
+       allocate(zwd(jpk, ntids))           
+        zwd          = huge(zwd(1,1))
+       allocate(zws(jpk, ntids))           
+        zws          = huge(zws(1,1))
+       allocate(zwi(jpk, ntids))           
+        zwi          = huge(zwi(1,1))
+       allocate(zwx(jpk, ntids))           
+        zwx          = huge(zwx(1,1))
+       allocate(zwy(jpk, ntids))           
+        zwy          = huge(zwy(1,1))
+       allocate(zwz(jpk, ntids))           
+        zwz          = huge(zwz(1,1))
+       allocate(zwt(jpk, ntids))           
+        zwt          = huge(zwt(1,1))
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem

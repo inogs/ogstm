@@ -1,38 +1,38 @@
 
       SUBROUTINE trcbio
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE trcbio
-CCC                     *******************
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC     compute the now trend due to biogeochemical processes
-CCC     and add it to the general trend of passive tracers equations.
-CCC
-CCC    Three options:
-CCC
-CC   METHOD :
-CC   -------
-CC      each now biological flux is calculated  in FUNCTION of now
-CC      concentrations of tracers.
-CC      depending on the tracer, these fluxes are sources or sinks.
-CC      the total of the sources and sinks for each tracer
-CC      is added to the general trend.
-CC
-CC        tra = tra + zf...tra - zftra...
-CC                             |         |
-CC                             |         |
-CC                          source      sink
-CC
-CC
-CC      IF 'key_trc_diabio' key is activated, the biogeochemical
-CC    trends for passive tracers are saved for futher diagnostics.
-CC
-CC      multitasked on vertical slab (jj-loop)
-CC
-CCC   MODIFICATIONS:
-CC   --------------
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE trcbio
+!!!                     *******************
+!!!
+!!!  PURPOSE :
+!!!  ---------
+!!!     compute the now trend due to biogeochemical processes
+!!!     and add it to the general trend of passive tracers equations.
+!!!
+!!!    Three options:
+!!!
+!!!   METHOD :
+!!!   -------
+!!!      each now biological flux is calculated  in FUNCTION of now
+!!!      concentrations of tracers.
+!!!      depending on the tracer, these fluxes are sources or sinks.
+!!!      the total of the sources and sinks for each tracer
+!!!      is added to the general trend.
+!!!
+!!!        tra = tra + zf...tra - zftra...
+!!!                             |         |
+!!!                             |         |
+!!!                          source      sink
+!!!
+!!!
+!!!      IF 'key_trc_diabio' key is activated, the biogeochemical
+!!!    trends for passive tracers are saved for futher diagnostics.
+!!!
+!!!      multitasked on vertical slab (jj-loop)
+!!!
+!!!   MODIFICATIONS:
+!!!   --------------
 
       USE myalloc
       USE myalloc_mpp
@@ -42,9 +42,9 @@ CC   --------------
        IMPLICIT NONE
 
 
-CC----------------------------------------------------------------------
-CC local declarations
-CC ==================
+!!!----------------------------------------------------------------------
+!!! local declarations
+!!! ==================
       LOGICAL sur,bot
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
 
@@ -59,15 +59,15 @@ CC ==================
             EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
+!!!----------------------------------------------------------------------
+!!! statement functions
+!!! ===================
 
 
-C   | --------------|
-C   | BFM MODEL CALL|
-C   | --------------|
-C
+!   | --------------|
+!   | BFM MODEL CALL|
+!   | --------------|
+
         BIOparttime = MPI_WTIME()
 
 #ifdef __OPENMP1

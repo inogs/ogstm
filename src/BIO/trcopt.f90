@@ -1,9 +1,9 @@
 
       SUBROUTINE trcopt
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE trcopt
-CCC                     ******************
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE trcopt
+!!!                     ******************
 
        USE myalloc
        USE myalloc_mpp
@@ -11,8 +11,8 @@ CCC                     ******************
        IMPLICIT NONE
 
 
-CC local declarations
-CC ==================
+!!! local declarations
+!!! ==================
 
       REAL(8) conversion
 #if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm
@@ -41,8 +41,8 @@ CC ==================
 
       conversion = 0.50/0.217 ! Conversion Einstein to Watt  E2W=0.217
 
-C vertical slab
-C ===============
+! vertical slab
+! ===============
 
       DO jj = 1,jpj,ntids
 !!!$omp parallel default(none) private(mytid,ji,jk)
@@ -53,8 +53,8 @@ C ===============
       if (mytid+jj.le.jpj) then
 
 
-C 1. determination of surface irradiance
-C
+! 1. determination of surface irradiance
+
         DO ji = 1,jpi
 
           zpar0m(ji)          = qsr(ji,mytid+jj)*conversion
@@ -64,10 +64,10 @@ C
           xEPS(ji,1)          = kef(ji,mytid+jj)
 
         END DO
-C
-C 2. determination of xpar
-C ------------------------
-C
+
+!! 2. determination of xpar
+!! ------------------------
+
         DO jk = 2,jpk
           DO ji = 1,jpi
 
@@ -94,10 +94,10 @@ C
        trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop
        trcopttottime = trcopttottime + trcoptparttime
 
-#    else
+#else
 
-C    No optical model
+!!    No optical model
 
-#    endif
+#endif
 
       END SUBROUTINE trcopt

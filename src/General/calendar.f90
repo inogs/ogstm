@@ -16,8 +16,8 @@
          INTEGER :: plev
          CHARACTER(LEN=*) :: pcname,pstr1,pstr2,pstr3
 !-
-         CHARACTER(LEN=30),DIMENSION(3) :: pemsg = (/ "NOTE TO THE USER FROM ROUTINE ",
-     &     "WARNING FROM ROUTINE          ", 
+         CHARACTER(LEN=30),DIMENSION(3) :: pemsg = (/ "NOTE TO THE USER FROM ROUTINE ", &
+     &     "WARNING FROM ROUTINE          ",  &
      &     "FATAL ERROR FROM ROUTINE      " /)
 !---------------------------------------------------------------------
          IF ( (plev >= 1).AND.(plev <= 3) ) THEN
@@ -59,10 +59,10 @@
         USE stringop,  ONLY : strlowercase
         ! 
         PRIVATE
-        PUBLIC :: ymds2ju, ju2ymds, tlen2itau, isittime,
-     &   ioconf_calendar, ioget_calendar, itau2date, ioget_timestamp,
-     & ioconf_startdate, itau2ymds, time_add, time_diff,
-     & write_date_string, read_date_string, datestring2sec,photoperiod,
+        PUBLIC :: ymds2ju, ju2ymds, tlen2itau, isittime, &
+     &   ioconf_calendar, ioget_calendar, itau2date, ioget_timestamp, &
+     & ioconf_startdate, itau2ymds, time_add, time_diff, &
+     & write_date_string, read_date_string, datestring2sec,photoperiod, &
      & tau2julianday
         !
         INTERFACE ioget_calendar
@@ -115,7 +115,7 @@
           INTEGER :: julian_day
           REAL(8)    :: julian_sec
           !
-        CALL ymds2ju_internal(year, month, day, sec,
+        CALL ymds2ju_internal(year, month, day, sec, &
      & julian_day, julian_sec)
           !
           julian = julian_day + julian_sec / un_jour
@@ -166,9 +166,9 @@
           !
           IF ( un_an .GT. 365.0 .AND. un_an .LT. 366.0) THEN
               !
-              jd = ( 1461 * ( y + 4800 + INT(( m - 14 ) / 12 )) ) / 4 + 
-     &        ( 367 * ( m - 2 - 12 * ( INT(( m - 14 ) / 12 )) ) ) / 12 - 
-     &        ( 3 * ( ( y + 4900 + INT(( m - 14 ) / 12 )) / 100 ) ) / 4 + 
+              jd = ( 1461 * ( y + 4800 + INT(( m - 14 ) / 12 )) ) / 4 +  &
+     &        ( 367 * ( m - 2 - 12 * ( INT(( m - 14 ) / 12 )) ) ) / 12 - &
+     &        ( 3 * ( ( y + 4900 + INT(( m - 14 ) / 12 )) / 100 ) ) / 4 + &
      &        d - 32075
               jd = jd - 2299160
               !          
@@ -214,7 +214,7 @@
           julian_day = INT(julian)
           julian_sec = (julian - julian_day)*un_jour
           !
-      CALL ju2ymds_internal(julian_day, julian_sec, year, month,
+      CALL ju2ymds_internal(julian_day, julian_sec, year, month, &
      & day, sec)
           !
         END SUBROUTINE ju2ymds
@@ -492,7 +492,7 @@
           julian_day = start_day
           julian_sec = start_sec + float(itau)*deltat
           !
-        CALL ju2ymds_internal(julian_day, julian_sec, year, month,
+        CALL ju2ymds_internal(julian_day, julian_sec, year, month, &
      &   date, sec)
           !
         END SUBROUTINE itau2ymds
@@ -572,7 +572,7 @@
           !
           check = .FALSE.
           !
-          IF (check) WRITE(*,*) "isittime 1.0 ", itau, date0, dt, freq,
+          IF (check) WRITE(*,*) "isittime 1.0 ", itau, date0, dt, freq, &
      &      last_action, last_check
           !
           IF (last_check >= 0) THEN
@@ -584,7 +584,7 @@
               ! on the time steps.
               !
               IF ( freq .GT. 0) THEN
-                  IF ( ABS(dt_action - freq) .LE. ABS(dt_action +
+                  IF ( ABS(dt_action - freq) .LE. ABS(dt_action + &
      &             dt_check - freq) ) THEN
                       do_action = .TRUE.
                   ELSE
@@ -636,14 +636,14 @@
                   ! 
       ! Transform the dates into time-steps for the needed precisions.
                   !
-                   next_act_itau = last_action +
+                   next_act_itau = last_action + &
      &              INT((date_next_act - date_last_act)*(un_jour/dt))
                   !
-                  IF ( ABS(itau - next_act_itau)  .LE.
+                  IF ( ABS(itau - next_act_itau)  .LE. &
      &             ABS( next_check_itau - next_act_itau) ) THEN
                       do_action = .TRUE.
                       IF ( check ) THEN
-       WRITE(*,*) 'ACT-TIME : itau, next_act_itau, next_check_itau : ',
+       WRITE(*,*) 'ACT-TIME : itau, next_act_itau, next_check_itau : ', &
      &               itau, next_act_itau, next_check_itau
                          CALL ju2ymds(date_now, year, month, day, sec)
        WRITE(*,*) 'ACT-TIME : y, m, d, s : ', year, month, day, sec
@@ -654,9 +654,9 @@
                   ENDIF
               ENDIF
               !
-              IF (check) WRITE(*,*) "isittime 2.0 ",
-     &         date_next_check, date_next_act, ABS(dt_action - freq),
-     & ABS(dt_action + dt_check - freq), dt_action,
+              IF (check) WRITE(*,*) "isittime 2.0 ", &
+     &         date_next_check, date_next_act, ABS(dt_action - freq), &
+     & ABS(dt_action + dt_check - freq), dt_action, &
      & dt_check, next_check_itau, do_action
               !
           ELSE 
@@ -711,21 +711,21 @@
                    IF ( MOD(leng,12) .EQ. 0 .AND. leng .GT. 1) THEN
                       un_an = leng
                    ELSE
-                      CALL histerr(3,'ioconf_calendar',
-     &             'The length of the year as to be a modulo of 12',
+                      CALL histerr(3,'ioconf_calendar', &
+     &             'The length of the year as to be a modulo of 12', &
      &'so that it can be divided into 12 month of equal length', str)
                    ENDIF
                 ELSE
-      CALL histerr(3,'ioconf_calendar',
-     & 'Unrecognized input, please ceck the man pages.',
+      CALL histerr(3,'ioconf_calendar', &
+     & 'Unrecognized input, please ceck the man pages.', &
      &             str, ' ')
                 ENDIF
              END SELECT
           ELSE
              WRITE(str10,'(f10.4)') un_an
-             CALL histerr(2,'ioconf_calendar',
-     &'The calendar was already used or configured. You are',
-     &'not allowed to change it again.The followingLengthOfYearIsUsed :'
+             CALL histerr(2,'ioconf_calendar', &
+     &'The calendar was already used or configured. You are', &
+     &'not allowed to change it again.The followingLengthOfYearIsUsed :' &
      &,str10)
           ENDIF
           !
@@ -771,7 +771,7 @@
           INTEGER :: julian_day
           REAL(8)    :: julian_sec
       
-          CALL ymds2ju_internal(year, month, day, sec, julian_day,
+          CALL ymds2ju_internal(year, month, day, sec, julian_day, &
      &     julian_sec)
       
           CALL ioconf_startdate_internal(julian_day, julian_sec)
@@ -801,12 +801,12 @@
              !
           ELSE
              !
-      WRITE(str70a,'("The date you tried to set : ",f10.4)')
+      WRITE(str70a,'("The date you tried to set : ",f10.4)') &
      & julian_day, julian_sec/un_jour
-      WRITE(str70b,'("The dateWhichWasAlreadyinTheCalendar: ",f10.4)')
+      WRITE(str70b,'("The dateWhichWasAlreadyinTheCalendar: ",f10.4)') &
      &   start_day + start_sec/un_jour
-             CALL histerr(2,'ioconf_startdate The start date has ',
-     &       'already been set and you tried to change it', 
+             CALL histerr(2,'ioconf_startdate The start date has ', &
+     &       'already been set and you tried to change it', &
      &  str70a, str70b)
              !
           ENDIF
@@ -924,9 +924,9 @@
               !
         CALL DATE_AND_TIME(bigben(1), bigben(2), bigben(3), date_time)
               !
-              WRITE(time_stamp,"(I4.4,'-',A3,'-',I2.2,
-     &         ' ',I2.2,':',I2.2,':',I2.2,' GMT',a5)") date_time(1), 
-     &         cal(date_time(2)),date_time(3),date_time(5),
+              WRITE(time_stamp,"(I4.4,'-',A3,'-',I2.2, &
+     &         ' ',I2.2,':',I2.2,':',I2.2,' GMT',a5)") date_time(1), &
+     &         cal(date_time(2)),date_time(3),date_time(5), &
      & date_time(6), date_time(7), bigben(3)
               !
           ENDIF
@@ -962,12 +962,12 @@
           INTEGER :: julian_day
           REAL(8)    :: julian_sec
           !
-          CALL ymds2ju_internal(year_s, month_s, day_s, sec_s,
+          CALL ymds2ju_internal(year_s, month_s, day_s, sec_s, &
      &     julian_day, julian_sec)
           !
           julian_sec = julian_sec + sec_increment
           !
-          CALL ju2ymds_internal(julian_day, julian_sec, year_e,
+          CALL ju2ymds_internal(julian_day, julian_sec, year_e, &
      &     month_e, day_e, sec_e)
           !
         END SUBROUTINE time_add
@@ -997,9 +997,9 @@
           INTEGER :: julian_day_s, julian_day_e, day_diff
           REAL(8)    :: julian_sec_s, julian_sec_e
           !
-          CALL ymds2ju_internal(year_s, month_s, day_s, sec_s,
+          CALL ymds2ju_internal(year_s, month_s, day_s, sec_s, &
      &     julian_day_s, julian_sec_s)
-          CALL ymds2ju_internal(year_e, month_e, day_e, sec_e,
+          CALL ymds2ju_internal(year_e, month_e, day_e, sec_e, &
      &     julian_day_e, julian_sec_e)
           !
           day_diff = julian_day_e - julian_day_s

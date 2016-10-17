@@ -74,13 +74,14 @@ CC----------------------------------------------------------------------
        sed_idx(20) = ppP4p
        sed_idx(21) = ppP4l
 
-       allocate(jarr_sed(2, jpi*jpj))      ; jarr_sed     = huge(jarr_sed(1,1))
-       allocate(jarr_sed_flx(jpi*jpj,jpk)) ; jarr_sed_flx = huge(jarr_sed_flx(1,1))
- 
-       allocate( ztra(nsed,ntids))         ; ztra         = huge(ztra(1,1))
-
-
-       allocate(zwork(nsed, jpk, ntids))   ; zwork        = huge(zwork(1,1,1))
+       allocate(jarr_sed(2, jpi*jpj))      
+       jarr_sed     = huge(jarr_sed(1,1))
+       allocate(jarr_sed_flx(jpi*jpj,jpk)) 
+       jarr_sed_flx = huge(jarr_sed_flx(1,1)) 
+       allocate( ztra(nsed,ntids))         
+       ztra         = huge(ztra(1,1))
+       allocate(zwork(nsed, jpk, ntids))   
+       zwork        = huge(zwork(1,1,1))
 
 
 #ifdef Mem_Monitor

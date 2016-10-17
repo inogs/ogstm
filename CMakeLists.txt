@@ -1,4 +1,5 @@
 # CMake project file for OGSTM
+# author : E.Pascolo, S.Bna, L.Calori
 
 cmake_minimum_required (VERSION 2.6)
 project (OGSTM)
@@ -24,10 +25,10 @@ set (CMAKE_INSTALL_PREFIX ${default_prefix} CACHE STRING
 # FFLAGS depend on the compiler
 
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
-
+set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -g -unroll=3 -qopt-subscript-in-range -align all -heap-arrays")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -g -cpp -unroll=3 -qopt-subscript-in-range -align all -heap-arrays")
   set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -traceback -fp-stack-check -check bounds -fpe0")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
@@ -54,7 +55,7 @@ list (APPEND FORTRAN_SOURCES ${TMP})
 endforeach()
 message(" pippo ->${FORTRAN_SOURCES}<--" )
 
-set(CMAKE_Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}/modules)
+#set(CMAKE_Fortran_MODULE_DIRECTORY ${PROJECT_BINARY_DIR}/modules)
 
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)

@@ -1,13 +1,13 @@
             SUBROUTINE parcst
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE parcst
-CCC                     ******************
-CCC
-CCC  Purpose :
-CCC  --------
-CCC     Print the model parameters-
-CC----------------------------------------------------------------------
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE parcst
+!!!                     ******************
+!!!
+!!!  Purpose :
+!!!  --------
+!!!     Print the model parameters-
+!!!----------------------------------------------------------------------
 
        USE myalloc
         IMPLICIT NONE
@@ -21,15 +21,15 @@ CC----------------------------------------------------------------------
       WRITE(numout,*) ' initialization of ogstm model'
       WRITE(numout,*) ' '
 
-C 1. Parameters
-C -------------
+! 1. Parameters
+! -------------
 
       WRITE(numout,*) ' '
       WRITE(numout,*) ' parameter file'
       WRITE(numout,*) ' **************'
       WRITE(numout,*) ' '
 
-C 1.1 Dimensions of domain
+! 1.1 Dimensions of domain
 
       WRITE(numout,*) ' dimension of model'
       WRITE(numout,*) ' '
@@ -52,7 +52,7 @@ C 1.1 Dimensions of domain
       WRITE(numout,*) ' jpij    : ', jpij
       WRITE(numout,*) ' '
 
-C 1.2 Option parameter : island, periodic,...
+! 1.2 Option parameter : island, periodic,...
 
       WRITE(numout,*) ' island,',' lateral boundary conditions, s-coordinate'
       WRITE(numout,*) ' '
@@ -67,25 +67,25 @@ C 1.2 Option parameter : island, periodic,...
 
 
       SUBROUTINE parctl 
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE parctl
-CCC                     ******************
-CCC
-CCC  Purpose :
-CCC  --------
-CCC     Control the cpp options for the run and if files are availables
-CCC     Control also consistancy between options and namelist values
-CCC
-CC   Method :
-CC   -------
-CC      We use if/endif inside #if defined option-cpp
-CC      c a u t i o n : FILE name must not exceed 21 characters
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE parctl
+!!!                     ******************
+!!!
+!!!  Purpose :
+!!!  --------
+!!!     Control the cpp options for the run and if files are availables
+!!!     Control also consistancy between options and namelist values
+!!!
+!!   Method :
+!!   -------
+!!      We use if/endif inside #if defined option-cpp
+!!      c a u t i o n : FILE name must not exceed 21 characters
 
        USE myalloc
        IMPLICIT NONE
-CC local declarations
-CC ==================
+!! local declarations
+!! ==================
       INTEGER ji, jj
       INTEGER iadv, istop, iwarn
 
@@ -100,13 +100,13 @@ CC ==================
           WRITE(numout,*) ' control of cpp options and files'
           WRITE(numout,*) ' '
       END IF
-C Initialization
+!! Initialization
       istop = 0
       iwarn = 0
 9000  FORMAT( /,' ===>>>> : E R R O R',/,'          ===========',/ )
 
-C II. Domain
-C ... Intialization of sub domain index
+!! II. Domain
+!! ... Intialization of sub domain index
       DO ji = 1,jpi
         mindi(ji) = ji+nizoom-1
       END DO
@@ -136,16 +136,16 @@ C ... Intialization of sub domain index
       ENDIF
 
 
-C ... coordinates & bathymetry
-C ----------------------------
-C   ... Vertical coordinate
+!!... coordinates & bathymetry
+!! ----------------------------
+!!   ... Vertical coordinate
 
       IF(lwp) THEN
           WRITE(numout,*)
           WRITE(numout,*)
           WRITE(numout,*) ' *** vertical coordinate option'
           WRITE(numout,*) '     z-coordinates (default)'
-C VI. Data and surface forcing dynamic and physic input file
+!! VI. Data and surface forcing dynamic and physic input file
           WRITE(numout,*)
           WRITE(numout,*)
           WRITE(numout,*) ' *** dynamic and physics file'
@@ -189,22 +189,22 @@ C VI. Data and surface forcing dynamic and physic input file
           WRITE(numout,*)
           WRITE(numout,*) ' *** lateral diffusion option'
           WRITE(numout,*)
-C   ... Space variation of eddy coefficients
+!   ... Space variation of eddy coefficients
 #if defined key_trahdfcoef1d 
           WRITE(numout,*) '     tracer eddy coef. function of depth only'
 #endif
-C   ... Type of diffusive operator
+!   ... Type of diffusive operator
 #if defined key_trahdfbilap
           WRITE(numout,*) '     biharmonic tracer diffusion'
 #  else
           WRITE(numout,*) '     harmonic tracer diffusion (default)'
 #endif
       ENDIF
-C   ... Order logical units by growing numbers
+!   ... Order logical units by growing numbers
 
 
-C ... W a r n i n g  and  e r r o r  control
-C ------------------------------------------
+! ... W a r n i n g  and  e r r o r  control
+! ------------------------------------------
 
       IF ( istop.GT.0 ) THEN
           IF(lwp)WRITE(numout,*)
@@ -219,8 +219,8 @@ C ------------------------------------------
 
       istop = 0
 
-C 8. Advection scheme option
-C --------------------------
+! 8. Advection scheme option
+! --------------------------
       iadv = 0
       IF(lwp) THEN
           WRITE(numout,*) ' *** Advection scheme'
@@ -230,10 +230,10 @@ C --------------------------
           WRITE(numout,*) ' '
           iadv = iadv + 1
 #endif
-C 9. Lateral diffusion option
+! 9. Lateral diffusion option
           WRITE(numout,*)' *** Lateral diffusion option for passive tracer'
           WRITE(numout,*)
-C   ... Type of diffusive operator
+!   ... Type of diffusive operator
 #     if defined key_trc_hdfbilap
          WRITE(numout,*) '   biharmonic tracer diffusion'
 #     else
@@ -244,7 +244,7 @@ C   ... Type of diffusive operator
          WRITE(numout,*) '   samethan active tracer diffusion'
 #        endif
 #     endif
-C     10. tracer damping option
+!     10. tracer damping option
           WRITE(numout,*) ' *** Tracer damping option'
           WRITE(numout,*)
 #     if defined key_trc_dmp
@@ -254,7 +254,7 @@ C     10. tracer damping option
 #    endif
           WRITE(numout,*) ' *** Source/Sink model option'
           WRITE(numout,*)
-C 11. SMS model
+! 11. SMS model
 #    if defined key_trc_bfm
           WRITE(numout,*) ' use bfm tracer model '
 #    else
@@ -265,7 +265,7 @@ C 11. SMS model
 
 
 
-C      E r r o r  control
+!      E r r o r  control
 
       IF ( istop.GT.0 .or. iadv.NE.1 ) THEN
           IF (iadv.EQ.0) THEN

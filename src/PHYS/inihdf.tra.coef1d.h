@@ -1,10 +1,10 @@
-CCC
-CCC             inihdf.tra.coef1d.h
-CCC           ***********************
-CCC
-CCC   defined key :  'key_trahdfcoef1d'
-CCC   ============
-CCC
+!!!
+!!!             inihdf.tra.coef1d.h
+!!!           ***********************
+!!!
+!!!   defined key :  'key_trahdfcoef1d'
+!!!   ============
+!!!
 CC      1D eddy diffusivity coefficients ( depth )
 CC      --------------------------------
 CC
@@ -21,9 +21,9 @@ CC       eddy induced velocity
 CC         always harmonic      : aeiu = aeiv defined at T-level
 CC				  aeiw defined at w-level
 CC
-CCC---------------------------------------------------------------------
-CCC  OPA8, LODYC (1997)
-CCC---------------------------------------------------------------------
+!!!---------------------------------------------------------------------
+!!!  OPA8, LODYC (1997)
+!!!---------------------------------------------------------------------
 C
       IF(lwp)WRITE(numout,*)
 
@@ -36,11 +36,11 @@ C
 C   ... ahts, ahtf: surface and bottom values
        zahts = aht0
        zahtf = aht0/2.
-CCC 
+!!! 
 C   ... zkah, zahr: depth of the inflection pt and width of inflection
           zkah =  -150.
           zahr =   150.
-CCC
+!!!
 C   ... computation coefficients
       za00 = tanh( (-gdept(1  )-zkah) / zahr )
       za01 = tanh( (-gdept(jpk)-zkah) / zahr )

@@ -1,51 +1,51 @@
-CCC        TRCHDF.BILAPLACIAN
-CCC      **********************
-CCC
-CC   define key : 'key_trc_hdfbilap'   but not key_trc_hdfgeop
-CC   ==========
-CC
-CC
-CC   METHOD :
-CC   -------
-CC      4th order diffusive operator along model level surfaces evalu-
-CC    ated using before fields (forward time scheme). The horizontal
-CC    diffusive trends of passive tracer is given by:
-CC    Multiply by the eddy diffusivity coef. and insure lateral bc:
-CC      Bilaplacian (laplacian of zlt):
-CC         difft = 1/(e1t*e2t*e3t) {  di-1[ e2u*e3u/e1u di(zlt) ]
-CC                                  + dj-1[ e1v*e3v/e2v dj(zlt) ]  }
-CC
-CC       * z-coordinate (default key), e3t=e3u=e3v, the trend becomes:
-CC      Laplacian of trb:
-CC         zlt   = 1/(e1t*e2t) {  di-1[ e2u/e1u di(trb) ]
-CC                              + dj-1[ e1v/e2v dj(trb) ] }
-CC    Multiply by the eddy diffusivity coef. and insure lateral bc:
-CC      Bilaplacian (laplacian of zlt):
-CC         difft = 1/(e1t*e2t) {  di-1[ e2u/e1u di(zlt) ]
-CC                              + dj-1[ e1v/e2v dj(zlt) ]  }
-CC
-CC      Add this trend to the general trend (tra):
-CC         (tra) = (tra) + ( difftr )
-CC
-CC
-CC      macro-tasked on tracer slab (jn-loop)
-CC
-CC
-CC   OUTPUT :
-CC   ------
-CC    tra      : general passive tracer trend increased by the
-CC                                horizontal diffusion trend
+!!!        TRCHDF.BILAPLACIAN
+!!!      **********************
+!!!
+!!   define key : 'key_trc_hdfbilap'   but not key_trc_hdfgeop
+!!   ==========
+!!
+!!
+!!   METHOD :
+!!   -------
+!!      4th order diffusive operator along model level surfaces evalu-
+!!    ated using before fields (forward time scheme). The horizontal
+!!    diffusive trends of passive tracer is given by:
+!!    Multiply by the eddy diffusivity coef. and insure lateral bc:
+!!      Bilaplacian (laplacian of zlt):
+!!         difft = 1/(e1t*e2t*e3t) {  di-1[ e2u*e3u/e1u di(zlt) ]
+!!                                  + dj-1[ e1v*e3v/e2v dj(zlt) ]  }
+!!
+!!       * z-coordinate (default key), e3t=e3u=e3v, the trend becomes:
+!!      Laplacian of trb:
+!!         zlt   = 1/(e1t*e2t) {  di-1[ e2u/e1u di(trb) ]
+!!                              + dj-1[ e1v/e2v dj(trb) ] }
+!!    Multiply by the eddy diffusivity coef. and insure lateral bc:
+!!      Bilaplacian (laplacian of zlt):
+!!         difft = 1/(e1t*e2t) {  di-1[ e2u/e1u di(zlt) ]
+!!                              + dj-1[ e1v/e2v dj(zlt) ]  }
+!!
+!!      Add this trend to the general trend (tra):
+!!         (tra) = (tra) + ( difftr )
+!!
+!!
+!!      macro-tasked on tracer slab (jn-loop)
+!!
+!!
+!!   OUTPUT :
+!!   ------
+!!    tra      : general passive tracer trend increased by the
+!!                                horizontal diffusion trend
 
 
-CC----------------------------------------------------------------------
+!!----------------------------------------------------------------------
       USE myalloc
       USE myalloc_mpp
       USE HDF_mem
       USE DIA_mem
         IMPLICIT NONE
-CC----------------------------------------------------------------------
-CC local declarations
-CC ==================
+!!----------------------------------------------------------------------
+!! local declarations
+!! ==================
 
 
       LOGICAL l1,l2,l3
@@ -56,12 +56,12 @@ CC ==================
       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
+!!----------------------------------------------------------------------
+!! statement functions
+!! ===================
 
        trcbilaphdfparttime = MPI_WTIME()
-CCC OpenMP
+!!! OpenMP
 #ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
@@ -72,9 +72,9 @@ CCC OpenMP
 
 
 
-CC Define auxiliary matrix
+!! Define auxiliary matrix
 
-C       dimen_jvhdf1=0
+!!       dimen_jvhdf1=0
        IF (dimen_jvhdf1 .EQ. 0) THEN
           DO jk = 1,jpk
              DO jj = 1,jpj
@@ -92,13 +92,13 @@ C       dimen_jvhdf1=0
                    if(jj .EQ. jpj) jjrig = 0
                    if(ji .EQ. jpi) jirig = 0
                    locsum = 0
-C                  DO myjk=jk+jklef, jk+jkrig
+!!                  DO myjk=jk+jklef, jk+jkrig
                       DO myjj=jj+jjlef, jj+jjrig
                          DO myji=ji+jilef, ji+jirig
                             locsum = locsum + tmask(myji, myjj, jk)
                          END DO
                       END DO
-C                  END DO
+!!                  END DO
                    if(locsum .NE. 0) then
                       dimen_jvhdf1 = dimen_jvhdf1 + 1
                       hdfmask(ji,jj,jk) = 1
@@ -109,12 +109,12 @@ C                  END DO
              END DO
           END DO
 
-C 0. Initialization of metric arrays (for z- or s-coordinates)
-C ----------------------------------
+!! 0. Initialization of metric arrays (for z- or s-coordinates)
+!! ----------------------------------
           DO jk=1,jpkm1
              DO jj = 1, jpjm1
                DO ji = 1, jpim1
-C   ... z-coordinates, no vertical scale factors
+!!   ... z-coordinates, no vertical scale factors
                   zbtr(ji,jj,jk) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk) )
                   zeeu(ji,jj,jk) = e2u(ji,jj)*e3u(ji,jj,jk) / e1u(ji,jj) * umask(ji,jj,jk)
                   zeev(ji,jj,jk) = e1v(ji,jj)*e3v(ji,jj,jk) / e2v(ji,jj) * vmask(ji,jj,jk)
@@ -139,7 +139,7 @@ C   ... z-coordinates, no vertical scale factors
           END DO
        ENDIF
 
-C       dimen_jvhdf3=0
+!!       dimen_jvhdf3=0
 
        IF (dimen_jvhdf3 .EQ. 0) THEN
           DO jk = 1,jpkm1
@@ -172,18 +172,18 @@ C       dimen_jvhdf3=0
              END DO
        ENDIF
 
-C tracer slab
-C =============
+!! tracer slab
+!! =============
 
       TRACER_LOOP: DO  jn = 1, jptra, ntids
 
-C 1. Laplacian
-C ------------
+!! 1. Laplacian
+!! ------------
 
-C ... First derivative (gradient)
-!!!$omp  parallel default(none) private(mytid,jv,jk,jj,ji)
-!!!$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
-!!!$omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
+!! ... First derivative (gradient)
+!!!&omp  parallel default(none) private(mytid,jv,jk,jj,ji)
+!!!&omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
+!!!&omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
 #ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
 #else
@@ -198,44 +198,45 @@ C ... First derivative (gradient)
              jj = jarr_hdf(2,jv,1)
              jk = jarr_hdf(3,jv,1)
 
-             ztu(ji,jj,jk,mytid+1) = zeeu(ji,jj,jk) *
-     $          ( trb(ji+1,jj,jk,jn+mytid) - trb(ji,jj,jk,jn+mytid) )*
-     $          tmask(ji+1,jj,jk) * tmask(ji,jj,jk)
-             ztv(ji,jj,jk,mytid+1) = zeev(ji,jj,jk) *
-     $          ( trb(ji,jj+1,jk,jn+mytid) - trb(ji,jj,jk,jn+mytid) )*
-     $          tmask(ji,jj+1,jk) * tmask(ji,jj,jk)
+             ztu(ji,jj,jk,mytid+1) = zeeu(ji,jj,jk) * &
+     &          ( trb(ji+1,jj,jk,jn+mytid) - trb(ji,jj,jk,jn+mytid) )* &
+     &          tmask(ji+1,jj,jk) * tmask(ji,jj,jk)
+
+             ztv(ji,jj,jk,mytid+1) = zeev(ji,jj,jk) * &
+     &          ( trb(ji,jj+1,jk,jn+mytid) - trb(ji,jj,jk,jn+mytid) )* &
+     &          tmask(ji,jj+1,jk) * tmask(ji,jj,jk)
 
           END DO
-C
-C ... Second derivative (divergence)
+!!
+!! ... Second derivative (divergence)
           DO jv=1, dimen_jvhdf3
 
              ji = jarr_hdf(1,jv,2)
              jj = jarr_hdf(2,jv,2)
              jk = jarr_hdf(3,jv,2)
 
-             zlt(ji,jj,jk,mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
-     $             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
-C ... Multiply by the eddy diffusivity coefficient
+             zlt(ji,jj,jk,mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1) &
+     &             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
+!! ... Multiply by the eddy diffusivity coefficient
              zlt(ji,jj,jk,mytid+1) = trcrat * ahtt(jk) * zlt(ji,jj,jk,mytid+1)
 
           END DO
 
        ENDIF
-!!!$omp  end parallel
+!!!&omp  end parallel
 #ifdef __OPENMP1
 #else
       END DO PACK_LOOP1
       mytid =0
 #endif
-C
-C
-C ... Lateral boundary conditions on the laplacian (zlt,zls)
+!!
+!!
+!! ... Lateral boundary conditions on the laplacian (zlt,zls)
 
 #ifdef key_mpp
-C
-C   ... Mpp : export boundary values to neighboring processors
-C
+!!
+!!   ... Mpp : export boundary values to neighboring processors
+!!
        IF( ntids - 1 + jn <= jptra ) THEN
           pack_size = ntids
        ELSE
@@ -257,13 +258,13 @@ C
 
 #endif
 
-C 2. Bilaplacian
-C --------------
+!! 2. Bilaplacian
+!! --------------
 
-C ... third derivative (gradient)
-!!!$omp  parallel default(none) private(mytid,jv,jk,jj,ji,jf)
-!!!$omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,zlt,tmask,ztv,zeev,
-!!!$omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
+!! ... third derivative (gradient)
+!!!&omp  parallel default(none) private(mytid,jv,jk,jj,ji,jf)
+!!!&omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,zlt,tmask,ztv,zeev,
+!!!&omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
 #ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
 #else
@@ -279,16 +280,16 @@ C ... third derivative (gradient)
              jk = jarr_hdf(3,jv,1)
 
 
-             ztu(ji,jj,jk,mytid+1) = zeeu(ji,jj,jk) *
-     $        ( zlt(ji+1,jj,jk,mytid+1) - zlt(ji,jj,jk,mytid+1) ) *
-     $        tmask(ji+1,jj,jk) * tmask(ji,jj,jk)
-             ztv(ji,jj,jk,mytid+1) = zeev(ji,jj,jk) *
-     $        ( zlt(ji,jj+1,jk,mytid+1) - zlt(ji,jj,jk,mytid+1) ) *
-     $        tmask(ji,jj+1,jk) * tmask(ji,jj,jk)
+             ztu(ji,jj,jk,mytid+1) = zeeu(ji,jj,jk) * &
+     &        ( zlt(ji+1,jj,jk,mytid+1) - zlt(ji,jj,jk,mytid+1) ) * &
+     &        tmask(ji+1,jj,jk) * tmask(ji,jj,jk)
+             ztv(ji,jj,jk,mytid+1) = zeev(ji,jj,jk) * & 
+     &        ( zlt(ji,jj+1,jk,mytid+1) - zlt(ji,jj,jk,mytid+1) ) * &
+     &        tmask(ji,jj+1,jk) * tmask(ji,jj,jk)
 
           END DO
 
-C ... fourth derivative (divergence) and add to the general tracer trend
+!! ... fourth derivative (divergence) and add to the general tracer trend
 
           DO jv=1, dimen_jvhdf3
 
@@ -297,10 +298,10 @@ C ... fourth derivative (divergence) and add to the general tracer trend
              jk = jarr_hdf(3,jv,2)
              jf = jarr_hdf_flx(jv)
 
-C   ... horizontal diffusive trends
-             zta(mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1)
-     $            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
-C   ... add it to the general tracer trends
+!!   ... horizontal diffusive trends
+             zta(mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1) &
+     &            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
+!!   ... add it to the general tracer trends
               tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid) + zta(mytid+1)
 
 !     Save diffusive fluxes x,y
@@ -312,15 +313,15 @@ C   ... add it to the general tracer trends
          END DO
 
       ENDIF
-!!!$omp  end parallel
+!!!&omp  end parallel
 #ifdef __OPENMP1
 #else
       END DO PACK_LOOP2
       mytid =0
 #endif
       
-C End of slab
-C ===========
+!! End of slab
+!! ===========
 
         END DO TRACER_LOOP
 

@@ -1,49 +1,49 @@
       SUBROUTINE trcnxt
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE trcnxt
-CCC                     *******************
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC    compute the passive tracers fields at the next time
-CCC    step from their temporal trends
-CCC
-CC    METHOD :
-CC
-CC
-CC      Apply lateral boundary conditions (nperio=0,closed ; nperio=1,
-CC      east-west cyclic ; nperio=2, symmetric round the equator)
-CC      on tra arrays
-CC
-CC   default:
-CC      arrays swap
-CC         (trn) = (tra) ; (tra) = (0,0)
-CC         (trb) = (trn) 
-CC
-CC   For Arakawa Sheme : IF key_trc_arakawa defined
-CC      A Asselin time filter applied on now tracers (trn) to avoid
-CC      the divergence of two consecutive time-steps and tr arrays
-CC      to prepare the next time_step:
-CC         (trb) = (trn) + gamma [ (trb) + (tra) - 2 (trn) ]
-CC         (trn) = (tra) ; (tra) = (0,0)
-CC
-CC      array swap for tracers to start the next time step
-CC
-CC
-CC      macrotasking on tracer slab
-CC
-CC
-CC   INPUT :
-CC   -----
-CC
-CC   OUTPUT :
-CC   ------
-CC      argument                : no
-CC
-CC   WORKSPACE :
-CC   ---------
-CC     ji jj jk jn zfact zdt
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE trcnxt
+!!!                     *******************
+!!!
+!!!  PURPOSE :
+!!!  ---------
+!!!    compute the passive tracers fields at the next time
+!!!    step from their temporal trends
+!!!
+!!    METHOD :
+!!
+!!
+!!      Apply lateral boundary conditions (nperio=0,closed ; nperio=1,
+!!      east-west cyclic ; nperio=2, symmetric round the equator)
+!!      on tra arrays
+!!
+!!   default:
+!!      arrays swap
+!!         (trn) = (tra) ; (tra) = (0,0)
+!!         (trb) = (trn) 
+!!
+!!   For Arakawa Sheme : IF key_trc_arakawa defined
+!!      A Asselin time filter applied on now tracers (trn) to avoid
+!!      the divergence of two consecutive time-steps and tr arrays
+!!      to prepare the next time_step:
+!!         (trb) = (trn) + gamma [ (trb) + (tra) - 2 (trn) ]
+!!         (trn) = (tra) ; (tra) = (0,0)
+!!
+!!      array swap for tracers to start the next time step
+!!
+!!
+!!      macrotasking on tracer slab
+!!
+!!
+!!   INPUT :
+!!   -----
+!!
+!!   OUTPUT :
+!!   ------
+!!      argument                : no
+!!
+!!   WORKSPACE :
+!!   ---------
+!!     ji jj jk jn zfact zdt
 
 
        USE myalloc
@@ -53,8 +53,8 @@ CC     ji jj jk jn zfact zdt
 
       IMPLICIT NONE
 
-CC local declarations
-CC ==================
+!! local declarations
+!! ==================
       INTEGER pack_size
 ! omp variables
       INTEGER :: mytid, ntids
@@ -79,20 +79,20 @@ CC ==================
 
        trcnxtparttime = MPI_WTIME() ! cronometer-start
 
-C 1. fields at the next time
-C --------------------------
-C Tracer slab
-C ===========
+!! 1. fields at the next time
+!! --------------------------
+!! Tracer slab
+!! ===========
 
 
       TRACER_LOOP: DO  jn = 1, jptra, ntids
 
 
-C 1. Lateral boundary conditions on tra (1,1,1,jn)
+!! 1. Lateral boundary conditions on tra (1,1,1,jn)
 
 #ifdef key_mpp
 
-C   ... Mpp : export boundary values to neighboring processors
+!!   ... Mpp : export boundary values to neighboring processors
 
         IF( ntids - 1 + jn <= jptra ) THEN
            pack_size = ntids
@@ -104,7 +104,7 @@ C   ... Mpp : export boundary values to neighboring processors
 
 #  else
 
-C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
+!!   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 
         CALL lbc( tra(1,1,1,jn), 1, 1, 1, 1, jpk, 1 )
 
@@ -145,8 +145,8 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 #endif
 
 
-C END of tracer slab
-C ==================
+!! END of tracer slab
+!! ==================
 
        END DO TRACER_LOOP
 

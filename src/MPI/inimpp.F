@@ -1,13 +1,13 @@
       SUBROUTINE inimpp
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE INIMPP
-CCC                     ******************
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC     Lay out the global domain over processors.
-CCC
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE INIMPP
+!!!                     ******************
+!!!
+!!!  PURPOSE :
+!!!  ---------
+!!!     Lay out the global domain over processors.
+!!!
 CC   METHOD :
 CC   -------
 CC      Global domain is distributed in smaller local domains.

@@ -193,8 +193,8 @@
       endif
 
 
-C ... Namelist :MPI_config
-C     Deafault value
+! ... Namelist :MPI_config
+!     Deafault value
       mpi_pack_size = 1
 
       REWIND( numnam )
@@ -209,10 +209,9 @@ C     Deafault value
 
 
 
-C
-C ... namelist.init: Domain_Characteristic
-C
-C
+
+! ... namelist.init: Domain_Characteristic
+
       REWIND( numnam )
       READ  ( numnam, Domain_Characteristic )
 
@@ -223,7 +222,7 @@ C
       WRITE(numout,*) ' lateral cond. type for the global domain (4, 3, 2, 1 or 0)',jperio
       ENDIF
 
-C ..  Namelist :  Number of fluxes
+! ..  Namelist :  Number of fluxes
 
 
       REWIND( numnam )

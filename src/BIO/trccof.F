@@ -1,14 +1,14 @@
       SUBROUTINE trccof
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE trccof
-CCC                     ******************
-CCC
-CCC  Purpose :
-CCC  --------
-CCC     Compute the arrays used for newtonian damping on passive tracer fields
-CCC     ( if "key_trc_dmp" key activated )
-CCC
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE trccof
+!!!                     ******************
+!!!
+!!!  Purpose :
+!!!  --------
+!!!     Compute the arrays used for newtonian damping on passive tracer fields
+!!!     ( if "key_trc_dmp" key activated )
+!!!
 CC   Method :
 CC   -------
 CC      Arrays defining the damping are computed for each grid

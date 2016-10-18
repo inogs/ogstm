@@ -1,19 +1,19 @@
 
       SUBROUTINE snutel()
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE snutel
-CCC                     *******************
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC	compensate along the water column to preserve total mass
-CCC
-CCC
-CC   METHOD :
-CC   -------
-CC    Must be called between trczdf and trcnxt
-CC----------------------------------------------------------------------
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE snutel
+!!!                     *******************
+!!!
+!!!  PURPOSE :
+!!!  ---------
+!!!	compensate along the water column to preserve total mass
+!!!
+!!!
+!!   METHOD :
+!!   -------
+!!    Must be called between trczdf and trcnxt
+!!----------------------------------------------------------------------
 
        USE myalloc
        USE myalloc_mpp
@@ -21,8 +21,8 @@ CC----------------------------------------------------------------------
 
        IMPLICIT NONE
 
-CC----------------------------------------------------------------------
-CC local declarations
+!!----------------------------------------------------------------------
+!! local declarations
 
 !      INTEGER :: elements,nelements(6),idx_element(14,6)
 ! omp variables
@@ -36,9 +36,9 @@ CC local declarations
       INTEGER ji,jj,jk,jn,jv! ,jnn,gji,gjj
       REAL(8) zfact,zdt
 
-CC----------------------------------------------------------------------
-CC statement functions
-CC ===================
+!!----------------------------------------------------------------------
+!! statement functions
+!! ===================
 
 
 #ifdef __OPENMP1
@@ -71,8 +71,8 @@ CC ===================
 
       TRACER_LOOP: DO  jn = 1, jptra, ntids
 
-C 3. swap of arrays
-C -----------------
+!! 3. swap of arrays
+!! -----------------
 !!!$omp   parallel default(none) private(mytid,ji,jj,jk)
 !!!$omp&      shared(jn,jpk,jpj,jpi,tra,tmask,tra_FN,SMALL)
 
@@ -104,7 +104,7 @@ C -----------------
       END DO TRACER_LOOP
 
 
-C Frequency of correction if plus module of kt
+!! Frequency of correction if plus module of kt
 
 !       ******TO BE DEVELOPED *************************
 !      CALL OPA_elements(elements,nelements,idx_element)
@@ -112,7 +112,7 @@ C Frequency of correction if plus module of kt
 !      TOT(:,:) =0
 !      TOT_FN(:,:)=0
 
-!C Compute vertical integral
+!!! Compute vertical integral
 !      DO jv = 1,dimen_jvsnu, ntids ! cicla sui punti terra 2D
 !
 ! $omp   parallel default(none) private(mytid,ji,jj,jk,jn,jnn)
@@ -140,7 +140,7 @@ C Frequency of correction if plus module of kt
 !           END DO
 
 
-C Compute correction factor
+!! Compute correction factor
 
 !          DO jn=1, elements
 !
@@ -161,7 +161,7 @@ C Compute correction factor
 !          END DO
 
 
-C Apply correction factor
+!! Apply correction factor
 !
 !          DO jn=1, elements
 !             DO jnn=1, nelements(jn)

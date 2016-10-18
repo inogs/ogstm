@@ -1,13 +1,13 @@
       SUBROUTINE trcsms
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE trcsms
-CCC                     *****************
-CCC
-CCC  PURPOSE :
-CCC  ---------
-CCC    time loop of ogstm for passive tracer
-CCC
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE trcsms
+!!!                     *****************
+!!!
+!!!  PURPOSE :
+!!!  ---------
+!!!    time loop of ogstm for passive tracer
+!!!
 CC   METHOD :
 CC   -------
 CC      compute the well/spring evolution

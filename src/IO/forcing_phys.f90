@@ -459,17 +459,17 @@
             DO jj=1,jpj
               DO ji=1,jpi
 
-                if (umask(ji,jj,uk). NE . 0.0) then
+                if (umask(ji,jj,uk) .NE. 0.0) then
                 un(ji,jj,uk)  = (Umzweigh*  udta(ji,jj,uk,1) + zweigh*  udta(ji,jj,uk,2))
                 e3u(ji,jj,uk) = (Umzweigh*  e3udta(ji,jj,uk,1) + zweigh*  e3udta(ji,jj,uk,2))
                 endif
 
-                if (vmask(ji,jj,uk). NE . 0.0) then
+                if (vmask(ji,jj,uk) .NE. 0.0) then
                 vn(ji,jj,uk)  = (Umzweigh*  vdta(ji,jj,uk,1) + zweigh*  vdta(ji,jj,uk,2))
                 e3v(ji,jj,uk) = (Umzweigh*  e3vdta(ji,jj,uk,1) + zweigh*  e3vdta(ji,jj,uk,2))
                 endif
 
-                if (tmask(ji,jj,uk). NE . 0.0) then
+                if (tmask(ji,jj,uk) .NE. 0.0) then
 
                  wn(ji,jj,uk) = (Umzweigh*  wdta(ji,jj,uk,1) + zweigh*  wdta(ji,jj,uk,2))
                 avt(ji,jj,uk) = (Umzweigh*avtdta(ji,jj,uk,1) + zweigh*avtdta(ji,jj,uk,2))

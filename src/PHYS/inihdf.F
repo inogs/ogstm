@@ -1,13 +1,13 @@
       SUBROUTINE inihdf
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE inihdf
-CCC                     ******************
-CCC
-CCC  Purpose :
-CCC  ---------
-CCC     Initializations of the horizontal coefficients
-CCC
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE inihdf
+!!!                     ******************
+!!!
+!!!  Purpose :
+!!!  ---------
+!!!     Initializations of the horizontal coefficients
+!!!
 CC   Method :
 CC   -------
 CC

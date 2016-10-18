@@ -1,14 +1,14 @@
 
       SUBROUTINE div ()
-CCC---------------------------------------------------------------------
-CCC
-CCC                       ROUTINE div
-CCC                     ***************
-CCC
-CCC  Purpose :
-CCC  --------
-CCC	compute the now horizontal divergence of the velocity field.
-CCC
+!!!---------------------------------------------------------------------
+!!!
+!!!                       ROUTINE div
+!!!                     ***************
+!!!
+!!!  Purpose :
+!!!  --------
+!!!	compute the now horizontal divergence of the velocity field.
+!!!
 CC   Method :
 CC   -------
 CC	The now divergence is given by :

@@ -84,7 +84,7 @@
              DO jj=1, jpj
                 DO ji=1, jpi
                IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                  traIO_HIGH(ji,jj,jk,jn_high+mytid)=
+                  traIO_HIGH(ji,jj,jk,jn_high+mytid)= &
      &           (traIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+trn(ji,jj,jk,jn_on_all))*Realcounterp1
                ELSE
                   traIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
@@ -181,7 +181,7 @@
             DO jj=1, jpj
                DO ji=1, jpi
                   IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                    tra_DIA_IO(ji,jj,jk,jn+mytid)=(tra_DIA_IO(ji,jj,jk,jn+mytid)*Realcounter+
+                    tra_DIA_IO(ji,jj,jk,jn+mytid)=(tra_DIA_IO(ji,jj,jk,jn+mytid)*Realcounter+ &
      &              tra_DIA(ji,jj,jk,jn+mytid))*Realcounterp1
                   ELSE
                     tra_DIA_IO(ji,jj,jk,jn+mytid)=Miss_val
@@ -200,7 +200,7 @@
             DO jj=1, jpj
                DO ji=1, jpi
                   IF(tmask(ji,jj,1) .NE. 0.) THEN ! Warning ! Tested only for surface
-                    tra_DIA_2d_IO(ji,jj,jn)=(tra_DIA_2d_IO(ji,jj,jn)*Realcounter+
+                    tra_DIA_2d_IO(ji,jj,jn)=(tra_DIA_2d_IO(ji,jj,jn)*Realcounter+ &
      &              tra_DIA_2d(ji,jj,jn))*Realcounterp1
                   ELSE
                     tra_DIA_2d_IO(ji,jj,jn)=Miss_val
@@ -235,8 +235,8 @@
              DO jj=1, jpj
              DO ji=1, jpi
                 IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                   tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)=
-     &            (tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_DIA(ji,jj,jk,jn_on_all))*Realcounterp1
+                   tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)= &
+     &            (tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_DIA(ji,jj,jk,jn_on_all))*Realcounterp1 
                 ELSE
                    tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
                 ENDIF
@@ -256,7 +256,7 @@
              DO jj=1, jpj
              DO ji=1, jpi
                 IF(tmask(ji,jj,1) .NE. 0.) THEN
-                   tra_DIA_2d_IO_HIGH(ji,jj,jn_high)=
+                   tra_DIA_2d_IO_HIGH(ji,jj,jn_high)= &
      &            (tra_DIA_2d_IO_HIGH(ji,jj,jn_high)*Realcounter+tra_DIA_2d(ji,jj,jn_on_all))*Realcounterp1
                 ELSE
                    tra_DIA_2d_IO_HIGH(ji,jj,jn_high)=Miss_val

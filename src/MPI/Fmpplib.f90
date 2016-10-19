@@ -9,7 +9,6 @@
 !! mppsync
 !! mppstop
 !!
-      FUNCTION mynode()
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mynode
@@ -32,6 +31,7 @@
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
 
+FUNCTION mynode()
 
        USE myalloc
        USE myalloc_mpp
@@ -60,9 +60,10 @@
       mynode=0
       RETURN
 #endif
-      END
 
-      SUBROUTINE mpplnk_my(ptab,packsize,ktype,ksgn)
+END FUNCTION
+
+     
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mpplnk_my
@@ -139,6 +140,7 @@
 !!       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
+ SUBROUTINE mpplnk_my(ptab,packsize,ktype,ksgn)
 
       USE myalloc
       USE myalloc_mpp
@@ -835,10 +837,11 @@
 !!
 !!
       RETURN
-      END
+
+END SUBROUTINE
 
 
-      SUBROUTINE mpplnk2(ptab,ktype,ksgn)
+     
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mpplnk2
@@ -916,6 +919,7 @@
 !!       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
+ SUBROUTINE mpplnk2(ptab,ktype,ksgn)
 
       USE myalloc
       USE myalloc_mpp
@@ -1343,14 +1347,13 @@
 !!     No mpp computation
 !!
 #endif
-!!
-!!
+
       RETURN
-      END
+
+END SUBROUTINE
 
 
 
-      SUBROUTINE mppsend(ktyp,pmess,kbytes,kdest,kid,ireqsend)
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mppsend
@@ -1377,6 +1380,7 @@
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
 
+SUBROUTINE mppsend(ktyp,pmess,kbytes,kdest,kid,ireqsend)
 
 
       USE myalloc
@@ -1385,31 +1389,25 @@
 
         IMPLICIT NONE
 
-
-!!----------------------------------------------------------------------
-!!
       REAL(8) pmess(*)
       INTEGER kbytes,kdest,ktyp,kid, ireqsend
-!!
+
 #ifdef key_mpp_mpi
 
 
 
 
-!!
+
       INTEGER iflag
-!      INTEGER itid_dest,info
-!!
-!!     write(*,*)  "#### kbytes = ", kbytes
       CALL mpi_isend(pmess,kbytes,mpi_real8,kdest,ktyp, &
      &    mpi_comm_world,ireqsend,iflag)
-!!
+
 
 #endif
       RETURN
-      END
 
-      SUBROUTINE mpprecv(ktyp,pmess,kbytes,ireqrecv)
+END SUBROUTINE
+
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mpprecv
@@ -1436,37 +1434,30 @@
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
 
+ SUBROUTINE mpprecv(ktyp,pmess,kbytes,ireqrecv)
 
 
       USE myalloc
       USE myalloc_mpp
 
 
-        IMPLICIT NONE
+      IMPLICIT NONE
 
 
-!!----------------------------------------------------------------------
-!!
       REAL(8) pmess(*)
       INTEGER   kbytes,ktyp, ireqrecv
-!!
+
 #ifdef key_mpp_mpi
 
-!!
-!!
-!!MPI VERSION
-!!
-!      INTEGER istatus(mpi_status_size)
       INTEGER iflag
-!!
+
       CALL mpi_irecv(pmess,kbytes,mpi_real8,mpi_any_source,ktyp,mpi_comm_world,ireqrecv,iflag)
-
-
 #endif
-      RETURN
-      END
 
-      SUBROUTINE mppwait(req)
+      RETURN
+
+END SUBROUTINE
+
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mppwait
@@ -1480,14 +1471,11 @@
 !!   -----
 !!      argument
 !!----------------------------------------------------------------------
+SUBROUTINE mppwait(req)
 
       USE myalloc
       USE myalloc_mpp
         IMPLICIT NONE
-
-
-!!----------------------------------------------------------------------
-
 
       integer req
       INTEGER istatus(mpi_status_size), ierr
@@ -1497,9 +1485,8 @@
       call MPI_WAIT(req, istatus, ierr)
 #endif
       RETURN
-      END
+END SUBROUTINE
 
-      SUBROUTINE mppsync()
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mppsync
@@ -1516,6 +1503,7 @@
 !!       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
+SUBROUTINE mppsync()
 
 
 
@@ -1532,12 +1520,11 @@
 
       CALL mpi_barrier(mpi_comm_world,ierror)
 
-
 #endif
       RETURN
-      END
+END SUBROUTINE
 
-      SUBROUTINE mppstop
+SUBROUTINE mppstop
 !!!---------------------------------------------------------------------
 !!!
 !!!                       routine mppstop
@@ -1551,16 +1538,12 @@
       USE myalloc
       USE myalloc_mpp
       IMPLICIT NONE
-!! local declarations
-!! ==================
+
       INTEGER info
+
 #ifdef key_mpp_mpi
-
       CALL mppsync
-
-
-
 #endif
 
       RETURN
-      END
+END SUBROUTINE

@@ -1,4 +1,4 @@
-      PROGRAM OGSTM_MAIN
+PROGRAM OGSTM_MAIN
 !
 !                       PROGRAM MAIN
 !                     ******************
@@ -6,7 +6,9 @@
 !
       USE ogstm
       implicit none
+      integer :: info,ierr
       write(*,*) "Starting ..."
+      CALL mpi_init(ierr)
 
 !$OMP PARALLEL
 !$OMP MASTER
@@ -14,4 +16,5 @@
 !$OMP END MASTER
 !$OMP END PARALLEL
 
-      END PROGRAM OGSTM_MAIN
+      CALL mpi_finalize(info)
+END PROGRAM OGSTM_MAIN

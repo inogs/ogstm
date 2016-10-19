@@ -19,7 +19,25 @@
 
 MODULE OGSTM
 
-#include "OGSTM_module_list.h"
+      USE myalloc
+      USE myalloc_mpp
+      USE IO_mem
+      USE FN_mem
+      USE ADV_mem
+      USE HDF_mem
+      USE ZDF_mem
+      USE OPT_mem
+      USE BC_mem
+      USE BIO_mem
+      USE SED_mem
+      USE DIA_mem
+      USE CALENDAR
+      USE time_manager
+
+#ifdef Mem_Monitor
+      USE check_mem
+      USE iso_c_binding
+#endif
 
 IMPLICIT NONE
 
@@ -30,9 +48,11 @@ SUBROUTINE ogstm_launcher()
 #ifdef key_trc_bfm
 #include "BFM_module_list.h"
 #endif
-      integer :: info,ierr
+
+     
       double precision :: timetosolution
-      CALL mpi_init(ierr)
+
+      
       timetosolution = MPI_Wtime()
 
       call ogstm_initialize()
@@ -46,14 +66,14 @@ SUBROUTINE ogstm_launcher()
       timetosolution = MPI_Wtime() - timetosolution
       print*,"TIME TO SOLUTION =",timetosolution
 
-      CALL mpi_finalize(info)
+     
       END SUBROUTINE ogstm_launcher
 
 
 ! *************************************************************
 !      SUBROUTINE ogstm_initialize
 ! *************************************************************
-       SUBROUTINE ogstm_initialize()
+SUBROUTINE ogstm_initialize()
 
 ! local declarations
 ! ==================
@@ -128,11 +148,11 @@ SUBROUTINE ogstm_launcher()
 
       call Initialize()
 
-      END SUBROUTINE ogstm_initialize
+END SUBROUTINE ogstm_initialize
 
 ! ***************************************************************
 ! ***************************************************************
-      SUBROUTINE ALLOC_ALL
+SUBROUTINE ALLOC_ALL
 
        REAL(8)  mem_all_tot
        INTEGER err, ierr
@@ -171,14 +191,15 @@ SUBROUTINE ogstm_launcher()
       call myalloc_IO()  ; write(*,*)'My_Rank:',Rank,'alloc_IO   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
       write(*,*)'My_Rank,',Rank,'Total Allocated Memory (MB):',mem_all_tot
-      END SUBROUTINE ALLOC_ALL
+
+END SUBROUTINE ALLOC_ALL
 
 
 ! *************************************************************
 ! ******** time_init ******************************************
 ! *************************************************************
 
-      SUBROUTINE time_init
+SUBROUTINE time_init
 
       real(8) sec, t_interp
 
@@ -241,13 +262,13 @@ SUBROUTINE ogstm_launcher()
             write(*,*) 'BeforeKex',      TC_LEX%Before, 'AfterKex',     TC_LEX%After
 
         endif
-      END SUBROUTINE time_init
+END SUBROUTINE time_init
 
 
 
-      SUBROUTINE photo_init
+SUBROUTINE photo_init
        
-       INTEGER ji,jj, julianday
+       INTEGER :: ji,jj, julianday
 
 
       call tau2julianday(TimeStepStart, deltaT, julianday)
@@ -258,9 +279,9 @@ SUBROUTINE ogstm_launcher()
       enddo
 
 
-      END SUBROUTINE photo_init
+END SUBROUTINE photo_init
 
-      SUBROUTINE set_to_zero()
+SUBROUTINE set_to_zero()
 
 ! Physical arrays set to zero
 
@@ -277,11 +298,12 @@ SUBROUTINE ogstm_launcher()
       trn       = 0.0
       tra       = 0.0
 
-      END SUBROUTINE set_to_zero
+END SUBROUTINE set_to_zero
 
 ! *************************************************************
 !      SUBROUTINE ogstm_finalize
 ! *************************************************************
+
 SUBROUTINE ogstm_finalize()
 
       CALL mppstop

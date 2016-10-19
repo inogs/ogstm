@@ -16,14 +16,17 @@
 !
 !*********************************************************************
 !
-      SUBROUTINE ogstm()
 
-    
-!
-
-
+MODULE OGSTM
 
 #include "OGSTM_module_list.h"
+
+IMPLICIT NONE
+
+CONTAINS
+
+SUBROUTINE ogstm_launcher()
+
 #ifdef key_trc_bfm
 #include "BFM_module_list.h"
 #endif
@@ -44,7 +47,7 @@
       print*,"TIME TO SOLUTION =",timetosolution
 
       CALL mpi_finalize(info)
-      END SUBROUTINE ogstm
+      END SUBROUTINE ogstm_launcher
 
 
 ! *************************************************************
@@ -52,9 +55,6 @@
 ! *************************************************************
        SUBROUTINE ogstm_initialize()
 
-#include "OGSTM_module_list.h"
-
-       IMPLICIT NONE
 ! local declarations
 ! ==================
       INTEGER ME
@@ -134,10 +134,6 @@
 ! ***************************************************************
       SUBROUTINE ALLOC_ALL
 
-#include "OGSTM_module_list.h"
-
-       IMPLICIT NONE
-
        REAL(8)  mem_all_tot
        INTEGER err, ierr
 
@@ -184,11 +180,6 @@
 
       SUBROUTINE time_init
 
-      USE calendar
-      USE time_manager
-      USE myalloc, ONLY: lwp, calendarType, rdt
-
-      IMPLICIT NONE
       real(8) sec, t_interp
 
       DELTAT = rdt ! importing namelist value
@@ -255,11 +246,7 @@
 
 
       SUBROUTINE photo_init
-       USE myalloc
-       USE calendar
-       USE TIME_Manager
-       IMPLICIT NONE
-      ! LOCAL
+       
        INTEGER ji,jj, julianday
 
 
@@ -274,9 +261,7 @@
       END SUBROUTINE photo_init
 
       SUBROUTINE set_to_zero()
-#include "OGSTM_module_list.h"
 
-       IMPLICIT NONE
 ! Physical arrays set to zero
 
       un        = 0.0
@@ -297,11 +282,7 @@
 ! *************************************************************
 !      SUBROUTINE ogstm_finalize
 ! *************************************************************
-       SUBROUTINE ogstm_finalize()
-
-#include "OGSTM_module_list.h"
-
-       IMPLICIT NONE
+SUBROUTINE ogstm_finalize()
 
       CALL mppstop
 
@@ -312,4 +293,5 @@
 
       END SUBROUTINE ogstm_finalize
 
+END MODULE OGSTM
 

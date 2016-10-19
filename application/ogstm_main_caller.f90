@@ -4,12 +4,13 @@
 !                     ******************
 !
 !
-!
+      USE ogstm
+      implicit none
       write(*,*) "Starting ..."
 
 !$OMP PARALLEL
 !$OMP MASTER
-      CALL ogstm()
+      CALL ogstm_launcher()
 !$OMP END MASTER
 !$OMP END PARALLEL
 

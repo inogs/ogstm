@@ -147,13 +147,15 @@
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
-         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn));
+         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn))
+      
 
       enddo
       ELSE
         resto=0.0
       ENDIF
-      call readnc_slice_int   ('bounmask.nc','index',idxt);
+      call readnc_slice_int   ('bounmask.nc','index',idxt)
+      
 
 
 
@@ -161,7 +163,8 @@
 
       NBFMPOINTS = BFM_count()
       call myalloc_BFM()
-      B=BFM_Indexing();
+      B=BFM_Indexing()
+      
 
 ! *********************************   Gibraltar area
       filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
@@ -188,7 +191,8 @@
       endif
 
 ! ********************************  Rivers ******
-      filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc';
+      filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'
+      
       CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
       Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
 

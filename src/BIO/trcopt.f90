@@ -81,7 +81,8 @@
 
         DO jk = 1,jpk
           DO ji = 1,jpi
-            !a=xpar(ji,mytid+jj,jk); xpar(ji,mytid+jj,jk) = max(a*exp(- xEPS(ji,jk)* 0.5D+00* e3t(jk) ), 1.D-15);
+            !a=xpar(ji,mytid+jj,jk)  xpar(ji,mytid+jj,jk) = max(a*exp(- xEPS(ji,jk)* 0.5D+00* e3t(jk) ), 1.D-15)
+      
             xpar(ji,mytid+jj,jk) = xpar(ji,mytid+jj,jk) * exp(- xEPS(ji,jk)* 0.5D+00* e3t(ji,jj,jk) )
             xpar(ji,mytid+jj,jk) = max(xpar(ji,mytid+jj,jk),1.D-15)
           END DO

@@ -54,7 +54,8 @@
 
 
 ! ********************   we put initial undef to 0
-          trn(:,:,:,jn) = trn(:,:,:,jn) * tmask;
+          trn(:,:,:,jn) = trn(:,:,:,jn) * tmask
+      
           trb = trn
 
 !         SECTION AVE backup

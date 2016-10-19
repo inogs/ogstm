@@ -29,7 +29,8 @@
 
             if (FsizeGlo.gt.0) then
 
-               allocate(INDFluxGlo(FsizeGlo)) ; 
+               allocate(INDFluxGlo(FsizeGlo)) 
+       
                INDFluxGlo = huge(INDFluxGlo(1))
 
             endif

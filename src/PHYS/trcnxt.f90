@@ -12,13 +12,13 @@
 !!    METHOD :
 !!
 !!
-!!      Apply lateral boundary conditions (nperio=0,closed ; nperio=1,
-!!      east-west cyclic ; nperio=2, symmetric round the equator)
+!!      Apply lateral boundary conditions (nperio=0,closed  nperio=1,
+!!      east-west cyclic nperio=2, symmetric round the equator)
 !!      on tra arrays
 !!
 !!   default:
 !!      arrays swap
-!!         (trn) = (tra) ; (tra) = (0,0)
+!!         (trn) = (tra)   (tra) = (0,0)
 !!         (trb) = (trn) 
 !!
 !!   For Arakawa Sheme : IF key_trc_arakawa defined
@@ -26,7 +26,7 @@
 !!      the divergence of two consecutive time-steps and tr arrays
 !!      to prepare the next time_step:
 !!         (trb) = (trn) + gamma [ (trb) + (tra) - 2 (trn) ]
-!!         (trn) = (tra) ; (tra) = (0,0)
+!!         (trn) = (tra)   (tra) = (0,0)
 !!
 !!      array swap for tracers to start the next time step
 !!

@@ -115,7 +115,8 @@
               nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
               print *,"c  ",nomevar,"\n"
-              call readnc_slice_float_2d(nomefile,nomevar,M1);
+              call readnc_slice_float_2d(nomefile,nomevar,M1)
+      
               print *,nomevar
 
             !CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)

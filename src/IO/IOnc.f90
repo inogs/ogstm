@@ -8,7 +8,8 @@
 
        counter=0
        B=.false.
-         stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
+         stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
          stat = nf90_inq_varid (ncid, varname, VARid)
 
          if(stat .ne. nf90_NoErr)  then
@@ -17,7 +18,8 @@
          else
             B=.true.
         endif
-        stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
        END SUBROUTINE EXISTVAR
 
 
@@ -37,15 +39,21 @@
       integer thecount(4), start(4)
       real(8) M(jpk,jpj,jpi)
 
-      counter = 0;
+      counter = 0
+      
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,M,start, thecount);
-      call handle_err2(stat, fileNetCDF,varname)        ;  call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      
+      call handle_err2(stat, fileNetCDF,varname)        
+        call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_slice_double
 
@@ -67,17 +75,24 @@
       real(8) M(jpk,jpj,jpi)
       real(4) F(jpk,jpj,jpi)
 
-      counter = 0;
+      counter = 0
+      
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,F,start, thecount);
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,F,start, thecount)
+      
+      call handle_err2(stat, fileNetCDF,varname)        
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
 
-      M = real(F,8);
+      M = real(F,8)
+      
 
 
       END SUBROUTINE readnc_slice_float
@@ -94,15 +109,20 @@
       integer counter
       integer thecount(4), start(4)
       integer M(jpk,jpj,jpi)
-      counter = 0;
+      counter = 0
+      
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,M,start, thecount)
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+      call handle_err2(stat, fileNetCDF,varname)        
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_slice_int
 
@@ -125,16 +145,22 @@
       real(8) M(jpi,jpj)
 
 
-      counter = 0;
+      counter = 0
+      
       start    = (/nimpp, njmpp,  1/)
       thecount = (/jpi,     jpj,  1/)
 
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,M,start, thecount);
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      
+      call handle_err2(stat, fileNetCDF,varname)        
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
 
 
 
@@ -160,18 +186,24 @@
       real(8) M(jpi,jpj)
       real(4) F(jpi,jpj)
 
-      counter = 0;
+      counter = 0
+      
       start    = (/nimpp, njmpp,  1/)
       thecount = (/jpi,     jpj,  1/)
 
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,F,start, thecount)
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+      call handle_err2(stat, fileNetCDF,varname)        
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
 
-      M = real(F,8);
+      M = real(F,8)
+      
 
 
       END SUBROUTINE readnc_slice_float_2d
@@ -191,17 +223,22 @@
       integer thecount(4), start(4)
       real(8) M(jpk,jpjglo,jpiglo)
 
-      counter = 0;
+      counter = 0
+      
       start    = (/1,       1,       1,  1/)
 ! epascolo warning
       thecount = (/jpk, jpjglo,  jpiglo,1/)
 
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,M,start, thecount)
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+      call handle_err2(stat, fileNetCDF,varname)        
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_global_double
 
@@ -220,17 +257,22 @@
       integer thecount(4), start(4)
       real(8) M(jpjglo,jpiglo)
 
-      counter = 0;
+      counter = 0
+      
       start    = (/1,       1,      1, 1/)
 ! epascolo warning      
       thecount = (/1, jpjglo,  jpiglo, 1/)
 
 
-      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      ; call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,M,start, thecount)
-      call handle_err2(stat, fileNetCDF,varname)        ; call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_close(ncid)                           ; call handle_err1(stat, counter,FileNetCDF)
+      call handle_err2(stat, fileNetCDF,varname)        
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+       call handle_err1(stat, counter,FileNetCDF)
 
       END SUBROUTINE readnc_global_double_2d
 
@@ -251,11 +293,16 @@
         start    = (/1,       1,       1,  1/)
         thecount = (/1,       1,      jpk, 1/)
 
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_get_var (ncid,VARid,ARRAY,start, thecount);
-        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_close(ncid)                          ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_varid (ncid, varname, VARid)     
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_get_var (ncid,VARid,ARRAY,start, thecount)
+      
+        call handle_err2(stat, fileNetCDF,varname)       
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                          
+       call handle_err1(stat, counter,FileNetCDF)
 
 
         end SUBROUTINE readmask_double_1d
@@ -272,11 +319,16 @@
 
         counter=0
 
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_get_var (ncid,VARid,ARRAY)           ;
-        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_close(ncid)                          ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_varid (ncid, varname, VARid)     
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_get_var (ncid,VARid,ARRAY)           
+      
+        call handle_err2(stat, fileNetCDF,varname)       
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                          
+       call handle_err1(stat, counter,FileNetCDF)
 
 
         end SUBROUTINE readnc_double_1d
@@ -292,11 +344,15 @@
 
         counter=0
 
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_inq_varid (ncid, varname, VARid)     ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_varid (ncid, varname, VARid)     
+       call handle_err1(stat, counter,FileNetCDF)
         stat = nf90_get_var (ncid,VARid,ARRAY)
-        call handle_err2(stat, fileNetCDF,varname)       ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_close(ncid)                          ; call handle_err1(stat, counter,FileNetCDF)
+        call handle_err2(stat, fileNetCDF,varname)       
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                          
+       call handle_err1(stat, counter,FileNetCDF)
 
 
         end SUBROUTINE readnc_int_1d
@@ -317,10 +373,14 @@
         integer counter
 
         counter = 0
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)    ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_inq_dimid (ncid, dimname, DIMid)        ; call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_Inquire_Dimension (ncid, DIMid, junk, n); call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_close(ncid)                             ; call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)    
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_inq_dimid (ncid, dimname, DIMid)        
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_Inquire_Dimension (ncid, DIMid, junk, n)
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)                             
+       call handle_err1(stat, counter,FileNetCDF)
         END SUBROUTINE getDIMENSION
 
        !****************************************************************************
@@ -370,19 +430,26 @@
         s = nf90_def_var(nc,'TRB'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idB)
         s = nf90_def_var(nc,'TRN'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idN)
 
-        s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00');
+        s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00')
+      
         s = nf90_put_att(nc,idB   , 'missing_value',1.e+20)
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
 
-        s = nf90_put_var(nc, idLon,  totglamt); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idLat,  totgphit); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idLev,     gdept); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLon,  totglamt)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLat,  totgphit)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLev,     gdept)
+       call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_var(nc, idTim,    julian); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idTim,    julian)
+       call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_var(nc, idB,      tottrb); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idN,      tottrn); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idB,      tottrb)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idN,      tottrn)
+       call handle_err1(s,counter,fileNetCDF)
 
         s =nf90_close(nc)
 
@@ -420,53 +487,83 @@
 
         counter=0
 
-        !s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc);
+        !s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+      
         s = nf90_create(fileNetCDF,or(or(nf90_clobber,NF90_HDF5),NF90_HDF5),nc)
         call handle_err1(s,counter,fileNetCDF)
         ! *********** GLOBAL ********************
-        s = nf90_put_att(nc, nf90_global, 'Convenctions' ,'COARDS');call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc, nf90_global, 'Convenctions' ,'COARDS')
+      call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc, nf90_global, 'Date__End'     ,   dateTo)
+       call handle_err1(s,counter,fileNetCDF)
 
         ! *********** DIMENSIONS ****************
-        s= nf90_def_dim(nc,'lon'           , jpiglo,  xid); call handle_err1(s,counter,fileNetCDF)
-        s= nf90_def_dim(nc,'lat'           , jpjglo,  yid); call handle_err1(s,counter,fileNetCDF)
-        s= nf90_def_dim(nc,'depth'         , jpk   ,depid); call handle_err1(s,counter,fileNetCDF)
-        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid); call handle_err1(s,counter,fileNetCDF)
+        s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
+       call handle_err1(s,counter,fileNetCDF)
+        s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
+       call handle_err1(s,counter,fileNetCDF)
+        s= nf90_def_dim(nc,'depth'         , jpk   ,depid)
+       call handle_err1(s,counter,fileNetCDF)
+        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
+       call handle_err1(s,counter,fileNetCDF)
 
         ! ********** VARIABLES *****************
-        !!s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt); call handle_err1(s,counter,fileNetCDF)
+        !!s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
+       call handle_err1(s,counter,fileNetCDF)
    
-        s = nf90_def_var(nc,trim(VAR) ,        nf90_float, (/xid,yid,depid,timid/),  idVAR); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_def_var(nc,trim(VAR) ,        nf90_float, (/xid,yid,depid,timid/),  idVAR)
+       call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_att(nc,idgdept,'units'        ,'meter'); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc,idgdept,'positive'     ,'down'); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc,idgdept,'actual_range' ,depth_actual_range); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idgdept,'units'        ,'meter')
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idgdept,'positive'     ,'down')
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idgdept,'actual_range' ,depth_actual_range)
+       call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north'); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude'); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc,idphit,'actual_range' ,lat_actual_range); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idphit, 'units'        ,'degrees_north')
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idphit, 'long_name'    ,'Latitude')
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idphit,'actual_range' ,lat_actual_range)
+       call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east'); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude'); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc,idlamt,'actual_range' ,lon_actual_range); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idlamt, 'units'        ,'degrees_east')
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idlamt, 'long_name'    ,'Longitude')
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idlamt,'actual_range' ,lon_actual_range)
+       call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_att(nc,idVAR, 'long_name'    ,VAR); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idVAR, 'long_name'    ,VAR)
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_att(nc,idVAR, 'missing_value'    ,1.e+20)
+       call handle_err1(s,counter,fileNetCDF)
 
-        s =nf90_enddef(nc); call handle_err1(s,counter,fileNetCDF)
-
-
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idgdept,  REAL(   gdept,     4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,  M )                    ; call handle_err1(s,counter,fileNetCDF)
+        s =nf90_enddef(nc)
+       call handle_err1(s,counter,fileNetCDF)
 
 
-        s =nf90_close(nc); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept,  REAL(   gdept,     4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idVAR  ,  M )                    
+       call handle_err1(s,counter,fileNetCDF)
+
+
+        s =nf90_close(nc)
+       call handle_err1(s,counter,fileNetCDF)
 
        END SUBROUTINE WRITE_AVE
 
@@ -528,9 +625,12 @@
 
         counter=0
         ! epascolo warning
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,  M )                    ; call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idVAR  ,  M )                    
+       call handle_err1(s,counter,fileNetCDF)
 
 
         s =nf90_close(nc)
@@ -604,10 +704,14 @@
         counter=0
 
         ! epascolo warning
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,                          M  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idVAR  ,                          M  )
+       call handle_err1(s,counter,fileNetCDF)
 
 
         s =nf90_close(nc)
@@ -672,9 +776,12 @@
         counter=0
 
 
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,                          M  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idVAR  ,                          M  )
+       call handle_err1(s,counter,fileNetCDF)
 
 
         s =nf90_close(nc)
@@ -786,23 +893,47 @@
 
         counter=0
 
-        s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4)  )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4)  )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  )
+       call handle_err1(s,counter,fileNetCDF)
 !      3D vars
-        d2f3d = REAL(totsnIO,4) ; s = nf90_put_var(nc, idS,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(tottnIO,4) ; s = nf90_put_var(nc, idT,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totunIO,4) ; s = nf90_put_var(nc, idU,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totvnIO,4) ; s = nf90_put_var(nc, idV,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totwnIO,4) ; s = nf90_put_var(nc, idW,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totavtIO,4); s = nf90_put_var(nc, idEddy, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, ide3t, tote3tIO) ;  call handle_err1(s,counter,fileNetCDF)
-!       d2f3d = REAL(tote3tIO,4); s = nf90_put_var(nc, ide3t, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totsnIO,4) 
+       s = nf90_put_var(nc, idS,    d2f3d) 
+        call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(tottnIO,4) 
+       s = nf90_put_var(nc, idT,    d2f3d) 
+        call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totunIO,4) 
+       s = nf90_put_var(nc, idU,    d2f3d) 
+        call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totvnIO,4) 
+       s = nf90_put_var(nc, idV,    d2f3d) 
+        call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totwnIO,4) 
+       s = nf90_put_var(nc, idW,    d2f3d) 
+        call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totavtIO,4)
+       s = nf90_put_var(nc, idEddy, d2f3d) 
+        call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, ide3t, tote3tIO) 
+        call handle_err1(s,counter,fileNetCDF)
+!       d2f3d = REAL(tote3tIO,4)
+       s = nf90_put_var(nc, ide3t, d2f3d) 
+        call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
-        d2f2d =REAL(totvatmIO,4); s = nf90_put_var(nc, idWs,   d2f2d) ; call handle_err1(s,counter,fileNetCDF)
-        d2f2d =REAL(totempIO ,4); s = nf90_put_var(nc, idE,    d2f2d) ; call handle_err1(s,counter,fileNetCDF)
-        d2f2d =REAL(totqsrIO ,4); s = nf90_put_var(nc, idR,    d2f2d) ; call handle_err1(s,counter,fileNetCDF)
+        d2f2d =REAL(totvatmIO,4)
+       s = nf90_put_var(nc, idWs,   d2f2d) 
+       call handle_err1(s,counter,fileNetCDF)
+        d2f2d =REAL(totempIO ,4)
+       s = nf90_put_var(nc, idE,    d2f2d) 
+       call handle_err1(s,counter,fileNetCDF)
+        d2f2d =REAL(totqsrIO ,4)
+       s = nf90_put_var(nc, idR,    d2f2d) 
+       call handle_err1(s,counter,fileNetCDF)
 
 
 
@@ -913,26 +1044,40 @@
         s = nf90_put_att(nc,idE   , 'units'        ,'kg/m*2/s')
         s = nf90_put_att(nc,idE   , 'missing_value',1.e+20)
 
-        s =nf90_enddef(nc); call handle_err1(s,counter,fileNetCDF)
+        s =nf90_enddef(nc)
+       call handle_err1(s,counter,fileNetCDF)
 
         counter=0
 
-        s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4)  ); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  ); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4)  )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4)  )
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  )
+       call handle_err1(s,counter,fileNetCDF)
 !      3D vars
-        s = nf90_put_var(nc, idS,    totsnIO) ;  call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idT,    tottnIO) ;  call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idU,    totunIO) ;  call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idV,    totvnIO) ;  call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idW,    totwnIO) ;  call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idEddy,totavtIO) ;  call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, ide3t ,tote3tIO) ;  call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idS,    totsnIO) 
+        call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idT,    tottnIO) 
+        call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idU,    totunIO) 
+        call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idV,    totvnIO) 
+        call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idW,    totwnIO) 
+        call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idEddy,totavtIO) 
+        call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, ide3t ,tote3tIO) 
+        call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
-        s = nf90_put_var(nc, idWs,  totvatmIO) ; call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idE,    totempIO) ; call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idR,    totqsrIO) ; call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idWs,  totvatmIO) 
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idE,    totempIO) 
+       call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idR,    totqsrIO) 
+       call handle_err1(s,counter,fileNetCDF)
 
 
 
@@ -959,9 +1104,12 @@
         integer stat, ncid
         integer counter
         counter=0
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ;       call handle_err1(stat, counter,FileNetCDF)
-        stat= nf90_get_att(ncid, nf90_global, attname, attvalue); call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_close(ncid);
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+             call handle_err1(stat, counter,FileNetCDF)
+        stat= nf90_get_att(ncid, nf90_global, attname, attvalue)
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)
+      
 
         END SUBROUTINE get_att_char
 
@@ -980,9 +1128,12 @@
         integer stat, ncid
         integer counter
         counter=0
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  ;       call handle_err1(stat, counter,FileNetCDF)
-        stat= nf90_get_att(ncid, nf90_global, attname, attvalue); call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_close(ncid);
+        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+             call handle_err1(stat, counter,FileNetCDF)
+        stat= nf90_get_att(ncid, nf90_global, attname, attvalue)
+       call handle_err1(stat, counter,FileNetCDF)
+        stat = nf90_close(ncid)
+      
 
         END SUBROUTINE get_att_int
 

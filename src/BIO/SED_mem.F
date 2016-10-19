@@ -46,7 +46,8 @@ CC----------------------------------------------------------------------
 #endif
        dimen_jvsed=0
 
-       allocate(sed_idx(nsed))  ; sed_idx = huge(sed_idx(1))
+       allocate(sed_idx(nsed))  
+       sed_idx = huge(sed_idx(1))
 
        sed_idx(1)  = ppR6c
        sed_idx(2)  = ppR6n

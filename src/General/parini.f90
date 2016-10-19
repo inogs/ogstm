@@ -59,8 +59,10 @@
       ENDIF
 
 
-      allocate(ilcit(jpni, jpnj)) ; ilcit = huge(ilcit(1,1))
-      allocate(ilcjt(jpni, jpnj)) ; ilcjt = huge(ilcjt(1,1))
+      allocate(ilcit(jpni, jpnj)) 
+       ilcit = huge(ilcit(1,1))
+      allocate(ilcjt(jpni, jpnj)) 
+       ilcjt = huge(ilcjt(1,1))
 
       open(3333,file='Dom_Dec_jpi.ascii', form='formatted')
       open(3334,file='Dom_Dec_jpj.ascii', form='formatted')

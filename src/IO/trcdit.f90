@@ -57,8 +57,12 @@
       jn_high = 0
 
       SELECT CASE (FREQ_GROUP)
-        CASE (1) ; ave_counter=ave_counter_1 ; DIR='AVE_FREQ_1/'
-        CASE (2) ; ave_counter=ave_counter_2 ; DIR='AVE_FREQ_2/'
+        CASE (1) 
+       ave_counter=ave_counter_1 
+       DIR='AVE_FREQ_1/'
+        CASE (2) 
+       ave_counter=ave_counter_2 
+       DIR='AVE_FREQ_2/'
       END SELECT
 
 !  Ghost Shells - Manual s Indexes-
@@ -84,10 +88,14 @@
           jstart = njmpp
           irange    = iPe - iPd + 1
           jrange    = jPe - jPd + 1
-          totistart = istart + iPd - 1; totiend  = totistart + irange - 1
-          totjstart = jstart + jPd - 1; totjend  = totjstart + jrange - 1
-          relistart = 1 + iPd - 1     ; reliend  = relistart + irange - 1
-          reljstart = 1 + jPd - 1     ; reljend  = reljstart + jrange - 1
+          totistart = istart + iPd - 1
+       totiend  = totistart + irange - 1
+          totjstart = jstart + jPd - 1
+       totjend  = totjstart + jrange - 1
+          relistart = 1 + iPd - 1     
+       reliend  = relistart + irange - 1
+          reljstart = 1 + jPd - 1     
+       reljend  = reljstart + jrange - 1
 
 
 !***** START ASSEMBLING ***  rank 0 puts its tracer part in the tot matrix
@@ -185,11 +193,13 @@
 
 
         if (IsBackup) then
-          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter);
+          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter)
+      
 
         else
           d2f3d = REAL(tottrnIO,4)
-          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, d2f3d);
+          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, d2f3d)
+      
          endif
 
 

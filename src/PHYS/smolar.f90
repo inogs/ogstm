@@ -388,11 +388,19 @@
       A = mytid + 1
       B = mytid + jn
            DO jk = 1,jpk
-             DO jj=1,jpj; zkx(  1,jj,jk,A)=0.  ; END DO
-             DO jj=1,jpj; zkx(jpi,jj,jk,A)=0.  ; END DO
+             DO jj=1,jpj
+       zkx(  1,jj,jk,A)=0.  
+       END DO
+             DO jj=1,jpj
+       zkx(jpi,jj,jk,A)=0.  
+       END DO
 
-             DO ji=1,jpi; zky(ji,  1,jk,A)=0.  ; END DO
-             DO ji=1,jpi; zky(ji,jpj,jk,A)=0.  ; END DO
+             DO ji=1,jpi
+       zky(ji,  1,jk,A)=0.  
+       END DO
+             DO ji=1,jpi
+       zky(ji,jpj,jk,A)=0.  
+       END DO
            END DO
 
 !!
@@ -414,12 +422,20 @@
            END DO
 
            DO jk = 2,jpk
-             jj=   1 ; DO ji = 1,jpi; zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk)); END DO
-             jj= jpj ; DO ji = 1,jpi; zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk)); END DO
+             jj=   1 
+       DO ji = 1,jpi
+       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+       END DO
+             jj= jpj 
+       DO ji = 1,jpi
+       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+       END DO
 
              DO jj = 2,jpjm1
-                ji=1   ; zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
-                ji=jpi ; zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+                ji=1   
+       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+                ji=jpi 
+       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
              END DO
            END DO
 
@@ -760,13 +776,21 @@
               END DO
 
              DO jk = 2,jpk
-               jj =  1; DO ji = 1,jpi ; zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A)); END DO!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
-               jj = jpj;DO ji = 1,jpi ; zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A)); END DO!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+               jj =  1
+       DO ji = 1,jpi 
+       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))
+       END DO!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+               jj = jpj
+      DO ji = 1,jpi 
+       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))
+       END DO!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
 
 
                DO jj = 2,jpjm1
-                 ji =   1 ; zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
-                 ji = jpi ; zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+                 ji =   1 
+       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+                 ji = jpi 
+       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
                END DO
              END DO
 

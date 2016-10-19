@@ -154,19 +154,43 @@
 
 
 
-      if (.not.CheckDatelist(DATESTART,TC_FOR)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATESTART,TC_TIN)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATESTART,TC_ATM)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATESTART,TC_GIB)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATESTART,TC_LEX)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATESTART,TC_CO2)) then ; B = .false.; endif
+      if (.not.CheckDatelist(DATESTART,TC_FOR)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATESTART,TC_TIN)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATESTART,TC_ATM)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATESTART,TC_GIB)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATESTART,TC_LEX)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATESTART,TC_CO2)) then 
+       B = .false.
+       endif
 
-      if (.not.CheckDatelist(DATE__END,TC_FOR)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATE__END,TC_TIN)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATE__END,TC_ATM)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATE__END,TC_GIB)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATE__END,TC_LEX)) then ; B = .false.; endif
-      if (.not.CheckDatelist(DATE__END,TC_CO2)) then ; B = .false.; endif
+      if (.not.CheckDatelist(DATE__END,TC_FOR)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_TIN)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_ATM)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_GIB)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_LEX)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_CO2)) then 
+       B = .false.
+       endif
 
       CheckStartEnd = B
       END FUNCTION CheckStartEnd
@@ -368,14 +392,16 @@
       if (STRUCT%Periodic) then
 
           read(datestring,'(I4)') year
-          write(yyyy,'(I4)') year-1 ;
+          write(yyyy,'(I4)') year-1 
+      
           STRUCT%TimeStringsExtended(1   ) = yyyy//STRUCT%TimeStrings(N)(5:17)
 
           DO I=2, N+1
         STRUCT%TimeStringsExtended(I) = datestring(1:4)//STRUCT%TimeStrings(I-1)(5:17)
           ENDDO
 
-          write(yyyy,'(I4)') year+1 ;
+          write(yyyy,'(I4)') year+1 
+      
           STRUCT%TimeStringsExtended(LAST) = yyyy//STRUCT%TimeStrings(1)(5:17)
 
           ! now, time in sec
@@ -403,11 +429,14 @@
 
       N=STRUCT%N
 
-         I =1 ;
+         I =1 
+      
          DO WHILE (STRUCT%Times(I).lt.sec)
-           I = I + 1;
+           I = I + 1
+      
          ENDDO
-         BEFORE = I - 1;
+         BEFORE = I - 1
+      
 
       AFTER = BEFORE +1
       if (BEFORE.gt.0) t_interp = (sec - STRUCT%Times(BEFORE))/(STRUCT%Times(AFTER) - STRUCT%Times(BEFORE))
@@ -415,10 +444,15 @@
 
       IF (STRUCT%Periodic) then
           ! ritorno ai 12
-          BEFORE = BEFORE -1 ;
+          BEFORE = BEFORE -1 
+      
           AFTER  = BEFORE +1
-          if (BEFORE.eq.0   ) then ; BEFORE = N; endif
-          if (AFTER.eq.(N+1)) then ; AFTER  = 1; endif
+          if (BEFORE.eq.0   ) then 
+       BEFORE = N
+       endif
+          if (AFTER.eq.(N+1)) then 
+       AFTER  = 1
+       endif
       ELSE
          if (BEFORE.eq.0) then
               BEFORE = 1
@@ -522,7 +556,8 @@
           call read_date_string(DATE__END, year2, month2, day2, sec2)
 
           ! ***** Tempo zero = 1 gennaio (anno di startdate) *********
-          year0=year1;
+          year0=year1
+      
           month0=1
           day0=1
           sec0=0.
@@ -532,9 +567,11 @@
           ! *********************************************************
 
           call time_diff(year0, month0, day0, sec0, year1, month1,day1,sec1, sec_diff)
-          timestep1 = NINT(sec_diff/deltaT);
+          timestep1 = NINT(sec_diff/deltaT)
+      
           call time_diff(year0, month0, day0, sec0, year2, month2,day2,sec2, sec_diff)
-          timestep2 = NINT(sec_diff/deltaT);
+          timestep2 = NINT(sec_diff/deltaT)
+      
 
 
       END SUBROUTINE getTimesteps
@@ -557,7 +594,8 @@
        call time_diff(year0, month0, day0, sec0, year, month,day,sec, sec_diff)
 
 
-       datestringToTAU = NINT(sec_diff/deltaT);
+       datestringToTAU = NINT(sec_diff/deltaT)
+      
 
 
        END FUNCTION datestringToTAU

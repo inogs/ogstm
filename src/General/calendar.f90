@@ -1024,7 +1024,8 @@
       read(datestring(13:14),'(I2)') minutes
       read(datestring(16:17),'(I2)') sec
 
-      seconds = hr*3600.0 + minutes*60. + sec;
+      seconds = hr*3600.0 + minutes*60. + sec
+      
       END SUBROUTINE read_date_string
 
        !=======================================================================

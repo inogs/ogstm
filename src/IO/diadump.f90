@@ -47,8 +47,12 @@
 
 
       SELECT CASE (FREQ_GROUP)
-        CASE (1) ; ave_counter=ave_counter_1 ; DIR='AVE_FREQ_1/'
-        CASE (2) ; ave_counter=ave_counter_2 ; DIR='AVE_FREQ_2/'
+        CASE (1) 
+       ave_counter=ave_counter_1 
+       DIR='AVE_FREQ_1/'
+        CASE (2) 
+       ave_counter=ave_counter_2 
+       DIR='AVE_FREQ_2/'
       END SELECT
 
 
@@ -68,10 +72,14 @@
           jstart = njmpp
           irange    = iPe - iPd + 1
           jrange    = jPe - jPd + 1
-          totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
-          totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
-          relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
-          reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+          totistart = istart + iPd - 1 
+       totiend   = totistart + irange - 1
+          totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+          relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+          reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
           totsnIO  (totistart:totiend, totjstart:totjend,:) = snIO    (relistart:reliend, reljstart:reljend, :)
           tottnIO  (totistart:totiend, totjstart:totjend,:) = tnIO    (relistart:reliend, reljstart:reljend, :)
@@ -111,10 +119,14 @@
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
               jrange    = jPe - jPd + 1
-              totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
-              totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
-              relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
-              reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+              totistart = istart + iPd - 1 
+       totiend   = totistart + irange - 1
+              totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+              relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+              reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
               do jk =1 , jpk ! 3d vars
                do jj =totjstart,totjend
@@ -231,10 +243,14 @@
              jstart = njmpp
              irange    = iPe - iPd + 1
              jrange    = jPe - jPd + 1
-             totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
-             totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
-             relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
-             reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+             totistart = istart + iPd - 1 
+       totiend   = totistart + irange - 1
+             totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+             relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+             reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
               if (FREQ_GROUP.eq.1) then
               tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO_HIGH(relistart:reliend,reljstart:reljend,jn_high)
@@ -259,10 +275,14 @@
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
                 jrange    = jPe - jPd + 1
-                totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
-                totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
-                relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
-                reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+                totistart = istart + iPd - 1 
+       totiend   = totistart + irange - 1
+                totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+                relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+                reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
                 do jj =totjstart,totjend ! only 2d vars
                  do ji =totistart,totiend
@@ -312,10 +332,12 @@
 
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
-                 CALL WRITE_AVE_2d_BKP(bkpname,var,datefrom, dateTo,tottrnIO2d, ave_counter);
+                 CALL WRITE_AVE_2d_BKP(bkpname,var,datefrom, dateTo,tottrnIO2d, ave_counter)
+      
               else
                  d2f2d = REAL(tottrnIO2d(:,:),4)
-                 CALL WRITE_AVE_2d(dia_file_nc,var,datefrom,dateTo, d2f2d);
+                 CALL WRITE_AVE_2d(dia_file_nc,var,datefrom,dateTo, d2f2d)
+      
 
               endif
       end if ! if(rank == 0)
@@ -351,10 +373,14 @@
              jstart = njmpp
              irange    = iPe - iPd + 1
              jrange    = jPe - jPd + 1
-             totistart = istart + iPd - 1 ;totiend   = totistart + irange - 1
-             totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
-             relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
-             reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+             totistart = istart + iPd - 1 
+      totiend   = totistart + irange - 1
+             totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+             relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+             reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
       if (FREQ_GROUP.eq.1) then
       tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO_HIGH(relistart:reliend,reljstart:reljend, :,jn_high)
@@ -378,10 +404,14 @@
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
                 jrange    = jPe - jPd + 1
-                totistart = istart + iPd - 1 ; totiend   = totistart + irange - 1
-                totjstart = jstart + jPd - 1 ; totjend   = totjstart + jrange - 1
-                relistart = 1 + iPd - 1      ; reliend   = relistart + irange - 1
-                reljstart = 1 + jPd - 1      ; reljend   = reljstart + jrange - 1
+                totistart = istart + iPd - 1 
+       totiend   = totistart + irange - 1
+                totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+                relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+                reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
 
                 do jk =1 , jpk ! 3d vars
@@ -446,10 +476,12 @@
 
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
-                 CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO(:,:,:),ave_counter);
+                 CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO(:,:,:),ave_counter)
+      
               else
                  d2f3d = REAL(tottrnIO(:,:,:),4)
-                 CALL WRITE_AVE(dia_file_nc,var,datefrom,dateTo, d2f3d);
+                 CALL WRITE_AVE(dia_file_nc,var,datefrom,dateTo, d2f3d)
+      
 
               endif
 

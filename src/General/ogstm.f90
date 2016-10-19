@@ -164,31 +164,54 @@ SUBROUTINE ALLOC_ALL
        mem_all = get_mem(err)
 #endif
 
-      write(*,*)'My_Rank=',Rank,': Memory Allocation - Basal - (MB):',  mem_all ; mem_all_tot=mem_all_tot+mem_all
+      write(*,*)'My_Rank=',Rank,': Memory Allocation - Basal - (MB):',  mem_all 
+       mem_all_tot=mem_all_tot+mem_all
 
-      call   alloc_tot() ; write(*,*)'My_Rank:',Rank,'alloc_init (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_OPT() ; write(*,*)'My_Rank:',Rank,'alloc_OPT  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_ADV() ; write(*,*)'My_Rank:',Rank,'alloc_ADV  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_HDF() ; write(*,*)'My_Rank:',Rank,'alloc_HDF  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_ZDF() ; write(*,*)'My_Rank:',Rank,'alloc_ZDF  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call   alloc_tot() 
+       write(*,*)'My_Rank:',Rank,'alloc_init (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
+      call myalloc_OPT() 
+       write(*,*)'My_Rank:',Rank,'alloc_OPT  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
+      call myalloc_ADV() 
+       write(*,*)'My_Rank:',Rank,'alloc_ADV  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
+      call myalloc_HDF() 
+       write(*,*)'My_Rank:',Rank,'alloc_HDF  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
+      call myalloc_ZDF() 
+       write(*,*)'My_Rank:',Rank,'alloc_ZDF  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
 
 
 #ifdef key_trc_dmp
 !     needs Time_Manager
-      call alloc_DTATRC(); write(*,*)'My_Rank:',Rank,'alloc_TRC  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call alloc_DTATRC()
+       write(*,*)'My_Rank:',Rank,'alloc_TRC  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
 #endif
-      call alloc_DIA()   ; write(*,*)'My_Rank:',Rank,'alloc_DIA  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call alloc_DIA()   
+       write(*,*)'My_Rank:',Rank,'alloc_DIA  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
 
-      call myalloc_BIO() ; write(*,*)'My_Rank:',Rank,'alloc_BIO  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
-      call myalloc_SED() ; write(*,*)'My_Rank:',Rank,'alloc_SED  (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_BIO() 
+       write(*,*)'My_Rank:',Rank,'alloc_BIO  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
+      call myalloc_SED() 
+       write(*,*)'My_Rank:',Rank,'alloc_SED  (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
 
-      call myalloc_FN()  ; write(*,*)'My_Rank:',Rank,'alloc_FN   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_FN()  
+       write(*,*)'My_Rank:',Rank,'alloc_FN   (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
 
 
       call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
       call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
-      call myalloc_IO()  ; write(*,*)'My_Rank:',Rank,'alloc_IO   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+      call myalloc_IO()  
+       write(*,*)'My_Rank:',Rank,'alloc_IO   (MB):', mem_all 
+       mem_all_tot=mem_all_tot+mem_all
 
       write(*,*)'My_Rank,',Rank,'Total Allocated Memory (MB):',mem_all_tot
 
@@ -205,12 +228,16 @@ SUBROUTINE time_init
 
       DELTAT = rdt ! importing namelist value
 
-!      call ioconf_calendar('gregorian');
+!      call ioconf_calendar('gregorian')
+      
 
       SELECT CASE (calendarType)
-        CASE ( 1) ; CALL ioconf_calendar('gregorian')
-        CASE ( 0) ; CALL ioconf_calendar('noleap')
-        CASE (30) ; CALL ioconf_calendar('360d')
+        CASE ( 1) 
+       CALL ioconf_calendar('gregorian')
+        CASE ( 0) 
+       CALL ioconf_calendar('noleap')
+        CASE (30) 
+       CALL ioconf_calendar('360d')
       END SELECT
 
 

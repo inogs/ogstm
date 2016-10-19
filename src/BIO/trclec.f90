@@ -70,7 +70,8 @@
       do ji =1,jptra
           if (ctr_hf(ji).eq.1) jptra_high = jptra_high + 1
       enddo
-      allocate(highfreq_table(jptra_HIGH)) ; highfreq_table = huge(highfreq_table(1))
+      allocate(highfreq_table(jptra_HIGH)) 
+       highfreq_table = huge(highfreq_table(1))
 
       jptra_high = 0
       do ji =1,jptra

@@ -158,9 +158,11 @@
 ! U  *********************************************************
       nomefile = 'FORCINGS/U'//datestring//'.nc'
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", rank, " starting reading forcing fields from ", nomefile(1:30)
-      call readnc_slice_float(nomefile,'vozocrtx',buf);
+      call readnc_slice_float(nomefile,'vozocrtx',buf)
+      
 
-      DO jk=1,jpk,ntids!udta(:,:,:,2) = buf*umask;
+      DO jk=1,jpk,ntids!udta(:,:,:,2) = buf*umask
+      
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,udta,umask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -175,7 +177,8 @@
 !!!$omp end parallel
       END DO
 
-      call readnc_slice_float(nomefile,'e3u',buf);
+      call readnc_slice_float(nomefile,'e3u',buf)
+      
 
       DO jk=1,jpk,ntids
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3udta,umask,buf)
@@ -197,9 +200,11 @@
 
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'vomecrty',buf);
+      call readnc_slice_float(nomefile,'vomecrty',buf)
+      
 
-      DO jk=1,jpk,ntids!vdta(:,:,:,2) = buf*vmask;
+      DO jk=1,jpk,ntids!vdta(:,:,:,2) = buf*vmask
+      
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,vdta,vmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -214,7 +219,8 @@
 !!!$omp end parallel
       END DO
 
-      call readnc_slice_float(nomefile,'e3v',buf);
+      call readnc_slice_float(nomefile,'e3v',buf)
+      
 
       DO jk=1,jpk,ntids
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3vdta,vmask,buf)
@@ -238,8 +244,10 @@
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
 
-      call readnc_slice_float(nomefile,'vovecrtz',buf);
-      DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask;
+      call readnc_slice_float(nomefile,'vovecrtz',buf)
+      
+      DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask
+      
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,avtdta,tmask,buf,wdta)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -255,8 +263,10 @@
       END DO
 
 
-      call readnc_slice_float(nomefile,'votkeavt',buf);
-      DO jk=1,jpk,ntids!avtdta(:,:,:,2) = buf*tmask;
+      call readnc_slice_float(nomefile,'votkeavt',buf)
+      
+      DO jk=1,jpk,ntids!avtdta(:,:,:,2) = buf*tmask
+      
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,avtdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -273,7 +283,8 @@
 
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'e3w',buf);
+      call readnc_slice_float(nomefile,'e3w',buf)
+      
       DO jk=1,jpk,ntids
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3wdta,tmask,buf)
 #ifdef __OPENMP1
@@ -292,8 +303,10 @@
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'votemper',buf);
-      DO jk=1,jpk,ntids!tdta(:,:,:,2) = buf*tmask;
+      call readnc_slice_float(nomefile,'votemper',buf)
+      
+      DO jk=1,jpk,ntids!tdta(:,:,:,2) = buf*tmask
+      
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,tdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -308,8 +321,10 @@
 !!!$omp end parallel
       END DO
 
-      call readnc_slice_float(nomefile,'vosaline',buf);
-      DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask;
+      call readnc_slice_float(nomefile,'vosaline',buf)
+      
+      DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask
+      
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,sdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -324,8 +339,10 @@
 !!!$omp end parallel
       END DO
 
-      call readnc_slice_float(nomefile,'e3t',buf);
-      DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask;
+      call readnc_slice_float(nomefile,'e3t',buf)
+      
+      DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask
+      
 !!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3tdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -342,12 +359,18 @@
 
 
 
-      call readnc_slice_float_2d(nomefile,'sowindsp',buf2); flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1);
-      call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
+      call readnc_slice_float_2d(nomefile,'sowindsp',buf2)
+       flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1)
+      
+      call readnc_slice_float_2d(nomefile,'soshfldo',buf2)
+       flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1)
+      
                                                             flxdta(:,:,jpice ,2) = 0.
       call EXISTVAR(nomefile,'sowaflcd',B)
       if (B) then
-      call readnc_slice_float_2d(nomefile,'sowaflcd',buf2); flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1);
+      call readnc_slice_float_2d(nomefile,'sowaflcd',buf2)
+       flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1)
+      
       else
          if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
          flxdta(:,:,jpemp ,2) = 0.
@@ -359,10 +382,12 @@
          call readnc_slice_float_2d(nomefile,'sossheiu',buf2)
          DO jj=1,jpj
            DO ji=1,jpi
-            if (umask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,8 ,2) = buf2(ji,jj);
+            if (umask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,8 ,2) = buf2(ji,jj)
+      
            END DO
          END DO
-      e3u(:,:,1) = flxdta(:,:,8 ,2);
+      e3u(:,:,1) = flxdta(:,:,8 ,2)
+      
       else
 !     Do nothing leave the init value --> domrea
       endif
@@ -373,10 +398,12 @@
          call readnc_slice_float_2d(nomefile,'sossheiv',buf2)
          DO jj=1,jpj
             DO ji=1,jpi
-               if (vmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,9 ,2) = buf2(ji,jj);
+               if (vmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,9 ,2) = buf2(ji,jj)
+      
             END DO
          END DO
-      e3v(:,:,1) = flxdta(:,:,9 ,2);
+      e3v(:,:,1) = flxdta(:,:,9 ,2)
+      
       else
 !     Do nothing leave the init value --> domrea
       endif
@@ -387,10 +414,12 @@
          call readnc_slice_float_2d(nomefile,'sossheit',buf2)
          DO jj=1,jpj
             DO ji=1,jpi
-               if (tmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,10 ,2) = buf2(ji,jj);
+               if (tmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,10 ,2) = buf2(ji,jj)
+      
             END DO
          END DO
-      e3t(:,:,1) = flxdta(:,:,10 ,2);
+      e3t(:,:,1) = flxdta(:,:,10 ,2)
+      
       else
 !     Do nothing leave the init value --> domrea
       endif

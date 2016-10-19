@@ -17,4 +17,5 @@ PROGRAM OGSTM_MAIN
 !$OMP END PARALLEL
 
       CALL mpi_finalize(info)
+      
 END PROGRAM OGSTM_MAIN

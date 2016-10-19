@@ -1,33 +1,33 @@
 # CMake project file for OGSTM
 # author : E.Pascolo, S.Bna, L.Calori
 
+# CMAKE setting
 cmake_minimum_required (VERSION 2.6)
 project (OGSTM)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
 enable_language(Fortran)
+set (NETCDF_F90 "YES")
 find_package(MPI REQUIRED)
 find_package(NetCDF REQUIRED)
+find_package(BFM REQUIRED)
 
-message("Compiler :${MPI_Fortran_COMPILER}")
-# make sure that the default is a RELEASE
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
       "Choose the type of build, options are: Debug Release."
       FORCE)
 endif (NOT CMAKE_BUILD_TYPE)
 
-# default installation
 get_filename_component (default_prefix "./bin" ABSOLUTE)
 set (CMAKE_INSTALL_PREFIX ${default_prefix} CACHE STRING
       "Choose the installation directory; by default it installs in the OGSTM directory."
       FORCE)
 
-# FFLAGS depend on the compiler
+# COMPILER
 
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
 add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_trc_smolar)
-add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed -Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2)
+add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed )
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
   set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -g -cpp -unroll=3 -qopt-subscript-in-range -align all -heap-arrays")
@@ -45,20 +45,17 @@ else ()
 endif ()
 
 #include
-include_directories(${CMAKE_SOURCE_DIR}/../bfm/include/)
-include_directories(${NETCDF_INCLUDE_DIR})
+include_directories(${BFM_INCLUDES})
+include_directories(${NETCDF_INCLUDES})
 
-# Fortran module
+# Search Fortran module to compile
 set ( FOLDERS BIO  General  IO  MPI  namelists  PHYS)
-foreach (FOLDER ${FOLDERS})
-file(GLOB TMP src/${FOLDER}/*)
-#message(" tmp ->${TMP}<--" )
-list (APPEND FORTRAN_SOURCES ${TMP})
+  foreach (FOLDER ${FOLDERS})
+  file(GLOB TMP src/${FOLDER}/*)
+  list (APPEND FORTRAN_SOURCES ${TMP})
 endforeach()
 
-#message(" FILE TO COMPILE ->${FORTRAN_SOURCES}<--" )
-
-#compile
+#building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDF_LIBRARY})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDF_LIBRARIES_F90} ${BFM_LIBRARIES})

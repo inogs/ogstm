@@ -50,7 +50,7 @@
 
 
 !! Passive tracers parameter
-!#if defined key_trc_bfm
+#ifdef key_trc_bfm
 
 
 #include "BFM_var_list.h"
@@ -60,7 +60,7 @@
       INTEGER :: jpkb , & ! : first vertical layers where biology is active
      &           jpkbm1 !  jpkb - 1
 
-!#endif
+#endif
 
 
       END MODULE modul_param

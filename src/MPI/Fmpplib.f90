@@ -122,7 +122,7 @@ END FUNCTION
 !!                    t3sn() : message passing arrays south-north
 !!   Workspace :
 !!   ---------
-!!             ji,jj,jk,jl,imigr,iihom,ijhom
+!!             jk,jj,ji,jl,imigr,iihom,ijhom
 !!
 !!   External :
 !!   --------
@@ -159,7 +159,7 @@ END FUNCTION
 
 #ifdef key_mpp_mpi
 
-      INTEGER ji,jj,jk,jl
+      INTEGER jk,jj,ji,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
       REAL(8) zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
@@ -216,8 +216,8 @@ END FUNCTION
 !!... cyclic
           DO jk = 1,jpk
             DO jj = 1, jpj
-              ptab( 1 ,jj,jk,jn+mytid) = ptab(jpim1,jj,jk,jn+mytid)
-              ptab(jpi,jj,jk,jn+mytid) = ptab(  2  ,jj,jk,jn+mytid)
+              ptab( 1 ,jj,jk,jn+mytid) = ptab(jk,jj,jpim1,jn+mytid)
+              ptab(jk,jj,jpi,jn+mytid) = ptab(  2  ,jj,jk,jn+mytid)
             END DO
           END DO
       ELSE
@@ -227,7 +227,7 @@ END FUNCTION
               DO ji = iihom+1,jpi
                 DO jk = 1,jpk
                   DO jj = 1,jpj
-                    ptab(ji,jj,jk,jn+mytid) = 0.e0
+                    ptab(jk,jj,ji,jn+mytid) = 0.e0
                   END DO
                 END DO
               END DO
@@ -235,7 +235,7 @@ END FUNCTION
                   DO ji = 1,jpreci
                     DO jk = 1,jpk
                       DO jj = 1,jpj
-                        ptab(ji,jj,jk,jn+mytid) = 0.e0
+                        ptab(jk,jj,ji,jn+mytid) = 0.e0
                       END DO
                     END DO
                   END DO
@@ -250,7 +250,7 @@ END FUNCTION
           DO jj = ijhom+1,jpj
             DO jk = 1,jpk
               DO ji = 1,jpi
-                ptab(ji,jj,jk,jn+mytid) = 0.e0
+                ptab(jk,jj,ji,jn+mytid) = 0.e0
               END DO
             END DO
           END DO
@@ -258,7 +258,7 @@ END FUNCTION
               DO jj = 1,jprecj
                 DO jk = 1,jpk
                   DO ji = 1, jpi
-                    ptab(ji,jj,jk,jn+mytid) = 0.e0
+                    ptab(jk,jj,ji,jn+mytid) = 0.e0
                   END DO
                 END DO
               END DO
@@ -294,8 +294,8 @@ END FUNCTION
           DO jl=1,jpreci
             DO jk=1,jpk
               DO jj=1,jpj
-                t3ew_my1(jj,jl,jk,jn+mytid,1)=ptab(jpreci+jl,jj,jk,jn+mytid)
-                t3we_my1(jj,jl,jk,jn+mytid,1)=ptab(iihom +jl,jj,jk,jn+mytid)
+                t3ew_my1(jk,jj,jl,jn+mytid,1)=ptab(jj,jpreci+jl,jk,jn+mytid)
+                t3we_my1(jk,jj,jl,jn+mytid,1)=ptab(jj,iihom+jl,jk,jn+mytid)
               END DO
             END DO
           END DO
@@ -354,7 +354,7 @@ END FUNCTION
           DO jl=1,jpreci
             DO jk=1,jpk
               DO jj=1,jpj
-                ptab(jl,jj,jk,jn+mytid)=t3we_my1(jj,jl,jk,jn+mytid,2)
+                ptab(jl,jj,jk,jn+mytid)=t3we_my1(jk,jj,jl,jn+mytid,2)
               END DO
             END DO
           END DO
@@ -364,7 +364,7 @@ END FUNCTION
           DO jl=1,jpreci
             DO jk=1,jpk
               DO jj=1,jpj
-                ptab(iihom+jl,jj,jk,jn+mytid)=t3ew_my1(jj,jl,jk,jn+mytid,2)
+                ptab(jj,iihom+jl,jk,jn+mytid)=t3ew_my1(jk,jj,jl,jn+mytid,2)
               END DO
             END DO
           END DO
@@ -403,8 +403,8 @@ END FUNCTION
           DO jl=1,jprecj
             DO jk=1,jpk
               DO ji=1,jpi
-                t3sn_my1(ji,jl,jk,jn+mytid,1)=ptab(ji,ijhom +jl,jk,jn+mytid)
-                t3ns_my1(ji,jl,jk,jn+mytid,1)=ptab(ji,jprecj+jl,jk,jn+mytid)
+                t3sn_my1(jk,jl,ji,jn+mytid,1)=ptab(jk,ijhom +jl,ji,jn+mytid)
+                t3ns_my1(jk,jl,ji,jn+mytid,1)=ptab(ji,jprecj+jl,jk,jn+mytid)
               END DO
             END DO
           END DO
@@ -463,7 +463,7 @@ END FUNCTION
           DO jl=1,jprecj
             DO jk=1,jpk
               DO ji=1,jpi
-                ptab(ji,jl,jk,jn+mytid)=t3sn_my1(ji,jl,jk,jn+mytid,2)
+                ptab(jk,jl,ji,jn+mytid)=t3sn_my1(jk,jl,ji,jn+mytid,2)
               END DO
             END DO
           END DO
@@ -473,7 +473,7 @@ END FUNCTION
           DO jl=1,jprecj
             DO jk=1,jpk
               DO ji=1,jpi
-                ptab(ji,ijhom+jl,jk,jn+mytid)=t3ns_my1(ji,jl,jk,jn+mytid,2)
+                ptab(jk,ijhom +jl,ji,jn+mytid)=t3ns_my1(jk,jl,ji,jn+mytid,2)
               END DO
             END DO
           END DO
@@ -741,8 +741,8 @@ END FUNCTION
                 DO jk=1,jpk
 !!Check the following
                   DO jj=1,jpj
-                    t3ew_my1(jj,jl,jk,jn+mytid,1)=ptab(jpreci+jl,jj,jk,jn+mytid)
-                    t3we_my1(jj,jl,jk,jn+mytid,1)=ptab(iihom +jl,jj,jk,jn+mytid)
+                    t3ew_my1(jk,jj,jl,jn+mytid,1)=ptab(jj,jpreci+jl,jk,jn+mytid)
+                    t3we_my1(jk,jj,jl,jn+mytid,1)=ptab(jj,iihom+jl,jk,jn+mytid)
                   END DO
                 END DO
               END DO
@@ -806,7 +806,7 @@ END FUNCTION
               DO jl=1,jpreci
                 DO jk=1,jpk
                   DO jj=1,jpj
-                    ptab(jl,jj,jk,jn+mytid)=t3we_my1(jj,jl,jk,jn+mytid,2)
+                    ptab(jl,jj,jk,jn+mytid)=t3we_my1(jk,jj,jl,jn+mytid,2)
                   END DO
                 END DO
               END DO
@@ -816,7 +816,7 @@ END FUNCTION
               DO jl=1,jpreci
                 DO jk=1,jpk
                   DO jj=1,jpj
-                    ptab(iihom+jl,jj,jk,jn+mytid)=t3ew_my1(jj,jl,jk,jn+mytid,2)
+                    ptab(jj,iihom+jl,jk,jn+mytid)=t3ew_my1(jk,jj,jl,jn+mytid,2)
                   END DO
                 END DO
               END DO
@@ -902,7 +902,7 @@ END SUBROUTINE
 !!   Workspace :
 !!   ---------
 !!      local
-!!             ji,jj,jl,imigr,iihom,ijhom
+!!             jj,ji,jl,imigr,iihom,ijhom
 !!
 !!   External :
 !!   --------
@@ -934,7 +934,7 @@ END SUBROUTINE
       REAL(8) t2p2(jpi,1,2)
 #ifdef key_mpp_mpi
 
-      INTEGER ji,jj,jl
+      INTEGER jj,ji,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
       REAL(8) zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
@@ -972,13 +972,13 @@ END SUBROUTINE
               iihom = nlci-jpreci
               DO ji = iihom+1,jpi
                 DO jj = 1,jpj
-                  ptab(ji,jj) = 0.e0
+                  ptab(jj,ji) = 0.e0
                 END DO
               END DO
               IF ( ktype.NE.4  ) THEN
                   DO ji = 1,jpreci
                     DO jj = 1,jpj
-                      ptab(ji,jj) = 0.e0
+                      ptab(jj,ji) = 0.e0
                     END DO
                   END DO
               ENDIF
@@ -991,13 +991,13 @@ END SUBROUTINE
           ijhom = nlcj-jprecj
           DO jj = ijhom+1,jpj
             DO ji = 1,jpi
-              ptab(ji,jj) = 0.e0
+              ptab(jj,ji) = 0.e0
             END DO
           END DO
           IF ( ktype.NE.4 ) THEN
               DO jj = 1,jprecj
                 DO ji = 1, jpi
-                  ptab(ji,jj) = 0.e0
+                  ptab(jj,ji) = 0.e0
                 END DO
               END DO
           ENDIF
@@ -1014,8 +1014,8 @@ END SUBROUTINE
 !!
           DO jl=1,jpreci
             DO jj=1,jpj
-              t2ew(jj,jl,1)=ptab(jpreci+jl,jj)
-              t2we(jj,jl,1)=ptab(iihom +jl,jj)
+              t2ew(1,jj,jl)=ptab(jj,jpreci+jl)
+              t2we(1,jj,jl)=ptab(jj,iihom+jl)
             END DO
           END DO
       ENDIF
@@ -1054,7 +1054,7 @@ END SUBROUTINE
 !!
           DO jl=1,jpreci
             DO jj=1,jpj
-              ptab(jl,jj)=t2we(jj,jl,2)
+              ptab(jl,jj)=t2we(2,jj,jl)
             END DO
           END DO
       ENDIF
@@ -1062,7 +1062,7 @@ END SUBROUTINE
       IF(nbondi.eq.-1.or.nbondi.eq.0) THEN
           DO jl=1,jpreci
             DO jj=1,jpj
-              ptab(iihom+jl,jj)=t2ew(jj,jl,2)
+              ptab(jj,iihom+jl)=t2ew(2,jj,jl)
             END DO
           END DO
       ENDIF
@@ -1078,8 +1078,8 @@ END SUBROUTINE
 !!
           DO jl=1,jprecj
             DO ji=1,jpi
-              t2sn(ji,jl,1)=ptab(ji,ijhom +jl)
-              t2ns(ji,jl,1)=ptab(ji,jprecj+jl)
+              t2sn(1,jl,ji)=ptab(ijhom +jl,ji)
+              t2ns(1,jl,ji)=ptab(jprecj+jl,ji)
             END DO
           END DO
       ENDIF
@@ -1119,7 +1119,7 @@ END SUBROUTINE
       IF(nbondj.eq.0.or.nbondj.eq.1) THEN
           DO jl=1,jprecj
             DO ji=1,jpi
-              ptab(ji,jl)=t2sn(ji,jl,2)
+              ptab(ji,jl)=t2sn(2,jl,ji)
             END DO
           END DO
       ENDIF
@@ -1127,7 +1127,7 @@ END SUBROUTINE
       IF(nbondj.eq.0.or.nbondj.eq.-1) THEN
           DO jl=1,jprecj
             DO ji=1,jpi
-              ptab(ji,ijhom+jl)=t2ns(ji,jl,2)
+              ptab(ji,ijhom+jl)=t2ns(2,jl,ji)
             END DO
           END DO
       ENDIF
@@ -1287,8 +1287,8 @@ END SUBROUTINE
 !!
               DO jl=1,jpreci
                 DO jj=1,jpj
-                  t2ew(jj,jl,1)=ptab(jpreci+jl,jj)
-                  t2we(jj,jl,1)=ptab(iihom +jl,jj)
+                  t2ew(1,jj,jl)=ptab(jj,jpreci+jl)
+                  t2we(1,jj,jl)=ptab(jj,iihom+jl)
                 END DO
               END DO
           ENDIF
@@ -1329,7 +1329,7 @@ END SUBROUTINE
 !!
               DO jl=1,jpreci
                 DO jj=1,jpj
-                  ptab(jl,jj)=t2we(jj,jl,2)
+                  ptab(jl,jj)=t2we(2,jj,jl)
                 END DO
               END DO
           ENDIF
@@ -1337,7 +1337,7 @@ END SUBROUTINE
           IF(nbondi.eq.-1.or.nbondi.eq.0) THEN
               DO jl=1,jpreci
                 DO jj=1,jpj
-                  ptab(iihom+jl,jj)=t2ew(jj,jl,2)
+                  ptab(jj,iihom+jl)=t2ew(2,jj,jl)
                 END DO
               END DO
           ENDIF

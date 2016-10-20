@@ -132,7 +132,7 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datestring
       LOGICAL B
-      integer ji,jj,jk
+      integer jk,jj,ji
 ! omp variables
             INTEGER :: mytid, ntids
 
@@ -163,14 +163,14 @@
 
       DO jk=1,jpk,ntids!udta(:,:,:,2) = buf*umask
       
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,udta,umask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,udta,umask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              udta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*umask(ji,jj,jk+mytid)
+              udta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*umask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -181,14 +181,14 @@
       
 
       DO jk=1,jpk,ntids
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3udta,umask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,e3udta,umask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              e3udta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*umask(ji,jj,jk+mytid)
+              e3udta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*umask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -205,14 +205,14 @@
 
       DO jk=1,jpk,ntids!vdta(:,:,:,2) = buf*vmask
       
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,vdta,vmask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,vdta,vmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              vdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*vmask(ji,jj,jk+mytid)
+              vdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*vmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -223,14 +223,14 @@
       
 
       DO jk=1,jpk,ntids
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3vdta,vmask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,e3vdta,vmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              e3vdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*vmask(ji,jj,jk+mytid)
+              e3vdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*vmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -248,14 +248,14 @@
       
       DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask
       
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,avtdta,tmask,buf,wdta)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,avtdta,tmask,buf,wdta)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              wdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+              wdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*tmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -267,14 +267,14 @@
       
       DO jk=1,jpk,ntids!avtdta(:,:,:,2) = buf*tmask
       
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,avtdta,tmask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,avtdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              avtdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+              avtdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*tmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -286,14 +286,14 @@
       call readnc_slice_float(nomefile,'e3w',buf)
       
       DO jk=1,jpk,ntids
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3wdta,tmask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,e3wdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              e3wdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+              e3wdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*tmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -307,14 +307,14 @@
       
       DO jk=1,jpk,ntids!tdta(:,:,:,2) = buf*tmask
       
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,tdta,tmask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,tdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              tdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+              tdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*tmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -325,14 +325,14 @@
       
       DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask
       
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,sdta,tmask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,sdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              sdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+              sdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*tmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -343,14 +343,14 @@
       
       DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask
       
-!!!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpk,jpj,jpi,e3tdta,tmask,buf)
+!!!$omp parallel default(none) private(mytid,jj,ji) shared(jk,jpk,jpj,jpi,e3tdta,tmask,buf)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
          IF (jk+mytid <=jpk) then
             DO jj= 1,jpj
             DO ji= 1,jpi
-              e3tdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+              e3tdta(jk,jj,ji+mytid,2) = buf(jk,jj,ji+mytid)*tmask(jk,jj,ji+mytid)
             ENDDO
             ENDDO
          ENDIF
@@ -382,7 +382,7 @@
          call readnc_slice_float_2d(nomefile,'sossheiu',buf2)
          DO jj=1,jpj
            DO ji=1,jpi
-            if (umask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,8 ,2) = buf2(ji,jj)
+            if (umask(jj,ji,1) .EQ. 1.)  flxdta(jj,ji,8 ,2) = buf2(jj,ji)
       
            END DO
          END DO
@@ -398,7 +398,7 @@
          call readnc_slice_float_2d(nomefile,'sossheiv',buf2)
          DO jj=1,jpj
             DO ji=1,jpi
-               if (vmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,9 ,2) = buf2(ji,jj)
+               if (vmask(jj,ji,1) .EQ. 1.)  flxdta(jj,ji,9 ,2) = buf2(jj,ji)
       
             END DO
          END DO
@@ -414,7 +414,7 @@
          call readnc_slice_float_2d(nomefile,'sossheit',buf2)
          DO jj=1,jpj
             DO ji=1,jpi
-               if (tmask(ji,jj,1) .EQ. 1.)  flxdta(ji,jj,10 ,2) = buf2(ji,jj)
+               if (tmask(jj,ji,1) .EQ. 1.)  flxdta(jj,ji,10 ,2) = buf2(jj,ji)
       
             END DO
          END DO
@@ -433,8 +433,8 @@
           DO jk=1,jpk
             DO jj=1,jpj
               DO ji=1,jpi
-                tn(ji,jj,jk)=tdta(ji,jj,jk,2)
-                sn(ji,jj,jk)=sdta(ji,jj,jk,2)
+                tn(jk,jj,ji)=tdta(jk,jj,ji,2)
+                sn(jk,jj,ji)=sdta(jk,jj,ji,2)
               END DO
             END DO
           END DO
@@ -453,7 +453,7 @@
          IMPLICIT NONE
          REAL(8) zweigh, Umzweigh
 
-         INTEGER ji,jj,jk
+         INTEGER jk,jj,ji
          INTEGER uk, uj      ! aux variables for OpenMP
 
       INTEGER :: mytid, ntids! omp variables
@@ -488,26 +488,26 @@
             DO jj=1,jpj
               DO ji=1,jpi
 
-                if (umask(ji,jj,uk) .NE. 0.0) then
-                un(ji,jj,uk)  = (Umzweigh*  udta(ji,jj,uk,1) + zweigh*  udta(ji,jj,uk,2))
-                e3u(ji,jj,uk) = (Umzweigh*  e3udta(ji,jj,uk,1) + zweigh*  e3udta(ji,jj,uk,2))
+                if (umask(uk,jj,ji) .NE. 0.0) then
+                un(uk,jj,ji)  = (Umzweigh*  udta(uk,jj,ji,1) + zweigh*  udta(uk,jj,ji,2))
+                e3u(uk,jj,ji) = (Umzweigh*  e3udta(uk,jj,ji,1) + zweigh*  e3udta(uk,jj,ji,2))
                 endif
 
-                if (vmask(ji,jj,uk) .NE. 0.0) then
-                vn(ji,jj,uk)  = (Umzweigh*  vdta(ji,jj,uk,1) + zweigh*  vdta(ji,jj,uk,2))
-                e3v(ji,jj,uk) = (Umzweigh*  e3vdta(ji,jj,uk,1) + zweigh*  e3vdta(ji,jj,uk,2))
+                if (vmask(uk,jj,ji) .NE. 0.0) then
+                vn(uk,jj,ji)  = (Umzweigh*  vdta(uk,jj,ji,1) + zweigh*  vdta(uk,jj,ji,2))
+                e3v(uk,jj,ji) = (Umzweigh*  e3vdta(uk,jj,ji,1) + zweigh*  e3vdta(uk,jj,ji,2))
                 endif
 
-                if (tmask(ji,jj,uk) .NE. 0.0) then
+                if (tmask(uk,jj,ji) .NE. 0.0) then
 
-                 wn(ji,jj,uk) = (Umzweigh*  wdta(ji,jj,uk,1) + zweigh*  wdta(ji,jj,uk,2))
-                avt(ji,jj,uk) = (Umzweigh*avtdta(ji,jj,uk,1) + zweigh*avtdta(ji,jj,uk,2))
-                e3w(ji,jj,uk) = (Umzweigh*  e3wdta(ji,jj,uk,1) + zweigh*  e3wdta(ji,jj,uk,2))
+                 wn(uk,jj,ji) = (Umzweigh*  wdta(uk,jj,ji,1) + zweigh*  wdta(uk,jj,ji,2))
+                avt(uk,jj,ji) = (Umzweigh*avtdta(uk,jj,ji,1) + zweigh*avtdta(uk,jj,ji,2))
+                e3w(uk,jj,ji) = (Umzweigh*  e3wdta(uk,jj,ji,1) + zweigh*  e3wdta(uk,jj,ji,2))
        
-                 tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
-                 sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
-                e3t_back(ji,jj,uk) = e3t(ji,jj,uk)
-                e3t(ji,jj,uk) = (Umzweigh*  e3tdta(ji,jj,uk,1) + zweigh*  e3tdta(ji,jj,uk,2))
+                 tn(uk,jj,ji) = (Umzweigh*  tdta(uk,jj,ji,1) + zweigh*  tdta(uk,jj,ji,2))
+                 sn(uk,jj,ji) = (Umzweigh*  sdta(uk,jj,ji,1) + zweigh*  sdta(uk,jj,ji,2))
+                e3t_back(uk,jj,ji) = e3t(uk,jj,ji)
+                e3t(uk,jj,ji) = (Umzweigh*  e3tdta(uk,jj,ji,1) + zweigh*  e3tdta(uk,jj,ji,2))
                 endif ! tmask
 
 
@@ -518,7 +518,7 @@
           END DO
 
           DO jj=1,jpj,ntids
-!!!$omp parallel default(none) private(mytid,jk,ji,uj)
+!!!$omp parallel default(none) private(mytid,jk,uj,ji)
 !!!$omp&                       shared(jpk,jpj,jpi,jj,flx,flxdta,
 !!!$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
 #ifdef __OPENMP1
@@ -530,18 +530,18 @@
 
             DO jk=1,jpflx
               DO ji=1,jpi
-                flx(ji,uj,jk) = ( Umzweigh * flxdta(ji,uj,jk,1)+ zweigh     * flxdta(ji,uj,jk,2) )
+                flx(jk,uj,ji) = ( Umzweigh * flxdta(jk,uj,ji,1)+ zweigh     * flxdta(jk,uj,ji,2) )
               END DO
             END DO
 
             DO ji=1,jpi
-                  vatm(ji,uj)   = flx(ji,uj,jpwind)
-                  freeze(ji,uj) = flx(ji,uj,jpice)
-                  emp(ji,uj)    = flx(ji,uj,jpemp)
-                  qsr(ji,uj)    = flx(ji,uj,jpqsr)
-!                 e3u(ji,uj,1)  = flx(ji,uj,8)
-!                 e3v(ji,uj,1)  = flx(ji,uj,9)
-!                 e3t(ji,uj,1)  = flx(ji,uj,10)
+                  vatm(uj,ji)   = flx(uj,ji,jpwind)
+                  freeze(uj,ji) = flx(uj,ji,jpice)
+                  emp(uj,ji)    = flx(uj,ji,jpemp)
+                  qsr(uj,ji)    = flx(uj,ji,jpqsr)
+!                 e3u(uj,ji,1)  = flx(uj,ji,8)
+!                 e3v(uj,ji,1)  = flx(uj,ji,9)
+!                 e3t(uj,ji,1)  = flx(uj,ji,10)
             END DO
 
         endif
@@ -561,7 +561,7 @@
       SUBROUTINE swap_PHYS
          USE myalloc
          IMPLICIT NONE
-         INTEGER ji,jj,jk,jdepth
+         INTEGER jk,jj,ji,jdepth
          INTEGER :: mytid, ntids! omp variables
 
 #ifdef __OPENMP1
@@ -580,7 +580,7 @@
 #endif
 
           DO jk=1,jpk,ntids
-!!!$omp parallel default(None) private(mytid,ji,jj,jdepth) shared(jpk,jpj,jpi,jk,udta,vdta,wdta,avtdta,tdta,sdta)
+!!!$omp parallel default(None) private(mytid,jdepth,jj,ji) shared(jpk,jpj,jpi,jk,udta,vdta,wdta,avtdta,tdta,sdta)
 !!!$omp&           shared(e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta)
 #ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
@@ -590,16 +590,16 @@
 
             DO jj=1,jpj
               DO ji=1,jpi
-                  udta(ji,jj,jdepth,1)   =  udta(ji,jj,jdepth,2)
-                  e3udta(ji,jj,jdepth,1) =  e3udta(ji,jj,jdepth,2)
-                  vdta(ji,jj,jdepth,1)   =  vdta(ji,jj,jdepth,2)
-                  e3vdta(ji,jj,jdepth,1) =  e3vdta(ji,jj,jdepth,2)
-                  wdta(ji,jj,jdepth,1)   =  wdta(ji,jj,jdepth,2)
-                  e3wdta(ji,jj,jdepth,1) =  e3wdta(ji,jj,jdepth,2)
-                  avtdta(ji,jj,jdepth,1) = avtdta(ji,jj,jdepth,2)
-                    tdta(ji,jj,jdepth,1) = tdta(ji,jj,jdepth,2)
-                    sdta(ji,jj,jdepth,1) = sdta(ji,jj,jdepth,2)
-                  e3tdta(ji,jj,jdepth,1) =  e3tdta(ji,jj,jdepth,2)
+                  udta(jdepth,jj,ji,1)   =  udta(jdepth,jj,ji,2)
+                  e3udta(jdepth,jj,ji,1) =  e3udta(jdepth,jj,ji,2)
+                  vdta(jdepth,jj,ji,1)   =  vdta(jdepth,jj,ji,2)
+                  e3vdta(jdepth,jj,ji,1) =  e3vdta(jdepth,jj,ji,2)
+                  wdta(jdepth,jj,ji,1)   =  wdta(jdepth,jj,ji,2)
+                  e3wdta(jdepth,jj,ji,1) =  e3wdta(jdepth,jj,ji,2)
+                  avtdta(jdepth,jj,ji,1) = avtdta(jdepth,jj,ji,2)
+                    tdta(jdepth,jj,ji,1) = tdta(jdepth,jj,ji,2)
+                    sdta(jdepth,jj,ji,1) = sdta(jdepth,jj,ji,2)
+                  e3tdta(jdepth,jj,ji,1) =  e3tdta(jdepth,jj,ji,2)
 
               END DO
             END DO
@@ -609,14 +609,14 @@
           END DO
 
           DO jk=1,jpflx,ntids
-!!!$omp parallel default(None) private(mytid,ji,jj) shared(jk,jpi,jpj,jpflx,flxdta)
+!!!$omp parallel default(None) private(mytid,jj,ji) shared(jk,jpi,jpj,jpflx,flxdta)
 #ifdef __OPENMP1
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
            if (jk+mytid.le.jpflx) then
             DO ji=1,jpi
               DO jj=1,jpj
-                flxdta(ji,jj,jk+mytid,1) = flxdta(ji,jj,jk+mytid,2)
+                flxdta(jk,jj,ji+mytid,1) = flxdta(jk,jj,ji+mytid,2)
               END DO
             END DO
            endif

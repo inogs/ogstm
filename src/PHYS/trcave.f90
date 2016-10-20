@@ -8,7 +8,7 @@
 
       implicit none
 !     local
-      integer ji,jj,jk,jn
+      integer jk,jj,ji,jn
       integer :: jn_high, jn_on_all
       REAL(8) ::  Miss_val =1.e20
       REAL(8) :: Realcounter, Realcounterp1
@@ -52,10 +52,10 @@
           DO jk=1, jpk
              DO jj=1, jpj
                 DO ji=1, jpi
-               IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                  traIO(ji,jj,jk,jn+mytid)=(traIO(ji,jj,jk,jn+mytid)*Realcounter+trn(ji,jj,jk,jn+mytid))*Realcounterp1
+               IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                  traIO(jk,jj,ji,jn+mytid)=(traIO(jk,jj,ji,jn+mytid)*Realcounter+trn(jk,jj,ji,jn+mytid))*Realcounterp1
                ELSE
-                  traIO(ji,jj,jk,jn+mytid)=Miss_val
+                  traIO(jk,jj,ji,jn+mytid)=Miss_val
                ENDIF
                 END DO
              END DO
@@ -83,11 +83,11 @@
           DO jk=1, jpk
              DO jj=1, jpj
                 DO ji=1, jpi
-               IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                  traIO_HIGH(ji,jj,jk,jn_high+mytid)= &
-     &           (traIO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+trn(ji,jj,jk,jn_on_all))*Realcounterp1
+               IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                  traIO_HIGH(jk,jj,ji,jn_high+mytid)= &
+     &           (traIO_HIGH(jk,jj,ji,jn_high+mytid)*Realcounter+trn(jk,jj,ji,jn_on_all))*Realcounterp1
                ELSE
-                  traIO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                  traIO_HIGH(jk,jj,ji,jn_high+mytid)=Miss_val
                ENDIF
                 END DO
              END DO
@@ -111,32 +111,32 @@
       DO jk=1, jpk
        DO jj=1, jpj
           DO ji=1, jpi
-             IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                snIO (ji,jj,jk)=(snIO (ji,jj,jk)*Realcounter+sn (ji,jj,jk))*Realcounterp1
-                tnIO (ji,jj,jk)=(tnIO (ji,jj,jk)*Realcounter+tn (ji,jj,jk))*Realcounterp1
-                wnIO (ji,jj,jk)=(wnIO (ji,jj,jk)*Realcounter+wn (ji,jj,jk))*Realcounterp1
-                avtIO(ji,jj,jk)=(avtIO(ji,jj,jk)*Realcounter+avt(ji,jj,jk))*Realcounterp1
-                e3tIO(ji,jj,jk)=(e3tIO(ji,jj,jk)*Realcounter+e3t(ji,jj,jk))*Realcounterp1
+             IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                snIO (jk,jj,ji)=(snIO (jk,jj,ji)*Realcounter+sn (jk,jj,ji))*Realcounterp1
+                tnIO (jk,jj,ji)=(tnIO (jk,jj,ji)*Realcounter+tn (jk,jj,ji))*Realcounterp1
+                wnIO (jk,jj,ji)=(wnIO (jk,jj,ji)*Realcounter+wn (jk,jj,ji))*Realcounterp1
+                avtIO(jk,jj,ji)=(avtIO(jk,jj,ji)*Realcounter+avt(jk,jj,ji))*Realcounterp1
+                e3tIO(jk,jj,ji)=(e3tIO(jk,jj,ji)*Realcounter+e3t(jk,jj,ji))*Realcounterp1
              ELSE
-                snIO (ji,jj,jk)=Miss_val
-                tnIO (ji,jj,jk)=Miss_val
-                wnIO (ji,jj,jk)=Miss_val
-                avtIO(ji,jj,jk)=Miss_val
-                e3tIO(ji,jj,jk)=Miss_val
+                snIO (jk,jj,ji)=Miss_val
+                tnIO (jk,jj,ji)=Miss_val
+                wnIO (jk,jj,ji)=Miss_val
+                avtIO(jk,jj,ji)=Miss_val
+                e3tIO(jk,jj,ji)=Miss_val
              ENDIF
 
 
-             IF(umask(ji,jj,jk) .NE. 0.) THEN
-                unIO(ji,jj,jk)=(unIO(ji,jj,jk)*Realcounter+un(ji,jj,jk))*Realcounterp1
+             IF(umask(jk,jj,ji) .NE. 0.) THEN
+                unIO(jk,jj,ji)=(unIO(jk,jj,ji)*Realcounter+un(jk,jj,ji))*Realcounterp1
              ELSE
-                unIO(ji,jj,jk)=Miss_val
+                unIO(jk,jj,ji)=Miss_val
              ENDIF
 
 
-             IF(vmask(ji,jj,jk) .NE. 0.) THEN
-                vnIO(ji,jj,jk)=(vnIO(ji,jj,jk)*Realcounter+vn(ji,jj,jk))*Realcounterp1
+             IF(vmask(jk,jj,ji) .NE. 0.) THEN
+                vnIO(jk,jj,ji)=(vnIO(jk,jj,ji)*Realcounter+vn(jk,jj,ji))*Realcounterp1
              ELSE
-                vnIO(ji,jj,jk)=Miss_val
+                vnIO(jk,jj,ji)=Miss_val
              ENDIF
 
           END DO
@@ -145,14 +145,14 @@
 
       DO jj=1, jpj
         DO ji=1, jpi
-           IF (tmask(ji,jj,1) .NE. 0.) THEN
-               vatmIO(ji,jj)=(vatmIO(ji,jj)*Realcounter+vatm(ji,jj))*Realcounterp1
-               empIO (ji,jj)=(empIO (ji,jj)*Realcounter+emp (ji,jj))*Realcounterp1
-               qsrIO (ji,jj)=(qsrIO (ji,jj)*Realcounter+qsr (ji,jj))*Realcounterp1
+           IF (tmask(jj,ji,1) .NE. 0.) THEN
+               vatmIO(jj,ji)=(vatmIO(jj,ji)*Realcounter+vatm(jj,ji))*Realcounterp1
+               empIO (jj,ji)=(empIO (jj,ji)*Realcounter+emp (jj,ji))*Realcounterp1
+               qsrIO (jj,ji)=(qsrIO (jj,ji)*Realcounter+qsr (jj,ji))*Realcounterp1
            ELSE
-               vatmIO(ji,jj)=Miss_val
-               empIO (ji,jj)=Miss_val
-               qsrIO (ji,jj)=Miss_val
+               vatmIO(jj,ji)=Miss_val
+               empIO (jj,ji)=Miss_val
+               qsrIO (jj,ji)=Miss_val
            ENDIF
         END DO
       END DO
@@ -180,11 +180,11 @@
          DO jk=1, jpk
             DO jj=1, jpj
                DO ji=1, jpi
-                  IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                    tra_DIA_IO(ji,jj,jk,jn+mytid)=(tra_DIA_IO(ji,jj,jk,jn+mytid)*Realcounter+ &
-     &              tra_DIA(ji,jj,jk,jn+mytid))*Realcounterp1
+                  IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                    tra_DIA_IO(jk,jj,ji,jn+mytid)=(tra_DIA_IO(jk,jj,ji,jn+mytid)*Realcounter+ &
+     &              tra_DIA(jk,jj,ji,jn+mytid))*Realcounterp1
                   ELSE
-                    tra_DIA_IO(ji,jj,jk,jn+mytid)=Miss_val
+                    tra_DIA_IO(jk,jj,ji,jn+mytid)=Miss_val
                   ENDIF
                END DO
             END DO
@@ -199,11 +199,11 @@
 
             DO jj=1, jpj
                DO ji=1, jpi
-                  IF(tmask(ji,jj,1) .NE. 0.) THEN ! Warning ! Tested only for surface
-                    tra_DIA_2d_IO(ji,jj,jn)=(tra_DIA_2d_IO(ji,jj,jn)*Realcounter+ &
-     &              tra_DIA_2d(ji,jj,jn))*Realcounterp1
+                  IF(tmask(jj,ji,1) .NE. 0.) THEN ! Warning ! Tested only for surface
+                    tra_DIA_2d_IO(jj,ji,jn)=(tra_DIA_2d_IO(jj,ji,jn)*Realcounter+ &
+     &              tra_DIA_2d(jj,ji,jn))*Realcounterp1
                   ELSE
-                    tra_DIA_2d_IO(ji,jj,jn)=Miss_val
+                    tra_DIA_2d_IO(jj,ji,jn)=Miss_val
                   ENDIF
                END DO
             END DO
@@ -234,11 +234,11 @@
              DO jk=1, jpk
              DO jj=1, jpj
              DO ji=1, jpi
-                IF(tmask(ji,jj,jk) .NE. 0.) THEN
-                   tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)= &
-     &            (tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)*Realcounter+tra_DIA(ji,jj,jk,jn_on_all))*Realcounterp1 
+                IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high+mytid)= &
+     &            (tra_DIA_IO_HIGH(jk,jj,ji,jn_high+mytid)*Realcounter+tra_DIA(jk,jj,ji,jn_on_all))*Realcounterp1 
                 ELSE
-                   tra_DIA_IO_HIGH(ji,jj,jk,jn_high+mytid)=Miss_val
+                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high+mytid)=Miss_val
                 ENDIF
              END DO
              END DO
@@ -255,11 +255,11 @@
 
              DO jj=1, jpj
              DO ji=1, jpi
-                IF(tmask(ji,jj,1) .NE. 0.) THEN
-                   tra_DIA_2d_IO_HIGH(ji,jj,jn_high)= &
-     &            (tra_DIA_2d_IO_HIGH(ji,jj,jn_high)*Realcounter+tra_DIA_2d(ji,jj,jn_on_all))*Realcounterp1
+                IF(tmask(jj,ji,1) .NE. 0.) THEN
+                   tra_DIA_2d_IO_HIGH(jj,ji,jn_high)= &
+     &            (tra_DIA_2d_IO_HIGH(jj,ji,jn_high)*Realcounter+tra_DIA_2d(jj,ji,jn_on_all))*Realcounterp1
                 ELSE
-                   tra_DIA_2d_IO_HIGH(ji,jj,jn_high)=Miss_val
+                   tra_DIA_2d_IO_HIGH(jj,ji,jn_high)=Miss_val
                 ENDIF
              END DO
              END DO

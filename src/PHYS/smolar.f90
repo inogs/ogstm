@@ -50,7 +50,7 @@
 !!                               monthly weather review, pp 479-486
 !!
       LOGICAL :: MPI_CHECK,l1,l2,l3
-      INTEGER ji,jj,jk,jt,jn,jf,ju
+      INTEGER jk,jj,ji,jt,jn,jf,ju
       INTEGER jp,pack_size
       REAL(8) zbtr,zdt
       REAL(8) junk, junki, junkj, junkk
@@ -123,7 +123,7 @@
          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk))
+                  zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
                END DO
             END DO
          END DO
@@ -131,8 +131,8 @@
          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3u(ji,jj,jk) )
-                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3v(ji,jj,jk) )
+                  inv_eu(jk,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(jk,jj,ji) )
+                  inv_ev(jk,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(jk,jj,ji) )
                END DO
             END DO
          END DO
@@ -140,7 +140,7 @@
          DO jk = 2,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  inv_et(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3w(ji,jj,jk) )
+                  inv_et(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji) )
                END DO
             END DO
          END DO
@@ -150,7 +150,7 @@
             DO jj = 1,jpj
                DO ji = 1,jpi
                   allpoints = allpoints + 1
-                  if(tmask(ji,jj,jk) .NE. 0) then
+                  if(tmask(jk,jj,ji) .NE. 0) then
                      tpoints = tpoints + 1
                   endif
                END DO
@@ -179,15 +179,15 @@
                   DO myjk=jk+jklef, jk+jkrig
                      DO myjj=jj+jjlef, jj+jjrig
                         DO myji=ji+jilef, ji+jirig
-                           locsum = locsum + tmask(myji, myjj, myjk)
+                           locsum = locsum + tmask(myjk,myjj,myji)
                         END DO
                      END DO
                   END DO
                   if(locsum .NE. 0) then
                      goodpoints = goodpoints + 1
-                     advmask(ji,jj,jk) = 1
+                     advmask(jk,jj,ji) = 1
                   else
-                     advmask(ji,jj,jk) = 0
+                     advmask(jk,jj,ji) = 0
                   endif
                END DO
             END DO
@@ -198,14 +198,14 @@
          DO jk = 1,jpk
             DO jj = 2,jpjm1
                DO  ji = 2,jpim1
-                  if(advmask(ji,jj,jk) .NE. 0) then
-                     zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk))
+                  if(advmask(jk,jj,ji) .NE. 0) then
+                     zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
                      dimen_jarr = dimen_jarr + 1
                      jarr(1,dimen_jarr) = ji
                      jarr(2,dimen_jarr) = jj
                      jarr(3,dimen_jarr) = jk
                   else
-                     zbtr_arr(ji,jj,jk) = 0.
+                     zbtr_arr(jk,jj,ji) = 0.
                   endif
                END DO
             END DO
@@ -213,7 +213,7 @@
          DO jk = 2,jpk
             DO jj = 2,jpjm1
                DO  ji = 2,jpim1
-                  if(advmask(ji,jj,jk) .NE. 0) then
+                  if(advmask(jk,jj,ji) .NE. 0) then
                      dimen_jarr1 = dimen_jarr1 + 1
                      jarr1(1,dimen_jarr1) = ji
                      jarr1(2,dimen_jarr1) = jj
@@ -225,7 +225,7 @@
          DO jk = 2,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  if(advmask(ji,jj,jk) .NE. 0) then
+                  if(advmask(jk,jj,ji) .NE. 0) then
                      dimen_jarr2 = dimen_jarr2 + 1
                      jarr2(1,dimen_jarr2) = ji
                      jarr2(2,dimen_jarr2) = jj
@@ -237,7 +237,7 @@
          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  if(advmask(ji,jj,jk) .NE. 0) then
+                  if(advmask(jk,jj,ji) .NE. 0) then
                      dimen_jarr3 = dimen_jarr3 + 1
                      jarr3(1,dimen_jarr3) = ji
                      jarr3(2,dimen_jarr3) = jj
@@ -249,7 +249,7 @@
          DO jk = 1,jpk
             DO jj = 1,jpj
                DO ji = 1,jpi
-                  if(tmask(ji,jj,jk) .NE. 0) then
+                  if(tmask(jk,jj,ji) .NE. 0) then
                      dimen_jarrt = dimen_jarrt + 1
                      jarrt(1,dimen_jarrt) = ji
                      jarrt(2,dimen_jarrt) = jj
@@ -277,20 +277,20 @@
          jk=1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk))
+                  zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
                END DO
             END DO
 
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3u(ji,jj,jk) )
-                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3v(ji,jj,jk) )
+                  inv_eu(jk,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(jk,jj,ji) )
+                  inv_ev(jk,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(jk,jj,ji) )
                END DO
             END DO
 
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  inv_et(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3w(ji,jj,jk) )
+                  inv_et(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji) )
                END DO
             END DO
 
@@ -313,10 +313,10 @@
        DO jk = 1,jpk
           DO jj = 1,jpj
              DO ji = 1,jpi
-                ztj(ji,jj,jk,A) = 0.
-                 zx(ji,jj,jk,A) = 0.
-                 zy(ji,jj,jk,A) = 0.
-                 zz(ji,jj,jk,A) = 0.
+                ztj(jk,jj,ji,A) = 0.
+                 zx(jk,jj,ji,A) = 0.
+                 zy(jk,jj,ji,A) = 0.
+                 zz(jk,jj,ji,A) = 0.
              END DO
           END DO
        END DO
@@ -328,7 +328,7 @@
 #endif
 
        DO jk = 1,jpk,ntids
-!!!&omp parallel default(none) private(mytid, ji,jj)
+!!!&omp parallel default(none) private(mytid, jj,ji)
 !!!&omp&         shared(jk, jpk,jpj,jpi,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,
 !!!&omp&                un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,zdt )
 #ifdef __OPENMP1
@@ -341,12 +341,12 @@
        if (jk+mytid.le.jpk) then
           DO jj = 1,jpj
              DO ji = 1,jpi
-                zaa(ji,jj,jk+mytid) = e2u(ji,jj)*e3u(ji,jj,jk+mytid) * un(ji,jj,jk+mytid)
-                zbb(ji,jj,jk+mytid) = e1v(ji,jj)*e3v(ji,jj,jk+mytid) * vn(ji,jj,jk+mytid)
-                zcc(ji,jj,jk+mytid) = e1t(ji,jj)*e2t(ji,jj)      * wn(ji,jj,jk+mytid)
-                big_fact_zaa(ji,jj,jk+mytid) = ( abs(zaa(ji,jj,jk+mytid)) - zdt*zaa(ji,jj,jk+mytid)**2*inv_eu(ji,jj,jk+mytid) )!/(e1u(ji,jj)*e2u(ji,jj)*e3t(ji,jj,jk+mytid) ) )
-                big_fact_zbb(ji,jj,jk+mytid) = ( abs(zbb(ji,jj,jk+mytid)) - zdt*zbb(ji,jj,jk+mytid)**2*inv_ev(ji,jj,jk+mytid) )!/(e1v(ji,jj)*e2v(ji,jj)*e3t(ji,jj,jk+mytid) ) )
-                big_fact_zcc(ji,jj,jk+mytid) = ( abs(zcc(ji,jj,jk+mytid)) - zdt*zcc(ji,jj,jk+mytid)**2*inv_et(ji,jj,jk+mytid) )!/(e1t(ji,jj)*e2t(ji,jj)*e3w(ji,jj,jk+mytid) ) )
+                zaa(jk,jj,ji+mytid) = e2u(jj,ji)*e3u(jk,jj,ji+mytid) * un(jk,jj,ji+mytid)
+                zbb(jk,jj,ji+mytid) = e1v(jj,ji)*e3v(jk,jj,ji+mytid) * vn(jk,jj,ji+mytid)
+                zcc(jk,jj,ji+mytid) = e1t(jj,ji)*e2t(jj,ji)      * wn(jk,jj,ji+mytid)
+                big_fact_zaa(jk,jj,ji+mytid) = ( abs(zaa(jk,jj,ji+mytid)) - zdt*zaa(jk,jj,ji+mytid)**2*inv_eu(jk,jj,ji+mytid) )!/(e1u(jj,ji)*e2u(jj,ji)*e3t(jk,jj,ji+mytid) ) )
+                big_fact_zbb(jk,jj,ji+mytid) = ( abs(zbb(jk,jj,ji+mytid)) - zdt*zbb(jk,jj,ji+mytid)**2*inv_ev(jk,jj,ji+mytid) )!/(e1v(jj,ji)*e2v(jj,ji)*e3t(jk,jj,ji+mytid) ) )
+                big_fact_zcc(jk,jj,ji+mytid) = ( abs(zcc(jk,jj,ji+mytid)) - zdt*zcc(jk,jj,ji+mytid)**2*inv_et(jk,jj,ji+mytid) )!/(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji+mytid) ) )
              END DO
           END DO
 
@@ -392,14 +392,14 @@
        zkx(  1,jj,jk,A)=0.  
        END DO
              DO jj=1,jpj
-       zkx(jpi,jj,jk,A)=0.  
+       zkx(jk,jj,jpi,A)=0.  
        END DO
 
              DO ji=1,jpi
        zky(ji,  1,jk,A)=0.  
        END DO
              DO ji=1,jpi
-       zky(ji,jpj,jk,A)=0.  
+       zky(jk,jpj,ji,A)=0.  
        END DO
            END DO
 
@@ -408,34 +408,34 @@
 !!
            DO jj = 1,jpj
              DO ji = 1,jpi
-               zkz(ji,jj,1,A) = 0.
-!               zkz(ji,jj,1,A) = fsz(trn(ji,jj,1,B),trn(ji,jj,1,B),zcc(ji,jj,1))
+               zkz(1,jj,ji,A) = 0.
+!               zkz(jj,ji,1,A) = fsz(trn(jj,ji,1,B),trn(jj,ji,1,B),zcc(jj,ji,1))
              END DO
            END DO
 
            jk = 1
            DO jj = 2,jpjm1
               DO ji = 2,jpim1
-                 zkx(ji,jj,jk,A) = fsx(trn(ji,jj,jk,B),trn(ji + 1,jj,jk,B),zaa(ji,jj,jk))
-                 zky(ji,jj,jk,A) = fsy(trn(ji,jj,jk,B),trn(ji,jj + 1,jk,B),zbb(ji,jj,jk))
+                 zkx(jk,jj,ji,A) = fsx(trn(jk,jj,ji,B),trn(ji + 1,jj,jk,B),zaa(jk,jj,ji))
+                 zky(jk,jj,ji,A) = fsy(trn(jk,jj,ji,B),trn(jj,ji+ 1,jk,B),zbb(jk,jj,ji))
               END DO
            END DO
 
            DO jk = 2,jpk
              jj=   1 
        DO ji = 1,jpi
-       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(trn(jk,jj,ji,B),trn(jk,jj,ji - 1,B),zcc(jk,jj,ji))
        END DO
              jj= jpj 
        DO ji = 1,jpi
-       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(trn(jk,jj,ji,B),trn(jk,jj,ji - 1,B),zcc(jk,jj,ji))
        END DO
 
              DO jj = 2,jpjm1
                 ji=1   
-       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(trn(jk,jj,ji,B),trn(jk,jj,ji - 1,B),zcc(jk,jj,ji))
                 ji=jpi 
-       zkz(ji,jj,jk,A) = fsz(trn(ji,jj,jk,B),trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(trn(jk,jj,ji,B),trn(jk,jj,ji - 1,B),zcc(jk,jj,ji))
              END DO
            END DO
 
@@ -444,10 +444,10 @@
               ji = jarr1(1, ju)
               jj = jarr1(2, ju)
               jk = jarr1(3, ju)
-              junk = trn(ji,jj,jk,B)
-              zkx(ji,jj,jk,A) = fsx(junk,trn(ji + 1,jj,jk,B),zaa(ji,jj,jk))
-              zky(ji,jj,jk,A) = fsy(junk,trn(ji,jj + 1,jk,B),zbb(ji,jj,jk))
-              zkz(ji,jj,jk,A) = fsz(junk,trn(ji,jj,jk - 1,B),zcc(ji,jj,jk))
+              junk = trn(jk,jj,ji,B)
+              zkx(jk,jj,ji,A) = fsx(junk,trn(ji + 1,jj,jk,B),zaa(jk,jj,ji))
+              zky(jk,jj,ji,A) = fsy(junk,trn(jj,ji+ 1,jk,B),zbb(jk,jj,ji))
+              zkz(jk,jj,ji,A) = fsz(junk,trn(jk,jj,ji - 1,B),zcc(jk,jj,ji))
 
            END DO
 
@@ -500,7 +500,7 @@
 !! -----------------------------------------------------------
 
 
-!!!&omp   parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
+!!!&omp   parallel default(none) private(mytid,A,B,zbtr,jk,jj,ji,ju,jf)
 !!!&omp&      shared(zkx,zky,zkz,zti,jpim1,jpjm1,trn,zdt,jn,jpkm1,zbtr_arr,e1t,e2t,ztj,jarr3,ncor,dimen_jarr3,
 !!!&omp&             jarr_adv_flx,Fsize,diaflx)
 
@@ -521,18 +521,18 @@
               jk = jarr3(3, ju)
               jf = jarr_adv_flx(ju)
 
-              zbtr = zbtr_arr(ji,jj,jk)
+              zbtr = zbtr_arr(jk,jj,ji)
 
-              ztj(ji,jj,jk,A) = -zbtr* &
-     &          ( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A) &
-     &          + zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A) &
-     &          + zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
+              ztj(jk,jj,ji,A) = -zbtr* &
+     &          ( zkx(jk,jj,ji,A) - zkx(ji - 1,jj,jk,A) &
+     &          + zky(jk,jj,ji,A) - zky(jj,ji- 1,jk,A) &
+     &          + zkz(jk,jj,ji,A) - zkz(jk,jj,ji + 1,A) )
 
 
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
-                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(ji,jj,jk,A)
-                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
+                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(jk,jj,ji,A)
+                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(jk,jj,ji,A)
+                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(jk,jj,ji,A)
               END IF
 
             END DO
@@ -552,7 +552,7 @@
 !! 2.2 calcul of intermediary field zti
 
 
-!!!&omp     parallel default(none) private(mytid,A,B,ji,jj,jk)
+!!!&omp     parallel default(none) private(mytid,A,B,jk,jj,ji)
 !!!&omp&       shared(jt,jn,ncor,jpkm1,jpjm1,jpim1,zti,ztj,trn,zdt,zbuf)
 
 #ifdef __OPENMP1
@@ -571,7 +571,7 @@
                    DO jk = 1,jpkm1
                       DO jj = 2,jpjm1
                          DO ji = 2,jpim1
-                            zti(ji,jj,jk,A) = trn(ji,jj,jk,B) + zdt*ztj(ji,jj,jk,A)!zbuf(ji,jj,jk) = 0. + ztj(ji,jj,jk,mytid+1)
+                            zti(jk,jj,ji,A) = trn(jk,jj,ji,B) + zdt*ztj(jk,jj,ji,A)!zbuf(jk,jj,ji) = 0. + ztj(jk,jj,ji,mytid+1)
                          END DO
                       END DO
                    END DO
@@ -579,8 +579,8 @@
                     DO jk = 1,jpkm1
                       DO jj = 2,jpjm1
                          DO ji = 2,jpim1
-                            zti(ji,jj,jk,A) = trn(ji,jj,jk,B) + zdt*ztj(ji,jj,jk,A)
-                            zbuf(ji,jj,jk,A) = ztj(ji,jj,jk,A)
+                            zti(jk,jj,ji,A) = trn(jk,jj,ji,B) + zdt*ztj(jk,jj,ji,A)
+                            zbuf(jk,jj,ji,A) = ztj(jk,jj,ji,A)
                          END DO
                       END DO
                    END DO
@@ -591,8 +591,8 @@
                 DO jk = 1,jpkm1
                    DO jj = 2,jpjm1
                       DO ji = 2,jpim1
-                         zti(ji,jj,jk,A) =  zti(ji,jj,jk,A) + zdt*ztj(ji,jj,jk,A)
-                         zbuf(ji,jj,jk,A)  = zbuf(ji,jj,jk,A)       + ztj(ji,jj,jk,A)
+                         zti(jk,jj,ji,A) =  zti(jk,jj,ji,A) + zdt*ztj(jk,jj,ji,A)
+                         zbuf(jk,jj,ji,A)  = zbuf(jk,jj,ji,A)       + ztj(jk,jj,ji,A)
                       END DO
                    END DO
                 END DO
@@ -643,7 +643,7 @@
 
 !! 2.3 calcul of the antidiffusive flux
 
-!!!&omp     parallel default(none) private(mytid,A,junk, junki, junkj, junkk, ji,jj,jk)
+!!!&omp     parallel default(none) private(mytid,A,junk, junki, junkj, junkk, jk,jj,ji)
 !!!&omp&       shared(jn,jpkm1,jpjm1,jpim1,zti,ztj,zy,zx,zz,jarr2,big_fact_zbb,
 !!!&omp&              big_fact_zaa,big_fact_zcc,dimen_jarr2,rtrn,rsc)
 
@@ -660,14 +660,14 @@
 !          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
               DO ji = 2,jpim1
-                  junk  = zti(ji,jj,jk,A)
+                  junk  = zti(jk,jj,ji,A)
                   junki = zti(ji + 1,jj,jk,A)
-                  junkj = zti(ji,jj + 1,jk,A)
-!                 if(advmask(ji,jj,jk) .NE. 0) then
-!                zx(ji,jj,jk,A) = ( abs(zaa(ji,jj,jk)) - zdt*zaa(ji,jj,jk)**2/(e1u(ji,jj)*e2u(ji,jj)*e3t(jk) ) )*inv_eu(ji,jj,jk) )
-!                zy(ji,jj,jk,A) = ( abs(zbb(ji,jj,jk)) - zdt*zbb(ji,jj,jk)**2/(e1v(ji,jj)*e2v(ji,jj)*e3t(jk) ) )*inv_ev(ji,jj,jk) )
-                    zx(ji,jj,jk,A) = big_fact_zaa(ji,jj,jk)*(junki - junk)/(junk + junki + rtrn)* rsc
-                    zy(ji,jj,jk,A) = big_fact_zbb(ji,jj,jk)*(junkj - junk)/(junk + junkj + rtrn)* rsc
+                  junkj = zti(jj,ji+ 1,jk,A)
+!                 if(advmask(jk,jj,ji) .NE. 0) then
+!                zx(jk,jj,ji,A) = ( abs(zaa(jk,jj,ji)) - zdt*zaa(jk,jj,ji)**2/(e1u(jj,ji)*e2u(jj,ji)*e3t(jk) ) )*inv_eu(jk,jj,ji) )
+!                zy(jk,jj,ji,A) = ( abs(zbb(jk,jj,ji)) - zdt*zbb(jk,jj,ji)**2/(e1v(jj,ji)*e2v(jj,ji)*e3t(jk) ) )*inv_ev(jk,jj,ji) )
+                    zx(jk,jj,ji,A) = big_fact_zaa(jk,jj,ji)*(junki - junk)/(junk + junki + rtrn)* rsc
+                    zy(jk,jj,ji,A) = big_fact_zbb(jk,jj,ji)*(junkj - junk)/(junk + junkj + rtrn)* rsc
 
 
 !                endif
@@ -678,28 +678,28 @@
 !!!!!!!!!!!!!!!!! To be checked
 !!          DO jj = 2,jpjm1
 !!            DO ji = 2,jpim1
-!!                junk  = zti(ji,jj,2,A)
-!!                junkk = zti(ji,jj,1,A)
-!!                zz(ji,jj,1,A) = big_fact_zaa(ji,jj,1)*(junk - junkk)/(junk + junkk + rtrn)* rsc*(-1.)
+!!                junk  = zti(jj,ji,2,A)
+!!                junkk = zti(jj,ji,1,A)
+!!                zz(jj,ji,1,A) = big_fact_zaa(jj,ji,1)*(junk - junkk)/(junk + junkk + rtrn)* rsc*(-1.)
 
 !!            END DO
 !!          END DO
 !!!!!!!!!!!!!!!!! 
 
-!                 if(advmask(ji,jj,jk) .NE. 0) then
+!                 if(advmask(jk,jj,ji) .NE. 0) then
 
             DO ju=1, dimen_jarr2
 
                ji = jarr2(1, ju)
                jj = jarr2(2, ju)
                jk = jarr2(3, ju)
-               junk  = zti(ji,jj,jk,A)
+               junk  = zti(jk,jj,ji,A)
                junki = zti(ji + 1,jj,jk,A)
-               junkj = zti(ji,jj + 1,jk,A)
-               junkk = zti(ji,jj,jk - 1,A)
-               zx(ji,jj,jk,A) = big_fact_zaa(ji,jj,jk)*(junki - junk)/(junk + junki + rtrn)* rsc
-               zy(ji,jj,jk,A) = big_fact_zbb(ji,jj,jk)*(junkj - junk)/(junk + junkj + rtrn)* rsc
-               zz(ji,jj,jk,A) = big_fact_zcc(ji,jj,jk)*(junk - junkk)/(junk + junkk + rtrn)* rsc*( -1.)
+               junkj = zti(jj,ji+ 1,jk,A)
+               junkk = zti(jk,jj,ji - 1,A)
+               zx(jk,jj,ji,A) = big_fact_zaa(jk,jj,ji)*(junki - junk)/(junk + junki + rtrn)* rsc
+               zy(jk,jj,ji,A) = big_fact_zbb(jk,jj,ji)*(junkj - junk)/(junk + junkj + rtrn)* rsc
+               zz(jk,jj,ji,A) = big_fact_zcc(jk,jj,ji)*(junk - junkk)/(junk + junkk + rtrn)* rsc*( -1.)
 
            END DO
 !                 endif
@@ -768,29 +768,29 @@
              jk = 1
              DO jj = 2,jpjm1
                  DO ji = 2,jpim1
-                   junk  = zti(ji,jj,jk,A)
-                   zkx(ji,jj,jk,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
-                   zky(ji,jj,jk,A) = fsy(junk,zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
-!!!!!! To be checked   zkz(ji,jj,jk,A) = fsz(junk,junk,zz(ji,jj,jk,A))
+                   junk  = zti(jk,jj,ji,A)
+                   zkx(jk,jj,ji,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(jk,jj,ji,A))!zti(jk,jj,ji,A),zti(ji + 1,jj,jk,A),zaa(jk,jj,ji))
+                   zky(jk,jj,ji,A) = fsy(junk,zti(jj,ji+ 1,jk,A),zy(jk,jj,ji,A))!zti(jk,jj,ji,A),zti(jj,ji+ 1,jk,A),zbb(jk,jj,ji))
+!!!!!! To be checked   zkz(jk,jj,ji,A) = fsz(junk,junk,zz(jk,jj,ji,A))
                  END DO
               END DO
 
              DO jk = 2,jpk
                jj =  1
        DO ji = 1,jpi 
-       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))
-       END DO!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zz(jk,jj,ji,A))
+       END DO!zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zcc(jk,jj,ji))
                jj = jpj
       DO ji = 1,jpi 
-       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))
-       END DO!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zz(jk,jj,ji,A))
+       END DO!zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zcc(jk,jj,ji))
 
 
                DO jj = 2,jpjm1
                  ji =   1 
-       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zz(jk,jj,ji,A))!zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zcc(jk,jj,ji))
                  ji = jpi 
-       zkz(ji,jj,jk,A) = fsz(zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+       zkz(jk,jj,ji,A) = fsz(zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zz(jk,jj,ji,A))!zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zcc(jk,jj,ji))
                END DO
              END DO
 
@@ -799,10 +799,10 @@
                 ji = jarr1(1, ju)
                 jj = jarr1(2, ju)
                 jk = jarr1(3, ju)
-                junk  = zti(ji,jj,jk,A)
-                zkx(ji,jj,jk,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
-                zky(ji,jj,jk,A) = fsy(junk,zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
-                zkz(ji,jj,jk,A) = fsz(junk,zti(ji,jj,jk - 1,A),zz(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj,jk - 1,A),zcc(ji,jj,jk))
+                junk  = zti(jk,jj,ji,A)
+                zkx(jk,jj,ji,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(jk,jj,ji,A))!zti(jk,jj,ji,A),zti(ji + 1,jj,jk,A),zaa(jk,jj,ji))
+                zky(jk,jj,ji,A) = fsy(junk,zti(jj,ji+ 1,jk,A),zy(jk,jj,ji,A))!zti(jk,jj,ji,A),zti(jj,ji+ 1,jk,A),zbb(jk,jj,ji))
+                zkz(jk,jj,ji,A) = fsz(junk,zti(jk,jj,ji - 1,A),zz(jk,jj,ji,A))!zti(jk,jj,ji,A),zti(jk,jj,ji - 1,A),zcc(jk,jj,ji))
 
              END DO
 
@@ -839,7 +839,7 @@
       END DO
 #endif
 
-!!!&omp    parallel default(none) private(mytid,A,B,zbtr,ji,jj,jk,ju,jf)
+!!!&omp    parallel default(none) private(mytid,A,B,zbtr,jk,jj,ji,ju,jf)
 !!!&omp&      shared(zkx,zky,zkz,zbtr_arr,e1t,e2t,ztj,dimen_jarr3,jarr3,ncor,jn,
 !!!&omp&             jarr_adv_flx,Fsize,diaflx)
 
@@ -863,16 +863,16 @@
                   jk = jarr3(3, ju)
                   jf = jarr_adv_flx(ju)
 
-!                 if(zbtr_arr(ji,jj,jk) .NE. 0) then zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(jk))
-                  zbtr = zbtr_arr(ji,jj,jk)
-                  ztj(ji,jj,jk,A) = -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A) &
-     &              + zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A)+ zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )+ ztj(ji,jj,jk,A)
+!                 if(zbtr_arr(jk,jj,ji) .NE. 0) then zbtr = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk))
+                  zbtr = zbtr_arr(jk,jj,ji)
+                  ztj(jk,jj,ji,A) = -zbtr*( zkx(jk,jj,ji,A) - zkx(ji - 1,jj,jk,A) &
+     &              + zky(jk,jj,ji,A) - zky(jj,ji- 1,jk,A)+ zkz(jk,jj,ji,A) - zkz(jk,jj,ji + 1,A) )+ ztj(jk,jj,ji,A)
 
 !     Save advective fluxes x,y,z
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                 diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
-                 diaflx(jf,B,2) = diaflx(jf,B,2) + zky(ji,jj,jk,A)
-                 diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
+                 diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(jk,jj,ji,A)
+                 diaflx(jf,B,2) = diaflx(jf,B,2) + zky(jk,jj,ji,A)
+                 diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(jk,jj,ji,A)
               END IF
 
               END DO
@@ -884,16 +884,16 @@
                   jk = jarr3(3, ju)
                   jf = jarr_adv_flx(ju)
 
-!                if(zbtr_arr(ji,jj,jk) .NE. 0) then    zbtr = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(jk))
-                  zbtr = zbtr_arr(ji,jj,jk)
-                  ztj(ji,jj,jk,A) = -zbtr*( zkx(ji,jj,jk,A) - zkx(ji - 1,jj,jk,A) &
-     &              + zky(ji,jj,jk,A) - zky(ji,jj - 1,jk,A)+ zkz(ji,jj,jk,A) - zkz(ji,jj,jk + 1,A) )
+!                if(zbtr_arr(jk,jj,ji) .NE. 0) then    zbtr = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk))
+                  zbtr = zbtr_arr(jk,jj,ji)
+                  ztj(jk,jj,ji,A) = -zbtr*( zkx(jk,jj,ji,A) - zkx(ji - 1,jj,jk,A) &
+     &              + zky(jk,jj,ji,A) - zky(jj,ji- 1,jk,A)+ zkz(jk,jj,ji,A) - zkz(jk,jj,ji + 1,A) )
 
 !     Save advective fluxes x,y,z
                  IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(ji,jj,jk,A)
-                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(ji,jj,jk,A)
-                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(ji,jj,jk,A)
+                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkx(jk,jj,ji,A)
+                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(jk,jj,ji,A)
+                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkz(jk,jj,ji,A)
                  END IF
               END DO
 
@@ -911,7 +911,7 @@
 
 
 !!       3. trend due to horizontal and vertical advection of tracer jn
-!!!&omp   parallel default(none) private(mytid,A,B,ji,jj,jk,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
+!!!&omp   parallel default(none) private(mytid,A,B,jk,jj,ji,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
 
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -931,7 +931,7 @@
                  jj = jarrt(2, ju)
                  jk = jarrt(3, ju)
 
-                 tra(ji,jj,jk,B) = tra(ji,jj,jk,B)+ ztj(ji,jj,jk,A)!+ (zbuf(ji,jj,jk,A) + ztj(ji,jj,jk,A))
+                 tra(jk,jj,ji,B) = tra(jk,jj,ji,B)+ ztj(jk,jj,ji,A)!+ (zbuf(jk,jj,ji,A) + ztj(jk,jj,ji,A))
 
               END DO
            else
@@ -940,7 +940,7 @@
                  jj = jarrt(2, ju)
                  jk = jarrt(3, ju)
 
-                 tra(ji,jj,jk,B) = tra(ji,jj,jk,B)+ (zbuf(ji,jj,jk,A) + ztj(ji,jj,jk,A))
+                 tra(jk,jj,ji,B) = tra(jk,jj,ji,B)+ (zbuf(jk,jj,ji,A) + ztj(jk,jj,ji,A))
 
               END DO
            endif

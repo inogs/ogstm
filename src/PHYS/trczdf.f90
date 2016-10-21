@@ -68,7 +68,7 @@
 
 
       LOGICAL l1,l2,l3
-      INTEGER ji, jj, jk, jn, jv, jf
+      INTEGER jk,jj,ji, jn, jv, jf
 ! omp variables
       INTEGER :: mytid, ntids
 
@@ -103,7 +103,7 @@
       IF (dimen_jvzdf .EQ. 0) THEN
          DO jj = 2,jpjm1
            DO  ji = 2,jpim1
-              IF(tmask(ji,jj,1) .NE. 0) THEN
+              IF(tmask(1,jj,ji) .NE. 0) THEN
                  dimen_jvzdf = dimen_jvzdf + 1
                  jarr_zdf(1,dimen_jvzdf) = ji
                  jarr_zdf(2,dimen_jvzdf) = jj
@@ -112,7 +112,7 @@
          END DO
          ! Cross matrix between transect and local optimized indexing
          jarr_zdf_flx=0
-
+         !epascolo warning
          DO jf=1,Fsize
             DO jv=1, dimen_jvzdf
                DO jk=1,jpk
@@ -132,7 +132,7 @@
 !! passive tracer slab
 !! ===================
 
-!!!$omp    parallel do default(none) private(jv,ji,jj,jk,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij,jn)
+!!!$omp    parallel do default(none) private(jv,jk,jj,ji,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij,jn)
 !!!$omp&                           shared(dimen_jvzdf,jarr_zdf,ndttrc,rdt,jpk,jpkm1,avt,zwi,
 !!!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e1t,e2t,e3t,e3w,jarr_zdf_flx,Fsize,
 !!!$omp&                                   diaflx)
@@ -148,7 +148,7 @@
 
            ji  = jarr_zdf(1,jv)
            jj  = jarr_zdf(2,jv)
-           Aij = e1t(ji,jj) * e2t(ji,jj)
+           Aij = e1t(jj,ji) * e2t(jj,ji)
 
 !! I. Vertical trends associated with lateral mixing
 !! -------------------------------------------------
@@ -170,8 +170,8 @@
 !!   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwi(jk,mytid+1) = - z2dtt * avt(ji,jj,jk  )/( e3t(ji,jj,jk) * e3w(ji,jj,jk  ) )
-          zws(jk,mytid+1) = - z2dtt * avt(ji,jj,jk+1)/( e3t(ji,jj,jk) * e3w(ji,jj,jk+1) )
+          zwi(jk,mytid+1) = - z2dtt * avt(jk,jj,ji  )/( e3t(jk,jj,ji) * e3w(jk,jj,ji  ) )
+          zws(jk,mytid+1) = - z2dtt * avt(jk+1,jj,ji)/( e3t(jk,jj,ji) * e3w(jk+1,jj,ji) )
           zwd(jk,mytid+1) = 1. - zwi(jk,mytid+1) - zws(jk,mytid+1)
         END DO
 
@@ -185,7 +185,7 @@
 !!   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwy(jk,mytid+1) = trb(ji,jj,jk,jn) + z2dtt * tra(ji,jj,jk,jn)
+          zwy(jk,mytid+1) = trb(jk,jj,ji,jn) + z2dtt * tra(jk,jj,ji,jn)
         END DO
 
 !! Matrix inversion from the first level
@@ -247,7 +247,7 @@
       DO jk=1,jpkm1
 
          z2dtt = zdt * rdt
-         delta_tra(jk) = ( zwx(jk,mytid+1) - zwy(jk,mytid+1) ) / z2dtt * Aij * e3t(ji,jj,jk)! or trn(ji,jj,jk,jn+mytid)
+         delta_tra(jk) = ( zwx(jk,mytid+1) - zwy(jk,mytid+1) ) / z2dtt * Aij * e3t(jk,jj,ji)! or trn(jk,jj,ji,jn+mytid)
 
          IF (jk .EQ. 1) THEN
              int_tra(1)  = 0
@@ -273,7 +273,7 @@
 !! (c a u t i o n:  tracer not its trend, Leap-frog scheme done
 !!                  it will not be done in trcnxt)
          DO jk = 1, jpkm1
-            tra(ji,jj,jk,jn) = zwx(jk,mytid+1) * tmask(ji,jj,jk)
+            tra(jk,jj,ji,jn) = zwx(jk,mytid+1) * tmask(jk,jj,ji)
          END DO
 
         END DO ! jv

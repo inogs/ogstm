@@ -49,9 +49,9 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
 
-      INTEGER ji, jj, jk, jn
+      INTEGER jk,jj,ji, jn
       REAL(8) zabe1, zabe2, zbtr, ztra
-      REAL(8) ztrx(jpi,jpj), ztry(jpi,jpj), zwtr(jpi,jpj)
+      REAL(8) ztrx(jpj,jpi), ztry(jpj,jpi), zwtr(jpj,jpi)
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
@@ -72,14 +72,14 @@ C 1.1 First derivative (gradient)
         DO jj=1,jpjm1
           DO ji=1,jpim1
 
-            zabe1 = trcrat * ahtu(jk) * umask(ji,jj,jk)
+            zabe1 = trcrat * ahtu(jk) * umask(jk,jj,ji)
      $            * e2u(ji,jj) / e1u(ji,jj)
-            zabe2 = trcrat * ahtv(jk) * vmask(ji,jj,jk)
+            zabe2 = trcrat * ahtv(jk) * vmask(jk,jj,ji)
      $            * e1v(ji,jj) / e2v(ji,jj)
               ztrx(ji,jj) = zabe1
-     $                    * (trb(ji+1,jj,jk,jn) - trb(ji,jj,jk,jn))
+     $                    * (trb(jk,jj,ji+1,jn) - trb(jk,jj,ji,jn))
               ztry(ji,jj) = zabe2
-     $                    * (trb(ji,jj+1,jk,jn) - trb(ji,jj,jk,jn))
+     $                    * (trb(jk,jj+1,ji,jn) - trb(jk,jj,ji,jn))
 
             END DO
           END DO
@@ -88,9 +88,9 @@ C --------------------
         DO jj = 2, jpjm1
           DO ji = 2, jpim1
             zbtr = 1. / ( e1t(ji,jj) * e2t(ji,jj) )
-              ztra = ( ztrx(ji,jj) - ztrx(ji-1, jj )
-     $             + ztry(ji,jj) - ztry(ji, jj-1) ) * zbtr
-              tra(ji,jj,jk,jn) = tra(ji,jj,jk,jn) + ztra
+              ztra = ( ztrx(ji,jj) - ztrx(jj,ji-1)
+     $             + ztry(ji,jj) - ztry(jj-1,ji) ) * zbtr
+              tra(jk,jj,ji,jn) = tra(jk,jj,ji,jn) + ztra
 
             END DO
           END DO

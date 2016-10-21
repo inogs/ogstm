@@ -33,7 +33,7 @@
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn,jv! ,jnn,gji,gjj
+      INTEGER jk,jj,ji,jn,jv! ,jnn,gji,gjj
       REAL(8) zfact,zdt
 
 !!----------------------------------------------------------------------
@@ -57,7 +57,7 @@
       IF (dimen_jvsnu .EQ. 0) THEN
          DO jj = 2,jpjm1
            DO  ji = 2,jpim1
-              IF(tmask(ji,jj,1) .NE. 0) THEN
+              IF(tmask(1,jj,ji) .NE. 0) THEN
                  dimen_jvsnu = dimen_jvsnu + 1
                  jarr_snu(1,dimen_jvsnu) = ji
                  jarr_snu(2,dimen_jvsnu) = jj
@@ -73,7 +73,7 @@
 
 !! 3. swap of arrays
 !! -----------------
-!!!$omp   parallel default(none) private(mytid,ji,jj,jk)
+!!!$omp   parallel default(none) private(mytid,jk,jj,ji)
 !!!$omp&      shared(jn,jpk,jpj,jpi,tra,tmask,tra_FN,SMALL)
 
 #ifdef __OPENMP1
@@ -86,12 +86,12 @@
                DO jj = 1,jpj
                   DO ji = 1,jpi
 
-                     if (tmask(ji,jj,jk).ne.0.0) then
-                     if( tra(ji,jj,jk,jn+mytid) .GT. 0.  ) then
+                     if (tmask(jk,jj,ji).ne.0.0) then
+                     if( tra(jk,jj,ji,jn+mytid) .GT. 0.  ) then
 
                      else
-                        tra_FN(ji,jj,jk,jn+mytid) =  - tra(ji,jj,jk,jn+mytid) + SMALL
-                        tra(   ji,jj,jk,jn+mytid) =  SMALL
+                        tra_FN(jk,jj,ji,jn+mytid) =  - tra(jk,jj,ji,jn+mytid) + SMALL
+                        tra(   jk,jj,ji,jn+mytid) =  SMALL
                      end if
                      endif
                   END DO
@@ -115,7 +115,7 @@
 !!! Compute vertical integral
 !      DO jv = 1,dimen_jvsnu, ntids ! cicla sui punti terra 2D
 !
-! $omp   parallel default(none) private(mytid,ji,jj,jk,jn,jnn)
+! $omp   parallel default(none) private(mytid,jk,jj,ji,jn,jnn)
 ! $omp&      shared(dimen_jvsnu,jarr_snu,jv,jpk,elements,nelements,TOT,TOT_FN,tra,tra_FN,idx_element,e3t,FN_CORR)
 !
 !#ifdef __OPENMP1
@@ -133,8 +133,8 @@
 !          DO jnn=1, nelements(jn)
 !
 !               DO jk = 1,jpk
-!                  TOT(   jv+mytid,jn)=TOT(   jv+mytid,jn) +   tra(ji,jj,jk,idx_element(jnn,jn))*e3t(ji,jj,jk)
-!                  TOT_FN(jv+mytid,jn)=TOT_FN(jv+mytid,jn) +tra_FN(ji,jj,jk,idx_element(jnn,jn))*e3t(ji,jj,jk)
+!                  TOT(   jv+mytid,jn)=TOT(   jv+mytid,jn) +   tra(jk,jj,ji,idx_element(jnn,jn))*e3t(jk,jj,ji)
+!                  TOT_FN(jv+mytid,jn)=TOT_FN(jv+mytid,jn) +tra_FN(jk,jj,ji,idx_element(jnn,jn))*e3t(jk,jj,ji)
 !               END DO
 !           END DO
 !           END DO
@@ -166,7 +166,7 @@
 !          DO jn=1, elements
 !             DO jnn=1, nelements(jn)
 !                DO jk = 1,jpk
-!                      tra(ji,jj,jk,idx_element(jnn,jn)) = FN_CORR(jv+mytid,jn) * tra(ji,jj,jk,idx_element(jnn,jn))
+!                      tra(jk,jj,ji,idx_element(jnn,jn)) = FN_CORR(jv+mytid,jn) * tra(jk,jj,ji,idx_element(jnn,jn))
 !                   END DO
 !                END DO
 !             END DO

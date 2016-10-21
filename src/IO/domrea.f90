@@ -28,7 +28,7 @@
 ! local declarations
 ! ==================
 
-      INTEGER ii, jj, kk, jn, iinew, jjnew, iiend, jjend
+      INTEGER kk,jj,ii, jn, iinew, jjnew, iiend, jjend
       INTEGER ierr
 
       CHARACTER(LEN=11) maskfile
@@ -51,9 +51,9 @@
             do ii=nimpp, iiend
                iinew = ii - nimpp + 1
                jjnew = jj - njmpp + 1
-               idxt2glo(iinew, jjnew, kk,1)=ii !
-               idxt2glo(iinew, jjnew, kk,2)=jj ! matrix to go from local to global
-               idxt2glo(iinew, jjnew, kk,3)=kk !
+               idxt2glo(kk,jjnew,iinew,1)=ii !
+               idxt2glo(kk,jjnew,iinew,2)=jj ! matrix to go from local to global
+               idxt2glo(kk,jjnew,iinew,3)=kk !
             enddo
          enddo
       enddo
@@ -103,8 +103,8 @@
       do jj=1, jpj
        do ii=1, jpi
         do kk=1, jpk
-         if (tmask(ii, jj, kk).NE.0.) then
-            mbathy(ii,jj) = mbathy(ii,jj) +1
+         if (tmask(kk,jj,ii).NE.0.) then
+            mbathy(jj,ii) = mbathy(ii,jj) +1
             NWATERPOINTS = NWATERPOINTS +1
          endif
         enddo
@@ -266,14 +266,14 @@
           INTEGER, INTENT(IN) :: idxtGLOBAL(sizeGLO)
 
           ! local
-          INTEGER ii,jj,kk,jv
+          INTEGER kk,jj,ii,jv
           INTEGER counter,junk
 
            counter = 0
            do kk =1, jpk
             do jj =1, jpj
              do ii =1, jpi
-                junk = idxt(ii,jj,kk)
+                junk = idxt(kk,jj,ii)
                 do jv =1, sizeGLO
                   if (junk.EQ.idxtGLOBAL(jv))  counter = counter + 1
                 enddo
@@ -289,7 +289,7 @@
       LOGICAL FUNCTION RIVRE_Indexing()
           IMPLICIT NONE
           ! local
-          INTEGER ii,jj,kk,jv
+          INTEGER kk,jj,ii,jv
           INTEGER counter,junk
 
 
@@ -297,7 +297,7 @@
            do kk =1, jpk
             do jj =1, jpj
              do ii =1, jpi
-                junk = idxt(ii,jj,kk)
+                junk = idxt(kk,jj,ii)
                 do jv =1, RsizeGLO
                    if ( junk.EQ.riv_idxtglo(jv) )  then
                       counter = counter + 1
@@ -319,7 +319,7 @@
           IMPLICIT NONE
 
           ! local
-          INTEGER ii,jj,kk,jv
+          INTEGER kk,jj,ii,jv
           INTEGER counter,junk
 
 
@@ -327,7 +327,7 @@
            do kk =1, jpk
             do jj =1, jpj
              do ii =1, jpi
-                junk = idxt(ii,jj,kk)
+                junk = idxt(kk,jj,ii)
                 do jv =1, Gsizeglo
                    if ( junk.EQ.gib_idxtglo(jv) )  then
                       counter = counter + 1
@@ -354,7 +354,7 @@
       !     IMPLICIT NONE
       !
       !     ! local
-      !     INTEGER ii,jj,kk,jv
+      !     INTEGER kk,jj,ii,jv
       !     INTEGER counter,junk
       !
       !
@@ -362,7 +362,7 @@
       !      do kk =1, jpk
       !       do jj =1, jpj
       !        do ii =1, jpi
-      !           junk = idxt(ii,jj,kk)
+      !           junk = idxt(kk,jj,ii)
       !           do jv =1, AsizeGLO
       !              if ( junk.EQ.atm_idxtglo(jv) )  then
       !                 counter = counter + 1
@@ -384,7 +384,7 @@
           IMPLICIT NONE
 
           ! local
-          INTEGER ii,jj,kk,jv
+          INTEGER kk,jj,ii,jv
           INTEGER counter,junk
 
 
@@ -392,7 +392,7 @@
            do kk =1, jpk
             do jj =1, jpj
              do ii =1, jpi
-                junk = idxt(ii,jj,kk)
+                junk = idxt(kk,jj,ii)
                 do jv =1, FsizeGLO
                    if ( junk.EQ.INDFluxGlo(jv) )  then
                       counter = counter + 1
@@ -421,7 +421,7 @@
           IMPLICIT NONE
 
           ! local
-          INTEGER ii,jj,kk
+          INTEGER kk,jj,ii
           INTEGER counter
 
 
@@ -432,7 +432,7 @@
                 do jj =1, jpj-1
                  do ii =2, jpi-1
 
-                   if (tmask(ii,jj,kk).EQ.1.0 ) then
+                   if (tmask(kk,jj,ii).EQ.1.0 ) then
                       counter = counter + 1
                       BFMpoints(1,counter) = ii
                       BFMpoints(2,counter) = jj
@@ -449,7 +449,7 @@
                 do jj =1, jpj-1
                  do ii =2, jpi-1
 
-                   if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0 )) then
+                   if ( (tmask(kk,jj,ii).EQ.1.0 ) .and. (resto(kk,jj,ii,1).eq.0.0 )) then
                       counter = counter + 1
                       BFMpoints(1,counter) = ii
                       BFMpoints(2,counter) = jj
@@ -474,7 +474,7 @@
           IMPLICIT NONE
 
           ! local
-          INTEGER ii,jj,kk
+          INTEGER kk,jj,ii
           INTEGER :: counter = 0
 
 
@@ -484,7 +484,7 @@
             do jj =1, jpj-1
              do ii =2, jpi-1
 
-               if (tmask(ii,jj,kk).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,jj,ii).EQ.1.0 ) counter = counter + 1
 
              enddo
             enddo
@@ -496,7 +496,7 @@
             do jj =1, jpj-1
              do ii =2, jpi-1
 
-               if ( (tmask(ii,jj,kk).EQ.1.0 ) .and. (resto(ii,jj,kk,1).eq.0.0) )  counter = counter + 1
+               if ( (tmask(kk,jj,ii).EQ.1.0 ) .and. (resto(kk,jj,ii,1).eq.0.0) )  counter = counter + 1
 
              enddo
             enddo

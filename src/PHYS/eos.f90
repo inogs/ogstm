@@ -93,7 +93,7 @@
 !!----------------------------------------------------------------------
 !! local declarations
 !! ==================
-      INTEGER ji, jj, jk
+      INTEGER jk,jj,ji
       REAL(8) zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw
       REAL(8) zb, zd, zc, zaw, za, zb1, za1, zkw, zk0
 
@@ -135,8 +135,8 @@
           DO ji = 1, jpi
 
 !!   ... now potential temperature and salinity
-            zt = tn(ji,jj,jk+mytid)
-            zs = sn(ji,jj,jk+mytid)
+            zt = tn(jk+mytid,jj,ji)
+            zs = sn(jk+mytid,jj,ji)
 !!   ... depth
             zh = gdept(jk+mytid)
 !!   ... square root salinity
@@ -152,7 +152,7 @@
             zrhop= ( zr4*zs + zr3*zsr + zr2 ) *zs + zr1
 
 !!   ... save potential volumic mass
-            rhopn(ji,jj,jk+mytid) = zrhop
+            rhopn(jk+mytid,jj,ji) = zrhop
 
 !!   ... add the compression terms
             ze = ( -3.508914e-8*zt-1.248266e-8 ) *zt-2.595994e-6
@@ -170,11 +170,11 @@
             zk0= ( zb1*zsr + za1 )*zs + zkw
 
 !!   ... masked in situ density anomaly
-            rdn(ji,jj,jk+mytid) = ( zrhop &
+            rdn(jk+mytid,jj,ji) = ( zrhop &
      &          / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) & 
-     &          - rau0 ) / rau0 * tmask(ji,jj,jk+mytid)
+     &          - rau0 ) / rau0 * tmask(jk+mytid,jj,ji)
 !!   ... masked in situ density
-            rho(ji,jj,jk+mytid)=zrhop / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) * tmask(ji,jj,jk+mytid)
+            rho(jk+mytid,jj,ji)=zrhop / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) * tmask(jk+mytid,jj,ji)
 
           END DO
         END DO
@@ -190,10 +190,10 @@
           DO ji = 1, jpi
 
 !!   ... now potential temperature and salinity
-            zt = tn(ji,jj,jk)
+            zt = tn(jk,jj,ji)
 !!   ... density and potential volumic mass
-            rdn(ji,jj,jk) = ( 0.028 - ralpha * zt ) * tmask(ji,jj,jk)
-            rhopn(ji,jj,jk) = ( rau0 * rdn(ji,jj,jk) + rau0 )* tmask(ji,jj,jk)
+            rdn(jk,jj,ji) = ( 0.028 - ralpha * zt ) * tmask(jk,jj,ji)
+            rhopn(jk,jj,ji) = ( rau0 * rdn(jk,jj,ji) + rau0 )* tmask(jk,jj,ji)
           END DO
         END DO
 
@@ -207,12 +207,12 @@
           DO ji = 1, jpi
 
 !!   ... now potential temperature and salinity
-            zt = tn(ji,jj,jk)
-            zs = sn(ji,jj,jk)
+            zt = tn(jk,jj,ji)
+            zs = sn(jk,jj,ji)
 
 !!   ... density and potential volumic mass
-            rdn(ji,jj,jk) = (   rbeta  * zs - ralpha * zt - 1. )* tmask(ji,jj,jk)
-            rhopn(ji,jj,jk) = ( rau0 * rdn(ji,jj,jk) + rau0 )   * tmask(ji,jj,jk)
+            rdn(jk,jj,ji) = (   rbeta  * zs - ralpha * zt - 1. )* tmask(jk,jj,ji)
+            rhopn(jk,jj,ji) = ( rau0 * rdn(jk,jj,ji) + rau0 )   * tmask(jk,jj,ji)
           END DO
         END DO
 

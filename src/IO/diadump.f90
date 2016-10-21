@@ -14,7 +14,7 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
       INTEGER, INTENT(IN) :: FREQ_GROUP
-      INTEGER ji, jj, jk, jn, jn_high
+      INTEGER jk,jj,ji, jn, jn_high
       INTEGER ind
 
       CHARACTER(LEN=42) forcing_file
@@ -132,13 +132,13 @@
                do jj =totjstart,totjend
                  do ji =totistart,totiend
                      ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-                     totsnIO (ji,jj,jk)= buffsn (ind)
-                     tottnIO (ji,jj,jk)= bufftn (ind)
-                     totunIO (ji,jj,jk)= buffun (ind)
-                     totvnIO (ji,jj,jk)= buffvn (ind)
-                     totwnIO (ji,jj,jk)= buffwn (ind)
-                     totavtIO(ji,jj,jk)= buffavt(ind)
-                     tote3tIO(ji,jj,jk)= buffe3t(ind)
+                     totsnIO (jk,jj,ji)= buffsn (ind)
+                     tottnIO (jk,jj,ji)= bufftn (ind)
+                     totunIO (jk,jj,ji)= buffun (ind)
+                     totvnIO (jk,jj,ji)= buffvn (ind)
+                     totwnIO (jk,jj,ji)= buffwn (ind)
+                     totavtIO(jk,jj,ji)= buffavt(ind)
+                     tote3tIO(jk,jj,ji)= buffe3t(ind)
                  enddo
                 enddo
                enddo
@@ -163,13 +163,13 @@
             do jj =1 , jpj
              do ji =1 , jpi
                    ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                   buffsn (ind)= snIO (ji,jj,jk)
-                   bufftn (ind)= tnIO (ji,jj,jk)
-                   buffun (ind)= unIO (ji,jj,jk)
-                   buffvn (ind)= vnIO (ji,jj,jk)
-                   buffwn (ind)= wnIO (ji,jj,jk)
-                   buffavt(ind)= avtIO(ji,jj,jk)
-                   buffe3t(ind)= e3tIO(ji,jj,jk)
+                   buffsn (ind)= snIO (jk,jj,ji)
+                   bufftn (ind)= tnIO (jk,jj,ji)
+                   buffun (ind)= unIO (jk,jj,ji)
+                   buffvn (ind)= vnIO (jk,jj,ji)
+                   buffwn (ind)= wnIO (jk,jj,ji)
+                   buffavt(ind)= avtIO(jk,jj,ji)
+                   buffe3t(ind)= e3tIO(jk,jj,ji)
               enddo
              enddo
             enddo
@@ -418,7 +418,7 @@
                      do jj =totjstart,totjend
                         do ji =totistart,totiend
                            ind = (ji-totistart+ relistart )+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-                           tottrnIO(ji,jj,jk)= buffDIA (ind)
+                           tottrnIO(jk,jj,ji)= buffDIA (ind)
                         enddo
                      enddo
                   enddo
@@ -434,7 +434,7 @@
              do jj =1 , jpj
               do ji =1 , jpi
                   ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                  buffDIA(ind) = tra_DIA_IO(ji,jj, jk,jn)
+                  buffDIA(ind) = tra_DIA_IO(jk,jj,ji,jn)
               enddo
              enddo
             enddo
@@ -443,7 +443,7 @@
              do jj =1 , jpj
               do ji =1 , jpi
                   ind         =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-                  buffDIA(ind) = tra_DIA_IO_HIGH(ji,jj, jk,jn_high)
+                  buffDIA(ind) = tra_DIA_IO_HIGH(jk,jj,ji,jn_high)
               enddo
              enddo
             enddo

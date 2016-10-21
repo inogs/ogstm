@@ -44,10 +44,10 @@ CC   External : mpplnk or lbc
 CC    local declarations
 
       INTEGER ktask, kt
-      INTEGER ji, jj, jk, ijt
+      INTEGER jk,jj,ji, ijt
 
       REAL(8) zbt
-      REAL(8) zwu(jpi,jpj), zwv(jpi,jpj)
+      REAL(8) zwu(jpj,jpi), zwv(jpj,jpi)
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================
@@ -64,11 +64,11 @@ C
         DO jj = 1, jpjm1
           DO ji = 1, jpim1
 #if defined key_s_coord 
-            zwu(ji,jj) = e2u(ji,jj) * fse3u(ji,jj,jk) * udta(ji,jj,jk,2)
-            zwv(ji,jj) = e1v(ji,jj) * fse3v(ji,jj,jk) * vdta(ji,jj,jk,2)
+            zwu(jj,ji) = e2u(jj,ji) * fse3u(jk,jj,ji) * udta(jk,jj,ji,2)
+            zwv(jj,ji) = e1v(jj,ji) * fse3v(jk,jj,ji) * vdta(jk,jj,ji,2)
 #  else
-            zwu(ji,jj) = e2u(ji,jj) * e3u(ji,jj,jk) * udta(ji,jj,jk,2)
-            zwv(ji,jj) = e1v(ji,jj) * e3v(ji,jj,jk) * vdta(ji,jj,jk,2)
+            zwu(jj,ji) = e2u(jj,ji) * e3u(jk,jj,ji) * udta(jk,jj,ji,2)
+            zwv(jj,ji) = e1v(jj,ji) * e3v(jk,jj,ji) * vdta(jk,jj,ji,2)
 #endif
           END DO
         END DO
@@ -79,12 +79,12 @@ C ------------------------
 C
         DO jj = 2, jpjm1
           DO ji = 2, jpim1
-            zbt = e1t(ji,jj) * e2t(ji,jj) * e3t(ji,jj,jk)
+            zbt = e1t(jj,ji) * e2t(jj,ji) * e3t(jk,jj,ji)
 #if defined key_s_coord
-     $                                    * fse3t(ji,jj,jk)
+     $                                    * fse3t(jk,jj,ji)
 #endif
-            hdivn(ji,jj,jk) = (  zwu(ji,jj) - zwu(ji-1,jj  )
-     $                         + zwv(ji,jj) - zwv(ji  ,jj-1)  ) / zbt
+            hdivn(jk,jj,ji) = (  zwu(jj,ji) - zwu(jj,ji-1  )
+     $                         + zwv(jj,ji) - zwv(jj-1  ,ji)  ) / zbt
           END DO  
         END DO  
 C

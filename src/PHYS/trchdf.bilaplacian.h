@@ -49,7 +49,7 @@
 
 
       LOGICAL l1,l2,l3
-      INTEGER ji,jj,jk,jn,jv,jf,mytid,ntids,pack_size,jp
+      INTEGER jk,jj,ji,jn,jv,jf,mytid,ntids,pack_size,jp
       INTEGER myji,myjj
       INTEGER locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
 #ifdef __OPENMP1
@@ -95,15 +95,15 @@
 !!                  DO myjk=jk+jklef, jk+jkrig
                       DO myjj=jj+jjlef, jj+jjrig
                          DO myji=ji+jilef, ji+jirig
-                            locsum = locsum + tmask(myji, myjj, jk)
+                            locsum = locsum + tmask(jk,myjj,myji)
                          END DO
                       END DO
 !!                  END DO
                    if(locsum .NE. 0) then
                       dimen_jvhdf1 = dimen_jvhdf1 + 1
-                      hdfmask(ji,jj,jk) = 1
+                      hdfmask(jk,jj,ji) = 1
                    else
-                      hdfmask(ji,jj,jk) = 0
+                      hdfmask(jk,jj,ji) = 0
                    endif
                 END DO
              END DO
@@ -115,9 +115,9 @@
              DO jj = 1, jpjm1
                DO ji = 1, jpim1
 !!   ... z-coordinates, no vertical scale factors
-                  zbtr(ji,jj,jk) = 1. / ( e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk) )
-                  zeeu(ji,jj,jk) = e2u(ji,jj)*e3u(ji,jj,jk) / e1u(ji,jj) * umask(ji,jj,jk)
-                  zeev(ji,jj,jk) = e1v(ji,jj)*e3v(ji,jj,jk) / e2v(ji,jj) * vmask(ji,jj,jk)
+                  zbtr(jk,jj,ji) = 1. / ( e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji) )
+                  zeeu(jk,jj,ji) = e2u(jj,ji)*e3u(jk,jj,ji) / e1u(jj,ji) * umask(jk,jj,ji)
+                  zeev(jk,jj,ji) = e1v(jj,ji)*e3v(jk,jj,ji) / e2v(jj,ji) * vmask(jk,jj,ji)
                END DO
              END DO
           END DO
@@ -128,7 +128,7 @@
           DO jk = 1,jpkm1
              DO jj = 1,jpjm1
                 DO  ji = 1,jpim1
-                   IF(hdfmask(ji,jj,jk) .NE. 0) THEN
+                   IF(hdfmask(jk,jj,ji) .NE. 0) THEN
                       dimen_jvhdf2 = dimen_jvhdf2 + 1
                       jarr_hdf(1,dimen_jvhdf2,1) = ji
                       jarr_hdf(2,dimen_jvhdf2,1) = jj
@@ -145,7 +145,7 @@
           DO jk = 1,jpkm1
              DO jj = 2,jpjm1
                 DO  ji = 2,jpim1
-                   IF(hdfmask(ji,jj,jk) .NE. 0) THEN
+                   IF(hdfmask(jk,jj,ji) .NE. 0) THEN
                       dimen_jvhdf3 = dimen_jvhdf3 + 1
                       jarr_hdf(1,dimen_jvhdf3,2) = ji
                       jarr_hdf(2,dimen_jvhdf3,2) = jj
@@ -198,13 +198,13 @@
              jj = jarr_hdf(2,jv,1)
              jk = jarr_hdf(3,jv,1)
 
-             ztu(ji,jj,jk,mytid+1) = zeeu(ji,jj,jk) * &
-     &          ( trb(ji+1,jj,jk,jn+mytid) - trb(ji,jj,jk,jn+mytid) )* &
-     &          tmask(ji+1,jj,jk) * tmask(ji,jj,jk)
+             ztu(jk,jj,ji,mytid+1) = zeeu(jk,jj,ji) * &
+     &          ( trb(jk,jj,ji+1,jn+mytid) - trb(jk,jj,ji,jn+mytid) )* &
+     &          tmask(jk,jj,ji+1) * tmask(jk,jj,ji)
 
-             ztv(ji,jj,jk,mytid+1) = zeev(ji,jj,jk) * &
-     &          ( trb(ji,jj+1,jk,jn+mytid) - trb(ji,jj,jk,jn+mytid) )* &
-     &          tmask(ji,jj+1,jk) * tmask(ji,jj,jk)
+             ztv(jk,jj,ji,mytid+1) = zeev(jk,jj,ji) * &
+     &          ( trb(jk,jj+1,ji,jn+mytid) - trb(jk,jj,ji,jn+mytid) )* &
+     &          tmask(jk,jj+1,ji) * tmask(jk,jj,ji)
 
           END DO
 !!
@@ -215,10 +215,10 @@
              jj = jarr_hdf(2,jv,2)
              jk = jarr_hdf(3,jv,2)
 
-             zlt(ji,jj,jk,mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1) &
-     &             + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
+             zlt(jk,jj,ji,mytid+1) = (  ztu(jk,jj,ji,mytid+1) - ztu(ji-1,jj,jk,mytid+1) &
+     &             + ztv(jk,jj,ji,mytid+1) - ztv(jj,ji-1,jk,mytid+1)  ) * zbtr(jk,jj,ji)
 !! ... Multiply by the eddy diffusivity coefficient
-             zlt(ji,jj,jk,mytid+1) = trcrat * ahtt(jk) * zlt(ji,jj,jk,mytid+1)
+             zlt(jk,jj,ji,mytid+1) = trcrat * ahtt(jk) * zlt(jk,jj,ji,mytid+1)
 
           END DO
 
@@ -280,12 +280,12 @@
              jk = jarr_hdf(3,jv,1)
 
 
-             ztu(ji,jj,jk,mytid+1) = zeeu(ji,jj,jk) * &
-     &        ( zlt(ji+1,jj,jk,mytid+1) - zlt(ji,jj,jk,mytid+1) ) * &
-     &        tmask(ji+1,jj,jk) * tmask(ji,jj,jk)
-             ztv(ji,jj,jk,mytid+1) = zeev(ji,jj,jk) * & 
-     &        ( zlt(ji,jj+1,jk,mytid+1) - zlt(ji,jj,jk,mytid+1) ) * &
-     &        tmask(ji,jj+1,jk) * tmask(ji,jj,jk)
+             ztu(jk,jj,ji,mytid+1) = zeeu(jk,jj,ji) * &
+     &        ( zlt(jk,jj,ji+1,mytid+1) - zlt(jk,jj,ji,mytid+1) ) * &
+     &        tmask(jk,jj,ji+1) * tmask(jk,jj,ji)
+             ztv(jk,jj,ji,mytid+1) = zeev(jk,jj,ji) * & 
+     &        ( zlt(jk,jj+1,ji,mytid+1) - zlt(jk,jj,ji,mytid+1) ) * &
+     &        tmask(jk,jj+1,ji) * tmask(jk,jj,ji)
 
           END DO
 
@@ -299,15 +299,15 @@
              jf = jarr_hdf_flx(jv)
 
 !!   ... horizontal diffusive trends
-             zta(mytid+1) = (  ztu(ji,jj,jk,mytid+1) - ztu(ji-1,jj,jk,mytid+1) &
-     &            + ztv(ji,jj,jk,mytid+1) - ztv(ji,jj-1,jk,mytid+1)  ) * zbtr(ji,jj,jk)
+             zta(mytid+1) = (  ztu(jk,jj,ji,mytid+1) - ztu(ji-1,jj,jk,mytid+1) &
+     &            + ztv(jk,jj,ji,mytid+1) - ztv(jj,ji-1,jk,mytid+1)  ) * zbtr(jk,jj,ji)
 !!   ... add it to the general tracer trends
-              tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid) + zta(mytid+1)
+              tra(jk,jj,ji,jn+mytid) = tra(jk,jj,ji,jn+mytid) + zta(mytid+1)
 
 !     Save diffusive fluxes x,y
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                 diaflx(jf,jn+mytid,5) = diaflx(jf,jn+mytid,5) + ztu(ji,jj,jk,mytid+1)
-                 diaflx(jf,jn+mytid,6) = diaflx(jf,jn+mytid,6) + ztv(ji,jj,jk,mytid+1)
+                 diaflx(jf,jn+mytid,5) = diaflx(jf,jn+mytid,5) + ztu(jk,jj,ji,mytid+1)
+                 diaflx(jf,jn+mytid,6) = diaflx(jf,jn+mytid,6) + ztv(jk,jj,ji,mytid+1)
               END IF
 
          END DO

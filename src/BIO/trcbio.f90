@@ -48,7 +48,7 @@
       LOGICAL sur,bot
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
 
-      INTEGER ji,jj,jk,jb,jn
+      INTEGER jk,jj,ji,jb,jn
       INTEGER jtr,jtrmax,tra_idx
 
 ! omp variables
@@ -86,7 +86,7 @@
 
 ! ---------------- Fuori dai punti BFM
          DO jn=1,4,ntids
-!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(sediPI,jpk,jpj,jpi,jn)
+!!$omp    parallel default(none) private(mytid, jk,jj,ji) shared(sediPI,jpk,jpj,jpi,jn)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -94,7 +94,7 @@
             do jk=1,jpk
             do jj=1,jpj
             do ji=1,jpi
-                sediPI(ji,jj,jk,jn+mytid)=0.
+                sediPI(jk,jj,ji,jn+mytid)=0.
             end do
             end do
             end do
@@ -104,7 +104,7 @@
          ENDDO
 
          DO jn=1, jptra_dia, ntids
-!!$omp    parallel default(none) private(mytid, ji,jj,jk) shared(tra_DIA,jpk,jpj,jpi,jn)
+!!$omp    parallel default(none) private(mytid, jk,jj,ji) shared(tra_DIA,jpk,jpj,jpi,jn)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -112,7 +112,7 @@
             do jk=1,jpk
             do jj=1,jpj
             do ji=1,jpi
-               tra_DIA(ji,jj,jk,jn+mytid)=0.
+               tra_DIA(jk,jj,ji,jn+mytid)=0.
             end do
             end do
             end do
@@ -126,7 +126,7 @@
 
 
 
-! $omp   parallel do default(none)  private(jb,ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
+! $omp   parallel do default(none)  private(jb,jk,jj,ji,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 ! $omp&      shared(NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 ! $omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
 ! $omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
@@ -148,20 +148,20 @@
                           bot = .FALSE.
 
                           DO jtr=1, jtrmax
-                             a(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations
+                             a(jtr) = trn(jk,jj,ji,jtr) ! current biogeochemical concentrations
                           END DO
 ! Environmental regulating factors (er)
 
-                          er(1)  = tn (ji,jj,jk)        ! Temperature (Celsius)
-                          er(2)  = sn (ji,jj,jk)        ! Salinity PSU
-                          er(3)  = rho(ji,jj,jk)        ! Density Kg/m3
+                          er(1)  = tn (jk,jj,ji)        ! Temperature (Celsius)
+                          er(2)  = sn (jk,jj,ji)        ! Salinity PSU
+                          er(3)  = rho(jk,jj,ji)        ! Density Kg/m3
                           er(4)  = ice                  ! from 0 to 1 adimensional
-                          er(5)  = co2(ji,jj)           ! CO2 Mixing Ratios (ppm)  390
-                          er(6)  = xpar(ji,jj,jk)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                          er(7)  = DAY_LENGTH(ji,jj)    ! fotoperiod expressed in hours
-                          er(8)  = e3t(ji,jj,jk)        ! depth in meters of the given cell
-                          er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)
-                          er(10) = PH(ji,jj,jk)         ! PH
+                          er(5)  = co2(jj,ji)           ! CO2 Mixing Ratios (ppm)  390
+                          er(6)  = xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          er(7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
+                          er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
+                          er(9)  = vatm(jj,ji) * surf_mask(jk) ! wind speed (m/s)
+                          er(10) = PH(jk,jj,ji)         ! PH
 
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
@@ -176,24 +176,24 @@
                            endif
 
                           DO jtr=1, jtrmax
-                             tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend
+                             tra(jk,jj,ji,jtr) =tra(jk,jj,ji,jtr) +b(jtr) ! trend
                           END DO
 
                           DO jtr=1,4
-                             sediPI(ji,jj,jk,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
+                             sediPI(jk,jj,ji,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
                           END DO
 
                           DO jtr=1,jptra_dia
-                             tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic
+                             tra_DIA(jk,jj,ji,jtr) = d(jtr) ! diagnostic
                           END DO
 
                           if (sur) then
                               DO jtr=1,jptra_dia_2d
-                                 tra_DIA_2d(ji,jj,jtr) = d2(jtr) ! diagnostic
+                                 tra_DIA_2d(jj,ji,jtr) = d2(jtr) ! diagnostic
                               END DO
                           endif
 
-                          PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
+                          PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 
 
              !ENDIF

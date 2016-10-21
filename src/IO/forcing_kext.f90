@@ -139,11 +139,11 @@
          REAL(8), INTENT(IN) :: zweigh
 
         ! local
-        INTEGER ji,jj
+        INTEGER jj,ji
 
         DO ji=1,jpi
           DO jj=1,jpj
-             kef(ji,jj) = ( (1. - zweigh) * kextIO(ji,jj,1)+ zweigh     * kextIO(ji,jj,2) )
+             kef(jj,ji) = ( (1. - zweigh) * kextIO(jj,ji,1)+ zweigh     * kextIO(jj,ji,2) )
           END DO
         END DO
 
@@ -164,11 +164,11 @@
          IMPLICIT NONE
 
 
-         INTEGER ji,jj
+         INTEGER jj,ji
 
             DO ji=1,jpi
               DO jj=1,jpj
-                kextIO(ji,jj,1) = kextIO(ji,jj,2)
+                kextIO(jj,ji,1) = kextIO(jj,ji,2)
               END DO
             END DO
 

@@ -498,7 +498,7 @@
 
               do jj =1, jpj
                   do ji=1, jpi
-                      DAY_LENGTH(ji,jj) = photoperiod(julianday, gphit(ji,jj))
+                      DAY_LENGTH(jj,ji) = photoperiod(julianday, gphit(jj,ji))
                   enddo
               enddo
 

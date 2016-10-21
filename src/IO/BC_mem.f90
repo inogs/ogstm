@@ -145,9 +145,9 @@
        IF ((lat .NE. 0) .AND. (lon .NE. 0)) THEN
            allocate(tra_matrix_atm(jn_atm))    
        tra_matrix_atm = huge(tra_matrix_atm(1))
-           allocate(atm_aux(jpi,jpj))  
+           allocate(atm_aux(jpj,jpi))  
        atm_aux        = huge(atm_aux(1,1))
-           allocate(atm_idxtglo(   jpi,jpj))  
+           allocate(atm_idxtglo(   jpj,jpi))  
        atm_idxtglo    = huge(atm_idxtglo(1,1))
 
           tra_matrix_atm(1) = ppN1p ! phosphates
@@ -246,12 +246,12 @@
 #endif
 
 
-      print *,"!!!!!!!!!!!!!!!!!!!!!!",jpi,jpj
+      print *,"!!!!!!!!!!!!!!!!!!!!!!",jpj,jpi
       !allocate(atm_ridxt (4,lon,lat        )) 
         atm_ridxt  = huge(atm_ridxt(1,1,1))
-      allocate(atm_dtatrc(jpi,jpj, 2, jn_atm)) 
+      allocate(atm_dtatrc(jpj,jpi, 2, jn_atm)) 
        atm_dtatrc = huge(atm_dtatrc(1,1,1,1))
-      allocate(atm       (jpi,jpj,    jn_atm)) 
+      allocate(atm       (jpj,jpi,    jn_atm)) 
        atm        = huge(atm(1,1,1))
 
 

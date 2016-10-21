@@ -50,9 +50,9 @@
          DO jk = 1,jpk
          DO jj = 1,jpj
          DO ji = 1,jpi
-            if (tra(ji,jj,jk,jn+mytid).gt.maxV) THEN
-                tra(ji,jj,jk,jn+mytid) = maxV*0.2 * tmask(ji,jj,jk)
-                if (isCheckLOG) write(*,320) STR, ji,jj,jk, '  rank-> ', rank,' tracer ',varname
+            if (tra(jk,jj,ji,jn+mytid).gt.maxV) THEN
+                tra(jk,jj,ji,jn+mytid) = maxV*0.2 * tmask(jk,jj,ji)
+                if (isCheckLOG) write(*,320) STR, jk,jj,ji, '  rank-> ', rank,' tracer ',varname
 
             endif
          ENDDO

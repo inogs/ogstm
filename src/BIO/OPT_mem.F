@@ -37,12 +37,12 @@
 
        allocate(itabe(jpi))         
        itabe   = huge(itabe(1))
-       allocate(imaske(jpi, jpk))   
+       allocate(imaske(jpk,jpi))   
        imaske  = huge(imaske(1,1))
-!!!$omp parallel default (none) shared(jpi,jpk)
-       allocate(zpar(jpi, jpk))     
+!!!$omp parallel default (none) shared(jpk,jpi)
+       allocate(zpar(jpk,jpi))     
        zpar    = huge(zpar(1,1))
-       allocate(xEPS(jpi, jpk))     
+       allocate(xEPS(jpk,jpi))     
        xEPS    = huge(xEPS(1,1))
        allocate(zpar0m(jpi))        
        zpar0m  = huge(zpar0m(1))
@@ -50,9 +50,9 @@
        zpar100 = huge(zpar100(1))
 !!!$omp end parallel
 
-       allocate(kef(jpi,jpj))       
+       allocate(kef(jpj,jpi))       
        kef     = huge(kef(1,1))
-       allocate(kextIO(jpi,jpj,2))  
+       allocate(kextIO(jpj,jpi,2))  
        kextIO  = huge(kextIO(1,1,1))
 
 #if ! defined  key_kef

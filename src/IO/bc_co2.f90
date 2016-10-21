@@ -126,11 +126,11 @@
          REAL(8), INTENT(IN) :: zweigh
 
         ! local
-        INTEGER ji,jj
+        INTEGER jj,ji
 
         DO ji=1,jpi
           DO jj=1,jpj
-             co2(ji,jj) = ( (1. - zweigh) * co2_IO(ji,jj,1)+ zweigh     * co2_IO(ji,jj,2) )
+             co2(jj,ji) = ( (1. - zweigh) * co2_IO(jj,ji,1)+ zweigh     * co2_IO(jj,ji,2) )
           END DO
         END DO
 
@@ -147,11 +147,11 @@
          IMPLICIT NONE
 
 
-         INTEGER ji,jj
+         INTEGER jj,ji
 
             DO ji=1,jpi
               DO jj=1,jpj
-                co2_IO(ji,jj,1) = co2_IO(ji,jj,2)
+                co2_IO(jj,ji,1) = co2_IO(jj,ji,2)
               END DO
             END DO
 

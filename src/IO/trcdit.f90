@@ -27,7 +27,7 @@
       INTEGER, INTENT(IN) :: FREQ_GROUP ! 1 = HIGH FREQ, 2 = LOW FREQ
 
 
-      INTEGER ji, jj, jk, jn, jn_high
+      INTEGER jk,jj,ji, jn, jn_high
       INTEGER ind
       INTEGER ave_counter
 
@@ -134,7 +134,7 @@
                do jj =totjstart,totjend
                  do ji =totistart,totiend
                      ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-                     tottrnIO(ji,jj,jk)= bufftrn   (ind)
+                     tottrnIO(jk,jj,ji)= bufftrn   (ind)
                  enddo
                 enddo
                enddo
@@ -151,7 +151,7 @@
             do jj =1 , jpj
              do ji =1 , jpi
                ind            =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-               bufftrn   (ind)= traIO( ji,jj,jk,jn)
+               bufftrn   (ind)= traIO( jk,jj,ji,jn)
              enddo
             enddo
           enddo
@@ -160,7 +160,7 @@
             do jj =1 , jpj
              do ji =1 , jpi
                ind            =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-               bufftrn   (ind)= traIO_HIGH( ji,jj,jk,jn_high)
+               bufftrn   (ind)= traIO_HIGH( jk,jj,ji,jn_high)
              enddo
             enddo
           enddo

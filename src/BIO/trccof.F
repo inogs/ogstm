@@ -38,7 +38,7 @@ C===================================================
         DO jk=1,jpk
           DO jj=1,jpj
             DO ji=1,jpi
-              restotr(ji,jj,jk,jn)=0.
+              restotr(jk,jj,ji,jn)=0.
             END DO
           END DO
         END DO
@@ -51,8 +51,8 @@ C===================================================
         DO jk=1,jpk
           DO jj=1,jpj
             DO ji=1,jpi
-              !print *,ji,jj,jk,tra_idx,jn,restocorr(jn),resto(ji,jj,jk,jn)
-              restotr(ji,jj,jk,tra_idx)=restocorr(jn)*resto(ji,jj,jk,jn)
+              !print *,jk,jj,ji,tra_idx,jn,restocorr(jn),resto(jk,jj,ji,jn)
+              restotr(jk,jj,ji,tra_idx)=restocorr(jn)*resto(jk,jj,ji,jn)
             END DO
           END DO
         END DO

@@ -206,8 +206,8 @@ SUBROUTINE ALLOC_ALL
        mem_all_tot=mem_all_tot+mem_all
 
 
-      call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
-      call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
+      call MPI_ALLREDUCE(jpi_max, jpi, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
+      call MPI_ALLREDUCE(jpj_max, jpj, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
       call myalloc_IO()  
        write(*,*)'My_Rank:',Rank,'alloc_IO   (MB):', mem_all 
@@ -301,7 +301,7 @@ SUBROUTINE photo_init
       call tau2julianday(TimeStepStart, deltaT, julianday)
       do jj =1, jpj
          do ji=1, jpi
-            DAY_LENGTH(ji,jj) = photoperiod(julianday, gphit(ji,jj))
+            DAY_LENGTH(jj,ji) = photoperiod(julianday, gphit(jj,ji))
          enddo
       enddo
 

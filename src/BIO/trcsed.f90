@@ -92,7 +92,7 @@
       IF (dimen_jvsed .EQ. 0) THEN ! initialization phase
          DO jj = 2,jpjm1
            DO  ji = 2,jpim1
-              IF(tmask(ji,jj,1) .NE. 0) THEN
+              IF(tmask(1,jj,ji) .NE. 0) THEN
                  dimen_jvsed = dimen_jvsed + 1
                  jarr_sed(1,dimen_jvsed) = ji
                  jarr_sed(2,dimen_jvsed) = jj
@@ -109,7 +109,7 @@
                   l2 = flx_ridxt(jf,3) .EQ. jarr_sed(2,jv)
                   l3 = flx_ridxt(jf,4) .EQ. jk
                   IF ( l1 .AND. l2 .AND. l3) THEN
-                     jarr_sed_flx(jv,jk)= jf
+                     jarr_sed_flx(jk,jv)= jf
                   END IF
                END DO
             END DO
@@ -146,7 +146,7 @@
 
                  DO js = 1, nsed
 
-                    zwork(js,jk,mytid+1) = 0.
+                    zwork(jk,js,mytid+1) = 0.
 
                  END DO
 
@@ -159,27 +159,27 @@
 
 !                Particulate
                  DO js =1,4
-                    zwork(js,jk,mytid+1) = -vsed * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(jk,js,mytid+1) = -vsed * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
 
 !                Diatoms
                  DO js =5,9
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,1) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
 
 !                Flagellates
                  DO js =10,13
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,2) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
 
 !                Picophytoplankton
                  DO js =14,17
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,3) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
 
 !                Dinoflagellates
                  DO js =18,21
-                    zwork(js,jk,mytid+1) = -sediPI(ji,jj,jk - 1,4) * trn(ji,jj,jk - 1, sed_idx(js))
+                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
 
               END DO
@@ -190,14 +190,14 @@
 ! 1.3 tracer flux divergence at t-point added to the general trend
 
               DO  jk = 1,jpkm1
-                 jf=  jarr_sed_flx(jv,jk)
+                 jf=  jarr_sed_flx(jk,jv)
 
                  ze3tr = 1./e3t(ji,jj,jk)
 
                  DO js =1,21
-                    ztra(js,mytid+1) = -ze3tr * (zwork(js,jk,mytid+1) - zwork(js,jk + 1,mytid+1))
+                    ztra(js,mytid+1) = -ze3tr * (zwork(jk,js,mytid+1) - zwork(jk+1,js,mytid+1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(js,jk,mytid+1)
+                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(jk,js,mytid+1)
                     ENDIF
                  END DO
 

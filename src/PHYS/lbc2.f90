@@ -83,19 +83,19 @@
             IF ( nperio.EQ.1 .OR. nperio.EQ.4 ) THEN
 !! ... cyclic
                 DO jj = 1, jpj
-                  ptab( 1 ,jj) = ptab(jpim1,jj)
-                  ptab(jpi,jj) = ptab(  2  ,jj)
+                  ptab( 1 ,jj) = ptab(jj,jpim1)
+                  ptab(jj,jpi) = ptab(  2  ,jj)
                 END DO
               ELSE
 !! ... closed
                 IF ( ktype.EQ.4 ) THEN
                     DO jj = 1, jpj
-                      ptab(jpi,jj) = 0.e0
+                      ptab(jj,jpi) = 0.e0
                     END DO
                   ELSE
                     DO jj = 1, jpj
                       ptab( 1 ,jj) = 0.e0
-                      ptab(jpi,jj) = 0.e0
+                      ptab(jj,jpi) = 0.e0
                     END DO
                 ENDIF
             ENDIF
@@ -108,12 +108,12 @@
                 IF ( ktype.EQ.1 .OR. ktype.EQ.2 ) THEN
                     DO ji = 1, jpi
                       ptab(ji, 1 ) = ptab(ji,3)
-                      ptab(ji,jpj) = 0.e0
+                      ptab(jpj,ji) = 0.e0
                     END DO
                   ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4 ) THEN
                     DO ji = 1, jpi
                       ptab(ji, 1 ) = zsgn * ptab(ji,2)
-                      ptab(ji,jpj) = 0.e0
+                      ptab(jpj,ji) = 0.e0
                     END DO
                 ENDIF
               ELSEIF ( nperio.EQ.3 .OR. nperio.EQ.4 ) THEN
@@ -124,47 +124,47 @@
                     DO ji = 2, jpi
                       ijt=jpi-ji+2
                       ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj) = zsgn * ptab(ijt,jpj-2)
+                      ptab(jpj,ji) = zsgn * ptab(ijt,jpj-2)
                     END DO
                     DO ji = jpi/2+1, jpi
                       ijt=jpi-ji+2
-                      ptab(ji,jpjm1) = zsgn * ptab(ijt,jpjm1)
+                      ptab(jpjm1,ji) = zsgn * ptab(jpjm1,ijt)
                     END DO
                   ELSEIF ( ktype.EQ.2 ) THEN
                     DO ji = 1, jpi-1
                       iju=jpi-ji+1
                       ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj) = zsgn * ptab(iju,jpj-2)
+                      ptab(jpj,ji) = zsgn * ptab(iju,jpj-2)
                     END DO
                     DO ji = jpi/2, jpi-1
                       iju=jpi-ji+1
-                      ptab(ji,jpjm1) = zsgn * ptab(iju,jpjm1)
+                      ptab(jpjm1,ji) = zsgn * ptab(jpjm1,iju)
                     END DO
                   ELSEIF ( ktype.EQ.3 ) THEN
                     DO ji = 2, jpi
                       ijt=jpi-ji+2
                       ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj-1) = zsgn * ptab(ijt,jpj-2)
-                      ptab(ji,jpj  ) = zsgn * ptab(ijt,jpj-3)
+                      ptab(jpj,ji-1) = zsgn * ptab(ijt,jpj-2)
+                      ptab(jpj,ji  ) = zsgn * ptab(ijt,jpj-3)
                     END DO
                   ELSEIF ( ktype.EQ.4 ) THEN
                     DO ji = 1, jpi-1
                       iju=jpi-ji+1
 !!                      ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj-1) = ptab(iju,jpj-2)
-                      ptab(ji,jpj  ) = ptab(iju,jpj-3)
+                      ptab(jpj,ji-1) = ptab(iju,jpj-2)
+                      ptab(jpj,ji  ) = ptab(iju,jpj-3)
                     END DO
                 ENDIF
               ELSE
 !! ... closed
                 IF ( ktype.EQ.4 ) THEN
                     DO ji = 1, jpi
-                      ptab(ji,jpj) = 0.e0
+                      ptab(jpj,ji) = 0.e0
                     END DO
                   ELSE
                     DO ji = 1, jpi
                       ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj) = 0.e0
+                      ptab(jpj,ji) = 0.e0
                     END DO
                 ENDIF
             ENDIF
@@ -190,19 +190,19 @@
             IF ( nperio.EQ.1 .OR. nperio.EQ.4 ) THEN
 !! ... cyclic
                 DO jk = 1, jpk
-                  ptab( 1 ,jj) = ptab(jpim1,jj)
-                  ptab(jpi,jj) = ptab(  2  ,jj)
+                  ptab( 1 ,jj) = ptab(jj,jpim1)
+                  ptab(jj,jpi) = ptab(  2  ,jj)
                 END DO
               ELSE
 !! ... closed
                 IF ( ktype.EQ.4 ) THEN
                     DO jk = 1, jpk
-                      ptab(jpi,jj) = 0.e0
+                      ptab(jj,jpi) = 0.e0
                     END DO
                   ELSE
                     DO jk = 1, jpk
                       ptab( 1 ,jj) = 0.e0
-                      ptab(jpi,jj) = 0.e0
+                      ptab(jj,jpi) = 0.e0
                     END DO
                 ENDIF
             ENDIF
@@ -217,7 +217,7 @@
                     DO jk = 1, jpk
                       DO ji = 1, jpi
                         ptab(ji, 1 ) = ptab(ji,3)
-                        ptab(ji,jpj) = 0.e0
+                        ptab(jpj,ji) = 0.e0
                       END DO
                     END DO
                   ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4
@@ -225,7 +225,7 @@
                     DO jk = 1, jpk
                       DO ji = 1, jpi
                         ptab(ji, 1 ) = zsgn * ptab(ji,2)
-                        ptab(ji,jpj) = 0.e0
+                        ptab(jpj,ji) = 0.e0
                       END DO
                     END DO
                 ENDIF
@@ -242,14 +242,14 @@
                        DO ji = 2, jpi
                          ijt=jpi-ji+2
                          ptab(ji, 1 ) = 0.e0
-                         ptab(ji,jpj) = zsgn * ptab(ijt,jpj-2)
+                         ptab(jpj,ji) = zsgn * ptab(ijt,jpj-2)
                        END DO
                      END DO
                    ELSEIF ( ktype.EQ.1 .AND. jj.EQ.jpjm1 ) THEN
                      DO jk = 1, jpk
                        DO ji = jpi/2+1, jpi
                          ijt=jpi-ji+2
-                         ptab(ji,jpjm1) = zsgn * ptab(ijt,jpjm1)
+                         ptab(jpjm1,ji) = zsgn * ptab(jpjm1,ijt)
                        END DO
                      END DO
                    ELSEIF ( ktype.EQ.2 .AND. jj.EQ.jpj-2 ) THEN
@@ -257,14 +257,14 @@
                        DO ji = 1, jpi-1
                          iju=jpi-ji+1
                          ptab(ji, 1 ) = 0.e0
-                         ptab(ji,jpj) = zsgn * ptab(iju,jpj-2)
+                         ptab(jpj,ji) = zsgn * ptab(iju,jpj-2)
                        END DO
                      END DO
                    ELSEIF ( ktype.EQ.2 .AND. jj.EQ.jpjm1 ) THEN
                      DO jk = 1, jpk
                        DO ji = jpi/2, jpi-1
                          iju=jpi-ji+1
-                         ptab(ji,jpjm1) = zsgn * ptab(iju,jpjm1)
+                         ptab(jpjm1,ji) = zsgn * ptab(jpjm1,iju)
                        END DO
                     END DO
                   ELSEIF ( ktype.EQ.3 .AND. jj.EQ.jpj-3 ) THEN
@@ -272,28 +272,28 @@
                       DO ji = 2, jpi
                         ijt=jpi-ji+2
                         ptab(ji, 1 ) = 0.e0
-                        ptab(ji,jpj) = zsgn * ptab(ijt,jpj-3)
+                        ptab(jpj,ji) = zsgn * ptab(ijt,jpj-3)
                       END DO
                     END DO
                   ELSEIF ( ktype.EQ.3 .AND. jj.EQ.jpj-2 ) THEN
                     DO jk = 1, jpk                    
                       DO ji = 2, jpi
                         ijt=jpi-ji+2
-                        ptab(ji,jpj-1) = zsgn * ptab(ijt,jpj-2)
+                        ptab(jpj,ji-1) = zsgn * ptab(ijt,jpj-2)
                       END DO
                     END DO
                   ELSEIF ( ktype.EQ.4 .AND. jj.EQ.jpj-3 ) THEN
                     DO jk = 1, jpk                       
                       DO ji = 1, jpi-1
                         iju=jpi-ji+1
-                        ptab(ji,jpj) =  ptab(iju,jpj-3)
+                        ptab(jpj,ji) =  ptab(iju,jpj-3)
                       END DO
                     END DO
                   ELSEIF ( ktype.EQ.4 .AND. jj.EQ.jpj-2 ) THEN
                     DO jk = 1, jpk                     
                       DO ji = 1, jpi-1
                         iju=jpi-ji+1
-                        ptab(ji,jpj-1) =  ptab(iju,jpj-2)
+                        ptab(jpj,ji-1) =  ptab(iju,jpj-2)
                       END DO
                     END DO
                 ENDIF
@@ -302,7 +302,7 @@
                 DO jk = 1, jpk
                   DO ji = 1, jpi
                     ptab(ji, 1 ) = 0.e0
-                    ptab(ji,jpj) = 0.e0
+                    ptab(jpj,ji) = 0.e0
                   END DO
                 END DO
             ENDIF
@@ -326,15 +326,15 @@
 !!
             IF ( nperio.EQ.1 .OR. nperio.EQ.4 ) THEN
 !! ... cyclic
-                ptab( 1 ,jj) = ptab(jpim1,jj)
-                ptab(jpi,jj) = ptab(  2  ,jj)
+                ptab( 1 ,jj) = ptab(jj,jpim1)
+                ptab(jj,jpi) = ptab(  2  ,jj)
               ELSE
 !! ... closed
                 IF ( ktype.EQ.4 ) THEN
-                    ptab(jpi,jj) = 0.e0
+                    ptab(jj,jpi) = 0.e0
                   ELSE
                     ptab( 1 ,jj) = 0.e0
-                    ptab(jpi,jj) = 0.e0
+                    ptab(jj,jpi) = 0.e0
                 ENDIF
             ENDIF
 !!
@@ -347,13 +347,13 @@
                 IF ( ktype.EQ.1 .OR. ktype.EQ.2 .AND. jj.EQ.3 ) THEN
                     DO ji = 1, jpi
                       ptab(ji, 1 ) = ptab(ji,3)
-                      ptab(ji,jpj) = 0.e0
+                      ptab(jpj,ji) = 0.e0
                     END DO
                   ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4
      $                                .AND. jj.EQ.2 ) THEN
                     DO ji = 1, jpi
                       ptab(ji, 1 ) = zsgn * ptab(ji,2)
-                      ptab(ji,jpj) = 0.e0
+                      ptab(jpj,ji) = 0.e0
                     END DO
                 ENDIF
               ELSEIF ( nperio.EQ.3 .OR. nperio.EQ.4 ) THEN
@@ -366,51 +366,51 @@
                     DO ji = 2, jpi
                       ijt=jpi-ji+2
                       ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj) = zsgn * ptab(ijt,jpj-2)
+                      ptab(jpj,ji) = zsgn * ptab(ijt,jpj-2)
                     END DO
                   ELSEIF ( ktype.EQ.1 .AND. jj.EQ.jpjm1 ) THEN
                     DO ji = jpi/2+1, jpi
                       ijt=jpi-ji+2
-                      ptab(ji,jpjm1) = zsgn * ptab(ijt,jpjm1)
+                      ptab(jpjm1,ji) = zsgn * ptab(jpjm1,ijt)
                     END DO
                   ELSEIF ( ktype.EQ.2 .AND. jj.EQ.jpj-2 ) THEN
                     DO ji = 1, jpi-1
                       iju=jpi-ji+1
                       ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj) = zsgn * ptab(iju,jpj-2)
+                      ptab(jpj,ji) = zsgn * ptab(iju,jpj-2)
                     END DO
                   ELSEIF ( ktype.EQ.2 .AND. jj.EQ.jpjm1 ) THEN
                     DO ji = jpi/2, jpi-1
                       iju=jpi-ji+1
-                      ptab(ji,jpjm1) = zsgn * ptab(iju,jpjm1)
+                      ptab(jpjm1,ji) = zsgn * ptab(jpjm1,iju)
                     END DO
                   ELSEIF ( ktype.EQ.3 .AND. jj.EQ.jpj-3 ) THEN
                     DO ji = 2, jpi
                       ijt=jpi-ji+2
                       ptab(ji, 1 ) = 0.e0
-                      ptab(ji,jpj) = zsgn * ptab(ijt,jpj-3)
+                      ptab(jpj,ji) = zsgn * ptab(ijt,jpj-3)
                     END DO
                   ELSEIF ( ktype.EQ.3 .AND. jj.EQ.jpj-2 ) THEN
                     DO ji = 2, jpi
                       ijt=jpi-ji+2
-                      ptab(ji,jpj-1) = zsgn * ptab(ijt,jpj-2)
+                      ptab(jpj,ji-1) = zsgn * ptab(ijt,jpj-2)
                     END DO
                   ELSEIF ( ktype.EQ.4 .AND. jj.EQ.jpj-3 ) THEN
                     DO ji = 1, jpi-1
                       iju=jpi-ji+1
-                      ptab(ji,jpj) =  ptab(iju,jpj-3)
+                      ptab(jpj,ji) =  ptab(iju,jpj-3)
                     END DO
                   ELSEIF ( ktype.EQ.4 .AND. jj.EQ.jpj-2 ) THEN
                     DO ji = 1, jpi-1
                       iju=jpi-ji+1
-                      ptab(ji,jpj-1) =  ptab(iju,jpj-2)
+                      ptab(jpj,ji-1) =  ptab(iju,jpj-2)
                     END DO
                 ENDIF
               ELSEIF( jj.EQ.2 ) THEN
 !! ... closed
                 DO ji = 1, jpi
                   ptab(ji, 1 ) = 0.e0
-                  ptab(ji,jpj) = 0.e0
+                  ptab(jpj,ji) = 0.e0
                 END DO
             ENDIF
 !!

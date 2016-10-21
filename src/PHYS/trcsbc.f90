@@ -16,7 +16,7 @@
 #endif
 
 
-      INTEGER  :: jj,jijn
+      INTEGER  :: jj,ji,jn
       REAL(8)  :: ztra,zse3t
 
 #ifdef __OPENMP1

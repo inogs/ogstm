@@ -32,7 +32,7 @@
 ! local declarations
 ! ==================
 
-      INTEGER ji, jj, jk, jn
+      INTEGER jk,jj,ji, jn
       INTEGER tra_idx
       INTEGER(4) jv
       INTEGER shift
@@ -58,7 +58,7 @@
 ! Boundary conditions fo Gib area
        IF (Gsize .NE. 0) THEN
          DO jn=1, jn_gib, ntids
-!!!$omp   parallel default(none) private(mytid,ji,jj,jk,ztra,jv,tra_idx)
+!!!$omp   parallel default(none) private(mytid,jk,jj,ji,ztra,jv,tra_idx)
 !!!$omp&                         shared(jn,tra,trb,gib, Gsize, gib_ridxt,restotr,tra_matrix_gib,jn_gib)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -71,9 +71,9 @@
              jj = gib_ridxt(3,jv)
              jk = gib_ridxt(4,jv)
 
-             ztra = restotr(ji,jj,jk,tra_idx) * ( gib(jv,jn+mytid)-trb(ji,jj,jk,tra_idx) )
+             ztra = restotr(jk,jj,ji,tra_idx) * ( gib(jv,jn+mytid)-trb(jk,jj,ji,tra_idx) )
 
-             tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + ztra
+             tra(jk,jj,ji,tra_idx) = tra(jk,jj,ji,tra_idx) + ztra
           ENDDO
       ENDIF
 !!!$omp end parallel
@@ -86,7 +86,7 @@
 ! Boundary conditions for rivers
        IF (Rsize .NE. 0) THEN
          DO jn=1, jn_riv,ntids
-!!!$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx,shift)
+!!!$omp   parallel default(none) private(mytid,jk,jj,ji,jv,tra_idx,shift)
 !!!$omp&                         shared(jn,tra, riv,Rsize, riv_ridxt,tra_matrix_riv,jn_riv,tra_DIA)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -99,7 +99,7 @@
              ji = riv_ridxt(2,jv)
              jj = riv_ridxt(3,jv)
              jk = riv_ridxt(4,jv)
-            tra(ji,jj,jk,tra_idx) = tra(ji,jj,jk,tra_idx) + riv(jv,jn+mytid)
+            tra(jk,jj,ji,tra_idx) = tra(jk,jj,ji,tra_idx) + riv(jv,jn+mytid)
           ENDDO
 
 
@@ -116,7 +116,7 @@
 ! Boundary conditions for Atmosphere
        IF (Asize .NE. 0) THEN
          DO jn=1, jn_atm, ntids
-!!!$omp   parallel default(none) private(mytid,ji,jj,jk,jv,tra_idx,shift)
+!!!$omp   parallel default(none) private(mytid,jk,jj,ji,jv,tra_idx,shift)
 !!!$omp&                         shared(jn,tra,atm,Asize, atm_ridxt,tra_matrix_atm,jn_atm,tra_DIA)
 #ifdef __OPENMP1
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -131,7 +131,7 @@
           !    ji = atm_ridxt(2,jv)
           !    jj = atm_ridxt(3,jv)
           !    jk = atm_ridxt(4,jv)
-        tra(ji,jj,1,tra_idx) = tra(ji,jj,1,tra_idx) + atm(ji,jj,jn+mytid)
+        tra(1,ji,jj,tra_idx) = tra(1,ji,jj,tra_idx) + atm(ji,jj,jn+mytid)
          ENDDO
          ENDDO
 

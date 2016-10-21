@@ -43,7 +43,7 @@
 !!
 !!   WORKSPACE :
 !!   ---------
-!!     ji jj jk jn zfact zdt
+!!     jk,jj,ji jn zfact zdt
 
 
        USE myalloc
@@ -65,7 +65,7 @@
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER ji,jj,jk,jn,jp
+      INTEGER jk,jj,ji,jn,jp
 
 
 #ifdef __OPENMP1
@@ -111,7 +111,7 @@
 #endif
 
 
-!!!$omp   parallel default(none) private(mytid,ji,jj,jk)
+!!!$omp   parallel default(none) private(mytid,jk,jj,ji)
 !!!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,e3t,e3t_back) 
 
 #ifdef __OPENMP1
@@ -127,10 +127,10 @@
           DO jj = 1,jpj
             DO ji = 1,jpi
 
-            tra(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*e3t_back(ji,jj,jk)/e3t(ji,jj,jk)
-            trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
-            trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
-            tra(ji,jj,jk,jn+mytid) = 0.e0
+            tra(jk,jj,ji,jn+mytid) = tra(jk,jj,ji,jn+mytid)*e3t_back(jk,jj,ji)/e3t(jk,jj,ji)
+            trb(jk,jj,ji,jn+mytid) = tra(jk,jj,ji,jn+mytid)
+            trn(jk,jj,ji,jn+mytid) = tra(jk,jj,ji,jn+mytid)*tmask(jk,jj,ji)
+            tra(jk,jj,ji,jn+mytid) = 0.e0
 
             END DO
           END DO

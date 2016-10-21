@@ -97,10 +97,10 @@
 !         local
           character(LEN=7) :: nomevar
           character(LEN=27) :: nomefile
-          INTEGER(4) jn,jv,i,j
+          INTEGER(4) jn,jv,j,i
           real(8),allocatable,dimension(:,:) :: M1
 
-          allocate(M1(jpi,jpj))
+          allocate(M1(jpj,jpi))
           nomevar= '1234567'
           nomefile='BC/ATM_yyyy0107-00:00:00.nc'
 
@@ -120,10 +120,10 @@
               print *,nomevar
 
             !CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
-            print *,jpi,jpj,"2",jn_atm, allocated(atm_dtatrc),allocated(M1)
+            print *,jpj,jpi,"2",jn_atm, allocated(atm_dtatrc),allocated(M1)
             DO i=1,jpi
               DO j =1,jpj
-                 atm_dtatrc(i,j,2,jn) = M1(i,j)
+                 atm_dtatrc(j,i,2,jn) = M1(j,i)
               ENDDO
             ENDDO
           ENDDO
@@ -140,12 +140,12 @@
 
          REAL(8), INTENT(IN) :: zweigh
 !         local
-         INTEGER jn, jv,i,j
+         INTEGER jn, jv,j,i
 
          DO jn=1, jn_atm
            DO i=1,jpi
              DO j =1,jpj
-                 atm(i,j,jn) = (1. - zweigh) * atm_dtatrc(i,j,1,jn) + zweigh * atm_dtatrc(i,j,2,jn)
+                 atm(j,i,jn) = (1. - zweigh) * atm_dtatrc(j,i,1,jn) + zweigh * atm_dtatrc(j,i,2,jn)
              ENDDO
            ENDDO
          ENDDO
@@ -161,12 +161,12 @@
           IMPLICIT NONE
 
 !         local
-          INTEGER jn, jv,i,j
+          INTEGER jn, jv,j,i
 
           DO jn=1, jn_atm
             DO i=1,jpi
               DO j =1,jpj
-                  atm_dtatrc(i,j,1,jn)=atm_dtatrc(i,j,2,jn)
+                  atm_dtatrc(j,i,1,jn)=atm_dtatrc(j,i,2,jn)
               ENDDO
             ENDDO
           ENDDO

@@ -17,7 +17,7 @@
       REAL(8) conversion
 #if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm
 
-      INTEGER :: ji,jj,jk
+      INTEGER :: jk,jj,ji
       INTEGER :: mytid, ntids! omp variables
 
 #ifdef __OPENMP1
@@ -45,7 +45,7 @@
 ! ===============
 
       DO jj = 1,jpj,ntids
-!!!$omp parallel default(none) private(mytid,ji,jk)
+!!!$omp parallel default(none) private(mytid,jk,ji)
 !!!$omp&                       shared(jj,jpk,jpj,jpi,xpar,conversion,kef,e3t,qsr)
 #ifdef __OPENMP1
          mytid  = omp_get_thread_num()  ! take the thread ID
@@ -71,20 +71,20 @@
         DO jk = 2,jpk
           DO ji = 1,jpi
 
-            xEPS(ji,jk)          = kef(ji,mytid+jj)
-            xEPS(ji,jk)          = max(xEPS(ji,jk),1.D-15) ! avoid denormalized number
-            xpar(ji,mytid+jj,jk) = xpar(ji,mytid+jj,jk-1) *exp(-1. * xEPS(ji,jk-1)* e3t(ji,jj,jk-1))
-            xpar(ji,mytid+jj,jk) = max(xpar(ji,mytid+jj,jk),1.D-15) ! avoid denormalized number
+            xEPS(jk,ji)          = kef(ji,mytid+jj)
+            xEPS(jk,ji)          = max(xEPS(jk,ji),1.D-15) ! avoid denormalized number
+            xpar(jk,mytid+jj,ji) = xpar(jk,mytid+jj,ji-1) *exp(-1. * xEPS(jk-1,ji)* e3t(jk-1,jj,ji))
+            xpar(jk,mytid+jj,ji) = max(xpar(jk,mytid+jj,ji),1.D-15) ! avoid denormalized number
 
           END DO
         END DO
 
         DO jk = 1,jpk
           DO ji = 1,jpi
-            !a=xpar(ji,mytid+jj,jk)  xpar(ji,mytid+jj,jk) = max(a*exp(- xEPS(ji,jk)* 0.5D+00* e3t(jk) ), 1.D-15)
+            !a=xpar(jk,mytid+jj,ji)  xpar(jk,mytid+jj,ji) = max(a*exp(- xEPS(jk,ji)* 0.5D+00* e3t(jk) ), 1.D-15)
       
-            xpar(ji,mytid+jj,jk) = xpar(ji,mytid+jj,jk) * exp(- xEPS(ji,jk)* 0.5D+00* e3t(ji,jj,jk) )
-            xpar(ji,mytid+jj,jk) = max(xpar(ji,mytid+jj,jk),1.D-15)
+            xpar(jk,mytid+jj,ji) = xpar(jk,mytid+jj,ji) * exp(- xEPS(jk,ji)* 0.5D+00* e3t(jk,jj,ji) )
+            xpar(jk,mytid+jj,ji) = max(xpar(jk,mytid+jj,ji),1.D-15)
           END DO
         END DO
 

@@ -16,7 +16,7 @@
 #endif
 
 
-      INTEGER  :: ji,jj,jn
+      INTEGER  :: jj,jijn
       REAL(8)  :: ztra,zse3t
 
 #ifdef __OPENMP1
@@ -37,10 +37,10 @@
         DO jj = 1, jpj
             DO ji = 1, jpi
 
-               zse3t = 1. / e3t(ji,jj,1)
+               zse3t = 1. / e3t(1,jj,ji)
 
-                  ztra = 1./ rhopn(ji,jj,1) * zse3t * tmask(ji,jj,1) * emp(ji,jj) * trn(ji,jj,1,jn) ! original emps(ji,jj)
-                  tra(ji,jj,1,jn) = tra(ji,jj,1,jn) + ztra
+                  ztra = 1./ rhopn(1,jj,ji) * zse3t * tmask(1,jj,ji) * emp(jj,ji) * trn(1,jj,ji,jn) ! original emps(jj,ji)
+                  tra(1,jj,ji,jn) = tra(1,jj,ji,jn) + ztra
 
           END DO
         END DO

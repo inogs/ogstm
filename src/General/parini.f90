@@ -16,7 +16,7 @@
 
 ! local declarations
 ! ==================
-      INTEGER ji,jj,nn,ME
+      INTEGER jj,ji,nn,ME
 
       call COUNTLINE ('Dom_Dec_jpi.ascii', jpni)
       call COUNTWORDS('Dom_Dec_jpi.ascii', jpnj)
@@ -59,16 +59,16 @@
       ENDIF
 
 
-      allocate(ilcit(jpni, jpnj)) 
+      allocate(ilcit(jpnj,jpni)) 
        ilcit = huge(ilcit(1,1))
-      allocate(ilcjt(jpni, jpnj)) 
+      allocate(ilcjt(jpnj,jpni)) 
        ilcjt = huge(ilcjt(1,1))
 
       open(3333,file='Dom_Dec_jpi.ascii', form='formatted')
       open(3334,file='Dom_Dec_jpj.ascii', form='formatted')
       
-      read(3333,*) ((ilcit(ji,jj), jj=1,jpnj),ji=1,jpni)
-      read(3334,*) ((ilcjt(ji,jj), jj=1,jpnj),ji=1,jpni)
+      read(3333,*) ((ilcit(jj,ji), jj=1,jpnj),ji=1,jpni)
+      read(3334,*) ((ilcjt(jj,ji), jj=1,jpnj),ji=1,jpni)
       
       close(3333)
       close(3334)
@@ -77,8 +77,8 @@
         if(ME+1 .EQ. nn) then
           ji = 1 + mod(nn -1, jpni)
           jj = 1 + (nn -1)/jpni
-          jpi =  ilcit(ji,jj) 
-          jpj =  ilcjt(ji,jj)
+          jpi =  ilcit(jj,ji) 
+          jpj =  ilcjt(jj,ji)
         endif
       enddo
 
@@ -87,8 +87,6 @@
       jpkm1=jpk-1
       jpij=jpi*jpj
       jpkbm1=jpkb-1
-
-
 
 
       CLOSE(numnam)

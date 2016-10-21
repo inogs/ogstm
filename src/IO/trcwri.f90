@@ -18,7 +18,7 @@
 ! local declarations
 ! ==================
       REAL(8) ::  Miss_val =1.e20
-      INTEGER ji,jj,jk,jn
+      INTEGER jk,jj,ji,jn
       REAL(8) julian
 
 
@@ -70,7 +70,7 @@
             do jk =1 , jpk
             do jj =1 , jpj
             do ji =1 , jpi
-               if (tmask(ji,jj,jk).eq.1.0) buf(ji,jj, jk) = trn(ji,jj, jk, jn)
+               if (tmask(jk,jj,ji).eq.1.0) buf(jk,jj,ji) = trn(jk,jj,ji, jn)
             enddo
             enddo
             enddo
@@ -80,7 +80,7 @@
             do jk =1 , jpk
             do jj =1 , jpj
             do ji =1 , jpi
-               if (tmask(ji,jj,jk).eq.1.0) buf(ji,jj, jk) = trb(ji,jj, jk, jn)
+               if (tmask(jk,jj,ji).eq.1.0) buf(jk,jj,ji) = trb(jk,jj,ji, jn)
             enddo
             enddo
             enddo
@@ -137,9 +137,9 @@
             do jj =1 , jpj
             do ji =1 , jpi
                ind1 = ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-               if (tmask(ji,jj,jk).eq.1.0) then
-                  bufftrn(ind1)= trn(ji,jj, jk, jn)
-                  bufftrb(ind1)= trb(ji,jj, jk, jn)
+               if (tmask(jk,jj,ji).eq.1.0) then
+                  bufftrn(ind1)= trn(jk,jj,ji, jn)
+                  bufftrb(ind1)= trb(jk,jj,ji, jn)
                endif
 
             enddo

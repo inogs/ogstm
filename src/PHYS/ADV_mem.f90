@@ -2,7 +2,7 @@
 
        USE modul_param 
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        USE DIA_mem
 
 #ifdef Mem_Monitor
@@ -55,7 +55,7 @@
 #ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
 #else
-      ntids = mpi_pack_size
+      ntids =threads_pack_size
 #endif
 
        allocate(advmask(jpk,jpj,jpi))       

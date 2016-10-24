@@ -1,6 +1,7 @@
       SUBROUTINE CHECKVALUES
       use myalloc
-      use myalloc_mpp
+      use mpi
+      
 
       IMPLICIT NONE
 
@@ -36,7 +37,7 @@
 
       DO jn=1, jptra, ntids
 !!!$omp parallel default(none) private(mytid, ji,jj,jk,varname,maxV)
-!!!$omp&         shared(jn, jpk,jpj,jpi, tra, rank, tmask,ctrcnm,STR,ctrmax,isCheckLOG)
+!!!$omp&         shared(jn, jpk,jpj,jpi, tra, myrank, tmask,ctrcnm,STR,ctrmax,isCheckLOG)
 
 #ifdef __OPENMP1
        mytid = omp_get_thread_num()  ! take the thread ID
@@ -52,7 +53,7 @@
          DO ji = 1,jpi
             if (tra(jk,jj,ji,jn+mytid).gt.maxV) THEN
                 tra(jk,jj,ji,jn+mytid) = maxV*0.2 * tmask(jk,jj,ji)
-                if (isCheckLOG) write(*,320) STR, jk,jj,ji, '  rank-> ', rank,' tracer ',varname
+                if (isCheckLOG) write(*,320) STR, jk,jj,ji, '  myrank-> ', myrank,' tracer ',varname
 
             endif
          ENDDO

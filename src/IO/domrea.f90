@@ -18,10 +18,11 @@
 ! ======================
       USE calendar
       USE myalloc
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
       USE BC_mem
       USE DIA_mem
       USE TIME_MANAGER
+      USE mpi
 
       IMPLICIT NONE
 
@@ -179,7 +180,7 @@
 
       Gsize = COUNT_InSubDomain(Gsizeglo, gib_idxtglo)
 
-      write(*,*) 'domrea->Gsize   : ', Gsize, 'rank=', rank
+      write(*,*) 'domrea->Gsize   : ', Gsize, 'myrank=', myrank
 
 
       if (Gsize.NE.0) then
@@ -213,9 +214,9 @@
 
       ! if (Asize.NE. 0) then
       call alloc_DTATRC_local_atm
-      !    write(*,*) 'domrea->ATMRE_Indexing ATM iniziata, rank=', rank
+      !    write(*,*) 'domrea->ATMRE_Indexing ATM iniziata, myrank=', myrank
       !    B=ATMRe_Indexing()
-      !    write(*,*) 'domrea->ATMRE_Indexing ATM finita, rank=', rank
+      !    write(*,*) 'domrea->ATMRE_Indexing ATM finita, myrank=', myrank
       ! endif
 
 
@@ -230,23 +231,23 @@
 
       call MPI_ALLREDUCE(Fsize, FsizeMax, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
-      write(*,*) 'rank=', rank, ' Fsize = ' , Fsize,' FsizeMax = ' , FsizeMax
+      write(*,*) 'myrank=', myrank, ' Fsize = ' , Fsize,' FsizeMax = ' , FsizeMax
 
       if (Fsize.NE.0) then
          call alloc_DIA_local_flx
       end if
 
-      if (rank ==0) call alloc_DIA_GLOBAL_flx()
+      if (myrank ==0) call alloc_DIA_GLOBAL_flx()
 
       if (Fsize.NE.0) then
          B=FLXRe_Indexing()
-         write(*,*) 'domrea->FLXRE_Indexing finita, rank=', rank
+         write(*,*) 'domrea->FLXRE_Indexing finita, myrank=', myrank
 
       endif
 
       call alloc_DIA_MPI_flx()
 
-      write(*,*) 'DOMREA finita, rank = ', rank
+      write(*,*) 'DOMREA finita, myrank = ', myrank
 
 
       CONTAINS
@@ -259,7 +260,7 @@
       INTEGER FUNCTION COUNT_InSubDomain(sizeGLO,idxtGLOBAL)
           USE modul_param , ONLY: jpk,jpj,jpi
           USE myalloc     , ONLY: idxt
-          USE myalloc_mpp , ONLY: rank
+          ! epascolo USE myalloc_mpp , ONLY: myrank
 
           IMPLICIT NONE
           INTEGER, INTENT(IN) :: sizeGLO

@@ -24,8 +24,9 @@
 
 
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        USE BC_mem
+       use mpi
        IMPLICIT NONE
 
 !----------------------------------------------------------------------

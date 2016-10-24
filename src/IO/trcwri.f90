@@ -5,8 +5,10 @@
       USE IO_mem
       USE calendar
       USE TIME_MANAGER
+      use mpi
+      USE ogstm_mpi_module
 #ifdef key_mpp
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
 #endif
 
       IMPLICIT NONE
@@ -37,7 +39,7 @@
 
        julian=datestring2sec(datestring)
 
-       if(lwp)write(*,*) 'trcwri ------------  rank =',rank,' datestring = ',  datestring
+       if(lwp)write(*,*) 'trcwri ------------  myrank =',myrank,' datestring = ',  datestring
 
        trcwriparttime = MPI_WTIME() ! cronometer-start
 
@@ -48,7 +50,7 @@
       bufftrn = Miss_val
 
       DO jn=1,jptra
-        if(rank == 0) then
+        if(myrank == 0) then
            istart = nimpp
            jstart = njmpp
            iPd = nldi
@@ -90,7 +92,7 @@
 
 
 
-           do idrank = 1, mpi_size_comm-1
+           do idrank = 1,mpi_glcomm_size-1
 
               call MPI_RECV(jpi_rec , 1,                  mpi_integer, idrank,  1,mpi_comm_world, status, ierr)
               call MPI_RECV(jpj_rec , 1,                  mpi_integer, idrank,  2,mpi_comm_world, status, ierr)
@@ -130,7 +132,7 @@
 
 
 
-        else !rank != 0
+        else !myrank != 0
 
 
             do jk =1 , jpk
@@ -157,17 +159,17 @@
             call MPI_SEND(bufftrn  ,jpk*jpj*jpi,  mpi_real8, 0, 11, mpi_comm_world,ierr)
             call MPI_SEND(bufftrb  ,jpk*jpj*jpi,  mpi_real8, 0, 12, mpi_comm_world,ierr)
 
-        endif ! if rank = 0
+        endif ! if myrank = 0
 
 
-        if(rank == 0) then
+        if(myrank == 0) then
 
             varname=ctrcnm(jn)
             filename = 'RESTARTS/RST.'//datestring//'.'//varname//'.nc'
 
         CALL write_restart(filename,varname,julian)
 
-        endif ! if rank = 0
+        endif ! if myrank = 0
       END DO ! DO jn=1,jptra
 
 

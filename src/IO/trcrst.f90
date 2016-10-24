@@ -13,7 +13,7 @@
 
        USE calendar
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        USE TIME_MANAGER
        USE IO_MEM , ONLY : ave_counter_1, ave_counter_2, existFilebkp
 

@@ -1,11 +1,16 @@
+MODULE mod_tinbc
+
+USE myalloc
+USE BC_mem
+USE TIME_MANAGER
+USE calendar
+USE mpi
+
+implicit NONE
+
+contains      
+
       SUBROUTINE BC_TIN(datestring)
-
-
-       USE myalloc
-       USE myalloc_mpp
-       USE BC_mem
-       USE TIME_MANAGER
-       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) ::  datestring
 
@@ -85,11 +90,7 @@
 !     loads BC/TIN_yyyy0107-00:00:00.nc in BC_mem.riv_dtatrc(:,2,:)
 ! ******************************************************
       SUBROUTINE LOAD_TIN(datestring)
-          USE calendar
-          USE myalloc
-          USE myalloc_mpp
-          USE BC_mem
-          USE TIME_MANAGER
+
 
           IMPLICIT NONE
 
@@ -106,7 +107,7 @@
     !     Starting I/O
     !    **********************************************************
          nomefile  ='BC/TIN_'//datestring//'.nc'
-         if(lwp) write(*,'(A,I4,A,A)') "LOAD_TIN --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
+         if(lwp) write(*,'(A,I4,A,A)') "LOAD_TIN --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:27)
 
 
 
@@ -126,9 +127,7 @@
 ! ****************************************************
 
       SUBROUTINE actualize_TIN(zweigh)
-         USE myalloc
-         USE BC_mem
-         IMPLICIT NONE
+
 
          REAL(8), INTENT(IN) :: zweigh
 !         local
@@ -146,9 +145,6 @@
 
 ! ****************************************************
       SUBROUTINE swap_TIN
-          use myalloc ! oink oink
-          use BC_mem  ! for jn_riv, Rsize, riv_dtatrc
-          IMPLICIT NONE
 
 !         local
           INTEGER jn, jv
@@ -160,3 +156,5 @@
           ENDDO
 
       END SUBROUTINE swap_TIN
+
+END MODULE mod_tinbc

@@ -1,7 +1,8 @@
       SUBROUTINE trcdia(datemean, datefrom, dateend,FREQ_GROUP)
 
       USE myalloc
-      USE myalloc_mpp
+      use mpi
+      ! epascolo USE myalloc_mpp
       IMPLICIT NONE
 
 

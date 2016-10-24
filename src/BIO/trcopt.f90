@@ -6,7 +6,8 @@
 !!!                     ******************
 
        USE myalloc
-       USE myalloc_mpp
+       USE mpi
+       ! epascolo USE myalloc_mpp
        USE OPT_mem
        IMPLICIT NONE
 

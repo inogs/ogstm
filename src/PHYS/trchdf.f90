@@ -46,6 +46,7 @@
 !!!              differents keys for passive tracer
 !!!
 
+USE ogstm_mpi_module
 
 #ifdef key_trc_hdfbilap
 #include "trchdf.bilaplacian.h"

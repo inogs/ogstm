@@ -86,8 +86,8 @@
        IMPLICIT NONE
 !! local declarations
 !! ==================
-      INTEGER ji, jj
-      INTEGER iadv, istop, iwarn
+      INTEGER :: ji, jj
+      INTEGER :: iadv, istop, iwarn
 
 
 
@@ -127,7 +127,7 @@
        WRITE(numout,*) ' '
       END IF
  25   FORMAT( (100(4x,19i4,/)) )
-
+      print *,"jp",jpi,jpj
       IF ( mindi(jpi).GT.jpiglo .OR. mindj(jpj).GT.jpjglo ) THEN
           IF(lwp)WRITE(numout,9000)
           IF(lwp)WRITE(numout,*) ' subdomain greater than the initial'

@@ -35,10 +35,10 @@
 !!!   --------------
 
       USE myalloc
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
       USE BIO_mem
       USE BC_mem
-
+      USE mpi
        IMPLICIT NONE
 
 

@@ -39,9 +39,10 @@
 
 !!----------------------------------------------------------------------
       USE myalloc
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
       USE HDF_mem
       USE DIA_mem
+      use mpi
         IMPLICIT NONE
 !!----------------------------------------------------------------------
 !! local declarations
@@ -66,7 +67,7 @@
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
-      ntids = mpi_pack_size
+      ntids =threads_pack_size
       mytid = 0
 #endif
 

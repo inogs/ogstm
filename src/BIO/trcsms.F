@@ -21,7 +21,8 @@ CC      trcbio, trcsed, trcopt for NPZD or NNPZDDOM models
 
 
        USE myalloc
-       USE myalloc_mpp
+       USE mpi
+       ! epascolo USE myalloc_mpp
        IMPLICIT NONE
 
 

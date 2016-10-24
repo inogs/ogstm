@@ -22,8 +22,9 @@
 
 
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        USE TIME_MANAGER
+       use mpi
        IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) ::  datestring
@@ -125,7 +126,7 @@
 ! ======================
       USE calendar
       USE myalloc
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
       USE TIME_MANAGER
 
       IMPLICIT NONE
@@ -157,7 +158,7 @@
 ! Starting I/O
 ! U  *********************************************************
       nomefile = 'FORCINGS/U'//datestring//'.nc'
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", rank, " starting reading forcing fields from ", nomefile(1:30)
+      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf)
       
 

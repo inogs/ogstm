@@ -27,7 +27,7 @@
 
       SUBROUTINE readnc_slice_double(fileNetCDF,varname, M)
       USE myalloc
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
@@ -132,7 +132,7 @@
 
       SUBROUTINE readnc_slice_double_2d(fileNetCDF,varname, M)
       USE myalloc
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 

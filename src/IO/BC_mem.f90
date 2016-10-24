@@ -2,7 +2,7 @@
 
        USE modul_param
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
 
 #ifdef Mem_Monitor
        USE check_mem
@@ -41,7 +41,7 @@
 !     *******************************************************************
       SUBROUTINE alloc_DTATRC
       USE TIME_MANAGER
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
 
       INTEGER  :: err
       REAL(8)  :: aux_mem
@@ -79,7 +79,7 @@
        !CALL ioogsnc_idx(atmfile,nomedim0,Asizeglo)
 
 
-               write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' rank = ',rank
+               write(*,*) 'Size of vector Gib to allocate -->', Gsizeglo, ' myrank = ',myrank
            if (lwp) then
                write(*,*) 'Size of vector Riv to allocate -->', Rsizeglo
                write(*,*) 'Size of vector Atm to allocate -->', lat,lon

@@ -20,7 +20,7 @@
 MODULE OGSTM
 
       USE myalloc
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
       USE IO_mem
       USE FN_mem
       USE ADV_mem
@@ -33,7 +33,8 @@ MODULE OGSTM
       USE DIA_mem
       USE CALENDAR
       USE time_manager
-
+      USE mpi
+      use module_step
 #ifdef Mem_Monitor
       USE check_mem
       USE iso_c_binding
@@ -56,7 +57,7 @@ SUBROUTINE ogstm_launcher()
       timetosolution = MPI_Wtime()
 
       call ogstm_initialize()
-
+      stop
 
       call step
 
@@ -77,15 +78,14 @@ SUBROUTINE ogstm_initialize()
 
 ! local declarations
 ! ==================
-      INTEGER ME
-      INTEGER mynode
+     
       ! *********************************************
 
-      OPEN(UNIT=numout,FILE='ocean.output',FORM='FORMATTED')
+      OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
 
-      ME = mynode() !  Nodes selection
+      CALL mynode() !  Nodes selection
 
-      narea = ME+1
+      narea = myrank+1
       lwp = narea.EQ.1
 
       IF(lwp) THEN
@@ -108,7 +108,7 @@ SUBROUTINE ogstm_initialize()
           WRITE(numout,*) ' '
       ENDIF
 
-      call parini(ME)
+      call parini()
 
       call parlec      ! read namelist.init
       call time_init
@@ -164,45 +164,45 @@ SUBROUTINE ALLOC_ALL
        mem_all = get_mem(err)
 #endif
 
-      write(*,*)'My_Rank=',Rank,': Memory Allocation - Basal - (MB):',  mem_all 
+      write(*,*)'My_Rank=',myrank,': Memory Allocation - Basal - (MB):',  mem_all 
        mem_all_tot=mem_all_tot+mem_all
 
       call   alloc_tot() 
-       write(*,*)'My_Rank:',Rank,'alloc_init (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_init (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_OPT() 
-       write(*,*)'My_Rank:',Rank,'alloc_OPT  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_OPT  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_ADV() 
-       write(*,*)'My_Rank:',Rank,'alloc_ADV  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_ADV  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_HDF() 
-       write(*,*)'My_Rank:',Rank,'alloc_HDF  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_HDF  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_ZDF() 
-       write(*,*)'My_Rank:',Rank,'alloc_ZDF  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
 
 
 #ifdef key_trc_dmp
 !     needs Time_Manager
       call alloc_DTATRC()
-       write(*,*)'My_Rank:',Rank,'alloc_TRC  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_TRC  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
 #endif
       call alloc_DIA()   
-       write(*,*)'My_Rank:',Rank,'alloc_DIA  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_DIA  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
 
       call myalloc_BIO() 
-       write(*,*)'My_Rank:',Rank,'alloc_BIO  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_BIO  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_SED() 
-       write(*,*)'My_Rank:',Rank,'alloc_SED  (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_SED  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
 
       call myalloc_FN()  
-       write(*,*)'My_Rank:',Rank,'alloc_FN   (MB):', mem_all 
+       write(*,*)'My_Rank:',myrank,'alloc_FN   (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
 
 
@@ -210,10 +210,10 @@ SUBROUTINE ALLOC_ALL
       call MPI_ALLREDUCE(jpj_max, jpj, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
       call myalloc_IO()  
-       write(*,*)'My_Rank:',Rank,'alloc_IO   (MB):', mem_all 
-       mem_all_tot=mem_all_tot+mem_all
+      write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 
+      mem_all_tot=mem_all_tot+mem_all
 
-      write(*,*)'My_Rank,',Rank,'Total Allocated Memory (MB):',mem_all_tot
+      write(*,*)'My_Rank,',myrank,'Total Allocated Memory (MB):',mem_all_tot
 
 END SUBROUTINE ALLOC_ALL
 

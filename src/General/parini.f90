@@ -1,4 +1,4 @@
-      SUBROUTINE parini(ME)
+      SUBROUTINE parini()
 !---------------------------------------------------------------------
 !
 !                       ROUTINE parini
@@ -11,12 +11,12 @@
 
 
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        IMPLICIT NONE
 
 ! local declarations
 ! ==================
-      INTEGER jj,ji,nn,ME
+      INTEGER jj,ji,nn
 
       call COUNTLINE ('Dom_Dec_jpi.ascii', jpni)
       call COUNTWORDS('Dom_Dec_jpi.ascii', jpnj)
@@ -70,11 +70,12 @@
       read(3333,*) ((ilcit(jj,ji), jj=1,jpnj),ji=1,jpni)
       read(3334,*) ((ilcjt(jj,ji), jj=1,jpnj),ji=1,jpni)
       
+      print *,"******************* epascolo LOG i,j",ilcit,ilcjt
       close(3333)
       close(3334)
 
       do nn =1, jpni*jpnj
-        if(ME+1 .EQ. nn) then
+        if(myrank+1 .EQ. nn) then
           ji = 1 + mod(nn -1, jpni)
           jj = 1 + (nn -1)/jpni
           jpi =  ilcit(jj,ji) 

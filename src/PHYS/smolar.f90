@@ -1,8 +1,10 @@
       SUBROUTINE smolar
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        USE ADV_mem
        USE DIA_mem
+       use mpi
+       USE ogstm_mpi_module
           implicit none
 
 !!!                      trcadv.smolar.h
@@ -74,7 +76,7 @@
       mytid = -1000000
 
 #else
-      ntids = mpi_pack_size
+      ntids =threads_pack_size
       mytid = 0
 #endif
 
@@ -157,7 +159,7 @@
             END DO
          END DO
 
-         write(*,*) 'trcadv: RANK -> ', RANK, ' all_points -> ', allpoints
+         write(*,*) 'trcadv: RANK -> ', myrank, ' all_points -> ', allpoints
 
          goodpoints = 0
          DO jk = 1,jpk
@@ -193,7 +195,7 @@
             END DO
          END DO
 
-         write(*,*) 'trcadv: RANK -> ', RANK, ' good_points -> ', goodpoints
+         write(*,*) 'trcadv: RANK -> ', myrank, ' good_points -> ', goodpoints
 
          DO jk = 1,jpk
             DO jj = 2,jpjm1

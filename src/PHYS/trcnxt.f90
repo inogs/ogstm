@@ -47,15 +47,16 @@
 
 
        USE myalloc
-       USE myalloc_mpp
        USE FN_mem
        USE Time_Manager
+       use mpi
+       USE ogstm_mpi_module
 
       IMPLICIT NONE
 
 !! local declarations
 !! ==================
-      INTEGER pack_size
+      
 ! omp variables
       INTEGER :: mytid, ntids
 
@@ -65,14 +66,14 @@
       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
 #endif
 
-      INTEGER jk,jj,ji,jn,jp
+      INTEGER jk,jj,ji,jn,jp,pack_size
 
 
 #ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
       mytid = -1000000
 #else
-      ntids = mpi_pack_size
+      ntids =threads_pack_size
       mytid = 0
 #endif
 

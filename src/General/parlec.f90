@@ -24,7 +24,7 @@
 
 
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        IMPLICIT NONE
 
 ! local declarations
@@ -37,7 +37,7 @@
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux
       NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG
 
-      NAMELIST/MPI_config/ mpi_pack_size
+      NAMELIST/MPI_config/threads_pack_size
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 
@@ -195,7 +195,7 @@
 
 ! ... Namelist :MPI_config
 !     Deafault value
-      mpi_pack_size = 1
+     threads_pack_size = 1
 
       REWIND( numnam )
       READ  ( numnam, MPI_config )
@@ -203,7 +203,7 @@
       IF(lwp) THEN
       WRITE(numout,*) 'MPI_config'
       WRITE(numout,*) ' '
-      WRITE(numout,*) ' mpi_pack_size  :size of mpi packet -->  ',mpi_pack_size
+      WRITE(numout,*) 'threads_pack_size  :size of mpi packet -->  ',threads_pack_size
       WRITE(numout,*) ' '
       ENDIF
 

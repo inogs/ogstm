@@ -1,12 +1,17 @@
+MODULE mod_atmbc
+
+USE myalloc
+USE BC_mem
+USE TIME_MANAGER
+USE calendar
+USE mpi
+
+implicit NONE
+
+contains
+
       SUBROUTINE BC_ATM(datestring)
-
-
-       USE myalloc
-       USE myalloc_mpp
-       USE BC_mem
-       USE TIME_MANAGER
-       IMPLICIT NONE
-
+      
       character(LEN=17), INTENT(IN) ::  datestring
 
 ! local declarations
@@ -84,13 +89,6 @@
 !     loads BC/ATM_yyyy0107-00:00:00.nc in BC_mem.atm_dtatrc(:,2,:)
 ! ******************************************************
       SUBROUTINE LOAD_ATM(datestring)
-          USE calendar
-          USE myalloc
-          USE myalloc_mpp
-          USE BC_mem
-          USE TIME_MANAGER
-
-          IMPLICIT NONE
 
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
@@ -108,7 +106,7 @@
     !     Starting I/O
     !    **********************************************************
          nomefile(1:27)='BC/ATM_'//datestring//'.nc'
-         if(lwp) write(*,'(A,I4,A,A)') "LOAD_ATM --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
+         if(lwp) write(*,'(A,I4,A,A)') "LOAD_ATM --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:27)
 
           DO jn = 1, jn_atm
               M1 = 0
@@ -134,9 +132,7 @@
 ! ****************************************************
 
       SUBROUTINE actualize_ATM(zweigh)
-         USE myalloc
-         USE BC_mem
-         IMPLICIT NONE
+     
 
          REAL(8), INTENT(IN) :: zweigh
 !         local
@@ -156,9 +152,7 @@
 
 ! ****************************************************
       SUBROUTINE swap_ATM
-          use myalloc ! oink oink
-          use BC_mem  ! for jn_atm, Asize, atm_dtatrc
-          IMPLICIT NONE
+
 
 !         local
           INTEGER jn, jv,j,i
@@ -172,3 +166,5 @@
           ENDDO
 
       END SUBROUTINE swap_ATM
+
+END MODULE mod_atmbc

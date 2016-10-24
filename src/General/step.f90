@@ -1,4 +1,24 @@
-      SUBROUTINE step
+MODULE module_step
+
+      USE calendar
+      USE myalloc
+      ! epascolo USE myalloc_mpp
+      USE TIME_MANAGER
+      USE BC_mem
+      USE IO_mem, only: ave_counter_1, ave_counter_2
+      USE mpi
+      USE mod_atmbc
+      USE mod_cbc
+      USE mod_gibbc
+      USE mod_tinbc
+      USE ogstm_mpi_module
+
+
+ implicit NONE
+
+ contains
+ 
+ SUBROUTINE step
 !---------------------------------------------------------------------
 !
 !                       ROUTINE STEP
@@ -28,13 +48,6 @@
 
 !      trcstp, trcdia  passive tracers interface
 
-
-       USE calendar
-       USE myalloc
-       USE myalloc_mpp
-       USE TIME_MANAGER
-       USE BC_mem
-       USE IO_mem, only: ave_counter_1, ave_counter_2
        IMPLICIT NONE
 
 
@@ -209,13 +222,67 @@
       REAL(8) elapsedtime
 
       if (isFIRST) then
-         write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," rank->", rank
+         write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," myrank->", myrank
          isFirst=.false.
       else
-         write(*,250) string,elapsedtime,elapsedtime/nwritetrc," rank->", rank
+         write(*,250) string,elapsedtime,elapsedtime/nwritetrc," myrank->", myrank
       endif
       writeTemporization = .true.
 250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I3 )
       END FUNCTION writeTemporization
 
       END SUBROUTINE step
+
+
+      SUBROUTINE trcstp
+!---------------------------------------------------------------------
+!
+!                       ROUTINE trcstp
+!                     *****************
+!
+!  PURPOSE :
+!  ---------
+!	time loop of ogstm for passive tracer
+!
+!   METHOD :
+!   -------
+!      compute the well/spring evolution
+!
+!      compute the time evolution of tracers concentration
+!         with advection
+!         with horizontal diffusion
+!         with surface boundary condition
+!         with IMPLICIT vertical diffusion
+
+       ! epascolo USE myalloc_mpp
+       IMPLICIT NONE
+
+      trcstpparttime = MPI_WTIME() ! cronometer-start
+
+      CALL trcadv ! tracers: advection
+
+#    if defined key_trc_dmp
+      CALL trcdmp ! tracers: damping for passive tracers
+#    endif
+
+! tracers: horizontal diffusion IF namelist flags are activated
+! -----------------------------
+
+      IF (lhdf)   CALL trchdf
+
+
+! tracers: sink and source (must be  parallelized on vertical slab)
+! ------------------------
+      
+      CALL trcsms
+      CALL trczdf ! tracers: vertical diffusion
+      CALL snutel
+      CALL checkValues
+      CALL trcnxt ! tracers: fields at next time step
+
+      trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
+      trcstptottime = trcstptottime + trcstpparttime
+
+      END SUBROUTINE trcstp
+
+end module

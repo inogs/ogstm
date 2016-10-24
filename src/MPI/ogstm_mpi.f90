@@ -1,4 +1,14 @@
 
+MODULE ogstm_mpi_module
+
+USE myalloc
+USE mpi
+
+implicit NONE
+
+
+
+contains
 !! mpp routines
 !!
 !! mynode
@@ -31,37 +41,20 @@
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
 
-FUNCTION mynode()
+SUBROUTINE mynode
 
-       USE myalloc
-       USE myalloc_mpp
-
-!!----------------------------------------------------------------------
-
-        IMPLICIT NONE
-!!
+      INTEGER :: ierr
 #ifdef key_mpp_mpi
-!!
-!!MPI VERSION
-!!
-      INTEGER mynode,ierr
-!!        -------------
-!!        Enroll in MPI
-!!        -------------
-!!
 
-      CALL mpi_comm_rank(mpi_comm_world,rank,ierr)
-      CALL mpi_comm_size(mpi_comm_world,mpi_size_comm,ierr)
-
-      mynode=rank
-      RETURN
-#  else
-      INTEGER mynode
-      mynode=0
-      RETURN
+      CALL mpi_comm_rank(mpi_comm_world,myrank,ierr)
+      CALL mpi_comm_size(mpi_comm_world,mpi_glcomm_size,ierr)
+      
+#else
+      mpi_glcomm_size = 1
+      myrank = 1     
 #endif
 
-END FUNCTION
+END SUBROUTINE
 
      
 !!!---------------------------------------------------------------------
@@ -141,11 +134,6 @@ END FUNCTION
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
  SUBROUTINE mpplnk_my(ptab,packsize,ktype,ksgn)
-
-      USE myalloc
-      USE myalloc_mpp
-
-        IMPLICIT NONE
 
 
 !!----------------------------------------------------------------------
@@ -921,10 +909,6 @@ END SUBROUTINE
 !!----------------------------------------------------------------------
  SUBROUTINE mpplnk2(ptab,ktype,ksgn)
 
-      USE myalloc
-      USE myalloc_mpp
-
-        IMPLICIT NONE
 
 !!----------------------------------------------------------------------
 !!
@@ -1383,12 +1367,6 @@ END SUBROUTINE
 SUBROUTINE mppsend(ktyp,pmess,kbytes,kdest,kid,ireqsend)
 
 
-      USE myalloc
-      USE myalloc_mpp
-
-
-        IMPLICIT NONE
-
       REAL(8) pmess(*)
       INTEGER kbytes,kdest,ktyp,kid, ireqsend
 
@@ -1436,14 +1414,6 @@ END SUBROUTINE
 
  SUBROUTINE mpprecv(ktyp,pmess,kbytes,ireqrecv)
 
-
-      USE myalloc
-      USE myalloc_mpp
-
-
-      IMPLICIT NONE
-
-
       REAL(8) pmess(*)
       INTEGER   kbytes,ktyp, ireqrecv
 
@@ -1472,13 +1442,9 @@ END SUBROUTINE
 !!      argument
 !!----------------------------------------------------------------------
 SUBROUTINE mppwait(req)
-
-      USE myalloc
-      USE myalloc_mpp
-        IMPLICIT NONE
-
-      integer req
       INTEGER istatus(mpi_status_size), ierr
+      integer req
+      
 
 
 #ifdef key_mpp_mpi
@@ -1505,13 +1471,6 @@ END SUBROUTINE
 !!----------------------------------------------------------------------
 SUBROUTINE mppsync()
 
-
-
-      USE myalloc
-      USE myalloc_mpp
-
-
-        IMPLICIT NONE
 !!----------------------------------------------------------------------
 
 #ifdef key_mpp_mpi
@@ -1535,9 +1494,6 @@ SUBROUTINE mppstop
 !!!     Stop massilively parallel processors method
 !!
 
-      USE myalloc
-      USE myalloc_mpp
-      IMPLICIT NONE
 
       INTEGER info
 
@@ -1547,3 +1503,5 @@ SUBROUTINE mppstop
 
       RETURN
 END SUBROUTINE
+
+END MODULE ogstm_mpi_module

@@ -34,7 +34,7 @@
 /
 
 &MPI_config
-      mpi_pack_size =1
+     threads_pack_size =1
 /
 &Domain_Characteristic
       jperio=0  

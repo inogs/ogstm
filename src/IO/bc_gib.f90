@@ -1,11 +1,16 @@
+MODULE mod_gibbc
+
+USE myalloc
+USE BC_mem
+USE TIME_MANAGER
+USE calendar
+USE mpi
+
+implicit NONE
+
+contains      
+      
       SUBROUTINE BC_GIB(datestring)
-
-
-       USE myalloc
-       USE myalloc_mpp
-       USE BC_mem
-       USE TIME_MANAGER
-       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) ::  datestring
 
@@ -86,13 +91,7 @@
 !     loads BC/GIB_yyyy0107-00:00:00.nc in BC_mem.gib_dtatrc(:,2,:)
 ! ******************************************************
       SUBROUTINE LOAD_GIB(datestring)
-          USE calendar
-          USE myalloc
-          USE myalloc_mpp
-          USE BC_mem
-          USE TIME_MANAGER
-
-          IMPLICIT NONE
+         
 
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
@@ -108,11 +107,11 @@
     !     Starting I/O
     !    **********************************************************
           nomefile = 'BC/GIB_'//datestring//'.nc'
-          if(lwp) write(*,'(A,I4,A,A)') "LOAD_GIB --> I am ", rank, " starting reading forcing fields from ",nomefile(1:27)
+          if(lwp) write(*,'(A,I4,A,A)') "LOAD_GIB --> I am ", myrank, " starting reading forcing fields from ",nomefile(1:27)
 
           DO jn = 1, jn_gib
               nomevar = 'gib_'//ctrcnm(tra_matrix_gib(jn))
-              if(lwp) write(*,*) "LOAD_GIB --> I am ", rank,'name var is ', nomevar(1:7)
+              if(lwp) write(*,*) "LOAD_GIB --> I am ", myrank,'name var is ', nomevar(1:7)
               !CALL ioogsnc_bc_1d2(nomefile,nomevar, Gsizeglo,gib_aux)
               CALL readnc_double_1d(nomefile,nomevar, Gsizeglo,gib_aux)
 
@@ -127,9 +126,6 @@
 ! ****************************************************
 
       SUBROUTINE actualize_GIB(zweigh)
-         USE myalloc
-         USE BC_mem
-         IMPLICIT NONE
 
          REAL(8), INTENT(IN) :: zweigh
 !         local
@@ -147,9 +143,6 @@
 
 ! ****************************************************
       SUBROUTINE swap_GIB
-          use myalloc ! oink oink
-          use BC_mem  ! for jn_gib, Gsize, gib_dtatrc
-          IMPLICIT NONE
 
 !         local
           INTEGER jn, jv
@@ -161,3 +154,5 @@
           ENDDO
 
       END SUBROUTINE swap_GIB
+
+END MODULE mod_gibbc

@@ -16,8 +16,9 @@
 !!----------------------------------------------------------------------
 
        USE myalloc
-       USE myalloc_mpp
+       ! epascolo USE myalloc_mpp
        USE FN_mem
+       use mpi
 
        IMPLICIT NONE
 

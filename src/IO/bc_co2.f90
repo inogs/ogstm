@@ -1,10 +1,17 @@
+MODULE mod_cbc
+
+USE myalloc
+USE BIO_mem
+USE TIME_MANAGER
+USE calendar
+USE mpi
+
+implicit NONE
+
+contains
+
       SUBROUTINE BC_CO2(datestring)
-
-
-       USE myalloc
-       USE myalloc_mpp
-       USE BIO_mem
-       USE TIME_MANAGER
+       
        IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) ::  datestring
@@ -84,11 +91,8 @@
 !     loads BC/CO2_yyyy0107-00:00:00.nc in BC_mem.co2_dtatrc(:,2,:)
 ! ******************************************************
       SUBROUTINE LOAD_CO2(datestring)
-          USE calendar
-          USE myalloc
-          USE myalloc_mpp
-          USE BIO_mem
-          USE TIME_MANAGER
+         
+         
 
           IMPLICIT NONE
 
@@ -103,7 +107,7 @@
     !     Starting I/O
     !    **********************************************************
          nomefile(1:27)='BC/CO2_'//datestring//'.nc'
-         if(lwp) write(*,'(A,I4,A,A)') "LOAD_CO2 --> I am ", rank, " starting reading forcing fields from ", nomefile(1:27)
+         if(lwp) write(*,'(A,I4,A,A)') "LOAD_CO2 --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:27)
 
          call readnc_slice_float_2d(nomefile,'CO2',buf2)
        co2_IO(:,:,2) = buf2*tmask(:,:,1)
@@ -119,8 +123,7 @@
 !     x(1)*(1-zweigh) + x(2)*zweigh
 ! ******************************************************
       SUBROUTINE ACTUALIZE_CO2(zweigh)
-         USE myalloc
-         USE BIO_mem
+        
          IMPLICIT NONE
 
          REAL(8), INTENT(IN) :: zweigh
@@ -142,8 +145,7 @@
 
 
       SUBROUTINE swap_CO2
-         USE myalloc
-         USE BIO_mem
+         
          IMPLICIT NONE
 
 
@@ -158,3 +160,4 @@
 
       END SUBROUTINE swap_CO2
 
+END MODULE mod_cbc

@@ -3,7 +3,8 @@
 
       USE DIA_mem
       USE netcdf
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
+      use mpi
       USE IO_mem, only: ave_counter_1
 
       IMPLICIT NONE
@@ -28,7 +29,7 @@
       flx_partTime = MPI_WTIME()
 
 !!!!!!!!!!!!!!!!!!PROCESSOR ZERO COLLECTS ALL FLUXES AND DUMPS  ON NETCDF FILE
-      if (rank ==0) then
+      if (myrank ==0) then
 !     Rank Zero only create netcdf file
 !     1234567890123456789012345
 !     flux.20021216-12:00:00.nc
@@ -80,7 +81,7 @@
           endif
 
 
-          do idrank = 1, mpi_size_comm-1
+          do idrank = 1,mpi_glcomm_size-1
 
               call MPI_RECV(INDflxBuff    , FsizeMax,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr)
 
@@ -128,7 +129,7 @@
 
               endif
 
-              DO idrank = 1, mpi_size_comm-1
+              DO idrank = 1,mpi_glcomm_size-1
 
                   call MPI_RECV(INDflxBuff    , FsizeMax,    mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
                   call MPI_RECV(diaflxBuff    , FsizeMax*7,  mpi_real8,   idrank, 3,mpi_comm_world, status, ierr)
@@ -148,7 +149,7 @@
                   END DO
 
 
-              ENDDO ! loop on rank for each tracers
+              ENDDO ! loop on myrank for each tracers
 
       !************************ now, put var
 
@@ -212,7 +213,7 @@
               call MPI_SEND(diaflxBuff  , FsizeMax*7, mpi_real8, 0, 3, mpi_comm_world, status, ierr)
 
 
-          END DO ! loop on rank for each tracers
+          END DO ! loop on myrank for each tracers
 
 
       endif !

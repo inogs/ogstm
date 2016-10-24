@@ -5,8 +5,10 @@
       USE IO_mem
       USE FN_mem
       USE TIME_MANAGER
+      use mpi
+      USE ogstm_mpi_module
 #ifdef key_mpp
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
 #endif
 
       IMPLICIT NONE
@@ -59,10 +61,10 @@
 !      PHYSICS FIRST!!
       if ( freq_ave_phys.eq.FREQ_GROUP) then
       ! *************** START COLLECTING DATA *****************************
-      if (rank == 0) then                    ! IF LABEL 1
+      if (myrank == 0) then                    ! IF LABEL 1
 
 
-! ******* rank 0 sets indexes of tot matrix where to place its own part
+! ******* myrank 0 sets indexes of tot matrix where to place its own part
 
           iPd    = nldi
           iPe    = nlei
@@ -92,8 +94,8 @@
           totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
           tote3tIO (totistart:totiend, totjstart:totjend,:) = e3tIO   (relistart:reliend, reljstart:reljend, :)
 
-          do idrank = 1, mpi_size_comm-1
-! **************  rank 0 is receiving from the others their buffer  ****
+          do idrank = 1,mpi_glcomm_size-1
+! **************  myrank 0 is receiving from the others their buffer  ****
 
               call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
               call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
@@ -116,7 +118,7 @@
       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
       call MPI_RECV(buffe3t ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
 
-! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
+! ******* myrank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
               jrange    = jPe - jPd + 1
               totistart = istart + iPd - 1 
@@ -156,7 +158,7 @@
           enddo !idrank = 1, size-1
 
 
-      else  ! IF LABEL 1,  if(rank == 0)
+      else  ! IF LABEL 1,  if(myrank == 0)
 
 
            do jk =1 , jpk
@@ -207,12 +209,12 @@
 
 
 
-      endif ! IF LABEL 1, if(rank == 0)
+      endif ! IF LABEL 1, if(myrank == 0)
 !************* END COLLECTING DATA  *****************
 
 ! *********** START WRITING **************************
 
-      if(rank == 0) then ! IF LABEL 4,
+      if(myrank == 0) then ! IF LABEL 4,
          if (IsBackup) then
 
             call PhysDump_bkp(forcing_file, datefrom, dateTo,ave_counter)
@@ -232,8 +234,8 @@
 
           if (.not.is_time_to_save(jn,FREQ_GROUP,2)) CYCLE
           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
-      if (rank == 0) then
-  ! ******* rank 0 sets indexes of tot matrix where to place its own part
+      if (myrank == 0) then
+  ! ******* myrank 0 sets indexes of tot matrix where to place its own part
 
              iPd    = nldi
              iPe    = nlei
@@ -258,8 +260,8 @@
               tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO(     relistart:reliend,reljstart:reljend,jn)
               endif
 
-             do idrank = 1, mpi_size_comm-1
-! **************  rank 0 is receiving from the others their buffer  ****
+             do idrank = 1,mpi_glcomm_size-1
+! **************  myrank 0 is receiving from the others their buffer  ****
 
                 call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 32,mpi_comm_world, status, ierr) !* first info to know where idrank is working
                 call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 33,mpi_comm_world, status, ierr)
@@ -272,7 +274,7 @@
 
                 call MPI_RECV(buffDIA2d,jpi_rec*jpj_rec      ,mpi_real8,idrank, 40,mpi_comm_world, status, ierr)
 
-! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
+! ******* myrank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
                 jrange    = jPe - jPd + 1
                 totistart = istart + iPd - 1 
@@ -325,7 +327,7 @@
 
       ENDIF
 
-      if (rank == 0) then
+      if (myrank == 0) then
               var        =  dianm_2d(jn)
               bkpname     = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
               dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
@@ -340,7 +342,7 @@
       
 
               endif
-      end if ! if(rank == 0)
+      end if ! if(myrank == 0)
 
          if (.not.IsBackup) then
              if (FREQ_GROUP.eq.2) then
@@ -360,10 +362,10 @@
           if (.not.is_time_to_save(jn,FREQ_GROUP,3)) CYCLE
           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
-          if (rank == 0) then                    ! IF LABEL 1
+          if (myrank == 0) then                    ! IF LABEL 1
 
 
-! ******* rank 0 sets indexes of tot matrix where to place its own part
+! ******* myrank 0 sets indexes of tot matrix where to place its own part
 
              iPd    = nldi
              iPe    = nlei
@@ -387,8 +389,8 @@
       else
       tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
       endif
-             do idrank = 1, mpi_size_comm-1
-! **************  rank 0 is receiving from the others their buffer  ****
+             do idrank = 1,mpi_glcomm_size-1
+! **************  myrank 0 is receiving from the others their buffer  ****
 
                 call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 22,mpi_comm_world, status, ierr) !* first info to know where idrank is working
                 call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 23,mpi_comm_world, status, ierr)
@@ -401,7 +403,7 @@
 
                 call MPI_RECV(buffDIA  ,jpi_rec*jpj_rec*jpk*jptra_dia,mpi_real8,idrank, 30,mpi_comm_world, status, ierr)
 
-! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
+! ******* myrank 0 sets indexes of tot matrix where to place buffers of idrank
                 irange    = iPe - iPd + 1
                 jrange    = jPe - jPd + 1
                 totistart = istart + iPd - 1 
@@ -427,7 +429,7 @@
              enddo !idrank = 1, size-1
 
 
-          else  ! IF LABEL 1,  if(rank == 0)
+          else  ! IF LABEL 1,  if(myrank == 0)
 
       if (FREQ_GROUP.eq.2) then
             do jk =1, jpk
@@ -464,12 +466,12 @@
 
 
 
-      endif ! IF LABEL 1, if(rank == 0)
+      endif ! IF LABEL 1, if(myrank == 0)
 !************* END COLLECTING DATA  *****************
 
 ! *********** START WRITING **************************
 
-      if (rank == 0) then
+      if (myrank == 0) then
               var        =  dianm(jn)
               bkpname     = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
               dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
@@ -486,7 +488,7 @@
               endif
 
 
-      end if ! IF LABEL 4  if(rank == 0)
+      end if ! IF LABEL 4  if(myrank == 0)
          if (.not.IsBackup) then
              if (FREQ_GROUP.eq.2) then
                 tra_DIA_IO(:,:,:,jn) = 0.

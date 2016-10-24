@@ -2,8 +2,9 @@
       USE myalloc
       USE IO_mem
       USE FN_mem
+      use mpi
 #ifdef key_mpp
-      USE myalloc_mpp
+      ! epascolo USE myalloc_mpp
 #endif
 
       implicit none

@@ -53,11 +53,11 @@
       !CALL OPA_elements(elements,nelements,idx_element)
 
       !allocate(TOT    (jpj*jpi,elements)) 
-       TOT        = huge(TOT(1,1))        ! elements is the number of element considered (C,P,N,...)
+      ! TOT        = huge(TOT(1,1))        ! elements is the number of element considered (C,P,N,...)
       !allocate(TOT_FN (jpj*jpi,elements)) 
-       TOT_FN     = huge(TOT_FN(1,1))
+      ! TOT_FN     = huge(TOT_FN(1,1))
       !allocate(FN_CORR(jpj*jpi,elements)) 
-       FN_CORR    = huge(FN_CORR(1,1))
+      ! FN_CORR    = huge(FN_CORR(1,1))
 
 
       allocate(cou_FN(jpk,jpj,jpi))       

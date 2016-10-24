@@ -83,6 +83,7 @@
 !!      c a u t i o n : FILE name must not exceed 21 characters
 
        USE myalloc
+       USE modul_param
        IMPLICIT NONE
 !! local declarations
 !! ==================

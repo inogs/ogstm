@@ -50,6 +50,7 @@
        dimen_jvhdf3=0
 
        allocate(jarr_hdf(3,jpk*jpj*jpi,2))  
+       
        jarr_hdf     = huge(jarr_hdf(1,1,1))
        allocate(jarr_hdf_flx(jpk*jpj*jpi))  
        jarr_hdf_flx = huge(jarr_hdf_flx(1))

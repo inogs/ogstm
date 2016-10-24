@@ -11,6 +11,7 @@
 
 
        USE myalloc
+       USE modul_param
        ! epascolo USE myalloc_mpp
        IMPLICIT NONE
 
@@ -70,7 +71,7 @@
       read(3333,*) ((ilcit(jj,ji), jj=1,jpnj),ji=1,jpni)
       read(3334,*) ((ilcjt(jj,ji), jj=1,jpnj),ji=1,jpni)
       
-      print *,"******************* epascolo LOG i,j",ilcit,ilcjt
+      
       close(3333)
       close(3334)
 
@@ -78,10 +79,12 @@
         if(myrank+1 .EQ. nn) then
           ji = 1 + mod(nn -1, jpni)
           jj = 1 + (nn -1)/jpni
+          
           jpi =  ilcit(jj,ji) 
           jpj =  ilcjt(jj,ji)
         endif
       enddo
+         
 
       jpim1=jpi-1
       jpjm1=jpj-1

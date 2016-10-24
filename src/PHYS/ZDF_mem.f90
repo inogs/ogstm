@@ -42,7 +42,7 @@
 #endif
        dimen_jvzdf=0
 
-       allocate(jarr_zdf(2, jpi*jpj))      
+       allocate(jarr_zdf(2, jpi*jpj))    
         jarr_zdf     = huge(jarr_zdf(1,1))
        allocate(jarr_zdf_flx(jpi*jpj,jpk)) 
         jarr_zdf_flx = huge(jarr_zdf_flx(1,1))

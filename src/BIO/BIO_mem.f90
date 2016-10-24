@@ -45,7 +45,8 @@
        surf_mask = huge(surf_mask(1))
        allocate(co2(jpj,jpi))          
        co2       = huge(co2(1,1))
-       allocate(co2_IO(jpj,jpi,2))     
+       allocate(co2_IO(jpj,jpi,2))    
+        
        co2_IO    = huge(co2_IO(1,1,1))
        allocate(sediPI(jpk,jpj,jpi,4)) 
        sediPI    = huge(sediPI(1,1,1,1))

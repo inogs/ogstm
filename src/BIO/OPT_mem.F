@@ -22,7 +22,7 @@
       REAL(8), allocatable :: zpar0m(:),zpar100(:) 
       REAL(8), allocatable :: kef(:,:)
       REAL(8), allocatable :: kextIO(:,:,:)
-!      REAL(4), allocatable :: zkef_f (:,:)
+      REAL(4), allocatable :: zkef_f (:,:)
 !!!$omp threadprivate (zpar0m,zpar100, zpar, xEPS)
 !----------------------------------------------------------------------
       CONTAINS
@@ -34,8 +34,8 @@
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
 #endif
-
        allocate(itabe(jpi))         
+      
        itabe   = huge(itabe(1))
        allocate(imaske(jpk,jpi))   
        imaske  = huge(imaske(1,1))

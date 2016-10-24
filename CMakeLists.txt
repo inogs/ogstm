@@ -5,7 +5,7 @@
 cmake_minimum_required (VERSION 2.6)
 project (OGSTM)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
-enable_language(Fortran)
+enable_language(Fortran C)
 set (NETCDF_F90 "YES")
 find_package(MPI REQUIRED)
 find_package(NetCDF REQUIRED)

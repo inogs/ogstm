@@ -161,7 +161,9 @@ SUBROUTINE ALLOC_ALL
       mem_all=0
 
 #ifdef Mem_Monitor
+
        mem_all = get_mem(err)
+       print *,"mem_all",mem_all
 #endif
 
       write(*,*)'My_Rank=',myrank,': Memory Allocation - Basal - (MB):',  mem_all 
@@ -204,10 +206,10 @@ SUBROUTINE ALLOC_ALL
       call myalloc_FN()  
        write(*,*)'My_Rank:',myrank,'alloc_FN   (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
-
-
-      call MPI_ALLREDUCE(jpi_max, jpi, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
-      call MPI_ALLREDUCE(jpj_max, jpj, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
+      
+      
+      call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
+      call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
       call myalloc_IO()  
       write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 

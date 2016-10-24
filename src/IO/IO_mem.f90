@@ -52,7 +52,7 @@
        aux_mem = get_mem(err)
 #endif
        print *,"-IO MEM 53-",jpi_max," ",jpj_max," ",jpk
-       allocate(buffglamt (jpi_max* jpj_max))      
+       allocate(buffglamt (jpi_max* jpj_max))    
         buffglamt = huge(buffglamt(1))
        allocate(buffgphit (jpi_max* jpj_max))      
         buffgphit = huge(buffgphit(1))

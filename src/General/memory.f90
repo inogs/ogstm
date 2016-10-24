@@ -371,9 +371,9 @@
       CONTAINS
 
 
-! *******************************************************************
+!*******************************************************************
 
-       subroutine myalloc_BFM()
+subroutine myalloc_BFM()
       INTEGER  :: err
       REAL(8)  :: aux_mem
 
@@ -388,12 +388,14 @@
       mem_all=get_mem(err) - aux_mem
 #endif
 
-       end subroutine myalloc_BFM
+end subroutine myalloc_BFM
+!*******************************************************************
 
-      subroutine alloc_tot()
+subroutine alloc_tot()
 
       INTEGER  :: err
       REAL(8)  :: aux_mem
+
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
 #endif
@@ -402,7 +404,6 @@
       ncpu = 1
       nimpp=1
       njmpp=1
-
 
       allocate(mindi(jpi))    
       mindi  = huge(mindi(1))

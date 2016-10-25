@@ -103,14 +103,14 @@ C
 C
       zidom=nreci
       DO ji=1,jpni
-        zidom = zidom + ilcit(ji,1) - nreci
+        zidom = zidom + ilcit(1,ji) - nreci
       END DO
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,*)" sum ilcit(i,1)=",zidom," jpiglo=",jpiglo
 C
       zjdom=nrecj
       DO jj=1,jpnj
-        zjdom = zjdom + ilcjt(1,jj) - nrecj
+        zjdom = zjdom + ilcjt(jj,1) - nrecj
       END DO
       IF(lwp)WRITE(numout,*)" sum ilcit(1,j)=",zjdom," jpjglo=",jpjglo
       IF(lwp)WRITE(numout,*)

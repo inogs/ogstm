@@ -105,7 +105,7 @@
 
 
 
-        LIM_THETA =  0.02/2 !THETA/k k can be varied
+        LIM_THETA =  0.02/10 !THETA/k k can be varied
 
         PVar='P'//CTYPE//'p'
         NVar='P'//CTYPE//'n'

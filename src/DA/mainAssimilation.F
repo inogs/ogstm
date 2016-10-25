@@ -30,6 +30,7 @@
       VARFILE   = 'DA_static_data/MISFIT/VAR2D/var2D.' // MONTH // '.nc'
       EOF_FILE  = 'DA_static_data/3D_VAR/EOF/eof.'  // MONTH // '.nc'
       GRID_FILE = 'DA_static_data/3D_VAR/GRID/BFM_grid.nc'
+      RCORR_FILE = 'DA_static_data/3D_VAR/gradsal.nc'
 
       MISFIT_FILE='DA__FREQ_1/'// DAY // '.chl_mis.nc'
       CORR_FILE = 'DA__FREQ_1/'// DAY // '_corr.nc'

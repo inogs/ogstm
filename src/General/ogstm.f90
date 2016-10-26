@@ -293,7 +293,7 @@ SUBROUTINE time_init
         endif
 END SUBROUTINE time_init
 
-
+! *************************************************************
 
 SUBROUTINE photo_init
        

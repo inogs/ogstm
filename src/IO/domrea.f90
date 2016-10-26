@@ -105,11 +105,11 @@
 !      Initialization of mbathy
       mbathy(:,:) = 0
       NWATERPOINTS=0
-      do jj=1, jpj
-       do ii=1, jpi
+     do ii=1, jpi
+       do jj=1, jpj
         do kk=1, jpk
          if (tmask(kk,jj,ii).NE.0.) then
-            mbathy(jj,ii) = mbathy(ii,jj) +1
+            mbathy(jj,ii) = mbathy(jj,ii) +1
             NWATERPOINTS = NWATERPOINTS +1
          endif
         enddo
@@ -132,9 +132,9 @@
       CALL readnc_slice_double (maskfile,'e3v', e3v )
       CALL readnc_slice_double (maskfile,'e3w', e3w )
 
-      flxdta(:,:,8 ,2)  = e3u(:,:,1)
-      flxdta(:,:,9 ,2)  = e3v(:,:,1)
-      flxdta(:,:,10 ,2) = e3t(:,:,1)
+      flxdta(:,:,8 ,2)  = e3u(1,:,:)
+      flxdta(:,:,9 ,2)  = e3v(1,:,:)
+      flxdta(:,:,10 ,2) = e3t(1,:,:)
 
 
 !       Restoration Mask ****************
@@ -433,15 +433,15 @@
           counter=0
           if (atlantic_bfm) then
 
-               do kk =1, jpkb-1
-                do jj =1, jpj-1
                  do ii =2, jpi-1
+                do jj =1, jpj-1
+               do kk =1, jpkb-1
 
                    if (tmask(kk,jj,ii).EQ.1.0 ) then
                       counter = counter + 1
-                      BFMpoints(1,counter) = ii
+                      BFMpoints(1,counter) = kk
                       BFMpoints(2,counter) = jj
-                      BFMpoints(3,counter) = kk
+                      BFMpoints(3,counter) = ii
 
                    endif
 
@@ -456,9 +456,9 @@
 
                    if ( (tmask(kk,jj,ii).EQ.1.0 ) .and. (resto(kk,jj,ii,1).eq.0.0 )) then
                       counter = counter + 1
-                      BFMpoints(1,counter) = ii
+                      BFMpoints(1,counter) = kk
                       BFMpoints(2,counter) = jj
-                      BFMpoints(3,counter) = kk
+                      BFMpoints(3,counter) = ii
 
                    endif
 

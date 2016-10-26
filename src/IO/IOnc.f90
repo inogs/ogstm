@@ -23,7 +23,7 @@
        END SUBROUTINE EXISTVAR
 
 
-! *****************************************************************************
+! ! *****************************************************************************
 
       SUBROUTINE readnc_slice_double(fileNetCDF,varname, M)
       USE myalloc
@@ -32,15 +32,16 @@
       implicit none
 
 
-      character fileNetCDF*(*) ,varname*(*)
-      integer ncid, stat, VARid
-
+      character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      double precision,intent(inout) ::  M(jpk,jpj,jpi)
+      
+      double precision,allocatable,dimension(:,:,:) :: copy_in
+      integer ncid, stat, VARid,i,j,k
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpk,jpj,jpi)
 
+      allocate(copy_in(jpi,jpj,jpk))
       counter = 0
-      
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
@@ -48,35 +49,44 @@
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_inq_varid (ncid, varname, VARid)      
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
       call handle_err2(stat, fileNetCDF,varname)        
-        call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_close(ncid)                           
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
+
+      DO i=1,jpi
+        DO j=1,jpj
+          DO k=1,jpk
+            M(k,j,i) = copy_in(i,j,k)
+          ENDDO
+        ENDDO
+      ENDDO   
+
+       deallocate(copy_in)
 
       END SUBROUTINE readnc_slice_double
 
 ! ********************************************************************************************
-! ********************************************************************************************
-! ********************************************************************************************
 
       SUBROUTINE readnc_slice_float(fileNetCDF,varname, M)
       USE myalloc
+      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
 
-      character fileNetCDF*(*) ,varname*(*)
-      integer ncid, stat, VARid
-
+      character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      double precision,intent(inout) ::  M(jpk,jpj,jpi)
+      
+      double precision,allocatable,dimension(:,:,:) :: copy_in
+      integer ncid, stat, VARid,i,j,k
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpk,jpj,jpi)
-      real(4) F(jpk,jpj,jpi)
 
+      allocate(copy_in(jpi,jpj,jpk))
       counter = 0
-      
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
@@ -84,45 +94,64 @@
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_inq_varid (ncid, varname, VARid)      
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,F,start, thecount)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
       call handle_err2(stat, fileNetCDF,varname)        
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_close(ncid)                           
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
 
-      M = real(F,8)
+      DO i=1,jpi
+        DO j=1,jpj
+          DO k=1,jpk
+            M(k,j,i) = real(copy_in(i,j,k),8)
+          ENDDO
+        ENDDO
+      ENDDO   
       
-
+      deallocate(copy_in)
 
       END SUBROUTINE readnc_slice_float
+
+! ********************************************************************************************
 
       SUBROUTINE readnc_slice_int(fileNetCDF,varname, M)
       USE myalloc
       USE netcdf
+
       implicit none
 
-
-      character fileNetCDF*(*) ,varname*(*)
-      integer ncid, stat, VARid
-
+      character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      integer,intent(inout) ::  M(jpk,jpj,jpi)
+      integer,allocatable,dimension(:,:,:) :: copy_in
+      integer ncid, stat, VARid,i,j,k
       integer counter
       integer thecount(4), start(4)
-      integer M(jpk,jpj,jpi)
+      
       counter = 0
+      allocate(copy_in(jpi,jpj,jpk))
       
       start    = (/nimpp, njmpp,  1,  1/)
       thecount = (/jpi,     jpj, jpk, 1/)
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_inq_varid (ncid, varname, VARid)      
-       call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       call handle_err2(stat, fileNetCDF,varname)        
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_close(ncid)                           
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
+
+      DO i=1,jpi
+        DO j=1,jpj
+          DO k=1,jpk
+            M(k,j,i) = copy_in(i,j,k)
+          ENDDO
+        ENDDO
+      ENDDO
+       deallocate(copy_in)
 
       END SUBROUTINE readnc_slice_int
 
@@ -136,17 +165,16 @@
       USE netcdf
       implicit none
 
-
-      character fileNetCDF*(*) ,varname*(*)
-      integer ncid, stat, VARid
-
+      character ,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      double precision,intent(inout) :: M(jpj,jpi)
+      double precision,allocatable,dimension(:,:) :: copy_in
+      
+      integer ncid, stat, VARid,i,j,k
       integer counter
       integer thecount(3), start(3)
-      real(8) M(jpi,jpj)
 
-
+      allocate(copy_in(jpi,jpj))
       counter = 0
-      
       start    = (/nimpp, njmpp,  1/)
       thecount = (/jpi,     jpj,  1/)
 
@@ -155,14 +183,20 @@
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_inq_varid (ncid, varname, VARid)      
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
       call handle_err2(stat, fileNetCDF,varname)        
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_close(ncid)                           
        call handle_err1(stat, counter,FileNetCDF)
 
+      DO i=1,jpi
+        DO j=1,jpj
+            M(j,i) = copy_in(i,j)  
+        ENDDO
+      ENDDO  
 
+      deallocate(copy_in)
 
 
       END SUBROUTINE readnc_slice_double_2d
@@ -172,22 +206,22 @@
 ! ********************************************************************************************
 ! ********************************************************************************************
 
-      SUBROUTINE readnc_slice_float_2d(fileNetCDF,varname, M)
-      USE myalloc
+     SUBROUTINE readnc_slice_float_2d(fileNetCDF,varname, M)
+     USE myalloc
+      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
-
-      character fileNetCDF*(*) ,varname*(*)
-      integer ncid, stat, VARid
-
+      character ,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      double precision,intent(inout) :: M(jpj,jpi)
+      real,allocatable,dimension(:,:) :: copy_in
+      
+      integer ncid, stat, VARid,i,j,k
       integer counter
       integer thecount(3), start(3)
-      real(8) M(jpi,jpj)
-      real(4) F(jpi,jpj)
 
+      allocate(copy_in(jpi,jpj))
       counter = 0
-      
       start    = (/nimpp, njmpp,  1/)
       thecount = (/jpi,     jpj,  1/)
 
@@ -196,17 +230,23 @@
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_inq_varid (ncid, varname, VARid)      
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,F,start, thecount)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
+      
       call handle_err2(stat, fileNetCDF,varname)        
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_close(ncid)                           
        call handle_err1(stat, counter,FileNetCDF)
 
-      M = real(F,8)
-      
+      DO i=1,jpi
+        DO j=1,jpj
+            M(j,i) = real(copy_in(i,j),8)  
+        ENDDO
+      ENDDO  
+
+     deallocate(copy_in)
 
 
-      END SUBROUTINE readnc_slice_float_2d
+     END SUBROUTINE readnc_slice_float_2d
 
 
 ! ************************************************************
@@ -216,63 +256,83 @@
       implicit none
 
 
-      character fileNetCDF*(*) ,varname*(*)
-      integer ncid, stat, VARid
-
+      character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      double precision,intent(inout) ::  M(jpk,jpjglo,jpiglo)
+      
+      double precision,allocatable,dimension(:,:,:) :: copy_in
+      
+      integer ncid, stat, VARid,i,j,k
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpk,jpjglo,jpiglo)
-
-      counter = 0
       
+      allocate(copy_in(jpiglo,jpjglo,jpk))
+      counter = 0
       start    = (/1,       1,       1,  1/)
-! epascolo warning
-      thecount = (/jpk, jpjglo,  jpiglo,1/)
+      thecount = (/jpiglo,  jpjglo,  jpk,1/)
 
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_inq_varid (ncid, varname, VARid)      
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       call handle_err2(stat, fileNetCDF,varname)        
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_close(ncid)                           
        call handle_err1(stat, counter,FileNetCDF)
+
+      DO i=1,jpiglo
+       DO j=1,jpjglo
+        DO k=1,jpk
+          M(k,j,i) = copy_in(i,j,k)
+        ENDDO
+       ENDDO
+      ENDDO  
+
+      deallocate(copy_in)
 
       END SUBROUTINE readnc_global_double
 
 
 ! ************************************************************
+
       SUBROUTINE readnc_global_double_2d(fileNetCDF,varname, M)
       USE myalloc
       USE netcdf
       implicit none
+      
+      character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      double precision,intent(inout) :: M(jpjglo,jpiglo)
 
-
-      character fileNetCDF*(*) ,varname*(*)
-      integer ncid, stat, VARid
-
+      double precision,allocatable,dimension(:,:) :: copy_in
+      integer ncid, stat, VARid,i,j
       integer counter
       integer thecount(4), start(4)
-      real(8) M(jpjglo,jpiglo)
 
+      allocate(copy_in(jpiglo,jpjglo))
       counter = 0
       
       start    = (/1,       1,      1, 1/)
 ! epascolo warning      
-      thecount = (/1, jpjglo,  jpiglo, 1/)
-
+      thecount = (/jpiglo,  jpjglo, 1, 1/)
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_inq_varid (ncid, varname, VARid)      
-       call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_get_var (ncid,VARid,M,start, thecount)
+      call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       call handle_err2(stat, fileNetCDF,varname)        
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_close(ncid)                           
-       call handle_err1(stat, counter,FileNetCDF)
+      call handle_err1(stat, counter,FileNetCDF)
+
+      DO i=1,jpiglo
+        DO j=1,jpjglo
+          M(j,i) = copy_in(i,j)
+        ENDDO
+      ENDDO      
+
+      deallocate(copy_in)
 
       END SUBROUTINE readnc_global_double_2d
 
@@ -283,10 +343,11 @@
         use netcdf
         USE modul_param
         implicit none
-        character fileNetCDF*(*) ,varname*(*)
+        character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+        double precision,intent(inout) :: ARRAY(jpk)
+
         integer ncid, stat, VARid
         integer counter
-        real(8) ARRAY(jpk)
         integer thecount(4), start(4)
 
         counter=0
@@ -311,12 +372,16 @@
         !****************************************************************************
         SUBROUTINE readnc_double_1d(fileNetCDF,varname,im,ARRAY)
         use netcdf
+        use myalloc
         implicit none
-        character fileNetCDF*(*) ,varname*(*)
-        integer ncid, stat, VARid
-        integer im,counter
-        real(8) ARRAY(im)
 
+        character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+        double precision,intent(inout),dimension(jpk) :: ARRAY
+        integer,intent(in) :: im
+        
+        integer ncid, stat, VARid
+        integer counter
+        
         counter=0
 
         stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
@@ -336,35 +401,43 @@
         !****************************************************************************
         SUBROUTINE readnc_int_1d(fileNetCDF,varname,im,ARRAY)
         use netcdf
+        use myalloc
         implicit none
-        character fileNetCDF*(*) ,varname*(*)
+
+        character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+        double precision,intent(inout) :: ARRAY(jpk)
+        integer,intent(in) :: im
+
         integer ncid, stat, VARid
-        integer im, counter
-        integer ARRAY(im)
+        integer counter
+        
 
         counter=0
 
-        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
+       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
        call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_inq_varid (ncid, varname, VARid)     
+       stat = nf90_inq_varid (ncid, varname, VARid)     
        call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_get_var (ncid,VARid,ARRAY)
-        call handle_err2(stat, fileNetCDF,varname)       
+       stat = nf90_get_var (ncid,VARid,ARRAY)
+       call handle_err2(stat, fileNetCDF,varname)       
        call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_close(ncid)                          
+       stat = nf90_close(ncid)                          
        call handle_err1(stat, counter,FileNetCDF)
 
 
         end SUBROUTINE readnc_int_1d
 
-       !****************************************************************************
+!        !****************************************************************************
 
 
         SUBROUTINE getDIMENSION(fileNetCDF,dimname,n)
         use netcdf
         implicit none
-        character  fileNetCDF*(*), dimname*(*)
-        integer n
+
+        character,intent(in) :: fileNetCDF*(*) ,dimname*(*)
+        integer,intent(inout) :: n
+       
+        
 
         ! local
 

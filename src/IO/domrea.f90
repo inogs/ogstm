@@ -275,9 +275,9 @@
           INTEGER counter,junk
 
            counter = 0
-           do kk =1, jpk
-            do jj =1, jpj
              do ii =1, jpi
+            do jj =1, jpj
+           do kk =1, jpk
                 junk = idxt(kk,jj,ii)
                 do jv =1, sizeGLO
                   if (junk.EQ.idxtGLOBAL(jv))  counter = counter + 1
@@ -299,17 +299,17 @@
 
 
           counter=0
-           do kk =1, jpk
-            do jj =1, jpj
              do ii =1, jpi
+            do jj =1, jpj
+           do kk =1, jpk
                 junk = idxt(kk,jj,ii)
                 do jv =1, RsizeGLO
                    if ( junk.EQ.riv_idxtglo(jv) )  then
                       counter = counter + 1
                       riv_ridxt(1,counter) = jv
-                      riv_ridxt(2,counter) = ii
+                      riv_ridxt(2,counter) = kk
                       riv_ridxt(3,counter) = jj
-                      riv_ridxt(4,counter) = kk
+                      riv_ridxt(4,counter) = ii
                    endif
               enddo
              enddo
@@ -329,17 +329,17 @@
 
 
           counter=0
-           do kk =1, jpk
-            do jj =1, jpj
              do ii =1, jpi
+            do jj =1, jpj
+           do kk =1, jpk
                 junk = idxt(kk,jj,ii)
                 do jv =1, Gsizeglo
                    if ( junk.EQ.gib_idxtglo(jv) )  then
                       counter = counter + 1
                       gib_ridxt(1,counter) = jv
-                      gib_ridxt(2,counter) = ii
+                      gib_ridxt(2,counter) = kk
                       gib_ridxt(3,counter) = jj
-                      gib_ridxt(4,counter) = kk
+                      gib_ridxt(4,counter) = ii
                    endif
               enddo
              enddo
@@ -394,17 +394,17 @@
 
 
           counter=0
-           do kk =1, jpk
-            do jj =1, jpj
              do ii =1, jpi
+            do jj =1, jpj
+           do kk =1, jpk
                 junk = idxt(kk,jj,ii)
                 do jv =1, FsizeGLO
                    if ( junk.EQ.INDFluxGlo(jv) )  then
                       counter = counter + 1
                       flx_ridxt(counter,1) = jv
-                      flx_ridxt(counter,2) = ii
+                      flx_ridxt(counter,2) = kk
                       flx_ridxt(counter,3) = jj
-                      flx_ridxt(counter,4) = kk
+                      flx_ridxt(counter,4) = ii
                    endif
               enddo
              enddo
@@ -484,10 +484,10 @@
 
 
        if (atlantic_bfm) then
+             do ii =2, jpi-1
+            do jj =1, jpj-1
            do kk =1, jpkb-1
             if (kk.eq.2)  NBFMPOINTS_SUP = counter
-            do jj =1, jpj-1
-             do ii =2, jpi-1
 
                if (tmask(kk,jj,ii).EQ.1.0 ) counter = counter + 1
 
@@ -496,10 +496,10 @@
            enddo
         else
            ! NO ACTIVATION IN ATLANTIC BUFFER
+             do ii =2, jpi-1
+            do jj =1, jpj-1
            do kk =1, jpkb-1
             if (kk.eq.2)  NBFMPOINTS_SUP = counter
-            do jj =1, jpj-1
-             do ii =2, jpi-1
 
                if ( (tmask(kk,jj,ii).EQ.1.0 ) .and. (resto(kk,jj,ii,1).eq.0.0) )  counter = counter + 1
 

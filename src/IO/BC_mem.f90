@@ -245,8 +245,6 @@
        aux_mem = get_mem(err)
 #endif
 
-
-      print *,"!!!!!!!!!!!!!!!!!!!!!!",jpj,jpi
       !allocate(atm_ridxt (4,lon,lat        )) 
         atm_ridxt  = huge(atm_ridxt(1,1,1))
       allocate(atm_dtatrc(jpj,jpi, 2, jn_atm)) 

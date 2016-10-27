@@ -63,8 +63,8 @@
           ENDDO
         ENDDO
       ENDDO   
-
-       deallocate(copy_in)
+      
+      deallocate(copy_in)
 
       END SUBROUTINE readnc_slice_double
 

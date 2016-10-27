@@ -35,9 +35,9 @@ C===================================================
 C===================================================
 
       DO jn=1,jptra
-        DO jk=1,jpk
-          DO jj=1,jpj
             DO ji=1,jpi
+          DO jj=1,jpj
+        DO jk=1,jpk
               restotr(jk,jj,ji,jn)=0.
             END DO
           END DO
@@ -48,9 +48,9 @@ C===================================================
 
       DO jn=1,jn_gib
         tra_idx=tra_matrix_gib(jn)
-        DO jk=1,jpk
-          DO jj=1,jpj
             DO ji=1,jpi
+          DO jj=1,jpj
+        DO jk=1,jpk
               !print *,jk,jj,ji,tra_idx,jn,restocorr(jn),resto(jk,jj,ji,jn)
               restotr(jk,jj,ji,tra_idx)=restocorr(jn)*resto(jk,jj,ji,jn)
             END DO

@@ -301,8 +301,8 @@ SUBROUTINE photo_init
 
 
       call tau2julianday(TimeStepStart, deltaT, julianday)
-      do jj =1, jpj
          do ji=1, jpi
+      do jj =1, jpj
             DAY_LENGTH(jj,ji) = photoperiod(julianday, gphit(jj,ji))
          enddo
       enddo

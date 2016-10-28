@@ -98,48 +98,27 @@
       REAL(8) zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw
       REAL(8) zb, zd, zc, zaw, za, zb1, za1, zkw, zk0
 
-      INTEGER :: mytid, ntids! omp variables
-
-#ifdef __OPENMP1
-      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
 
       density_partTime = MPI_WTIME()
 
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
 
-#else
-      ntids = 1
-      mytid = 0
-#endif
-
-
-      DO jk = 1, jpkm1, ntids
+     
 
         IF ( neos.EQ.0 ) THEN
 !!!$omp parallel default(none) private(mytid,jj,ji,
 !!!$omp&                 zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw,
 !!!$omp&                   zb, zd, zc, zaw, za, zb1, za1, zkw, zk0)
 !!!$omp&                   shared(jpk,jpj,jpi,jk,tn,sn,rau0,rhopn,rdn,rho,tmask,gdept)
-#ifdef __OPENMP1
-         mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-
-
-!! 1. Jackett and McDougall (1994) formulation
-!! -------------------------------------------
-        if (jk+mytid.le.jpk) then
-        DO jj = 1, jpj
+        
           DO ji = 1, jpi
+        DO jj = 1, jpj
+      DO jk = 1, jpkm1
 
 !!   ... now potential temperature and salinity
-            zt = tn(jk+mytid,jj,ji)
-            zs = sn(jk+mytid,jj,ji)
+            zt = tn(jk,jj,ji)
+            zs = sn(jk,jj,ji)
 !!   ... depth
-            zh = gdept(jk+mytid)
+            zh = gdept(jk)
 !!   ... square root salinity
             zsr= sqrt( abs( zs ) )
 !!   ... compute volumic mass pure water at atm pressure
@@ -153,7 +132,7 @@
             zrhop= ( zr4*zs + zr3*zsr + zr2 ) *zs + zr1
 
 !!   ... save potential volumic mass
-            rhopn(jk+mytid,jj,ji) = zrhop
+            rhopn(jk,jj,ji) = zrhop
 
 !!   ... add the compression terms
             ze = ( -3.508914e-8*zt-1.248266e-8 ) *zt-2.595994e-6
@@ -171,15 +150,15 @@
             zk0= ( zb1*zsr + za1 )*zs + zkw
 
 !!   ... masked in situ density anomaly
-            rdn(jk+mytid,jj,ji) = ( zrhop &
+            rdn(jk,jj,ji) = ( zrhop &
      &          / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) & 
-     &          - rau0 ) / rau0 * tmask(jk+mytid,jj,ji)
+     &          - rau0 ) / rau0 * tmask(jk,jj,ji)
 !!   ... masked in situ density
-            rho(jk+mytid,jj,ji)=zrhop / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) * tmask(jk+mytid,jj,ji)
+            rho(jk,jj,ji)=zrhop / (  1.0 - zh / ( zk0 - zh * ( za - zh * zb ) )  ) * tmask(jk,jj,ji)
 
           END DO
         END DO
-      endif
+      ENDDO
 !!!$omp end parallel
           ELSEIF( neos.EQ.1 ) THEN
 
@@ -187,16 +166,17 @@
 !! 2. First Linear density formulation (function of tempreature only)
 !! -----------------------------------
 
-        DO jj = 1, jpj
-          DO ji = 1, jpi
-
+                  DO ji = 1, jpi
+            DO jj = 1, jpj
+        DO jk = 1, jpkm1
 !!   ... now potential temperature and salinity
             zt = tn(jk,jj,ji)
 !!   ... density and potential volumic mass
             rdn(jk,jj,ji) = ( 0.028 - ralpha * zt ) * tmask(jk,jj,ji)
             rhopn(jk,jj,ji) = ( rau0 * rdn(jk,jj,ji) + rau0 )* tmask(jk,jj,ji)
-          END DO
-        END DO
+          ENDDO
+        ENDDO
+      ENDDO
 
           ELSEIF( neos.EQ.2 ) THEN
 
@@ -204,9 +184,9 @@
 !! 3. Second linear density formulation (function of temp. and salinity)
 !! ------------------------------------
 
-        DO jj = 1, jpj
           DO ji = 1, jpi
-
+        DO jj = 1, jpj
+            DO jk = 1, jpkm1
 !!   ... now potential temperature and salinity
             zt = tn(jk,jj,ji)
             zs = sn(jk,jj,ji)
@@ -216,6 +196,7 @@
             rhopn(jk,jj,ji) = ( rau0 * rdn(jk,jj,ji) + rau0 )   * tmask(jk,jj,ji)
           END DO
         END DO
+      END DO
 
         ELSE
 
@@ -229,8 +210,6 @@
           STOP 'eos.f'
 
       ENDIF
-
-      END DO
 
       density_partTime =    MPI_WTIME()  - density_partTime
       density_TotTime  = density_TotTime + density_partTime

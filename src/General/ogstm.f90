@@ -57,7 +57,7 @@ SUBROUTINE ogstm_launcher()
       timetosolution = MPI_Wtime()
 
       call ogstm_initialize()
-      stop
+      
 
       call step
 

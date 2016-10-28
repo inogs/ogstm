@@ -118,7 +118,7 @@
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", myrank, " starting reading forcing fields from ", nomefile
 
       call readnc_slice_float_2d(nomefile,'kextfact',buf2)
-       kextIO(:,:,2) = buf2*tmask(:,:,1)
+       kextIO(:,:,2) = buf2*tmask(1,:,:)
       
 
       END SUBROUTINE LOAD_KEXT
@@ -144,7 +144,7 @@
 
         DO ji=1,jpi
           DO jj=1,jpj
-             kef(jj,ji) = ( (1. - zweigh) * kextIO(jj,ji,1)+ zweigh     * kextIO(jj,ji,2) )
+             kef(jj,ji) = ( (1. - zweigh) * kextIO(jj,ji,1)+ zweigh * kextIO(jj,ji,2) )
           END DO
         END DO
 

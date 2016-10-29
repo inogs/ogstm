@@ -376,8 +376,8 @@
         implicit none
 
         character,intent(in) :: fileNetCDF*(*) ,varname*(*)
-        double precision,intent(inout),dimension(jpk) :: ARRAY
         integer,intent(in) :: im
+        double precision,intent(inout),dimension(im) :: ARRAY
         
         integer ncid, stat, VARid
         integer counter

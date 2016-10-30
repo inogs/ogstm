@@ -77,11 +77,11 @@ CC----------------------------------------------------------------------
 
        allocate(jarr_sed(2, jpi*jpj))        
        jarr_sed     = huge(jarr_sed(1,1))
-       allocate(jarr_sed_flx(jpi*jpj,jpk)) 
+       allocate(jarr_sed_flx(jpk,jpi*jpj)) 
        jarr_sed_flx = huge(jarr_sed_flx(1,1)) 
        allocate( ztra(nsed,ntids))         
        ztra         = huge(ztra(1,1))
-       allocate(zwork(nsed, jpk, ntids))   
+       allocate(zwork(jpk,nsed, ntids))   
        zwork        = huge(zwork(1,1,1))
 
 

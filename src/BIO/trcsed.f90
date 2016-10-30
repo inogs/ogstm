@@ -65,12 +65,7 @@
       INTEGER :: bottom
       REAL(8) :: ze3tr,d2s
 ! omp variables
-      INTEGER :: mytid, ntids
-
-#ifdef __OPENMP1
-      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
+    
 !!----------------------------------------------------------------------
 !! statement functions
 !! ===================
@@ -80,22 +75,13 @@
 
       d2s=1./3600./24.  ! speed from (m/day) to  (m/s)
 
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids = 1
-      mytid = 0
-#endif
-
-
       IF (dimen_jvsed .EQ. 0) THEN ! initialization phase
-         DO jj = 2,jpjm1
            DO  ji = 2,jpim1
+         DO jj = 2,jpjm1
               IF(tmask(1,jj,ji) .NE. 0) THEN
                  dimen_jvsed = dimen_jvsed + 1
-                 jarr_sed(1,dimen_jvsed) = ji
-                 jarr_sed(2,dimen_jvsed) = jj
+                 jarr_sed(1,dimen_jvsed) = jj
+                 jarr_sed(2,dimen_jvsed) = ji
               ENDIF
             END DO
          END DO
@@ -131,22 +117,19 @@
 
       MAIN_LOOP: DO jv=1,dimen_jvsed
 
-#ifdef __OPENMP1
-         mytid = omp_get_thread_num()  ! take the thread ID
-#endif
 !      if( mytid + jv <=  dimen_jvsed) then
 ! 1. sedimentation of detritus  : upstream scheme
 ! -----------------------------------------------
 ! 1.1 initialisation needed for bottom and surface value
 
-           ji = jarr_sed(1,jv)
-           jj = jarr_sed(2,jv)
+           ji = jarr_sed(2,jv)
+           jj = jarr_sed(1,jv)
 
-              DO  jk = 1,jpk
 
                  DO js = 1, nsed
+              DO  jk = 1,jpk
 
-                    zwork(jk,js,mytid+1) = 0.
+                    zwork(jk,js,1) = 0.
 
                  END DO
 
@@ -155,59 +138,63 @@
 ! 1.2 tracer flux at w-point: we use -vsed (downward flux)
 ! with simplification : no e1*e2
 
-              DO  jk = 2,jpkm1
+             
 
 !                Particulate
                  DO js =1,4
-                    zwork(jk,js,mytid+1) = -vsed * trn(jk-1,jj,ji, sed_idx(js))
+                  DO  jk = 2,jpkm1
+                    zwork(jk,js,1) = -vsed * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-
+               END DO
 !                Diatoms
                  DO js =5,9
-                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
+                  DO  jk = 2,jpkm1                 
+                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-
+               END DO
 !                Flagellates
                  DO js =10,13
-                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
+                  DO  jk = 2,jpkm1
+                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-
+               END DO
 !                Picophytoplankton
                  DO js =14,17
-                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
+                  DO  jk = 2,jpkm1
+                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-
+               END DO
 !                Dinoflagellates
                  DO js =18,21
-                    zwork(jk,js,mytid+1) = -sediPI(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
+                  DO  jk = 2,jpkm1
+                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-
               END DO
 
-               bottom = mbathy(ji,jj) + 1
-               zwork(:,bottom,mytid+1) = bottom_flux * zwork(:,bottom,mytid+1) ! bottom_flux = 0 -> no flux in the sea floor
+               bottom = mbathy(jj,ji) + 1
+               zwork(bottom,:,1) = bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
 
 ! 1.3 tracer flux divergence at t-point added to the general trend
 
               DO  jk = 1,jpkm1
-                 jf=  jarr_sed_flx(jk,jv)
+                 jf=  jarr_sed_flx(jk,jV)
 
-                 ze3tr = 1./e3t(ji,jj,jk)
+                 ze3tr = 1./e3t(jk,jj,ji)
 
                  DO js =1,21
-                    ztra(js,mytid+1) = -ze3tr * (zwork(jk,js,mytid+1) - zwork(jk+1,js,mytid+1))
+                    ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(jk,js,mytid+1)
+                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(jk,js,1)
                     ENDIF
                  END DO
 
                  DO js =1,21
 !!!  d2s convert speed from (m/day) to  (m/s)
-                    tra(ji,jj,jk,sed_idx(js)) = tra(ji,jj,jk,sed_idx(js)) + ztra(js,mytid+1)*d2s
+                    tra(jk,jj,ji,sed_idx(js)) = tra(jk,jj,ji,sed_idx(js)) + ztra(js,1)*d2s
                  END DO
 
 #ifdef key_trc_diabio
-                  trbio(ji,jj,jk,8) = ztra
+                  trbio(jk,jj,ji,8) = ztra
 #endif
 
 

@@ -39,7 +39,8 @@
       USE BIO_mem
       USE BC_mem
       USE mpi
-       IMPLICIT NONE
+      
+      IMPLICIT NONE
 
 
 !!!----------------------------------------------------------------------
@@ -51,13 +52,6 @@
       INTEGER jk,jj,ji,jb,jn
       INTEGER jtr,jtrmax,tra_idx
 
-! omp variables
-            INTEGER :: mytid, ntids
-
-#ifdef __OPENMP1
-            INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-            EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
 
 !!!----------------------------------------------------------------------
 !!! statement functions
@@ -70,13 +64,6 @@
 
         BIOparttime = MPI_WTIME()
 
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids = 1
-      mytid = 0
-#endif
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 ! -------------------------------------------------
@@ -85,38 +72,33 @@
           jtrmax=jptra
 
 ! ---------------- Fuori dai punti BFM
-         DO jn=1,4,ntids
+         DO jn=1,4
 !!$omp    parallel default(none) private(mytid, jk,jj,ji) shared(sediPI,jpk,jpj,jpi,jn)
-#ifdef __OPENMP1
-        mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-        IF (mytid+jn <= 4) then
+
+                        do ji=1,jpi
+                  do jj=1,jpj
             do jk=1,jpk
-            do jj=1,jpj
-            do ji=1,jpi
-                sediPI(jk,jj,ji,jn+mytid)=0.
+                sediPI(jk,jj,ji,jn)=0.
+                        end do
+                  end do
             end do
-            end do
-            end do
-        ENDIF
+        
 
 !!$omp end parallel
          ENDDO
 
-         DO jn=1, jptra_dia, ntids
+         DO jn=1, jptra_dia
 !!$omp    parallel default(none) private(mytid, jk,jj,ji) shared(tra_DIA,jpk,jpj,jpi,jn)
-#ifdef __OPENMP1
-        mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-        IF (mytid+jn <= jptra_dia) then
+
+       
+                       do ji=1,jpi
+                  do jj=1,jpj
             do jk=1,jpk
-            do jj=1,jpj
-            do ji=1,jpi
-               tra_DIA(jk,jj,ji,jn+mytid)=0.
+               tra_DIA(jk,jj,ji,jn)=0.
+                        end do
+                  end do
             end do
-            end do
-            end do
-        ENDIF
+        
 !!$omp end parallel
          ENDDO
 
@@ -132,16 +114,13 @@
 ! $omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
 
       MAIN_LOOP: DO  jb = 1, NBFMPOINTS
-#ifdef __OPENMP1
-        mytid = omp_get_thread_num()  ! take the thread ID
-#endif
 
                  !IF( mytid + jb <= NBFMPOINTS ) THEN
 
 
-                 ji = BFMpoints(1, jb)
+                 ji = BFMpoints(3, jb)
                  jj = BFMpoints(2, jb)
-                 jk = BFMpoints(3, jb)
+                 jk = BFMpoints(1, jb)
 
 
                           sur = (jk .eq. 1)

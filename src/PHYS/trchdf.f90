@@ -224,9 +224,9 @@
 
           DO jv=1, dimen_jvhdf2
 
-             ji = jarr_hdf(1,jv,1)
+             ji = jarr_hdf(3,jv,1)
              jj = jarr_hdf(2,jv,1)
-             jk = jarr_hdf(3,jv,1)
+             jk = jarr_hdf(1,jv,1)
 
              ztu(jk,jj,ji, 1) = zeeu(jk,jj,ji) * &
      &          ( trb(jk,jj,ji+1,jn ) - trb(jk,jj,ji,jn ) )* &
@@ -241,12 +241,12 @@
 !! ... Second derivative (divergence)
           DO jv=1, dimen_jvhdf3
 
-             ji = jarr_hdf(1,jv,2)
+             ji = jarr_hdf(3,jv,2)
              jj = jarr_hdf(2,jv,2)
-             jk = jarr_hdf(3,jv,2)
+             jk = jarr_hdf(1,jv,2)
 
-             zlt(jk,jj,ji, 1) = (  ztu(jk,jj,ji, 1) - ztu(ji-1,jj,jk, 1) &
-     &             + ztv(jk,jj,ji, 1) - ztv(jj,ji-1,jk, 1)  ) * zbtr(jk,jj,ji)
+             zlt(jk,jj,ji, 1) = (  ztu(jk,jj,ji, 1) - ztu(jk,jj-1,ji, 1) &
+     &             + ztv(jk,jj,ji, 1) - ztv(jk,jj-1,ji, 1)  ) * zbtr(jk,jj,ji)
 !! ... Multiply by the eddy diffusivity coefficient
              zlt(jk,jj,ji, 1) = trcrat * ahtt(jk) * zlt(jk,jj,ji, 1)
 
@@ -295,9 +295,9 @@
 
           DO jv=1, dimen_jvhdf2
 
-             ji = jarr_hdf(1,jv,1)
+             ji = jarr_hdf(3,jv,1)
              jj = jarr_hdf(2,jv,1)
-             jk = jarr_hdf(3,jv,1)
+             jk = jarr_hdf(1,jv,1)
 
 
              ztu(jk,jj,ji, 1) = zeeu(jk,jj,ji) * &
@@ -313,14 +313,14 @@
 
           DO jv=1, dimen_jvhdf3
 
-             ji = jarr_hdf(1,jv,2)
+             ji = jarr_hdf(3,jv,2)
              jj = jarr_hdf(2,jv,2)
-             jk = jarr_hdf(3,jv,2)
+             jk = jarr_hdf(1,jv,2)
              jf = jarr_hdf_flx(jv)
 
 !!   ... horizontal diffusive trends
-             zta( 1) = (  ztu(jk,jj,ji, 1) - ztu(ji-1,jj,jk, 1) &
-     &            + ztv(jk,jj,ji, 1) - ztv(jj,ji-1,jk, 1)  ) * zbtr(jk,jj,ji)
+             zta( 1) = (  ztu(jk,jj,ji, 1) - ztu(jk,jj,ji-1, 1) &
+     &            + ztv(jk,jj,ji, 1) - ztv(jk,jj-1,ji, 1)  ) * zbtr(jk,jj,ji)
 !!   ... add it to the general tracer trends
               tra(jk,jj,ji,jn ) = tra(jk,jj,ji,jn ) + zta( 1)
 

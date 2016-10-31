@@ -58,24 +58,9 @@
 !! ==================
       
 ! omp variables
-      INTEGER :: mytid, ntids
 
 
-#ifdef __OPENMP1
-      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
-
-      INTEGER jk,jj,ji,jn,jp,pack_size
-
-
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids =threads_pack_size
-      mytid = 0
-#endif
+      INTEGER :: jk,jj,ji,jn,jp,pack_size
 
 
        trcnxtparttime = MPI_WTIME() ! cronometer-start
@@ -86,64 +71,53 @@
 !! ===========
 
 
-      TRACER_LOOP: DO  jn = 1, jptra, ntids
+      TRACER_LOOP: DO  jn = 1, jptra
 
 
 !! 1. Lateral boundary conditions on tra (1,1,1,jn)
+!! epascolo mpi comment
+! #ifdef key_mpp
 
-#ifdef key_mpp
+! !!   ... Mpp : export boundary values to neighboring processors
 
-!!   ... Mpp : export boundary values to neighboring processors
+!         IF( ntids - 1 + jn <= jptra ) THEN
+!            pack_size = ntids
+!         ELSE
+!            pack_size = ntids - (ntids - 1 + jn - jptra)
+!         END IF
 
-        IF( ntids - 1 + jn <= jptra ) THEN
-           pack_size = ntids
-        ELSE
-           pack_size = ntids - (ntids - 1 + jn - jptra)
-        END IF
+!         CALL mpplnk_my(tra(1,1,1,jn), pack_size,1,1)
 
-        CALL mpplnk_my(tra(1,1,1,jn), pack_size,1,1)
+! #  else
 
-#  else
+! !!   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 
-!!   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
+!         CALL lbc( tra(1,1,1,jn), 1, 1, 1, 1, jpk, 1 )
 
-        CALL lbc( tra(1,1,1,jn), 1, 1, 1, 1, jpk, 1 )
-
-#endif
+! #endif
 
 
 !!!$omp   parallel default(none) private(mytid,jk,jj,ji)
 !!!$omp&      shared(jn,jpk,jpj,jpi,trn,trb,tra,tmask,e3t,e3t_back) 
 
-#ifdef __OPENMP1
-        mytid = omp_get_thread_num()  ! take the thread ID
-#else
-      PACK_LOOP1: DO jp=1,ntids
-       mytid=jp-1
-#endif
-      IF( mytid + jn <= jptra ) THEN
 
 
-        DO jk = 1,jpk
-          DO jj = 1,jpj
+
             DO ji = 1,jpi
+          DO jj = 1,jpj
+        DO jk = 1,jpk
 
-            tra(jk,jj,ji,jn+mytid) = tra(jk,jj,ji,jn+mytid)*e3t_back(jk,jj,ji)/e3t(jk,jj,ji)
-            trb(jk,jj,ji,jn+mytid) = tra(jk,jj,ji,jn+mytid)
-            trn(jk,jj,ji,jn+mytid) = tra(jk,jj,ji,jn+mytid)*tmask(jk,jj,ji)
-            tra(jk,jj,ji,jn+mytid) = 0.e0
+            tra(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*e3t_back(jk,jj,ji)/e3t(jk,jj,ji)
+            trb(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )
+            trn(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*tmask(jk,jj,ji)
+            tra(jk,jj,ji,jn  ) = 0.e0
 
             END DO
           END DO
         END DO
 
-      END IF
+     
 !!!$omp end parallel
-#ifdef __OPENMP1
-#else
-      END DO PACK_LOOP1
-      mytid =0
-#endif
 
 
 !! END of tracer slab

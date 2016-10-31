@@ -27,28 +27,13 @@
 
 !      INTEGER :: elements,nelements(6),idx_element(14,6)
 ! omp variables
-      INTEGER :: mytid, ntids
 
-#ifdef __OPENMP1
-      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
-
-      INTEGER jk,jj,ji,jn,jv! ,jnn,gji,gjj
-      REAL(8) zfact,zdt
+      INTEGER :: jk,jj,ji,jn,jv! ,jnn,gji,gjj
+      double precision :: zfact,zdt
 
 !!----------------------------------------------------------------------
 !! statement functions
 !! ===================
-
-
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids = 1
-      mytid = 0
-#endif
 
        TRA_FN = 0.0
 !      SMALL =  0.00000000001
@@ -60,8 +45,8 @@
            DO  ji = 2,jpim1
               IF(tmask(1,jj,ji) .NE. 0) THEN
                  dimen_jvsnu = dimen_jvsnu + 1
-                 jarr_snu(1,dimen_jvsnu) = ji
-                 jarr_snu(2,dimen_jvsnu) = jj
+                 jarr_snu(2,dimen_jvsnu) = ji
+                 jarr_snu(1,dimen_jvsnu) = jj
               ENDIF
             END DO
          END DO
@@ -70,36 +55,31 @@
 ! ***************************************************
       snutelparttime = MPI_WTIME()
 
-      TRACER_LOOP: DO  jn = 1, jptra, ntids
+      TRACER_LOOP: DO  jn = 1, jptra
 
 !! 3. swap of arrays
 !! -----------------
 !!!$omp   parallel default(none) private(mytid,jk,jj,ji)
 !!!$omp&      shared(jn,jpk,jpj,jpi,tra,tmask,tra_FN,SMALL)
 
-#ifdef __OPENMP1
-        mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-         IF( mytid + jn <= jptra ) THEN
 
-
-            DO jk = 1,jpk
-               DO jj = 1,jpj
                   DO ji = 1,jpi
+               DO jj = 1,jpj
+            DO jk = 1,jpk
 
                      if (tmask(jk,jj,ji).ne.0.0) then
-                     if( tra(jk,jj,ji,jn+mytid) .GT. 0.  ) then
+                     if( tra(jk,jj,ji,jn) .GT. 0.  ) then
 
                      else
-                        tra_FN(jk,jj,ji,jn+mytid) =  - tra(jk,jj,ji,jn+mytid) + SMALL
-                        tra(   jk,jj,ji,jn+mytid) =  SMALL
+                        tra_FN(jk,jj,ji,jn) =  - tra(jk,jj,ji,jn) + SMALL
+                        tra(   jk,jj,ji,jn) =  SMALL
                      end if
                      endif
                   END DO
                END DO
             END DO
 
-         END IF
+      
 !!!$omp end parallel
 
       END DO TRACER_LOOP

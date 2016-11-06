@@ -427,7 +427,7 @@
 ! loop unfusion
         DO ji = 2,jpim1
            DO jj = 2,jpjm1
-                 zkx(1,jj,ji,A) = fsx(trn(1,jj,ji,B),trn(ji + 1,jj,1,B),zaa(1,jj,ji))
+                 zkx(1,jj,ji,A) = fsx(trn(1,jj,ji,B),trn(1,jj,ji + 1,B),zaa(1,jj,ji))
  !                zky(1,jj,ji,A) = fsy(trn(1,jj,ji,B),trn(jj,ji+ 1,1,B),zbb(1,jj,ji))
               END DO
            END DO
@@ -435,7 +435,7 @@
              DO ji = 2,jpim1
            DO jj = 2,jpjm1
 !                 zkx(1,jj,ji,A) = fsx(trn(1,jj,ji,B),trn(ji + 1,jj,1,B),zaa(1,jj,ji))
-                 zky(1,jj,ji,A) = fsy(trn(1,jj,ji,B),trn(jj,ji+ 1,1,B),zbb(1,jj,ji))
+                 zky(1,jj,ji,A) = fsy(trn(1,jj,ji,B),trn(1,jj,ji + 1,B),zbb(1,jj,ji))
               END DO
            END DO
 
@@ -663,8 +663,8 @@
       DO ji = 2,jpim1
             DO jj = 2,jpjm1
                   junk  = zti(jk,jj,ji,A)
-                  junki = zti(ji + 1,jj,jk,A)
-                  junkj = zti(jj,ji+ 1,jk,A)
+                  junki = zti(jk,jj,ji + 1,A)
+                  junkj = zti(jk,jj,ji+ 1,A)
                   zx(jk,jj,ji,A) = big_fact_zaa(jk,jj,ji)*(junki - junk)/(junk + junki + rtrn)* rsc
                   zy(jk,jj,ji,A) = big_fact_zbb(jk,jj,ji)*(junkj - junk)/(junk + junkj + rtrn)* rsc
             END DO

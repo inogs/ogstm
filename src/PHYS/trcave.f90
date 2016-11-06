@@ -3,9 +3,6 @@
       USE IO_mem
       USE FN_mem
       use mpi
-#ifdef key_mpp
-      ! epascolo USE myalloc_mpp
-#endif
 
       implicit none
 !     local
@@ -14,55 +11,30 @@
       REAL(8) ::  Miss_val =1.e20
       REAL(8) :: Realcounter, Realcounterp1
 
-! omp variables
-      INTEGER :: mytid, ntids
-
-#ifdef __OPENMP1
-      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
-
       ave_partTime = MPI_WTIME()
-
-
-
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids = 1
-      mytid = 0
-#endif
 
 
 !     FIRST, LOW FREQUENCY
       Realcounter   =    REAL(ave_counter_2  , 8)
       Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
 
-      DO jn=1 ,jptra,ntids
+      DO jn=1 ,jptra
 
-!!!$omp parallel default(none) private(jk,jj,ji,mytid)
+!!!$omp parallel default(none) private(jk,jj,ji, )
 !!!$omp&                       shared(jpk,jpj,jpi,jn,tmask,traIO,trn,Miss_val,Realcounter,Realcounterp1)
 
 
-#ifdef __OPENMP1
-           mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-       IF( mytid + jn <= jptra ) then
-
-          DO jk=1, jpk
-             DO jj=1, jpj
                 DO ji=1, jpi
+             DO jj=1, jpj
+          DO jk=1, jpk
                IF(tmask(jk,jj,ji) .NE. 0.) THEN
-                  traIO(jk,jj,ji,jn+mytid)=(traIO(jk,jj,ji,jn+mytid)*Realcounter+trn(jk,jj,ji,jn+mytid))*Realcounterp1
+                  traIO(jk,jj,ji,jn )=(traIO(jk,jj,ji,jn )*Realcounter+trn(jk,jj,ji,jn ))*Realcounterp1
                ELSE
-                  traIO(jk,jj,ji,jn+mytid)=Miss_val
+                  traIO(jk,jj,ji,jn )=Miss_val
                ENDIF
                 END DO
              END DO
           END DO
-       ENDIF
-!!!$omp    end parallel
 
       END DO
 
@@ -71,29 +43,27 @@
 
       Realcounter   =    REAL(ave_counter_1  , 8)! ****************** HIGH FREQUENCY
       Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
-      DO jn_high=1 ,jptra_high,ntids
+      DO jn_high=1 ,jptra_high
 
-!!!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
+!!!$omp parallel default(none) private(jk,jj,ji, ,jn_on_all)
 !!!$omp& shared(jpk,jpj,jpi,jn_high,jptra_high,highfreq_table,tmask,traIO_HIGH,trn,Miss_val,Realcounter,Realcounterp1)
 
-#ifdef __OPENMP1
-           mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-       IF( mytid + jn_high <= jptra_high ) then
-          jn_on_all = highfreq_table(jn_high+mytid)
-          DO jk=1, jpk
-             DO jj=1, jpj
+
+       
+          jn_on_all = highfreq_table(jn_high)
                 DO ji=1, jpi
+             DO jj=1, jpj
+          DO jk=1, jpk
                IF(tmask(jk,jj,ji) .NE. 0.) THEN
-                  traIO_HIGH(jk,jj,ji,jn_high+mytid)= &
-     &           (traIO_HIGH(jk,jj,ji,jn_high+mytid)*Realcounter+trn(jk,jj,ji,jn_on_all))*Realcounterp1
+                  traIO_HIGH(jk,jj,ji,jn_high  )= &
+     &           (traIO_HIGH(jk,jj,ji,jn_high  )*Realcounter+trn(jk,jj,ji,jn_on_all))*Realcounterp1
                ELSE
-                  traIO_HIGH(jk,jj,ji,jn_high+mytid)=Miss_val
+                  traIO_HIGH(jk,jj,ji,jn_high  )=Miss_val
                ENDIF
                 END DO
              END DO
           END DO
-       ENDIF
+   
 !!!$omp    end parallel
 
       END DO
@@ -109,9 +79,9 @@
       endif
 
 
-      DO jk=1, jpk
-       DO jj=1, jpj
           DO ji=1, jpi
+       DO jj=1, jpj
+      DO jk=1, jpk
              IF(tmask(jk,jj,ji) .NE. 0.) THEN
                 snIO (jk,jj,ji)=(snIO (jk,jj,ji)*Realcounter+sn (jk,jj,ji))*Realcounterp1
                 tnIO (jk,jj,ji)=(tnIO (jk,jj,ji)*Realcounter+tn (jk,jj,ji))*Realcounterp1
@@ -144,9 +114,9 @@
        END DO
       END DO
 
-      DO jj=1, jpj
         DO ji=1, jpi
-           IF (tmask(jj,ji,1) .NE. 0.) THEN
+      DO jj=1, jpj
+           IF (tmask(1,jj,ji) .NE. 0.) THEN
                vatmIO(jj,ji)=(vatmIO(jj,ji)*Realcounter+vatm(jj,ji))*Realcounterp1
                empIO (jj,ji)=(empIO (jj,ji)*Realcounter+emp (jj,ji))*Realcounterp1
                qsrIO (jj,ji)=(qsrIO (jj,ji)*Realcounter+qsr (jj,ji))*Realcounterp1
@@ -168,24 +138,21 @@
       Realcounter   =    REAL(ave_counter_2  , 8)
       Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
 
-      DO jn=1, jptra_dia,ntids
+      DO jn=1, jptra_dia
 
-!!!$omp parallel default(none) private(jk,jj,ji,mytid)
+!!!$omp parallel default(none) private(jk,jj,ji, )
 !!!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
 
-#ifdef __OPENMP1
-           mytid = omp_get_thread_num()  ! take the thread ID
-#endif
-      IF( mytid + jn .LE. jptra_dia ) then
+      IF( jn .LE. jptra_dia ) then
 
-         DO jk=1, jpk
-            DO jj=1, jpj
                DO ji=1, jpi
+            DO jj=1, jpj
+         DO jk=1, jpk
                   IF(tmask(jk,jj,ji) .NE. 0.) THEN
-                    tra_DIA_IO(jk,jj,ji,jn+mytid)=(tra_DIA_IO(jk,jj,ji,jn+mytid)*Realcounter+ &
-     &              tra_DIA(jk,jj,ji,jn+mytid))*Realcounterp1
+                    tra_DIA_IO(jk,jj,ji,jn )=(tra_DIA_IO(jk,jj,ji,jn )*Realcounter+ &
+     &              tra_DIA(jk,jj,ji,jn ))*Realcounterp1
                   ELSE
-                    tra_DIA_IO(jk,jj,ji,jn+mytid)=Miss_val
+                    tra_DIA_IO(jk,jj,ji,jn )=Miss_val
                   ENDIF
                END DO
             END DO
@@ -198,9 +165,9 @@
 !     *********************  DIAGNOSTICS 2D **********
       DO jn=1, jptra_dia_2d
 
-            DO jj=1, jpj
                DO ji=1, jpi
-                  IF(tmask(jj,ji,1) .NE. 0.) THEN ! Warning ! Tested only for surface
+            DO jj=1, jpj
+                  IF(tmask(1,jj,ji) .NE. 0.) THEN ! Warning ! Tested only for surface
                     tra_DIA_2d_IO(jj,ji,jn)=(tra_DIA_2d_IO(jj,ji,jn)*Realcounter+ &
      &              tra_DIA_2d(jj,ji,jn))*Realcounterp1
                   ELSE
@@ -218,34 +185,32 @@
       Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
 
 
-      DO jn_high=1, jptra_dia_high,ntids
+      DO jn_high=1, jptra_dia_high
 
-!!!$omp parallel default(none) private(jk,jj,ji,mytid,jn_on_all)
+!!!$omp parallel default(none) private(jk,jj,ji, ,jn_on_all)
 !!!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_DIA_IO_HIGH,tra_DIA,Miss_val,
 !!!$omp&   Realcounter,Realcounterp1)
 
-#ifdef __OPENMP1
-           mytid = omp_get_thread_num()  ! take the thread ID
-#endif
 
-      IF (mytid + jn_high .LE. jptra_dia_high)  then
-          IF (mytid + jn_high .LE. jptra_dia ) then
-             jn_on_all = highfreq_table_dia(jn_high+mytid)
 
-             DO jk=1, jpk
-             DO jj=1, jpj
+     
+          IF (   jn_high .LE. jptra_dia ) then
+             jn_on_all = highfreq_table_dia(jn_high )
+
              DO ji=1, jpi
+             DO jj=1, jpj
+             DO jk=1, jpk
                 IF(tmask(jk,jj,ji) .NE. 0.) THEN
-                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high+mytid)= &
-     &            (tra_DIA_IO_HIGH(jk,jj,ji,jn_high+mytid)*Realcounter+tra_DIA(jk,jj,ji,jn_on_all))*Realcounterp1 
+                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high )= &
+     &            (tra_DIA_IO_HIGH(jk,jj,ji,jn_high )*Realcounter+tra_DIA(jk,jj,ji,jn_on_all))*Realcounterp1 
                 ELSE
-                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high+mytid)=Miss_val
+                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high )=Miss_val
                 ENDIF
              END DO
              END DO
              END DO
           ENDIF
-      ENDIF
+     
 !!!$omp    end parallel
       END DO
 
@@ -254,9 +219,9 @@
       DO jn_high=1, jptra_dia2d_high
              jn_on_all = highfreq_table_dia2d(jn_high)
 
-             DO jj=1, jpj
              DO ji=1, jpi
-                IF(tmask(jj,ji,1) .NE. 0.) THEN
+             DO jj=1, jpj
+                IF(tmask(1,jj,ji) .NE. 0.) THEN
                    tra_DIA_2d_IO_HIGH(jj,ji,jn_high)= &
      &            (tra_DIA_2d_IO_HIGH(jj,ji,jn_high)*Realcounter+tra_DIA_2d(jj,ji,jn_on_all))*Realcounterp1
                 ELSE

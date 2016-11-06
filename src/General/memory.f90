@@ -666,9 +666,9 @@ subroutine alloc_tot()
 
 
       if(lwp) then
-       allocate(tottrn(jpiglo, jpjglo, jpk))      
+       allocate(tottrn(jpk, jpjglo, jpiglo))      
        tottrn = huge(tottrn(1,1,1)) 
-       allocate(tottrb(jpiglo, jpjglo, jpk))      
+       allocate(tottrb(jpk, jpjglo, jpiglo))      
        tottrb = huge(tottrb(1,1,1))
        allocate(tottrnIO(jpk,jpjglo,jpiglo)) 
        tottrnIO  = huge(tottrnIO(1,1,1)) 

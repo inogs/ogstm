@@ -465,22 +465,21 @@
        USE myalloc
 
        IMPLICIT NONE
-       CHARACTER*(*) fileNetCDF
-       REAL(8) julian
+       CHARACTER*(*),intent(in) :: fileNetCDF
+       double precision,intent(in) :: julian
+       CHARACTER(*),intent(in) ::  VAR
 
        ! local
-       CHARACTER(LEN=20) VAR
-       CHARACTER(LEN=17) TimeString
-       integer istart, iend
-       integer s, nc, counter
-       integer timid, depid, yid, xid, xaid, yaid, zaid
-       integer idB, idN, idLon, idLat, idLev, idTim
-
+       CHARACTER(LEN=17) :: TimeString
+       integer :: istart, iend
+       integer :: s, nc, counter
+       integer :: timid, depid, yid, xid, xaid, yaid, zaid
+       integer :: idB, idN, idLon, idLat, idLev, idTim
+       double precision,allocatable,dimension(:,:,:) :: copy_in
        TimeString =fileNetCDF(14:30)
 !      istart=index(fileNetCDF,'00.')+3
 !      iend  =index(fileNetCDF,'.nc')-1
 !      VAR        =fileNetCDF(istart:iend)
-
 
       s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
 
@@ -509,21 +508,29 @@
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
 
-        s = nf90_put_var(nc, idLon,  totglamt)
+        s = nf90_put_var(nc, idLon,  TRANSPOSE(totglamt))
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idLat,  totgphit)
+        s = nf90_put_var(nc, idLat,  TRANSPOSE(totgphit))
        call handle_err1(s,counter,fileNetCDF)
+       
+
         s = nf90_put_var(nc, idLev,     gdept)
        call handle_err1(s,counter,fileNetCDF)
 
         s = nf90_put_var(nc, idTim,    julian)
        call handle_err1(s,counter,fileNetCDF)
+      
+       allocate(copy_in(jpiglo, jpjglo, jpk))
+       call switch_index_double(tottrb,copy_in,jpiglo,jpjglo,jpk)
+       s = nf90_put_var(nc, idB,copy_in)
+       deallocate(copy_in)
 
-        s = nf90_put_var(nc, idB,      tottrb)
+       allocate(copy_in(jpiglo, jpjglo, jpk))
+       call switch_index_double(tottrn,copy_in,jpiglo,jpjglo,jpk)
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idN,      tottrn)
+        s = nf90_put_var(nc, idN,      copy_in)
        call handle_err1(s,counter,fileNetCDF)
-
+       deallocate(copy_in)
         s =nf90_close(nc)
 
 
@@ -538,13 +545,13 @@
        USE myalloc
        IMPLICIT NONE
 
-       CHARACTER*(*) fileNetCDF
-       character(LEN=17) datefrom, dateTo
-       real(4) M(jpk, jpjglo, jpiglo)
-
-       character(LEN=20) VAR
+       CHARACTER*(*),intent(in) :: fileNetCDF
+       character(LEN=20),intent(in) :: VAR
+       character(LEN=17),intent(in) :: datefrom, dateTo
+       real, dimension(jpk, jpjglo, jpiglo),intent(in) :: M
+       
+       real,allocatable,dimension(:,:,:) :: copy_in
        integer istart,iend
-
        integer s, nc, counter
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
@@ -631,14 +638,19 @@
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idgdept,  REAL(   gdept,     4) )
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,  M )                    
-       call handle_err1(s,counter,fileNetCDF)
 
+       allocate(copy_in(jpiglo, jpjglo, jpk))
+       call switch_index_double(M,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, idVAR  ,  copy_in )                    
+       call handle_err1(s,counter,fileNetCDF)
+       deallocate(copy_in)
 
         s =nf90_close(nc)
        call handle_err1(s,counter,fileNetCDF)
 
        END SUBROUTINE WRITE_AVE
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
        SUBROUTINE WRITE_AVE_2D(fileNetCDF,VAR, datefrom, dateTo,M)
        USE netcdf
@@ -698,11 +710,11 @@
 
         counter=0
         ! epascolo warning
-        s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
+        s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4) )
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
+        s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4) )
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,  M )                    
+        s = nf90_put_var(nc, idVAR  ,  transpose(M) )                    
        call handle_err1(s,counter,fileNetCDF)
 
 
@@ -719,12 +731,13 @@
        USE myalloc
        IMPLICIT NONE
 
-       CHARACTER*(*) fileNetCDF
-       character(LEN=17) datefrom, dateTo
-       real(8) M(jpk, jpjglo, jpiglo)
-       integer ave_counter
+       CHARACTER*(*),intent(in) :: fileNetCDF
+       character(LEN=17),intent(in) :: datefrom, dateTo
+       double precision,dimension(jpk, jpjglo, jpiglo),intent(in) :: M
+       integer,intent(in) :: ave_counter
 
        !local
+       double precision, allocatable,dimension(:,:,:) :: copy_in
        character(LEN=20) VAR
        integer istart,iend
 
@@ -783,7 +796,12 @@
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) )
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,                          M  )
+       
+       allocate(copy_in(jpiglo, jpjglo, jpk))
+       call switch_index_double(M,copy_in,jpiglo,jpjglo,jpk)
+       s = nf90_put_var(nc, idVAR  , copy_in  )
+       deallocate(copy_in)
+
        call handle_err1(s,counter,fileNetCDF)
 
 
@@ -796,10 +814,10 @@
        USE myalloc
        IMPLICIT NONE
 
-       CHARACTER*(*) fileNetCDF
-       character(LEN=17) datefrom, dateTo
-       real(8) M(jpjglo, jpiglo)
-       integer ave_counter
+       CHARACTER*(*),intent(in) :: fileNetCDF
+       character(LEN=17),intent(in) :: datefrom, dateTo
+       double precision,intent(in),dimension(jpjglo, jpiglo) :: M
+       integer,intent(in) :: ave_counter
 
        !local
        character(LEN=20) VAR
@@ -807,7 +825,7 @@
 
        integer s, nc, counter
        integer timid, yid, xid
-       integer idvartime,idgdept,idphit,idlamt,idVAR
+       integer idvartime,idgdept,idphit,idlamt,idVAR 
 
 
 !      istart=index(fileNetCDF,'00.')+3
@@ -853,7 +871,7 @@
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idVAR  ,                          M  )
+        s = nf90_put_var(nc, idVAR, transpose(M))
        call handle_err1(s,counter,fileNetCDF)
 
 
@@ -1241,3 +1259,21 @@
         end subroutine handle_err2
 
        ! ***************************************************************************
+
+       SUBROUTINE switch_index_double(in_matrix,out_matrix,x,y,z)
+
+       IMPLICIT NONE
+       integer,intent(in) :: x,y,z
+       double precision,dimension(z,y,x),intent(in) :: in_matrix
+       double precision,dimension(x,y,z),intent(inout) :: out_matrix
+       integer :: i,j,k
+
+       DO i=1,x
+        DO j=1,y
+          DO k=1,z
+            out_matrix(i,j,k) = in_matrix(k,j,i)
+          ENDDO
+        ENDDO
+      ENDDO   
+
+      END SUBROUTINE switch_index_double

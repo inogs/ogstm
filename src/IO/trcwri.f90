@@ -45,121 +45,124 @@
 
       call mppsync()
 
-      buf     = Miss_val
-      bufftrb = Miss_val
-      bufftrn = Miss_val
+      ! buf     = Miss_val
+      ! bufftrb = Miss_val
+      ! bufftrn = Miss_val
 
-      DO jn=1,jptra
-        if(myrank == 0) then
-           istart = nimpp
-           jstart = njmpp
-           iPd = nldi
-           iPe = nlei
-           jPd = nldj
-           jPe = nlej
-           irange    = iPe - iPd + 1
-           jrange    = jPe - jPd + 1
-           totistart = istart + iPd - 1
-           totiend   = totistart + irange - 1
-           totjstart = jstart + jPd - 1
-           totjend   = totjstart + jrange - 1
-           relistart = 1 + iPd - 1
-           reliend   = relistart + irange - 1
-           reljstart = 1 + jPd - 1
-           reljend   = reljstart + jrange - 1
-
-
-            do jk =1 , jpk
-            do jj =1 , jpj
-            do ji =1 , jpi
-               if (tmask(jk,jj,ji).eq.1.0) buf(jk,jj,ji) = trn(jk,jj,ji, jn)
-            enddo
-            enddo
-            enddo
-           tottrn  (totistart:totiend, totjstart:totjend,:)= buf  (relistart:reliend, reljstart:reljend, :)
+       DO jn=1,jptra
+      !   if(myrank == 0) then
+      !      istart = nimpp
+      !      jstart = njmpp
+      !      iPd = nldi
+      !      iPe = nlei
+      !      jPd = nldj
+      !      jPe = nlej
+      !      irange    = iPe - iPd + 1
+      !      jrange    = jPe - jPd + 1
+      !      totistart = istart + iPd - 1
+      !      totiend   = totistart + irange - 1
+      !      totjstart = jstart + jPd - 1
+      !      totjend   = totjstart + jrange - 1
+      !      relistart = 1 + iPd - 1
+      !      reliend   = relistart + irange - 1
+      !      reljstart = 1 + jPd - 1
+      !      reljend   = reljstart + jrange - 1
 
 
-            do jk =1 , jpk
-            do jj =1 , jpj
-            do ji =1 , jpi
-               if (tmask(jk,jj,ji).eq.1.0) buf(jk,jj,ji) = trb(jk,jj,ji, jn)
-            enddo
-            enddo
-            enddo
-
-           tottrb  (totistart:totiend, totjstart:totjend,:)= buf  (relistart:reliend, reljstart:reljend, :)
-
-
-
-
-           do idrank = 1,mpi_glcomm_size-1
-
-              call MPI_RECV(jpi_rec , 1,                  mpi_integer, idrank,  1,mpi_comm_world, status, ierr)
-              call MPI_RECV(jpj_rec , 1,                  mpi_integer, idrank,  2,mpi_comm_world, status, ierr)
-              call MPI_RECV(istart  , 1,                  mpi_integer, idrank,  3,mpi_comm_world, status, ierr)
-              call MPI_RECV(jstart  , 1,                  mpi_integer, idrank,  4,mpi_comm_world, status, ierr)
-              call MPI_RECV(iPe     , 1,                  mpi_integer, idrank,  5,mpi_comm_world, status, ierr)
-              call MPI_RECV(jPe     , 1,                  mpi_integer, idrank,  6,mpi_comm_world, status, ierr)
-              call MPI_RECV(iPd     , 1,                  mpi_integer, idrank,  7,mpi_comm_world, status, ierr)
-              call MPI_RECV(jPd     , 1,                  mpi_integer, idrank,  8,mpi_comm_world, status, ierr)
-              call MPI_RECV(bufftrn,   jpi_rec*jpj_rec*jpk, mpi_real8, idrank, 11,mpi_comm_world, status, ierr)
-              call MPI_RECV(bufftrb,   jpi_rec*jpj_rec*jpk, mpi_real8, idrank, 12,mpi_comm_world, status, ierr)
+      !       do ji =1 , jpi
+      !             do jj =1 , jpj
+      !                   do jk =1 , jpk
+      !                         if (tmask(jk,jj,ji).eq.1.0) then 
+      !                               buf(jk,jj,ji) = trn(jk,jj,ji, jn)
+      !                         endif
+      !                   enddo
+      !             enddo
+      !       enddo
+      !      tottrn  (totistart:totiend, totjstart:totjend,:)= buf(relistart:reliend, reljstart:reljend, :)
 
 
-              irange    = iPe - iPd + 1
-              jrange    = jPe - jPd + 1
-              totistart = istart + iPd - 1
-              totiend   = totistart + irange - 1
-              totjstart = jstart + jPd - 1
-              totjend   = totjstart + jrange - 1
-              relistart = 1 + iPd - 1
-              reliend   = relistart + irange - 1
-              reljstart = 1 + jPd - 1
-              reljend   = reljstart + jrange - 1
+      !       do ji =1 , jpi
+      !        do jj =1 , jpj
+      !         do jk =1 , jpk
+      !          if (tmask(jk,jj,ji).eq.1.0) then 
+      !             buf(jk,jj,ji) = trb(jk,jj,ji, jn)
+      !          endif
+      !         enddo
+      !        enddo
+      !       enddo
 
-
-              do jk =1 , jpk
-                  do jj =totjstart,totjend
-                  ind1=(                   relistart +(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
-                  ind2=((totiend-totistart+relistart)+(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
-                  tottrn(totistart:totiend, jj, jk) =bufftrn(ind1:ind2)
-                  tottrb(totistart:totiend, jj, jk) =bufftrb(ind1:ind2)
-                  enddo
-              enddo
-
-
-           enddo ! do idrank = 1, size-1
+      !      tottrb  (totistart:totiend, totjstart:totjend,:)= buf  (relistart:reliend, reljstart:reljend, :)
 
 
 
-        else !myrank != 0
+
+      !      do idrank = 1,mpi_glcomm_size-1
+
+      !         call MPI_RECV(jpi_rec , 1,                  mpi_integer, idrank,  1,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(jpj_rec , 1,                  mpi_integer, idrank,  2,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(istart  , 1,                  mpi_integer, idrank,  3,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(jstart  , 1,                  mpi_integer, idrank,  4,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(iPe     , 1,                  mpi_integer, idrank,  5,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(jPe     , 1,                  mpi_integer, idrank,  6,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(iPd     , 1,                  mpi_integer, idrank,  7,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(jPd     , 1,                  mpi_integer, idrank,  8,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(bufftrn,   jpi_rec*jpj_rec*jpk, mpi_real8, idrank, 11,mpi_comm_world, status, ierr)
+      !         call MPI_RECV(bufftrb,   jpi_rec*jpj_rec*jpk, mpi_real8, idrank, 12,mpi_comm_world, status, ierr)
 
 
-            do jk =1 , jpk
-            do jj =1 , jpj
-            do ji =1 , jpi
-               ind1 = ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-               if (tmask(jk,jj,ji).eq.1.0) then
-                  bufftrn(ind1)= trn(jk,jj,ji, jn)
-                  bufftrb(ind1)= trb(jk,jj,ji, jn)
-               endif
+      !         irange    = iPe - iPd + 1
+      !         jrange    = jPe - jPd + 1
+      !         totistart = istart + iPd - 1
+      !         totiend   = totistart + irange - 1
+      !         totjstart = jstart + jPd - 1
+      !         totjend   = totjstart + jrange - 1
+      !         relistart = 1 + iPd - 1
+      !         reliend   = relistart + irange - 1
+      !         reljstart = 1 + jPd - 1
+      !         reljend   = reljstart + jrange - 1
 
-            enddo
-            enddo
-            enddo
 
-            call MPI_SEND(jpi      , 1         ,mpi_integer, 0,  1, mpi_comm_world,ierr)
-            call MPI_SEND(jpj      , 1         ,mpi_integer, 0,  2, mpi_comm_world,ierr)
-            call MPI_SEND(nimpp    , 1         ,mpi_integer, 0,  3, mpi_comm_world,ierr)
-            call MPI_SEND(njmpp    , 1         ,mpi_integer, 0,  4, mpi_comm_world,ierr)
-            call MPI_SEND(nlei     , 1         ,mpi_integer, 0,  5, mpi_comm_world,ierr)
-            call MPI_SEND(nlej     , 1         ,mpi_integer, 0,  6, mpi_comm_world,ierr)
-            call MPI_SEND(nldi     , 1         ,mpi_integer, 0,  7, mpi_comm_world,ierr)
-            call MPI_SEND(nldj     , 1         ,mpi_integer, 0,  8, mpi_comm_world,ierr)
-            call MPI_SEND(bufftrn  ,jpk*jpj*jpi,  mpi_real8, 0, 11, mpi_comm_world,ierr)
-            call MPI_SEND(bufftrb  ,jpk*jpj*jpi,  mpi_real8, 0, 12, mpi_comm_world,ierr)
+      !         do jk =1 , jpk
+      !             do jj =totjstart,totjend
+      !             ind1=(                   relistart +(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
+      !             ind2=((totiend-totistart+relistart)+(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
+      !             tottrn(totistart:totiend, jj, jk) =bufftrn(ind1:ind2)
+      !             tottrb(totistart:totiend, jj, jk) =bufftrb(ind1:ind2)
+      !             enddo
+      !         enddo
 
-        endif ! if myrank = 0
+
+      !      enddo ! do idrank = 1, size-1
+
+
+
+      !   else !myrank != 0
+
+
+      !       do ji =1 , jpi
+      !        do jj =1 , jpj
+      !         do jk =1 , jpk
+      !          ind1 = ji + jpi * (jj-1) + jpi * jpj *(jk-1)
+      !          if (tmask(jk,jj,ji).eq.1.0) then
+      !             bufftrn(ind1)= trn(jk,jj,ji, jn)
+      !             bufftrb(ind1)= trb(jk,jj,ji, jn)
+      !          endif
+      !         enddo
+      !        enddo
+      !       enddo
+
+      !       call MPI_SEND(jpi      , 1         ,mpi_integer, 0,  1, mpi_comm_world,ierr)
+      !       call MPI_SEND(jpj      , 1         ,mpi_integer, 0,  2, mpi_comm_world,ierr)
+      !       call MPI_SEND(nimpp    , 1         ,mpi_integer, 0,  3, mpi_comm_world,ierr)
+      !       call MPI_SEND(njmpp    , 1         ,mpi_integer, 0,  4, mpi_comm_world,ierr)
+      !       call MPI_SEND(nlei     , 1         ,mpi_integer, 0,  5, mpi_comm_world,ierr)
+      !       call MPI_SEND(nlej     , 1         ,mpi_integer, 0,  6, mpi_comm_world,ierr)
+      !       call MPI_SEND(nldi     , 1         ,mpi_integer, 0,  7, mpi_comm_world,ierr)
+      !       call MPI_SEND(nldj     , 1         ,mpi_integer, 0,  8, mpi_comm_world,ierr)
+      !       call MPI_SEND(bufftrn  ,jpk*jpj*jpi,  mpi_real8, 0, 11, mpi_comm_world,ierr)
+      !       call MPI_SEND(bufftrb  ,jpk*jpj*jpi,  mpi_real8, 0, 12, mpi_comm_world,ierr)
+
+      !   endif ! if myrank = 0
 
 
         if(myrank == 0) then

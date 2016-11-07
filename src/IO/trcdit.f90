@@ -27,7 +27,7 @@
       INTEGER, INTENT(IN) :: FREQ_GROUP ! 1 = HIGH FREQ, 2 = LOW FREQ
 
 
-      INTEGER jk,jj,ji, jn, jn_high
+      INTEGER jk,jj,ji, jn, jn_high,i,j,k
       INTEGER ind
       INTEGER ave_counter
 
@@ -76,34 +76,36 @@
       output_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
       bkpname        = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
 
-! ! *************** START COLLECTING DATA *****************************
-!       if(myrank == 0) then                    ! IF LABEL 1
+! *************** START COLLECTING DATA *****************************
+!      if(myrank == 0) then                    ! IF LABEL 1
 
-! ! ******* myrank 0 sets indexes of tot matrix where to place its own part
-!           iPd    = nldi
-!           iPe    = nlei
-!           jPd    = nldj
-!           jPe    = nlej
-!           istart = nimpp
-!           jstart = njmpp
-!           irange    = iPe - iPd + 1
-!           jrange    = jPe - jPd + 1
-!           totistart = istart + iPd - 1
-!        totiend  = totistart + irange - 1
-!           totjstart = jstart + jPd - 1
-!        totjend  = totjstart + jrange - 1
-!           relistart = 1 + iPd - 1     
-!        reliend  = relistart + irange - 1
-!           reljstart = 1 + jPd - 1     
-!        reljend  = reljstart + jrange - 1
+! ******* myrank 0 sets indexes of tot matrix where to place its own part
+          iPd    = nldi
+          iPe    = nlei
+          jPd    = nldj
+          jPe    = nlej
+          istart = nimpp
+          jstart = njmpp
+          irange    = iPe - iPd + 1
+          jrange    = jPe - jPd + 1
+          totistart = istart + iPd - 1
+       totiend  = totistart + irange - 1
+          totjstart = jstart + jPd - 1
+       totjend  = totjstart + jrange - 1
+          relistart = 1 + iPd - 1     
+       reliend  = relistart + irange - 1
+          reljstart = 1 + jPd - 1     
+       reljend  = reljstart + jrange - 1
 
 
-! !***** START ASSEMBLING ***  myrank 0 puts its tracer part in the tot matrix
-!           if (FREQ_GROUP.eq.1) then
-!           tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO_HIGH(relistart:reliend, reljstart:reljend,:,jn_high)
-!           else
-!           tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO (relistart:reliend, reljstart:reljend,:,jn)
-!           endif
+!***** START ASSEMBLING ***  myrank 0 puts its tracer part in the tot matrix
+          print *,totistart,totiend,relistart,reliend
+          print *,totjstart,totjend,reljstart,reljend
+          if (FREQ_GROUP.eq.1) then
+          tottrnIO(:,totjstart:totjend,totistart:totiend)= traIO_HIGH(:,reljstart:reljend,relistart:reliend,jn_high)
+          else
+          tottrnIO(:,totjstart:totjend,totistart:totiend)= traIO (:,reljstart:reljend,relistart:reliend,jn)
+          endif
 
 
 !           do idrank = 1,mpi_glcomm_size-1
@@ -130,14 +132,14 @@
 !               reljstart = 1 + jPd - 1
 !               reljend   = reljstart + jrange - 1
 ! ! **** ASSEMBLING *** myrank 0 puts in tot matrix buffer received by idrank
-!               do jk =1 , jpk
-!                do jj =totjstart,totjend
-!                  do ji =totistart,totiend
-!                      ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-!                      tottrnIO(jk,jj,ji)= bufftrn   (ind)
-!                  enddo
-!                 enddo
-!                enddo
+            !   do jk =1 , jpk
+            !    do jj =totjstart,totjend
+            !      do ji =totistart,totiend
+            !          ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
+            !          tottrnIO(jk,jj,ji)= bufftrn   (ind)
+            !      enddo
+            !     enddo
+            !    enddo
 
 !           enddo !idrank = 1, size-1
 
@@ -197,7 +199,15 @@
       
 
         else
-          d2f3d = REAL(tottrnIO,4)
+
+          do i=1,jpiglo
+           do j=1,jpjglo
+            do k=1,jpk
+            d2f3d(k,j,i) = REAL(tottrnIO(k,j,i),4)
+            !print *,".. = ",d2f3d(k,j,i)        
+            enddo
+           enddo
+          enddo
           CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, d2f3d)
       
          endif

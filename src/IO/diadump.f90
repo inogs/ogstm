@@ -63,33 +63,33 @@
 
 ! ! ******* myrank 0 sets indexes of tot matrix where to place its own part
 
-!           iPd    = nldi
-!           iPe    = nlei
-!           jPd    = nldj
-!           jPe    = nlej
-!           istart = nimpp
-!           jstart = njmpp
-!           irange    = iPe - iPd + 1
-!           jrange    = jPe - jPd + 1
-!           totistart = istart + iPd - 1 
-!        totiend   = totistart + irange - 1
-!           totjstart = jstart + jPd - 1 
-!        totjend   = totjstart + jrange - 1
-!           relistart = 1 + iPd - 1      
-!        reliend   = relistart + irange - 1
-!           reljstart = 1 + jPd - 1      
-!        reljend   = reljstart + jrange - 1
+          iPd    = nldi
+          iPe    = nlei
+          jPd    = nldj
+          jPe    = nlej
+          istart = nimpp
+          jstart = njmpp
+          irange    = iPe - iPd + 1
+          jrange    = jPe - jPd + 1
+          totistart = istart + iPd - 1 
+       totiend   = totistart + irange - 1
+          totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+          relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+          reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
-!           totsnIO  (totistart:totiend, totjstart:totjend,:) = snIO    (relistart:reliend, reljstart:reljend, :)
-!           tottnIO  (totistart:totiend, totjstart:totjend,:) = tnIO    (relistart:reliend, reljstart:reljend, :)
-!           totvatmIO(totistart:totiend, totjstart:totjend)   = vatmIO  (relistart:reliend, reljstart:reljend)
-!           totempIO (totistart:totiend, totjstart:totjend)   = empIO   (relistart:reliend, reljstart:reljend)
-!           totqsrIO (totistart:totiend, totjstart:totjend)   = qsrIO   (relistart:reliend, reljstart:reljend)
-!           totunIO  (totistart:totiend, totjstart:totjend,:) = unIO    (relistart:reliend, reljstart:reljend, :)
-!           totvnIO  (totistart:totiend, totjstart:totjend,:) = vnIO    (relistart:reliend, reljstart:reljend, :)
-!           totwnIO  (totistart:totiend, totjstart:totjend,:) = wnIO    (relistart:reliend, reljstart:reljend, :)
-!           totavtIO (totistart:totiend, totjstart:totjend,:) = avtIO   (relistart:reliend, reljstart:reljend, :)
-!           tote3tIO (totistart:totiend, totjstart:totjend,:) = e3tIO   (relistart:reliend, reljstart:reljend, :)
+          totsnIO  (:, totjstart:totjend,totistart:totiend) = snIO    (:, reljstart:reljend,relistart:reliend)
+          tottnIO  (:, totjstart:totjend,totistart:totiend) = tnIO    (:, reljstart:reljend,relistart:reliend)
+          totvatmIO(totjstart:totjend,totistart:totiend) = vatmIO  (reljstart:reljend,relistart:reliend)
+          totempIO (totjstart:totjend,totistart:totiend) = empIO   (reljstart:reljend,relistart:reliend)
+          totqsrIO (totjstart:totjend,totistart:totiend) = qsrIO   (reljstart:reljend,relistart:reliend)
+          totunIO  (:, totjstart:totjend,totistart:totiend) = unIO    (:, reljstart:reljend,relistart:reliend)
+          totvnIO  (:, totjstart:totjend,totistart:totiend) = vnIO    (:, reljstart:reljend,relistart:reliend)
+          totwnIO  (:, totjstart:totjend,totistart:totiend) = wnIO    (:, reljstart:reljend,relistart:reliend)
+          totavtIO (:, totjstart:totjend,totistart:totiend) = avtIO   (:, reljstart:reljend,relistart:reliend)
+          tote3tIO (:, totjstart:totjend,totistart:totiend) = e3tIO   (:, reljstart:reljend,relistart:reliend)
 
 !           do idrank = 1,mpi_glcomm_size-1
 ! ! **************  myrank 0 is receiving from the others their buffer  ****
@@ -230,32 +230,32 @@
       DO jn = 1, JPTRA_DIA_2D
 
 !           if (.not.is_time_to_save(jn,FREQ_GROUP,2)) CYCLE
-!           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
+           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 !       if (myrank == 0) then
 !   ! ******* myrank 0 sets indexes of tot matrix where to place its own part
 
-!              iPd    = nldi
-!              iPe    = nlei
-!              jPd    = nldj
-!              jPe    = nlej
-!              istart = nimpp
-!              jstart = njmpp
-!              irange    = iPe - iPd + 1
-!              jrange    = jPe - jPd + 1
-!              totistart = istart + iPd - 1 
-!        totiend   = totistart + irange - 1
-!              totjstart = jstart + jPd - 1 
-!        totjend   = totjstart + jrange - 1
-!              relistart = 1 + iPd - 1      
-!        reliend   = relistart + irange - 1
-!              reljstart = 1 + jPd - 1      
-!        reljend   = reljstart + jrange - 1
+             iPd    = nldi
+             iPe    = nlei
+             jPd    = nldj
+             jPe    = nlej
+             istart = nimpp
+             jstart = njmpp
+             irange    = iPe - iPd + 1
+             jrange    = jPe - jPd + 1
+             totistart = istart + iPd - 1 
+       totiend   = totistart + irange - 1
+             totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+             relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+             reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
-!               if (FREQ_GROUP.eq.1) then
-!               tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO_HIGH(relistart:reliend,reljstart:reljend,jn_high)
-!               else
-!               tottrnIO2d (totistart:totiend, totjstart:totjend) = tra_DIA_2d_IO(     relistart:reliend,reljstart:reljend,jn)
-!               endif
+              if (FREQ_GROUP.eq.1) then
+              tottrnIO2d (totjstart:totjend,totistart:totiend) = tra_DIA_2d_IO_HIGH(reljstart:reljend,relistart:reliend,jn_high)
+              else
+              tottrnIO2d (totjstart:totjend,totistart:totiend) = tra_DIA_2d_IO(     reljstart:reljend,relistart:reliend,jn)
+              endif
 
 !              do idrank = 1,mpi_glcomm_size-1
 ! ! **************  myrank 0 is receiving from the others their buffer  ****

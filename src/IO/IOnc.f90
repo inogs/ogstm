@@ -640,7 +640,8 @@
        call handle_err1(s,counter,fileNetCDF)
 
        allocate(copy_in(jpiglo, jpjglo, jpk))
-       call switch_index_double(M,copy_in,jpiglo,jpjglo,jpk)
+       print *,allocated(copy_in)
+       call switch_index_real(M,copy_in,jpiglo,jpjglo,jpk)
         s = nf90_put_var(nc, idVAR  ,  copy_in )                    
        call handle_err1(s,counter,fileNetCDF)
        deallocate(copy_in)
@@ -896,7 +897,10 @@
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
         integer idT, idS, idU, idV, idW, idEddy,ide3t, idR, idWs, idE
-
+        real,allocatable,dimension(:,:,:) :: copy_in
+        real,allocatable,dimension(:,:) :: copy_in_2d
+        allocate(copy_in(jpiglo,jpjglo,jpk))
+        allocate(copy_in_2d(jpiglo,jpjglo))
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
@@ -991,44 +995,62 @@
         s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  )
        call handle_err1(s,counter,fileNetCDF)
 !      3D vars
-        d2f3d = REAL(totsnIO,4) 
-       s = nf90_put_var(nc, idS,    d2f3d) 
-        call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(tottnIO,4) 
-       s = nf90_put_var(nc, idT,    d2f3d) 
-        call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totunIO,4) 
-       s = nf90_put_var(nc, idU,    d2f3d) 
-        call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totvnIO,4) 
-       s = nf90_put_var(nc, idV,    d2f3d) 
-        call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totwnIO,4) 
-       s = nf90_put_var(nc, idW,    d2f3d) 
-        call handle_err1(s,counter,fileNetCDF)
-        d2f3d = REAL(totavtIO,4)
-       s = nf90_put_var(nc, idEddy, d2f3d) 
-        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, ide3t, tote3tIO) 
-        call handle_err1(s,counter,fileNetCDF)
-!       d2f3d = REAL(tote3tIO,4)
-       s = nf90_put_var(nc, ide3t, d2f3d) 
+        
+        call switch_index_rout(totsnIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, idS,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 
+      
+        call switch_index_rout(tottnIO,copy_in,jpiglo,jpjglo,jpk)
+       s = nf90_put_var(nc, idT,    copy_in) 
+        call handle_err1(s,counter,fileNetCDF)
+
+     
+        call switch_index_rout(totunIO,copy_in,jpiglo,jpjglo,jpk) 
+       s = nf90_put_var(nc, idU,    copy_in) 
+        call handle_err1(s,counter,fileNetCDF)
+
+      print *,"PIPPO0"
+        call switch_index_rout(totvnIO,copy_in,jpiglo,jpjglo,jpk) 
+       s = nf90_put_var(nc, idV,    copy_in) 
+        call handle_err1(s,counter,fileNetCDF)
+
+     
+        call switch_index_rout(totwnIO,copy_in,jpiglo,jpjglo,jpk) 
+       s = nf90_put_var(nc, idW,    copy_in) 
+        call handle_err1(s,counter,fileNetCDF)
+
+        print *,"PIPPO1"
+        call switch_index_rout(totavtIO,copy_in,jpiglo,jpjglo,jpk)
+       s = nf90_put_var(nc, idEddy, copy_in) 
+        call handle_err1(s,counter,fileNetCDF)
+      
+      !  call switch_index_rout(tote3tIO,copy_in,jpiglo,jpjglo,jpk)
+       ! s = nf90_put_var(nc, ide3t, tote3tIO) 
+        !call handle_err1(s,counter,fileNetCDF)
+
+      
+        print *,"PIPPO2"
+        call switch_index_rout(tote3tIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, ide3t, copy_in) 
+        call handle_err1(s,counter,fileNetCDF)
 !       2D vars
-        d2f2d =REAL(totvatmIO,4)
-       s = nf90_put_var(nc, idWs,   d2f2d) 
+        print *,"PIPPO3"
+        copy_in_2d =transpose(REAL(totvatmIO,4))
+       s = nf90_put_var(nc, idWs,   copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
-        d2f2d =REAL(totempIO ,4)
-       s = nf90_put_var(nc, idE,    d2f2d) 
+        copy_in_2d =transpose(REAL(totempIO ,4))
+       s = nf90_put_var(nc, idE,    copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
-        d2f2d =REAL(totqsrIO ,4)
-       s = nf90_put_var(nc, idR,    d2f2d) 
+        copy_in_2d =transpose(REAL(totqsrIO ,4))
+       s = nf90_put_var(nc, idR,    copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
 
 
 
         s= nf90_close(nc)
+        deallocate(copy_in_2d)
+        deallocate(copy_in)
 
 
        END SUBROUTINE physDump
@@ -1264,9 +1286,12 @@
 
        IMPLICIT NONE
        integer,intent(in) :: x,y,z
-       double precision,dimension(z,y,x),intent(in) :: in_matrix
+       double precision,dimension(z,y,x),intent(in)    :: in_matrix
        double precision,dimension(x,y,z),intent(inout) :: out_matrix
        integer :: i,j,k
+      !  print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
+      !  print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
+      !  print *,x,y,z
 
        DO i=1,x
         DO j=1,y
@@ -1277,3 +1302,48 @@
       ENDDO   
 
       END SUBROUTINE switch_index_double
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+      SUBROUTINE switch_index_real(in_matrix,out_matrix,x,y,z)
+
+       IMPLICIT NONE
+       integer,intent(in) :: x,y,z
+       real,dimension(z,y,x),intent(in)    :: in_matrix
+       real,dimension(x,y,z),intent(inout) :: out_matrix
+       integer :: i,j,k
+      !  print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
+      !  print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
+      !  print *,x,y,z
+
+       DO i=1,x
+        DO j=1,y
+          DO k=1,z
+            out_matrix(i,j,k) = in_matrix(k,j,i)
+          ENDDO
+        ENDDO
+      ENDDO   
+
+      END SUBROUTINE switch_index_real
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      
+      SUBROUTINE switch_index_rout(in_matrix,out_matrix,x,y,z)
+
+       IMPLICIT NONE
+       integer,intent(in) :: x,y,z
+       double precision,dimension(z,y,x),intent(in)    :: in_matrix
+       real,dimension(x,y,z),intent(inout) :: out_matrix
+       integer :: i,j,k
+       print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
+       print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
+       print *,x,y,z
+
+       DO i=1,x
+        DO j=1,y
+          DO k=1,z
+            out_matrix(i,j,k) = REAL(in_matrix(k,j,i),4)
+          ENDDO
+        ENDDO
+      ENDDO   
+
+      END SUBROUTINE switch_index_rout

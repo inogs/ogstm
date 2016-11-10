@@ -117,8 +117,8 @@ def create_bc_nc(test):
         ncOUT.createDimension('lon'    ,jpi);
         ncOUT.createDimension('lat'    ,jpj);
         
-        ncvar = ncOUT.createVariable('atm_N1p'      ,'f',('lat','lon')                   ); ncvar[:] =0.#3.75866672509673e-09;
-        ncvar = ncOUT.createVariable('atm_N3n'      ,'f',('lat','lon')                   ); ncvar[:] =0.#2.24183651189621e-07;
+        ncvar = ncOUT.createVariable('atm_N1p'      ,'f',('lat','lon')                   ); ncvar[:] =3.75866672509673e-09;
+        ncvar = ncOUT.createVariable('atm_N3n'      ,'f',('lat','lon')                   ); ncvar[:] =2.24183651189621e-07;
         ncOUT.close()
 
 # Atmosphere CO2

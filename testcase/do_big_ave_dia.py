@@ -28,7 +28,7 @@ def do_big_ave_dia(test):
     M.close()
 
 # Retrieving state variables names from model namelist
-    VARS=['ruPPY1c','ruPPY2c','ruPPY3c','ruPPY4c','loPPY1c','loPPY2c','loPPY3c','loPPY4c'] 
+    VARS=['ruPBAc','ruPPY1c','ruPPY2c','ruPPY3c','ruPPY4c','loPPY1c','loPPY2c','loPPY3c','loPPY4c','loBAc','dN1p','dN3n','dN4n','ruPPYn','ruPPYp','ruBAn','ruBAp'] 
     nvars=len(VARS)
     check_bool = 0
     for v,var in enumerate(VARS):

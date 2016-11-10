@@ -10,7 +10,7 @@ import pickle
 
 import datetime
 
-def do_big_ave(test):
+def do_big_ave_flux(test):
 
     jpi=test['jpi'];
     jpj=test['jpj'];
@@ -43,38 +43,28 @@ def do_big_ave(test):
     nvars=len(VARS)
     check_bool = 0
     for v,var in enumerate(VARS):
-         DIR_DATA          = test['Dir'] + '/AVE_FREQ_1/'
+         DIR_DATA          = test['Dir'] + '/'
          print DIR_DATA 
 #/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase
 #        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/' + 'AVE_FREQ_1/'
-         filenames         = DIR_DATA + 'ave.2002*.' + var +'.nc'
+         filenames         = DIR_DATA + 'flux.2002*.nc'
          SingleVar_filelist= glob.glob(filenames)
          SingleVar_filelist.sort()
          if check_bool == 0:
              ntimes=len(SingleVar_filelist)
-             matrix=np.zeros((ntimes,jpk))
+             matrix=np.zeros((ntimes,jpk-1,7))
              #       WRITE NetCDF restart file
-             outfile = 'POSTPROC/' + test['Area'] + '.nc'
+             outfile = 'POSTPROC/' + test['Area'] + '_flux.nc'
              ncOUT   = NC.netcdf_file(outfile,"w");
         
-             ncOUT.createDimension('depth',jpk);
+             ncOUT.createDimension('depth',jpk-1);
              ncOUT.createDimension('time',ntimes)
+             ncOUT.createDimension('Type',7)
              check_bool = 1
          for nf,fname in enumerate(SingleVar_filelist):
              DATA=NC.netcdf_file(fname,"r")
-             matrix[nf,:]=DATA.variables[var].data[0,:,1,1].copy();# Input data to be interpolated on final grid
+             matrix[nf,:,:]=DATA.variables[var].data[:,:].copy();# Input data to be interpolated on final grid
              DATA.close()
-         ncvar = ncOUT.createVariable(var       ,'f',('time','depth')); ncvar[:] = matrix; 
+         ncvar = ncOUT.createVariable(var       ,'f',('time','depth','Type')); ncvar[:] = matrix; 
          setattr(ncOUT.variables[var]   ,'missing_value',1e+20                              );     
     ncOUT.close()
-
-
-#   getting Julian date for present simulation
-#   mm    = date[4:6]
-#   dd    = date[6:8]
-#   s0    = mm+'.'+dd
-#   fmt   = '%m.%d'
-#   dt    = datetime.datetime.strptime(s0,fmt)
-#   tt    = dt.timetuple()
-#   j_day = tt.tm_yday -1 # from 1 to 365 scaled to 0 364
-

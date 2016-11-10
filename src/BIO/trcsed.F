@@ -197,7 +197,7 @@ C 1.3 tracer flux divergence at t-point added to the general trend
                  DO js =1,21
                     ztra(js,mytid+1) = -ze3tr * (zwork(js,jk,mytid+1) - zwork(js,jk + 1,mytid+1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(js,jk,mytid+1)
+                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(js,jk,mytid+1)*e1t(ji,jj)*e2t(ji,jj)
                     ENDIF
                  END DO
 

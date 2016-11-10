@@ -84,6 +84,18 @@ C --------------------------
 C Tracer slab
 C ===========
 
+        DO jk = 1,jpk
+          DO jj = 1,jpj
+            DO ji = 1,jpi
+
+            tra_DIA(ji,jj,jk,90+ppdN1p) = ( tra(ji,jj,jk,ppN1p)-trn(ji,jj,jk,ppN1p) )/rdt
+            tra_DIA(ji,jj,jk,90+ppdN3n) = ( tra(ji,jj,jk,ppN3n)-trn(ji,jj,jk,ppN3n) )/rdt
+            tra_DIA(ji,jj,jk,90+ppdN4n) = ( tra(ji,jj,jk,ppN4n)-trn(ji,jj,jk,ppN4n) )/rdt
+
+            END DO
+          END DO
+        END DO
+
 
       TRACER_LOOP: DO  jn = 1, jptra, ntids
 
@@ -126,7 +138,6 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
         DO jk = 1,jpk
           DO jj = 1,jpj
             DO ji = 1,jpi
-
             trb(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)
             trn(ji,jj,jk,jn+mytid) = tra(ji,jj,jk,jn+mytid)*tmask(ji,jj,jk)
             tra(ji,jj,jk,jn+mytid) = 0.e0
@@ -142,15 +153,6 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
       END DO PACK_LOOP1
       mytid =0
 #endif
-
-      DO jj = 1,jpj
-         DO ji = 1,jpi
-!           e3t(ji,jj,1) = max(0.3, e3t(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3u(ji,jj,1) = max(0.3, e3u(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3v(ji,jj,1) = max(0.3, e3v(ji,jj,1) + wn(ji,jj,1) * rdt)
-!           e3w(ji,jj,1) = max(0.3, e3w(ji,jj,1) + wn(ji,jj,1) * rdt)
-         END DO
-      END DO
 
 
 C END of tracer slab

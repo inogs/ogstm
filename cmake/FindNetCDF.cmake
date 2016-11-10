@@ -32,7 +32,7 @@ if (NETCDF_INCLUDES AND NETCDF_LIBRARIES)
 endif (NETCDF_INCLUDES AND NETCDF_LIBRARIES)
 
 find_path (NETCDF_INCLUDES netcdf.h
-  HINTS NETCDF_DIR ENV NETCDF_DIR)
+HINTS NETCDF_DIR $ENV(NETCDF_DIR))
 
 find_library (NETCDF_LIBRARIES_C       NAMES netcdf)
 mark_as_advanced(NETCDF_LIBRARIES_C)
@@ -59,7 +59,7 @@ macro (NetCDF_check_interface lang header libs)
 endmacro (NetCDF_check_interface)
 
 NetCDF_check_interface (F90 netcdf.mod  netcdff)
-NetCDF_check_interface (CXX netcdfcpp.h netcdf_c++)
+#NetCDF_check_interface (CXX netcdfcpp.h netcdf_c++)
 NetCDF_check_interface (F77 netcdf.inc  netcdff)
 
 set (NETCDF_LIBRARIES "${NetCDF_libs}" CACHE STRING "All NetCDF libraries required for interface level")

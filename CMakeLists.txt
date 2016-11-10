@@ -31,7 +31,7 @@ add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed )
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
   set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -g -cpp -unroll=3 -qopt-subscript-in-range -align all -heap-arrays")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -traceback -cpp -fp-stack-check -check bounds -fpe0")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -traceback -cpp -fp-stack-check -check bounds")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")

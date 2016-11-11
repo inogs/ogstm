@@ -130,8 +130,8 @@
                    if(ji .EQ. jpi) jirig = 0
                    locsum = 0
 
-                      DO myjj=jj+jjlef, jj+jjrig
                          DO myji=ji+jilef, ji+jirig
+                      DO myjj=jj+jjlef, jj+jjrig
                             locsum = locsum + tmask(jk,myjj,myji)
                          END DO
                       END DO
@@ -245,7 +245,7 @@
              jj = jarr_hdf(2,jv,2)
              jk = jarr_hdf(1,jv,2)
 
-             zlt(jk,jj,ji, 1) = (  ztu(jk,jj,ji, 1) - ztu(jk,jj-1,ji, 1) &
+             zlt(jk,jj,ji, 1) = (  ztu(jk,jj,ji, 1) - ztu(jk,jj,ji-1, 1) &
      &             + ztv(jk,jj,ji, 1) - ztv(jk,jj-1,ji, 1)  ) * zbtr(jk,jj,ji)
 !! ... Multiply by the eddy diffusivity coefficient
              zlt(jk,jj,ji, 1) = trcrat * ahtt(jk) * zlt(jk,jj,ji, 1)
@@ -277,7 +277,7 @@
 
 !            IF( itid - 1 + jn <= jptra ) THEN
 
-!               CALL lbc( zlt(:,:,:,itid), 1, 1, 1, 1, jpk, 1 )
+               CALL lbc( zlt(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
 
 !            END IF
 !         END DO

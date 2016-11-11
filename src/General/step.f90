@@ -268,7 +268,7 @@ MODULE module_step
 ! tracers: horizontal diffusion IF namelist flags are activated
 ! -----------------------------
 
-   !   IF (lhdf)   CALL trchdf
+      IF (lhdf)   CALL trchdf
 
 
 ! tracers: sink and source (must be  parallelized on vertical slab)

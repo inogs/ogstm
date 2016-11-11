@@ -72,41 +72,10 @@
           jtrmax=jptra
 
 ! ---------------- Fuori dai punti BFM
-         DO jn=1,4
-!!$omp    parallel default(none) private(mytid, jk,jj,ji) shared(sediPI,jpk,jpj,jpi,jn)
-
-                        do ji=1,jpi
-                  do jj=1,jpj
-            do jk=1,jpk
-                sediPI(jk,jj,ji,jn)=0.
-                        end do
-                  end do
-            end do
-        
-
-!!$omp end parallel
-         ENDDO
-
-         DO jn=1, jptra_dia
-!!$omp    parallel default(none) private(mytid, jk,jj,ji) shared(tra_DIA,jpk,jpj,jpi,jn)
-
-       
-                       do ji=1,jpi
-                  do jj=1,jpj
-            do jk=1,jpk
-               tra_DIA(jk,jj,ji,jn)=0.
-                        end do
-                  end do
-            end do
-        
-!!$omp end parallel
-         ENDDO
 
       sediPI     = 0.
       tra_DIA    = 0.
       tra_DIA_2d = 0.
-
-
 
 ! $omp   parallel do default(none)  private(jb,jk,jj,ji,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 ! $omp&      shared(NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
@@ -141,7 +110,7 @@
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
                           er(9)  = vatm(jj,ji) * surf_mask(jk) ! wind speed (m/s)
                           er(10) = PH(jk,jj,ji)         ! PH
-
+                       
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
                           call BFM0D_reset()
@@ -183,5 +152,5 @@
 
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime
-
+               
       END SUBROUTINE trcbio

@@ -43,5 +43,5 @@
 
        trcsmsparttime = MPI_WTIME() - trcsmsparttime ! cronometer-stop
        trcsmstottime = trcsmstottime + trcsmsparttime
-
+       
       END SUBROUTINE trcsms

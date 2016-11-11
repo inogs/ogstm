@@ -262,7 +262,7 @@ MODULE module_step
       CALL trcadv ! tracers: advection
 
 #    if defined key_trc_dmp
-     ! CALL trcdmp ! tracers: damping for passive tracers
+      CALL trcdmp ! tracers: damping for passive tracers
 #    endif
 
 ! tracers: horizontal diffusion IF namelist flags are activated
@@ -275,9 +275,9 @@ MODULE module_step
 ! ------------------------
       
       CALL trcsms
-      !CALL trczdf ! tracers: vertical diffusion
-      !CALL snutel
-      !CALL checkValues
+      CALL trczdf ! tracers: vertical diffusion
+      CALL snutel
+      CALL checkValues
       CALL trcnxt ! tracers: fields at next time step
 
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop

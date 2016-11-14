@@ -163,7 +163,6 @@
       
 
 
-
 ! ************************************ BFM points re-indexing *******
 
       NBFMPOINTS = BFM_count()
@@ -197,8 +196,11 @@
 
 ! ********************************  Rivers ******
       filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'
+      !print *,"---",Rsizeglo
       
       CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
+      !print *,riv_idxtglo
+      !print *,Rsize,Rsizeglo
       Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
 
       if (Rsize.NE. 0) then
@@ -207,6 +209,7 @@
           B=RIVRe_Indexing()
 
       endif
+      !print *,Rsize,Rsizeglo
 
 
        if(lwp) write(*,*) 'RIV finiti'
@@ -280,7 +283,10 @@
            do kk =1, jpk
                 junk = idxt(kk,jj,ii)
                 do jv =1, sizeGLO
-                  if (junk.EQ.idxtGLOBAL(jv))  counter = counter + 1
+                  if (junk.EQ.idxtGLOBAL(jv))  then
+                  !print *,ii,jj,kk,jv,junk,idxtGLOBAL(jv),counter
+                  counter = counter + 1
+                  endif
                 enddo
              enddo
             enddo
@@ -446,7 +452,7 @@
                    endif
 
                  enddo
-                enddo
+                enddo!idxt
                enddo
            else
            ! NO ACTIVATION IN ATLANTIC BUFFER

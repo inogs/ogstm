@@ -109,18 +109,19 @@ contains
          nomefile  ='BC/TIN_'//datestring//'.nc'
          if(lwp) write(*,'(A,I4,A,A)') "LOAD_TIN --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:27)
 
-
-
+         !print *,"Rsize",Rsize," jn_riv",jn_riv
+         
           DO jn = 1, jn_riv
 
               nomevar = 'riv_'//ctrcnm(tra_matrix_riv(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Rsizeglo,riv_aux)
               CALL readnc_double_1d(nomefile,nomevar, Rsizeglo,riv_aux)
               DO jv=1,Rsize
-                 riv_dtatrc(jv,2,jn) = riv_aux(riv_ridxt(1,jv))
+                 riv_dtatrc(2,jv,jn) = riv_aux(riv_ridxt(1,jv))
+                 !print *,jn,jv,riv_ridxt(1,jv),"---",riv_dtatrc(2,jv,jn)
               ENDDO
           ENDDO
-          
+         
 
       END SUBROUTINE LOAD_TIN
 
@@ -135,7 +136,7 @@ contains
 
          DO jn=1, jn_riv
              DO jv=1, Rsize
-                 riv(jv,jn) = (1. - zweigh) * riv_dtatrc(jv,1,jn) + zweigh * riv_dtatrc(jv,2,jn)
+                 riv(jv,jn) = (1. - zweigh) * riv_dtatrc(1,jv,jn) + zweigh * riv_dtatrc(2,jv,jn)
              ENDDO
          ENDDO
 
@@ -151,7 +152,7 @@ contains
 
           DO jn=1, jn_riv
               DO jv=1, Rsize
-                  riv_dtatrc(jv,1,jn)=riv_dtatrc(jv,2,jn)
+                  riv_dtatrc(1,jv,jn)=riv_dtatrc(2,jv,jn)
               ENDDO
           ENDDO
 

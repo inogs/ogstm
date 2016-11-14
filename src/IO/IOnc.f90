@@ -370,14 +370,14 @@
 
 
         !****************************************************************************
-        SUBROUTINE readnc_double_1d(fileNetCDF,varname,im,ARRAY)
+        SUBROUTINE readnc_double_1d(fileNetCDF,varname,dim1,ARRAY)
         use netcdf
         use myalloc
         implicit none
 
         character,intent(in) :: fileNetCDF*(*) ,varname*(*)
-        integer,intent(in) :: im
-        double precision,intent(inout),dimension(im) :: ARRAY
+        integer,intent(in) :: dim1
+        double precision,intent(inout),dimension(dim1) :: ARRAY
         
         integer ncid, stat, VARid
         integer counter
@@ -399,14 +399,14 @@
         end SUBROUTINE readnc_double_1d
 
         !****************************************************************************
-        SUBROUTINE readnc_int_1d(fileNetCDF,varname,im,ARRAY)
+        SUBROUTINE readnc_int_1d(fileNetCDF,varname,dim1,ARRAY)
         use netcdf
         use myalloc
         implicit none
 
         character,intent(in) :: fileNetCDF*(*) ,varname*(*)
-        double precision,intent(inout) :: ARRAY(jpk)
-        integer,intent(in) :: im
+        integer,intent(in) :: dim1
+        integer,intent(inout),dimension(dim1) :: ARRAY
 
         integer ncid, stat, VARid
         integer counter

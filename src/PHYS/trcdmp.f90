@@ -79,19 +79,19 @@
 !!!$omp   parallel default(none) private(mytid,jk,jj,ji,jv,tra_idx,shift)
 !!!$omp&                         shared(jn,tra, riv,Rsize, riv_ridxt,tra_matrix_riv,jn_riv,tra_DIA)
 
-      !  IF (Rsize .NE. 0) THEN
-      !    DO jn=1, jn_riv
-      !     tra_idx=tra_matrix_riv(jn)
+       IF (Rsize .NE. 0) THEN
+         DO jn=1, jn_riv
+          tra_idx=tra_matrix_riv(jn)
 
-      !     DO jv=1, Rsize
+          DO jv=1, Rsize
 
-      !        ji = riv_ridxt(4,jv)
-      !        jj = riv_ridxt(3,jv)
-      !        jk = riv_ridxt(2,jv)
-      !       tra(jk,jj,ji,tra_idx) = tra(jk,jj,ji,tra_idx) + riv(jv,jn)
-      !     ENDDO
-      !    ENDDO
-      !  ENDIF
+             ji = riv_ridxt(4,jv)
+             jj = riv_ridxt(3,jv)
+             jk = riv_ridxt(2,jv)
+            tra(jk,jj,ji,tra_idx) = tra(jk,jj,ji,tra_idx) + riv(jv,jn)
+          ENDDO
+         ENDDO
+       ENDIF
 
 
 ! Boundary conditions for Atmosphere

@@ -216,7 +216,7 @@
 
        allocate(riv_ridxt (4, Rsize       )) 
        riv_ridxt  = huge(riv_ridxt(1,1))
-       allocate(riv_dtatrc(Rsize,2, jn_riv)) 
+       allocate(riv_dtatrc(2,Rsize,jn_riv)) 
        riv_dtatrc = huge(riv_dtatrc(1,1,1))
        allocate(riv       (Rsize,   jn_riv)) 
        riv        = huge(riv(1,1))

@@ -34,9 +34,9 @@
 ! Conc/dilution process
 
 
-      Do jn=1,jptra
-        DO jj = 1, jpj
+                  DO jn=1,jptra
             DO ji = 1, jpi
+        DO jj = 1, jpj
 
                zse3t = 1. / e3t(1,jj,ji)
 

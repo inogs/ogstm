@@ -305,7 +305,7 @@
             if (umask(jj,ji,1) .EQ. 1.)  flxdta(jj,ji,8 ,2) = buf2(jj,ji)      
            END DO
          END DO
-      e3u(:,:,1) = flxdta(:,:,8 ,2)
+      e3u(1,:,:) = flxdta(:,:,8 ,2)
       
       else
 !     Do nothing leave the init value --> domrea
@@ -321,7 +321,7 @@
       
             END DO
          END DO
-      e3v(:,:,1) = flxdta(:,:,9 ,2)
+      e3v(1,:,:) = flxdta(:,:,9 ,2)
       
       else
 !     Do nothing leave the init value --> domrea
@@ -336,7 +336,7 @@
                if (tmask(1,jj,ji) .EQ. 1.)  flxdta(jj,ji,10 ,2) = buf2(jj,ji)
             END DO
          END DO
-      e3t(:,:,1) = flxdta(:,:,10 ,2)
+      e3t(1,:,:) = flxdta(:,:,10 ,2)
       
       else
 !     Do nothing leave the init value --> domrea

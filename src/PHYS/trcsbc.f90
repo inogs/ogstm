@@ -10,24 +10,8 @@
 
       INTEGER :: mytid, ntids
 
-
-#ifdef __OPENMP1
-      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
-
-
       INTEGER  :: jj,ji,jn
-      REAL(8)  :: ztra,zse3t
-
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids = 1
-      mytid = 0
-#endif
-
+      double precision  :: ztra,zse3t
 
       trcsbcparttime = MPI_WTIME()
 

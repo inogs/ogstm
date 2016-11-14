@@ -95,8 +95,8 @@
 !! local declarations
 !! ==================
       INTEGER jk,jj,ji
-      REAL(8) zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw
-      REAL(8) zb, zd, zc, zaw, za, zb1, za1, zkw, zk0
+      double precision :: zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw
+      double precision :: zb, zd, zc, zaw, za, zb1, za1, zkw, zk0
 
 
       density_partTime = MPI_WTIME()
@@ -160,7 +160,7 @@
         END DO
       ENDDO
 !!!$omp end parallel
-          ELSEIF( neos.EQ.1 ) THEN
+     ELSEIF( neos.EQ.1 ) THEN
 
 
 !! 2. First Linear density formulation (function of tempreature only)
@@ -178,7 +178,7 @@
         ENDDO
       ENDDO
 
-          ELSEIF( neos.EQ.2 ) THEN
+  ELSEIF( neos.EQ.2 ) THEN
 
 
 !! 3. Second linear density formulation (function of temp. and salinity)
@@ -186,7 +186,7 @@
 
           DO ji = 1, jpi
         DO jj = 1, jpj
-            DO jk = 1, jpkm1
+      DO jk = 1, jpkm1
 !!   ... now potential temperature and salinity
             zt = tn(jk,jj,ji)
             zs = sn(jk,jj,ji)
@@ -198,7 +198,7 @@
         END DO
       END DO
 
-        ELSE
+  ELSE
 
           IF(lwp) THEN
           WRITE(numout,*) ' E R R O R in neos flag '

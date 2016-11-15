@@ -44,7 +44,7 @@ C===================================================
         END DO
       END DO
 
-      print *,allocated(restotr),allocated(restocorr),allocated(resto)
+      !print *,allocated(restotr),allocated(restocorr),allocated(resto)
 
       DO jn=1,jn_gib
         tra_idx=tra_matrix_gib(jn)

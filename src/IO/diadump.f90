@@ -32,7 +32,7 @@
       INTEGER totjstart, totjend, reljstart, reljend
 
 
-      call mppsync()
+     ! call mppsync()
 ! ----------------------------------------
       IsBackup =  (datemean.eq.dateTo)
       if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup, ' group ' ,FREQ_GROUP
@@ -229,7 +229,7 @@
 ! ******************  DIAGNOSTIC OUTPUT   2D *******************
       DO jn = 1, JPTRA_DIA_2D
 
-!           if (.not.is_time_to_save(jn,FREQ_GROUP,2)) CYCLE
+           if (.not.is_time_to_save(jn,FREQ_GROUP,2)) CYCLE
            if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 !       if (myrank == 0) then
 !   ! ******* myrank 0 sets indexes of tot matrix where to place its own part
@@ -352,40 +352,40 @@
       ENDDO ! on jn
 
 
-!       jn_high = 0
+       jn_high = 0
 ! ! ******************  3D DIAGNOSTIC OUTPUT   *******************
        DO jn =1 , jptra_dia
 
-!           if (.not.is_time_to_save(jn,FREQ_GROUP,3)) CYCLE
-!           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
+           if (.not.is_time_to_save(jn,FREQ_GROUP,3)) CYCLE
+           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
 !           if (myrank == 0) then                    ! IF LABEL 1
 
 
 ! ! ******* myrank 0 sets indexes of tot matrix where to place its own part
 
-!              iPd    = nldi
-!              iPe    = nlei
-!              jPd    = nldj
-!              jPe    = nlej
-!              istart = nimpp
-!              jstart = njmpp
-!              irange    = iPe - iPd + 1
-!              jrange    = jPe - jPd + 1
-!              totistart = istart + iPd - 1 
-!       totiend   = totistart + irange - 1
-!              totjstart = jstart + jPd - 1 
-!        totjend   = totjstart + jrange - 1
-!              relistart = 1 + iPd - 1      
-!        reliend   = relistart + irange - 1
-!              reljstart = 1 + jPd - 1      
-!        reljend   = reljstart + jrange - 1
+             iPd    = nldi
+             iPe    = nlei
+             jPd    = nldj
+             jPe    = nlej
+             istart = nimpp
+             jstart = njmpp
+             irange    = iPe - iPd + 1
+             jrange    = jPe - jPd + 1
+             totistart = istart + iPd - 1 
+      totiend   = totistart + irange - 1
+             totjstart = jstart + jPd - 1 
+       totjend   = totjstart + jrange - 1
+             relistart = 1 + iPd - 1      
+       reliend   = relistart + irange - 1
+             reljstart = 1 + jPd - 1      
+       reljend   = reljstart + jrange - 1
 
-!       if (FREQ_GROUP.eq.1) then
-!       tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO_HIGH(relistart:reliend,reljstart:reljend, :,jn_high)
-!       else
-!       tottrnIO (totistart:totiend, totjstart:totjend,:) = tra_DIA_IO(relistart:reliend, reljstart:reljend, :,jn) ! diagnostic from reaction model
-!       endif
+      if (FREQ_GROUP.eq.1) then
+      tottrnIO (:,totjstart:totjend,totistart:totiend) = tra_DIA_IO_HIGH(:,reljstart:reljend,relistart:reliend,jn_high)
+      else
+      tottrnIO (:, totjstart:totjend,totistart:totiend) = tra_DIA_IO(:, reljstart:reljend, relistart:reliend,jn) ! diagnostic from reaction model
+      endif
 !              do idrank = 1,mpi_glcomm_size-1
 ! ! **************  myrank 0 is receiving from the others their buffer  ****
 
@@ -472,7 +472,7 @@
               var        =  dianm(jn)
               bkpname     = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
               dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
-
+              
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
                  CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO(:,:,:),ave_counter)

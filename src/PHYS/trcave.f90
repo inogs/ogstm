@@ -158,9 +158,11 @@
             END DO
          END DO
       ENDIF
+      
 
 !!!$omp    end parallel
       END DO
+      ! print *,"---------2",tra_DIA_IO(1,30,15,:)
 
 !     *********************  DIAGNOSTICS 2D **********
       DO jn=1, jptra_dia_2d
@@ -194,7 +196,8 @@
 
 
      
-          IF (   jn_high .LE. jptra_dia ) then
+          IF (jn_high .LE. jptra_dia_high)  then
+          IF (jn_high .LE. jptra_dia ) then
              jn_on_all = highfreq_table_dia(jn_high )
 
              DO ji=1, jpi
@@ -209,6 +212,7 @@
              END DO
              END DO
              END DO
+          ENDIF
           ENDIF
      
 !!!$omp    end parallel

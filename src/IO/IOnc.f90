@@ -640,7 +640,7 @@
        call handle_err1(s,counter,fileNetCDF)
 
        allocate(copy_in(jpiglo, jpjglo, jpk))
-       print *,allocated(copy_in)
+       !print *,allocated(copy_in)
        call switch_index_real(M,copy_in,jpiglo,jpjglo,jpk)
         s = nf90_put_var(nc, idVAR  ,  copy_in )                    
        call handle_err1(s,counter,fileNetCDF)
@@ -1010,7 +1010,7 @@
        s = nf90_put_var(nc, idU,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 
-      print *,"PIPPO0"
+      !print *,"PIPPO0"
         call switch_index_rout(totvnIO,copy_in,jpiglo,jpjglo,jpk) 
        s = nf90_put_var(nc, idV,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
@@ -1020,7 +1020,7 @@
        s = nf90_put_var(nc, idW,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 
-        print *,"PIPPO1"
+       ! print *,"PIPPO1"
         call switch_index_rout(totavtIO,copy_in,jpiglo,jpjglo,jpk)
        s = nf90_put_var(nc, idEddy, copy_in) 
         call handle_err1(s,counter,fileNetCDF)
@@ -1030,12 +1030,12 @@
         !call handle_err1(s,counter,fileNetCDF)
 
       
-        print *,"PIPPO2"
+        !print *,"PIPPO2"
         call switch_index_rout(tote3tIO,copy_in,jpiglo,jpjglo,jpk)
         s = nf90_put_var(nc, ide3t, copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 !       2D vars
-        print *,"PIPPO3"
+       ! print *,"PIPPO3"
         copy_in_2d =transpose(REAL(totvatmIO,4))
        s = nf90_put_var(nc, idWs,   copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
@@ -1334,9 +1334,9 @@
        double precision,dimension(z,y,x),intent(in)    :: in_matrix
        real,dimension(x,y,z),intent(inout) :: out_matrix
        integer :: i,j,k
-       print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
-       print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
-       print *,x,y,z
+      !  print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
+      !  print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
+      !  print *,x,y,z
 
        DO i=1,x
         DO j=1,y

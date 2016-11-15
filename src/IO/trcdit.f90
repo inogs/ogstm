@@ -99,8 +99,8 @@
 
 
 !***** START ASSEMBLING ***  myrank 0 puts its tracer part in the tot matrix
-          print *,totistart,totiend,relistart,reliend
-          print *,totjstart,totjend,reljstart,reljend
+      !     print *,totistart,totiend,relistart,reliend
+      !     print *,totjstart,totjend,reljstart,reljend
           if (FREQ_GROUP.eq.1) then
           tottrnIO(:,totjstart:totjend,totistart:totiend)= traIO_HIGH(:,reljstart:reljend,relistart:reliend,jn_high)
           else

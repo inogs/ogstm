@@ -66,7 +66,7 @@
 
          call getDimension(atmfile,'lat',lat)
          call getDimension(atmfile,'lon',lon)
-         print *,lat,lon
+         !print *,lat,lon
          call getDimension(gibfile,'gib_idxt_N1p',Gsizeglo)
          call getDimension(rivfile,'riv_idxt'    ,Rsizeglo)
 

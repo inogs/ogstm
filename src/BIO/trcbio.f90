@@ -134,7 +134,6 @@
                           DO jtr=1,jptra_dia
                              tra_DIA(jk,jj,ji,jtr) = d(jtr) ! diagnostic
                           END DO
-
                           if (sur) then
                               DO jtr=1,jptra_dia_2d
                                  tra_DIA_2d(jj,ji,jtr) = d2(jtr) ! diagnostic
@@ -148,6 +147,7 @@
 
                 END DO MAIN_LOOP
 
+                          
 ! $omp end parallel do
 
                 BIOparttime =  MPI_WTIME() -BIOparttime

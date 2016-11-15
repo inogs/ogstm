@@ -43,55 +43,55 @@
 
        trcwriparttime = MPI_WTIME() ! cronometer-start
 
-      call mppsync()
+      !call mppsync()
 
-      ! buf     = Miss_val
-      ! bufftrb = Miss_val
-      ! bufftrn = Miss_val
+      buf     = Miss_val
+      bufftrb = Miss_val
+      bufftrn = Miss_val
 
        DO jn=1,jptra
-      !   if(myrank == 0) then
-      !      istart = nimpp
-      !      jstart = njmpp
-      !      iPd = nldi
-      !      iPe = nlei
-      !      jPd = nldj
-      !      jPe = nlej
-      !      irange    = iPe - iPd + 1
-      !      jrange    = jPe - jPd + 1
-      !      totistart = istart + iPd - 1
-      !      totiend   = totistart + irange - 1
-      !      totjstart = jstart + jPd - 1
-      !      totjend   = totjstart + jrange - 1
-      !      relistart = 1 + iPd - 1
-      !      reliend   = relistart + irange - 1
-      !      reljstart = 1 + jPd - 1
-      !      reljend   = reljstart + jrange - 1
+        !if(myrank == 0) then
+           istart = nimpp
+           jstart = njmpp
+           iPd = nldi
+           iPe = nlei
+           jPd = nldj
+           jPe = nlej
+           irange    = iPe - iPd + 1
+           jrange    = jPe - jPd + 1
+           totistart = istart + iPd - 1
+           totiend   = totistart + irange - 1
+           totjstart = jstart + jPd - 1
+           totjend   = totjstart + jrange - 1
+           relistart = 1 + iPd - 1
+           reliend   = relistart + irange - 1
+           reljstart = 1 + jPd - 1
+           reljend   = reljstart + jrange - 1
 
 
-      !       do ji =1 , jpi
-      !             do jj =1 , jpj
-      !                   do jk =1 , jpk
-      !                         if (tmask(jk,jj,ji).eq.1.0) then 
-      !                               buf(jk,jj,ji) = trn(jk,jj,ji, jn)
-      !                         endif
-      !                   enddo
-      !             enddo
-      !       enddo
-      !      tottrn  (totistart:totiend, totjstart:totjend,:)= buf(relistart:reliend, reljstart:reljend, :)
+            do ji =1 , jpi
+                  do jj =1 , jpj
+                        do jk =1 , jpk
+                              if (tmask(jk,jj,ji).eq.1.0) then 
+                                    buf(jk,jj,ji) = trn(jk,jj,ji, jn)
+                              endif
+                        enddo
+                  enddo
+            enddo
+           tottrn  (:,totjstart:totjend,totistart:totiend)= buf(:, reljstart:reljend,relistart:reliend)
 
 
-      !       do ji =1 , jpi
-      !        do jj =1 , jpj
-      !         do jk =1 , jpk
-      !          if (tmask(jk,jj,ji).eq.1.0) then 
-      !             buf(jk,jj,ji) = trb(jk,jj,ji, jn)
-      !          endif
-      !         enddo
-      !        enddo
-      !       enddo
+            do ji =1 , jpi
+             do jj =1 , jpj
+              do jk =1 , jpk
+               if (tmask(jk,jj,ji).eq.1.0) then 
+                  buf(jk,jj,ji) = trb(jk,jj,ji, jn)
+               endif
+              enddo
+             enddo
+            enddo
 
-      !      tottrb  (totistart:totiend, totjstart:totjend,:)= buf  (relistart:reliend, reljstart:reljend, :)
+           tottrb  (:, totjstart:totjend,totistart:totiend)= buf (:, reljstart:reljend, relistart:reliend)
 
 
 
@@ -110,26 +110,26 @@
       !         call MPI_RECV(bufftrb,   jpi_rec*jpj_rec*jpk, mpi_real8, idrank, 12,mpi_comm_world, status, ierr)
 
 
-      !         irange    = iPe - iPd + 1
-      !         jrange    = jPe - jPd + 1
-      !         totistart = istart + iPd - 1
-      !         totiend   = totistart + irange - 1
-      !         totjstart = jstart + jPd - 1
-      !         totjend   = totjstart + jrange - 1
-      !         relistart = 1 + iPd - 1
-      !         reliend   = relistart + irange - 1
-      !         reljstart = 1 + jPd - 1
-      !         reljend   = reljstart + jrange - 1
+            !   irange    = iPe - iPd + 1
+            !   jrange    = jPe - jPd + 1
+            !   totistart = istart + iPd - 1
+            !   totiend   = totistart + irange - 1
+            !   totjstart = jstart + jPd - 1
+            !   totjend   = totjstart + jrange - 1
+            !   relistart = 1 + iPd - 1
+            !   reliend   = relistart + irange - 1
+            !   reljstart = 1 + jPd - 1
+            !   reljend   = reljstart + jrange - 1
 
 
-      !         do jk =1 , jpk
-      !             do jj =totjstart,totjend
-      !             ind1=(                   relistart +(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
-      !             ind2=((totiend-totistart+relistart)+(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
-      !             tottrn(totistart:totiend, jj, jk) =bufftrn(ind1:ind2)
-      !             tottrb(totistart:totiend, jj, jk) =bufftrb(ind1:ind2)
-      !             enddo
-      !         enddo
+            !   do jk =1 , jpk
+            !       do jj =totjstart,totjend
+            !       ind1=(                   relistart +(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
+            !       ind2=((totiend-totistart+relistart)+(jj-totjstart + reljstart-1)*jpi_rec + (jk-1)*jpj_rec*jpi_rec)
+            !       tottrn(jk, jj,totistart:totiend) =bufftrn(ind1:ind2)
+            !       tottrb(jk, jj, totistart:totiend) =bufftrb(ind1:ind2)
+            !       enddo
+            !   enddo
 
 
       !      enddo ! do idrank = 1, size-1

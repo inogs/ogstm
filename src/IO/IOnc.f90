@@ -480,6 +480,7 @@
 !      istart=index(fileNetCDF,'00.')+3
 !      iend  =index(fileNetCDF,'.nc')-1
 !      VAR        =fileNetCDF(istart:iend)
+      print *,"PPPPPPPP",fileNetCDF,VAR, julian
 
       s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
 
@@ -498,16 +499,16 @@
        s = nf90_def_var(nc,'nav_lat', nf90_double,  (/xid,yid/), idLat)
        s = nf90_def_var(nc,'nav_lev', nf90_double,  (/depid/)  , idLev)
        !s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
-
-        s = nf90_def_var(nc,'TRB'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idB)
-        s = nf90_def_var(nc,'TRN'//trim(VAR), nf90_double, (/xid,yid,depid,timid/), idN)
-
-        s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00')
+      !  print *,"-----0"
+        s = nf90_def_var(nc,'TRB'//VAR, nf90_double, (/xid,yid,depid,timid/), idB)
+        s = nf90_def_var(nc,'TRN'//VAR, nf90_double, (/xid,yid,depid,timid/), idN)
+        ! print *,"-----1"
+        !s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00')
       
         s = nf90_put_att(nc,idB   , 'missing_value',1.e+20)
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
-
+        ! print *,"-----1.5"
         s = nf90_put_var(nc, idLon,  TRANSPOSE(totglamt))
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idLat,  TRANSPOSE(totgphit))
@@ -517,17 +518,19 @@
         s = nf90_put_var(nc, idLev,     gdept)
        call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_var(nc, idTim,    julian)
-       call handle_err1(s,counter,fileNetCDF)
-      
+       ! s = nf90_put_var(nc, idTim,    julian)
+       !call handle_err1(s,counter,fileNetCDF)
+      !  print *,"-----1.8"
        allocate(copy_in(jpiglo, jpjglo, jpk))
        call switch_index_double(tottrb,copy_in,jpiglo,jpjglo,jpk)
+      !  print *,"-----2"
        s = nf90_put_var(nc, idB,copy_in)
-       deallocate(copy_in)
-
-       allocate(copy_in(jpiglo, jpjglo, jpk))
+       !deallocate(copy_in)
+      !  print *,"-----3"
+       !allocate(copy_in(jpiglo, jpjglo, jpk))
        call switch_index_double(tottrn,copy_in,jpiglo,jpjglo,jpk)
        call handle_err1(s,counter,fileNetCDF)
+      !  print *,"-----4"
         s = nf90_put_var(nc, idN,      copy_in)
        call handle_err1(s,counter,fileNetCDF)
        deallocate(copy_in)
@@ -750,7 +753,7 @@
 !      istart=index(fileNetCDF,'00.')+3
 !      iend  =index(fileNetCDF,'.nc')-1
 !      VAR        =fileNetCDF(istart:iend)
-
+        print *,fileNetCDF," ",VAR," ",datefrom," ", dateTo," ", ave_counter
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
@@ -763,7 +766,7 @@
         s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
         s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
         s= nf90_def_dim(nc,'depth'         , jpk   ,depid)
-        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
+        s= nf90_def_dim(nc,'time'  , 1,timid)
 
         ! ********** VARIABLES *****************
         !s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
@@ -791,25 +794,28 @@
         counter=0
 
         ! epascolo warning
+        print *,"----- 0"
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
        call handle_err1(s,counter,fileNetCDF)
+       print *,"----- 1"
         s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
        call handle_err1(s,counter,fileNetCDF)
+       print *,"----- 2"
         s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) )
        call handle_err1(s,counter,fileNetCDF)
-       
+       print *,"----- 3"
        allocate(copy_in(jpiglo, jpjglo, jpk))
        call switch_index_double(M,copy_in,jpiglo,jpjglo,jpk)
        s = nf90_put_var(nc, idVAR  , copy_in  )
        deallocate(copy_in)
-
+       print *,"----- 4"
        call handle_err1(s,counter,fileNetCDF)
 
 
         s =nf90_close(nc)
 
        END SUBROUTINE WRITE_AVE_BKP
-
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
       SUBROUTINE WRITE_AVE_2d_BKP(fileNetCDF,VAR, datefrom, dateTo,M, ave_counter)
        USE netcdf
        USE myalloc
@@ -1072,7 +1078,10 @@
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
         integer idT, idS, idU, idV, idW, idEddy, ide3t, idR, idWs, idE
-
+        double precision,allocatable,dimension(:,:,:) :: copy_in
+        double precision,allocatable,dimension(:,:) :: copy_in_2d
+        allocate(copy_in(jpiglo,jpjglo,jpk))
+        allocate(copy_in_2d(jpiglo,jpjglo))
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
@@ -1168,33 +1177,55 @@
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idgdept, REAL(   gdept          ,4)  )
        call handle_err1(s,counter,fileNetCDF)
+
 !      3D vars
-        s = nf90_put_var(nc, idS,    totsnIO) 
+        call switch_index_double(totsnIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, idS,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idT,    tottnIO) 
+
+         call switch_index_double(tottnIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, idT,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idU,    totunIO) 
+
+        call switch_index_double(totunIO,copy_in,jpiglo,jpjglo,jpk) 
+        s = nf90_put_var(nc, idU,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idV,    totvnIO) 
+
+        call switch_index_double(totvnIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, idV,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idW,    totwnIO) 
+
+        call switch_index_double(totwnIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, idW,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idEddy,totavtIO) 
+
+        call switch_index_double(totavtIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, idEddy,copy_in) 
         call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, ide3t ,tote3tIO) 
+
+        call switch_index_double(tote3tIO,copy_in,jpiglo,jpjglo,jpk)
+        s = nf90_put_var(nc, ide3t ,copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
-        s = nf90_put_var(nc, idWs,  totvatmIO) 
+        copy_in_2d =transpose(REAL(totvatmIO,4))
+        s = nf90_put_var(nc, idWs,  copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idE,    totempIO) 
+
+        copy_in_2d =transpose(REAL(totempIO ,4))
+        s = nf90_put_var(nc, idE,    copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idR,    totqsrIO) 
+
+        copy_in_2d =transpose(REAL(totqsrIO ,4))
+        s = nf90_put_var(nc, idR,    copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
 
 
 
         s= nf90_close(nc)
+
+        deallocate(copy_in_2d)
+        deallocate(copy_in)
 
 
        END SUBROUTINE physDump_bkp

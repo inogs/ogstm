@@ -63,7 +63,7 @@
       LOGICAL :: l1,l2,l3
       INTEGER :: ji,jj,jk,jv,jf,js
       INTEGER :: bottom
-      REAL(8) :: ze3tr,d2s
+      double precision :: ze3tr,d2s
 ! omp variables
     
 !!----------------------------------------------------------------------

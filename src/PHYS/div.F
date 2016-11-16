@@ -46,8 +46,8 @@ CC    local declarations
       INTEGER ktask, kt
       INTEGER jk,jj,ji, ijt
 
-      REAL(8) zbt
-      REAL(8) zwu(jpj,jpi), zwv(jpj,jpi)
+      double precision zbt
+      double precision zwu(jpj,jpi), zwv(jpj,jpi)
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================

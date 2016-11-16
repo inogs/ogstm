@@ -16,7 +16,7 @@ contains
 
 ! local declarations
 ! ==================
-      REAL(8) sec,zweigh
+      double precision sec,zweigh
       integer Before, After
       INTEGER iswap
 
@@ -96,7 +96,7 @@ contains
           character(LEN=7) :: nomevar
           character(LEN=27) :: nomefile
           INTEGER(4) jn,jv,j,i
-          real(8),allocatable,dimension(:,:) :: M1
+          double precision,allocatable,dimension(:,:) :: M1
 
           allocate(M1(jpj,jpi))
           nomevar= '1234567'
@@ -134,7 +134,7 @@ contains
       SUBROUTINE actualize_ATM(zweigh)
      
 
-         REAL(8), INTENT(IN) :: zweigh
+         double precision, INTENT(IN) :: zweigh
 !         local
          INTEGER jn, jv,j,i
 

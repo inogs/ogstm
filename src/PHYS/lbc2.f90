@@ -48,13 +48,13 @@
 !! ==================
       INTEGER ktype, ksgn, kdoloop, kjstart, kjpend, kstep
 
-      REAL(8) ptab(jpi,jpj)
+      double precision ptab(jpi,jpj)
 
 
 #if ! defined key_mpp
       INTEGER ji, jj, jk
       INTEGER ijt, iju
-      REAL(8) zsgn
+      double precision zsgn
 
 
 !!

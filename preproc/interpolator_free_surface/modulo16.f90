@@ -140,7 +140,7 @@
       REAL(4), allocatable :: qsr16(:,:)
       REAL(4), allocatable :: wsp16(:,:)
       REAL(4), allocatable :: ssh16(:,:)
-      REAL(8), allocatable :: ssh16_R8(:,:),ssh16x_R8(:,:),ssh16y_R8(:,:)
+      double precision, allocatable :: ssh16_R8(:,:),ssh16x_R8(:,:),ssh16y_R8(:,:)
       REAL(4), allocatable :: flp16(:,:)
       CONTAINS
 

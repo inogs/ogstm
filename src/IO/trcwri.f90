@@ -17,9 +17,9 @@
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      REAL(8) ::  Miss_val =1.e20
+      double precision ::  Miss_val =1.e20
       INTEGER jk,jj,ji,jn
-      REAL(8) julian
+      double precision julian
 
 
       CHARACTER(LEN=37) filename

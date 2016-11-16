@@ -50,14 +50,14 @@
 !! ==================
 
       INTEGER ktype, ksgn, kdoloop, kjstart, kjpend, kstep
-      REAL(8) ptab(jpk,jpj,jpi)
+      double precision ptab(jpk,jpj,jpi)
 #ifdef key_mpp
 
 
 
 
 
-      REAL(8) zsgn
+      double precision zsgn
 
 
       INTEGER ijt, iju

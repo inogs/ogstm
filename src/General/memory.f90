@@ -44,11 +44,11 @@
       INTEGER, allocatable :: mindi(:), mindj(:)
       INTEGER, allocatable :: nimppt(:), njmppt(:), nlcit(:), nlcjt(:)
       INTEGER, allocatable ::  nldit(:),  nldjt(:), nleit(:), nlejt(:)
-      REAL(8)  mem_all
+      double precision  mem_all
 
       INTEGER npolj
 
-      REAL(8), PARAMETER ::  g =9.80665  ! gravity
+      double precision, PARAMETER ::  g =9.80665  ! gravity
 
 
 
@@ -63,8 +63,8 @@
 !!               for linear equation of state (neos=1 or 2)
 
       INTEGER neos
-      REAL(8) rau0, ralpha, rbeta
-      REAL(8)  rdt     ! dynamics time step
+      double precision rau0, ralpha, rbeta
+      double precision  rdt     ! dynamics time step
 
 !!----------------------------------------------------------------------
 !!        horizontal curvilinear coordinate and scale factors
@@ -84,10 +84,10 @@
 !!        ff             : coriolis factor
 
 
-      REAL(8), allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf  !, glamt,
-      REAL(8), allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
-      REAL(8), allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
-      REAL(8), allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
+      double precision, allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf  !, glamt,
+      double precision, allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
+      double precision, allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
+      double precision, allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
 
 !!----------------------------------------------------------------------
 !!       vertical coordinate and scale factors
@@ -98,8 +98,8 @@
 !!      gdept, gdepw() : depth of t- and w-points (m)
 !!      e3t_0, e3w_0()     : vertical scale factors at t- and w-points (m)
 !!
-      REAL(8), allocatable :: gdept(:), gdepw(:), e3t_0(:), e3w_0(:)
-      REAL(8), allocatable :: e3t(:,:,:), e3t_back(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
+      double precision, allocatable :: gdept(:), gdepw(:), e3t_0(:), e3w_0(:)
+      double precision, allocatable :: e3t(:,:,:), e3t_back(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
 
 !!----------------------------------------------------------------------
 !!        masks, bathymetry
@@ -111,7 +111,7 @@
       INTEGER, allocatable :: mbathy(:,:)
 
 
-      REAL(8), allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
+      double precision, allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
       INTEGER NBFMPOINTS, NBFMPOINTS_SUP, NWATERPOINTS
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
@@ -122,7 +122,7 @@
 !!       previous fields (before)
 !! -----------------------------------------
 
-      REAL(8), allocatable, dimension(:,:,:) :: ub, vb ! horizontal velocity (m s-1)
+      double precision, allocatable, dimension(:,:,:) :: ub, vb ! horizontal velocity (m s-1)
 
 
 !!----------------------------------------------------------------------
@@ -135,9 +135,9 @@
 !!        rhopn          : potential volumic mass (kg m-3)
 !!      bn2n           : brunt-vaisala frequency (s-2)
 !!
-      REAL(8), allocatable, dimension(:,:,:) :: un, vn, wn
-      REAL(8), allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho,bn2n
-      REAL(8), allocatable, dimension(:,:,:) :: hdivn
+      double precision, allocatable, dimension(:,:,:) :: un, vn, wn
+      double precision, allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho,bn2n
+      double precision, allocatable, dimension(:,:,:) :: hdivn
 
 
 !!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -158,8 +158,8 @@
 !!                         (the arrays used are 3D, 2D, 1D or 0D depen-
 !!                          ding on 'key_trahdfcoef.d' )
 
-      REAL(8) aht0
-      REAL(8), allocatable :: ahtu(:), ahtv(:), ahtw(:), ahtt(:)
+      double precision aht0
+      double precision, allocatable :: ahtu(:), ahtv(:), ahtw(:), ahtt(:)
 
 
 !!----------------------------------------------------------------------
@@ -168,15 +168,15 @@
 !!     avt             : vertical diffusivity coeff. at w-point
 !!     avtb            : background profile of avm and avt
 
-      REAL(8), allocatable :: avt(:,:,:)
-      REAL(8), allocatable ::  avtb(:)
+      double precision, allocatable :: avt(:,:,:)
+      double precision, allocatable ::  avtb(:)
 
 
 !! IV. SURFACE FORCING AND DATA
 !! ============================
 !!  surface wind stress at givem time_step
 !!    taux, tauy()   : wind stress components in (i,j) referential
-      REAL(8), allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
+      double precision, allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
 
 !!----------------------------------------------------------------------
 !!     surface fluxes
@@ -186,8 +186,8 @@
 !!      emp            : evaporation minus precipitation (mm day-1)
 !!      runoff         : annual run off (mm/day)
 
-      REAL(8), allocatable, dimension(:,:) :: qt, q, emp,runoff
-      REAL(8), allocatable :: qsr(:,:) ! penetrative solar radiation (w m-2)
+      double precision, allocatable, dimension(:,:) :: qt, q, emp,runoff
+      double precision, allocatable :: qsr(:,:) ! penetrative solar radiation (w m-2)
 
       INTEGER nsptint ! YPE of spatial interpolation (NAMELIST)
 
@@ -197,10 +197,10 @@
 !!      avtdta       : avt data array
 !!      flxdta         : additional fluxes
 
-      REAL(8), allocatable, dimension(:,:,:,:) :: udta,vdta,wdta,avtdta,flxdta
-      REAL(8), allocatable, dimension(:,:,:)   :: flx
-      REAL(8), allocatable, dimension(:,:,:,:) :: tdta,sdta ! : temperature and salinity data array
-      REAL(8), allocatable, dimension(:,:,:,:) :: e3tdta,e3udta,e3vdta,e3wdta ! : temperature and salinity data array
+      double precision, allocatable, dimension(:,:,:,:) :: udta,vdta,wdta,avtdta,flxdta
+      double precision, allocatable, dimension(:,:,:)   :: flx
+      double precision, allocatable, dimension(:,:,:,:) :: tdta,sdta ! : temperature and salinity data array
+      double precision, allocatable, dimension(:,:,:,:) :: e3tdta,e3udta,e3vdta,e3wdta ! : temperature and salinity data array
 
 !! V. DIAGNOSTICS
 !! ==============
@@ -208,7 +208,7 @@
 
       INTEGER calendarType ! leap years calendar (0/1)
 
-      REAL(8), ALLOCATABLE, DIMENSION(:,:) :: DAY_LENGTH
+      double precision, ALLOCATABLE, DIMENSION(:,:) :: DAY_LENGTH
 
       INTEGER            :: numnam = 208 ! unit for namelist
       INTEGER, PARAMETER :: numout = 2   ! unit for output print
@@ -226,12 +226,12 @@
 !!      t2ns           : 2d message passing arrays north-south
 !!      t2sn           : 2d message passing arrays south-north 
 
-      REAL(8), allocatable :: t3ns (:,:,:,:), t3sn (:,:,:,:)
-      REAL(8), allocatable :: t3ew (:,:,:,:), t3we (:,:,:,:)
-      REAL(8), allocatable :: t3ew_my1 (:,:,:,:,:), t3we_my1 (:,:,:,:,:)
-      REAL(8), allocatable :: t3sn_my1 (:,:,:,:,:), t3ns_my1 (:,:,:,:,:)
-      REAL(8), allocatable :: t2ns (:,:,:)  , t2sn (:,:,:)
-      REAL(8), allocatable :: t2ew (:,:,:)  , t2we (:,:,:)
+      double precision, allocatable :: t3ns (:,:,:,:), t3sn (:,:,:,:)
+      double precision, allocatable :: t3ew (:,:,:,:), t3we (:,:,:,:)
+      double precision, allocatable :: t3ew_my1 (:,:,:,:,:), t3we_my1 (:,:,:,:,:)
+      double precision, allocatable :: t3sn_my1 (:,:,:,:,:), t3ns_my1 (:,:,:,:,:)
+      double precision, allocatable :: t2ns (:,:,:)  , t2sn (:,:,:)
+      double precision, allocatable :: t2ew (:,:,:)  , t2we (:,:,:)
 
 #  else
 !     no mpp
@@ -253,7 +253,7 @@
 
 
 
-      REAL(8) ::  ctrmax(jptra)
+      double precision ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
       LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
@@ -264,48 +264,48 @@
 
 
       INTEGER flagSMS_Dyn                    ! Flag time advance SMS or Dyn
-      REAL(8), allocatable ::  trn(:,:,:,:)
-      REAL(8), allocatable ::  tra(:,:,:,:)
-      REAL(8), allocatable ::  tra_DIA(:,:,:,:)
-      REAL(8), allocatable ::  tra_DIA_2d(:,:,:)
-      REAL(8), allocatable ::  traIO(:,:,:,:)
-      REAL(8), allocatable ::  traIO_HIGH(:,:,:,:)
-      REAL(8), allocatable ::  snIO(:,:,:) 
-      REAL(8), allocatable ::  tnIO(:,:,:) 
-      REAL(8), allocatable ::  vatmIO(:,:) 
-      REAL(8), allocatable ::  empIO(:,:) 
-      REAL(8), allocatable ::  qsrIO(:,:) 
-      REAL(8), allocatable ::  unIO(:,:,:) 
-      REAL(8), allocatable ::  vnIO(:,:,:) 
-      REAL(8), allocatable ::  wnIO(:,:,:) 
-      REAL(8), allocatable ::  avtIO(:,:,:) 
-      REAL(8), allocatable ::  e3tIO(:,:,:) 
-      REAL(8), allocatable ::  tra_DIA_IO(:,:,:,:)
-      REAL(8), allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
-      REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
-      REAL(8), allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
-      REAL(8), allocatable :: tottrn(:,:,:)
-      REAL(8), allocatable :: tottrb(:,:,:)
+      double precision, allocatable ::  trn(:,:,:,:)
+      double precision, allocatable ::  tra(:,:,:,:)
+      double precision, allocatable ::  tra_DIA(:,:,:,:)
+      double precision, allocatable ::  tra_DIA_2d(:,:,:)
+      double precision, allocatable ::  traIO(:,:,:,:)
+      double precision, allocatable ::  traIO_HIGH(:,:,:,:)
+      double precision, allocatable ::  snIO(:,:,:) 
+      double precision, allocatable ::  tnIO(:,:,:) 
+      double precision, allocatable ::  vatmIO(:,:) 
+      double precision, allocatable ::  empIO(:,:) 
+      double precision, allocatable ::  qsrIO(:,:) 
+      double precision, allocatable ::  unIO(:,:,:) 
+      double precision, allocatable ::  vnIO(:,:,:) 
+      double precision, allocatable ::  wnIO(:,:,:) 
+      double precision, allocatable ::  avtIO(:,:,:) 
+      double precision, allocatable ::  e3tIO(:,:,:) 
+      double precision, allocatable ::  tra_DIA_IO(:,:,:,:)
+      double precision, allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
+      double precision, allocatable ::  tra_DIA_2d_IO(:,:,:)
+      double precision, allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
+      double precision, allocatable :: tottrn(:,:,:)
+      double precision, allocatable :: tottrb(:,:,:)
 
-      REAL(8), allocatable ::  tottrnIO(:,:,:) ! matrix for i/o writing(trcdit.F)
-      REAL(8), allocatable ::  tottrnIO2d(:,:)
-      REAL(8), allocatable ::  tottrbIO(:,:,:)
-      REAL(8), allocatable ::  totsnIO(:,:,:) 
-      REAL(8), allocatable ::  tottnIO(:,:,:) 
-      REAL(8), allocatable ::  totvatmIO(:,:) 
-      REAL(8), allocatable ::  totempIO(:,:) 
-      REAL(8), allocatable ::  totqsrIO(:,:) 
-      REAL(8), allocatable ::  totunIO(:,:,:) 
-      REAL(8), allocatable ::  totvnIO(:,:,:) 
-      REAL(8), allocatable ::  totwnIO(:,:,:) 
-      REAL(8), allocatable ::  totavtIO(:,:,:) 
-      REAL(8), allocatable ::  tote3tIO(:,:,:) 
-      REAL(8), allocatable ::  tottmaIO(:,:,:) 
+      double precision, allocatable ::  tottrnIO(:,:,:) ! matrix for i/o writing(trcdit.F)
+      double precision, allocatable ::  tottrnIO2d(:,:)
+      double precision, allocatable ::  tottrbIO(:,:,:)
+      double precision, allocatable ::  totsnIO(:,:,:) 
+      double precision, allocatable ::  tottnIO(:,:,:) 
+      double precision, allocatable ::  totvatmIO(:,:) 
+      double precision, allocatable ::  totempIO(:,:) 
+      double precision, allocatable ::  totqsrIO(:,:) 
+      double precision, allocatable ::  totunIO(:,:,:) 
+      double precision, allocatable ::  totvnIO(:,:,:) 
+      double precision, allocatable ::  totwnIO(:,:,:) 
+      double precision, allocatable ::  totavtIO(:,:,:) 
+      double precision, allocatable ::  tote3tIO(:,:,:) 
+      double precision, allocatable ::  tottmaIO(:,:,:) 
 
 
-      REAL(8), allocatable ::  trb(:,:,:,:)
-      REAL(8), allocatable ::  buf(:,:,:)
-      REAL(8), allocatable ::  buf2(:,:)
+      double precision, allocatable ::  trb(:,:,:,:)
+      double precision, allocatable ::  buf(:,:,:)
+      double precision, allocatable ::  buf2(:,:)
       INTEGER, allocatable, dimension(:) :: highfreq_table,highfreq_table_dia, highfreq_table_dia2d
 
 !!----------------------------------------------------------------------
@@ -315,7 +315,7 @@
 !!      rsc         : tuning coefficient for anti-diffusion (NAMELIST)
 !!      rtrn        : value for truncation (NAMELIST)
 
-      REAL(8) rsc,rtrn
+      double precision rsc,rtrn
 
 
 !!----------------------------------------------------------------------
@@ -327,7 +327,7 @@
 !!      ndttrc      : frequency of step on passive tracers (NAMELIST)
 
       INTEGER ncor
-      REAL(8) ndttrc
+      double precision ndttrc
       LOGICAL lhdf
 
 
@@ -340,7 +340,7 @@
 !!      ahtrc0    : horizontal eddy diffusivity for passive tracers (m2/s)
 !!    aeivtr0   : eddy induced velocity coefficient (m2/s)
 
-      REAL(8) ahtrb0,trcrat,ahtrc0,aeivtr0
+      double precision ahtrb0,trcrat,ahtrc0,aeivtr0
 
       INTEGER nwritetrc ! time step frequency for concentration outputs (NAMELIST)
 
@@ -355,11 +355,11 @@
       LOGICAL atlantic_bfm ! atlantic buffer biology activation
 
 #    if defined key_trc_bfm
-      REAL(8) vsed                        ! sedimentation speed (NAMELIST)
-      REAL(8) bottom_flux                 ! (NAMELIST)
+      double precision vsed                        ! sedimentation speed (NAMELIST)
+      double precision bottom_flux                 ! (NAMELIST)
 
 !!     optical parameters
-      REAL(8), allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)
+      double precision, allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)
 
 #     endif
 !!----------------------------------------------------------------------
@@ -375,7 +375,7 @@
 
 subroutine myalloc_BFM()
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 
@@ -394,7 +394,7 @@ end subroutine myalloc_BFM
 subroutine alloc_tot()
 
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err) 

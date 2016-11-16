@@ -61,12 +61,12 @@
       INTEGER ji16, jj16, jk,i
       INTEGER jpi16m1,jpj16m1,jpk16m1
 !
-      REAL(8) zwu16, zwv16, zww16, inv_fact
-      REAL(8) a,b,c,x_0,y_0
-      REAL(8) resx, resy, x_1, y_1, du, dv, dz
-      REAL(8) resx_1, resy_1
-      REAL(8) aa(5)
-      REAL(8) u,v,e3
+      double precision zwu16, zwv16, zww16, inv_fact
+      double precision a,b,c,x_0,y_0
+      double precision resx, resy, x_1, y_1, du, dv, dz
+      double precision resx_1, resy_1
+      double precision aa(5)
+      double precision u,v,e3
       COMPLEX(8) z(4),zz(4)
 !C----------------------------------------------------------------------
 !C statement functions

@@ -154,7 +154,7 @@ END SUBROUTINE ogstm_initialize
 ! ***************************************************************
 SUBROUTINE ALLOC_ALL
 
-       REAL(8)  mem_all_tot
+       double precision  mem_all_tot
        INTEGER err, ierr
 
       mem_all_tot=0.
@@ -226,7 +226,7 @@ END SUBROUTINE ALLOC_ALL
 
 SUBROUTINE time_init
 
-      real(8) sec, t_interp
+      double precision sec, t_interp
 
       DELTAT = rdt ! importing namelist value
 

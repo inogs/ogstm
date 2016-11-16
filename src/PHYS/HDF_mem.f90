@@ -16,9 +16,9 @@
       INTEGER :: dimen_jvhdf1,dimen_jvhdf2,dimen_jvhdf3
       INTEGER, allocatable :: hdfmask(:,:,:)
       INTEGER, allocatable :: jarr_hdf(:,:,:),jarr_hdf_flx(:)
-      REAL(8), allocatable :: zta(:)
-      REAL(8), allocatable :: zeeu(:,:,:), zeev(:,:,:), zbtr(:,:,:)
-      REAL(8), allocatable :: zlt(:,:,:,:), ztu(:,:,:,:), ztv(:,:,:,:)
+      double precision, allocatable :: zta(:)
+      double precision, allocatable :: zeeu(:,:,:), zeev(:,:,:), zbtr(:,:,:)
+      double precision, allocatable :: zlt(:,:,:,:), ztu(:,:,:,:), ztv(:,:,:,:)
 
 !!----------------------------------------------------------------------
       CONTAINS
@@ -32,7 +32,7 @@
       INTEGER :: ntids 
 #endif
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

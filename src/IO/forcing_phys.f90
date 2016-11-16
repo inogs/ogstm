@@ -20,10 +20,7 @@
 ! parameters and commons
 ! ======================
 
-
-
        USE myalloc
-       ! epascolo USE myalloc_mpp
        USE TIME_MANAGER
        use mpi
        IMPLICIT NONE
@@ -32,7 +29,7 @@
 
 ! local declarations
 ! ==================
-      REAL(8) sec,zweigh
+      double precision sec,zweigh
       integer Before, After
       INTEGER iswap
 
@@ -127,7 +124,6 @@
 ! ======================
       USE calendar
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE TIME_MANAGER
 
       IMPLICIT NONE
@@ -135,24 +131,8 @@
       CHARACTER(LEN=17), INTENT(IN) :: datestring
       LOGICAL B
       integer jk,jj,ji
-! omp variables
-            INTEGER :: mytid, ntids
-
-#ifdef __OPENMP1
-            INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-            EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
       ! LOCAL
       character(LEN=30) nomefile
-
-
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids = 1
-      mytid = 0
-#endif
 
       nomefile='FORCINGS/U19951206-12:00:00.nc'
 
@@ -369,13 +349,12 @@
          USE myalloc
          USE OPT_mem
          IMPLICIT NONE
-         REAL(8) zweigh, Umzweigh
+         double precision zweigh, Umzweigh
 
          INTEGER jk,jj,ji,jf
          INTEGER uk, uj      ! aux variables for OpenMP
 
-      INTEGER :: mytid, ntids! omp variables
-
+   
       Umzweigh  = 1.0 - zweigh
 
 !!!$omp parallel default(none) private(mytid,jj,ji,uk)
@@ -415,9 +394,9 @@
 !!!$omp&                       shared(jpk,jpj,jpi,jj,flx,flxdta,
 !!!$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
 
+                              DO jf=1,jpflx
                         DO ji=1,jpi
                   DO uj=1,jpj
-            DO jf=1,jpflx
 
                 flx(uj,ji,jf) = ( Umzweigh * flxdta(uj,ji,jf,1)+ zweigh * flxdta(uj,ji,jf,2) )
                         END DO
@@ -451,7 +430,7 @@
          USE myalloc
          IMPLICIT NONE
          INTEGER :: jk,jj,ji,jdepth,jf
-         INTEGER :: mytid, ntids! omp variables
+         
 
 
               DO ji=1,jpi

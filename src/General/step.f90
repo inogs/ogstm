@@ -2,7 +2,6 @@ MODULE module_step
 
       USE calendar
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE TIME_MANAGER
       USE BC_mem
       USE IO_mem, only: ave_counter_1, ave_counter_2
@@ -56,7 +55,7 @@ MODULE module_step
       INTEGER TAU, indic
 
       character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
-      REAL(8) sec
+      double precision sec
       LOGICAL B, isFIRST
       double precision :: timess,timesw
 !++++++++++++++++++++++++++++++c
@@ -219,7 +218,7 @@ MODULE module_step
       LOGICAL FUNCTION writeTemporization(string, elapsedtime)
       IMPLICIT NONE
       CHARACTER(LEN=*) string
-      REAL(8) elapsedtime
+      double precision elapsedtime
 
       if (isFIRST) then
          write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," myrank->", myrank

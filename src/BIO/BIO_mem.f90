@@ -14,13 +14,13 @@
 
        public
 
-      REAL(8), allocatable :: bfm_trn(:), bfm_tra(:)
+      double precision, allocatable :: bfm_trn(:), bfm_tra(:)
 !!!$omp  threadprivate(bfm_trn,bfm_tra)
-      REAL(8), allocatable :: surf_mask(:)
-      REAL(8), allocatable :: sediPI(:,:,:,:)
-      REAL(8), allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
-      REAL(8), allocatable :: co2(:,:), co2_IO(:,:,:)
-      REAL(8):: ice
+      double precision, allocatable :: surf_mask(:)
+      double precision, allocatable :: sediPI(:,:,:,:)
+      double precision, allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
+      double precision, allocatable :: co2(:,:), co2_IO(:,:,:)
+      double precision:: ice
 
 
 !!!----------------------------------------------------------------------
@@ -29,7 +29,7 @@
       subroutine myalloc_BIO()
 
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

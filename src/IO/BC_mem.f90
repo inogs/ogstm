@@ -29,11 +29,11 @@
 !     queste matrici ridotte hanno nel primo indice l'indice globale, negli altri 3 il corrispondente indice i,j,k locale (per cpu)
 
 
-      REAL(8), allocatable, DIMENSION(:)       :: gib_aux,riv_aux
-      REAL(8), allocatable, DIMENSION(:)       :: restocorr
-      REAL(8), allocatable, DIMENSION(:,:)     :: gib,riv,atm_aux
-      REAL(8), allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm       ! <--bc_gib.load_gib(), bc_tin.
-      REAL(8), allocatable, DIMENSION(:,:,:,:) :: resto,restotr,atm_dtatrc        !array of restoring coeff. for passive tracers
+      double precision, allocatable, DIMENSION(:)       :: gib_aux,riv_aux
+      double precision, allocatable, DIMENSION(:)       :: restocorr
+      double precision, allocatable, DIMENSION(:,:)     :: gib,riv,atm_aux
+      double precision, allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm       ! <--bc_gib.load_gib(), bc_tin.
+      double precision, allocatable, DIMENSION(:,:,:,:) :: resto,restotr,atm_dtatrc        !array of restoring coeff. for passive tracers
 ! ----------------------------------------------------------------------
       CONTAINS
 !     *******************************************************************
@@ -44,7 +44,7 @@
       ! epascolo USE myalloc_mpp
 
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
       CHARACTER(LEN=50) atmfile, rivfile, gibfile
 
@@ -171,7 +171,7 @@
        USE iso_c_binding
 #endif
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
@@ -207,7 +207,7 @@
        USE iso_c_binding
 #endif
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
@@ -239,7 +239,7 @@
        USE iso_c_binding
 #endif
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

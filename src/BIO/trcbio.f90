@@ -47,7 +47,7 @@
 !!! local declarations
 !!! ==================
       LOGICAL sur,bot
-      REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
+      double precision a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
 
       INTEGER jk,jj,ji,jb,jn
       INTEGER jtr,jtrmax,tra_idx

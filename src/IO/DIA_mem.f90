@@ -8,8 +8,8 @@
           INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP, INDflxDUMPglo, INDflxBuff, INDflxDUMPZERO
           INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
 
-          REAL(8),    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
-          REAL(8),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
+          double precision,    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
+          double precision,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
           REAL(4),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo_Float
           logical existFileFluxes
 

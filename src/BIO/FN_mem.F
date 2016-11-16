@@ -17,13 +17,13 @@
 ! ---------------------------------------------------------------------
       INTEGER              :: dimen_jvsnu
       INTEGER, allocatable :: jarr_snu(:,:)
-      REAL(8)              :: SMALL
-      REAL(8), allocatable :: tra_FN(:,:,:,:)
-      REAL(8), allocatable :: TOT(:,:),TOT_FN(:,:),FN_CORR(:,:)
+      double precision              :: SMALL
+      double precision, allocatable :: tra_FN(:,:,:,:)
+      double precision, allocatable :: TOT(:,:),TOT_FN(:,:),FN_CORR(:,:)
 
 
-      REAL(8), allocatable :: cou_FN(:,:,:)
-      REAL(8), allocatable :: FN_ranking(:)
+      double precision, allocatable :: cou_FN(:,:,:)
+      double precision, allocatable :: FN_ranking(:)
       INTEGER :: elements,nelements(6),idx_element(14,6)
 
 
@@ -36,7 +36,7 @@
       IMPLICIT NONE
 
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

@@ -20,18 +20,18 @@
       INTEGER :: jilef, jjlef, jklef, jirig, jjrig, jkrig
       INTEGER, allocatable :: advmask(:,:,:)
       INTEGER, allocatable :: jarr(:,:), jarr1(:,:), jarr2(:,:), jarr3(:,:), jarrt(:,:), jarr_adv_flx(:)
-      REAL(8), allocatable :: zti(:,:,:,:),ztj(:,:,:,:)
-      REAL(8), allocatable :: zaa(:,:,:),zbb(:,:,:),zcc(:,:,:)
-      REAL(8), allocatable :: zx(:,:,:,:),zy(:,:,:,:),zz(:,:,:,:)
+      double precision, allocatable :: zti(:,:,:,:),ztj(:,:,:,:)
+      double precision, allocatable :: zaa(:,:,:),zbb(:,:,:),zcc(:,:,:)
+      double precision, allocatable :: zx(:,:,:,:),zy(:,:,:,:),zz(:,:,:,:)
 
-      REAL(8), allocatable :: zbuf(:,:,:,:)
+      double precision, allocatable :: zbuf(:,:,:,:)
 
 
-      REAL(8), allocatable :: zkx(:,:,:,:),zky(:,:,:,:),zkz(:,:,:,:)
+      double precision, allocatable :: zkx(:,:,:,:),zky(:,:,:,:),zkz(:,:,:,:)
 
-      REAL(8), allocatable :: inv_eu(:,:,:), inv_ev(:,:,:), inv_et(:,:,:) 
-      REAL(8), allocatable :: big_fact_zaa(:,:,:), big_fact_zbb(:,:,:), big_fact_zcc(:,:,:) 
-      REAL(8), allocatable :: zbtr_arr(:,:,:)
+      double precision, allocatable :: inv_eu(:,:,:), inv_ev(:,:,:), inv_et(:,:,:) 
+      double precision, allocatable :: big_fact_zaa(:,:,:), big_fact_zbb(:,:,:), big_fact_zcc(:,:,:) 
+      double precision, allocatable :: zbtr_arr(:,:,:)
 
 !!----------------------------------------------------------------------
       CONTAINS
@@ -46,7 +46,7 @@
 #endif
 
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

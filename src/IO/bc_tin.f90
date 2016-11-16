@@ -16,7 +16,7 @@ contains
 
 ! local declarations
 ! ==================
-      REAL(8) sec,zweigh
+      double precision sec,zweigh
       integer Before, After
       INTEGER iswap
 
@@ -130,7 +130,7 @@ contains
       SUBROUTINE actualize_TIN(zweigh)
 
 
-         REAL(8), INTENT(IN) :: zweigh
+         double precision, INTENT(IN) :: zweigh
 !         local
          INTEGER jn, jv
 

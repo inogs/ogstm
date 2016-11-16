@@ -32,8 +32,8 @@
       INTEGER  jk
 !!
 
-      REAL(8) zkah, zahr, za00, za01, zahf, zahs
-      REAL(8) zahtf, zahts
+      double precision zkah, zahr, za00, za01, zahf, zahs
+      double precision zahtf, zahts
 
 
 !! 1. Lateral eddy diffusivity and eddy induced velocity coefficients

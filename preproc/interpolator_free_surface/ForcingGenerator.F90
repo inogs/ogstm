@@ -46,7 +46,7 @@
      character*1024 evapofile
      integer theCUT
      integer year, month, day
-     real(8) sec, TheTime
+     double precision sec, TheTime
 !   ------------ SEZIONE PS ----------------------
     logical PS
     character*1024 PS16FILE_U,PS16FILE_V

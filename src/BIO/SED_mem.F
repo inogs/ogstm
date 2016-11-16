@@ -19,8 +19,8 @@
       INTEGER :: nsed=21 ! number of sedimenting state variables
       INTEGER, allocatable :: sed_idx(:)
       INTEGER, allocatable :: jarr_sed(:,:),jarr_sed_flx(:,:)
-      REAL(8), allocatable :: ztra(:,:)
-      REAL(8), allocatable :: zwork(:,:,:)
+      double precision, allocatable :: ztra(:,:)
+      double precision, allocatable :: zwork(:,:,:)
 
 
 CC----------------------------------------------------------------------
@@ -35,7 +35,7 @@ CC----------------------------------------------------------------------
       INTEGER :: ntids = 1
 #endif
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

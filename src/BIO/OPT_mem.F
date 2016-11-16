@@ -18,10 +18,10 @@
 
 
       INTEGER, allocatable :: itabe(:),imaske(:,:) 
-      REAL(8), allocatable :: zpar(:,:),xEPS(:,:)
-      REAL(8), allocatable :: zpar0m(:),zpar100(:) 
-      REAL(8), allocatable :: kef(:,:)
-      REAL(8), allocatable :: kextIO(:,:,:)
+      double precision, allocatable :: zpar(:,:),xEPS(:,:)
+      double precision, allocatable :: zpar0m(:),zpar100(:) 
+      double precision, allocatable :: kef(:,:)
+      double precision, allocatable :: kextIO(:,:,:)
       REAL(4), allocatable :: zkef_f (:,:)
 !!!$omp threadprivate (zpar0m,zpar100, zpar, xEPS)
 !----------------------------------------------------------------------
@@ -29,7 +29,7 @@
 
       subroutine myalloc_OPT()
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

@@ -72,7 +72,7 @@ CC----------------------------------------------------------------------
       INTEGER iimppt(jpnj,jpni),ijmppt(jpnj,jpni)
       INTEGER ibonit(jpnij),ibonjt(jpnij)
       INTEGER iglo(4),iloc(4),iabsf(4),iabsl(4),ihals(4),ihale(4)
-      REAL(8)    zidom ,zjdom
+      double precision    zidom ,zjdom
 
 C
 C  1. Dimension arrays for subdomains
@@ -297,7 +297,7 @@ C
           nbse = 1
           npse = (narea-2)
 C
-C...real(8) boundary condition
+C...double precision boundary condition
 C
           IF (nbondj .EQ. -1 .OR. nbondj .EQ. 2) THEN 
               nbsw = 0

@@ -21,7 +21,7 @@
       integer s, nc,INDid
       integer nid, tid
       INTEGER IDS(jptra)
-      REAL(8)  Realcounter
+      double precision  Realcounter
 
       if (.not.existFileFluxes) RETURN
       Realcounter   =    1./REAL(ave_counter_1  , 8)

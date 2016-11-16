@@ -15,8 +15,8 @@
 
       INTEGER :: dimen_jvzdf
       INTEGER, allocatable :: jarr_zdf(:,:),jarr_zdf_flx(:,:)
-      REAL(8), allocatable :: zwd(:,:), zws(:,:), zwi(:,:)
-      REAL(8), allocatable :: zwx(:,:), zwy(:,:), zwz(:,:), zwt(:,:)
+      double precision, allocatable :: zwd(:,:), zws(:,:), zwi(:,:)
+      double precision, allocatable :: zwx(:,:), zwy(:,:), zwz(:,:), zwt(:,:)
 
 
 !!----------------------------------------------------------------------
@@ -31,7 +31,7 @@
       INTEGER :: ntids = 1
 #endif
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

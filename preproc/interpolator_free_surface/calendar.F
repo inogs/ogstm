@@ -79,8 +79,8 @@
            MODULE PROCEDURE ioconf_startdate_ymds
         END INTERFACE
         !
-        REAL(8), PARAMETER :: un_jour = 86400.0
-        REAL(8), SAVE :: un_an = 365.2425
+        double precision, PARAMETER :: un_jour = 86400.0
+        double precision, SAVE :: un_an = 365.2425
         LOGICAL, SAVE :: lock_unan = .FALSE.
         LOGICAL, SAVE :: lock_startdate = .FALSE.
         !
@@ -90,7 +90,7 @@
 
         CHARACTER(LEN=3),PARAMETER::cal(12)=(/'JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'/)
         !
-        REAL(8), SAVE :: start_day, start_sec
+        double precision, SAVE :: start_day, start_sec
         !
       CONTAINS
         !
@@ -105,16 +105,16 @@
           !     INPUT
           !
           INTEGER, INTENT(IN) :: year, month, day
-          REAL(8), INTENT(IN)    :: sec
+          double precision, INTENT(IN)    :: sec
           !
           !     OUTPUT
           !     
-          REAL(8), INTENT(OUT) :: julian
+          double precision, INTENT(OUT) :: julian
           !
           !     LOCAL
           !
           INTEGER :: julian_day
-          REAL(8)    :: julian_sec
+          double precision    :: julian_sec
           !
         CALL ymds2ju_internal(year, month, day, sec,
      & julian_day, julian_sec)
@@ -142,18 +142,18 @@
           !     This is the day at which Pope Gregory XIII introduced the Gregorian calendar.
           !     Compared to the true Julian calendar, which starts some 7980 years ago, the Lilian
           !     days are smaler and are dealt with easily on 32 bit machines. With the true Julian 
-          !     days you can only the fraction of the day in the real(8) part to a precision of a 1/4 of 
+          !     days you can only the fraction of the day in the double precision part to a precision of a 1/4 of 
           !     a day with 32 bits.
           !
           !     INPUT
           !
           INTEGER, INTENT(IN) :: year, month, day
-          REAL(8), INTENT(IN)    :: sec
+          double precision, INTENT(IN)    :: sec
           !
           !     OUTPUT
           !     
           INTEGER, INTENT(OUT) :: julian_day
-          REAL(8), INTENT(OUT)    :: julian_sec
+          double precision, INTENT(OUT)    :: julian_sec
           !
           !     LOCAL
           !
@@ -200,17 +200,17 @@
           !
           !     INPUT
           !     
-          REAL(8), INTENT(IN) :: julian
+          double precision, INTENT(IN) :: julian
           !
           !     OUTPUT
           !
           INTEGER, INTENT(OUT) :: year, month, day
-          REAL(8), INTENT(OUT)    :: sec
+          double precision, INTENT(OUT)    :: sec
           !
           !     LOCAL
           !
           INTEGER :: julian_day
-          REAL(8)    :: julian_sec
+          double precision    :: julian_sec
           !
           julian_day = INT(julian)
           julian_sec = (julian - julian_day)*un_jour
@@ -240,18 +240,18 @@
           !     This is the day at which Pope Gregory XIII introduced the Gregorian calendar.
           !     Compared to the true Julian calendar, which starts some 7980 years ago, the Lilian
           !     days are smaler and are dealt with easily on 32 bit machines. With the true Julian 
-          !     days you can only the fraction of the day in the real(8) part to a precision of a 1/4 of 
+          !     days you can only the fraction of the day in the double precision part to a precision of a 1/4 of 
           !     a day with 32 bits.
           !
           !     INPUT
           !     
           INTEGER, INTENT(IN) :: julian_day
-          REAL(8), INTENT(IN)    :: julian_sec
+          double precision, INTENT(IN)    :: julian_sec
           !
           !     OUTPUT
           !
           INTEGER, INTENT(OUT) :: year, month, day
-          REAL(8), INTENT(OUT)    :: sec
+          double precision, INTENT(OUT)    :: sec
           !
           !     LOCAL
           !
@@ -337,7 +337,7 @@
           !     INPUT
           !
           CHARACTER(LEN=*), INTENT(IN) :: input_str
-          REAL(8), INTENT(IN)             :: dt, date
+          double precision, INTENT(IN)             :: dt, date
           !     
           !     OUTPUT
           !
@@ -351,7 +351,7 @@
           CHARACTER(LEN=80) :: tmp_str
           !
           INTEGER           :: year, month, day
-          REAL(8)              :: sec, date_new, dd, ss
+          double precision              :: sec, date_new, dd, ss
           !
           !
           !
@@ -431,7 +431,7 @@
         !=======================================================================
         !
         !
-        REAL(8) FUNCTION itau2date(itau, date0, deltat)
+        double precision FUNCTION itau2date(itau, date0, deltat)
           !
           IMPLICIT NONE
           !
@@ -449,7 +449,7 @@
           !
           !
           INTEGER  :: itau
-          REAL(8)     :: date0, deltat
+          double precision     :: date0, deltat
           !
           itau2date = float(itau)*deltat/un_jour + date0
           !
@@ -478,17 +478,17 @@
           ! INPUT
           !
           INTEGER, INTENT(IN) :: itau
-          REAL(8), INTENT(IN)    :: deltat
+          double precision, INTENT(IN)    :: deltat
           !
           ! OUTPUT
           !
           INTEGER, INTENT(OUT) :: year, month, date
-          REAL(8), INTENT(OUT)    :: sec
+          double precision, INTENT(OUT)    :: sec
           !
           ! Local
           !
           INTEGER :: julian_day
-          REAL(8)    :: julian_sec
+          double precision    :: julian_sec
           !
           julian_day = start_day
           julian_sec = start_sec + float(itau)*deltat
@@ -501,7 +501,7 @@
         !=======================================================================
         !
         !
-        REAL(8) FUNCTION dtchdate(itau, date0, old_dt, new_dt)
+        double precision FUNCTION dtchdate(itau, date0, old_dt, new_dt)
           !
           IMPLICIT NONE
           !
@@ -521,9 +521,9 @@
           !
           !
           INTEGER, INTENT(IN) :: itau
-          REAL(8), INTENT(IN)    :: date0, old_dt, new_dt
+          double precision, INTENT(IN)    :: date0, old_dt, new_dt
           !
-          REAL(8) :: rtime
+          double precision :: rtime
           !
           rtime = itau2date(itau, date0, old_dt)
           dtchdate = rtime - float(itau)*new_dt/un_jour
@@ -546,16 +546,16 @@
           !     The test is done on the following condition : The distance from the current time to the 
           !     time for the next action is smaller than the one from the next expected check to the next action. 
           !     When the test is done on the time steps simplifactions make it more difficult to read in the code.
-          !     For the real(8) time case it is easier to understand !
+          !     For the double precision time case it is easier to understand !
           !
           IMPLICIT NONE
           !
           !     INPUT
           !
           INTEGER,INTENT(IN) :: itau
-          REAL(8),INTENT(IN)    :: dt, freq
+          double precision,INTENT(IN)    :: dt, freq
           INTEGER,INTENT(IN) :: last_action, last_check
-          REAL(8),INTENT(IN)    :: date0
+          double precision,INTENT(IN)    :: date0
           !
           !     OUTPUT
           !
@@ -563,11 +563,11 @@
           !
           !     LOCAL
           !
-          REAL(8) :: dt_action, dt_check
-          REAL(8) :: date_last_act, date_next_check, date_next_act, date_now, date_mp1, date_mpf
+          double precision :: dt_action, dt_check
+          double precision :: date_last_act, date_next_check, date_next_act, date_now, date_mp1, date_mpf
           INTEGER :: year, month, monthp1, day, next_check_itau, next_act_itau
           INTEGER :: yearp, dayp
-          REAL(8) :: sec, secp
+          double precision :: sec, secp
           LOGICAL :: check
           !
           !
@@ -742,12 +742,12 @@
           !
           !  INPUT
           !
-          REAL(8), INTENT(IN) :: julian
+          double precision, INTENT(IN) :: julian
           !
           ! LOCAL
           !
           INTEGER :: julian_day
-          REAL(8)    :: julian_sec
+          double precision    :: julian_sec
       
           julian_day = INT(julian)
           julian_sec = (julian - julian_day)*un_jour
@@ -765,12 +765,12 @@
           !  INPUT
           !
           INTEGER, INTENT(IN) :: year, month, day
-          REAL(8), INTENT(IN)    :: sec
+          double precision, INTENT(IN)    :: sec
           !
           !  LOCAL
           !
           INTEGER :: julian_day
-          REAL(8)    :: julian_sec
+          double precision    :: julian_sec
       
           CALL ymds2ju_internal(year, month, day, sec, julian_day,
      &     julian_sec)
@@ -790,7 +790,7 @@
           !
           !
           INTEGER, INTENT(IN)  :: julian_day
-          REAL(8), INTENT(IN)     :: julian_sec
+          double precision, INTENT(IN)     :: julian_sec
           !
           CHARACTER(len=70) :: str70a, str70b
           !
@@ -864,7 +864,7 @@
           !
           !     INPUT
           !
-          REAL(8), INTENT(OUT) :: long_an
+          double precision, INTENT(OUT) :: long_an
           !
           !     This routine will lock the calendar. You do not want it to change after your inquiry.
           !
@@ -892,7 +892,7 @@
           !
           !     INPUT
           !
-          REAL(8), INTENT(OUT) :: long_an, long_jour
+          double precision, INTENT(OUT) :: long_an, long_jour
           !
           !     This routine will lock the calendar. You do not want it to change after your inquiry.
           !
@@ -950,18 +950,18 @@
           ! INPUT
           !
           INTEGER, INTENT(IN) :: year_s, month_s, day_s
-          REAL(8), INTENT(IN)    :: sec_s
-          REAL(8), INTENT(IN)    :: sec_increment            !! Time in seconds to be added to the date
+          double precision, INTENT(IN)    :: sec_s
+          double precision, INTENT(IN)    :: sec_increment            !! Time in seconds to be added to the date
           !
           ! OUTUT
           !
           INTEGER, INTENT(OUT) :: year_e, month_e, day_e
-          REAL(8), INTENT(OUT)    :: sec_e
+          double precision, INTENT(OUT)    :: sec_e
           !
           ! LOCAL
           !
           INTEGER :: julian_day
-          REAL(8)    :: julian_sec
+          double precision    :: julian_sec
           !
           CALL ymds2ju_internal(year_s, month_s, day_s, sec_s,
      &     julian_day, julian_sec)
@@ -985,18 +985,18 @@
           ! INPUT
           !
           INTEGER, INTENT(IN) :: year_s, month_s, day_s
-          REAL(8), INTENT(IN)    :: sec_s
+          double precision, INTENT(IN)    :: sec_s
           INTEGER, INTENT(IN) :: year_e, month_e, day_e
-          REAL(8), INTENT(IN)    :: sec_e
+          double precision, INTENT(IN)    :: sec_e
           !
           ! OUTPUT
           !
-          REAL(8), INTENT(OUT)    :: sec_diff           !! Time in seconds between the two dates
+          double precision, INTENT(OUT)    :: sec_diff           !! Time in seconds between the two dates
           !
           ! LOCAL
           !
           INTEGER :: julian_day_s, julian_day_e, day_diff
-          REAL(8)    :: julian_sec_s, julian_sec_e
+          double precision    :: julian_sec_s, julian_sec_e
           !
           CALL ymds2ju_internal(year_s, month_s, day_s, sec_s,
      &     julian_day_s, julian_sec_s)
@@ -1017,7 +1017,7 @@
 
       CHARACTER(LEN=17), INTENT(IN ) :: datestring
       integer,      INTENT(OUT) :: year, month, day
-      real(8),      INTENT(OUT) ::  seconds
+      double precision,      INTENT(OUT) ::  seconds
       integer hr, minutes,sec
 
       read(datestring,'(I4,I2,I2)') year, month, day
@@ -1034,14 +1034,14 @@
       IMPLICIT NONE
 !      INPUTS, not declared because of calling of ju2ymds
       INTEGER            :: year, month, day
-      REAL(8)            :: seconds
+      double precision            :: seconds
       CHARACTER(LEN=17), INTENT(OUT) :: datestring
 
       INTEGER           :: hr, minutes,sec
       CHARACTER(LEN=8)  :: thedate, ora
 !        ! ********* scamuffo per evitare di avere 20100102-24:00:00 ***
 !        ! ********* e avere piuttosto             20100103-00:00:00 ***
-       REAL(8) endofday, julian
+       double precision endofday, julian
        endofday=3600.*24 - 1.0
        IF (seconds.gt.endofday) THEN
           CALL ymds2ju(year,  month, day, seconds,julian)
@@ -1060,14 +1060,14 @@
 
        !=======================================================================
 
-       REAL(8) FUNCTION datestring2sec(datestring)
+       double precision FUNCTION datestring2sec(datestring)
        IMPLICIT NONE
        CHARACTER(LEN=17), INTENT(IN) :: datestring
-       !REAL(8)          , INTENT(OUT):: seconds
+       !double precision          , INTENT(OUT):: seconds
 
        ! LOCAL
        INTEGER  :: year, month, day
-       real(8)  :: sec, julian
+       double precision  :: sec, julian
 
        call read_date_string(datestring, year, month, day, sec)
        CALL ymds2ju(year,month,day,sec,julian)
@@ -1081,12 +1081,12 @@
       IMPLICIT NONE
 
       INTEGER, INTENT(IN)  :: TAU
-      REAL(8), INTENT(IN)  :: deltaT
+      double precision, INTENT(IN)  :: deltaT
       INTEGER, INTENT(OUT) :: julian
 
       ! LOCAL
       integer :: year, month,day
-      real(8) :: sec, julianFrom1582, julianOnYear
+      double precision :: sec, julianFrom1582, julianOnYear
 
 
          call itau2ymds(TAU,deltaT, year, month,day,sec)
@@ -1101,7 +1101,7 @@
 
 !=======================================================================
 
-      REAL(8) FUNCTION photoperiod(jday, latit)
+      double precision FUNCTION photoperiod(jday, latit)
 !     jd          = julian day
 !     latit       = latitude in degrees
 !     photoperiod = day length in hours
@@ -1110,11 +1110,11 @@
       IMPLICIT NONE
 
       INTEGER, INTENT(IN)    :: jday
-      REAL(8), INTENT(IN)    :: latit
+      double precision, INTENT(IN)    :: latit
 
       ! LOCAL
-      REAL(8)    :: Pi
-      REAL(8)    :: declin,refract,sundia,f0,x1
+      double precision    :: Pi
+      double precision    :: declin,refract,sundia,f0,x1
 
 
       Pi = 3.1415927
@@ -1140,13 +1140,13 @@
       END FUNCTION photoperiod
 
 !=======================================================================
-      REAL(8) FUNCTION p_delta(jday)
+      double precision FUNCTION p_delta(jday)
 
       implicit none
 
       INTEGER, INTENT(IN)  :: jday
       ! LOCAL
-      REAL(8)  :: sdelta
+      double precision  :: sdelta
 
 
       sdelta  = sin(p_oblique(jday)) * sin(p_lambda(jday))
@@ -1155,14 +1155,14 @@
       END FUNCTION p_delta
 
 !=======================================================================
-      REAL(8) FUNCTION p_oblique(jday)
+      double precision FUNCTION p_oblique(jday)
 
       implicit none
 
       INTEGER, INTENT(IN)  :: jday
       !LOCAL
 
-      REAL(8)  :: rads
+      double precision  :: rads
 
       rads = 3.1415927 / 180.
       p_oblique = 23.439 * rads - 4.e-07 * rads * REAL(jday,8)
@@ -1170,12 +1170,12 @@
       END FUNCTION p_oblique
 !=======================================================================
 
-      REAL(8) FUNCTION p_lambda(jday)
+      double precision FUNCTION p_lambda(jday)
       implicit none
 
       INTEGER, INTENT(IN)  :: jday
       ! LOCAL
-      REAL(8)  :: rads, L, g
+      double precision  :: rads, L, g
 
       rads = 3.1415927 / 180.
 
@@ -1185,13 +1185,13 @@
 
       end function p_lambda
 !=======================================================================
-      REAL(8) FUNCTION p_range(x)
+      double precision FUNCTION p_range(x)
       implicit none
 
 
-      REAL(8), INTENT(IN)  :: x
+      double precision, INTENT(IN)  :: x
       ! LOCAL
-      REAL(8)  :: tpi,b,a
+      double precision  :: tpi,b,a
 
       tpi = 2 * 3.1415927
 

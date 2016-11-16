@@ -21,24 +21,24 @@
       INTEGER :: jpi_max, jpj_max
       INTEGER :: ave_counter_1=0, ave_counter_2=0
       LOGICAL :: existFilebkp = .false.
-      REAL(8), allocatable :: buffglamt(:) 
-      REAL(8), allocatable :: buffgphit(:)
-      REAL(8), allocatable :: bufftrn(:)
-      REAL(8), allocatable :: bufftrb(:)
-      REAL(8), allocatable :: buffsn(:)
-      REAL(8), allocatable :: bufftn(:)
-      REAL(8), allocatable :: buffvatm(:)
-      REAL(8), allocatable :: buffemp(:)
-      REAL(8), allocatable :: buffqsr(:)
-      REAL(8), allocatable :: buffun(:)
-      REAL(8), allocatable :: buffvn(:)
-      REAL(8), allocatable :: buffwn(:)
-      REAL(8), allocatable :: buffavt(:)
-      REAL(8), allocatable :: buffe3t(:)
-      REAL(8), allocatable :: bufftma(:)
-      REAL(8), allocatable :: bufftrIO(:)
-      REAL(8), allocatable :: buffDIA(:)
-      REAL(8), allocatable :: buffDIA2d(:)
+      double precision, allocatable :: buffglamt(:) 
+      double precision, allocatable :: buffgphit(:)
+      double precision, allocatable :: bufftrn(:)
+      double precision, allocatable :: bufftrb(:)
+      double precision, allocatable :: buffsn(:)
+      double precision, allocatable :: bufftn(:)
+      double precision, allocatable :: buffvatm(:)
+      double precision, allocatable :: buffemp(:)
+      double precision, allocatable :: buffqsr(:)
+      double precision, allocatable :: buffun(:)
+      double precision, allocatable :: buffvn(:)
+      double precision, allocatable :: buffwn(:)
+      double precision, allocatable :: buffavt(:)
+      double precision, allocatable :: buffe3t(:)
+      double precision, allocatable :: bufftma(:)
+      double precision, allocatable :: bufftrIO(:)
+      double precision, allocatable :: buffDIA(:)
+      double precision, allocatable :: buffDIA2d(:)
       REAL(4), allocatable :: d2f3d(:,:,:)
       REAL(4), allocatable :: d2f2d(:,:)
 !----------------------------------------------------------------------
@@ -46,7 +46,7 @@
 
       subroutine myalloc_IO()
       INTEGER  :: err
-      REAL(8)  :: aux_mem
+      double precision  :: aux_mem
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

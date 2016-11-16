@@ -8,8 +8,8 @@
 !     local
       integer jk,jj,ji,jn
       integer :: jn_high, jn_on_all
-      REAL(8) ::  Miss_val =1.e20
-      REAL(8) :: Realcounter, Realcounterp1
+      double precision ::  Miss_val =1.e20
+      double precision :: Realcounter, Realcounterp1
 
       ave_partTime = MPI_WTIME()
 

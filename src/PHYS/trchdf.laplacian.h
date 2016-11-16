@@ -51,8 +51,8 @@ CC local declarations
 CC ==================
 
       INTEGER jk,jj,ji, jn
-      REAL(8) zabe1, zabe2, zbtr, ztra
-      REAL(8) ztrx(jpj,jpi), ztry(jpj,jpi), zwtr(jpj,jpi)
+      double precision zabe1, zabe2, zbtr, ztra
+      double precision ztrx(jpj,jpi), ztry(jpj,jpi), zwtr(jpj,jpi)
 CC----------------------------------------------------------------------
 CC statement functions
 CC ===================

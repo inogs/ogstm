@@ -14,7 +14,7 @@
           CHARACTER(LEN=1024)        :: Filename
           CHARACTER(LEN=17), POINTER  :: TimeStrings(:)
           CHARACTER(LEN=17), POINTER  :: TimeStringsExtended(:)
-          real(8),           POINTER  :: Times(:)
+          double precision,           POINTER  :: Times(:)
           INTEGER                                :: Before
           INTEGER                                :: After
           LOGICAL                                :: Periodic
@@ -48,15 +48,15 @@
       INTEGER           :: TimeStepStart
       INTEGER           :: TimeStep__End
 
-      REAL(8)           :: DELTAT    = 1800.0
-      REAL(8)           :: TIME_0
+      double precision           :: DELTAT    = 1800.0
+      double precision           :: TIME_0
 
 
       INTEGER           :: TauAVEfrom_1
       INTEGER           :: TauAVEfrom_2
       CHARACTER(LEN=17) :: NOW_datestring
       INTEGER           :: NOW_timestep
-      REAL(8)           :: NOW_sec
+      double precision           :: NOW_sec
       CHARACTER(LEN=17) :: BKPdatefrom_1
       CHARACTER(LEN=17) :: BKPdatefrom_2
       LOGICAL           :: IsStartBackup_1 = .false.
@@ -138,7 +138,7 @@
       IMPLICIT NONE
 
       ! LOCAL
-      real(8) t1,t2
+      double precision t1,t2
       LOGICAL B
 
 
@@ -208,7 +208,7 @@
       TYPE (TIME_CONTAINER), INTENT(IN) :: STRUCT
 
       ! LOCAL
-      real(8) t
+      double precision t
 
       IF (STRUCT%Periodic) THEN
          CheckDatelist = .true.
@@ -352,7 +352,7 @@
       ! potrei fare
       ! tau2datestring e poi datestring2sec
       ! ma evito il passaggio alle stringhe
-      REAL(8) FUNCTION  tau2sec(TAU)
+      double precision FUNCTION  tau2sec(TAU)
       IMPLICIT NONE
       INTEGER, INTENT(IN) :: TAU
       tau2sec = TAU*deltaT + TIME_0
@@ -368,7 +368,7 @@
 
       ! LOCAL
       integer :: year, month,day
-      real(8) :: sec
+      double precision :: sec
 
          call itau2ymds(TAU,deltaT, year, month,day,sec)
          call write_date_string(datestring, year, month, day, sec)
@@ -418,10 +418,10 @@
       ! ****************************************
       SUBROUTINE TimeInterpolation(sec, STRUCT,Before, After, t_interp)
       IMPLICIT NONE
-      REAL(8),        INTENT(IN ) :: sec
+      double precision,        INTENT(IN ) :: sec
       TYPE (TIME_CONTAINER),INTENT(IN ) :: STRUCT
       INTEGER,        INTENT(OUT) :: Before, After
-      REAL(8),        INTENT(OUT) :: t_interp
+      double precision,        INTENT(OUT) :: t_interp
 
 
       ! LOCAL
@@ -546,9 +546,9 @@
           integer year1,  year2
           integer month1, month2
           integer day1,   day2
-          real(8) sec1, sec2
+          double precision sec1, sec2
 
-          real(8) sec_diff, sec0, julian0
+          double precision sec_diff, sec0, julian0
           integer year0, month0, day0
 
 
@@ -585,7 +585,7 @@
        integer year, year0
        integer month, month0
        integer day, day0
-       real(8) sec, sec0, sec_diff
+       double precision sec, sec0, sec_diff
 
        datestringToTAU = -500
 
@@ -609,7 +609,7 @@
 
         ! local
 
-        real(8) sec,  seconds
+        double precision sec,  seconds
         integer year, month, day
 
       sec = (tau2sec(tau1) + tau2sec(tau2)) /2

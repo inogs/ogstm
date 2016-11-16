@@ -140,16 +140,16 @@ END SUBROUTINE
 !!
       INTEGER ktype, ksgn
       INTEGER packsize
-      REAL(8) ptab(jpk,jpj,jpi,packsize)
+      double precision ptab(jpk,jpj,jpi,packsize)
 
-      REAL(8) t3p1_my1(jpi,1,jpk,packsize,2)
-      REAL(8) t3p2_my1(jpi,1,jpk,packsize,2)
+      double precision t3p1_my1(jpi,1,jpk,packsize,2)
+      double precision t3p2_my1(jpi,1,jpk,packsize,2)
 
 #ifdef key_mpp_mpi
 
       INTEGER jk,jj,ji,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
-      REAL(8) zsgn
+      double precision zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
       INTEGER jn
 ! omp variables
@@ -913,14 +913,14 @@ END SUBROUTINE
 !!----------------------------------------------------------------------
 !!
       INTEGER ktype, ksgn
-      REAL(8) ptab(jpi,jpj)
-      REAL(8) t2p1(jpi,1,2)
-      REAL(8) t2p2(jpi,1,2)
+      double precision ptab(jpi,jpj)
+      double precision t2p1(jpi,1,2)
+      double precision t2p2(jpi,1,2)
 #ifdef key_mpp_mpi
 
       INTEGER jj,ji,jl
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
-      REAL(8) zsgn
+      double precision zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
 !!
 !!!---------------------------------------------------------------------
@@ -1351,8 +1351,8 @@ END SUBROUTINE
 !!   -----
 !!      argument                :
 !!                   ktyp   -> Tag of the message
-!!                   pmess  -> array of real(8) to send
-!!                   kbytes -> size of pmess in real(8)
+!!                   pmess  -> array of double precision to send
+!!                   kbytes -> size of pmess in double precision
 !!                   kdest  -> receive process number
 !!                   kid    _> ? (note used)
 !!
@@ -1367,7 +1367,7 @@ END SUBROUTINE
 SUBROUTINE mppsend(ktyp,pmess,kbytes,kdest,kid,ireqsend)
 
 
-      REAL(8) pmess(*)
+      double precision pmess(*)
       INTEGER kbytes,kdest,ktyp,kid, ireqsend
 
 #ifdef key_mpp_mpi
@@ -1399,7 +1399,7 @@ END SUBROUTINE
 !!   -----
 !!      argument
 !!                   ktyp    -> Tag of the recevied message
-!!                   pmess   -> array of real(8)
+!!                   pmess   -> array of double precision
 !!                   kbytes  -> suze of the array pmess
 
 
@@ -1414,7 +1414,7 @@ END SUBROUTINE
 
  SUBROUTINE mpprecv(ktyp,pmess,kbytes,ireqrecv)
 
-      REAL(8) pmess(*)
+      double precision pmess(*)
       INTEGER   kbytes,ktyp, ireqrecv
 
 #ifdef key_mpp_mpi

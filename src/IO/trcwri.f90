@@ -7,9 +7,7 @@
       USE TIME_MANAGER
       use mpi
       USE ogstm_mpi_module
-#ifdef key_mpp
-      ! epascolo USE myalloc_mpp
-#endif
+
 
       IMPLICIT NONE
       CHARACTER(LEN=17), INTENT(IN) :: datestring

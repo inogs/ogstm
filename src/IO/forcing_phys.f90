@@ -282,7 +282,9 @@
          call readnc_slice_float_2d(nomefile,'sossheiu',buf2)
            DO ji=1,jpi
          DO jj=1,jpj
-            if (umask(jj,ji,1) .EQ. 1.)  flxdta(jj,ji,8 ,2) = buf2(jj,ji)      
+            if (umask(1,jj,ji) .EQ. 1.) then  
+                  flxdta(jj,ji,8 ,2) = buf2(jj,ji)
+            endif      
            END DO
          END DO
       e3u(1,:,:) = flxdta(:,:,8 ,2)
@@ -297,7 +299,7 @@
          call readnc_slice_float_2d(nomefile,'sossheiv',buf2)
             DO ji=1,jpi
          DO jj=1,jpj
-               if (vmask(jj,ji,1) .EQ. 1.)  flxdta(jj,ji,9 ,2) = buf2(jj,ji)
+               if (vmask(1,jj,ji) .EQ. 1.)  flxdta(jj,ji,9 ,2) = buf2(jj,ji)
       
             END DO
          END DO

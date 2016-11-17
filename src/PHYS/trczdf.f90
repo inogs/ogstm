@@ -104,9 +104,9 @@
          DO jf=1,Fsize
             DO jv=1, dimen_jvzdf
                DO jk=1,jpk
-                  l1 = flx_ridxt(jf,2) .EQ. jarr_zdf(1,jv)
-                  l2 = flx_ridxt(jf,3) .EQ. jarr_zdf(2,jv)
-                  l3 = flx_ridxt(jf,4) .EQ. jk
+                  l1 = flx_ridxt(jf,4) .EQ. jarr_zdf(2,jv)
+                  l2 = flx_ridxt(jf,3) .EQ. jarr_zdf(1,jv)
+                  l3 = flx_ridxt(jf,2) .EQ. jk
                   IF ( l1 .AND. l2 .AND. l3) THEN
                      jarr_zdf_flx(jv,jk)= jf
                   END IF

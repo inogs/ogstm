@@ -62,7 +62,7 @@
 
               do jf=1,Fsize
 
-                  ji = flx_ridxt(jf,2)
+                  ji = flx_ridxt(jf,4)
                   jj = flx_ridxt(jf,3)
 
                   INDflxDUMPZERO(jf)=INDflxDUMP(jf)
@@ -174,7 +174,7 @@
 
               do jf=1,Fsize
 
-                  ji = flx_ridxt(jf,2)
+                  ji = flx_ridxt(jf,4)
                   jj = flx_ridxt(jf,3)
 
                   INDflxBuff(jf)=INDflxDUMP(jf)

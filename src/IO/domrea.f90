@@ -53,9 +53,9 @@
       do kk=1, jpk
                iinew = ii - nimpp + 1
                jjnew = jj - njmpp + 1
-               idxt2glo(kk,jjnew,iinew,1)=ii !
+               idxt2glo(kk,jjnew,iinew,3)=ii !
                idxt2glo(kk,jjnew,iinew,2)=jj ! matrix to go from local to global
-               idxt2glo(kk,jjnew,iinew,3)=kk !
+               idxt2glo(kk,jjnew,iinew,1)=kk !
             enddo
          enddo
       enddo

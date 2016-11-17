@@ -91,9 +91,9 @@
          DO jf=1,Fsize
             DO jv=1, dimen_jvsed
                DO jk=1,jpk
-                  l1 = flx_ridxt(jf,2) .EQ. jarr_sed(1,jv)
-                  l2 = flx_ridxt(jf,3) .EQ. jarr_sed(2,jv)
-                  l3 = flx_ridxt(jf,4) .EQ. jk
+                  l1 = flx_ridxt(jf,4) .EQ. jarr_sed(2,jv)
+                  l2 = flx_ridxt(jf,3) .EQ. jarr_sed(1,jv)
+                  l3 = flx_ridxt(jf,2) .EQ. jk
                   IF ( l1 .AND. l2 .AND. l3) THEN
                      jarr_sed_flx(jk,jv)= jf
                   END IF

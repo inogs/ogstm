@@ -122,7 +122,7 @@
       implicit none
 
       character,intent(in) :: fileNetCDF*(*) ,varname*(*)
-      integer,intent(inout) ::  M(jpk,jpj,jpi)
+      integer,intent(inout),dimension(jpk,jpj,jpi) ::  M
       integer,allocatable,dimension(:,:,:) :: copy_in
       integer ncid, stat, VARid,i,j,k
       integer counter
@@ -1208,15 +1208,15 @@
         call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
-        copy_in_2d =transpose(REAL(totvatmIO,4))
+        copy_in_2d =transpose(totvatmIO)
         s = nf90_put_var(nc, idWs,  copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
 
-        copy_in_2d =transpose(REAL(totempIO ,4))
+        copy_in_2d =transpose(totempIO)
         s = nf90_put_var(nc, idE,    copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
 
-        copy_in_2d =transpose(REAL(totqsrIO ,4))
+        copy_in_2d =transpose(totqsrIO)
         s = nf90_put_var(nc, idR,    copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
 

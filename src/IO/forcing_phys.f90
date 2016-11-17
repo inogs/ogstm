@@ -29,9 +29,9 @@
 
 ! local declarations
 ! ==================
-      double precision sec,zweigh
-      integer Before, After
-      INTEGER iswap
+      double precision :: sec,zweigh
+      integer :: Before, After
+      integer :: iswap
 
 
 
@@ -128,9 +128,9 @@
 
       IMPLICIT NONE
 
-      CHARACTER(LEN=17), INTENT(IN) :: datestring
-      LOGICAL B
-      integer jk,jj,ji
+      character(LEN=17), INTENT(IN) :: datestring
+      LOGICAL :: B
+      integer  :: jk,jj,ji
       ! LOCAL
       character(LEN=30) nomefile
 
@@ -401,10 +401,12 @@
                   DO uj=1,jpj
 
                 flx(uj,ji,jf) = ( Umzweigh * flxdta(uj,ji,jf,1)+ zweigh * flxdta(uj,ji,jf,2) )
+                !if(jf==3) write(*,200),ji,uj,flx(uj,ji,jf)
                         END DO
                   END DO
             END DO
-
+!            STOP
+            200 FORMAT(' ',I4,I4,D30.23)
 
                   DO ji=1,jpi
             DO uj=1,jpj
@@ -424,9 +426,9 @@
 
 
 ! *************************************************************
-!      SUBROUTINE SWAP
-! *    copies index 2 in index 1
-! *************************************************************
+!     SUBROUTINE SWAP
+!     copies index 2 in index 1
+! **************************************************************
 
       SUBROUTINE swap_PHYS
          USE myalloc

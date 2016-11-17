@@ -114,10 +114,11 @@
        END DO
       END DO
 
-        DO ji=1, jpi
       DO jj=1, jpj
+        DO ji=1, jpi
            IF (tmask(1,jj,ji) .NE. 0.) THEN
                vatmIO(jj,ji)=(vatmIO(jj,ji)*Realcounter+vatm(jj,ji))*Realcounterp1
+       !        write(*,200),ji,jj,vatm(jj,ji),vatmIO(jj,ji)
                empIO (jj,ji)=(empIO (jj,ji)*Realcounter+emp (jj,ji))*Realcounterp1
                qsrIO (jj,ji)=(qsrIO (jj,ji)*Realcounter+qsr (jj,ji))*Realcounterp1
            ELSE
@@ -127,7 +128,9 @@
            ENDIF
         END DO
       END DO
+      !STOP
 
+ 200 FORMAT(' ',I4,I4,D30.23,D30.23)
 !     *****************  END PHYS *************************************************
 
 

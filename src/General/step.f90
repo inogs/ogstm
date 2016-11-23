@@ -58,6 +58,7 @@ MODULE module_step
       double precision sec
       LOGICAL B, isFIRST
       double precision :: timess,timesw
+      INTEGER :: jk,jj,ji,jn
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
 !++++++++++++++++++++++++++++++c
@@ -158,11 +159,22 @@ MODULE module_step
 
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp    ! se commento questo non fa calcoli
+
+      ! OPEN(UNIT=10007, FILE='s7.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10007,200),'S7',jn,jk,jj,ji,trn(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10007)
+
         call trcave
         ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
         ave_counter_2 = ave_counter_2 +1
 
-
+!       OPEN(UNIT=10008, FILE='s8.txt', FORM='FORMATTED')
+!       DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+!       WRITE(10008,200),'S8',jn,jk,jj,ji,trn(jk,jj,ji,jn)
+!       ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10008)
+! 200     FORMAT(' ',A3,I4,I4,I4,I4,D30.23)
+!        STOP
        stpparttime = MPI_WTIME() - stpparttime
        stptottime  = stptottime  + stpparttime
        timess = MPI_WTIME() - timess
@@ -255,7 +267,7 @@ MODULE module_step
 
        ! epascolo USE myalloc_mpp
        IMPLICIT NONE
-
+      integer jn,jk,ji,jj
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
       CALL trcadv ! tracers: advection
@@ -272,12 +284,49 @@ MODULE module_step
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
 ! ------------------------
-      
+      ! OPEN(UNIT=10001, FILE='s1.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10001,200),'S1',jn,jk,jj,ji,tra(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO; CLOSE(10001)
+
       CALL trcsms
+
+      ! OPEN(UNIT=10002, FILE='s2.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10002,200),'S2',jn,jk,jj,ji,tra(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10002)
+
       CALL trczdf ! tracers: vertical diffusion
+      
+      ! OPEN(UNIT=10003, FILE='s3.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10003,200),'S3',jn,jk,jj,ji,tra(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10003)
+
       CALL snutel
+      
+      ! OPEN(UNIT=10004, FILE='s4.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10004,200),'S4',jn,jk,jj,ji,tra(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10004)
+
       CALL checkValues
+
+      ! OPEN(UNIT=10005, FILE='s5.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10005,200),'S5',jn,jk,jj,ji,tra(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10005)
+
       CALL trcnxt ! tracers: fields at next time step
+
+!       OPEN(UNIT=10006, FILE='s6.txt', FORM='FORMATTED')
+!       DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+!       WRITE(10006,200),'S6',jn,jk,jj,ji,tra(jk,jj,ji,jn)
+!       ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10006)
+
+! 200     FORMAT(' ',A3,I4,I4,I4,I4,D30.23)
+
+      
 
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime

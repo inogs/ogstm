@@ -406,7 +406,7 @@
                   END DO
             END DO
 !            STOP
-            200 FORMAT(' ',I4,I4,D30.23)
+!            200 FORMAT(' ',I4,I4,D30.23)
 
                   DO ji=1,jpi
             DO uj=1,jpj

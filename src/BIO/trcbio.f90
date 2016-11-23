@@ -46,11 +46,15 @@
 !!!----------------------------------------------------------------------
 !!! local declarations
 !!! ==================
-      LOGICAL sur,bot
-      double precision a(jptra),b(jptra),c(4),d(jptra_dia),er(10),d2(jptra_dia_2d)
+      logical :: sur,bot
+      double precision,dimension(jptra) :: a,b
+      double precision,dimension(4) :: c
+      double precision,dimension(jptra_dia) :: d
+      double precision,dimension(10) :: er
+      double precision,dimension(jptra_dia_2d) :: d2
 
-      INTEGER jk,jj,ji,jb,jn
-      INTEGER jtr,jtrmax,tra_idx
+      integer :: jk,jj,ji,jb,jn
+      integer :: jtr,jtrmax,tra_idx
 
 
 !!!----------------------------------------------------------------------
@@ -97,6 +101,8 @@
 
                           DO jtr=1, jtrmax
                              a(jtr) = trn(jk,jj,ji,jtr) ! current biogeochemical concentrations
+                        !      WRITE(*,200) ,'I',jk,jj,ji,jtr,trn(jk,jj,ji,jtr)
+                             
                           END DO
 ! Environmental regulating factors (er)
 
@@ -110,7 +116,7 @@
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
                           er(9)  = vatm(jj,ji) * surf_mask(jk) ! wind speed (m/s)
                           er(10) = PH(jk,jj,ji)         ! PH
-                       
+                        !   WRITE(*,201),'ERR',jk,jj,ji,er(:)
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
                           call BFM0D_reset()
@@ -125,6 +131,8 @@
 
                           DO jtr=1, jtrmax
                              tra(jk,jj,ji,jtr) =tra(jk,jj,ji,jtr) +b(jtr) ! trend
+                        !      WRITE(*,200),'OB',jk,jj,ji,jtr,b(jtr)
+                        !      WRITE(*,200),'TRA',jk,jj,ji,jtr,tra(jk,jj,ji,jtr)
                           END DO
 
                           DO jtr=1,4
@@ -133,10 +141,12 @@
 
                           DO jtr=1,jptra_dia
                              tra_DIA(jk,jj,ji,jtr) = d(jtr) ! diagnostic
+                        !      WRITE(*,200),'IO3',jk,jj,ji,jtr,tra_DIA(jk,jj,ji,jtr)
                           END DO
                           if (sur) then
                               DO jtr=1,jptra_dia_2d
                                  tra_DIA_2d(jj,ji,jtr) = d2(jtr) ! diagnostic
+                              !    WRITE(*,202),'IO2',jj,ji,jtr,tra_DIA_2d(jj,ji,jtr)
                               END DO
                           endif
 
@@ -146,7 +156,10 @@
              !ENDIF
 
                 END DO MAIN_LOOP
-
+! 200    FORMAT(' ',A3,I4,I4,I4,I4,D30.23)
+! 201    FORMAT(' ',A3,I4,I4,I4,10D30.23)
+! 202    FORMAT(' ',A3,I4,I4,I4,10D30.23)
+                
                           
 ! $omp end parallel do
 

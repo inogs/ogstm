@@ -38,6 +38,12 @@
 
       END DO
 
+      ! OPEN(UNIT=10009, FILE='s9.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10009,200),'S9',jn,jk,jj,ji,traIO(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10009)
+
+       
 
 
 
@@ -68,6 +74,10 @@
 
       END DO
 
+      ! OPEN(UNIT=10010, FILE='s10.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10010,200),'S10',jn,jk,jj,ji,traIO(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10010)
 
 !     *****************  PHYS *****************************************************
       if (freq_ave_phys.eq.1) then
@@ -130,7 +140,7 @@
       END DO
       !STOP
 
- 200 FORMAT(' ',I4,I4,D30.23,D30.23)
+
 !     *****************  END PHYS *************************************************
 
 
@@ -146,7 +156,7 @@
 !!!$omp parallel default(none) private(jk,jj,ji, )
 !!!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
 
-      IF( jn .LE. jptra_dia ) then
+      !IF( jn .LE. jptra_dia ) then
 
                DO ji=1, jpi
             DO jj=1, jpj
@@ -160,12 +170,16 @@
                END DO
             END DO
          END DO
-      ENDIF
+      !ENDIF
       
 
 !!!$omp    end parallel
       END DO
       ! print *,"---------2",tra_DIA_IO(1,30,15,:)
+      ! OPEN(UNIT=10011, FILE='s11.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra_dia; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10011,200),'S11',jn,jk,jj,ji,tra_DIA_IO(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10011)
 
 !     *********************  DIAGNOSTICS 2D **********
       DO jn=1, jptra_dia_2d
@@ -182,6 +196,7 @@
             END DO
 
       END DO
+
 
 
 
@@ -221,6 +236,11 @@
 !!!$omp    end parallel
       END DO
 
+      ! OPEN(UNIT=10012, FILE='s12.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra_dia_high; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10012,200),'S12',jn,jk,jj,ji,tra_DIA_IO_HIGH(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10012)
+
 !     *********************  DIAGNOSTICS 2D **********
 
       DO jn_high=1, jptra_dia2d_high
@@ -238,7 +258,7 @@
              END DO
 
       END DO
-
+      
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

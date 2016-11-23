@@ -15,7 +15,7 @@
       INTEGER, INTENT(IN) :: FREQ_GROUP
       INTEGER jk,jj,ji, jn, jn_high
       INTEGER ind
-
+      CHARACTER(10) newfile
       CHARACTER(LEN=42) forcing_file
       CHARACTER(LEN=60) bkpname
       CHARACTER(LEN=11) DIR
@@ -467,15 +467,23 @@
 !************* END COLLECTING DATA  *****************
 
 ! *********** START WRITING **************************
-
+      !print *,"SONO QUIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII"
       if (myrank == 0) then
               var        =  dianm(jn)
+            !  newfile = 's'//trim(var)//'.txt'
+             ! print *,newfile
+!              stop
               bkpname     = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
               dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
               
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
                  CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO(:,:,:),ave_counter)
+                 
+            !      OPEN(UNIT=10013, FILE=newfile, FORM='FORMATTED')
+            !      DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+            !      WRITE(10013,200),'S13',jn,jk,jj,ji,tottrnIO(jk,jj,ji)
+            !      ENDDO;ENDDO;ENDDO;CLOSE(10013)
       
               else
                  d2f3d = REAL(tottrnIO(:,:,:),4)
@@ -494,6 +502,15 @@
               endif
           endif
       enddo  ! loop in jn
+
+
+
+      ! OPEN(UNIT=10014, FILE='s14.txt', FORM='FORMATTED')
+      ! DO jn=1,jptra_dia; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+      ! WRITE(10014,200),'S14',jn,jk,jj,ji,tra_DIA_IO(jk,jj,ji,jn)
+      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10014)
+! 200     FORMAT(' ',A3,I4,I4,I4,I4,D30.23)
+!       STOP 
 
       if ((.not.IsBackup).and.( freq_ave_phys.eq.FREQ_GROUP) ) then
 

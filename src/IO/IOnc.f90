@@ -80,7 +80,7 @@
       character,intent(in) :: fileNetCDF*(*) ,varname*(*)
       double precision,intent(inout) ::  M(jpk,jpj,jpi)
       
-      double precision,allocatable,dimension(:,:,:) :: copy_in
+      real,allocatable,dimension(:,:,:) :: copy_in
       integer ncid, stat, VARid,i,j,k
       integer counter
       integer thecount(4), start(4)
@@ -661,17 +661,17 @@
        USE myalloc
        IMPLICIT NONE
 
-       CHARACTER*(*) fileNetCDF
-       character(LEN=17) datefrom, dateTo
-       real(4) M(jpjglo, jpiglo)
+       character*(*),intent(in) :: fileNetCDF
+       character(LEN=17),intent(in) :: datefrom, dateTo
+       real,intent(in),dimension(jpjglo, jpiglo) :: M
 
-       character(LEN=20) VAR
-       integer istart,iend
+       character(LEN=20) :: VAR
+       integer :: istart,iend
 
-       integer s, nc, counter
-       integer timid, yid, xid
-       integer idvartime,idphit,idlamt,idVAR
-       real lat_actual_range(2), lon_actual_range(2)
+       integer :: s, nc, counter
+       integer :: timid, yid, xid
+       integer :: idvartime,idphit,idlamt,idVAR
+       real :: lat_actual_range(2), lon_actual_range(2)
          lon_actual_range=(/-9.25  , 36.0   /)
          lat_actual_range=(/30.5   , 44.5   /)
 
@@ -774,7 +774,7 @@
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
 
-       s = nf90_def_var(nc,trim(VAR) ,           nf90_double,(/xid,yid,depid,timid/),  idVAR)
+       s = nf90_def_var(nc,trim(VAR) , nf90_double,(/xid,yid,depid,timid/),  idVAR)
 
         s = nf90_put_att(nc,idgdept,'units'        ,'m')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')

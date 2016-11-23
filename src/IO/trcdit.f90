@@ -32,7 +32,7 @@
       INTEGER ave_counter
 
       CHARACTER(LEN=56) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
-      CHARACTER(LEN=20)  var
+      CHARACTER(LEN=20)  var,newfile
       CHARACTER(LEN=60) bkpname
       CHARACTER(LEN=11) DIR
       logical IsBackup
@@ -73,6 +73,8 @@
       if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
       var    = ctrcnm(jn)
+      newfile = 's'//trim(var)//'.txt'
+              print *,newfile
       output_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
       bkpname        = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
 
@@ -196,7 +198,10 @@
 
         if (IsBackup) then
           CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter)
-      
+            !      OPEN(UNIT=10013, FILE=newfile, FORM='FORMATTED')
+            !      DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
+            !      WRITE(10013,200),'S13',jn,jk,jj,ji,tottrnIO(jk,jj,ji)
+            !      ENDDO;ENDDO;ENDDO;CLOSE(10013)      
 
         else
 
@@ -215,6 +220,7 @@
 
       end if ! IF LABEL 4  if(myrank == 0)
 
+! 200     FORMAT(' ',A3,I4,I4,I4,I4,D30.23)
 
 
 
@@ -228,6 +234,7 @@
 
       END DO ! do jn=1,jptra , DO LABEL 5
 
+      ! stop
 
 
 

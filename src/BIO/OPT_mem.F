@@ -22,7 +22,7 @@
       double precision, allocatable :: zpar0m(:),zpar100(:) 
       double precision, allocatable :: kef(:,:)
       double precision, allocatable :: kextIO(:,:,:)
-      REAL(4), allocatable :: zkef_f (:,:)
+      real, allocatable :: zkef_f (:,:)
 !!!$omp threadprivate (zpar0m,zpar100, zpar, xEPS)
 !----------------------------------------------------------------------
       CONTAINS

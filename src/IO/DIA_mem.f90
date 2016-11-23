@@ -10,7 +10,7 @@
 
           double precision,    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
           double precision,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
-          REAL(4),    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo_Float
+          real,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo_Float
           logical existFileFluxes
 
           CONTAINS

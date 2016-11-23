@@ -39,8 +39,8 @@
       double precision, allocatable :: bufftrIO(:)
       double precision, allocatable :: buffDIA(:)
       double precision, allocatable :: buffDIA2d(:)
-      REAL(4), allocatable :: d2f3d(:,:,:)
-      REAL(4), allocatable :: d2f2d(:,:)
+      real, allocatable :: d2f3d(:,:,:)
+      real, allocatable :: d2f2d(:,:)
 !----------------------------------------------------------------------
       CONTAINS
 

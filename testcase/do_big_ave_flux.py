@@ -47,14 +47,14 @@ def do_big_ave_flux(test):
          print DIR_DATA 
 #/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase
 #        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/' + 'AVE_FREQ_1/'
-         filenames         = DIR_DATA + 'flux.2002*.nc'
+         filenames         = DIR_DATA + 'flux.*.nc'
          SingleVar_filelist= glob.glob(filenames)
          SingleVar_filelist.sort()
          if check_bool == 0:
              ntimes=len(SingleVar_filelist)
              matrix=np.zeros((ntimes,jpk-1,7))
              #       WRITE NetCDF restart file
-             outfile = 'POSTPROC/' + test['Area'] + '_flux.nc'
+             outfile = 'POSTPROC/' + test['BIO-FLOAT'] + '_flux.nc'
              ncOUT   = NC.netcdf_file(outfile,"w");
         
              ncOUT.createDimension('depth',jpk-1);

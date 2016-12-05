@@ -25,16 +25,16 @@ def plot_hovmoeller_PTSW(test):
 
 	M.close()
 
-
 # Center coordinates
 	ci=jpi/2
 	cj=jpj/2
 
 #extract data
 #filename = 'ave.' + vrn + '.nc'
-	filename = 'POSTPROC/' + test['Area'] + '_phys.nc'
+	filename = 'POSTPROC/' + test['BIO-FLOAT'] + '_phys.nc'
 
 	M=NC.netcdf_file(filename,"r",mmap=False)
+        nTimes   = M.dimensions['time']
 	dataP    = (M.variables['par'].data[:,:]).copy()
 	dataT    = (M.variables['votemper'].data[:,:]).copy()
 	dataS    = (M.variables['vosaline'].data[:,:]).copy()
@@ -54,8 +54,8 @@ def plot_hovmoeller_PTSW(test):
         vrn_unit = '(W/m2)'
         ax2=plt.subplot(2, 2, 1)
 
-        t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
-        z= np.tile(np.flipud(gdept),(365, 1))
+        t= np.transpose(np.tile(np.arange(0,nTimes),(jpk, 1)))
+        z= np.tile(np.flipud(gdept),(nTimes, 1))
 
         data2plot= np.transpose( np.flipud(masked_array_P.T*0.217) ) # matrix must be tranposed wr2 t and z
 #       data2plot= np.transpose( np.flipud(masked_array_P.T) ) # matrix must be tranposed wr2 t and z
@@ -63,18 +63,19 @@ def plot_hovmoeller_PTSW(test):
 #       plt.pcolormesh(t,z,data2plot, cmap = 'PuBu', edgecolors = 'None')
 
         plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
-        plt.axis([0, 365, 400., 0.])
+        plt.axis([0, nTimes, 400., 0.])
+        ax2.axis('tight')
         plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
-        plt.xlabel('month', fontsize=16)
+        plt.xlabel('week', fontsize=16)
         plt.ylabel('depth [m]', fontsize=16)
-        labels=['J','F','M','A','M','J','J','A','S','O','N','D']
-        Xl    = np.arange(0.,365.,30)+0.5 # Major tick position
-        xl    = np.arange(0.,365.,30) # Minor tick position
-        plt.xticks(Xl,labels)
-        ax2.set_xticks(xl, minor=True)
-        plt.tick_params(axis='x',which='major',length=0)
-        plt.tick_params(which='minor',length=3)
-        plt.xticks(Xl, labels)
+##      labels=['J','F','M','A','M','J','J','A','S','O','N','D']
+##      Xl    = np.arange(0.,nTimes,30)+0.5 # Major tick position
+##      xl    = np.arange(0.,nTimes,30) # Minor tick position
+##      plt.xticks(Xl,labels)
+##      ax2.set_xticks(xl, minor=True)
+##      plt.tick_params(axis='x',which='major',length=0)
+##      plt.tick_params(which='minor',length=3)
+##      plt.xticks(Xl, labels)
 
 
 # Temperature
@@ -82,77 +83,81 @@ def plot_hovmoeller_PTSW(test):
         vrn_unit = '(Degrees Celsius)'
 	ax2=plt.subplot(2, 2, 2)
 
-	t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
-	z= np.tile(np.flipud(gdept),(365, 1))
+	t= np.transpose(np.tile(np.arange(0,nTimes),(jpk, 1)))
+	z= np.tile(np.flipud(gdept),(nTimes, 1))
 
 	data2plot= np.transpose( np.flipud(masked_array_T.T) ) # matrix must be tranposed wr2 t and z
 	plt.pcolormesh(t,z,data2plot, cmap = 'Reds', edgecolors = 'None')
 
 	plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
-	plt.axis([0, 365, 400., 0.])
+	plt.axis([0, nTimes, 400., 0.])
+        ax2.axis('tight')
         plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
-	plt.xlabel('month', fontsize=16)
+	plt.xlabel('week', fontsize=16)
 	plt.ylabel('depth [m]', fontsize=16)
-	labels=['J','F','M','A','M','J','J','A','S','O','N','D']
-	Xl    = np.arange(0.,365.,30)+0.5 # Major tick position
-	xl    = np.arange(0.,365.,30) # Minor tick position
-	plt.xticks(Xl,labels)
-	ax2.set_xticks(xl, minor=True)
-	plt.tick_params(axis='x',which='major',length=0)
-	plt.tick_params(which='minor',length=3)
-	plt.xticks(Xl, labels)
+##      labels=['J','F','M','A','M','J','J','A','S','O','N','D']
+##      Xl    = np.arange(0.,nTimes,30)+0.5 # Major tick position
+##      xl    = np.arange(0.,nTimes,30) # Minor tick position
+##      plt.xticks(Xl,labels)
+##      ax2.set_xticks(xl, minor=True)
+##      plt.tick_params(axis='x',which='major',length=0)
+##      plt.tick_params(which='minor',length=3)
+##      plt.xticks(Xl, labels)
 
 # Salinity
 	vrn='Salinity'
         vrn_unit = '(PSU)'
 	ax2=plt.subplot(2, 2, 3)
 
-	t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
-	z= np.tile(np.flipud(gdept),(365, 1))
+	t= np.transpose(np.tile(np.arange(0,nTimes),(jpk, 1)))
+	z= np.tile(np.flipud(gdept),(nTimes, 1))
 
 	data2plot= np.transpose( np.flipud(masked_array_S.T) ) # matrix must be tranposed wr2 t and z
 	plt.pcolormesh(t,z,data2plot, cmap = 'Purples', edgecolors = 'None')
 
 	plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
-	plt.axis([0, 365, 400., 0.])
+	plt.axis([0, nTimes, 400., 0.])
+        ax2.axis('tight')
         plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
-	plt.xlabel('month', fontsize=16)
+	plt.xlabel('week', fontsize=16)
 	plt.ylabel('depth [m]', fontsize=16)
-	labels=['J','F','M','A','M','J','J','A','S','O','N','D']
-	Xl    = np.arange(0.,365.,30)+0.5 # Major tick position
-	xl    = np.arange(0.,365.,30) # Minor tick position
-	plt.xticks(Xl,labels)
-	ax2.set_xticks(xl, minor=True)
-	plt.tick_params(axis='x',which='major',length=0)
-	plt.tick_params(which='minor',length=3)
-	plt.xticks(Xl, labels)
+##      labels=['J','F','M','A','M','J','J','A','S','O','N','D']
+##      Xl    = np.arange(0.,nTimes,30)+0.5 # Major tick position
+##      xl    = np.arange(0.,nTimes,30) # Minor tick position
+##      plt.xticks(Xl,labels)
+##      ax2.set_xticks(xl, minor=True)
+##      plt.tick_params(axis='x',which='major',length=0)
+##      plt.tick_params(which='minor',length=3)
+##      plt.xticks(Xl, labels)
+
 
 # vertical Eddy Diffusivity
 	vrn='Vert. Eddy diff.'
         vrn_unit = '(m2/s)'
 	ax2=plt.subplot(2, 2, 4)
 
-	t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
-	z= np.tile(np.flipud(gdept),(365, 1))
+	t= np.transpose(np.tile(np.arange(0,nTimes),(jpk, 1)))
+	z= np.tile(np.flipud(gdept),(nTimes, 1))
 
 	data2plot= np.transpose( np.flipud(masked_array_K.T) ) # matrix must be tranposed wr2 t and z
 	plt.pcolormesh(t,z,data2plot, norm=LogNorm(vmin=data2plot.min(), vmax=data2plot.max()),cmap = 'BuGn', edgecolors = 'None')
 
 	plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
-	plt.axis([0, 365, 400., 0.])
+	plt.axis([0, nTimes, 400., 0.])
+        ax2.axis('tight')
         plt.title(vrn + '\n'+ vrn_unit, fontsize=20, y=1.1)
-	plt.xlabel('month', fontsize=16)
+	plt.xlabel('week', fontsize=16)
 	plt.ylabel('depth [m]', fontsize=16)
-	labels=['J','F','M','A','M','J','J','A','S','O','N','D']
-	Xl    = np.arange(0.,365.,30)+0.5 # Major tick position
-	xl    = np.arange(0.,365.,30) # Minor tick position
-	plt.xticks(Xl,labels)
-	ax2.set_xticks(xl, minor=True)
-	plt.tick_params(axis='x',which='major',length=0)
-	plt.tick_params(which='minor',length=3)
-	plt.xticks(Xl, labels)
+##      labels=['J','F','M','A','M','J','J','A','S','O','N','D']
+##	Xl    = np.arange(0.,nTimes,30)+0.5 # Major tick position
+##      xl    = np.arange(0.,nTimes,30) # Minor tick position
+##      plt.xticks(Xl,labels)
+##      ax2.set_xticks(xl, minor=True)
+##      plt.tick_params(axis='x',which='major',length=0)
+##      plt.tick_params(which='minor',length=3)
+##      plt.xticks(Xl, labels)
 
 	plt.tight_layout()
 
-	theOutputFile = 'POSTPROC/' + test['Area'] + '.png'
+	theOutputFile = 'POSTPROC/' + test['BIO-FLOAT'] + '.png'
 	fig.savefig(theOutputFile)

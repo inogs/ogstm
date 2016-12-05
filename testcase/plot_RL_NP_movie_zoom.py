@@ -51,9 +51,9 @@ def plot_RL_NP_movie_zoom(test):
                ('sP1c','f4'),('sP2c','f4'),('sP3c','f4'),('sP4c','f4'), ('sB1c','f4'), 
                ('dP1c','f4'),('dP2c','f4'),('dP3c','f4'),('dP4c','f4'), ('dB1c','f4')]          
 
-    filename      = 'POSTPROC/' + test['Area'] + '.nc'
-    filename_dia  = 'POSTPROC/' + test['Area'] + '_dia.nc'
-    filename_flux = 'POSTPROC/' + test['Area'] + '_flux.nc'
+    filename      = 'POSTPROC/' + test['BIO-FLOAT'] + '.nc'
+    filename_dia  = 'POSTPROC/' + test['BIO-FLOAT'] + '_dia.nc'
+    filename_flux = 'POSTPROC/' + test['BIO-FLOAT'] + '_flux.nc'
 
     M       = NC.netcdf_file(filename,"r",mmap=False)
     aux     = (M.variables[mydtype[0][0]].data[:,:]).copy()
@@ -155,8 +155,8 @@ def plot_RL_NP_movie_zoom(test):
             mm   = date.strftime('%m')
             dd   = date.strftime('%d')
             
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
-#           main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino, Black-->Bact date: ' + 'm: ' + mm + ' - d: ' + dd
+            main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+#           main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino, Black-->Bact date: ' + 'm: ' + mm + ' - d: ' + dd
             self.main_title=plt.suptitle(main_title)
 
             self.ax=ax
@@ -176,21 +176,21 @@ def plot_RL_NP_movie_zoom(test):
             mm   = date.strftime('%m')
             dd   = date.strftime('%d')
             
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
-#           main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino, Black-->Bact date: ' + 'm: ' + mm + ' - d: ' + dd
+            main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+#           main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino, Black-->Bact date: ' + 'm: ' + mm + ' - d: ' + dd
 
 #           self._drawn_artists = self.lines
             self.main_title = plt.suptitle(main_title)
 
         def new_frame_seq(self):
-            return iter(range(0,365))
+            return iter(range(0,ntime))
 
         def _init_draw(self):
             for l in self.lines:
                 l.set_data([], [])
 
     ani = SubplotAnimation()
-    fileout="POSTPROC/MOVIE/TIL" + test['Area'] + "zoom.mp4"
+    fileout="POSTPROC/MOVIE/TIL" + test['BIO-FLOAT'] + "zoom.mp4"
     ani.save(fileout)
 #   plt.show()
 

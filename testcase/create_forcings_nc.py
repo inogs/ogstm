@@ -1,5 +1,7 @@
 import os,sys
 
+import glob
+
 import numpy as np
 
 from mydtype import *
@@ -49,6 +51,7 @@ def create_forcings_nc(test):
 
    
     D3T=np.zeros((1,jpk,jpj,jpi),np.float)
+    D3SIGMA=np.zeros((1,jpk,jpj,jpi),np.float)
     D3S=np.zeros((1,jpk,jpj,jpi),np.float)
     D3K=np.zeros((1,jpk,jpj,jpi),np.float)
 
@@ -60,6 +63,12 @@ def create_forcings_nc(test):
     D3U=np.zeros((1,jpk,jpj,jpi),np.float)
     D3V=np.zeros((1,jpk,jpj,jpi),np.float)
     D3W=np.zeros((1,jpk,jpj,jpi),np.float)
+
+    PAR   = np.zeros((1,jpk,jpj,jpi),np.float)
+    Ed380 = np.zeros((1,jpk,jpj,jpi),np.float)
+    Ed412 = np.zeros((1,jpk,jpj,jpi),np.float)
+    Ed490 = np.zeros((1,jpk,jpj,jpi),np.float)
+    CHL_F = np.zeros((1,jpk,jpj,jpi),np.float)
     
     UVW.create_UVW(test,D3U,D3V,D3W,Av,Au)
     
@@ -69,17 +78,19 @@ def create_forcings_nc(test):
 
     FORCING_DATE=[]
 
-    filein=file('COPERNICUS/forcing_date')
-    for var in filein:
-        FORCING_DATE.append(var[:-1])
-    
-    filein.close()    
+    theDir='BIO-ARGO-FLOAT/' + test['BIO-FLOAT']
+    filename =theDir + '/' + '????????.profile' 
+
+    listFileName = glob.glob( filename )
+    listFileName.sort()
 
     os.system("mkdir -p " + test['Dir'] + '/FORCINGS/')
 
-    for date in FORCING_DATE:
+
+    for flnm in listFileName:
         # Create T file
-        TSKQWHF.create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F)
+        TSKQWHF.create_TSKQWHF(test,flnm,D3T,D3SIGMA,D3S,D3K,D2W,D2H,D2F,PAR,Ed380,Ed412,Ed490,CHL_F)
+        date=  flnm.split("/")[-1].split(".")[-2] + '-12:00:00'
         outfile = test['Dir'] + '/FORCINGS/T' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
@@ -93,9 +104,14 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('deptht'       ,'f',('deptht',)                      ); ncvar[:] = gdept;
         ncvar = ncOUT.createVariable('time_counter' ,'d',('time_counter',)                ); ncvar    = 1.;
         ncvar = ncOUT.createVariable('vosaline'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3S;   
+        ncvar = ncOUT.createVariable('SIGMA   '     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3SIGMA;   
         ncvar = ncOUT.createVariable('votemper'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3T;
         ncvar = ncOUT.createVariable('e3t'          ,'f',('time_counter','deptht','y','x')); ncvar[:] = e3t0;
-        ncvar = ncOUT.createVariable('soshfldo'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2Q;
+        ncvar = ncOUT.createVariable('PAR'          ,'f',('time_counter','deptht','y','x')); ncvar[:] = PAR;
+        ncvar = ncOUT.createVariable('Ed380'        ,'f',('time_counter','deptht','y','x')); ncvar[:] = Ed380;
+        ncvar = ncOUT.createVariable('Ed412'        ,'f',('time_counter','deptht','y','x')); ncvar[:] = Ed412;
+        ncvar = ncOUT.createVariable('Ed490'        ,'f',('time_counter','deptht','y','x')); ncvar[:] = Ed490;
+        ncvar = ncOUT.createVariable('CHL_F'        ,'f',('time_counter','deptht','y','x')); ncvar[:] = CHL_F;
         ncvar = ncOUT.createVariable('sowindsp'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2W;
         ncvar = ncOUT.createVariable('sossheig'     ,'f',('time_counter','y','x')         ); ncvar[:] = 0.;
         ncvar = ncOUT.createVariable('sowaflcd'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2F;

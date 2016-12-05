@@ -32,7 +32,7 @@ C this ROUTINE is called only every ndttrc time step
 
 C this first routines are parallelized on vertical slab
 
-       CALL trcopt ! tracers: optical model
+!      CALL trcopt ! tracers: optical model
        CALL trcbio ! tracers: biological model
 
 C trcsed no updated for time step advancing

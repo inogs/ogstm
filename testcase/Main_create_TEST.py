@@ -50,7 +50,7 @@ for test in TEST_LIST:
     
     c_for.create_forcings_nc(test)
     
-    c_ext.create_extinction_nc(test)
+#   c_ext.create_extinction_nc(test)
     
     c_bc.create_bc_nc(test)
     

@@ -37,7 +37,7 @@ import plot_CHL_movie_zoom as plot_CHL_mov_z
 
 # MAIN PROGRAM
 
-TEST_LIST=np.loadtxt('TEST_LIST.DIA.dat', dtype=test_conf,skiprows=1,ndmin=1)
+TEST_LIST=np.loadtxt('TEST_LIST.dat', dtype=test_conf,skiprows=1,ndmin=1)
 
 for test in TEST_LIST:
 
@@ -51,11 +51,11 @@ for test in TEST_LIST:
     plot_LDNCCC.plot_hovmoeller_LDNCCC(test)
     plot_LDNC.plot_hovmoeller_LDNC(test)
     plot_CCCCBBBB.plot_hovmoeller_CCCCBBBB(test)
-    plot_TIL_mov.plot_RL_NP_movie(test)
-    plot_TIL_mov_z.plot_RL_NP_movie_zoom(test)
-    plot_TIL_mov_T.plot_RL_NP_movie_T(test)
-    plot_TILS_mov_T.plot_RLS_NP_movie_T(test)
-    plot_BIOc_mov.plot_BIOc_movie(test)
-    plot_BIOc_mov_z.plot_BIOc_movie_zoom(test)
-    plot_CHL_mov.plot_CHL_movie(test)
-    plot_CHL_mov_z.plot_CHL_movie_zoom(test)
+#   plot_TIL_mov.plot_RL_NP_movie(test)
+#   plot_TIL_mov_z.plot_RL_NP_movie_zoom(test)
+#   plot_TIL_mov_T.plot_RL_NP_movie_T(test)
+#   plot_TILS_mov_T.plot_RLS_NP_movie_T(test)
+#   plot_BIOc_mov.plot_BIOc_movie(test)
+#   plot_BIOc_mov_z.plot_BIOc_movie_zoom(test)
+#   plot_CHL_mov.plot_CHL_movie(test)
+#   plot_CHL_mov_z.plot_CHL_movie_zoom(test)

@@ -127,7 +127,7 @@ C
 
 !$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
-!$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
+!$omp&               restotr,jtrmax,trn,tn,sn,PAR,e3t,vatm,surf_mask,DAY_LENGTH,
 !$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
 
 #ifdef __OPENMP
@@ -155,7 +155,7 @@ C
                           er(3)  = rho(ji,jj,jk)        ! Density Kg/m3
                           er(4)  = ice                  ! from 0 to 1 adimensional
                           er(5)  = co2(ji,jj)           ! CO2 Mixing Ratios (ppm)  390
-                          er(6)  = xpar(ji,jj,jk)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          er(6)  = PAR(ji,jj,jk)/0.217  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
                           er(7)  = DAY_LENGTH(ji,jj)    ! fotoperiod expressed in hours
                           er(8)  = e3t(ji,jj,jk)        ! depth in meters of the given cell
                           er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)

@@ -31,8 +31,8 @@ def plot_CHL_movie(test):
 #define derived type to store informations
     mydtype = [('P1l','f4')    ,('P2l','f4')    ,('P3l','f4')    ,('P4l','f4')]
 
-    filename     = 'POSTPROC/' + test['Area'] + '.nc'
-    filename_dia = 'POSTPROC/' + test['Area'] + '_dia.nc'
+    filename     = 'POSTPROC/' + test['BIO-FLOAT'] + '.nc'
+    filename_dia = 'POSTPROC/' + test['BIO-FLOAT'] + '_dia.nc'
 
     M       = NC.netcdf_file(filename,"r",mmap=False)
     aux     = (M.variables[mydtype[0][0]].data[:,:]).copy()
@@ -77,7 +77,7 @@ def plot_CHL_movie(test):
                 ax[d].add_line(CHL3_lines[d])
                 ax[d].add_line(CHL4_lines[d])
 
-                ax[d].set_xlim([0,365])
+                ax[d].set_xlim([0,ntime])
                 ax[d].set_ylim([0,1])
 
                 for label in (ax[d].get_xticklabels() + ax[d].get_yticklabels()):
@@ -117,7 +117,7 @@ def plot_CHL_movie(test):
             mm   = date.strftime('%m')
             dd   = date.strftime('%d')
             
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+            main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
 
             self.big_title=plt.suptitle(main_title)
 
@@ -166,12 +166,12 @@ def plot_CHL_movie(test):
             mm   = date.strftime('%m')
             dd   = date.strftime('%d')
 
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+            main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
 
             self.big_title=plt.suptitle(main_title)
 
         def new_frame_seq(self):
-            return iter(range(0,365))
+            return iter(range(0,ntime))
 
         def _init_draw(self):
             lines= [self.CHL0_lines, self.CHL1_lines, self.CHL2_lines, self.CHL3_lines,self.CHL4_lines]
@@ -179,6 +179,6 @@ def plot_CHL_movie(test):
                 for ld in l: 
                     ld.set_data([], [])
     ani = SubplotAnimation()
-    fileout="POSTPROC/MOVIE/CHL" + test['Area'] + ".mp4"
+    fileout="POSTPROC/MOVIE/CHL" + test['BIO-FLOAT'] + ".mp4"
     ani.save(fileout)
 #   plt.show()

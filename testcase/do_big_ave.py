@@ -47,14 +47,14 @@ def do_big_ave(test):
          print DIR_DATA 
 #/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase
 #        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/' + 'AVE_FREQ_1/'
-         filenames         = DIR_DATA + 'ave.2002*.' + var +'.nc'
+         filenames         = DIR_DATA + 'ave.*.' + var +'.nc'
          SingleVar_filelist= glob.glob(filenames)
          SingleVar_filelist.sort()
          if check_bool == 0:
              ntimes=len(SingleVar_filelist)
              matrix=np.zeros((ntimes,jpk))
              #       WRITE NetCDF restart file
-             outfile = 'POSTPROC/' + test['Area'] + '.nc'
+             outfile = 'POSTPROC/' + test['BIO-FLOAT'] + '.nc'
              ncOUT   = NC.netcdf_file(outfile,"w");
         
              ncOUT.createDimension('depth',jpk);

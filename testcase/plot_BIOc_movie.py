@@ -31,8 +31,8 @@ def plot_BIOc_movie(test):
 #define derived type to store informations
     mydtype = [('P1c','f4')    ,('P2c','f4')    ,('P3c','f4')    ,('P4c','f4')]
 
-    filename     = 'POSTPROC/' + test['Area'] + '.nc'
-    filename_dia = 'POSTPROC/' + test['Area'] + '_dia.nc'
+    filename     = 'POSTPROC/' + test['BIO-FLOAT'] + '.nc'
+    filename_dia = 'POSTPROC/' + test['BIO-FLOAT'] + '_dia.nc'
 
     M       = NC.netcdf_file(filename,"r",mmap=False)
     aux     = (M.variables[mydtype[0][0]].data[:,:]).copy()
@@ -74,7 +74,7 @@ def plot_BIOc_movie(test):
                 ax[d].add_line(BIO2_lines[d])
                 ax[d].add_line(BIO3_lines[d])
 
-                ax[d].set_xlim([0,365])
+                ax[d].set_xlim([0,ntime])
                 ax[d].set_ylim([0,30])
 
                 for label in (ax[d].get_xticklabels() + ax[d].get_yticklabels()):
@@ -113,7 +113,7 @@ def plot_BIOc_movie(test):
             mm   = date.strftime('%m')
             dd   = date.strftime('%d')
             
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+            main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
 
             self.big_title=plt.suptitle(main_title)
 
@@ -159,12 +159,12 @@ def plot_BIOc_movie(test):
             mm   = date.strftime('%m')
             dd   = date.strftime('%d')
 
-            main_title = test['Area'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
+            main_title = test['BIO-FLOAT'] + ' Red--> Dia, Green-->Fla, cia -->Cia, Blue-->Dino date: ' + 'm: ' + mm + ' - d: ' + dd
 
             self.big_title=plt.suptitle(main_title)
 
         def new_frame_seq(self):
-            return iter(range(0,365))
+            return iter(range(0,ntime))
 
         def _init_draw(self):
             lines= [self.BIO0_lines, self.BIO1_lines, self.BIO2_lines, self.BIO3_lines]
@@ -172,6 +172,6 @@ def plot_BIOc_movie(test):
                 for ld in l: 
                     ld.set_data([], [])
     ani = SubplotAnimation()
-    fileout="POSTPROC/MOVIE/BIOc" + test['Area'] + ".mp4"
+    fileout="POSTPROC/MOVIE/BIOc" + test['BIO-FLOAT'] + ".mp4"
     ani.save(fileout)
 #   plt.show()

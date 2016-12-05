@@ -12,7 +12,7 @@ import datetime
 
 from scipy.interpolate import interp1d
 
-def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
+def create_TSKQWHF(test,flnm,D3T,D3SIGMA,D3S,D3K,D2W,D2H,D2F,PAR,Ed380,Ed412,Ed490,CHL_F):
 
     jpi=test['jpi'];
     jpj=test['jpj'];
@@ -29,56 +29,42 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
 
     M.close()
 
-    Area=test['Area']
-#   Area='DYFAMED'
-
-    forcfileT= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_T.nc"
-    forcfileU= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_U.nc"
-    forcfileV= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_V.nc"
-    forcfileW= "COPERNICUS/FORCINGS/" + Area + "/CLIM/" +  Area + "_W.nc"
-
-    DATA_T=NC.netcdf_file(forcfileT,"r")
-    DATA_U=NC.netcdf_file(forcfileU,"r")
-    DATA_V=NC.netcdf_file(forcfileV,"r")
-    DATA_W=NC.netcdf_file(forcfileW,"r")
+    float_data=np.loadtxt(flnm, dtype=Bio_Float_type,skiprows=1,ndmin=1)
 
 #   getting Julian date for present simulation
-    mm    = date[4:6]
-    dd    = date[6:8]
-    s0    = mm+'.'+dd
-    fmt   = '%m.%d'
-    dt    = datetime.datetime.strptime(s0,fmt)
-    tt    = dt.timetuple()
-    j_day = tt.tm_yday -1 # from 1 to 365 scaled to 0 364
 
-    s_0  = DATA_T.variables['vosaline'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
-    t_0  = DATA_T.variables['votemper'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
-    k_0  = DATA_W.variables['votkeavt'].data[j_day,:,0,0].copy();# Input data to be interpolated on final grid
-    q    = DATA_T.variables['soshfldo'].data[j_day,0,0].copy();
-    taux = DATA_U.variables['sozotaux'].data[j_day,0,0].copy();
-    tauy = DATA_V.variables['sometauy'].data[j_day,0,0].copy();
+    gdeptTOT= float_data['Depth']
+    s_0     = float_data['SAL'];# Input data to be interpolated on final grid
+    t_0     = float_data['Temp'];# Input data to be interpolated on final grid
+    si_0    = float_data['sigma'];# Input data to be interpolated on final grid
+    k_0     = float_data['EKD'];# Input data to be interpolated on final grid
+    par_0   = float_data['PAR'];
+    Ed380_0 = float_data['Ed380'];
+    Ed412_0 = float_data['Ed412'];
+    Ed490_0 = float_data['Ed490'];
+    CHL_F_0 = float_data['CHL_F'];
 
-    rho   = 1.3 # kg/m3
-    Cdrag = 1.5 * 0.001
-    K     = np.sqrt(1./(rho*Cdrag))
-    w     = (taux**2 + tauy**2)**0.25 * K
+#   rho   = 1.3 # kg/m3
+#   Cdrag = 1.5 * 0.001
+#   K     = np.sqrt(1./(rho*Cdrag))
+#   w     = (taux**2 + tauy**2)**0.25 * K
 
-#   w  =DATA_T.variables['sowindsp'].data[j_day,0,0].copy();
+    w  =0.5
     h  =0.;
     f  =0.;
 #   f  =DATA_T.variables['sowaflcd'].data[j_day,0,0].copy();
 
 # Interpolating from original vertical grid to high resolution one
-    filein             = 'COPERNICUS' + '/gdept' + 'COPERNICUS' + '.dat'
-    gdeptTOT           = np.loadtxt(filein, dtype=np.double);
 
-    t_int = interp1d(gdeptTOT,t_0,kind='nearest',fill_value='extrapolate'); t = t_int(gdept)
-    s_int = interp1d(gdeptTOT,s_0,kind='nearest',fill_value='extrapolate'); s = s_int(gdept) 
-    
-   
-    filein             = 'COPERNICUS' + '/gdepw' + 'COPERNICUS' + '.dat'
-    gdepwTOT           = np.loadtxt(filein, dtype=np.double);
-    k_int = interp1d(gdepwTOT,k_0,kind='nearest',fill_value='extrapolate'); k = k_int(gdepw)
+    t_int     = interp1d(gdeptTOT,t_0,kind='nearest',fill_value='extrapolate');     t = t_int(gdept)
+    s_int     = interp1d(gdeptTOT,s_0,kind='nearest',fill_value='extrapolate');     s = s_int(gdept) 
+    si_int    = interp1d(gdeptTOT,si_0,kind='nearest',fill_value='extrapolate');    si = si_int(gdept) 
+    k_int     = interp1d(gdeptTOT,k_0,kind='nearest',fill_value='extrapolate');     k = k_int(gdepw)
+    par_int   = interp1d(gdeptTOT,par_0,kind='nearest',fill_value='extrapolate');   par_1d = par_int(gdept)
+    Ed380_int = interp1d(gdeptTOT,Ed380_0,kind='nearest',fill_value='extrapolate'); Ed380_1d = Ed380_int(gdept) 
+    Ed412_int = interp1d(gdeptTOT,Ed412_0,kind='nearest',fill_value='extrapolate'); Ed412_1d = Ed412_int(gdept)
+    Ed490_int = interp1d(gdeptTOT,Ed490_0,kind='nearest',fill_value='extrapolate'); Ed490_1d = Ed490_int(gdept)
+    CHL_F_int = interp1d(gdeptTOT,CHL_F_0,kind='nearest',fill_value='extrapolate'); CHL_F_1d = CHL_F_int(gdept)
 
 ##############################
 
@@ -87,18 +73,20 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
            for ji in np.arange(jpi):
                D3S[0,jk,jj,ji] = s[jk]
                D3T[0,jk,jj,ji] = t[jk]
+               D3SIGMA[0,jk,jj,ji] = si[jk]
                if jk > 4 :
                    D3K[0,jk,jj,ji] = np.amin([k[jk],D3K[0,jk-1,jj,ji]])
                    D3K[0,jk,jj,ji] = np.amax([D3K[0,jk,jj,ji],0.00000001])
                else:
                    D3K[0,jk,jj,ji] = np.amax([k[jk],0.00000001])
+               PAR[0,jk,jj,ji]   = par_1d[jk]
+               Ed380[0,jk,jj,ji] = Ed380_1d[jk]
+               Ed412[0,jk,jj,ji] = Ed412_1d[jk]
+               Ed490[0,jk,jj,ji] = Ed490_1d[jk]
+               CHL_F[0,jk,jj,ji] = CHL_F_1d[jk]
 
     for jj in np.arange(jpj):
         for ji in np.arange(jpi):
-            D2Q[0,jj,ji] = q
             D2W[0,jj,ji] = w
             D2H[0,jj,ji] = 0.
             D2F[0,jj,ji] = f
-
-    DATA_T.close()
-    DATA_W.close()

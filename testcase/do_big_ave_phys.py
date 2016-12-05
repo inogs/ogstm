@@ -34,14 +34,14 @@ def do_big_ave_phys(test):
     for v,var in enumerate(VARS):
          DIR_DATA          = test['Dir'] + '/AVE_PHYS/'
 #        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/AVE_PHYS/'
-         filenames         = DIR_DATA + 'ave.2002*.phys.nc'
+         filenames         = DIR_DATA + 'ave.*.phys.nc'
          SingleVar_filelist= glob.glob(filenames)
          SingleVar_filelist.sort()
          if check_bool == 0:
              ntimes=len(SingleVar_filelist)
              matrix=np.zeros((ntimes,jpk))
              #       WRITE NetCDF restart file
-             outfile = 'POSTPROC/'+ test['Area'] + '_phys.nc'
+             outfile = 'POSTPROC/'+ test['BIO-FLOAT'] + '_phys.nc'
              ncOUT   = NC.netcdf_file(outfile,"w");
         
              ncOUT.createDimension('depth',jpk);

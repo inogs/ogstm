@@ -32,10 +32,11 @@ def plot_hovmoeller_CCCCBBBB(test):
 
 #extract data
 #filename = 'ave.' + vrn + '.nc'
-	filename      = 'POSTPROC/' + test['Area'] + '.nc'
-	filename_phys = 'POSTPROC/' + test['Area'] + '_phys.nc'
+	filename      = 'POSTPROC/' + test['BIO-FLOAT'] + '.nc'
+	filename_phys = 'POSTPROC/' + test['BIO-FLOAT'] + '_phys.nc'
 
 	M=NC.netcdf_file(filename,"r",mmap=False)
+        nTimes   = M.dimensions['time']
 	dataCH1  = (M.variables['P1l'].data[:,:]).copy()
 	dataCH2  = (M.variables['P2l'].data[:,:]).copy()
 	dataCH3  = (M.variables['P3l'].data[:,:]).copy()
@@ -65,8 +66,8 @@ def plot_hovmoeller_CCCCBBBB(test):
         for v,vrn in enumerate(vrnLIST):
             ax2=plt.subplot(2, 4, v+1)
 
-            t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
-            z= np.tile(np.flipud(gdept),(365, 1))
+            t= np.transpose(np.tile(np.arange(0,nTimes),(jpk, 1)))
+            z= np.tile(np.flipud(gdept),(nTimes, 1))
 
             if v == 0 : data2plot= np.transpose( np.flipud(masked_array_CH1.T) ) # matrix must be tranposed wr2 t and z
             if v == 1 : data2plot= np.transpose( np.flipud(masked_array_CH2.T) ) 
@@ -75,18 +76,21 @@ def plot_hovmoeller_CCCCBBBB(test):
             plt.pcolormesh(t,z,data2plot, cmap = 'BuGn', edgecolors = 'None')
 
             plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
-            plt.axis([0, 365, 400., 0.])
+            plt.axis([0, nTimes, 400., 0.])
+            ax2.axis('tight')
+
             plt.title(vrn + '\n'+ vrn_unitLIST[v], fontsize=20, y=1.1)
-            plt.xlabel('month', fontsize=16)
+            plt.xlabel('week', fontsize=16)
             plt.ylabel('depth [m]', fontsize=16)
-            labels=['J','F','M','A','M','J','J','A','S','O','N','D']
-            Xl    = np.arange(0.,365.,30)+0.5 # Major tick position
-            xl    = np.arange(0.,365.,30) # Minor tick position
-            plt.xticks(Xl,labels)
-            ax2.set_xticks(xl, minor=True)
-            plt.tick_params(axis='x',which='major',length=0)
-            plt.tick_params(which='minor',length=3)
-            plt.xticks(Xl, labels)
+
+##          labels=['J','F','M','A','M','J','J','A','S','O','N','D']
+##          Xl    = np.arange(0.,nTimes,30)+0.5 # Major tick position
+##          xl    = np.arange(0.,nTimes,30) # Minor tick position
+##          plt.xticks(Xl,labels)
+##          ax2.set_xticks(xl, minor=True)
+##          plt.tick_params(axis='x',which='major',length=0)
+##          plt.tick_params(which='minor',length=3)
+##          plt.xticks(Xl, labels)
 
 # Carbon
         vrnLIST=['Bio-Diatoms','Bio-Flagellates','Bio-Phyto','Bio-Dinoflagellates']
@@ -94,8 +98,8 @@ def plot_hovmoeller_CCCCBBBB(test):
         for v,vrn in enumerate(vrnLIST):
             ax2=plt.subplot(2, 4, v+5)
 
-            t= np.transpose(np.tile(np.arange(0,365),(jpk, 1)))
-            z= np.tile(np.flipud(gdept),(365, 1))
+            t= np.transpose(np.tile(np.arange(0,nTimes),(jpk, 1)))
+            z= np.tile(np.flipud(gdept),(nTimes, 1))
 
             if v == 0 : data2plot= np.transpose( np.flipud(masked_array_B1.T) ) # matrix must be tranposed wr2 t and z
             if v == 1 : data2plot= np.transpose( np.flipud(masked_array_B2.T) ) 
@@ -104,22 +108,25 @@ def plot_hovmoeller_CCCCBBBB(test):
             plt.pcolormesh(t,z,data2plot, cmap = 'Blues', edgecolors = 'None')
 
             plt.colorbar(orientation="vertical",fraction=0.07,pad=0.12)
-            plt.axis([0, 365, 400., 0.])
+            plt.axis([0, nTimes, 400., 0.])
+            ax2.axis('tight')
+
             plt.title(vrn + '\n'+ vrn_unitLIST[v], fontsize=20, y=1.1)
-            plt.xlabel('month', fontsize=16)
+            plt.xlabel('week', fontsize=16)
             plt.ylabel('depth [m]', fontsize=16)
-            labels=['J','F','M','A','M','J','J','A','S','O','N','D']
-            Xl    = np.arange(0.,365.,30)+0.5 # Major tick position
-            xl    = np.arange(0.,365.,30) # Minor tick position
-            plt.xticks(Xl,labels)
-            ax2.set_xticks(xl, minor=True)
-            plt.tick_params(axis='x',which='major',length=0)
-            plt.tick_params(which='minor',length=3)
-            plt.xticks(Xl, labels)
+
+##          labels=['J','F','M','A','M','J','J','A','S','O','N','D']
+##          Xl    = np.arange(0.,nTimes,30)+0.5 # Major tick position
+##          xl    = np.arange(0.,nTimes,30) # Minor tick position
+##          plt.xticks(Xl,labels)
+##          ax2.set_xticks(xl, minor=True)
+##          plt.tick_params(axis='x',which='major',length=0)
+##          plt.tick_params(which='minor',length=3)
+##          plt.xticks(Xl, labels)
 
 	plt.tight_layout()
 
 # Saving  image
 
-	theOutputFile = 'POSTPROC/' + test['Area'] + '_CCCCBBBB.png'
+	theOutputFile = 'POSTPROC/' + test['BIO-FLOAT'] + '_CCCCBBBB.png'
 	fig.savefig(theOutputFile)

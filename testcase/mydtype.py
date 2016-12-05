@@ -4,7 +4,7 @@ import numpy as np
 
 test_conf=np.dtype([('jpi'   ,np.int)  ,('jpj',np.int)     ,('jpk',np.int),\
                     ('nprocx',np.int)  ,('nprocy',np.int)  ,\
-                    ('lon0'  ,np.float),('lat0',np.float)  , ('Area','S100'),\
+                    ('lon0'  ,np.float),('lat0',np.float)  , ('BIO-FLOAT','S100'),\
                     ('dx'    ,np.float),('dy'    ,np.float),\
                     ('Start' ,'S100')  ,('End'   ,'S100')  ,\
                     ('Dir','S100'),('Code','S100')])
@@ -20,5 +20,6 @@ def file2stringlist(filename):
     filein.close()
     return LIST
 
-
-
+Bio_Float_type= np.dtype([('Depth', np.float), ('sigma' , np.float), ('Temp' , np.float), ('SAL',   np.float),\
+                          ('EKD'  , np.float), ('PAR'   , np.float), ('Ed380', np.float), ('Ed412', np.float),\
+                          ('Ed490', np.float), ('CHL_F' , np.float) ])

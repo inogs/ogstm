@@ -324,9 +324,25 @@
 !$omp end parallel
       END DO
 
+      call readnc_slice_float(nomefile,'PAR',buf);
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,PARdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              PARdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
       call readnc_slice_float(nomefile,'e3t',buf);
       DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask;
-!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,e3tdta,tmask,buf)
+!$omp parallel default(none) private(mytid,ji,jj)  shared(jk,jpi,jpj,jpk,e3tdta,tmask,buf)
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -342,8 +358,10 @@
 
 
 
+
       call readnc_slice_float_2d(nomefile,'sowindsp',buf2); flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1);
-      call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
+!     call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
+                                                            flxdta(:,:,jpqsr ,2) = 0.
                                                             flxdta(:,:,jpice ,2) = 0.
       call EXISTVAR(nomefile,'sowaflcd',B)
       if (B) then
@@ -478,6 +496,7 @@
                  tn(ji,jj,uk) = (Umzweigh*  tdta(ji,jj,uk,1) + zweigh*  tdta(ji,jj,uk,2))
                  sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
                 e3t(ji,jj,uk) = (Umzweigh*  e3tdta(ji,jj,uk,1) + zweigh*  e3tdta(ji,jj,uk,2))
+                PAR(ji,jj,uk) = (Umzweigh*  PARdta(ji,jj,uk,1) + zweigh*  PARdta(ji,jj,uk,2))
                 endif ! tmask
 
 
@@ -569,6 +588,7 @@
                     tdta(ji,jj,jdepth,1) = tdta(ji,jj,jdepth,2)
                     sdta(ji,jj,jdepth,1) = sdta(ji,jj,jdepth,2)
                   e3tdta(ji,jj,jdepth,1) =  e3tdta(ji,jj,jdepth,2)
+                  PARdta(ji,jj,jdepth,1) =  PARdta(ji,jj,jdepth,2)
 
               END DO
             END DO

@@ -123,6 +123,8 @@
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
       double precision FUNCTION fsx( pfx1, pfx2, pfu )
+      !$OMP DECLARE SIMD (fsx) 
+
       IMPLICIT NONE
             double precision, INTENT(IN) :: pfx1, pfx2, pfu
             double precision ::  abspfu
@@ -131,6 +133,7 @@
       END FUNCTION fsx
 
       double precision FUNCTION fsy( pfy1, pfy2, pfv  )
+      !$OMP DECLARE SIMD (fsy) 
       IMPLICIT NONE
             double precision, INTENT(IN) :: pfy1, pfy2, pfv
             double precision :: abspfv
@@ -140,6 +143,7 @@
 
 
       double precision FUNCTION fsz( pfz1, pfz2, pfw )
+      !$OMP DECLARE SIMD (fsz)
       IMPLICIT NONE
       double precision, INTENT(IN) :: pfz1, pfz2, pfw
       double precision abspfw

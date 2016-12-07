@@ -30,12 +30,12 @@ add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dk
 add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed )
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -g -cpp -unroll=3 -qopt-subscript-in-range -align all -heap-arrays")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -qopenmp -O2 -xAVX -qopt-report5 -g -cpp -unroll=3  -qopt-subscript-in-range -align array64byte")
   set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -traceback -cpp -fp-stack-check -check bounds")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -ffixed-line-length-132")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -align array64byte")
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})

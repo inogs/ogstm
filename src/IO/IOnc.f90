@@ -480,7 +480,7 @@
 !      istart=index(fileNetCDF,'00.')+3
 !      iend  =index(fileNetCDF,'.nc')-1
 !      VAR        =fileNetCDF(istart:iend)
-      print *,"PPPPPPPP",fileNetCDF,VAR, julian
+      !print *,"PPPPPPPP",fileNetCDF,VAR, julian
 
       s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
 
@@ -753,7 +753,7 @@
 !      istart=index(fileNetCDF,'00.')+3
 !      iend  =index(fileNetCDF,'.nc')-1
 !      VAR        =fileNetCDF(istart:iend)
-        print *,fileNetCDF," ",VAR," ",datefrom," ", dateTo," ", ave_counter
+        !print *,fileNetCDF," ",VAR," ",datefrom," ", dateTo," ", ave_counter
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
@@ -793,22 +793,22 @@
 
         counter=0
 
-        ! epascolo warning
-        print *,"----- 0"
+       ! epascolo warning
+       ! print *,"----- 0"
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
        call handle_err1(s,counter,fileNetCDF)
-       print *,"----- 1"
+       !print *,"----- 1"
         s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
        call handle_err1(s,counter,fileNetCDF)
-       print *,"----- 2"
+       !print *,"----- 2"
         s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) )
        call handle_err1(s,counter,fileNetCDF)
-       print *,"----- 3"
+       !print *,"----- 3"
        allocate(copy_in(jpiglo, jpjglo, jpk))
        call switch_index_double(M,copy_in,jpiglo,jpjglo,jpk)
        s = nf90_put_var(nc, idVAR  , copy_in  )
        deallocate(copy_in)
-       print *,"----- 4"
+       !print *,"----- 4"
        call handle_err1(s,counter,fileNetCDF)
 
 

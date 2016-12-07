@@ -98,8 +98,9 @@
 !!      gdept, gdepw() : depth of t- and w-points (m)
 !!      e3t_0, e3w_0()     : vertical scale factors at t- and w-points (m)
 !!
+      !dir$ attributes align:64 :: e3t
       double precision, allocatable :: gdept(:), gdepw(:), e3t_0(:), e3w_0(:)
-      double precision, allocatable :: e3t(:,:,:), e3t_back(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
+      double precision, allocatable,save :: e3t(:,:,:), e3t_back(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
 
 !!----------------------------------------------------------------------
 !!        masks, bathymetry

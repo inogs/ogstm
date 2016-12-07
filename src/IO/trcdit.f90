@@ -74,7 +74,7 @@
 
       var    = ctrcnm(jn)
       newfile = 's'//trim(var)//'.txt'
-              print *,newfile
+       !       print *,newfile
       output_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
       bkpname        = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
 

@@ -74,9 +74,9 @@
       double precision :: zbtr,zdt
       double precision :: junk, junki, junkj, junkk
       double precision :: timer
-      double precision,dimension(:),allocatable :: array 
-      double precision,dimension(:,:),allocatable :: surface 
-      INTEGER :: A,B
+      double precision,dimension(:), allocatable :: array 
+      double precision,dimension(:,:), allocatable :: surface 
+     
 
 !-------------------------------------------------------------------
 
@@ -84,15 +84,15 @@
 
       if(allpoints .EQ. 0) then  ! INIT phase
 
-         zti(:,:,:,:)  = 0.
-         ztj(:,:,:,:)  = 0.
-         zkx(:,:,:,:)  = 0.
-         zky(:,:,:,:)  = 0.
-         zkz(:,:,:,:)  = 0.
-         zbuf(:,:,:,:) = 0.
-         zx(:,:,:,:)   = 0.
-         zy(:,:,:,:)   = 0.
-         zz(:,:,:,:)   = 0.
+         zti(:,:,:)  = 0.
+         ztj(:,:,:)  = 0.
+         zkx(:,:,:)  = 0.
+         zky(:,:,:)  = 0.
+         zkz(:,:,:)  = 0.
+         zbuf(:,:,:) = 0.
+         zx(:,:,:)   = 0.
+         zy(:,:,:)   = 0.
+         zz(:,:,:)   = 0.
 
          zaa  = 0.
          zbb  = 0.
@@ -273,118 +273,149 @@
 
       endif 
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end initialization phase
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end initialization phase
 
          jk=1
-            !ALLOCATE(surface(jpj,jpi))
-           ! timer = omp_get_wtime()
+
+         zdt = rdt*ndttrc
+           
+         !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
                DO ji = 2,jpim1
                !dir$ vector aligned
             DO jj = 2,jpjm1
                   zbtr_arr(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(1,jj,ji))
                END DO
             END DO
-            !zbtr_arr(1,:,:) = surface(:,:)
+         !$OMP END TASK
 
-               DO ji = 2,jpim1
-               !dir$ vector aligned
+
+          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
+          !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
+            DO ji = 2,jpim1
+            !dir$ vector aligned
             DO jj = 2,jpjm1
                   inv_eu(1,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(1,jj,ji) )
-               END DO
+            END DO
             END DO
 
-                  DO ji = 2,jpim1
+             DO ji = 1,jpi
+             DO jj = 1,jpj
+             !dir$ vector aligned
+             DO jk = 1,jpk
+                 zaa(jk,jj,ji) = e2u(jj,ji)*e3u(jk,jj,ji) * un(jk,jj,ji)
+             END DO
+             END DO
+             END DO
+
+            DO ji = 1,jpi
+            DO jj = 1,jpj
+            !dir$ vector aligned
+            DO jk = 1,jpk
+             big_fact_zaa(jk,jj,ji) = ( abs(zaa(jk,jj,ji)) - zdt*zaa(jk,jj,ji)**2*inv_eu(jk,jj,ji) )!/(e1u(jj,ji)*e2u(jj,ji)*e3t(jk,jj,ji) ) )
+            END DO
+            END DO
+            END DO
+      
+          !$OMP END TASK
+
+          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk)  default(none) &
+          !$OMP shared(inv_ev,e1v,e2v,e3v,vn,zdt,zbb,big_fact_zbb)
+                 DO ji = 2,jpim1
                  !dir$ vector aligned
-            DO jj = 2,jpjm1
+                 DO jj = 2,jpjm1
                   inv_ev(1,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(1,jj,ji) )
-               END DO
-            END DO
+                 END DO
+                 END DO          
 
+                 DO ji = 1,jpi
+                 DO jj = 1,jpj
+                  !dir$ vector aligned
+                 DO jk = 1,jpk
+                  zbb(jk,jj,ji) = e1v(jj,ji)*e3v(jk,jj,ji) * vn(jk,jj,ji)
+                END DO
+                END DO
+                END DO
+      
+                DO ji = 1,jpi
+                DO jj = 1,jpj
+                !dir$ vector aligned
+                DO jk = 1,jpk
+                 big_fact_zbb(jk,jj,ji) = ( abs(zbb(jk,jj,ji)) - zdt*zbb(jk,jj,ji)**2*inv_ev(jk,jj,ji) )
+                END DO
+                END DO
+                END DO
+            !$OMP END TASK
+
+            !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
+            !$OMP shared(inv_et,e1t,e2t,e3w,wn,zcc,zdt,big_fact_zcc)   
                DO ji = 2,jpim1
                !dir$ vector aligned
-            DO jj = 2,jpjm1
+               DO jj = 2,jpjm1
                   inv_et(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(1,jj,ji) )
                END DO
-            END DO
+               END DO
 
-            !DEALLOCATE(surface)
-            ! timer = omp_get_wtime() -timer
-            ! print *,"TTT  = ",timer
+               DO ji = 1,jpi
+               DO jj = 1,jpj
+               !dir$ vector aligned
+               DO jk = 1,jpk
+                zcc(jk,jj,ji) = e1t(jj,ji)*e2t(jj,ji)* wn(jk,jj,ji)
+               END DO
+               END DO
+               END DO
 
-      zdt = rdt*ndttrc
+               DO ji = 1,jpi
+               DO jj = 1,jpj
+               !dir$ vector aligned
+               DO jk = 1,jpk
+                big_fact_zcc(jk,jj,ji) = ( abs(zcc(jk,jj,ji)) - zdt*zcc(jk,jj,ji)**2*inv_et(jk,jj,ji) )
+               END DO
+               END DO
+               END DO
+
+            !$OMP END TASK
+
+       !$OMP TASK
+       ztj(:,:,:) = 0
+       !$OMP END TASK
+       
+       !$OMP TASK
+       zx(:,:,:) = 0
+       !$OMP END TASK
+       
+       !$OMP TASK
+       zy(:,:,:) = 0
+       !$OMP END TASK
+       
+       !$OMP TASK
+       zz(:,:,:) = 0
+       !$OMP END TASK
+      
+      !$OMP TASKWAIT
 
 
 !!!&omp  parallel default(none) private(A,mytid,jk,jj,ji) shared(jpk,jpj,jpi,ztj,zx,zy,zz)
 
-       A = 1
-       ztj(:,:,:,:) = 0
-       zx(:,:,:,:) = 0
-       zy(:,:,:,:) = 0
-       zz(:,:,:,:) = 0
-
-!!!&omp parallel default(none) private(mytid, jj,ji)
-!!!&omp&         shared(jk, jpk,jpj,jpi,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,
-!!!&omp&                un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,zdt )
-
-             DO ji = 1,jpi
-                  DO jj = 1,jpj
-                  !dir$ vector aligned
-                        DO jk = 1,jpk
-                        zaa(jk,jj,ji) = e2u(jj,ji)*e3u(jk,jj,ji) * un(jk,jj,ji)
-                        END DO
-                  END DO
-            END DO
-
-       DO ji = 1,jpi
-          DO jj = 1,jpj
-          !dir$ vector aligned
-             DO jk = 1,jpk
-               big_fact_zaa(jk,jj,ji) = ( abs(zaa(jk,jj,ji)) - zdt*zaa(jk,jj,ji)**2*inv_eu(jk,jj,ji) )!/(e1u(jj,ji)*e2u(jj,ji)*e3t(jk,jj,ji) ) )
-             END DO
-          END DO
-       END DO
-
-       DO ji = 1,jpi
-          DO jj = 1,jpj
-          !dir$ vector aligned
-              DO jk = 1,jpk
-                zbb(jk,jj,ji) = e1v(jj,ji)*e3v(jk,jj,ji) * vn(jk,jj,ji)
-                END DO
-          END DO
-       END DO
       
-       DO ji = 1,jpi
-         DO jj = 1,jpj
-         !dir$ vector aligned
-            DO jk = 1,jpk
-                big_fact_zbb(jk,jj,ji) = ( abs(zbb(jk,jj,ji)) - zdt*zbb(jk,jj,ji)**2*inv_ev(jk,jj,ji) )
-             END DO
-          END DO
-       END DO
 
-       DO ji = 1,jpi
-         DO jj = 1,jpj
-         !dir$ vector aligned
-          DO jk = 1,jpk
-                zcc(jk,jj,ji) = e1t(jj,ji)*e2t(jj,ji)* wn(jk,jj,ji)
-             END DO
-          END DO
-       END DO
 
-       DO ji = 1,jpi
-         DO jj = 1,jpj
-         !dir$ vector aligned
-            DO jk = 1,jpk
-                big_fact_zcc(jk,jj,ji) = ( abs(zcc(jk,jj,ji)) - zdt*zcc(jk,jj,ji)**2*inv_et(jk,jj,ji) )
-             END DO
-          END DO
-       END DO
+
+
+
+
+
 
 
 !!     tracer loop parallelized (macrotasking)
 !!     =======================================
 
       trcadvparttime = MPI_WTIME()
+
+! $omp taskloop default(none) private(jn,jj,ji,jk,jf,junk,junki,junkj,junkk,zbtr) &
+! $omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,) &
+! $omp shared(jpk,jpj,jpi,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
+! $omp shared(un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,zdt,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr) &
+! $omp firstprivate(jptra,jpkm1,jpim1,jpjm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt) 
 
        
       TRACER_LOOP: DO  jn = 1, jptra
@@ -397,24 +428,24 @@
 !!           and mass fluxes calculated above
 !!       calcul of tracer flux in the i and j direction
 
-!!!&omp   parallel default(none) private(jk,jj,ji,mytid,A,B,junk)
+!!!&omp   parallel default(none) private(jk,jj,ji,mytid , jn,junk)
 !!!&omp&      shared(jpk,jpj,jpi,zkx,zky,zbb,zaa,zcc,jarr1,dimen_jarr1,jn,zkz,trn,jpjm1,jpim1)
 
 
-      A =  1
-      B =  jn
+  
+        
       
-       zkx(  :,:,1,A)=0.  
-       zkx(:,:,jpi,A)=0.    
-       zky(:,  1,:,A)=0.  
-       zky(:,jpj,:,A)=0.  
-       zkz(1,:,:,A)  =0.
+       zkx(  :,:,1)=0.  
+       zkx(:,:,jpi)=0.    
+       zky(:,  1,:)=0.  
+       zky(:,jpj,:)=0.  
+       zkz(1,:,:)  =0.
 ! loop unfusion
 
         DO ji = 2,jpim1
            !dir$ vector aligned
            DO jj = 2,jpjm1
-                 zkx(1,jj,ji,A) = fsx(trn(1,jj,ji,B),trn(1,jj,ji + 1,B),zaa(1,jj,ji))
+                 zkx(1,jj,ji ) = fsx(trn(1,jj,ji, jn),trn(1,jj,ji + 1, jn),zaa(1,jj,ji))
               END DO
            END DO
         
@@ -422,35 +453,35 @@
         DO ji = 2,jpim1
           !dir$ vector aligned
            DO jj = 2,jpjm1
-                zky(1,jj,ji,A) = fsy(trn(1,jj,ji,B),trn(1,jj+1,ji,B),zbb(1,jj,ji))
+                zky(1,jj,ji ) = fsy(trn(1,jj,ji, jn),trn(1,jj+1,ji, jn),zbb(1,jj,ji))
            END DO
         END DO
 
        DO ji = 1,jpi
            !dir$ vector aligned
            DO jk = 2,jpk
-            zkz(jk,1,ji,A) = fsz(trn(jk,1,ji,B),trn(jk-1,1,ji,B),zcc(jk,1,ji))
+            zkz(jk,1,ji ) = fsz(trn(jk,1,ji, jn),trn(jk-1,1,ji, jn),zcc(jk,1,ji))
             ENDDO
        ENDDO
       
        DO ji = 1,jpi
             !dir$ vector aligned
             DO jk = 2,jpk
-            zkz(jk,jpj,ji,A) = fsz(trn(jk,jpj,ji,B),trn(jk-1,jpj,ji,B),zcc(jk,jpj,ji))
+            zkz(jk,jpj,ji ) = fsz(trn(jk,jpj,ji, jn),trn(jk-1,jpj,ji, jn),zcc(jk,jpj,ji))
             END DO
        END DO
 ! loop unfusion
       DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
-            zkz(jk,jj,1,A) = fsz(trn(jk,jj,1,B),trn(jk-1,jj,1,B),zcc(jk,jj,1))
+            zkz(jk,jj,1 ) = fsz(trn(jk,jj,1, jn),trn(jk-1,jj,1, jn),zcc(jk,jj,1))
             END DO
       END DO
 
       DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
-            zkz(jk,jj,jpi,A) = fsz(trn(jk,jj,jpi,B),trn(jk-1,jj,jpi,B),zcc(jk,jj,jpi))
+            zkz(jk,jj,jpi ) = fsz(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
             END DO
       END DO
 
@@ -458,7 +489,7 @@
         DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
-              zkx(jk,jj,ji,A) = fsx(trn(jk,jj,ji,B),trn(jk,jj,ji + 1,B),zaa(jk,jj,ji))*advmask(jk,jj,ji)
+              zkx(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk,jj,ji + 1, jn),zaa(jk,jj,ji))*advmask(jk,jj,ji)
             END DO
          END DO
       END DO
@@ -467,7 +498,7 @@
         DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
-              zky(jk,jj,ji,A) = fsy(trn(jk,jj,ji,B),trn(jk,jj + 1,ji,B),zbb(jk,jj,ji))*advmask(jk,jj,ji)
+              zky(jk,jj,ji ) = fsy(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
               END DO
          END DO
       END DO
@@ -476,7 +507,7 @@
         DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
-              zkz(jk,jj,ji,A) = fsz(trn(jk,jj,ji,B),trn(jk-1,jj,ji,B),zcc(jk,jj,ji))*advmask(jk,jj,ji)
+              zkz(jk,jj,ji ) = fsz(trn(jk,jj,ji, jn),trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
             END DO
          END DO
       END DO
@@ -508,8 +539,8 @@
 
 !        IF( itid - 1 + jn <= jptra ) THEN
 
-               CALL lbc( zkx(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
-               CALL lbc( zky(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
+               CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1 )
+               CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 
 !        END IF
 
@@ -522,15 +553,15 @@
 !! -----------------------------------------------------------
 
 
-!!!&omp   parallel default(none) private(mytid,A,B,zbtr,jk,jj,ji,ju,jf)
+!!!&omp   parallel default(none) private(mytid , jn,zbtr,jk,jj,ji,ju,jf)
 !!!&omp&      shared(zkx,zky,zkz,zti,jpim1,jpjm1,trn,zdt,jn,jpkm1,zbtr_arr,e1t,e2t,ztj,jarr3,ncor,dimen_jarr3,
 !!!&omp&             jarr_adv_flx,Fsize,diaflx)
 
 
 
       
-      A = 1
-      B = jn
+       
+        
            DO ju=1, dimen_jarr3
 
               ji = jarr3(3, ju)
@@ -540,16 +571,16 @@
 
               zbtr = zbtr_arr(jk,jj,ji)
 
-              ztj(jk,jj,ji,A) = -zbtr* &
-     &          ( zkx(jk,jj,ji,A) - zkx(jk,jj,ji-1,A) &
-     &          + zky(jk,jj,ji,A) - zky(jk,jj- 1,ji,A) &
-     &          + zkz(jk,jj,ji,A) - zkz(jk+1,jj,ji,A) )
+              ztj(jk,jj,ji ) = -zbtr* &
+     &          ( zkx(jk,jj,ji ) - zkx(jk,jj,ji-1 ) &
+     &          + zky(jk,jj,ji ) - zky(jk,jj- 1,ji ) &
+     &          + zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
 
 
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkx(jk,jj,ji,A)
-                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(jk,jj,ji,A)
-                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkz(jk,jj,ji,A)
+                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
+                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
+                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
               END IF
 
             END DO
@@ -561,11 +592,11 @@
 !! 2.2 calcul of intermediary field zti
 
 
-!!!&omp     parallel default(none) private(mytid,A,B,jk,jj,ji)
+!!!&omp     parallel default(none) private(mytid , jn,jk,jj,ji)
 !!!&omp&       shared(jt,jn,ncor,jpkm1,jpjm1,jpim1,zti,ztj,trn,zdt,zbuf)
 
-      A = 1
-      B = jn
+       
+        
              if(jt .EQ. 1) then
 
                 if(ncor .EQ. 1) then
@@ -574,7 +605,7 @@
                       DO jj = 2,jpjm1
                       !dir$ vector aligned
                    DO jk = 1,jpkm1
-                            zti(jk,jj,ji,A) = trn(jk,jj,ji,B) + zdt*ztj(jk,jj,ji,A)
+                            zti(jk,jj,ji ) = trn(jk,jj,ji, jn) + zdt*ztj(jk,jj,ji )
                         END DO
                       END DO
                    END DO
@@ -584,8 +615,8 @@
                       DO jj = 2,jpjm1
                       !dir$ vector aligned
                     DO jk = 1,jpkm1
-                            zti(jk,jj,ji,A) = trn(jk,jj,ji,B) + zdt*ztj(jk,jj,ji,A)
-                          !  zbuf(jk,jj,ji,A) = ztj(jk,jj,ji,A)
+                            zti(jk,jj,ji ) = trn(jk,jj,ji, jn) + zdt*ztj(jk,jj,ji )
+                          !  zbuf(jk,jj,ji ) = ztj(jk,jj,ji )
                          END DO
                       END DO
                    END DO
@@ -594,8 +625,8 @@
                       DO jj = 2,jpjm1
                       !dir$ vector aligned
                     DO jk = 1,jpkm1
-                         !   zti(jk,jj,ji,A) = trn(jk,jj,ji,B) + zdt*ztj(jk,jj,ji,A)
-                            zbuf(jk,jj,ji,A) = ztj(jk,jj,ji,A)
+                         !   zti(jk,jj,ji ) = trn(jk,jj,ji, jn) + zdt*ztj(jk,jj,ji )
+                            zbuf(jk,jj,ji ) = ztj(jk,jj,ji )
                          END DO
                       END DO
                    END DO
@@ -609,7 +640,7 @@
                    DO jj = 2,jpjm1
                    !dir$ vector aligned
                 DO jk = 1,jpkm1
-                         zti(jk,jj,ji,A) =  zti(jk,jj,ji,A) + zdt*ztj(jk,jj,ji,A)
+                         zti(jk,jj,ji ) =  zti(jk,jj,ji ) + zdt*ztj(jk,jj,ji )
                       END DO
                    END DO
                 END DO
@@ -618,7 +649,7 @@
                    DO jj = 2,jpjm1
                    !dir$ vector aligned
                 DO jk = 1,jpkm1
-                         zbuf(jk,jj,ji,A) = zbuf(jk,jj,ji,A) + ztj(jk,jj,ji,A)
+                         zbuf(jk,jj,ji ) = zbuf(jk,jj,ji ) + ztj(jk,jj,ji )
                       END DO
                    END DO
                 END DO
@@ -650,7 +681,7 @@
 
 !           DO itid = 1, ntids
 !          IF( itid - 1 + jn <= jptra ) THEN
-                 CALL lbc( zti(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
+                 CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1 )
 !          END IF
 !           END DO
 
@@ -659,22 +690,22 @@
 
 !! 2.3 calcul of the antidiffusive flux
 
-!!!&omp     parallel default(none) private(mytid,A,junk, junki, junkj, junkk, jk,jj,ji)
+!!!&omp     parallel default(none) private(mytid ,junk, junki, junkj, junkk, jk,jj,ji)
 !!!&omp&       shared(jn,jpkm1,jpjm1,jpim1,zti,ztj,zy,zx,zz,jarr2,big_fact_zbb,
 !!!&omp&              big_fact_zaa,big_fact_zcc,dimen_jarr2,rtrn,rsc)
 
 
       
-      A = 1
+       
       !jk = 1
 !          DO jk = 1,jpkm1
       DO ji = 2,jpim1
             DO jj = 2,jpjm1
-                  junk  = zti(1,jj,ji,A)
-                  junki = zti(1,jj,ji+1,A)
-                  junkj = zti(1,jj+1,ji,A)
-                  zx(1,jj,ji,A) = big_fact_zaa(1,jj,ji)*(junki - junk)/(junk + junki + rtrn)* rsc
-                  zy(1,jj,ji,A) = big_fact_zbb(1,jj,ji)*(junkj - junk)/(junk + junkj + rtrn)* rsc
+                  junk  = zti(1,jj,ji )
+                  junki = zti(1,jj,ji+1 )
+                  junkj = zti(1,jj+1,ji )
+                  zx(1,jj,ji ) = big_fact_zaa(1,jj,ji)*(junki - junk)/(junk + junki + rtrn)* rsc
+                  zy(1,jj,ji ) = big_fact_zbb(1,jj,ji)*(junkj - junk)/(junk + junkj + rtrn)* rsc
             END DO
       END DO
 
@@ -687,13 +718,13 @@
             !    ji = jarr2(3, ju)
             !    jj = jarr2(2, ju)
             !    jk = jarr2(1, ju)
-               !junk  = zti(jk,jj,ji,A)
-               !junki = zti(jk,jj,ji+1,A)
-               !junkj = zti(jk,jj+ 1,ji,A)
-               !junkk = zti(jk-1,jj,ji,A)
-               zx(jk,jj,ji,A) = advmask(jk,jj,ji)*(big_fact_zaa(jk,jj,ji)*(zti(jk,jj,ji+1,A) - zti(jk,jj,ji,A))/(zti(jk,jj,ji,A) + zti(jk,jj,ji+1,A) + rtrn)* rsc)
-               zy(jk,jj,ji,A) = advmask(jk,jj,ji)*(big_fact_zbb(jk,jj,ji)*(zti(jk,jj+ 1,ji,A) - zti(jk,jj,ji,A))/(zti(jk,jj,ji,A) + zti(jk,jj+ 1,ji,A) + rtrn)* rsc)
-               zz(jk,jj,ji,A) = advmask(jk,jj,ji)*(big_fact_zcc(jk,jj,ji)*(zti(jk,jj,ji,A) -  zti(jk-1,jj,ji,A))/(zti(jk,jj,ji,A) +  zti(jk-1,jj,ji,A) + rtrn)* rsc*( -1.))
+               !junk  = zti(jk,jj,ji )
+               !junki = zti(jk,jj,ji+1 )
+               !junkj = zti(jk,jj+ 1,ji )
+               !junkk = zti(jk-1,jj,ji )
+               zx(jk,jj,ji ) = advmask(jk,jj,ji)*(big_fact_zaa(jk,jj,ji)*(zti(jk,jj,ji+1 ) - zti(jk,jj,ji ))/(zti(jk,jj,ji ) + zti(jk,jj,ji+1 ) + rtrn)* rsc)
+               zy(jk,jj,ji ) = advmask(jk,jj,ji)*(big_fact_zbb(jk,jj,ji)*(zti(jk,jj+ 1,ji ) - zti(jk,jj,ji ))/(zti(jk,jj,ji ) + zti(jk,jj+ 1,ji ) + rtrn)* rsc)
+               zz(jk,jj,ji ) = advmask(jk,jj,ji)*(big_fact_zcc(jk,jj,ji)*(zti(jk,jj,ji ) -  zti(jk-1,jj,ji ))/(zti(jk,jj,ji ) +  zti(jk-1,jj,ji ) + rtrn)* rsc*( -1.))
 
            END DO
            END DO
@@ -725,9 +756,9 @@
 
 !           DO itid = 1, ntids
 !          IF( itid - 1 + jn <= jptra ) THEN
-                CALL lbc( zx(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
-                CALL lbc( zy(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
-                CALL lbc( zz(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
+                CALL lbc( zx(:,:,:), 1, 1, 1, 1, jpk, 1 )
+                CALL lbc( zy(:,:,:), 1, 1, 1, 1, jpk, 1 )
+                CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1 )
 !          END IF
 !       END DO
 
@@ -735,55 +766,53 @@
 
 !! 2.4 reinitialization
 
-!!!&omp     parallel default(none) private(mytid,A,junk,jk,jj,ji)
+!!!&omp     parallel default(none) private(mytid ,junk,jk,jj,ji)
 !!!&omp&      shared(zkx,zky,zkz,zz,zx,zy,zti,jpjm1,jpim1,dimen_jarr1,jarr1,jpi,jpk,jpj,jn)
 
       
-      A=1
+       
 !!            2.5 calcul of the final field:
 !!                advection by antidiffusive mass fluxes and an upstream scheme
            
                  DO ji = 2,jpim1
                  !dir$ vector aligned
              DO jj = 2,jpjm1
-                   junk  = zti(1,jj,ji,A)
-                   zkx(1,jj,ji,A) = fsx(junk,zti(1,jj,ji+1,A),zx(1,jj,ji,A))
+                   zkx(1,jj,ji ) = fsx(zti(1,jj,ji ),zti(1,jj,ji+1 ),zx(1,jj,ji ))
                  END DO
              END DO
 
                  DO ji = 2,jpim1
                  !dir$ vector aligned
-             DO jj = 2,jpjm1
-                   junk  = zti(1,jj,ji,A)
-                   zky(1,jj,ji,A) = fsy(junk,zti(1,jj+ 1,ji,A),zy(1,jj,ji,A))
+             DO jj = 2,jpjm1 
+                   zky(1,jj,ji ) = fsy(zti(1,jj,ji ),zti(1,jj+ 1,ji ),zy(1,jj,ji ))
                  END DO
               END DO
 
             DO ji = 1,jpi 
             !dir$ vector aligned
                    DO jk = 2,jpk   
-                        zkz(jk,1,ji,A) = fsz(zti(jk,1,ji,A),zti(jk-1,1,ji,A),zz(jk,1,ji,A))
+                        zkz(jk,1,ji ) = fsz(zti(jk,1,ji ),zti(jk-1,1,ji ),zz(jk,1,ji ))
                   ENDDO
             ENDDO
                
             DO ji = 1,jpi
             !dir$ vector aligned
                   DO jk = 2,jpk 
-                        zkz(jk,jpj,ji,A) = fsz(zti(jk,jpj,ji,A),zti(jk-1,jpj,ji,A),zz(jk,jpj,ji,A))
+                        zkz(jk,jpj,ji ) = fsz(zti(jk,jpj,ji ),zti(jk-1,jpj,ji ),zz(jk,jpj,ji ))
                   ENDDO
             ENDDO
 
              DO jj = 2,jpjm1
              !dir$ vector aligned
                   DO jk = 2,jpk
-                        zkz(jk,jj,1,A) = fsz(zti(jk,jj,1,A),zti(jk-1,jj,1,A),zz(jk,jj,1,A))
+                        zkz(jk,jj,1 ) = fsz(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
                   ENDDO
             ENDDO   
 
              DO jj = 2,jpjm1
              !dir$ vector aligned
                   DO jk = 2,jpk
-                        zkz(jk,jj,jpi,A) = fsz(zti(jk,jj,jpi,A),zti(jk-1,jj,jpi,A),zz(jk,jj,jpi,A))
+                        zkz(jk,jj,jpi ) = fsz(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
                   END DO
              END DO
 
@@ -791,9 +820,9 @@
             DO jj = 2,jpjm1
             !dir$ vector aligned
          DO jk = 2,jpk    
-                zkx(jk,jj,ji,A) = fsx(zti(jk,jj,ji,A),zti(jk,jj,ji + 1,A),zx(jk,jj,ji,A))*advmask(jk,jj,ji)
-                !zky(jk,jj,ji,A) = fsy(zti(jk,jj,ji,A),zti(jk,jj+ 1,ji,A),zy(jk,jj,ji,A))*advmask(jk,jj,ji)
-                !zkz(jk,jj,ji,A) = fsz(zti(jk,jj,ji,A),zti(jk-1,jj,ji,A),zz(jk,jj,ji,A))*advmask(jk,jj,ji)
+                zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
+                !zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
+                !zkz(jk,jj,ji ) = fsz(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
          END DO
           END DO
            END DO
@@ -802,9 +831,9 @@
             DO jj = 2,jpjm1
             !dir$ vector aligned
          DO jk = 2,jpk    
-                !zkx(jk,jj,ji,A) = fsx(zti(jk,jj,ji,A),zti(jk,jj,ji + 1,A),zx(jk,jj,ji,A))*advmask(jk,jj,ji)
-                zky(jk,jj,ji,A) = fsy(zti(jk,jj,ji,A),zti(jk,jj+ 1,ji,A),zy(jk,jj,ji,A))*advmask(jk,jj,ji)
-                !zkz(jk,jj,ji,A) = fsz(zti(jk,jj,ji,A),zti(jk-1,jj,ji,A),zz(jk,jj,ji,A))*advmask(jk,jj,ji)
+                !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
+                zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
+                !zkz(jk,jj,ji ) = fsz(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
          END DO
           END DO
            END DO
@@ -813,9 +842,9 @@
             DO jj = 2,jpjm1
             !dir$ vector aligned
          DO jk = 2,jpk    
-                !zkx(jk,jj,ji,A) = fsx(zti(jk,jj,ji,A),zti(jk,jj,ji + 1,A),zx(jk,jj,ji,A))*advmask(jk,jj,ji)
-                !zky(jk,jj,ji,A) = fsy(zti(jk,jj,ji,A),zti(jk,jj+ 1,ji,A),zy(jk,jj,ji,A))*advmask(jk,jj,ji)
-                zkz(jk,jj,ji,A) = fsz(zti(jk,jj,ji,A),zti(jk-1,jj,ji,A),zz(jk,jj,ji,A))*advmask(jk,jj,ji)
+                !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
+                !zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
+                zkz(jk,jj,ji ) = fsz(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
          END DO
           END DO
            END DO
@@ -838,21 +867,21 @@
 ! !!   ... T-point, 3D array, full local array zk[xy] are initialised
 !       DO itid = 1, ntids
 !         IF( itid - 1 + jn <= jptra ) THEN
-               CALL lbc( zkx(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
-               CALL lbc( zky(:,:,:,1), 1, 1, 1, 1, jpk, 1 )
+               CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1 )
+               CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 !         END IF
 !       END DO
 ! #endif
 
-!!!&omp    parallel default(none) private(mytid,A,B,zbtr,jk,jj,ji,ju,jf)
+!!!&omp    parallel default(none) private(mytid , jn,zbtr,jk,jj,ji,ju,jf)
 !!!&omp&      shared(zkx,zky,zkz,zbtr_arr,e1t,e2t,ztj,dimen_jarr3,jarr3,ncor,jn,
 !!!&omp&             jarr_adv_flx,Fsize,diaflx)
 
 
 !!        2.6. calcul of after field using an upstream advection scheme
 
-         A = 1
-         B = jn
+          
+           
             if(ncor .EQ. 1) then
                DO ju=1, dimen_jarr3
 
@@ -862,14 +891,14 @@
                   jf = jarr_adv_flx(ju)
 
                   zbtr = zbtr_arr(jk,jj,ji)
-                  ztj(jk,jj,ji,A) = -zbtr*( zkx(jk,jj,ji,A) - zkx(jk,jj,ji - 1,A) &
-     &              + zky(jk,jj,ji,A) - zky(jk,jj- 1,ji,A)+ zkz(jk,jj,ji,A) - zkz(jk+1,jj,ji,A) )+ ztj(jk,jj,ji,A)
+                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
+     &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )+ ztj(jk,jj,ji )
 
 !     Save advective fluxes x,y,z
               IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                 diaflx(jf,B,3) = diaflx(jf,B,3) + zkx(jk,jj,ji,A)
-                 diaflx(jf,B,2) = diaflx(jf,B,2) + zky(jk,jj,ji,A)
-                 diaflx(jf,B,1) = diaflx(jf,B,1) + zkz(jk,jj,ji,A)
+                 diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
+                 diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
+                 diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
               END IF
 
               END DO
@@ -882,14 +911,14 @@
                   jf = jarr_adv_flx(ju)
 
                   zbtr = zbtr_arr(jk,jj,ji)
-                  ztj(jk,jj,ji,A) = -zbtr*( zkx(jk,jj,ji,A) - zkx(jk,jj,ji - 1,A) &
-     &              + zky(jk,jj,ji,A) - zky(jk,jj- 1,ji,A)+ zkz(jk,jj,ji,A) - zkz(jk+1,jj,ji,A) )
+                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
+     &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
 
                  !Save advective fluxes x,y,z
                  IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                    diaflx(jf,B,3) = diaflx(jf,B,3) + zkx(jk,jj,ji,A)
-                    diaflx(jf,B,2) = diaflx(jf,B,2) + zky(jk,jj,ji,A)
-                    diaflx(jf,B,1) = diaflx(jf,B,1) + zkz(jk,jj,ji,A)
+                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
+                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
+                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
                  END IF
               END DO
 
@@ -899,10 +928,10 @@
 
 
 !!       3. trend due to horizontal and vertical advection of tracer jn
-!!!&omp   parallel default(none) private(mytid,A,B,jk,jj,ji,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
+!!!&omp   parallel default(none) private(mytid , jn,jk,jj,ji,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
 
-        A=1
-        B=jn
+         
+          
 
            if(ncor .EQ. 1) then
               DO ju=1, dimen_jarrt
@@ -910,7 +939,7 @@
                  jj = jarrt(2, ju)
                  jk = jarrt(1, ju)
 
-                 tra(jk,jj,ji,B) = tra(jk,jj,ji,B)+ ztj(jk,jj,ji,A)
+                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ ztj(jk,jj,ji )
 
               END DO
            else
@@ -919,12 +948,13 @@
                  jj = jarrt(2, ju)
                  jk = jarrt(1, ju)
 
-                 tra(jk,jj,ji,B) = tra(jk,jj,ji,B)+ (zbuf(jk,jj,ji,A) + ztj(jk,jj,ji,A))
+                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ (zbuf(jk,jj,ji ) + ztj(jk,jj,ji ))
 
               END DO
            endif
 
        END DO TRACER_LOOP
+      !!$omp end taskloop
 
        trcadvparttime = MPI_WTIME() - trcadvparttime
        trcadvtottime = trcadvtottime + trcadvparttime

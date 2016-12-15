@@ -193,6 +193,7 @@
          DO  ji = 2,jpim1
             DO jj = 2,jpjm1
                   DO jk = 1,jpk
+                        !print *,allocated(jarr),allocated(zbtr_arr),allocated(e1t),allocated(e2t),allocated(e3t)
                         if(advmask(jk,jj,ji) .NE. 0) then
                         zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
                         dimen_jarr = dimen_jarr + 1
@@ -232,6 +233,8 @@
       !       END DO
       !    END DO
 
+      
+
                DO ji = 2,jpim1
             DO jj = 2,jpjm1
          DO jk = 1,jpkm1
@@ -258,6 +261,8 @@
             END DO
          END DO
 
+      
+
       jarr_adv_flx=0
 
          DO jf=1,Fsize
@@ -278,31 +283,36 @@
          jk=1
 
          zdt = rdt*ndttrc
-           
+         !print*,"1---------------------------------------"     
+         !print*,allocated(zbtr_arr),allocated(e1t),allocated(e2t),allocated(e3t)
          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
                DO ji = 2,jpim1
                !dir$ vector aligned
             DO jj = 2,jpjm1
                   zbtr_arr(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(1,jj,ji))
+                  !print *,ji,jj,e1t(jj,ji),e2t(jj,ji),e3t(1,jj,ji),zbtr_arr(1,jj,ji)
                END DO
             END DO
          !$OMP END TASK
-
-
+         !  print*,"2---------------------------------------"     
+        
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
           !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
+            !print *,jpi,jpj,allocated(zaa),allocated(e2u),allocated(e3u),allocated(un)
             DO ji = 2,jpim1
             !dir$ vector aligned
             DO jj = 2,jpjm1
                   inv_eu(1,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(1,jj,ji) )
+                  !print *,allocated(inv_eu),inv_eu(1,jj,ji)
             END DO
             END DO
-
              DO ji = 1,jpi
              DO jj = 1,jpj
              !dir$ vector aligned
              DO jk = 1,jpk
+                  !print *,e2u(jj,ji),e3u(jk,jj,ji),un(jk,jj,ji)
                  zaa(jk,jj,ji) = e2u(jj,ji)*e3u(jk,jj,ji) * un(jk,jj,ji)
+                 !print *,ji,jj,jk
              END DO
              END DO
              END DO
@@ -317,7 +327,7 @@
             END DO
       
           !$OMP END TASK
-
+           
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk)  default(none) &
           !$OMP shared(inv_ev,e1v,e2v,e3v,vn,zdt,zbb,big_fact_zbb)
                  DO ji = 2,jpim1
@@ -345,7 +355,7 @@
                 END DO
                 END DO
             !$OMP END TASK
-
+             
             !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
             !$OMP shared(inv_et,e1t,e2t,e3w,wn,zcc,zdt,big_fact_zcc)   
                DO ji = 2,jpim1
@@ -374,48 +384,20 @@
                END DO
 
             !$OMP END TASK
-
-       !$OMP TASK
-       ztj(:,:,:) = 0
-       !$OMP END TASK
-       
-       !$OMP TASK
-       zx(:,:,:) = 0
-       !$OMP END TASK
-       
-       !$OMP TASK
-       zy(:,:,:) = 0
-       !$OMP END TASK
-       
-       !$OMP TASK
-       zz(:,:,:) = 0
-       !$OMP END TASK
       
       !$OMP TASKWAIT
 
-
-!!!&omp  parallel default(none) private(A,mytid,jk,jj,ji) shared(jpk,jpj,jpi,ztj,zx,zy,zz)
-
-      
-
-
-
-
-
-
-
-
-
+     
 !!     tracer loop parallelized (macrotasking)
 !!     =======================================
 
       trcadvparttime = MPI_WTIME()
 
-! $omp taskloop default(none) private(jn,jj,ji,jk,jf,junk,junki,junkj,junkk,zbtr) &
-! $omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,) &
-! $omp shared(jpk,jpj,jpi,big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
-! $omp shared(un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,zdt,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr) &
-! $omp firstprivate(jptra,jpkm1,jpim1,jpjm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt) 
+!$omp taskloop default(none) private(jj,ji,jk,jf,junk,junki,junkj,junkk,zbtr) &
+!$omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
+!$omp shared(big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
+!$omp shared(un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr) &
+!$omp firstprivate(jpkm1,jpim1,jpjm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt,jpk,jpj,jpi) 
 
        
       TRACER_LOOP: DO  jn = 1, jptra
@@ -428,26 +410,28 @@
 !!           and mass fluxes calculated above
 !!       calcul of tracer flux in the i and j direction
 
-!!!&omp   parallel default(none) private(jk,jj,ji,mytid , jn,junk)
-!!!&omp&      shared(jpk,jpj,jpi,zkx,zky,zbb,zaa,zcc,jarr1,dimen_jarr1,jn,zkz,trn,jpjm1,jpim1)
+       zy(:,:,:) = 0
+       zz(:,:,:) = 0 
+       zx(:,:,:) = 0
+       ztj(:,:,:)= 0
 
+       zkx(:,:,:)=0.  
+       zky(:,:,:)=0.  
+       zkz(:,:,:)=0.
 
-  
-        
-      
-       zkx(  :,:,1)=0.  
-       zkx(:,:,jpi)=0.    
-       zky(:,  1,:)=0.  
-       zky(:,jpj,:)=0.  
-       zkz(1,:,:)  =0.
-! loop unfusion
+!        zkx(  :,:,1)=0.  
+!        zkx(:,:,jpi)=0.    
+!        zky(:,  1,:)=0.  
+!        zky(:,jpj,:)=0.  
+!        zkz(1,:,:)  =0.
+! ! loop unfusion
 
         DO ji = 2,jpim1
            !dir$ vector aligned
            DO jj = 2,jpjm1
                  zkx(1,jj,ji ) = fsx(trn(1,jj,ji, jn),trn(1,jj,ji + 1, jn),zaa(1,jj,ji))
-              END DO
            END DO
+        END DO
         
 
         DO ji = 2,jpim1
@@ -494,7 +478,7 @@
          END DO
       END DO
 
-            DO  ji = 2,jpim1
+      DO  ji = 2,jpim1
         DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
@@ -551,16 +535,7 @@
 
 !! 2. calcul of after field using an upstream advection scheme
 !! -----------------------------------------------------------
-
-
-!!!&omp   parallel default(none) private(mytid , jn,zbtr,jk,jj,ji,ju,jf)
-!!!&omp&      shared(zkx,zky,zkz,zti,jpim1,jpjm1,trn,zdt,jn,jpkm1,zbtr_arr,e1t,e2t,ztj,jarr3,ncor,dimen_jarr3,
-!!!&omp&             jarr_adv_flx,Fsize,diaflx)
-
-
-
-      
-       
+          
         
            DO ju=1, dimen_jarr3
 
@@ -592,8 +567,6 @@
 !! 2.2 calcul of intermediary field zti
 
 
-!!!&omp     parallel default(none) private(mytid , jn,jk,jj,ji)
-!!!&omp&       shared(jt,jn,ncor,jpkm1,jpjm1,jpim1,zti,ztj,trn,zdt,zbuf)
 
        
         
@@ -689,12 +662,6 @@
 
 
 !! 2.3 calcul of the antidiffusive flux
-
-!!!&omp     parallel default(none) private(mytid ,junk, junki, junkj, junkk, jk,jj,ji)
-!!!&omp&       shared(jn,jpkm1,jpjm1,jpim1,zti,ztj,zy,zx,zz,jarr2,big_fact_zbb,
-!!!&omp&              big_fact_zaa,big_fact_zcc,dimen_jarr2,rtrn,rsc)
-
-
       
        
       !jk = 1
@@ -765,12 +732,6 @@
 ! #endif
 
 !! 2.4 reinitialization
-
-!!!&omp     parallel default(none) private(mytid ,junk,jk,jj,ji)
-!!!&omp&      shared(zkx,zky,zkz,zz,zx,zy,zti,jpjm1,jpim1,dimen_jarr1,jarr1,jpi,jpk,jpj,jn)
-
-      
-       
 !!            2.5 calcul of the final field:
 !!                advection by antidiffusive mass fluxes and an upstream scheme
            
@@ -873,11 +834,6 @@
 !       END DO
 ! #endif
 
-!!!&omp    parallel default(none) private(mytid , jn,zbtr,jk,jj,ji,ju,jf)
-!!!&omp&      shared(zkx,zky,zkz,zbtr_arr,e1t,e2t,ztj,dimen_jarr3,jarr3,ncor,jn,
-!!!&omp&             jarr_adv_flx,Fsize,diaflx)
-
-
 !!        2.6. calcul of after field using an upstream advection scheme
 
           
@@ -928,8 +884,6 @@
 
 
 !!       3. trend due to horizontal and vertical advection of tracer jn
-!!!&omp   parallel default(none) private(mytid , jn,jk,jj,ji,ju) shared(ncor,dimen_jarrt,jarrt,tra,ztj,jn,zbuf)
-
          
           
 
@@ -954,9 +908,10 @@
            endif
 
        END DO TRACER_LOOP
-      !!$omp end taskloop
+      !$OMP end taskloop
 
        trcadvparttime = MPI_WTIME() - trcadvparttime
+       print *, "TIME ADV = ", trcadvparttime
        trcadvtottime = trcadvtottime + trcadvparttime
 
 

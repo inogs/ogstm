@@ -376,7 +376,7 @@
 
                DO ji = 1,jpi
                DO jj = 1,jpj
-               !dir$ vector aligned
+               !dir$ vector aligned 
                DO jk = 1,jpk
                 big_fact_zcc(jk,jj,ji) = ( abs(zcc(jk,jj,ji)) - zdt*zcc(jk,jj,ji)**2*inv_et(jk,jj,ji) )
                END DO
@@ -393,11 +393,11 @@
 
       trcadvparttime = MPI_WTIME()
 
-!$omp taskloop default(none) private(jj,ji,jk,jf,junk,junki,junkj,junkk,zbtr) &
-!$omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
-!$omp shared(big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
-!$omp shared(un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr) &
-!$omp firstprivate(jpkm1,jpim1,jpjm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt,jpk,jpj,jpi) 
+! $omp taskloop simd default(none) private(jf,junk,junki,junkj,junkk,zbtr) &
+! $omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
+! $omp shared(big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
+! $omp shared(jpim1,jpjm1,un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr,jpk) &
+! $omp firstprivate(jpkm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt,jpj,jpi) 
 
        
       TRACER_LOOP: DO  jn = 1, jptra
@@ -414,7 +414,8 @@
        zz(:,:,:) = 0 
        zx(:,:,:) = 0
        ztj(:,:,:)= 0
-
+       zti(:,:,:)= 0
+       
        zkx(:,:,:)=0.  
        zky(:,:,:)=0.  
        zkz(:,:,:)=0.
@@ -480,7 +481,7 @@
 
       DO  ji = 2,jpim1
         DO jj = 2,jpjm1
-            !dir$ vector aligned
+            !$omp simd aligned(trn,zbb,advmask)
             DO jk = 2,jpk
               zky(jk,jj,ji ) = fsy(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
               END DO
@@ -908,7 +909,7 @@
            endif
 
        END DO TRACER_LOOP
-      !$OMP end taskloop
+      !  $OMP end taskloop simd
 
        trcadvparttime = MPI_WTIME() - trcadvparttime
        print *, "TIME ADV = ", trcadvparttime

@@ -121,7 +121,6 @@
 
       double precision FUNCTION fsx( pfx1, pfx2, pfu )
       !$OMP DECLARE SIMD (fsx) 
-
       IMPLICIT NONE
             double precision, INTENT(IN) :: pfx1, pfx2, pfu
             double precision ::  abspfu
@@ -137,7 +136,6 @@
             abspfv = abs(pfv)
             fsy = ( ( pfv + abspfv ) * pfy1 +( pfv - abspfv ) * pfy2 ) * 0.5
       END FUNCTION fsy
-
 
       double precision FUNCTION fsz( pfz1, pfz2, pfw )
       !$OMP DECLARE SIMD (fsz)

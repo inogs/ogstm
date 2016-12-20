@@ -909,11 +909,44 @@
            endif
 
        END DO TRACER_LOOP
-      !  $OMP end taskloop simd
+      ! $OMP end taskloop simd
 
        trcadvparttime = MPI_WTIME() - trcadvparttime
        print *, "TIME ADV = ", trcadvparttime
        trcadvtottime = trcadvtottime + trcadvparttime
+!!!!
+
+      contains
+
+         double precision FUNCTION fsx( pfx1, pfx2, pfu )
+       !$OMP DECLARE SIMD (fsx) 
+       IMPLICIT NONE
+            double precision, INTENT(IN) :: pfx1, pfx2, pfu
+            double precision ::  abspfu
+            abspfu = abs(pfu)
+            fsx = ( ( pfu + abspfu ) * pfx1+( pfu - abspfu ) * pfx2 ) * 0.5
+       END FUNCTION fsx
+
+
+       double precision FUNCTION fsy( pfy1, pfy2, pfv  )
+       !$OMP DECLARE SIMD (fsy) 
+       IMPLICIT NONE
+            double precision, INTENT(IN) :: pfy1, pfy2, pfv
+            double precision :: abspfv
+            abspfv = abs(pfv)
+            fsy = ( ( pfv + abspfv ) * pfy1 +( pfv - abspfv ) * pfy2 ) * 0.5
+       END FUNCTION fsy
+
+
+       double precision FUNCTION fsz( pfz1, pfz2, pfw )
+       !$OMP DECLARE SIMD (fsz)
+       IMPLICIT NONE
+       double precision, INTENT(IN) :: pfz1, pfz2, pfw
+       double precision abspfw
+            abspfw = abs(pfw)
+            fsz = ( ( pfw + abspfw ) * pfz1+( pfw - abspfw ) * pfz2 ) * 0.5
+       END FUNCTION fsz       
+
 
 
       END SUBROUTINE

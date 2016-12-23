@@ -21,11 +21,11 @@
       INTEGER, allocatable,dimension(:) :: jarr_adv_flx
       INTEGER, allocatable,dimension(:,:) :: jarr, jarr1, jarr2, jarr3, jarrt
       INTEGER, allocatable,dimension(:,:,:) :: advmask
-      double precision, allocatable,dimension(:,:,:) :: zti,ztj
+      ! double precision, allocatable,dimension(:,:,:),save :: zti,ztj
+      ! double precision, allocatable,dimension(:,:,:),save :: zx,zy,zz,zbuf
+      ! double precision, allocatable,dimension(:,:,:),save :: zkx,zky,zkz
       double precision, allocatable,dimension(:,:,:) :: zaa,zbb,zcc
-      double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
 
-      double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
       double precision, allocatable,dimension(:,:,:) :: inv_eu, inv_ev, inv_et 
       double precision, allocatable,dimension(:,:,:) :: big_fact_zaa, big_fact_zbb, big_fact_zcc 
       double precision, allocatable,dimension(:,:,:) :: zbtr_arr
@@ -57,32 +57,32 @@
 
        allocate(advmask(jpk,jpj,jpi))       
        advmask      = huge(advmask(1,1,1))
-       allocate(zti(jpk,jpj,jpi))    
-       zti          = huge(zti(1,1,1))
-       allocate(ztj(jpk,jpj,jpi))    
-       ztj          = huge(ztj(1,1,1))
+      !  allocate(zti(jpk,jpj,jpi))    
+      !  zti          = huge(zti(1,1,1))
+      !  allocate(ztj(jpk,jpj,jpi))    
+      !  ztj          = huge(ztj(1,1,1))
        allocate(zaa(jpk,jpj,jpi))           
        zaa          = huge(zaa(1,1,1))
        allocate(zbb(jpk,jpj,jpi))           
        zbb          = huge(zbb(1,1,1))
        allocate(zcc(jpk,jpj,jpi))           
        zcc          = huge(zcc(1,1,1))
-       allocate(zx(jpk,jpj,jpi))     
-       zx           = huge(zx(1,1,1))
-       allocate(zy(jpk,jpj,jpi))     
-       zy           = huge(zy(1,1,1))
-       allocate(zz(jpk,jpj,jpi))     
-       zz           = huge(zz(1,1,1))
+      !  allocate(zx(jpk,jpj,jpi))     
+       !zx           = huge(zx(1,1,1))
+       !allocate(zy(jpk,jpj,jpi))     
+       !zy           = huge(zy(1,1,1))
+      !  allocate(zz(jpk,jpj,jpi))     
+      !  zz           = huge(zz(1,1,1))
 
-       allocate(zbuf(jpk,jpj,jpi))    
-       zbuf         = huge(zbuf(1,1,1))
+      !  allocate(zbuf(jpk,jpj,jpi))    
+      !  zbuf         = huge(zbuf(1,1,1))
 
-       allocate(zkx(jpk,jpj,jpi))    
-       zkx          = huge(zkx(1,1,1))
-       allocate(zky(jpk,jpj,jpi))    
-       zky          = huge(zky(1,1,1))
-       allocate(zkz(jpk,jpj,jpi))    
-       zkz          = huge(zkz(1,1,1))
+      !  allocate(zkx(jpk,jpj,jpi))    
+      !  zkx          = huge(zkx(1,1,1))
+      !  allocate(zky(jpk,jpj,jpi))    
+      !  zky          = huge(zky(1,1,1))
+      !  allocate(zkz(jpk,jpj,jpi))    
+      !  zkz          = huge(zkz(1,1,1))
 
        allocate(inv_eu(jpk,jpj,jpi))        
        inv_eu       = huge(inv_eu(1,1,1))

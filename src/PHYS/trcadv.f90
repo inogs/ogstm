@@ -76,7 +76,9 @@
       double precision :: timer
       double precision,dimension(:), allocatable :: array 
       double precision,dimension(:,:), allocatable :: surface 
-     
+      double precision, allocatable,dimension(:,:,:) :: zti,ztj
+      double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
+      double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
 
 !-------------------------------------------------------------------
 
@@ -84,15 +86,8 @@
 
       if(allpoints .EQ. 0) then  ! INIT phase
 
-         zti(:,:,:)  = 0.
-         ztj(:,:,:)  = 0.
-         zkx(:,:,:)  = 0.
-         zky(:,:,:)  = 0.
-         zkz(:,:,:)  = 0.
-         zbuf(:,:,:) = 0.
-         zx(:,:,:)   = 0.
-         zy(:,:,:)   = 0.
-         zz(:,:,:)   = 0.
+        
+        
 
          zaa  = 0.
          zbb  = 0.
@@ -392,12 +387,12 @@
 !!     =======================================
 
       trcadvparttime = MPI_WTIME()
-
-! $omp taskloop simd default(none) private(jf,junk,junki,junkj,junkk,zbtr) &
-! $omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
-! $omp shared(big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
-! $omp shared(jpim1,jpjm1,un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr,jpk) &
-! $omp firstprivate(jpkm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt,jpj,jpi) 
+       
+!$omp taskloop default(none) private(jf,junk,junki,junkj,junkk,zbtr) &
+!$omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
+!$omp shared(big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
+!$omp shared(jpim1,jpjm1,un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr) &
+!$omp firstprivate(jpkm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt,jpj,jpi,jpk) 
 
        
       TRACER_LOOP: DO  jn = 1, jptra
@@ -409,13 +404,25 @@
 !!       1.2 calcul of intermediate field with an upstream advection scheme
 !!           and mass fluxes calculated above
 !!       calcul of tracer flux in the i and j direction
+       
+       !print *,allocated(zx)
+     
+       allocate(zy(jpk,jpj,jpi))  
+       allocate(zx(jpk,jpj,jpi))
+       allocate(zz(jpk,jpj,jpi))
+       allocate(ztj(jpk,jpj,jpi)) 
+       allocate(zti(jpk,jpj,jpi))    
+       allocate(zkx(jpk,jpj,jpi)) 
+       allocate(zky(jpk,jpj,jpi)) 
+       allocate(zkz(jpk,jpj,jpi)) 
+       allocate(zbuf(jpk,jpj,jpi))
 
        zy(:,:,:) = 0
        zz(:,:,:) = 0 
        zx(:,:,:) = 0
        ztj(:,:,:)= 0
        zti(:,:,:)= 0
-       
+       zbuf(:,:,:) = 0.
        zkx(:,:,:)=0.  
        zky(:,:,:)=0.  
        zkz(:,:,:)=0.
@@ -481,7 +488,7 @@
 
       DO  ji = 2,jpim1
         DO jj = 2,jpjm1
-            !$omp simd aligned(trn,zbb,advmask)
+            !dir$ vector aligned
             DO jk = 2,jpk
               zky(jk,jj,ji ) = fsy(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
               END DO
@@ -908,9 +915,22 @@
               END DO
            endif
 
-       END DO TRACER_LOOP
-      ! $OMP end taskloop simd
+        deallocate(zy )  
+        deallocate(zx )
+        deallocate(zz )
+        deallocate(ztj ) 
+        deallocate(zti )    
+        deallocate(zkx ) 
+        deallocate(zky ) 
+        deallocate(zkz ) 
+        deallocate(zbuf )
 
+
+
+       END DO TRACER_LOOP
+      !$OMP end taskloop 
+
+        
        trcadvparttime = MPI_WTIME() - trcadvparttime
        print *, "TIME ADV = ", trcadvparttime
        trcadvtottime = trcadvtottime + trcadvparttime
@@ -919,7 +939,7 @@
       contains
 
          double precision FUNCTION fsx( pfx1, pfx2, pfu )
-       !$OMP DECLARE SIMD (fsx) 
+         !dir$ attributes vector :: fsx
        IMPLICIT NONE
             double precision, INTENT(IN) :: pfx1, pfx2, pfu
             double precision ::  abspfu
@@ -929,7 +949,7 @@
 
 
        double precision FUNCTION fsy( pfy1, pfy2, pfv  )
-       !$OMP DECLARE SIMD (fsy) 
+       !dir$ attributes vector :: fsy
        IMPLICIT NONE
             double precision, INTENT(IN) :: pfy1, pfy2, pfv
             double precision :: abspfv
@@ -939,7 +959,7 @@
 
 
        double precision FUNCTION fsz( pfz1, pfz2, pfw )
-       !$OMP DECLARE SIMD (fsz)
+       !dir$ attributes vector :: fsz
        IMPLICIT NONE
        double precision, INTENT(IN) :: pfz1, pfz2, pfw
        double precision abspfw

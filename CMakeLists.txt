@@ -30,8 +30,8 @@ add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dk
 add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed )
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -qopenmp -xAVX -O2 -qopt-report5 -g -cpp -qopt-subscript-in-range -align array64byte")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -qopenmp -g -traceback -cpp -fp-stack-check -CB")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -qopenmp  -O2 -xAVX -qopt-report5 -g -cpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -qopenmp -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")

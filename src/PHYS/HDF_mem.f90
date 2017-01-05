@@ -16,21 +16,15 @@
       INTEGER :: dimen_jvhdf1,dimen_jvhdf2,dimen_jvhdf3
       INTEGER, allocatable :: hdfmask(:,:,:)
       INTEGER, allocatable :: jarr_hdf(:,:,:),jarr_hdf_flx(:)
-      double precision, allocatable :: zta(:)
+      double precision :: zta
       double precision, allocatable :: zeeu(:,:,:), zeev(:,:,:), zbtr(:,:,:)
-      double precision, allocatable :: zlt(:,:,:,:), ztu(:,:,:,:), ztv(:,:,:,:)
+      double precision, allocatable,dimension(:,:,:) :: zlt, ztu, ztv
 
 !!----------------------------------------------------------------------
       CONTAINS
 
       subroutine myalloc_HDF()
 
-#ifdef __OPENMP1
-      INTEGER :: ntids, omp_get_max_threads
-      EXTERNAL :: omp_get_max_threads
-#else
-      INTEGER :: ntids 
-#endif
       INTEGER  :: err
       double precision  :: aux_mem
 
@@ -38,11 +32,6 @@
        aux_mem = get_mem(err)
 #endif
 
-#ifdef __OPENMP1
-      ntids = omp_get_max_threads() ! take the number of threads
-#else
-      ntids =threads_pack_size
-#endif
 
 
        dimen_jvhdf1=0
@@ -56,20 +45,19 @@
        jarr_hdf_flx = huge(jarr_hdf_flx(1))
        allocate(hdfmask(jpk,jpj,jpi   ))    
        hdfmask      = huge(hdfmask(1,1,1))
-       allocate(zta    (            ntids)) 
-       zta          = huge(zta(1))
+       
        allocate(zeeu   (jpk,jpj,jpi      )) 
        zeeu         = huge(zeeu(1,1,1))
        allocate(zeev   (jpk,jpj,jpi      )) 
        zeev         = huge(zeev(1,1,1))
        allocate(zbtr   (jpk,jpj,jpi      )) 
        zbtr         = huge(zbtr(1,1,1)) 
-       allocate(zlt    (jpk,jpj,jpi,ntids)) 
-       zlt          = huge(zlt(1,1,1,1)) 
-       allocate(ztu    (jpk,jpj,jpi,ntids)) 
-       ztu          = huge(ztu(1,1,1,1))
-       allocate(ztv    (jpk,jpj,jpi,ntids)) 
-       ztv          = huge(ztv(1,1,1,1))
+       allocate(zlt    (jpk,jpj,jpi)) 
+       zlt          = huge(zlt(1,1,1)) 
+       allocate(ztu    (jpk,jpj,jpi)) 
+       ztu          = huge(ztu(1,1,1))
+       allocate(ztv    (jpk,jpj,jpi)) 
+       ztv          = huge(ztv(1,1,1))
 
 
        ztu = 0.

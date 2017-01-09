@@ -367,6 +367,8 @@
 
       INTEGER ncpu
 
+      integer :: nsubset
+      integer,allocatable,dimension(:) :: subset_idx
 
 
       CONTAINS

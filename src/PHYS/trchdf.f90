@@ -114,7 +114,7 @@
 
 
        IF (dimen_jvhdf1 .EQ. 0) THEN
-       
+
                 DO ji = 1,jpi
              DO jj = 1,jpj
           DO jk = 1,jpk
@@ -163,54 +163,7 @@
 
         ENDIF
 
-      !  IF (dimen_jvhdf2 .EQ. 0) THEN
-      !           DO  ji = 1,jpim1
-      !        DO jj = 1,jpjm1
-      !     DO jk = 1,jpkm1
-      !              IF(hdfmask(jk,jj,ji) .NE. 0) THEN
-      !                 dimen_jvhdf2 = dimen_jvhdf2 + 1
-      !                 jarr_hdf(1,dimen_jvhdf2,1a) = jk
-      !                 jarr_hdf(2,dimen_jvhdf2,1a) = jj
-      !                 jarr_hdf(3,dimen_jvhdf2,1a) = ji
-      !              ENDIF
-      !           END DO
-      !        END DO
-      !     END DO
-      !  ENDIF
-
-!!       dimen_jvhdf3=0
-
-      !  IF (dimen_jvhdf3 .EQ. 0) THEN
-      !           DO  ji = 2,jpim1
-      !        DO jj = 2,jpjm1
-      !     DO jk = 1,jpkm1
-      !              IF(hdfmask(jk,jj,ji) .NE. 0) THEN
-      !                 dimen_jvhdf3 = dimen_jvhdf3 + 1
-      !                 jarr_hdf(1,dimen_jvhdf3,2) = jk
-      !                 jarr_hdf(2,dimen_jvhdf3,2) = jj
-      !                 jarr_hdf(3,dimen_jvhdf3,2) = ji
-      !              ENDIF
-      !           END DO
-      !        END DO
-      !     END DO
-
-      !     jarr_hdf_flx=0
-
-      !        DO jf=1,Fsize
-      !           DO jv=1, dimen_jvhdf3
-
-      !              l1 = flx_ridxt(jf,2) .EQ. jarr_hdf(1,jv,2)
-      !              l2 = flx_ridxt(jf,3) .EQ. jarr_hdf(2,jv,2)
-      !              l3 = flx_ridxt(jf,4) .EQ. jarr_hdf(3,jv,2)
-
-      !              IF ( l1 .AND. l2 .AND. l3) THEN
-      !                 jarr_hdf_flx(jv)= jf
-      !              END IF
-
-      !           END DO
-      !        END DO
-      !  ENDIF
-
+     
 !! tracer slab
 !! =============
 
@@ -224,13 +177,13 @@
 !!!&omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
 !!!&omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
 
-      !     DO jv=1, dimen_jvhdf2
+      !     DO jv=1, dimen_jvhdf2ji
 
             !  ji = jarr_hdf(3,jv,1a)
             !  jj = jarr_hdf(2,jv,1a)
             !  jk = jarr_hdf(1,jv,1a)
 
-                  DO ji = 1,jpi
+                  DO ji = 1,jpi-1
               DO jj = 1,jpj
            DO jk = 1,jpk
             !dir$ vector aligned
@@ -243,7 +196,7 @@
           END DO
 
                 DO ji = 1,jpi
-              DO jj = 1,jpj
+              DO jj = 1,jpj-1
            DO jk = 1,jpk
              !dir$ vector aligned
              !ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( trb(jk,jj,ji+1,jn ) - trb(jk,jj,ji,jn ) )*tmask(jk,jj,ji+1) * tmask(jk,jj,ji)
@@ -261,9 +214,10 @@
       !        ji = jarr_hdf(3,jv,2)
       !        jj = jarr_hdf(2,jv,2)
       !        jk = jarr_hdf(1,jv,2)
-                  DO ji = 2,jpi
-              DO jj = 2,jpj
+                  DO ji = 2,jpi-1
+              DO jj = 2,jpj-1
            DO jk = 1,jpk
+             !dir$ vector aligned
              zlt(jk,jj,ji)  = trcrat * ahtt(jk) * (  ztu(jk,jj,ji)  - ztu(jk,jj,ji-1)  + ztv(jk,jj,ji)  - ztv(jk,jj-1,ji)   ) * zbtr(jk,jj,ji) *  hdfmask(jk,jj,ji)
  
 !! ... Multiply by the eddy diffusivity coefficient
@@ -313,10 +267,10 @@
 !!!&omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
 
 
-                  DO ji = 1,jpi
+                  DO ji = 1,jpi-1
               DO jj = 1,jpj
            DO jk = 1,jpk
-
+             !dir$ vector aligned
              ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( zlt(jk,jj,ji+1)  - zlt(jk,jj,ji)  ) * tmask(jk,jj,ji+1) * tmask(jk,jj,ji) * hdfmask(jk,jj,ji)
 
               END DO
@@ -324,9 +278,9 @@
           END DO
 
                DO ji = 1,jpi
-              DO jj = 1,jpj
+              DO jj = 1,jpj-1
            DO jk = 1,jpk
-
+              !dir$ vector aligned
       !       ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( zlt(jk,jj,ji+1)  - zlt(jk,jj,ji)  ) * tmask(jk,jj,ji+1) * tmask(jk,jj,ji)
              ztv(jk,jj,ji)  = zeev(jk,jj,ji) * ( zlt(jk,jj+1,ji)  - zlt(jk,jj,ji)  ) * tmask(jk,jj+1,ji) * tmask(jk,jj,ji) * hdfmask(jk,jj,ji)
 
@@ -346,6 +300,7 @@
               DO jj = 2,jpj
            DO jk = 1,jpk
 !!   ... horizontal diffusive trends
+             !dir$ vector aligned
              zta = (  ztu(jk,jj,ji)  - ztu(jk,jj,ji-1)  + ztv(jk,jj,ji)  - ztv(jk,jj-1,ji)   ) * zbtr(jk,jj,ji)* hdfmask(jk,jj,ji)
 
 !!   ... add it to the general tracer trends
@@ -370,6 +325,7 @@
         END DO TRACER_LOOP
 
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
+       print *,"TIME HDF = ",trcbilaphdfparttime
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime
 
       END SUBROUTINE trchdf

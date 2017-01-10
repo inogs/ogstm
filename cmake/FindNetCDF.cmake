@@ -4,7 +4,7 @@
 #
 #  NETCDF_INCLUDES_LANG    - where to find netcdf.h, etc
 #  NETCDF_LIBRARIES_LANG   - Link these libraries when using NetCDF
-#  NETCDF_FOUND       - True if NetCDF found including required interfaces (see below)
+#  NetCDF_has_interfaces   - True if NetCDF found including required interfaces
 #
 
 if (NETCDF_INCLUDES AND NETCDF_LIBRARIES)

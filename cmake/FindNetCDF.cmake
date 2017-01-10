@@ -22,7 +22,7 @@ find_path (NETCDFF_INCLUDES_F90 netcdf.mod HINTS NETCDFF_DIR NETCDFF_DIR)
 message(STATUS "NETCDF F90 include =  ${NETCDFF_INCLUDES_F90}  ")
 find_library (NETCDFF_LIBRARIES_F90  NAMES netcdff HINTS NETCDFF_DIR )
 message(STATUS "NETCDF F90 library=  ${NETCDFF_LIBRARIES_F90}  ")
-mark_as_advanced(NETCDF_LIBRARIES_F90)
+mark_as_advanced(NETCDFF_LIBRARIES_F90)
 
 if (NETCDFF_INCLUDES_F90 AND NETCDFF_LIBRARIES_F90 AND NETCDF_INCLUDES_C AND NETCDF_LIBRARIES_C )
   set (NetCDF_has_interfaces "YES") # will be set to NO if we're missing any interfaces
@@ -34,4 +34,4 @@ endif (NETCDFF_INCLUDES_F90 AND NETCDFF_LIBRARIES_F90 AND NETCDF_INCLUDES_C AND 
 
 include (FindPackageHandleStandardArgs)
 find_package_handle_standard_args (NetCDF DEFAULT_MSG  NetCDF_has_interfaces)
-mark_as_advanced (NETCDF_LIBRARIES NETCDF_INCLUDES)
+mark_as_advanced(NETCDF_INCLUDES_C NETCDF_LIBRARIES_C NETCDFF_INCLUDES_F90 NETCDFF_LIBRARIES_F90)

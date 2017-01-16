@@ -24,7 +24,7 @@ MODULE OGSTM
       USE IO_mem
       USE FN_mem
       USE ADV_mem
-      USE HDF_mem
+      !USE HDF_mem
       USE ZDF_mem
       USE OPT_mem
       USE BC_mem
@@ -178,8 +178,8 @@ SUBROUTINE ALLOC_ALL
       call myalloc_ADV() 
        write(*,*)'My_Rank:',myrank,'alloc_ADV  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
-      call myalloc_HDF() 
-       write(*,*)'My_Rank:',myrank,'alloc_HDF  (MB):', mem_all 
+      !call myalloc_HDF() 
+      ! write(*,*)'My_Rank:',myrank,'alloc_HDF  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_ZDF() 
        write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all 
@@ -320,7 +320,7 @@ SUBROUTINE set_to_zero()
       avt       = 0.0
       tn        = 0.0
       sn        = 0.0
-      hdivn     = 0.0
+!      hdivn     = 0.0
 ! Passive tracers arrays set to zero
 
       xpar      = 0.0

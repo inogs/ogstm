@@ -112,7 +112,7 @@
       INTEGER, allocatable :: mbathy(:,:)
 
 
-      double precision, allocatable, dimension(:,:,:) :: tmask, fmask,umask, vmask
+      double precision, allocatable, dimension(:,:,:) :: tmask,umask, vmask
       INTEGER NBFMPOINTS, NBFMPOINTS_SUP, NWATERPOINTS
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
@@ -123,7 +123,7 @@
 !!       previous fields (before)
 !! -----------------------------------------
 
-      double precision, allocatable, dimension(:,:,:) :: ub, vb ! horizontal velocity (m s-1)
+      
 
 
 !!----------------------------------------------------------------------
@@ -137,9 +137,8 @@
 !!      bn2n           : brunt-vaisala frequency (s-2)
 !!
       double precision, allocatable, dimension(:,:,:) :: un, vn, wn
-      double precision, allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho,bn2n
+      double precision, allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho
       double precision, allocatable, dimension(:,:,:) :: hdivn
-
 
 !!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 !! III. OCEAN PHYSICS
@@ -227,8 +226,7 @@
 !!      t2ns           : 2d message passing arrays north-south
 !!      t2sn           : 2d message passing arrays south-north 
 
-      double precision, allocatable :: t3ns (:,:,:,:), t3sn (:,:,:,:)
-      double precision, allocatable :: t3ew (:,:,:,:), t3we (:,:,:,:)
+
       double precision, allocatable :: t3ew_my1 (:,:,:,:,:), t3we_my1 (:,:,:,:,:)
       double precision, allocatable :: t3sn_my1 (:,:,:,:,:), t3ns_my1 (:,:,:,:,:)
       double precision, allocatable :: t2ns (:,:,:)  , t2sn (:,:,:)
@@ -491,18 +489,12 @@ subroutine alloc_tot()
 
       allocate(tmask(jpk,jpj,jpi)) 
       tmask = huge(tmask(1,1,1))
-      allocate(fmask(jpk,jpj,jpi)) 
-      fmask = huge(fmask(1,1,1))
+      
+      
       allocate(umask(jpk,jpj,jpi)) 
       umask = huge(umask(1,1,1))
       allocate(vmask(jpk,jpj,jpi)) 
       vmask = huge(vmask(1,1,1))
-
-      allocate(ub(jpk,jpj,jpi)) 
-      ub = huge(ub(1,1,1))
-      allocate(vb(jpk,jpj,jpi)) 
-      vb = huge(vb(1,1,1))
-
        allocate(un(jpk,jpj,jpi))    
       un     = huge(un(1,1,1))
        allocate(vn(jpk,jpj,jpi))    
@@ -519,11 +511,9 @@ subroutine alloc_tot()
       rhopn  = huge(rhopn(1,1,1))
        allocate(rho(jpk,jpj,jpi))   
       rho    = huge(rho(1,1,1))
-       allocate(bn2n(jpk,jpj,jpi))  
-      bn2n   = huge(bn2n(1,1,1))
        allocate(hdivn(jpk,jpj,jpi)) 
       hdivn  = huge(hdivn(1,1,1))
-
+      
       allocate(ahtu(jpk)) 
       ahtu = huge(ahtu(1))
       allocate(ahtv(jpk)) 
@@ -591,14 +581,7 @@ subroutine alloc_tot()
 !!----------------------------------------------------------------------
 
 #if defined key_mpp 
-       allocate(t3ns(jpi,jprecj,jpk,2))            
-       t3ns     = huge(t3ns(1,1,1,1))
-       allocate(t3sn(jpi,jprecj,jpk,2))            
-       t3sn     = huge(t3sn(1,1,1,1))
-       allocate(t3ew(jpj,jpreci,jpk,2))            
-       t3ew     = huge(t3ew(1,1,1,1))
-       allocate(t3we(jpj,jpreci,jpk,2))            
-       t3we     = huge(t3we(1,1,1,1))
+        
        allocate(t3ew_my1(jpj,jpreci,jpk,jptra,2))  
        t3ew_my1 = huge(t3ew_my1(1,1,1,1,1))
        allocate(t3we_my1(jpj,jpreci,jpk,jptra,2))  

@@ -22,7 +22,7 @@
       double precision, allocatable :: TOT(:,:),TOT_FN(:,:),FN_CORR(:,:)
 
 
-      double precision, allocatable :: cou_FN(:,:,:)
+  
       double precision, allocatable :: FN_ranking(:)
       INTEGER :: elements,nelements(6),idx_element(14,6)
 
@@ -60,14 +60,13 @@
       ! FN_CORR    = huge(FN_CORR(1,1))
 
 
-      allocate(cou_FN(jpk,jpj,jpi))       
-      cou_FN     = huge(cou_FN(1,1,1))
+     
       allocate(FN_ranking(jptra))         
       FN_ranking = huge(FN_ranking(1))
 
 
       tra_FN=0.
-      cou_FN=0.
+     
 !     cor_FN=0.
       FN_ranking=0.
 

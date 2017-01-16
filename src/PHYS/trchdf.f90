@@ -89,7 +89,7 @@
       USE myalloc
       USE ogstm_mpi_module
       ! epascolo USE myalloc_mpp
-      USE HDF_mem
+    
       USE DIA_mem
       use mpi
       
@@ -99,11 +99,16 @@
 !! ==================
 
 
+      INTEGER(KIND=1), allocatable,dimension(:,:,:),save :: hdfmask
+      double precision, allocatable,dimension(:,:,:),save :: zeeu, zeev, zbtr
+      INTEGER,save :: dimen_jvhdf1=0
+
       LOGICAL :: l1,l2,l3
-      INTEGER :: jk,jj,ji,jn,jv,jf,mytid,ntids,pack_size,jp
+      INTEGER :: jk,jj,ji,jn,jv,jf,jp
       INTEGER :: myji,myjj
       INTEGER :: locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
-
+      !INTEGER, allocatable :: jarr_hdf(:,:,:),jarr_hdf_flx(:)
+      double precision, allocatable,dimension(:,:,:) :: zlt, ztu, ztv
 !!----------------------------------------------------------------------
 !! statement functions
 !! ===================
@@ -113,7 +118,21 @@
 !! Define auxiliary matrix
 
 
+         !   print *,"val ",dimen_jvhdf1
        IF (dimen_jvhdf1 .EQ. 0) THEN
+
+        
+        !    print *,"ENTRATO val ",dimen_jvhdf1
+
+             allocate(hdfmask(jpk,jpj,jpi   ))    
+             hdfmask      = huge(hdfmask(1,1,1))
+             allocate(zeeu   (jpk,jpj,jpi      )) 
+             zeeu         = huge(zeeu(1,1,1))
+             allocate(zeev   (jpk,jpj,jpi      )) 
+             zeev         = huge(zeev(1,1,1))
+             allocate(zbtr   (jpk,jpj,jpi      )) 
+             zbtr         = huge(zbtr(1,1,1)) 
+
 
                 DO ji = 1,jpi
              DO jj = 1,jpj
@@ -164,25 +183,35 @@
         ENDIF
 
      
+             allocate(zlt    (jpk,jpj,jpi)) 
+             allocate(ztu    (jpk,jpj,jpi)) 
+             allocate(ztv    (jpk,jpj,jpi)) 
 !! tracer slab
 !! =============
 
+! $omp  taskloop default(none) private(jv,jk,jj,ji) &
+! $omp  private(jn,ztu,ztv,zlt) firstprivate(jpi,jpj,jpk,trcrat) &
+! $omp  shared(zeeu,trb,tmask,zeev) &
+! $omp  shared(hdfmask,zbtr,ahtt,tra)         
       TRACER_LOOP: DO  jn = 1, jptra
 
+
+             zlt = 0.
+             ztu = 0.
+             ztv = 0.
+            
 !! 1. Laplacian
 !! ------------
 
 !! ... First derivative (gradient)
-!!!&omp  parallel default(none) private(mytid,jv,jk,jj,ji)
-!!!&omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,trb,tmask,ztv,zeev,
-!!!&omp&                               dimen_jvhdf3,zlt,zbtr,trcrat,ahtt)
 
       !     DO jv=1, dimen_jvhdf2ji
 
             !  ji = jarr_hdf(3,jv,1a)
             !  jj = jarr_hdf(2,jv,1a)
             !  jk = jarr_hdf(1,jv,1a)
-
+            
+            ! $OMP TASK default(shared) private(ji,jj,jk)
                   DO ji = 1,jpi-1
               DO jj = 1,jpj
            DO jk = 1,jpk
@@ -194,7 +223,9 @@
              END DO
             END DO
           END DO
+          ! $OMP END TASK
 
+                ! $OMP TASK default(shared) private(ji,jj,jk)
                 DO ji = 1,jpi
               DO jj = 1,jpj-1
            DO jk = 1,jpk
@@ -206,6 +237,10 @@
              END DO
             END DO
           END DO
+          ! $OMP END TASK
+
+          ! $OMP TASKWAIT
+
 !!
 !! ... Second derivative (divergence)
       !     DO jv=1, dimen_jvhdf3* tmask(jk,jj,ji)
@@ -266,7 +301,7 @@
 !!!&omp&                        shared(jn,dimen_jvhdf2,jarr_hdf,ztu,zeeu,zlt,tmask,ztv,zeev,
 !!!&omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
 
-
+            ! $OMP TASK default(shared) private(ji,jj,jk)
                   DO ji = 1,jpi-1
               DO jj = 1,jpj
            DO jk = 1,jpk
@@ -276,7 +311,9 @@
               END DO
             END DO
           END DO
+          ! $OMP END TASK
 
+          ! $OMP TASK default(shared) private(ji,jj,jk)
                DO ji = 1,jpi
               DO jj = 1,jpj-1
            DO jk = 1,jpk
@@ -287,6 +324,7 @@
               END DO
             END DO
           END DO
+          ! $OMP END TASK
 
 !! ... fourth derivative (divergence) and add to the general tracer trend
 
@@ -296,15 +334,17 @@
       !        jj = jarr_hdf(2,jv,2)
       !        jk = jarr_hdf(1,jv,2)
       !        jf = jarr_hdf_flx(jv)
+          
+      ! $OMP TASKWAIT 
                   DO ji = 2,jpi
               DO jj = 2,jpj
            DO jk = 1,jpk
 !!   ... horizontal diffusive trends
              !dir$ vector aligned
-             zta = (  ztu(jk,jj,ji)  - ztu(jk,jj,ji-1)  + ztv(jk,jj,ji)  - ztv(jk,jj-1,ji)   ) * zbtr(jk,jj,ji)* hdfmask(jk,jj,ji)
+             tra(jk,jj,ji,jn ) = tra(jk,jj,ji,jn ) + (  ztu(jk,jj,ji)  - ztu(jk,jj,ji-1)  + ztv(jk,jj,ji)  - ztv(jk,jj-1,ji)   ) * zbtr(jk,jj,ji)* hdfmask(jk,jj,ji)
 
 !!   ... add it to the general tracer trends
-              tra(jk,jj,ji,jn ) = tra(jk,jj,ji,jn ) + zta
+              !tra(jk,jj,ji,jn ) = tra(jk,jj,ji,jn ) + zta
                END DO
             END DO
           END DO
@@ -316,13 +356,17 @@
 !              END IF
 
       !    END DO
-
  
       
 !! End of slab
 !! ===========
 
         END DO TRACER_LOOP
+        ! $OMP END TASKLOOP
+             deallocate(zlt) 
+             deallocate(ztu) 
+             deallocate(ztv) 
+            
 
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
        print *,"TIME HDF = ",trcbilaphdfparttime

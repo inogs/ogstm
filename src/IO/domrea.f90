@@ -97,7 +97,7 @@
 
       CALL readnc_slice_double (maskfile,'umask', umask )
       CALL readnc_slice_double (maskfile,'vmask', vmask )
-      CALL readnc_slice_double (maskfile,'fmask', fmask )
+!      CALL readnc_slice_double (maskfile,'fmask', fmask )
       CALL readnc_slice_double (maskfile,'tmask', tmask )
 !      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
 
@@ -255,6 +255,10 @@
       call alloc_DIA_MPI_flx()
 
       write(*,*) 'DOMREA finita, myrank = ', myrank
+
+   !   DEALLOCATE(idxt)
+    !  DEALLOCATE(idxt2glo)
+     ! DEALLOCATE(resto)
 
 
       CONTAINS
@@ -516,7 +520,6 @@
         endif
         BFM_count =counter
       END FUNCTION BFM_count
-
 
 
 

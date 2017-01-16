@@ -309,7 +309,7 @@
    diaun(13)="mg C/m3/d"
    diahf(13)=0 
 
-   dianm(14)="resPPY2c"
+   dianm(14)="netPPY2c"
    diaun(14)="mg C/m3/d"
    diahf(14)=0 
 

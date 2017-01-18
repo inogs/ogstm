@@ -18,12 +18,12 @@
 
 
       INTEGER, allocatable :: itabe(:),imaske(:,:) 
-      double precision, allocatable :: zpar(:,:),xEPS(:,:)
+      double precision, allocatable :: zpar(:,:),xEPS_ogstm(:,:)
       double precision, allocatable :: zpar0m(:),zpar100(:) 
       double precision, allocatable :: kef(:,:)
       double precision, allocatable :: kextIO(:,:,:)
       real, allocatable :: zkef_f (:,:)
-!!!$omp threadprivate (zpar0m,zpar100, zpar, xEPS)
+!!!$omp threadprivate (zpar0m,zpar100, zpar, xEPS_ogstm)
 !----------------------------------------------------------------------
       CONTAINS
 
@@ -42,8 +42,8 @@
 !!!$omp parallel default (none) shared(jpk,jpi)
        allocate(zpar(jpk,jpi))     
        zpar    = huge(zpar(1,1))
-       allocate(xEPS(jpk,jpi))     
-       xEPS    = huge(xEPS(1,1))
+       allocate(xEPS_ogstm(jpk,jpi))     
+       xEPS_ogstm    = huge(xEPS_ogstm(1,1))
        allocate(zpar0m(jpi))        
        zpar0m  = huge(zpar0m(1))
        allocate(zpar100(jpi))       

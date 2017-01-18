@@ -1,6 +1,6 @@
        MODULE SED_mem
 
-       USE modul_param 
+     USE modul_param 
        USE myalloc
        USE DIA_mem
 
@@ -23,7 +23,7 @@
       double precision, allocatable :: zwork(:,:,:)
 
 
-CC----------------------------------------------------------------------
+!!!CC----------------------------------------------------------------------
       CONTAINS
 
       subroutine myalloc_SED()

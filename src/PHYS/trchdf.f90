@@ -89,7 +89,7 @@
       USE myalloc
       USE ogstm_mpi_module
       ! epascolo USE myalloc_mpp
-    
+
       USE DIA_mem
       use mpi
       
@@ -113,6 +113,7 @@
 !! statement functions
 !! ===================
 
+    !  #include "BFM_var_list.h"
        trcbilaphdfparttime = MPI_WTIME()
 
 !! Define auxiliary matrix

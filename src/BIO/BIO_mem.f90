@@ -17,9 +17,9 @@
       double precision, allocatable :: bfm_trn(:), bfm_tra(:)
 !!!$omp  threadprivate(bfm_trn,bfm_tra)
       double precision, allocatable :: surf_mask(:)
-      double precision, allocatable :: sediPI(:,:,:,:)
-      double precision, allocatable :: PH(:,:,:) ! GUESS for FOLLOWS algorithm
-      double precision, allocatable :: co2(:,:), co2_IO(:,:,:)
+      double precision, allocatable :: ogstm_sedipi(:,:,:,:)
+      double precision, allocatable :: ogstm_ph(:,:,:) ! GUESS for FOLLOWS algorithm
+      double precision, allocatable :: ogstm_co2(:,:), co2_IO(:,:,:)
       double precision:: ice
 
 
@@ -43,16 +43,16 @@
 !!!$omp end parallel
        allocate(surf_mask(jpk))        
        surf_mask = huge(surf_mask(1))
-       allocate(co2(jpj,jpi))          
-       co2       = huge(co2(1,1))
+       allocate(ogstm_co2(jpj,jpi))          
+       ogstm_co2       = huge(ogstm_co2(1,1))
        allocate(co2_IO(jpj,jpi,2))    
         
        co2_IO    = huge(co2_IO(1,1,1))
-       allocate(sediPI(jpk,jpj,jpi,4)) 
-       sediPI    = huge(sediPI(1,1,1,1))
-       allocate(PH(jpk,jpj,jpi))       
-       PH        = huge(PH(1,1,1))
-       PH=8.0
+       allocate(ogstm_sedipi(jpk,jpj,jpi,4)) 
+       ogstm_sedipi    = huge(ogstm_sedipi(1,1,1,1))
+       allocate(ogstm_ph(jpk,jpj,jpi))       
+       ogstm_ph        = huge(ogstm_ph(1,1,1))
+       ogstm_ph=8.0
 
        ice=0
 

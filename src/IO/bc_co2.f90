@@ -133,7 +133,7 @@ contains
 
         DO ji=1,jpi
           DO jj=1,jpj
-             co2(jj,ji) = ( (1. - zweigh) * co2_IO(jj,ji,1)+ zweigh     * co2_IO(jj,ji,2) )
+             ogstm_co2(jj,ji) = ( (1. - zweigh) * co2_IO(jj,ji,1)+ zweigh     * co2_IO(jj,ji,2) )
           END DO
         END DO
 

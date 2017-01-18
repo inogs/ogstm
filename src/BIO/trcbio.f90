@@ -110,12 +110,12 @@
                           er(2)  = sn (jk,jj,ji)        ! Salinity PSU
                           er(3)  = rho(jk,jj,ji)        ! Density Kg/m3
                           er(4)  = ice                  ! from 0 to 1 adimensional
-                          er(5)  = co2(jj,ji)           ! CO2 Mixing Ratios (ppm)  390
+                          er(5)  = ogstm_co2(jj,ji)           ! CO2 Mixing Ratios (ppm)  390
                           er(6)  = xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
                           er(7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
                           er(9)  = vatm(jj,ji) * surf_mask(jk) ! wind speed (m/s)
-                          er(10) = PH(jk,jj,ji)         ! PH
+                          er(10) = ogstm_PH(jk,jj,ji)         ! PH
                         !   WRITE(*,201),'ERR',jk,jj,ji,er(:)
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
@@ -136,7 +136,7 @@
                           END DO
 
                           DO jtr=1,4
-                             sediPI(jk,jj,ji,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
+                             ogstm_sediPI(jk,jj,ji,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
                           END DO
 
                           DO jtr=1,jptra_dia
@@ -150,7 +150,7 @@
                               END DO
                           endif
 
-                          PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
+                          ogstm_PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 
 
              !ENDIF

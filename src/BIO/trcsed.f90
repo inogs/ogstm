@@ -110,7 +110,7 @@
 
 !!!$omp    parallel do default(none) private(jv,ji,jj,jk,js,mytid,jf,bottom)
 !!!$omp&                           shared(dimen_jvsed,jarr_sed,jpk, 
-!!!$omp&                                  jpkm1,nsed,zwork,vsed,sediPI,
+!!!$omp&                                  jpkm1,nsed,zwork,vsed,ogstm_sedipi,
 !!!$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
 !!!$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx,
 !!!$omp&                                  mbathy,bottom_flux)
@@ -149,25 +149,25 @@
 !                Diatoms
                  DO js =5,9
                   DO  jk = 2,jpkm1                 
-                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
+                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
                END DO
 !                Flagellates
                  DO js =10,13
                   DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
+                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
                END DO
 !                Picophytoplankton
                  DO js =14,17
                   DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
+                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
                END DO
 !                Dinoflagellates
                  DO js =18,21
                   DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -sediPI(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
+                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 

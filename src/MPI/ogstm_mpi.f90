@@ -133,17 +133,16 @@ END SUBROUTINE
 !!       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
 !!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
- SUBROUTINE mpplnk_my(ptab,packsize,ktype,ksgn)
+ SUBROUTINE mpplnk_my(ptab)
 
 
 !!----------------------------------------------------------------------
 !!
-      INTEGER ktype, ksgn
-      INTEGER packsize
-      double precision ptab(jpk,jpj,jpi,packsize)
 
-      double precision t3p1_my1(jpi,1,jpk,packsize,2)
-      double precision t3p2_my1(jpi,1,jpk,packsize,2)
+      double precision ptab(jpk,jpj,jpi)
+
+      double precision t3p1_my1(jpi,1,jpk,2)
+      double precision t3p2_my1(jpi,1,jpk,2)
 
 #ifdef key_mpp_mpi
 
@@ -152,13 +151,7 @@ END SUBROUTINE
       double precision zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
       INTEGER jn
-! omp variables
-      INTEGER :: mytid, ntids!, itid
 
-#ifdef __OPENMP11
-      INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-      EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-#endif
 
 
 !!
@@ -167,99 +160,64 @@ END SUBROUTINE
 !!
 !!Sign setting
 !!...
-      IF (ksgn.EQ.0) THEN
-          zsgn = -1.
-      ELSE
-          zsgn =  1.
-      ENDIF
-!!OPENMP settings
-#ifdef __OPENMP11
-      ntids = omp_get_max_threads() ! take the number of threads
-      mytid = -1000000
-#else
-      ntids = 1
-      mytid = 0
-#endif
+
+zsign = 1.
 
 
 !!     trcadvparttime = MPI_WTIME()
 
 
 
-!!!!!$omp   parallel default(none) private(jn,jk,jj,ji,mytid,iihom,ijhom)
-!!!!!$omp&      shared(packsize,nbondi,nperio,jpk,jpj,jpi,ptab,jpim1,ktype,nlci,jpreci,nlcj,jprecj)
-#ifdef __OPENMP11
-        mytid = omp_get_thread_num()  ! take the thread ID
-        jn=1
-        IF(mytid +1 <= packsize) THEN
-#else
-      PACK_LOOP1: DO jn=1,packsize
-#endif
+
 !!1. standard boundary treatment
 !!------------------------------
 !!
 !!East-West boundary conditions
 !!
-      IF(nbondi.EQ.2.AND.(nperio.EQ.1.or.nperio.EQ.4)) THEN
-!!... cyclic
-          DO jk = 1,jpk
-            DO jj = 1, jpj
-              ptab( 1 ,jj,jk,jn+mytid) = ptab(jk,jj,jpim1,jn+mytid)
-              ptab(jk,jj,jpi,jn+mytid) = ptab(  2  ,jj,jk,jn+mytid)
-            END DO
-          END DO
-      ELSE
-!!... closed
-          IF( ktype .NE. 11 .and. ktype .NE. 14 ) Then
+
+
               iihom = nlci-jpreci
               DO ji = iihom+1,jpi
                 DO jk = 1,jpk
                   DO jj = 1,jpj
-                    ptab(jk,jj,ji,jn+mytid) = 0.e0
+                    ptab(jk,jj,ji) = 0.e0
                   END DO
                 END DO
               END DO
-              IF ( ktype.NE.4  ) THEN
+
                   DO ji = 1,jpreci
                     DO jk = 1,jpk
                       DO jj = 1,jpj
-                        ptab(jk,jj,ji,jn+mytid) = 0.e0
+                        ptab(jk,jj,ji) = 0.e0
                       END DO
                     END DO
                   END DO
-              ENDIF
-          ENDIF
-      ENDIF
+
+
 !!
 !!North-South boundary conditions
 !!
-      IF( ktype .NE. 11 .and. ktype .NE. 14 ) THEN
+
           ijhom = nlcj-jprecj
           DO jj = ijhom+1,jpj
             DO jk = 1,jpk
               DO ji = 1,jpi
-                ptab(jk,jj,ji,jn+mytid) = 0.e0
+                ptab(jk,jj,ji) = 0.e0
               END DO
             END DO
           END DO
-          IF ( ktype.NE.4 ) THEN
+
               DO jj = 1,jprecj
                 DO jk = 1,jpk
                   DO ji = 1, jpi
-                    ptab(jk,jj,ji,jn+mytid) = 0.e0
+                    ptab(jk,jj,ji) = 0.e0
                   END DO
                 END DO
               END DO
-          ENDIF
-      ENDIF
 
 
-#ifdef __OPENMP11
-      END IF
-!!!!!$omp    end parallel
-#else
-      END DO PACK_LOOP1
-#endif
+
+
 !!
 !!
 !!2. East and west directions exchange
@@ -267,105 +225,100 @@ END SUBROUTINE
 !!
 !!2.1 Read Dirichlet lateral conditions
 !!
-!!!!!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
-!!!!!$omp&      shared(packsize,nbondi,nlci,nreci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP11
-        mytid = omp_get_thread_num()  ! take the thread ID
-        jn=1
-        IF(mytid +1 <= packsize) THEN
-#else
-      PACK_LOOP2: DO jn=1,packsize
-#endif
+
 
       IF(nbondi.ne.2) THEN
+         ! jpreci = 1 from parini
+         ! nreci =  2*jpreci from inimpp
+         ! nlci = jpi
+         ! iihom=jpi-2
+
+
+
           iihom=nlci-nreci
-          DO jl=1,jpreci
-            DO jk=1,jpk
-              DO jj=1,jpj
-                t3ew_my1(jk,jj,jl,jn+mytid,1)=ptab(jj,jpreci+jl,jk,jn+mytid)
-                t3we_my1(jk,jj,jl,jn+mytid,1)=ptab(jj,iihom+jl,jk,jn+mytid)
-              END DO
-            END DO
-          END DO
+          jl = 1 ! it was a DO jl=1,jpreci, (with jpreci=1) now is forced jl=1
+         DO jw=1,WEST_count_send
+              jj = WESTpoints_send(1,jw)
+              jk = WESTpoints_send(2,jw)
+             tw_send(jw) = ptab(jk,jj,jpreci+jl)
+         ENDDO
+         DO jw=1,EAST_count_send
+             jj = EASTpoints_send(1,jw)
+             jk = EASTpoints_send(2,jw)
+             te_send(jw) = ptab(jk,jj,iihom +jl)
+         ENDDO
+
+
       ENDIF
-#ifdef __OPENMP11
-      END IF
-!!!!!$omp    end parallel
-#else
-      END DO PACK_LOOP2
-#endif
+
 
 !!
 !!2.2 Migrations
 !!
 !!
-      imigr=jpreci*jpj*jpk*packsize
-!!
-      IF(nbondi.eq.-1) THEN
-          CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs1)
-          CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
+
+      IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
+          CALL mppsend(2,te_send,EAST_count_send,noea,0,reqs1)
+          CALL mpprecv(1,te_recv,EAST_count_recv,reqr1)
+          !CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs1)
+          !CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
       ELSE IF(nbondi.eq.0) THEN
-          CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
-          CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs2)
-          CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr2)
+          CALL mppsend(1, tw_send,WEST_count_send,nowe,0,reqs1)
+          CALL mppsend(2, te_send,EAST_count_send,noea,0,reqs2)
+          !CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
+          !CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs2)
+          !CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
+          !CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr2)
+          CALL mpprecv(1,te_recv,EAST_count_recve,reqr1)
+          CALL mpprecv(2,tw_recv,WEST_count_recv,reqr2)
+
           CALL mppwait(reqs1)
           CALL mppwait(reqs2)
           CALL mppwait(reqr1)
           CALL mppwait(reqr2)
-      ELSE IF(nbondi.eq.1) THEN
-          CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
-          CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr1)
+      ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
+          !CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
+          !CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr1)
+          CALL mppsend(1,tw_send, WEST_count_send, nowe,0, reqs1)
+          CALL mpprecv(2,tw_recv, WEST_count_recv, reqr1)
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
       ENDIF
-!!
+
+
+
 
 !!
 !!2.3 Write Dirichlet lateral conditions
 !!
-!!     trcadvparttime = MPI_WTIME()
-!!!!!$omp   parallel default(none) private(jn,jk,jj,jl,mytid,iihom)
-!!!!!$omp&      shared(packsize,nbondi,nlci,jpreci,jpk,jpj,t3ew_my1,t3we_my1,ptab)
-#ifdef __OPENMP11
-        mytid = omp_get_thread_num()  ! take the thread ID
-        jn=1
-        IF(mytid +1 <= packsize) THEN
-#else
-      PACK_LOOP3: DO jn=1,packsize
-#endif
       iihom=nlci-jpreci
-      IF(nbondi.eq.0.or.nbondi.eq.1) THEN
-!!
-          DO jl=1,jpreci
-            DO jk=1,jpk
-              DO jj=1,jpj
-                ptab(jl,jj,jk,jn+mytid)=t3we_my1(jk,jj,jl,jn+mytid,2)
-              END DO
-            END DO
-          END DO
-      ENDIF
-!!
-      IF(nbondi.eq.-1.or.nbondi.eq.0) THEN
-          DO jl=1,jpreci
-            DO jk=1,jpk
-              DO jj=1,jpj
-                ptab(jj,iihom+jl,jk,jn+mytid)=t3ew_my1(jk,jj,jl,jn+mytid,2)
-              END DO
-            END DO
-          END DO
-      ENDIF
-#ifdef __OPENMP11
-      END IF
-!!!!!$omp    end parallel
-#else
-      END DO PACK_LOOP3
-#endif
+      jl = 1
+      IF(nbondi.eq.0.or.nbondi.eq.1) THEN ! All but west boundary, we received from west
 
-!!       trcadvparttime = MPI_WTIME() - trcadvparttime
-!!       trcadvtottime = trcadvtottime + trcadvparttime
+         DO jw=1,WEST_count_recv
+              jj = WESTpoints_recv(1,jw)
+              jk = WESTpoints_recv(2,jw)
+             ptab(jk,jj,1)= tw_recv(jw)
+         ENDDO
+
+      ENDIF
+
+      IF(nbondi.eq.-1.or.nbondi.eq.0) THEN ! All but east boundary, we received from east
+
+        DO jw=1,EAST_count_recv
+              jj = EASTpoints_recv(1,jw)
+              jk = EASTpoints_recv(2,jw)
+             ptab(jk,jj,jpi)= te_recv(jw)
+        ENDDO
+
+      ENDIF
+
+
+
+
+
 
 !!
 !!

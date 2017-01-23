@@ -221,16 +221,10 @@
 !!      t3we           : 3d message passing arrays west-east
 !!      t3ns           : 3d message passing arrays north-south
 !!      t3sn           : 3d message passing arrays south-north 
-!!      t2ew           : 2d message passing arrays east-west    
-!!      t2we           : 2d message passing arrays west-east
-!!      t2ns           : 2d message passing arrays north-south
-!!      t2sn           : 2d message passing arrays south-north 
 
 
       double precision, allocatable :: t3ew_my1 (:,:,:,:,:), t3we_my1 (:,:,:,:,:)
       double precision, allocatable :: t3sn_my1 (:,:,:,:,:), t3ns_my1 (:,:,:,:,:)
-      double precision, allocatable :: t2ns (:,:,:)  , t2sn (:,:,:)
-      double precision, allocatable :: t2ew (:,:,:)  , t2we (:,:,:)
 
 #  else
 !     no mpp

@@ -523,6 +523,7 @@
 
 
 ! ***************************************************************
+#ifdef key_mpp
           LOGICAL FUNCTION  SENDRECV_count()
           USE myalloc
           IMPLICIT NONE
@@ -716,4 +717,5 @@
         SENDRECV_Indexing =.true.
       END FUNCTION SENDRECV_Indexing
 
+#endif
       END SUBROUTINE domrea

@@ -75,47 +75,16 @@ END SUBROUTINE
 !!   -----
 !!      argument
 !!              ptab            : variable array
-!!              ktype           : define the nature of the grid-point
-!!                  at which ptab is defined for 0
-!!                                initialization
-!!                  = 1 ,  T- and W-points
-!!                  = 2 ,  U-point
-!!                  = 3 ,  V-point
-!!                  = 4 ,  F-point
-!!                                = 11,  T-point only fold treatment
-!!                                = 14,  F-point only fold treatment
-!!        ksgn        : control of the sign change
-!!                  = 0 , the sign is modified following
-!!                  the type of b.c. used
-!!                  = 1 , the sign of the field is un-
-!!                  changed at the boundaries
+!!
 !!      common
 !!            /COMDOM/ : domain parameters
-!!                    nlci   : first dimension of the local subdomain
-!!                    nlcj   : second dimension of the local subdomain
 !!                    nbondi : mark for "east-west local boundary"
 !!                    nbondj : mark for "north-south local boundary"
 !!                    noea   : number for local neighboring processors
 !!                    nowe   : number for local neighboring processors
 !!                    noso   : number for local neighboring processors
 !!                    nono   : number for local neighboring processors
-!!            /COMMPP/ : massively parallel processors
-!!                    t3ew() : message passing arrays east-west
-!!                    t3we() : message passing arrays west-east
-!!                    t3ns() : message passing arrays north-south
-!!                    t3sn() : message passing arrays south-north
 !!
-!!   Output :
-!!   ------
-!!      common
-!!            /COMMPP/ : massively parallel processors
-!!                    t3ew() : message passing arrays east-west
-!!                    t3we() : message passing arrays west-east
-!!                    t3ns() : message passing arrays north-south
-!!                    t3sn() : message passing arrays south-north
-!!   Workspace :
-!!   ---------
-!!             jk,jj,ji,jl,imigr,iihom,ijhom
 !!
 !!   External :
 !!   --------
@@ -135,19 +104,15 @@ END SUBROUTINE
 !!----------------------------------------------------------------------
  SUBROUTINE mpplnk_my(ptab)
 
-
-!!----------------------------------------------------------------------
-!!
-
       double precision ptab(jpk,jpj,jpi)
 
 
 #ifdef key_mpp_mpi
 
-      INTEGER jk,jj,ji,jl
-      INTEGER imigr,iihom,ijhom,iloc,ijt,iju
+      INTEGER jk,jj,ji
+      INTEGER imigr,iihom,ijhom,iloc
       INTEGER reqs1, reqs2, reqr1, reqr2
-      INTEGER jn,jw
+      INTEGER jw
 
 
 
@@ -221,15 +186,6 @@ END SUBROUTINE
 
 
       IF(nbondi.ne.2) THEN
-         ! jpreci = 1 from parini
-         ! nreci =  2*jpreci from inimpp
-         ! nlci = jpi
-         ! iihom=jpi-2
-
-
-
-          iihom=nlci-nreci
-          jl = 1 ! it was a DO jl=1,jpreci, (with jpreci=1) now is forced jl=1
          DO jw=1,WEST_count_send
               jj = WESTpoints_send(1,jw)
               jk = WESTpoints_send(2,jw)
@@ -242,7 +198,7 @@ END SUBROUTINE
          ENDDO
 
 
-      ENDIF
+      ENDIF ! PACK_LOOP2
 
 
 !!
@@ -305,7 +261,7 @@ END SUBROUTINE
              ptab(jk,jj,jpi)= te_recv(jw)
         ENDDO
 
-      ENDIF
+      ENDIF ! PACK_LOOP3
 
 
 
@@ -320,7 +276,7 @@ END SUBROUTINE
 !!3.1 Read Dirichlet lateral conditions
 !!
 
-!    PACK_LOOP4
+
       IF(nbondi.ne.2) THEN
          DO jw=1,NORTH_count_send
               ji = NORTHpoints_send(1,jw)
@@ -334,7 +290,7 @@ END SUBROUTINE
          ENDDO
 
 
-      ENDIF
+      ENDIF!    PACK_LOOP4
 
 
 !!
@@ -343,13 +299,13 @@ END SUBROUTINE
 !!
 
       IF(nbondj.eq.-1) THEN ! We are at the south side of the domain
-          CALL mppsend(4,tn_send,NORTH_count_send,noea,0,reqs1)
+          CALL mppsend(4,tn_send,NORTH_count_send,nono,0,reqs1)
           CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr1)
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
       ELSE IF(nbondj.eq.0) THEN
-          CALL mppsend(4, tn_send,NORTH_count_send,nowe,0,reqs1)
-          CALL mppsend(3, ts_send,SOUTH_count_send,noea,0,reqs2)
+          CALL mppsend(4, tn_send,NORTH_count_send,nono,0,reqs1)
+          CALL mppsend(3, ts_send,SOUTH_count_send,noso,0,reqs2)
           CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr1)
           CALL mpprecv(4,ts_recv,SOUTH_count_recv,reqr2)
 
@@ -358,7 +314,7 @@ END SUBROUTINE
           CALL mppwait(reqr1)
           CALL mppwait(reqr2)
       ELSE IF(nbondj.eq.1) THEN ! We are at the north side of the domain
-          CALL mppsend(3,ts_send, SOUTH_count_send, nowe,0, reqs1)
+          CALL mppsend(3,ts_send, SOUTH_count_send, noso,0, reqs1)
           CALL mpprecv(4,ts_recv, SOUTH_count_recv, reqr1)
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
@@ -375,7 +331,7 @@ END SUBROUTINE
          DO jw=1,SOUTH_count_recv
               ji = SOUTHpoints_recv(1,jw)
               jk = SOUTHpoints_recv(2,jw)
-             ptab(jk,1,ji)= ts_recv(jw)
+              ptab(jk,1,ji)= ts_recv(jw)
          ENDDO
 
       ENDIF
@@ -388,7 +344,7 @@ END SUBROUTINE
              ptab(jk,jpj,ji)= tn_recv(jw)
         ENDDO
 
-      ENDIF ! PACKLOOP5
+      ENDIF ! PACK_LOOP5
 
 
       RETURN

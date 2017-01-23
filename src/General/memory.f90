@@ -384,10 +384,10 @@
        allocate(tn_send(NORTH_count_send)) ; tn_send = huge(tn_send(1))
        allocate(ts_send(SOUTH_count_send)) ; ts_send = huge(ts_send(1))
 
-       allocate(te_recv(EAST_count_recv ) ; te_recv = huge(te_recv(1))
-       allocate(tw_recv(WEST_count_recv ) ; tw_recv = huge(tw_recv(1))
-       allocate(tn_recv(NORTH_count_recv) ; tn_recv = huge(tn_recv(1))
-       allocate(ts_recv(SOUTH_count_recv) ; ts_recv = huge(ts_recv(1))
+       allocate(te_recv(EAST_count_recv )) ; te_recv = huge(te_recv(1))
+       allocate(tw_recv(WEST_count_recv )) ; tw_recv = huge(tw_recv(1))
+       allocate(tn_recv(NORTH_count_recv)) ; tn_recv = huge(tn_recv(1))
+       allocate(ts_recv(SOUTH_count_recv)) ; ts_recv = huge(ts_recv(1))
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
@@ -603,28 +603,6 @@ subroutine alloc_tot()
 
 !!----------------------------------------------------------------------
 
-#if defined key_mpp 
-        
-       allocate(t3ew_my1(jpj,jpreci,jpk,jptra,2))  
-       t3ew_my1 = huge(t3ew_my1(1,1,1,1,1))
-       allocate(t3we_my1(jpj,jpreci,jpk,jptra,2))  
-       t3we_my1 = huge(t3we_my1(1,1,1,1,1))
-       allocate(t3sn_my1(jpi,jpreci,jpk,jptra,2))  
-       t3sn_my1 = huge(t3sn_my1(1,1,1,1,1))
-       allocate(t3ns_my1(jpi,jpreci,jpk,jptra,2))  
-       t3ns_my1 = huge(t3ns_my1(1,1,1,1,1))
-       allocate(t2ns(jpi,jprecj,2))                
-       t2ns     = huge(t2ns(1,1,1))
-       allocate(t2sn(jpi,jprecj,2))                
-       t2sn     = huge(t2sn(1,1,1))
-       allocate(t2ew(jpj,jpreci,2))                
-       t2ew     = huge(t2ew(1,1,1))
-       allocate(t2we(jpj,jpreci,2))                
-       t2we     = huge(t2we(1,1,1))
-
-#  else
-!     no mpp
-#endif
 
        allocate(trn(jpk,jpj,jpi,jptra))                    
        trn    = huge(trn(1,1,1,1))

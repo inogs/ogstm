@@ -216,18 +216,13 @@
       INTEGER, PARAMETER :: numnat =80   ! the number of the passive tracer NAMELIST
 
 
-#if defined key_mpp 
-!!      t3ew           : 3d message passing arrays east-west    
-!!      t3we           : 3d message passing arrays west-east
-!!      t3ns           : 3d message passing arrays north-south
-!!      t3sn           : 3d message passing arrays south-north 
-
-
-      double precision, allocatable :: t3ew_my1 (:,:,:,:,:), t3we_my1 (:,:,:,:,:)
-      double precision, allocatable :: t3sn_my1 (:,:,:,:,:), t3ns_my1 (:,:,:,:,:)
-
-#  else
-!     no mpp
+#if defined key_mpp
+      INTEGER :: EAST_count_send, WEST_count_send, SOUTH_count_send, NORTH_COUNT_send
+      INTEGER :: EAST_count_recv, WEST_count_recv, SOUTH_count_recv, NORTH_COUNT_recv
+      double precision, allocatable, dimension(:) :: te_send, tw_send, tn_send, ts_send
+      double precision, allocatable, dimension(:) :: te_recv, tw_recv, tn_recv, ts_recv
+      INTEGER, allocatable, dimension(:,:) :: EASTpoints_send, WESTpoints_send,NORTHpoints_send, SOUTHpoints_send
+      INTEGER, allocatable, dimension(:,:) :: EASTpoints_recv, WESTpoints_recv,NORTHpoints_recv, SOUTHpoints_recv
 #endif
 
 
@@ -365,6 +360,40 @@
 
       CONTAINS
 
+! *******************************************************************
+       subroutine myalloc_sendrecv()
+      INTEGER  :: err
+      REAL(8)  :: aux_mem
+
+#ifdef Mem_Monitor
+       aux_mem = get_mem(err)
+#endif
+
+       allocate(EASTpoints_send( 2,EAST_count_send )) ; EASTpoints_send  = huge(EASTpoints_send( 1,1))
+       allocate(WESTpoints_send( 2,WEST_count_send )) ; WESTpoints_send  = huge(WESTpoints_send( 1,1))
+       allocate(NORTHpoints_send(2,NORTH_count_send)) ; NORTHpoints_send = huge(NORTHpoints_send(1,1))
+       allocate(SOUTHpoints_send(2,SOUTH_count_send)) ; SOUTHpoints_send = huge(SOUTHpoints_send(1,1))
+
+       allocate(EASTpoints_recv( 2,EAST_count_recv )) ; EASTpoints_recv  = huge(EASTpoints_recv( 1,1))
+       allocate(WESTpoints_recv( 2,WEST_count_recv )) ; WESTpoints_recv  = huge(WESTpoints_recv( 1,1))
+       allocate(NORTHpoints_recv(2,NORTH_count_recv)) ; NORTHpoints_recv = huge(NORTHpoints_recv(1,1))
+       allocate(SOUTHpoints_recv(2,SOUTH_count_recv)) ; SOUTHpoints_recv = huge(SOUTHpoints_recv(1,1))
+
+       allocate(te_send(EAST_count_send )) ; te_send = huge(te_send(1))
+       allocate(tw_send(WEST_count_send )) ; tw_send = huge(tw_send(1))
+       allocate(tn_send(NORTH_count_send)) ; tn_send = huge(tn_send(1))
+       allocate(ts_send(SOUTH_count_send)) ; ts_send = huge(ts_send(1))
+
+       allocate(te_recv(EAST_count_recv ) ; te_recv = huge(te_recv(1))
+       allocate(tw_recv(WEST_count_recv ) ; tw_recv = huge(tw_recv(1))
+       allocate(tn_recv(NORTH_count_recv) ; tn_recv = huge(tn_recv(1))
+       allocate(ts_recv(SOUTH_count_recv) ; ts_recv = huge(ts_recv(1))
+
+#ifdef Mem_Monitor
+      mem_all=get_mem(err) - aux_mem
+#endif
+
+       end subroutine myalloc_sendrecv
 
 !*******************************************************************
 

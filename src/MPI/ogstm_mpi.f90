@@ -240,12 +240,12 @@ zsign = 1.
          DO jw=1,WEST_count_send
               jj = WESTpoints_send(1,jw)
               jk = WESTpoints_send(2,jw)
-             tw_send(jw) = ptab(jk,jj,jpreci+jl)
+             tw_send(jw) = ptab(jk,jj,2)
          ENDDO
          DO jw=1,EAST_count_send
              jj = EASTpoints_send(1,jw)
              jk = EASTpoints_send(2,jw)
-             te_send(jw) = ptab(jk,jj,iihom +jl)
+             te_send(jw) = ptab(jk,jj,jpi-1)
          ENDDO
 
 
@@ -293,8 +293,7 @@ zsign = 1.
 !!
 !!2.3 Write Dirichlet lateral conditions
 !!
-      iihom=nlci-jpreci
-      jl = 1
+
       IF(nbondi.eq.0.or.nbondi.eq.1) THEN ! All but west boundary, we received from west
 
          DO jw=1,WEST_count_recv
@@ -327,6 +326,81 @@ zsign = 1.
 !!
 !!3.1 Read Dirichlet lateral conditions
 !!
+
+!    PACK_LOOP4
+      IF(nbondi.ne.2) THEN
+         DO jw=1,NORTH_count_send
+              ji = NORTHpoints_send(1,jw)
+              jk = NORTHpoints_send(2,jw)
+              tn_send(jw) = ptab(jk,jpj-1,ji)
+         ENDDO
+         DO jw=1,SOUTH_count_send
+             ji = SOUTHpoints_send(1,jw)
+             jk = SOUTHpoints_send(2,jw)
+             ts_send(jw) = ptab(jk,2,ji)
+         ENDDO
+
+
+      ENDIF
+
+
+!!
+!!2.2 Migrations
+!!
+!!
+
+      IF(nbondj.eq.-1) THEN ! We are at the south side of the domain
+          CALL mppsend(4,tn_send,NORTH_count_send,noea,0,reqs1)
+          CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr1)
+          CALL mppwait(reqs1)
+          CALL mppwait(reqr1)
+      ELSE IF(nbondj.eq.0) THEN
+          CALL mppsend(4, tn_send,NORTH_count_send,nowe,0,reqs1)
+          CALL mppsend(3, ts_send,SOUTH_count_send,noea,0,reqs2)
+          CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr1)
+          CALL mpprecv(4,ts_recv,SOUTH_count_recv,reqr2)
+
+          CALL mppwait(reqs1)
+          CALL mppwait(reqs2)
+          CALL mppwait(reqr1)
+          CALL mppwait(reqr2)
+      ELSE IF(nbondj.eq.1) THEN ! We are at the north side of the domain
+          CALL mppsend(3,ts_send, SOUTH_count_send, nowe,0, reqs1)
+          CALL mpprecv(4,ts_recv, SOUTH_count_recv, reqr1)
+          CALL mppwait(reqs1)
+          CALL mppwait(reqr1)
+      ENDIF
+
+
+
+!!
+!!2.3 Write Dirichlet lateral conditions
+!!
+
+      IF(nbondj.eq.0.or.nbondj.eq.1) THEN ! All but south boundary, we received from south
+
+         DO jw=1,SOUTH_count_recv
+              ji = SOUTHpoints_recv(1,jw)
+              jk = SOUTHpoints_recv(2,jw)
+             ptab(jk,1,ji)= ts_recv(jw)
+         ENDDO
+
+      ENDIF
+
+      IF(nbondi.eq.-1.or.nbondi.eq.0) THEN ! All but north boundary, we received from north
+
+        DO jw=1,NORTH_count_recv
+              ji = NORTHpoints_recv(1,jw)
+              jk = NORTHpoints_recv(2,jw)
+             ptab(jk,jpj,ji)= tn_recv(jw)
+        ENDDO
+
+      ENDIF
+
+
+
+
+
 !!       trcadvparttime = MPI_WTIME()
 !!!!!$omp   parallel default(none) private(jn,jk,ji,jl,mytid,ijhom)
 !!!!!$omp&      shared(packsize,nbondj,nlcj,nrecj,jprecj,jpk,jpi,t3sn_my1,t3ns_my1,ptab)

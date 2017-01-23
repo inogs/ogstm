@@ -150,7 +150,7 @@ END SUBROUTINE
       INTEGER imigr,iihom,ijhom,iloc,ijt,iju
       double precision zsgn
       INTEGER reqs1, reqs2, reqr1, reqr2
-      INTEGER jn
+      INTEGER jn,jw
 
 
 
@@ -161,7 +161,7 @@ END SUBROUTINE
 !!Sign setting
 !!...
 
-zsign = 1.
+! zsign = 1.
 
 
 !!     trcadvparttime = MPI_WTIME()
@@ -271,7 +271,7 @@ zsign = 1.
           !CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs2)
           !CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
           !CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr2)
-          CALL mpprecv(1,te_recv,EAST_count_recve,reqr1)
+          CALL mpprecv(1,te_recv,EAST_count_recv,reqr1)
           CALL mpprecv(2,tw_recv,WEST_count_recv,reqr2)
 
           CALL mppwait(reqs1)
@@ -398,7 +398,7 @@ zsign = 1.
       ENDIF
 
 
-
+#ifdef JUNK
 
 
 !!       trcadvparttime = MPI_WTIME()
@@ -851,6 +851,8 @@ zsign = 1.
 #endif
 !!
 !!
+
+#endif
       RETURN
 
 END SUBROUTINE

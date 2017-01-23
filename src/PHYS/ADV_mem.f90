@@ -20,7 +20,7 @@
       INTEGER :: jilef, jjlef, jklef, jirig, jjrig, jkrig
       INTEGER, allocatable,dimension(:) :: jarr_adv_flx
       INTEGER, allocatable,dimension(:,:) :: jarr, jarr1, jarr2, jarr3, jarrt
-      INTEGER, allocatable,dimension(:,:,:) :: advmask
+      INTEGER(kind=1), allocatable,dimension(:,:,:) :: advmask
       ! double precision, allocatable,dimension(:,:,:),save :: zti,ztj
       ! double precision, allocatable,dimension(:,:,:),save :: zx,zy,zz,zbuf
       ! double precision, allocatable,dimension(:,:,:),save :: zkx,zky,zkz

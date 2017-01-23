@@ -95,10 +95,10 @@
 ! 3. masks
 ! --------
 
-      CALL readnc_slice_double (maskfile,'umask', umask )
-      CALL readnc_slice_double (maskfile,'vmask', vmask )
+      CALL readnc_slice_int1 (maskfile,'umask', umask )
+      CALL readnc_slice_int1 (maskfile,'vmask', vmask )
 !      CALL readnc_slice_double (maskfile,'fmask', fmask )
-      CALL readnc_slice_double (maskfile,'tmask', tmask )
+      CALL readnc_slice_int1 (maskfile,'tmask', tmask )
 !      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
 
 

@@ -112,7 +112,7 @@
       INTEGER, allocatable :: mbathy(:,:)
 
 
-      double precision, allocatable, dimension(:,:,:) :: tmask,umask, vmask
+      INTEGER(kind = 1), allocatable, dimension(:,:,:) :: tmask,umask, vmask
       INTEGER NBFMPOINTS, NBFMPOINTS_SUP, NWATERPOINTS
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 

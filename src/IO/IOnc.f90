@@ -69,7 +69,50 @@
       END SUBROUTINE readnc_slice_double
 
 ! ********************************************************************************************
+      SUBROUTINE readnc_slice_int1(fileNetCDF,varname, M)
+      USE myalloc
+      ! epascolo USE myalloc_mpp
+      USE netcdf
+      implicit none
 
+
+      character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      INTEGER(kind=1),intent(inout) ::  M(jpk,jpj,jpi)
+      
+      double precision,allocatable,dimension(:,:,:) :: copy_in
+      integer ncid, stat, VARid,i,j,k
+      integer counter
+      integer thecount(4), start(4)
+
+      allocate(copy_in(jpi,jpj,jpk))
+      counter = 0
+      start    = (/nimpp, njmpp,  1,  1/)
+      thecount = (/jpi,     jpj, jpk, 1/)
+
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)      
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
+      
+      call handle_err2(stat, fileNetCDF,varname)        
+      call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+      call handle_err1(stat, counter,FileNetCDF)
+
+      DO i=1,jpi
+        DO j=1,jpj
+          DO k=1,jpk
+            M(k,j,i) = INT(copy_in(i,j,k),1)
+          ENDDO
+        ENDDO
+      ENDDO   
+      
+      deallocate(copy_in)
+
+      END SUBROUTINE readnc_slice_int1
+
+! ********************************************************************************************
       SUBROUTINE readnc_slice_float(fileNetCDF,varname, M)
       USE myalloc
       ! epascolo USE myalloc_mpp

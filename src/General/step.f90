@@ -268,6 +268,7 @@ MODULE module_step
        ! epascolo USE myalloc_mpp
        IMPLICIT NONE
       integer jn,jk,ji,jj
+      double precision :: timetrczdf
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
       CALL trcadv ! tracers: advection
@@ -295,9 +296,10 @@ MODULE module_step
       ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
       ! WRITE(10002,200),'S2',jn,jk,jj,ji,tra(jk,jj,ji,jn)
       ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10002)
-
+      timetrczdf = MPI_WTIME()
       CALL trczdf ! tracers: vertical diffusion
-      
+      timetrczdf = MPI_WTIME() - timetrczdf
+      print *,"TIME ZDF",timetrczdf
       ! OPEN(UNIT=10003, FILE='s3.txt', FORM='FORMATTED')
       ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
       ! WRITE(10003,200),'S3',jn,jk,jj,ji,tra(jk,jj,ji,jn)

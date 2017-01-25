@@ -504,41 +504,22 @@
          END DO
       END DO
 
-! ! epascolo mpi comment
-! !! ... Lateral boundary conditions on zk[xy]
-! #ifdef key_mpp
 
-! !!   ... Mpp : export boundary values to neighboring processors
+! ... Lateral boundary conditions on zk[xy]
+#ifdef key_mpp
 
+!  ... Mpp : export boundary values to neighboring processors
 
-!       IF( ntids - 1 + jn <= jptra ) THEN
-!        pack_size = ntids
-!         ELSE
-!            pack_size = ntids - (ntids - 1 + jn - jptra)
-!       END IF
-!         CALL mpplnk_my(zkx, pack_size,1,1)
-!         CALL mpplnk_my(zky, pack_size,1,1)
+         CALL mpplnk_my(zkx)
+         CALL mpplnk_my(zky)
 
-
-
-
-! #else
+#else
 
 ! !!   ... T-point, 3D array, full local arrays zk[xy] are initialised
 
-
-!         DO itid = 1, ntids
-
-!        IF( itid - 1 + jn <= jptra ) THEN
-
                CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1 )
                CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
-
-!        END IF
-
-!         END DO
-
-! #endif
+#endif
 
 
 !! 2. calcul of after field using an upstream advection scheme
@@ -639,34 +620,13 @@
 
 
 !! ... Lateral boundary conditions on zti
-! epascolo mpi comment
-! #ifdef key_mpp
-
-! !!   ... Mpp : export boundary values to neighboring processors
-
-
-
-!         IF( ntids - 1 + jn <= jptra ) THEN
-!            pack_size = ntids
-!         ELSE
-!            pack_size = ntids - (ntids - 1 + jn - jptra)
-!         END IF
-
-!         CALL mpplnk_my(zti, pack_size,1,1)
-
-
-
-! #else
-
-! !!   ... T-point, 3D array, full local array zti is initialised
-
-!           DO itid = 1, ntids
-!          IF( itid - 1 + jn <= jptra ) THEN
+#ifdef key_mpp
+! ... Mpp : export boundary values to neighboring processors
+         CALL mpplnk_my(zti)
+#else
+! ... T-point, 3D array, full local array zti is initialised
                  CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1 )
-!          END IF
-!           END DO
-
-! #endif
+#endif
 
 
 !! 2.3 calcul of the antidiffusive flux
@@ -706,38 +666,23 @@
            END DO
 !                 endif
 
-!! epascolo mpi comment 
-!! ... Lateral boundary conditions on z[xyz]
-! #ifdef key_mpp
 
-! !!   ... Mpp : export boundary values to neighboring processors
+! ... Lateral boundary conditions on z[xyz]
+#ifdef key_mpp
 
+! ... Mpp : export boundary values to neighboring processors
 
-!       IF( ntids - 1 + jn <= jptra ) THEN
-!        pack_size = ntids
-!         ELSE
-!            pack_size = ntids - (ntids - 1 + jn - jptra)
-!       END IF
+         CALL mpplnk_my(zx)
+         CALL mpplnk_my(zy)
+         CALL mpplnk_my(zz)
 
-!         CALL mpplnk_my(zx, pack_size,1,1)
-!         CALL mpplnk_my(zy, pack_size,1,1)
-!         CALL mpplnk_my(zz, pack_size,1,1)
+#else
 
-
-! #else
-
-! !!   ... T-point, 3D array, full local array z[xyz] are initialised
-
-
-!           DO itid = 1, ntids
-!          IF( itid - 1 + jn <= jptra ) THEN
+!  ... T-point, 3D array, full local array z[xyz] are initialised
                 CALL lbc( zx(:,:,:), 1, 1, 1, 1, jpk, 1 )
                 CALL lbc( zy(:,:,:), 1, 1, 1, 1, jpk, 1 )
                 CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1 )
-!          END IF
-!       END DO
-
-! #endif
+#endif
 
 !! 2.4 reinitialization
 !!            2.5 calcul of the final field:
@@ -818,29 +763,17 @@
           END DO
            END DO
 
-!! ... Lateral boundary conditions on zk[xy]
-! epascolo mpi comment
-! #ifdef key_mpp
-! !!   ... Mpp : export boundary values to neighboring processors
+!... Lateral boundary conditions on zk[xy]
+#ifdef key_mpp
+!  ... Mpp : export boundary values to neighboring processors
 
-
-!         IF( ntids - 1 + jn <= jptra ) THEN
-!            pack_size = ntids
-!         ELSE
-!            pack_size = ntids - (ntids - 1 + jn - jptra)
-!         END IF
-
-!         CALL mpplnk_my(zkx, pack_size,1,1)
-!         CALL mpplnk_my(zky, pack_size,1,1)
-! #else
-! !!   ... T-point, 3D array, full local array zk[xy] are initialised
-!       DO itid = 1, ntids
-!         IF( itid - 1 + jn <= jptra ) THEN
+         CALL mpplnk_my(zkx)
+         CALL mpplnk_my(zky)
+#else
+! ... T-point, 3D array, full local array zk[xy] are initialised
                CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1 )
                CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
-!         END IF
-!       END DO
-! #endif
+#endif
 
 !!        2.6. calcul of after field using an upstream advection scheme
 

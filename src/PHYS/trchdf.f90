@@ -268,31 +268,14 @@
 !!
 !! ... Lateral boundary conditions on the laplacian (zlt,zls)
 
-! epascolo mpi comment
-! #ifdef key_mpp
-! !!
-! !!   ... Mpp : export boundary values to neighboring processors
-! !!
-!        IF( ntids - 1 + jn <= jptra ) THEN
-!           pack_size = ntids
-!        ELSE
-!           pack_size = ntids - (ntids - 1 + jn - jptra)
-!        END IF
 
-!        CALL mpplnk_my(zlt(:,:,:,:), pack_size,1) 
+#ifdef key_mpp
+!  ... Mpp : export boundary values to neighboring processors
 
-! #else
-
-!         DO itid = 1, ntids
-
-!            IF( itid - 1 + jn <= jptra ) THEN
-
+        CALL mpplnk_my(zlt)
+#else
                CALL lbc( zlt(:,:,:), 1, 1, 1, 1, jpk, 1 )
-
-!            END IF
-!         END DO
-
-! #endif
+#endif
 
 !! 2. Bilaplacian
 !! --------------

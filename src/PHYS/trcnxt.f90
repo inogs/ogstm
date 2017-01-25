@@ -33,18 +33,6 @@
 !!
 !!      macrotasking on tracer slab
 !!
-!!
-!!   INPUT :
-!!   -----
-!!
-!!   OUTPUT :
-!!   ------
-!!      argument                : no
-!!
-!!   WORKSPACE :
-!!   ---------
-!!     jk,jj,ji jn zfact zdt
-
 
        USE myalloc
        USE FN_mem
@@ -60,7 +48,7 @@
 ! omp variables
 
 
-      INTEGER :: jk,jj,ji,jn,jp,pack_size
+      INTEGER :: jk,jj,ji,jn
 
 
        trcnxtparttime = MPI_WTIME() ! cronometer-start
@@ -75,26 +63,19 @@
 
 
 !! 1. Lateral boundary conditions on tra (1,1,1,jn)
-!! epascolo mpi comment
-! #ifdef key_mpp
 
-! !!   ... Mpp : export boundary values to neighboring processors
+#ifdef key_mpp
 
-!         IF( ntids - 1 + jn <= jptra ) THEN
-!            pack_size = ntids
-!         ELSE
-!            pack_size = ntids - (ntids - 1 + jn - jptra)
-!         END IF
+! ... Mpp : export boundary values to neighboring processors
 
-!         CALL mpplnk_my(tra(1,1,1,jn), pack_size,1,1)
+         CALL mpplnk_my(tra(1,1,1,jn))
 
-! #  else
+#  else
 
-! !!   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
+! ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 
          CALL lbc( tra(1,1,1,jn), 1, 1, 1, 1, jpk, 1 )
-
-! #endif
+#endif
 
 
 !!!$omp   parallel default(none) private(mytid,jk,jj,ji)

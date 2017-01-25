@@ -85,22 +85,6 @@ END SUBROUTINE
 !!                    noso   : number for local neighboring processors
 !!                    nono   : number for local neighboring processors
 !!
-!!
-!!   External :
-!!   --------
-!!             mppsend,mpprecv
-!!       or    shmem_put barrier shmem_udcflush
-!!
-!!
-!!   References :                 no
-!!   ----------
-!!
-!!   Modifications:
-!!   --------------
-!!       original  : 94-11 (M. Guyon)
-!!       additions : 95-04 (j. Escobar, M. Imbard)
-!!       additions : 98-05 (M. Imbard, J. Escobar, L. Colombet )
-!!                          SHMEM and MPI versions
 !!----------------------------------------------------------------------
  SUBROUTINE mpplnk_my(ptab)
 
@@ -110,73 +94,11 @@ END SUBROUTINE
 #ifdef key_mpp_mpi
 
       INTEGER jk,jj,ji
-      INTEGER imigr,iihom,ijhom,iloc
       INTEGER reqs1, reqs2, reqr1, reqr2
       INTEGER jw
 
-
-
-!!
-!!0. Initialization
-!!-----------------
-
-
-
 !!     trcadvparttime = MPI_WTIME()
 
-
-
-
-!!1. standard boundary treatment
-!!------------------------------
-!!
-!!East-West boundary conditions
-!!
-
-
-              iihom = nlci-jpreci
-              DO ji = iihom+1,jpi
-                DO jk = 1,jpk
-                  DO jj = 1,jpj
-                    ptab(jk,jj,ji) = 0.e0
-                  END DO
-                END DO
-              END DO
-
-                  DO ji = 1,jpreci
-                    DO jk = 1,jpk
-                      DO jj = 1,jpj
-                        ptab(jk,jj,ji) = 0.e0
-                      END DO
-                    END DO
-                  END DO
-
-
-!!
-!!North-South boundary conditions
-!!
-
-          ijhom = nlcj-jprecj
-          DO jj = ijhom+1,jpj
-            DO jk = 1,jpk
-              DO ji = 1,jpi
-                ptab(jk,jj,ji) = 0.e0
-              END DO
-            END DO
-          END DO
-
-              DO jj = 1,jprecj
-                DO jk = 1,jpk
-                  DO ji = 1, jpi
-                    ptab(jk,jj,ji) = 0.e0
-                  END DO
-                END DO
-              END DO
-
-
-
-
-!!
 !!
 !!2. East and west directions exchange
 !!------------------------------------
@@ -205,6 +127,20 @@ END SUBROUTINE
 !!2.2 Migrations
 !!
 !!
+!               3     4
+!               |     ^
+!               |     |
+!               v     |
+!           ________________
+!          |                |
+!     1<-- |                | 1 <--
+!     2--> |                | 2 -->
+!          |________________|
+!               3     4
+!               |     ^
+!               |     |
+!               v     |
+
 
       IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
           CALL mppsend(2,te_send,EAST_count_send,noea,0,reqs1)

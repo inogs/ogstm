@@ -535,7 +535,7 @@
       counter=0
         do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,2).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,jj,2).EQ.1 ) counter = counter + 1
            enddo
         enddo
       WEST_count_send =counter
@@ -543,7 +543,7 @@
       counter=0
          do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,1).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,jj,1).EQ.1 ) counter = counter + 1
            enddo
          enddo
       WEST_count_recv =counter
@@ -554,14 +554,14 @@
       counter=0
          do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,jpi-1).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,jj,jpi-1).EQ.1 ) counter = counter + 1
            enddo
          enddo
       EAST_count_send = counter
       counter=0
          do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,jpi).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,jj,jpi).EQ.1 ) counter = counter + 1
            enddo
          enddo
       EAST_count_recv = counter
@@ -570,14 +570,14 @@
       counter=0
          do ii =1, jpi
            do kk =1, jpk-1
-               if (tmask(kk,2,ii).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,2,ii).EQ.1 ) counter = counter + 1
            enddo
          enddo
       SOUTH_count_send = counter
       counter=0
          do ii =1, jpi
            do kk =1, jpk-1
-               if (tmask(kk,1,ii).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,1,ii).EQ.1 ) counter = counter + 1
            enddo
          enddo
       SOUTH_count_recv = counter
@@ -586,14 +586,14 @@
       counter=0
          do ii =1, jpi
            do kk =1, jpk-1
-               if (tmask(kk,jpj-1,ii).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,jpj-1,ii).EQ.1 ) counter = counter + 1
            enddo
          enddo
       NORTH_count_send = counter
       counter=0
          do ii =1, jpi
            do kk =1, jpk-1
-               if (tmask(kk,jpj,ii).EQ.1.0 ) counter = counter + 1
+               if (tmask(kk,jpj,ii).EQ.1 ) counter = counter + 1
            enddo
          enddo
       NORTH_count_recv = counter
@@ -617,7 +617,7 @@
       counter=0
         do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,2).EQ.1.0 ) then
+               if (tmask(kk,jj,2).EQ.1 ) then
                   counter = counter + 1
                   WESTpoints_send(1,counter) = jj
                   WESTpoints_send(2,counter) = kk
@@ -629,7 +629,7 @@
       counter=0
          do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,1).EQ.1.0 ) then
+               if (tmask(kk,jj,1).EQ.1 ) then
                    counter = counter + 1
                    WESTpoints_recv(1,counter) = jj
                    WESTpoints_recv(2,counter) = kk
@@ -642,7 +642,7 @@
       counter=0
          do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,jpi-1).EQ.1.0 ) then
+               if (tmask(kk,jj,jpi-1).EQ.1 ) then
                    counter = counter + 1
                    EASTpoints_send(1,counter) = jj
                    EASTpoints_send(2,counter) = kk
@@ -653,7 +653,7 @@
       counter=0
          do jj =1, jpj
            do kk =1, jpk-1
-               if (tmask(kk,jj,jpi).EQ.1.0 ) then
+               if (tmask(kk,jj,jpi).EQ.1 ) then
                    counter = counter + 1
                    EASTpoints_recv(1,counter) = jj
                    EASTpoints_recv(2,counter) = kk
@@ -666,7 +666,7 @@
       counter=0
          do ii =1, jpi
            do kk =1, jpk-1
-               if (tmask(kk,2,ii).EQ.1.0 ) then
+               if (tmask(kk,2,ii).EQ.1 ) then
                    counter = counter + 1
                    SOUTHpoints_send(1,counter) = ii
                    SOUTHpoints_send(2,counter) = kk
@@ -677,7 +677,7 @@
       counter=0
          do ii =1, jpi
            do kk =1, jpk-1
-               if (tmask(kk,1,ii).EQ.1.0 ) then
+               if (tmask(kk,1,ii).EQ.1 ) then
                    counter = counter + 1
                    SOUTHpoints_recv(1,counter) = ii
                    SOUTHpoints_recv(2,counter) = kk
@@ -690,7 +690,7 @@
       counter=0
          do kk =1, jpk-1
            do ii =1, jpi
-               if (tmask(kk,jpj-1,ii).EQ.1.0 ) then
+               if (tmask(kk,jpj-1,ii).EQ.1 ) then
                    counter = counter + 1
                    NORTHpoints_send(1,counter) = ii
                    NORTHpoints_send(2,counter) = kk
@@ -701,7 +701,7 @@
       counter=0
          do kk =1, jpk-1
            do ii =1, jpi
-               if (tmask(kk,jpj,ii).EQ.1.0 ) then
+               if (tmask(kk,jpj,ii).EQ.1 ) then
                    counter = counter + 1
                    NORTHpoints_recv(1,counter) = ii
                    NORTHpoints_recv(2,counter) = kk

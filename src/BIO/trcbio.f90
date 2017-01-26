@@ -119,7 +119,7 @@ allocate(A(jptra,jpk,jpj,jpi))
 
                         bot = .FALSE.
           
-                       D3STATE(:) = A(:,jk,jj,ji)
+                       D3STATE(1:jptra) = A(1:jptra,jk,jj,ji)
 
                         O2o = A(ppO2o,jk,jj,ji)
                         N1p = A(ppN1p,jk,jj,ji)

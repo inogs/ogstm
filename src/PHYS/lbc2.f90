@@ -220,8 +220,7 @@
                         ptab(jpj,ji) = 0.e0
                       END DO
                     END DO
-                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4
-     $                                .AND. jj.EQ.2 ) THEN
+                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4 .AND. jj.EQ.2 ) THEN
                     DO jk = 1, jpk
                       DO ji = 1, jpi
                         ptab(ji, 1 ) = zsgn * ptab(ji,2)
@@ -349,8 +348,7 @@
                       ptab(ji, 1 ) = ptab(ji,3)
                       ptab(jpj,ji) = 0.e0
                     END DO
-                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4
-     $                                .AND. jj.EQ.2 ) THEN
+                  ELSEIF ( ktype.EQ.3 .OR. ktype.EQ.4  .AND. jj.EQ.2 ) THEN
                     DO ji = 1, jpi
                       ptab(ji, 1 ) = zsgn * ptab(ji,2)
                       ptab(jpj,ji) = 0.e0

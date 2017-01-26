@@ -361,6 +361,7 @@
       CONTAINS
 
 ! *******************************************************************
+#ifdef key_mpp
        subroutine myalloc_sendrecv()
       INTEGER  :: err
       REAL(8)  :: aux_mem
@@ -394,7 +395,7 @@
 #endif
 
        end subroutine myalloc_sendrecv
-
+#endif
 !*******************************************************************
 
 subroutine myalloc_BFM()

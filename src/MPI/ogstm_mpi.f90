@@ -51,7 +51,7 @@ SUBROUTINE mynode
       
 #else
       mpi_glcomm_size = 1
-      myrank = 1     
+      myrank = 0
 #endif
 
 END SUBROUTINE

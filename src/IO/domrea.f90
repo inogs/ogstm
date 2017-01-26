@@ -168,7 +168,14 @@
       NBFMPOINTS = BFM_count()
       call myalloc_BFM()
       B=BFM_Indexing()
-      
+
+!************************************ North,South,East,West Boundaries ****
+#ifdef key_mpp
+      B = SENDRECV_count()
+      call myalloc_sendrecv()
+      B = SENDRECV_Indexing()
+#endif
+
 
 ! *********************************   Gibraltar area
       filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'

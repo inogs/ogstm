@@ -13,10 +13,10 @@
        trcdiaparttime = MPI_WTIME() ! cronometer-start
 
 !      writes ave files for tracer concentration
-      print *,"- trcdia -",datemean, datefrom, dateend,FREQ_GROUP
+      write(*,*) "- trcdia -",datemean, datefrom, dateend,FREQ_GROUP
       CALL   trcdit(datemean, datefrom, dateend,FREQ_GROUP)
-      CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
-      CALL fluxdump(datemean, datefrom, dateend)
+      !CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
+      !CALL fluxdump(datemean, datefrom, dateend)
 
 
        trcdiaparttime =   MPI_WTIME() - trcdiaparttime  ! cronometer-stop

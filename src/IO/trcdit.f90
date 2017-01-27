@@ -28,11 +28,11 @@
 
 
       INTEGER jk,jj,ji, jn, jn_high,i,j,k
-      INTEGER ind
+      INTEGER ind, i_contribution, j_contribution
       INTEGER ave_counter
 
       CHARACTER(LEN=56) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
-      CHARACTER(LEN=20)  var,newfile
+      CHARACTER(LEN=20)  var
       CHARACTER(LEN=60) bkpname
       CHARACTER(LEN=11) DIR
       logical IsBackup
@@ -73,13 +73,11 @@
       if (FREQ_GROUP.eq.1) jn_high = jn_high+1
 
       var    = ctrcnm(jn)
-      newfile = 's'//trim(var)//'.txt'
-       !       print *,newfile
       output_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
       bkpname        = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
 
 ! *************** START COLLECTING DATA *****************************
-!      if(myrank == 0) then                    ! IF LABEL 1
+      if(myrank == 0) then                    ! IF LABEL 1
 
 ! ******* myrank 0 sets indexes of tot matrix where to place its own part
           iPd    = nldi
@@ -91,18 +89,16 @@
           irange    = iPe - iPd + 1
           jrange    = jPe - jPd + 1
           totistart = istart + iPd - 1
-       totiend  = totistart + irange - 1
+          totiend  = totistart + irange - 1
           totjstart = jstart + jPd - 1
-       totjend  = totjstart + jrange - 1
+          totjend  = totjstart + jrange - 1
           relistart = 1 + iPd - 1     
-       reliend  = relistart + irange - 1
+          reliend  = relistart + irange - 1
           reljstart = 1 + jPd - 1     
-       reljend  = reljstart + jrange - 1
+          reljend  = reljstart + jrange - 1
 
 
 !***** START ASSEMBLING ***  myrank 0 puts its tracer part in the tot matrix
-      !     print *,totistart,totiend,relistart,reliend
-      !     print *,totjstart,totjend,reljstart,reljend
           if (FREQ_GROUP.eq.1) then
           tottrnIO(:,totjstart:totjend,totistart:totiend)= traIO_HIGH(:,reljstart:reljend,relistart:reliend,jn_high)
           else
@@ -110,83 +106,85 @@
           endif
 
 
-!           do idrank = 1,mpi_glcomm_size-1
-! ! **************  myrank 0 is receiving from the others their buffer  ****
-!               call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
-!               call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
-!               call MPI_RECV(istart     , 1,                 mpi_integer, idrank, 3,mpi_comm_world, status, ierr)
-!               call MPI_RECV(jstart     , 1,                 mpi_integer, idrank, 4,mpi_comm_world, status, ierr)
-!               call MPI_RECV(iPe        , 1,                 mpi_integer, idrank, 5,mpi_comm_world, status, ierr)
-!               call MPI_RECV(jPe        , 1,                 mpi_integer, idrank, 6,mpi_comm_world, status, ierr)
-!               call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 7,mpi_comm_world, status, ierr)
-!               call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
-!               call MPI_RECV(bufftrn    ,jpi_rec*jpj_rec*jpk,  mpi_real8, idrank, 9,mpi_comm_world, status, ierr) ! ** then tracer buffer
-
-! ! ******* myrank 0 sets indexes of tot matrix where to place buffers of idrank
-!               irange    = iPe - iPd + 1
-!               jrange    = jPe - jPd + 1
-!               totistart = istart + iPd - 1
-!               totiend   = totistart + irange - 1
-!               totjstart = jstart + jPd - 1
-!               totjend   = totjstart + jrange - 1
-!               relistart = 1 + iPd - 1
-!               reliend   = relistart + irange - 1
-!               reljstart = 1 + jPd - 1
-!               reljend   = reljstart + jrange - 1
-! ! **** ASSEMBLING *** myrank 0 puts in tot matrix buffer received by idrank
-            !   do jk =1 , jpk
-            !    do jj =totjstart,totjend
-            !      do ji =totistart,totiend
-            !          ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
-            !          tottrnIO(jk,jj,ji)= bufftrn   (ind)
-            !      enddo
-            !     enddo
-            !    enddo
-
-!           enddo !idrank = 1, size-1
-
-
-!       else  ! IF LABEL 1,  if(myrank == 0)
-! ! **** work of the other ranks
-! ! ****** 1. load  inf buffer their IO matrices
-
-!         if (FREQ_GROUP.eq.2) then
-!            do jk =1 , jpk
-!             do jj =1 , jpj
-!              do ji =1 , jpi
-!                ind            =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-!                bufftrn   (ind)= traIO( jk,jj,ji,jn)
-!              enddo
+           do idrank = 1,mpi_glcomm_size-1
+! **************  myrank 0 is receiving from the others their buffer  ****
+           call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
+           call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
+           call MPI_RECV(istart     , 1,                 mpi_integer, idrank, 3,mpi_comm_world, status, ierr)
+           call MPI_RECV(jstart     , 1,                 mpi_integer, idrank, 4,mpi_comm_world, status, ierr)
+           call MPI_RECV(iPe        , 1,                 mpi_integer, idrank, 5,mpi_comm_world, status, ierr)
+           call MPI_RECV(jPe        , 1,                 mpi_integer, idrank, 6,mpi_comm_world, status, ierr)
+           call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 7,mpi_comm_world, status, ierr)
+           call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
+           call MPI_RECV(bufftrn    ,jpi_rec*jpj_rec*jpk,  mpi_real8, idrank, 9,mpi_comm_world, status, ierr) ! ** then tracer buffer
+! ******* myrank 0 sets indexes of tot matrix where to place buffers of idrank
+           irange    = iPe - iPd + 1
+           jrange    = jPe - jPd + 1
+           totistart = istart + iPd - 1
+           totiend   = totistart + irange - 1
+           totjstart = jstart + jPd - 1
+           totjend   = totjstart + jrange - 1
+           relistart = 1 + iPd - 1
+           reliend   = relistart + irange - 1
+           reljstart = 1 + jPd - 1
+           reljend   = reljstart + jrange - 1
+! **** ASSEMBLING *** myrank 0 puts in tot matrix buffer received by idrank
+          do ji =totistart,totiend
+            i_contribution   = jpk*jpj_rec*(ji-1-totistart+ relistart)
+            do jj =totjstart,totjend
+              j_contribution = jpk*(jj-1-totjstart+ reljstart)
+              do jk =1, jpk
+                  ind = jk + j_contribution + i_contribution
+                  tottrnIO(jk,jj,ji)= bufftrn(ind)
+              enddo
+            enddo
+          enddo
+!          do jk =1 , jpk
+!           do jj =totjstart,totjend
+!             do ji =totistart,totiend
+!                 ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec+(jk-1)*jpj_rec*jpi_rec
+!                 tottrnIO(jk,jj,ji)= bufftrn   (ind)
 !             enddo
+!            enddo
 !           enddo
-!         else ! FREQ_GROUP.eq.1
-!            do jk =1 , jpk
-!             do jj =1 , jpj
-!              do ji =1 , jpi
-!                ind            =  ji + jpi * (jj-1) + jpi * jpj *(jk-1)
-!                bufftrn   (ind)= traIO_HIGH( jk,jj,ji,jn_high)
-!              enddo
-!             enddo
-!           enddo
-!         endif
-
-
-
-
-! ! ******  2.send buffer to myrank 0
-!           call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
-!           call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
-!           call MPI_SEND(nimpp, 1,mpi_integer, 0, 3, mpi_comm_world,ierr)
-!           call MPI_SEND(njmpp, 1,mpi_integer, 0, 4, mpi_comm_world,ierr)
-!           call MPI_SEND(nlei , 1,mpi_integer, 0, 5, mpi_comm_world,ierr)
-!           call MPI_SEND(nlej , 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
-!           call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
-!           call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
-!           call MPI_SEND(bufftrn, jpi * jpj * jpk,MPI_DOUBLE_PRECISION, 0, 9, mpi_comm_world,ierr)
-
-
-
-!       endif ! IF LABEL 1, if(myrank == 0)
+       enddo !idrank = 1, size-1
+   else  ! IF LABEL 1,  if(myrank == 0)
+! **** work of the other ranks
+! ****** 1. load  inf buffer their IO matrices
+     if (FREQ_GROUP.eq.2) then
+        do ji =1 , jpi
+          i_contribution= jpk*jpj * (ji - 1 )
+         do jj =1 , jpj
+          j_contribution=jpk*(jj-1)
+          do jk =1 , jpk
+            ind            =  jk + j_contribution + i_contribution
+            bufftrn   (ind)= traIO( jk,jj,ji,jn)
+          enddo
+         enddo
+       enddo
+     else ! FREQ_GROUP.eq.1
+        do ji =1 , jpi
+          i_contribution= jpk*jpj * (ji - 1 )
+         do jj =1 , jpj
+          j_contribution=jpk*(jj-1)
+          do jk =1 , jpk
+            ind            =  jk + j_contribution + i_contribution
+            bufftrn   (ind)= traIO_HIGH( jk,jj,ji,jn)
+          enddo
+         enddo
+       enddo
+     endif
+! ******  2.send buffer to myrank 0
+       call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
+       call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
+       call MPI_SEND(nimpp, 1,mpi_integer, 0, 3, mpi_comm_world,ierr)
+       call MPI_SEND(njmpp, 1,mpi_integer, 0, 4, mpi_comm_world,ierr)
+       call MPI_SEND(nlei , 1,mpi_integer, 0, 5, mpi_comm_world,ierr)
+       call MPI_SEND(nlej , 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
+       call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
+       call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
+       call MPI_SEND(bufftrn, jpi * jpj * jpk,MPI_DOUBLE_PRECISION, 0, 9, mpi_comm_world,ierr)
+   endif ! IF LABEL 1, if(myrank == 0)
 
 !************* END COLLECTING DATA  *****************
 
@@ -198,10 +196,6 @@
 
         if (IsBackup) then
           CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter)
-            !      OPEN(UNIT=10013, FILE=newfile, FORM='FORMATTED')
-            !      DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
-            !      WRITE(10013,200),'S13',jn,jk,jj,ji,tottrnIO(jk,jj,ji)
-            !      ENDDO;ENDDO;ENDDO;CLOSE(10013)      
 
         else
 
@@ -209,7 +203,6 @@
            do j=1,jpjglo
             do k=1,jpk
             d2f3d(k,j,i) = REAL(tottrnIO(k,j,i),4)
-            !print *,".. = ",d2f3d(k,j,i)        
             enddo
            enddo
           enddo

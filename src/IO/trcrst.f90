@@ -111,14 +111,14 @@
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,dianm(jn), tra_DIA_IO(:,:,:,jn) )
+             CALL readnc_slice_double(bkpname,dianm(jn), tra_DIA_IO(jn,:,:,:) )
              if (.not.bkp2hasbeenread) then
                 call get_att_int( bkpname,'ave_counter', ave_counter_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
           else
-             tra_DIA_IO(:,:,:,jn) = 0.0
+             tra_DIA_IO(jn,:,:,:) = 0.0
           endif
 
           IF (diahf(jn).eq.1)  THEN

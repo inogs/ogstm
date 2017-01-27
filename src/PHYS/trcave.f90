@@ -162,10 +162,10 @@
             DO jj=1, jpj
          DO jk=1, jpk
                   IF(tmask(jk,jj,ji) .NE. 0.) THEN
-                    tra_DIA_IO(jk,jj,ji,jn )=(tra_DIA_IO(jk,jj,ji,jn )*Realcounter+ &
-     &              tra_DIA(jk,jj,ji,jn ))*Realcounterp1
+                    tra_DIA_IO(jn,jk,jj,ji )=(tra_DIA_IO(jn,jk,jj,ji )*Realcounter+ &
+     &              tra_DIA(jn,jk,jj,ji))*Realcounterp1
                   ELSE
-                    tra_DIA_IO(jk,jj,ji,jn )=Miss_val
+                    tra_DIA_IO(jn,jk,jj,ji )=Miss_val
                   ENDIF
                END DO
             END DO
@@ -178,7 +178,7 @@
       ! print *,"---------2",tra_DIA_IO(1,30,15,:)
       ! OPEN(UNIT=10011, FILE='s11.txt', FORM='FORMATTED')
       ! DO jn=1,jptra_dia; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
-      ! WRITE(10011,200),'S11',jn,jk,jj,ji,tra_DIA_IO(jk,jj,ji,jn)
+      ! WRITE(10011,200),'S11',jn,jk,jj,ji,tra_DIA_IO(jn,jk,jj,ji)
       ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10011)
 
 !     *********************  DIAGNOSTICS 2D **********
@@ -223,7 +223,7 @@
              DO jk=1, jpk
                 IF(tmask(jk,jj,ji) .NE. 0.) THEN
                    tra_DIA_IO_HIGH(jk,jj,ji,jn_high )= &
-     &            (tra_DIA_IO_HIGH(jk,jj,ji,jn_high )*Realcounter+tra_DIA(jk,jj,ji,jn_on_all))*Realcounterp1 
+     &            (tra_DIA_IO_HIGH(jk,jj,ji,jn_high )*Realcounter+tra_DIA(jn_on_all,jk,jj,ji))*Realcounterp1 
                 ELSE
                    tra_DIA_IO_HIGH(jk,jj,ji,jn_high )=Miss_val
                 ENDIF

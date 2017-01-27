@@ -384,7 +384,7 @@
       if (FREQ_GROUP.eq.1) then
       tottrnIO (:,totjstart:totjend,totistart:totiend) = tra_DIA_IO_HIGH(:,reljstart:reljend,relistart:reliend,jn_high)
       else
-      tottrnIO (:, totjstart:totjend,totistart:totiend) = tra_DIA_IO(:, reljstart:reljend, relistart:reliend,jn) ! diagnostic from reaction model
+      tottrnIO (:, totjstart:totjend,totistart:totiend) = tra_DIA_IO(jn,:, reljstart:reljend, relistart:reliend) ! diagnostic from reaction model
       endif
 !              do idrank = 1,mpi_glcomm_size-1
 ! ! **************  myrank 0 is receiving from the others their buffer  ****
@@ -496,7 +496,7 @@
       end if ! IF LABEL 4  if(myrank == 0)
          if (.not.IsBackup) then
              if (FREQ_GROUP.eq.2) then
-                tra_DIA_IO(:,:,:,jn) = 0.
+                tra_DIA_IO(jn,:,:,:) = 0.
               else
                 tra_DIA_IO_HIGH(:,:,:,jn_high) = 0.
               endif
@@ -507,7 +507,7 @@
 
       ! OPEN(UNIT=10014, FILE='s14.txt', FORM='FORMATTED')
       ! DO jn=1,jptra_dia; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
-      ! WRITE(10014,200),'S14',jn,jk,jj,ji,tra_DIA_IO(jk,jj,ji,jn)
+      ! WRITE(10014,200),'S14',jn,jk,jj,ji,tra_DIA_IO(jn,jk,jj,ji)
       ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10014)
 ! 200     FORMAT(' ',A3,I4,I4,I4,I4,D30.23)
 !       STOP 

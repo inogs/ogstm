@@ -932,7 +932,7 @@
        SUBROUTINE physDump(fileNetCDF, datefrom, dateTo)
        USE myalloc
        USE netcdf
-       USE IO_mem, only: d2f3d, d2f2d
+       USE IO_mem, only: d2f2d
 
        IMPLICIT NONE
 

@@ -39,7 +39,6 @@
       double precision, allocatable :: bufftrIO(:)
       double precision, allocatable :: buffDIA(:)
       double precision, allocatable :: buffDIA2d(:)
-      real, allocatable :: d2f3d(:,:,:)
       real, allocatable :: d2f2d(:,:)
 !----------------------------------------------------------------------
       CONTAINS
@@ -90,8 +89,6 @@
         buffDIA2d = huge(buffDIA2d(1))
 
        if (lwp) then
-       allocate(d2f3d     (jpk,jpjglo,jpiglo))     
-        d2f3d     = huge(d2f3d(1,1,1))
        allocate(d2f2d     (jpjglo,jpiglo))         
         d2f2d     = huge(d2f2d(1,1))
        endif

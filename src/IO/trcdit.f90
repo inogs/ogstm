@@ -139,6 +139,7 @@
               enddo
             enddo
           enddo
+!      ciclo vecchia maniera
 !          do jk =1 , jpk
 !           do jj =totjstart,totjend
 !             do ji =totistart,totiend
@@ -169,7 +170,7 @@
           j_contribution=jpk*(jj-1)
           do jk =1 , jpk
             ind            =  jk + j_contribution + i_contribution
-            bufftrn   (ind)= traIO_HIGH( jk,jj,ji,jn)
+            bufftrn   (ind)= traIO_HIGH( jk,jj,ji,jn_high)
           enddo
          enddo
        enddo

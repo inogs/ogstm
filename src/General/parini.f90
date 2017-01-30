@@ -12,12 +12,11 @@
 
        USE myalloc
        USE modul_param
-       ! epascolo USE myalloc_mpp
        IMPLICIT NONE
 
 ! local declarations
 ! ==================
-      INTEGER jj,ji,nn
+      INTEGER ji,jj,nn
 
       call COUNTLINE ('Dom_Dec_jpi.ascii', jpni)
       call COUNTWORDS('Dom_Dec_jpi.ascii', jpnj)
@@ -48,29 +47,26 @@
       jpkb   = jpk
 
 
-! epascolo warning
+
       IF(lwp) THEN
       WRITE(numout,*) 'Dimension_Med_Grid'
       WRITE(numout,*) ' '
-      WRITE(numout,*) ' jpjglo  : first dimension of global domain --> j ',jpjglo
-      WRITE(numout,*) ' jpiglo  : second  dimension of global domain --> i ',jpiglo
+      WRITE(numout,*) ' jpiglo  : first  dimension of global domain --> i ',jpiglo
+      WRITE(numout,*) ' jpjglo  : second dimension of global domain --> j ',jpjglo
       WRITE(numout,*) ' jpk     : number of levels           > or = jpk   ',jpk
       WRITE(numout,*) ' jpkb    : first vertical layers where biology is active > or = jpkb   ',jpkb
       WRITE(numout,*) ' '
       ENDIF
 
 
-      allocate(ilcit(jpnj,jpni)) 
-       ilcit = huge(ilcit(1,1))
-      allocate(ilcjt(jpnj,jpni)) 
-       ilcjt = huge(ilcjt(1,1))
+      allocate(ilcit(jpni, jpnj)) ; ilcit = huge(ilcit(1,1))
+      allocate(ilcjt(jpni, jpnj)) ; ilcjt = huge(ilcjt(1,1))
 
       open(3333,file='Dom_Dec_jpi.ascii', form='formatted')
       open(3334,file='Dom_Dec_jpj.ascii', form='formatted')
       
-      read(3333,*) ((ilcit(jj,ji), jj=1,jpnj),ji=1,jpni)
-      read(3334,*) ((ilcjt(jj,ji), jj=1,jpnj),ji=1,jpni)
-      
+      read(3333,*) ((ilcit(ji,jj), jj=1,jpnj),ji=1,jpni)
+      read(3334,*) ((ilcjt(ji,jj), jj=1,jpnj),ji=1,jpni)
       
       close(3333)
       close(3334)
@@ -79,18 +75,18 @@
         if(myrank+1 .EQ. nn) then
           ji = 1 + mod(nn -1, jpni)
           jj = 1 + (nn -1)/jpni
-          
-          jpi =  ilcit(jj,ji) 
-          jpj =  ilcjt(jj,ji)
+          jpi =  ilcit(ji,jj)
+          jpj =  ilcjt(ji,jj)
         endif
       enddo
-         
 
       jpim1=jpi-1
       jpjm1=jpj-1
       jpkm1=jpk-1
       jpij=jpi*jpj
       jpkbm1=jpkb-1
+
+
 
 
       CLOSE(numnam)

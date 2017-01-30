@@ -14,7 +14,7 @@
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
       INTEGER, INTENT(IN) :: FREQ_GROUP
       INTEGER jk,jj,ji, jn, jn_high
-      INTEGER ind
+      INTEGER ind, i_contribution, j_contribution
       CHARACTER(10) newfile
       CHARACTER(LEN=42) forcing_file
       CHARACTER(LEN=60) bkpname
@@ -465,7 +465,7 @@
              if (FREQ_GROUP.eq.2) then
                 tra_DIA_IO(jn,:,:,:) = 0.
               else
-                tra_DIA_IO_HIGH(jn_high,:,:) = 0.
+                tra_DIA_IO_HIGH(jn_high,:,:,:) = 0.
               endif
           endif
       enddo  ! loop in jn

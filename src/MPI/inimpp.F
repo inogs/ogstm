@@ -1,13 +1,13 @@
       SUBROUTINE inimpp
-!!!---------------------------------------------------------------------
-!!!
-!!!                       ROUTINE INIMPP
-!!!                     ******************
-!!!
-!!!  PURPOSE :
-!!!  ---------
-!!!     Lay out the global domain over processors.
-!!!
+CCC---------------------------------------------------------------------
+CCC
+CCC                       ROUTINE INIMPP
+CCC                     ******************
+CCC
+CCC  PURPOSE :
+CCC  ---------
+CCC     Lay out the global domain over processors.
+CCC
 CC   METHOD :
 CC   -------
 CC      Global domain is distributed in smaller local domains.
@@ -44,8 +44,8 @@ CC
 CC   WORKSPACE :
 CC   ---------
 CC      local
-CC              jj,ji, jn, jproc
-CC              ij,ii, ifreq, il1, il2, iresti, irestj, zidom, zjdom
+CC              ji, jj, jn, jproc
+CC              ii, ij, ifreq, il1, il2, iresti, irestj, zidom, zjdom
 CC              nlcit(), nlcjt(), nimppt(), njmppt()
 CC
 CC   MODIFICATIONS:
@@ -66,20 +66,20 @@ CC----------------------------------------------------------------------
       INTEGER, PARAMETER :: nsolv = 3
 
 #ifdef key_mpp_mpi
-      INTEGER jj,ji,jn,jproc
-      INTEGER ij,ii
+      INTEGER ji,jj,jn,jproc
+      INTEGER ii,ij
       INTEGER iresti,irestj,ijm1,imil
-      INTEGER iimppt(jpnj,jpni),ijmppt(jpnj,jpni)
+      INTEGER iimppt(jpni,jpnj),ijmppt(jpni,jpnj)
       INTEGER ibonit(jpnij),ibonjt(jpnij)
       INTEGER iglo(4),iloc(4),iabsf(4),iabsl(4),ihals(4),ihale(4)
-      double precision    zidom ,zjdom
+      REAL(8)    zidom ,zjdom
 
 C
 C  1. Dimension arrays for subdomains
 C -----------------------------------
 C
 C  Computation of local domain sizes ilcit() ilcjt()
-C  These dimensions depend on global sizes jpnj,jpni and jpjglo,jpiglo
+C  These dimensions depend on global sizes jpni,jpnj and jpiglo,jpjglo
 C  The subdomains are squares leeser than or equal to the global
 C  dimensions divided by the number of processors minus the overlap
 C  array.
@@ -103,14 +103,14 @@ C
 C
       zidom=nreci
       DO ji=1,jpni
-        zidom = zidom + ilcit(1,ji) - nreci
+        zidom = zidom + ilcit(ji,1) - nreci
       END DO
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,*)" sum ilcit(i,1)=",zidom," jpiglo=",jpiglo
 C
       zjdom=nrecj
       DO jj=1,jpnj
-        zjdom = zjdom + ilcjt(jj,1) - nrecj
+        zjdom = zjdom + ilcjt(1,jj) - nrecj
       END DO
       IF(lwp)WRITE(numout,*)" sum ilcit(1,j)=",zjdom," jpjglo=",jpjglo
       IF(lwp)WRITE(numout,*)
@@ -121,15 +121,15 @@ C -------------------------------
 C
       DO jj=1,jpnj
         DO ji=1,jpni
-          iimppt(jj,ji)=1
-          ijmppt(jj,ji)=1
+          iimppt(ji,jj)=1
+          ijmppt(ji,jj)=1
         END DO
       END DO
 C
       IF(jpni.gt.1)THEN
           DO jj=1,jpnj
             DO ji=2,jpni
-              iimppt(jj,ji)=iimppt(jj,ji-1)+ilcit(jj,ji-1)-nreci
+              iimppt(ji,jj)=iimppt(ji-1,jj)+ilcit(ji-1,jj)-nreci
             END DO
           END DO
       ENDIF
@@ -137,7 +137,7 @@ C
       IF(jpnj.gt.1)THEN
           DO jj=2,jpnj
             DO ji=1,jpni
-              ijmppt(jj,ji)=ijmppt(jj,ji-1)+ilcjt(jj,ji-1)-nrecj
+              ijmppt(ji,jj)=ijmppt(ji,jj-1)+ilcjt(ji,jj-1)-nrecj
             END DO
           END DO
       ENDIF
@@ -148,11 +148,11 @@ C
       DO jproc=1,jpnij
         ii=1+mod(jproc-1,jpni)
         ij=1+   (jproc-1)/jpni
-        nimppt(jproc)=iimppt(ij,ii)
-        njmppt(jproc)=ijmppt(ij,ii)
-        nlcit(jproc)=ilcit(ij,ii)     
+        nimppt(jproc)=iimppt(ii,ij)
+        njmppt(jproc)=ijmppt(ii,ij)
+        nlcit(jproc)=ilcit(ii,ij)     
         nlci=nlcit(jproc)     
-        nlcjt(jproc)=ilcjt(ij,ii)     
+        nlcjt(jproc)=ilcjt(ii,ij)     
         nlcj=nlcjt(jproc)
         nbondj=-1
         IF(jproc.gt.jpni) nbondj=0
@@ -297,7 +297,7 @@ C
           nbse = 1
           npse = (narea-2)
 C
-C...double precision boundary condition
+C...real(8) boundary condition
 C
           IF (nbondj .EQ. -1 .OR. nbondj .EQ. 2) THEN 
               nbsw = 0

@@ -200,14 +200,7 @@
 
         else
 
-          do i=1,jpiglo
-           do j=1,jpjglo
-            do k=1,jpk
-            d2f3d(k,j,i) = REAL(tottrnIO(k,j,i),4)
-            enddo
-           enddo
-          enddo
-          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, d2f3d)
+          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, tottrnIO)
       
          endif
 

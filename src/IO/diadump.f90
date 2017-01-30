@@ -454,10 +454,9 @@
               dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
               
               if (IsBackup) then
-                 CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO(:,:,:),ave_counter)
+                 CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter)
               else
-                 d2f3d = REAL(tottrnIO(:,:,:),4)
-                 CALL WRITE_AVE(dia_file_nc,var,datefrom,dateTo, d2f3d)
+                 CALL WRITE_AVE(dia_file_nc,var,datefrom,dateTo, tottrnIO)
               endif
 
 

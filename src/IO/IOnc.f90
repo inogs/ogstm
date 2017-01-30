@@ -594,7 +594,7 @@
        CHARACTER*(*),intent(in) :: fileNetCDF
        character(LEN=20),intent(in) :: VAR
        character(LEN=17),intent(in) :: datefrom, dateTo
-       real, dimension(jpk, jpjglo, jpiglo),intent(in) :: M
+       double precision, dimension(jpk, jpjglo, jpiglo),intent(in) :: M
        
        real,allocatable,dimension(:,:,:) :: copy_in
        integer istart,iend
@@ -637,7 +637,7 @@
 
         ! ********** VARIABLES *****************
         !!s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
-       call handle_err1(s,counter,fileNetCDF)
+        !call handle_err1(s,counter,fileNetCDF)
         s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept)
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
@@ -686,8 +686,7 @@
        call handle_err1(s,counter,fileNetCDF)
 
        allocate(copy_in(jpiglo, jpjglo, jpk))
-       !print *,allocated(copy_in)
-       call switch_index_real(M,copy_in,jpiglo,jpjglo,jpk)
+       call switch_index_rout(M,copy_in,jpiglo,jpjglo,jpk)
         s = nf90_put_var(nc, idVAR  ,  copy_in )                    
        call handle_err1(s,counter,fileNetCDF)
        deallocate(copy_in)
@@ -836,22 +835,19 @@
 
         counter=0
 
-       ! epascolo warning
-       ! print *,"----- 0"
+
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
        call handle_err1(s,counter,fileNetCDF)
-       !print *,"----- 1"
         s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
        call handle_err1(s,counter,fileNetCDF)
-       !print *,"----- 2"
         s = nf90_put_var(nc, idgdept,  REAL(   gdept,          4) )
        call handle_err1(s,counter,fileNetCDF)
-       !print *,"----- 3"
+
        allocate(copy_in(jpiglo, jpjglo, jpk))
        call switch_index_double(M,copy_in,jpiglo,jpjglo,jpk)
        s = nf90_put_var(nc, idVAR  , copy_in  )
        deallocate(copy_in)
-       !print *,"----- 4"
+
        call handle_err1(s,counter,fileNetCDF)
 
 

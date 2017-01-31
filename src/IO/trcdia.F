@@ -2,7 +2,6 @@
 
       USE myalloc
       use mpi
-      ! epascolo USE myalloc_mpp
       IMPLICIT NONE
 
 
@@ -13,7 +12,6 @@
        trcdiaparttime = MPI_WTIME() ! cronometer-start
 
 !      writes ave files for tracer concentration
-      write(*,*) "- trcdia -",datemean, datefrom, dateend,FREQ_GROUP
       CALL   trcdit(datemean, datefrom, dateend,FREQ_GROUP)
       !CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
       !CALL fluxdump(datemean, datefrom, dateend)

@@ -865,7 +865,6 @@
 
         
        trcadvparttime = MPI_WTIME() - trcadvparttime
-       print *, "TIME ADV = ", trcadvparttime
        trcadvtottime = trcadvtottime + trcadvparttime
 !!!!
 

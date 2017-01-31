@@ -112,13 +112,9 @@ contains
               M1 = 0
               nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
-              print *,"c  ",nomevar,"\n"
               call readnc_slice_float_2d(nomefile,nomevar,M1)
-      
-              print *,nomevar
-
             !CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
-            print *,jpj,jpi,"2",jn_atm, allocated(atm_dtatrc),allocated(M1)
+
             DO i=1,jpi
               DO j =1,jpj
                  atm_dtatrc(j,i,2,jn) = M1(j,i)

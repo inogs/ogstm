@@ -353,7 +353,6 @@
             
 
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
-       print *,"TIME HDF = ",trcbilaphdfparttime
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime
 
       END SUBROUTINE trchdf

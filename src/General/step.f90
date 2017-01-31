@@ -57,7 +57,6 @@ MODULE module_step
       character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
       double precision sec
       LOGICAL B, isFIRST
-      double precision :: timess,timesw
       INTEGER :: jk,jj,ji,jn
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
@@ -76,7 +75,6 @@ MODULE module_step
       DO TAU = TimeStepStart, TimeStep__End
 
          stpparttime = MPI_WTIME()  ! stop cronomether
-         timess = MPI_WTIME()
          call tau2datestring(TAU, DATEstring)
          sec=datestring2sec(DATEstring)
 
@@ -127,7 +125,7 @@ MODULE module_step
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
 
-      timesw = MPI_WTIME()
+
 
       if (IsAnAveDump(DATEstring,1)) then
          call MIDDLEDATE(TauAVEfrom_1, TAU, datemean)
@@ -153,7 +151,7 @@ MODULE module_step
          if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
-      timesw = MPI_WTIME() - timesw
+
 
 
 
@@ -177,10 +175,8 @@ MODULE module_step
 !        STOP
        stpparttime = MPI_WTIME() - stpparttime
        stptottime  = stptottime  + stpparttime
-       timess = MPI_WTIME() - timess
-       if (lwp) then
-       print *,"TIME STEP s =",timess,stptottime
-       endif
+
+
 ! OGSTM TEMPORIZATION
        IF (TAU.GT.TimeStepStart) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
@@ -268,7 +264,6 @@ MODULE module_step
        ! epascolo USE myalloc_mpp
        IMPLICIT NONE
       integer jn,jk,ji,jj
-      double precision :: timetrczdf
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
       CALL trcadv ! tracers: advection
@@ -296,10 +291,10 @@ MODULE module_step
       ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
       ! WRITE(10002,200),'S2',jn,jk,jj,ji,tra(jk,jj,ji,jn)
       ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10002)
-      timetrczdf = MPI_WTIME()
+
       CALL trczdf ! tracers: vertical diffusion
-      timetrczdf = MPI_WTIME() - timetrczdf
-      print *,"TIME ZDF",timetrczdf
+
+
       ! OPEN(UNIT=10003, FILE='s3.txt', FORM='FORMATTED')
       ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
       ! WRITE(10003,200),'S3',jn,jk,jj,ji,tra(jk,jj,ji,jn)

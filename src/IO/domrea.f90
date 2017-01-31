@@ -695,8 +695,8 @@
 
 
       counter=0
-         do kk =1, jpk-1
-           do ii =1, jpi
+         do ii =1, jpi
+            do kk =1, jpk-1
                if (tmask(kk,jpj-1,ii).EQ.1 ) then
                    counter = counter + 1
                    NORTHpoints_send(1,counter) = ii
@@ -706,8 +706,8 @@
          enddo
       NORTH_count_send = counter
       counter=0
-         do kk =1, jpk-1
-           do ii =1, jpi
+         do ii =1, jpi
+            do kk =1, jpk-1
                if (tmask(kk,jpj,ii).EQ.1 ) then
                    counter = counter + 1
                    NORTHpoints_recv(1,counter) = ii

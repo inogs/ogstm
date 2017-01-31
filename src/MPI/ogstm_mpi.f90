@@ -213,7 +213,7 @@ END SUBROUTINE
 !!
 
 
-      IF(nbondi.ne.2) THEN
+      IF(nbondj.ne.2) THEN
          DO jw=1,NORTH_count_send
               ji = NORTHpoints_send(1,jw)
               jk = NORTHpoints_send(2,jw)
@@ -272,7 +272,7 @@ END SUBROUTINE
 
       ENDIF
 
-      IF(nbondi.eq.-1.or.nbondi.eq.0) THEN ! All but north boundary, we received from north
+      IF(nbondj.eq.-1.or.nbondj.eq.0) THEN ! All but north boundary, we received from north
 
         DO jw=1,NORTH_count_recv
               ji = NORTHpoints_recv(1,jw)

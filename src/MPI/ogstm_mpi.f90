@@ -107,12 +107,14 @@ END SUBROUTINE
 !!
 
 
-      IF(nbondi.ne.2) THEN
+      IF(nbondi.eq.0.or.nbondi.eq.1) THEN
          DO jw=1,WEST_count_send
               jj = WESTpoints_send(1,jw)
               jk = WESTpoints_send(2,jw)
              tw_send(jw) = ptab(jk,jj,2)
          ENDDO
+      ENDIF
+      IF(nbondi.eq.0.or.nbondi.eq.-1) THEN
          DO jw=1,EAST_count_send
              jj = EASTpoints_send(1,jw)
              jk = EASTpoints_send(2,jw)
@@ -213,12 +215,14 @@ END SUBROUTINE
 !!
 
 
-      IF(nbondj.ne.2) THEN
+      IF(nbondj.eq.0.or.nbondj.eq.-1) THEN
          DO jw=1,NORTH_count_send
               ji = NORTHpoints_send(1,jw)
               jk = NORTHpoints_send(2,jw)
               tn_send(jw) = ptab(jk,jpj-1,ji)
          ENDDO
+     ENDIF
+     IF(nbondj.eq.0.or.nbondj.eq.1) THEN
          DO jw=1,SOUTH_count_send
              ji = SOUTHpoints_send(1,jw)
              jk = SOUTHpoints_send(2,jw)

@@ -542,16 +542,11 @@
        s = nf90_def_var(nc,'nav_lat', nf90_double,  (/xid,yid/), idLat)
        s = nf90_def_var(nc,'nav_lev', nf90_double,  (/depid/)  , idLev)
        !s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
-      !  print *,"-----0"
-        s = nf90_def_var(nc,'TRB'//VAR, nf90_double, (/xid,yid,depid,timid/), idB)
         s = nf90_def_var(nc,'TRN'//VAR, nf90_double, (/xid,yid,depid,timid/), idN)
-        ! print *,"-----1"
         !s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00')
       
-        s = nf90_put_att(nc,idB   , 'missing_value',1.e+20)
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
-        ! print *,"-----1.5"
         s = nf90_put_var(nc, idLon,  TRANSPOSE(totglamt))
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idLat,  TRANSPOSE(totgphit))
@@ -561,19 +556,10 @@
         s = nf90_put_var(nc, idLev,     gdept)
        call handle_err1(s,counter,fileNetCDF)
 
-       ! s = nf90_put_var(nc, idTim,    julian)
-       !call handle_err1(s,counter,fileNetCDF)
-      !  print *,"-----1.8"
        allocate(copy_in(jpiglo, jpjglo, jpk))
-       call switch_index_double(tottrb,copy_in,jpiglo,jpjglo,jpk)
-      !  print *,"-----2"
-       s = nf90_put_var(nc, idB,copy_in)
-       !deallocate(copy_in)
-      !  print *,"-----3"
-       !allocate(copy_in(jpiglo, jpjglo, jpk))
+
        call switch_index_double(tottrn,copy_in,jpiglo,jpjglo,jpk)
        call handle_err1(s,counter,fileNetCDF)
-      !  print *,"-----4"
         s = nf90_put_var(nc, idN,      copy_in)
        call handle_err1(s,counter,fileNetCDF)
        deallocate(copy_in)

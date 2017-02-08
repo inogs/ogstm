@@ -143,12 +143,8 @@
                              tra_DIA(jtr,jk,jj,ji) = d(jtr) ! diagnostic
                         !      WRITE(*,200),'IO3',jk,jj,ji,jtr,tra_DIA(jk,jj,ji,jtr)
                           END DO
-                          if (sur) then
-                              DO jtr=1,jptra_dia_2d
-                                 tra_DIA_2d(jj,ji,jtr) = d2(jtr) ! diagnostic
-                              !    WRITE(*,202),'IO2',jj,ji,jtr,tra_DIA_2d(jj,ji,jtr)
-                              END DO
-                          endif
+                          if (sur) tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
+
 
                           ogstm_PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 

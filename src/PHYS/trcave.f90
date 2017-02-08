@@ -151,7 +151,7 @@
       Realcounter   =    REAL(ave_counter_2  , 8)
       Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
 
-      DO jn=1, jptra_dia
+
 
 !!!$omp parallel default(none) private(jk,jj,ji, )
 !!!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
@@ -162,14 +162,13 @@
             DO jj=1, jpj
          DO jk=1, jpk
                   IF(tmask(jk,jj,ji) .NE. 0.) THEN
-                    tra_DIA_IO(jn,jk,jj,ji )=(tra_DIA_IO(jn,jk,jj,ji )*Realcounter+ &
-     &              tra_DIA(jn,jk,jj,ji))*Realcounterp1
+                    tra_DIA_IO(:,jk,jj,ji ) = (tra_DIA_IO(:,jk,jj,ji )*Realcounter+ &
+     &              tra_DIA(:,jk,jj,ji))*Realcounterp1
                   ELSE
-                    tra_DIA_IO(jn,jk,jj,ji )=Miss_val
+                    tra_DIA_IO(:,jk,jj,ji )=Miss_val
                   ENDIF
                END DO
             END DO
-         END DO
       !ENDIF
       
 
@@ -182,20 +181,19 @@
       ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10011)
 
 !     *********************  DIAGNOSTICS 2D **********
-      DO jn=1, jptra_dia_2d
+
 
                DO ji=1, jpi
             DO jj=1, jpj
                   IF(tmask(1,jj,ji) .NE. 0.) THEN ! Warning ! Tested only for surface
-                    tra_DIA_2d_IO(jj,ji,jn)=(tra_DIA_2d_IO(jj,ji,jn)*Realcounter+ &
-     &              tra_DIA_2d(jj,ji,jn))*Realcounterp1
+                    tra_DIA_2d_IO(:,jj,ji)=(tra_DIA_2d_IO(:,jj,ji)*Realcounter+ &
+     &              tra_DIA_2d(:,jj,ji))*Realcounterp1
                   ELSE
-                    tra_DIA_2d_IO(jj,ji,jn)=Miss_val
+                    tra_DIA_2d_IO(:,jj,ji)=Miss_val
                   ENDIF
                END DO
             END DO
 
-      END DO
 
 
 
@@ -205,36 +203,31 @@
       Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
 
 
-      DO jn_high=1, jptra_dia_high
+
 
 !!!$omp parallel default(none) private(jk,jj,ji, ,jn_on_all)
 !!!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_DIA_IO_HIGH,tra_DIA,Miss_val,
 !!!$omp&   Realcounter,Realcounterp1)
 
-
-
-     
-          IF (jn_high .LE. jptra_dia_high)  then
-          IF (jn_high .LE. jptra_dia ) then
-             jn_on_all = highfreq_table_dia(jn_high )
-
+     if (jptra_dia_high.gt.0) THEN
              DO ji=1, jpi
              DO jj=1, jpj
              DO jk=1, jpk
                 IF(tmask(jk,jj,ji) .NE. 0.) THEN
-                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high )= &
-     &            (tra_DIA_IO_HIGH(jk,jj,ji,jn_high )*Realcounter+tra_DIA(jn_on_all,jk,jj,ji))*Realcounterp1 
+                DO jn_high=1, jptra_dia_high
+                   jn_on_all = highfreq_table_dia(jn_high )
+                   tra_DIA_IO_HIGH(jn_high, jk,jj,ji )= &
+     &            (tra_DIA_IO_HIGH(jn_high, jk,jj,ji )*Realcounter+tra_DIA(jn_on_all,jk,jj,ji))*Realcounterp1
+                 END DO
                 ELSE
-                   tra_DIA_IO_HIGH(jk,jj,ji,jn_high )=Miss_val
+                   tra_DIA_IO_HIGH(:, jk,jj,ji )=Miss_val
                 ENDIF
              END DO
              END DO
              END DO
-          ENDIF
-          ENDIF
-     
+     endif
 !!!$omp    end parallel
-      END DO
+
 
       ! OPEN(UNIT=10012, FILE='s12.txt', FORM='FORMATTED')
       ! DO jn=1,jptra_dia_high; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
@@ -243,21 +236,24 @@
 
 !     *********************  DIAGNOSTICS 2D **********
 
-      DO jn_high=1, jptra_dia2d_high
-             jn_on_all = highfreq_table_dia2d(jn_high)
 
+       if (jptra_dia2d_high.gt.0) THEN
              DO ji=1, jpi
              DO jj=1, jpj
                 IF(tmask(1,jj,ji) .NE. 0.) THEN
-                   tra_DIA_2d_IO_HIGH(jj,ji,jn_high)= &
-     &            (tra_DIA_2d_IO_HIGH(jj,ji,jn_high)*Realcounter+tra_DIA_2d(jj,ji,jn_on_all))*Realcounterp1
+                DO jn_high=1, jptra_dia2d_high
+                   jn_on_all = highfreq_table_dia2d(jn_high)
+                   tra_DIA_2d_IO_HIGH(jn_high,jj,ji)= &
+     &            (tra_DIA_2d_IO_HIGH(jn_high,jj,ji)*Realcounter+tra_DIA_2d(jn_on_all,jj,ji))*Realcounterp1
+                END DO
                 ELSE
-                   tra_DIA_2d_IO_HIGH(jj,ji,jn_high)=Miss_val
+                   tra_DIA_2d_IO_HIGH(:,jj,ji)=Miss_val
                 ENDIF
              END DO
              END DO
+        endif
 
-      END DO
+
       
 
       ave_partTime = MPI_WTIME() - ave_partTime

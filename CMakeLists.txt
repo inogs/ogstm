@@ -26,12 +26,13 @@ set (CMAKE_INSTALL_PREFIX ${default_prefix} CACHE STRING
 
 get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
-add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_mpp -Dkey_mpp_mpi -Dkey_trc_smolar)
+add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_trc_smolar)
 add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed )
+add_definitions(-Dkey_mpp -Dkey_mpp_mpi )
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -qopenmp  -O2 -xAVX -qopt-report5 -g -cpp -align array64byte")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -qopenmp -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces") #-qopenmp
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")

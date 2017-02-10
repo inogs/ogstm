@@ -165,6 +165,20 @@ J,I = M.nonzero()
 
 
 def neighbors(M,nproc):
+    '''
+    Generates number of neighbors ranks for each rank,
+    corresponding to nowe, noea, nono, noso in ogstm.
+
+
+    Arguments:
+    * M     * a 2d array of integers (nproci, nprocj), as provided by get_wp_matrix
+    * nproc * integer, the number of MPI ranks
+
+    This method is tested for a M waterpoint matrix associated to nproc, M should be the best choice.
+
+    Returns:
+    * WEST, EAST, NORTH, SOUTH, *   1d arrays of integers (nproc)
+    '''
     J,I = M.nonzero()
     WEST =np.zeros((nproc,),dtype=np.int)
     SOUTH=np.zeros((nproc,),dtype=np.int)
@@ -217,7 +231,18 @@ WEST, EAST, NORTH, SOUTH = neighbors(M, nproc)
 for rank in range(nproc):
     print WEST[rank],rank, EAST[rank], I[rank], J[rank]
 
-def plot_decomposition(nproci, nprocj):
+def plot_decomposition(tmask, nproci, nprocj):
+    '''
+    Plots the domain decomposition scheme
+
+    Arguments :
+    * tmask  * a 2d logical array, the surface tmask
+    * nproci * integer, number of longitudinal subdivisions
+    * nprocj * integer, number of latitudinal subdivisions
+
+    Returns:
+    fig, ax : matplotlib handles
+    '''
     M,C = get_wp_matrix(tmask, nprocj, nproci)
     J,I = M.nonzero()
 
@@ -250,7 +275,7 @@ def plot_decomposition(nproci, nprocj):
     ax.invert_yaxis()
     return fig, ax
 
-fig, ax = plot_decomposition(nproci, nprocj)
+fig, ax = plot_decomposition(tmask, nproci, nprocj)
 fig.set_dpi(150)
 
 

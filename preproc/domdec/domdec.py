@@ -7,7 +7,18 @@ tmask = TheMask.mask_at_level(0)
 jpjglo, jpiglo = tmask.shape
 
 def riparto(lenglo,nprocs):
-    ''' works in a single direction '''
+    ''' Uniform decomposition of a 1d array of size lenglo in nprocs subdomains
+        The load balancing of advection and hdf depends on that decomposition,
+        that is supposed uniform.
+
+    Arguments :
+     * lenglo * integer, longitudinal or latitudinal dimension of the global mesh
+     * nprocs * integer, the number of processors along a dimension
+    Features :
+    -  the ghost cell is taken in account
+    - subdomains a bit largers (one cell) are the last ones
+
+    Returns a numpy array of integers, called jpi or jpj in ogstm '''
     mean_value, remainder = divmod(lenglo,nprocs)
     #print "rem = ", remainder
     JP = np.ones((nprocs),np.int)*mean_value + 2
@@ -18,7 +29,15 @@ def riparto(lenglo,nprocs):
     return JP
 
 def get_startpoints(JP):
-    '''returns indexes in fortran format'''
+    '''
+    Calculates startpoints, called nimpp or njmpp in ogstm
+    IO/IOnc.f90:      start    = (/nimpp, njmpp,  1,  1/)
+
+    Argument:
+     * JP* the list of jpi (or jpj)
+
+    Returns:
+    * indexes * list of integers in fortran format'''
     startpoint=1
     startpoints=[]
     for j in JP:
@@ -31,9 +50,22 @@ def get_startpoints(JP):
 
 def get_wp_matrix(tmask, nprocj, nproci):
     '''
-    returns 
+    Generates a Waterpoint matrix over the domain decomposition obtained by
+    the number of processors in each direction
+    Arguments:
+    * tmask  * a 2d logical array, the surface tmask
+    * nprocj * integer, number of latitudinal subdivisions
+    * nproci * integer, number of longitudinal subdivisions
+
+
+    The waterpoint number is calculated on surface, in order to detect
+    land processors
+
+    Returns:
     * M * a 2d array (nprocj, nproci) of integers containing the sum of waterpoints
-    * C * 
+          useful to detect land processors
+    * C * a 2d array (nprocj, nproci) of integers containing, the sum of waterpoints on west and south boundary
+          useful to have an idea of MPI communication
     '''
     jpjglo, jpiglo = tmask.shape
     JPI = riparto(jpiglo,nproci)
@@ -62,6 +94,27 @@ def get_wp_matrix(tmask, nprocj, nproci):
 
 
 def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
+    '''
+    Calculates a set of possible decompositions for a number of nranks that approximate nproc
+    (with the limitation of maximum number of decompositions in each direction).
+    In general, there are many decompositions for nproc ranks, we need to find them and to choice the best.
+
+    Arguments:
+     * tmask      * a 2d logical array, the surface tmask
+     * max_proc_i * integer, a maximum number of longitudinal subdomains
+     * max_proc_j * integer, a maximum number of latitudinal subdomains
+     * nproc      * the number of processors effectively used
+
+    Returns:
+    * M_processes * a 2d integer array (max_proc_j,max_proc_i)
+                    M_processes[nprocj,nproci] is the number of no-land processors
+                    for a (nprocj,nproci) decomposition
+                    M_processes == nproc are the actual candidate decomposition.
+
+    * C_processes * a 2d integer array (max_proc_j,max_proc_i)
+                    C_processes[nproci,nprocj] is the MPI communication,
+                    useful to choice between candidates.
+    '''
     M_processes = np.zeros((max_proc_j,max_proc_i),np.int)
     C_processes = np.zeros((max_proc_j,max_proc_i),np.int)
     for i in range(max_proc_i):

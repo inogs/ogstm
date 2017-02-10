@@ -1,8 +1,8 @@
 import numpy as np
 from commons.mask import Mask
 import pylab as pl
-#TheMask = Mask("/Users/gbolzon/Documents/workspace/ogs_bounday_conditions/masks/meshmask.nc")
-TheMask= Mask("/gpfs/scratch/userexternal/plazzari/eas_v6/eas_v6_1/wrkdir/MODEL/meshmask.nc")
+TheMask = Mask("/Users/gbolzon/Documents/workspace/ogs_bounday_conditions/masks/meshmask.nc")
+#TheMask= Mask("/gpfs/scratch/userexternal/plazzari/eas_v6/eas_v6_1/wrkdir/MODEL/meshmask.nc")
 tmask = TheMask.mask_at_level(0)
 jpjglo, jpiglo = tmask.shape
 
@@ -134,36 +134,6 @@ def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
             Comm_table[j,i] = C.sum()
     return Needed_procs,Comm_table
         
-nproc = 128
-max_proc_i = 20
-max_proc_j = 12
-
-USED_PROCS, COMMUNICATION = candidate_decompositions(tmask, max_proc_i, max_proc_j, nproc)
-good = USED_PROCS == nproc
-J,I = good.nonzero() # poi vanno incrementati di 1
-nCandidates = len(I)
-HYP_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
-EFF_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
-for k in range(nCandidates):
-    nproci = I[k]+1
-    nprocj = J[k]+1
-    line = (nproci -1 )*jpjglo + (nprocj-1)*jpiglo
-    HYP_COMMUNICATION_LINE[k]=line
-    EFF_COMMUNICATION_LINE[k] = COMMUNICATION[J[k],I[k]]
-    JPI = riparto(jpiglo,nproci)
-    JPJ = riparto(jpjglo,nprocj)
-    print (JPI.mean()==JPI[0]) , (JPJ.mean()==JPJ[0]) 
-
-
-print I+1,J+1, EFF_COMMUNICATION_LINE
-
-choosen = EFF_COMMUNICATION_LINE.argmin()
-nproci  = I[choosen]+1
-nprocj  = J[choosen]+1
-M,C = get_wp_matrix(tmask, nprocj, nproci)
-J,I = M.nonzero()
-
-
 def neighbors(M,nproc):
     '''
     Generates number of neighbors ranks for each rank,
@@ -226,10 +196,7 @@ def neighbors(M,nproc):
         
         return WEST, EAST, NORTH, SOUTH
     
-WEST, EAST, NORTH, SOUTH = neighbors(M, nproc)
 
-for rank in range(nproc):
-    print WEST[rank],rank, EAST[rank], I[rank], J[rank]
 
 def plot_decomposition(tmask, nproci, nprocj):
     '''
@@ -275,6 +242,39 @@ def plot_decomposition(tmask, nproci, nprocj):
     ax.invert_yaxis()
     return fig, ax
 
+nproc = 128
+max_proc_i = 30
+max_proc_j = 16
+
+USED_PROCS, COMMUNICATION = candidate_decompositions(tmask, max_proc_i, max_proc_j, nproc)
+good = USED_PROCS == nproc
+J,I = good.nonzero() # poi vanno incrementati di 1
+nCandidates = len(I)
+HYP_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
+EFF_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
+for k in range(nCandidates):
+    nproci = I[k]+1
+    nprocj = J[k]+1
+    line = (nproci -1 )*jpjglo + (nprocj-1)*jpiglo
+    HYP_COMMUNICATION_LINE[k]=line
+    EFF_COMMUNICATION_LINE[k] = COMMUNICATION[J[k],I[k]]
+    JPI = riparto(jpiglo,nproci)
+    JPJ = riparto(jpjglo,nprocj)
+    print (JPI.mean()==JPI[0]) , (JPJ.mean()==JPJ[0]) 
+
+
+print I+1,J+1, EFF_COMMUNICATION_LINE
+
+choosen = EFF_COMMUNICATION_LINE.argmin()
+nproci  = I[choosen]+1
+nprocj  = J[choosen]+1
+M,C = get_wp_matrix(tmask, nprocj, nproci)
+J,I = M.nonzero()
+
+WEST, EAST, NORTH, SOUTH = neighbors(M, nproc)
+
+for rank in range(nproc):
+    print WEST[rank],rank, EAST[rank], I[rank], J[rank]
 fig, ax = plot_decomposition(tmask, nproci, nprocj)
 fig.set_dpi(150)
 

@@ -132,6 +132,10 @@ def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
             M,C = get_wp_matrix(tmask, nprocj, nproci)
             Needed_procs[j,i] = (M>0).sum()
             Comm_table[j,i] = C.sum()
+    good = Needed_procs == nproc
+    if good.sum()==0:
+        print "No valid candidate have been found. Try modify max_proc_i and/or max_proc_j."
+        raise ValueError
     return Needed_procs,Comm_table
         
 def neighbors(M,nproc):
@@ -242,41 +246,88 @@ def plot_decomposition(tmask, nproci, nprocj):
     ax.invert_yaxis()
     return fig, ax
 
+
+
+def get_best_decomposition(USED_PROCS, COMMUNICATION, nproc):
+    '''
+    Choose of best decomposition on the basis of:
+     - fit with the
+     - minor MPI communication
+    Arguments:
+    * USED_PROCS    * output of  candidate_decomposition()
+    * COMMUNICATION * idem
+    * nproc         * effective number of MPI ranks used in simulation
+
+    Returns:
+     * nproci, nprocj * integers
+    '''
+    good = USED_PROCS == nproc
+
+    J,I = good.nonzero() # poi vanno incrementati di 1
+    nCandidates = len(I)
+    print "There are ", nCandidates, "candidate decompositions"
+    print "nproci, nprocj, COMM, perfect decomposition i, perfect decomposition j"
+    HYP_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
+    EFF_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
+
+    for k in range(nCandidates):
+        nproci = I[k]+1
+        nprocj = J[k]+1
+        line = (nproci -1 )*jpjglo + (nprocj-1)*jpiglo
+        HYP_COMMUNICATION_LINE[k]=line
+        EFF_COMMUNICATION_LINE[k] = COMMUNICATION[J[k],I[k]]
+        JPI = riparto(jpiglo,nproci)
+        JPJ = riparto(jpjglo,nprocj)
+        print nproci,nprocj, EFF_COMMUNICATION_LINE[k],  (JPI.mean()==JPI[0]), (JPJ.mean()==JPJ[0])
+    choosen = EFF_COMMUNICATION_LINE.argmin()
+    nproci  = I[choosen]+1
+    nprocj  = J[choosen]+1
+    return nproci, nprocj
+
+
+def waterpoints_3d(maskobj, nprocj, nproci):
+    '''
+    Info about load balance of BFM calls
+    '''
+    jpjglo, jpiglo = tmask.shape
+    JPI = riparto(jpiglo,nproci)
+    Start_I = get_startpoints(JPI)
+    End_I = Start_I + JPI -1
+
+    JPJ = riparto(jpjglo,nprocj)
+    Start_J = get_startpoints(JPJ)
+    End_J = Start_J + JPJ -1
+
+    M = np.zeros((nprocj, nproci),dtype=np.int32)
+
+    for i in range(nproci):
+        for j in range(nprocj):
+            start_i = Start_I[i] -1
+            end_i   = End_I[i] -1
+            start_j = Start_J[j] -1
+            end_j   = End_J[j] -1
+            #print start_i, end_i, start_j, end_j
+            m = maskobj.mask[:,start_j:end_j, start_i:end_i]
+            M[j,i] = m.sum()
+    return M
+
+
+
+
 nproc = 128
 max_proc_i = 30
 max_proc_j = 16
 
 USED_PROCS, COMMUNICATION = candidate_decompositions(tmask, max_proc_i, max_proc_j, nproc)
-good = USED_PROCS == nproc
-J,I = good.nonzero() # poi vanno incrementati di 1
-nCandidates = len(I)
-HYP_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
-EFF_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
-for k in range(nCandidates):
-    nproci = I[k]+1
-    nprocj = J[k]+1
-    line = (nproci -1 )*jpjglo + (nprocj-1)*jpiglo
-    HYP_COMMUNICATION_LINE[k]=line
-    EFF_COMMUNICATION_LINE[k] = COMMUNICATION[J[k],I[k]]
-    JPI = riparto(jpiglo,nproci)
-    JPJ = riparto(jpjglo,nprocj)
-    print (JPI.mean()==JPI[0]) , (JPJ.mean()==JPJ[0]) 
 
+nproci, nprocj =  get_best_decomposition(USED_PROCS, COMMUNICATION, nproc)
 
-print I+1,J+1, EFF_COMMUNICATION_LINE
-
-choosen = EFF_COMMUNICATION_LINE.argmin()
-nproci  = I[choosen]+1
-nprocj  = J[choosen]+1
 M,C = get_wp_matrix(tmask, nprocj, nproci)
 J,I = M.nonzero()
 
 WEST, EAST, NORTH, SOUTH = neighbors(M, nproc)
+#for rank in range(nproc): print WEST[rank],rank, EAST[rank], I[rank], J[rank]
 
-for rank in range(nproc):
-    print WEST[rank],rank, EAST[rank], I[rank], J[rank]
 fig, ax = plot_decomposition(tmask, nproci, nprocj)
 fig.set_dpi(150)
 
-
-        

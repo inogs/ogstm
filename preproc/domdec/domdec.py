@@ -106,17 +106,17 @@ def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
      * nproc      * the number of processors effectively used
 
     Returns:
-    * M_processes * a 2d integer array (max_proc_j,max_proc_i)
-                    M_processes[nprocj,nproci] is the number of no-land processors
+    * Needed_procs * a 2d integer array (max_proc_j,max_proc_i)
+                    Needed_procs[nprocj,nproci] is the number of no-land processors
                     for a (nprocj,nproci) decomposition
-                    M_processes == nproc are the actual candidate decomposition.
+                    Needed_procs == nproc are the actual candidate decomposition.
 
-    * C_processes * a 2d integer array (max_proc_j,max_proc_i)
-                    C_processes[nproci,nprocj] is the MPI communication,
+    * Comm_table * a 2d integer array (max_proc_j,max_proc_i)
+                    Comm_table[nproci,nprocj] is the MPI communication,
                     useful to choice between candidates.
     '''
-    M_processes = np.zeros((max_proc_j,max_proc_i),np.int)
-    C_processes = np.zeros((max_proc_j,max_proc_i),np.int)
+    Needed_procs = np.zeros((max_proc_j,max_proc_i),np.int)
+    Comm_table = np.zeros((max_proc_j,max_proc_i),np.int)
     for i in range(max_proc_i):
         nproci = i+1
         for j in range(max_proc_j):
@@ -124,9 +124,9 @@ def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
             if (nproci * nprocj < nproc)   : continue
             if (nproci * nprocj > nproc*3 ): continue
             M,C = get_wp_matrix(tmask, nprocj, nproci)
-            M_processes[j,i] = (M>0).sum()
-            C_processes[j,i] = C.sum()
-    return M_processes,C_processes
+            Needed_procs[j,i] = (M>0).sum()
+            Comm_table[j,i] = C.sum()
+    return Needed_procs,Comm_table
         
 nproc = 128
 max_proc_i = 20

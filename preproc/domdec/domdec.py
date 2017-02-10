@@ -95,25 +95,31 @@ def get_wp_matrix(tmask, nprocj, nproci):
 
 def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
     '''
-    Calculates a set of possible decompositions for a number of nranks that approximate nproc
-    (with the limitation of maximum number of decompositions in each direction).
-    In general, there are many decompositions for nproc ranks, we need to find them and to choice the best.
+    Calculates the number of needed ranks for all the possible decompositions
+    we can generate by fixing the maximum number of decompositions in each direction.
+    A decomposition is considered candidate if nproc < nproci*nprocj < nproc*3
+
+    In general, there are many decompositions for nproc ranks, so we need
+     - to find them
+     - then to choice the best.
 
     Arguments:
      * tmask      * a 2d logical array, the surface tmask
      * max_proc_i * integer, a maximum number of longitudinal subdomains
      * max_proc_j * integer, a maximum number of latitudinal subdomains
-     * nproc      * the number of processors effectively used
+     * nproc      * the number of processors effectively used in simulation
+
 
     Returns:
     * Needed_procs * a 2d integer array (max_proc_j,max_proc_i)
                     Needed_procs[nprocj,nproci] is the number of no-land processors
                     for a (nprocj,nproci) decomposition
-                    Needed_procs == nproc are the actual candidate decomposition.
+                    Needed_procs == nproc will be the next step candidate decomposition.
 
     * Comm_table * a 2d integer array (max_proc_j,max_proc_i)
                     Comm_table[nproci,nprocj] is the MPI communication,
                     useful to choice between candidates.
+
     '''
     Needed_procs = np.zeros((max_proc_j,max_proc_i),np.int)
     Comm_table = np.zeros((max_proc_j,max_proc_i),np.int)

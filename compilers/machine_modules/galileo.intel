@@ -1,0 +1,7 @@
+module purge
+module load profile/advanced
+module load autoload
+module load intel
+module load intelmpi
+module load netcdff
+module load cmake/3.7.1

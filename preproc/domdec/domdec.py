@@ -151,13 +151,15 @@ def neighbors(M,nproc):
     This method is tested for a M waterpoint matrix associated to nproc, M should be the best choice.
 
     Returns:
-    * WEST, EAST, NORTH, SOUTH, *   1d arrays of integers (nproc)
+    * WEST, EAST, NORTH, SOUTH, NBONDI, NBONDJ *   1d arrays of integers (nproc)
     '''
     J,I = M.nonzero()
     WEST =np.zeros((nproc,),dtype=np.int)
     SOUTH=np.zeros((nproc,),dtype=np.int)
     EAST =np.zeros((nproc,),dtype=np.int)
     NORTH=np.zeros((nproc,),dtype=np.int)
+    NBONDI=np.zeros((nproc,),dtype=np.int)
+    NBONDJ=np.zeros((nproc,),dtype=np.int)
     
     for rank in range(nproc):
         j = J[rank]
@@ -192,13 +194,24 @@ def neighbors(M,nproc):
                 north = np.argwhere((J == j+1) & ( I == i))[0][0]
             else:
                 north = -1
-    
-        WEST[rank] = west
-        SOUTH[rank] = south
-        EAST[rank] = east
-        NORTH[rank] = north
         
-        return WEST, EAST, NORTH, SOUTH
+        nbondi=2
+        if (east>  -1) & (west>  -1) : nbondi= 0
+        if (east== -1) & (west>  -1) : nbondi= 1
+        if (east>  -1) & (west== -1) : nbondi=-1
+        nbondj=2
+        if (south>  -1) & (north>  -1) : nbondj= 0
+        if (south>  -1) & (north== -1) : nbondj= 1
+        if (south== -1) & (north>  -1) : nbondj=-1
+
+
+        NBONDI[rank] = nbondi
+        NBONDJ[rank] = nbondj
+        WEST[  rank] = west
+        SOUTH[ rank] = south
+        EAST[  rank] = east
+        NORTH[ rank] = north
+    return WEST, EAST, NORTH, SOUTH,NBONDI, NBONDJ
     
 
 
@@ -324,10 +337,24 @@ nproci, nprocj =  get_best_decomposition(USED_PROCS, COMMUNICATION, nproc)
 
 M,C = get_wp_matrix(tmask, nprocj, nproci)
 J,I = M.nonzero()
+JPI = riparto(jpiglo,nproci)
+JPJ = riparto(jpjglo,nprocj)
+Start_I = get_startpoints(JPI) #nimpp
+Start_J = get_startpoints(JPJ) #njmpp
 
-WEST, EAST, NORTH, SOUTH = neighbors(M, nproc)
+
+
+WEST, EAST, NORTH, SOUTH, NBONDI,NBONDJ = neighbors(M, nproc)
 #for rank in range(nproc): print WEST[rank],rank, EAST[rank], I[rank], J[rank]
+for rank in range(nproc):
+    i = I[rank]
+    j = J[rank]
+    jpi = JPI[i]
+    jpj = JPJ[j]
+    nimpp = Start_I[i]
+    njmpp = Start_J[j]
+    print rank,i,j, jpi, jpj, nimpp, njmpp, NBONDI[rank], NBONDJ[rank]
 
-fig, ax = plot_decomposition(tmask, nproci, nprocj)
-fig.set_dpi(150)
+#fig, ax = plot_decomposition(tmask, nproci, nprocj)
+#fig.set_dpi(150)
 

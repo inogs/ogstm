@@ -345,7 +345,8 @@ Start_J = get_startpoints(JPJ) #njmpp
 
 
 WEST, EAST, NORTH, SOUTH, NBONDI,NBONDJ = neighbors(M, nproc)
-#for rank in range(nproc): print WEST[rank],rank, EAST[rank], I[rank], J[rank]
+
+OUT = np.zeros((nproc,13), dtype=np.int32)
 for rank in range(nproc):
     i = I[rank]
     j = J[rank]
@@ -353,8 +354,21 @@ for rank in range(nproc):
     jpj = JPJ[j]
     nimpp = Start_I[i]
     njmpp = Start_J[j]
-    print rank,i,j, jpi, jpj, nimpp, njmpp, NBONDI[rank], NBONDJ[rank]
+    OUT[rank, 0] = rank
+    OUT[rank, 1] = i
+    OUT[rank, 2] = j
+    OUT[rank, 3] = jpi
+    OUT[rank, 4] = jpj
+    OUT[rank, 5] = nimpp
+    OUT[rank, 6] = njmpp
+    OUT[rank, 7] = NBONDI[rank]
+    OUT[rank, 8] = NBONDJ[rank]
+    OUT[rank, 9] = WEST[rank]
+    OUT[rank,10] = EAST[rank]
+    OUT[rank,11] = NORTH[rank]
+    OUT[rank,12] = SOUTH[rank]
+
 
 #fig, ax = plot_decomposition(tmask, nproci, nprocj)
 #fig.set_dpi(150)
-
+np.savetxt('domdec.txt', OUT, fmt=13*"%5d")

@@ -120,7 +120,7 @@
 
 
          !   print *,"val ",dimen_jvhdf1
-       IF (dimen_jvhdf1 .EQ. 0) THEN
+       IF (.not.hdf_initialized ) THEN
 
         
         !    print *,"ENTRATO val ",dimen_jvhdf1
@@ -181,6 +181,7 @@
               END DO
            END DO
 
+        hdf_initialized=.true.
         ENDIF
 
      

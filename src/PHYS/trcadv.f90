@@ -84,7 +84,7 @@
 
       MPI_CHECK = .FALSE.
 
-      if(allpoints .EQ. 0) then  ! INIT phase
+      if(.not.adv_initialized ) then  ! INIT phase
 
         
         
@@ -271,6 +271,7 @@
             END DO
          END DO
 
+      adv_initialized=.true.
       endif 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end initialization phase

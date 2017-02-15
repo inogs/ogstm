@@ -80,6 +80,8 @@
 !! ... initialization of the profile
 !!
 !!   ... ahts, ahtf: surface and bottom values
+       hdf_initialized = .false.
+       adv_initialized = .true.
        zahts = aht0
        zahtf = aht0/2.
 !!! 

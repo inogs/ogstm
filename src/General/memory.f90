@@ -317,6 +317,7 @@
       INTEGER ncor
       double precision ndttrc
       LOGICAL lhdf
+      LOGICAL hdf_initialized, adv_initialized 
 
 
 !      isopycnal sheme for passive tracers

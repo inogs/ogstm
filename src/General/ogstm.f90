@@ -108,7 +108,7 @@ SUBROUTINE ogstm_initialize()
           WRITE(numout,*) ' '
       ENDIF
 
-      call parini()
+      call parini2
 
       call parlec      ! read namelist.init
       call time_init
@@ -126,7 +126,7 @@ SUBROUTINE ogstm_initialize()
 ! 1. Model general initialization
 ! ===============================
 
-      call inimpp
+      !call inimpp
 
       call domrea        !   Domain
 

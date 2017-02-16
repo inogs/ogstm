@@ -427,9 +427,9 @@ subroutine alloc_tot()
 #endif
      
 
-      ncpu = 1
-      nimpp=1
-      njmpp=1
+!      ncpu = 1
+!      nimpp=1
+!      njmpp=1
 
       allocate(mindi(jpi))    
       mindi  = huge(mindi(1))

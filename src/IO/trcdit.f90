@@ -25,7 +25,7 @@
 ! ==================
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
       INTEGER, INTENT(IN) :: FREQ_GROUP ! 1 = HIGH FREQ, 2 = LOW FREQ
-
+      double precision ::  Miss_val =1.e20
 
       INTEGER jk,jj,ji, jn, jn_high,i,j,k
       INTEGER ind, i_contribution, j_contribution
@@ -64,7 +64,7 @@
        ave_counter=ave_counter_2 
        DIR='AVE_FREQ_2/'
       END SELECT
-
+      tottrnIO = Miss_val
 !  Ghost Shells - Manual s Indexes-
 
       DO jn=1,jptra ! DO LABEL 5

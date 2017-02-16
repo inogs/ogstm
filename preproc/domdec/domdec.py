@@ -9,15 +9,15 @@ def argument():
 
 
     parser.add_argument(   '--mpiprocs','-n',
-                                type = str,
+                                type = int,
                                 required = True,
                                 help = 'number of MPI ranks of ogstm simulation')
     parser.add_argument(   '--max_proc_i','-i',
-                                type = str,
+                                type = int,
                                 required = True,
                                 help = 'Maximum number of subdivision along i')
     parser.add_argument(   '--max_proc_j','-j',
-                                type = str,
+                                type = int,
                                 required = True,
                                 help = 'Maximum number of subdivision along j')
 

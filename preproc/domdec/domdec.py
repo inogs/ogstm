@@ -1,8 +1,44 @@
+import argparse
+
+def argument():
+    parser = argparse.ArgumentParser(description = '''
+    Creates domdec.txt file for ogstm-bfm model, a file containing
+    this line for each rank:
+    rank i_pos j_pos jpi jpj nimpp njmpp nbondi nbondj west east north south neighbors
+    ''', formatter_class=argparse.RawTextHelpFormatter)
+
+
+    parser.add_argument(   '--mpiprocs','-n',
+                                type = str,
+                                required = True,
+                                help = 'number of MPI ranks of ogstm simulation')
+    parser.add_argument(   '--max_proc_i','-i',
+                                type = str,
+                                required = True,
+                                help = 'Maximum number of subdivision along i')
+    parser.add_argument(   '--max_proc_j','-j',
+                                type = str,
+                                required = True,
+                                help = 'Maximum number of subdivision along j')
+
+    parser.add_argument(   '--maskfile', '-m',
+                                type = str,
+                                default = None,
+                                required = True,
+                                help = ''' Path of maskfile''')
+
+
+    return parser.parse_args()
+
+args = argument()
+nproc = args.mpiprocs
+max_proc_i = args.max_proc_i
+max_proc_j = args.max_proc_j
+
 import numpy as np
 from commons.mask import Mask
 import pylab as pl
-TheMask = Mask("/Users/gbolzon/Documents/workspace/ogs_bounday_conditions/masks/meshmask.nc")
-#TheMask= Mask("/gpfs/scratch/userexternal/plazzari/eas_v6/eas_v6_1/wrkdir/MODEL/meshmask.nc")
+TheMask = Mask(args.maskfile)
 tmask = TheMask.mask_at_level(0)
 jpjglo, jpiglo = tmask.shape
 
@@ -327,9 +363,7 @@ def waterpoints_3d(maskobj, nprocj, nproci):
 
 
 
-nproc = 128
-max_proc_i = 30
-max_proc_j = 16
+
 
 USED_PROCS, COMMUNICATION = candidate_decompositions(tmask, max_proc_i, max_proc_j, nproc)
 

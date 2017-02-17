@@ -265,6 +265,7 @@ def plot_decomposition(tmask, nproci, nprocj):
     '''
     M,C = get_wp_matrix(tmask, nprocj, nproci)
     J,I = M.nonzero()
+    nproc = len(I)
 
     JPI = riparto(jpiglo,nproci)
     Start_I = get_startpoints(JPI)
@@ -417,6 +418,8 @@ for rank in range(choosen_procs):
     OUT[rank,12] = SOUTH[rank]
 
 
-#fig, ax = plot_decomposition(tmask, nproci, nprocj)
-#fig.set_dpi(150)
+fig, ax = plot_decomposition(tmask, nproci, nprocj)
+fig.set_dpi(150)
+outfile='domdec_' + str(choosen_procs) + ".png"
+fig.savefig(outfile)
 np.savetxt('domdec.txt', OUT, fmt=13*"%5d")

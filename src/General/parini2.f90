@@ -17,6 +17,7 @@
 ! local declarations
 ! ==================
       INTEGER ji,jj,nn
+      INTEGER nproci, nprocj
       integer, allocatable, dimension(:,:) :: domdec
 
       call COUNTLINE ('domdec.txt', nn)
@@ -38,7 +39,11 @@
 !        write(*,'(13I3)') domdec(ji,:)
 !        enddo
 !        endif
+        nproci = maxval(domdec(:,2))+1
+        nprocj = maxval(domdec(:,3))+1
 
+        ji     = domdec(narea, 2)+1
+        jj     = domdec(narea, 3)+1
         jpi    = domdec(narea, 4)
         jpj    = domdec(narea, 5)
         nimpp  = domdec(narea, 6)
@@ -58,12 +63,12 @@
         nlcj = jpj
         nldi= 1  +jpreci
         nlei=nlci-jpreci
-        IF(nbondi.eq.-1.or.nbondi.eq.2) nldi=1
-        IF(nbondi.eq. 1.or.nbondi.eq.2) nlei=nlci
+        IF(ji.eq.1) nldi=1 ! western boundary without ghost cell
+        IF(ji.eq.nproci) nlei=nlci
         nldj= 1  +jprecj
         nlej=nlcj-jprecj
-        IF(nbondj.eq.-1.or.nbondj.eq.2) nldj=1
-        IF(nbondj.eq. 1.or.nbondj.eq.2) nlej=nlcj
+        IF(jj.eq.1) nldj=1 ! south boundary without ghost cell
+        IF(jj.eq.nprocj) nlej=nlcj
 ! ------------------------------------------------
       IF(lwp) THEN
       WRITE(numout,*) ' '

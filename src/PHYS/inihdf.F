@@ -81,7 +81,7 @@
 !!
 !!   ... ahts, ahtf: surface and bottom values
        hdf_initialized = .false.
-       adv_initialized = .true.
+       adv_initialized = .false.
        zahts = aht0
        zahtf = aht0/2.
 !!! 

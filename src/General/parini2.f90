@@ -69,6 +69,7 @@
         nlej=nlcj-jprecj
         IF(jj.eq.1) nldj=1 ! south boundary without ghost cell
         IF(jj.eq.nprocj) nlej=nlcj
+        nperio=0
 ! ------------------------------------------------
       IF(lwp) THEN
       WRITE(numout,*) ' '

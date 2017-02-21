@@ -170,9 +170,9 @@
 
 ! !! 0. Initialization of metric arrays (for z- or s-coordinates)
 ! !! ----------------------------------
-                DO ji = 1, jpim1
-              DO jj = 1, jpjm1
-           DO jk=1,jpkm1
+                DO ji = 1, jpi
+              DO jj = 1, jpj
+           DO jk=1,jpk
 ! !!   ... z-coordinates, no vertical scale factors
                    zbtr(jk,jj,ji) = 1. / ( e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji) )
                    zeeu(jk,jj,ji) = e2u(jj,ji)*e3u(jk,jj,ji) / e1u(jj,ji) * umask(jk,jj,ji)

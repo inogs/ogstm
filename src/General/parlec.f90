@@ -34,10 +34,9 @@
 
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux
+      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,lrivers,lbfm, latmosph, ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux
       NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG
 
-      NAMELIST/MPI_config/threads_pack_size
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 
@@ -150,6 +149,9 @@
           WRITE(numout,*) ' ncor number of corrective phase                   = ', ncor
           WRITE(numout,*) ' ndttrc time step freq. for pass. trac.            = ', ndttrc
           WRITE(numout,*) ' lhdf  calls or not trchdf                         = ', lhdf
+          WRITE(numout,*) ' activation of rivers                              = ', lrivers
+          WRITE(numout,*) ' activation atmospheric deposition                 = ', latmosh
+          WRITE(numout,*) ' activation of bfm                                 = ', lbfm
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat
           WRITE(numout,*) ' horizontal eddy diffus. for passive tr            = ', ahtrc0
@@ -191,21 +193,6 @@
                endif
           endif
       endif
-
-
-! ... Namelist :MPI_config
-!     Deafault value
-     threads_pack_size = 1
-
-      REWIND( numnam )
-      READ  ( numnam, MPI_config )
-
-      IF(lwp) THEN
-      WRITE(numout,*) 'MPI_config'
-      WRITE(numout,*) ' '
-      WRITE(numout,*) 'threads_pack_size  :size of mpi packet -->  ',threads_pack_size
-      WRITE(numout,*) ' '
-      ENDIF
 
 
 

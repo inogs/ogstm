@@ -51,8 +51,6 @@
 
 #ifdef __OPENMP1
       ntids = omp_get_max_threads() ! take the number of threads
-#else
-      ntids =threads_pack_size
 #endif
 
        allocate(advmask(jpk,jpj,jpi))       

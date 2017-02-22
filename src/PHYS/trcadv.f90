@@ -70,7 +70,6 @@
 !!
       LOGICAL :: MPI_CHECK,l1,l2,l3
       INTEGER :: jk,jj,ji,jt,jn,jf,ju
-      INTEGER :: jp,pack_size
       double precision :: zbtr,zdt
       double precision :: junk, junki, junkj, junkk
       double precision :: timer

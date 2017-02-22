@@ -35,7 +35,6 @@
 
       INTEGER, PARAMETER :: nizoom=1,  njzoom=1
       INTEGER :: mpi_glcomm_size,myrank
-      INTEGER  ::threads_pack_size=18
       INTEGER nimpp,njmpp
       INTEGER nperio, narea, nlci, nlcj
       INTEGER nbondi, nbondj, nproc, noea, nowe, noso, nono
@@ -337,6 +336,10 @@
 #    if defined key_trc_dmp 
       INTEGER(4), allocatable ::  idxt(:,:,:),idxt2glo(:,:,:,:)
 #    endif
+
+      LOGICAL lrivers   ! activates rivers
+      LOGICAL lbfm      ! activates bfm model
+      LOGICAL latmosph  ! activates atmospheric deposition
 
 
 !!    Photoperiod formulation

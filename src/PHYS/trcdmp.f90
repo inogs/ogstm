@@ -24,7 +24,6 @@
 
 
        USE myalloc
-       ! epascolo USE myalloc_mpp
        USE BC_mem
        use mpi
        IMPLICIT NONE
@@ -39,27 +38,12 @@
       INTEGER :: shift
       double precision :: ztra
 
-!       INTEGER :: mytid, ntids
-! #ifdef __OPENMP1
-!       INTEGER ::  omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-!       EXTERNAL :: omp_get_thread_num, omp_get_num_threads, omp_get_max_threads
-! #endif
-
-! #ifdef __OPENMP1
-!       ntids = omp_get_max_threads() ! take the number of threads
-!       mytid = -1000000
-! #else
-!       ntids = 1
-!       mytid = 0
-! #endif
 
 
       trcdmpparttime = MPI_WTIME() ! cronometer-start
 
 
 ! Boundary conditions fo Gib area
-!!!$omp   parallel default(none) private(mytid,jk,jj,ji,ztra,jv,tra_idx)
-!!!$omp&                         shared(jn,tra,trb,gib, Gsize, gib_ridxt,restotr,tra_matrix_gib,jn_gib)
 
        IF (Gsize .NE. 0) THEN
          DO jn=1, jn_gib
@@ -76,9 +60,8 @@
 
 
 ! Boundary conditions for rivers
-!!!$omp   parallel default(none) private(mytid,jk,jj,ji,jv,tra_idx,shift)
-!!!$omp&                         shared(jn,tra, riv,Rsize, riv_ridxt,tra_matrix_riv,jn_riv,tra_DIA)
 
+       if ( lrivers ) THEN
        IF (Rsize .NE. 0) THEN
          DO jn=1, jn_riv
           tra_idx=tra_matrix_riv(jn)
@@ -92,13 +75,13 @@
           ENDDO
          ENDDO
        ENDIF
+       ENDIF
 
 
 ! Boundary conditions for Atmosphere
-!!!$omp   parallel default(none) private(mytid,jk,jj,ji,jv,tra_idx,shift)
-!!!$omp&                         shared(jn,tra,atm,Asize, atm_ridxt,tra_matrix_atm,jn_atm,tra_DIA)
 
-       IF (Asize .NE. 0) THEN
+
+       IF ( latmosph ) THEN
         DO jn=1, jn_atm
              tra_idx=tra_matrix_atm(jn)
           DO ji=1,jpi
@@ -113,7 +96,7 @@
 
 
 
-       trcdmpparttime = MPI_WTIME() - trcdmpparttime ! cronometer-stop
+       trcdmpparttime = MPI_WTIME() - trcdmpparttime
        trcdmptottime  = trcdmptottime + trcdmpparttime
 
 

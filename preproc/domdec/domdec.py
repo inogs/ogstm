@@ -340,7 +340,7 @@ def waterpoints_3d(maskobj, nprocj, nproci):
     return M
 
 
-def dump_outfile(tmask, choosen_procs,nproci, nprocj):
+def dump_outfile(tmask, choosen_procs,nproci, nprocj, filename="domdec.txt"):
     jpjglo, jpiglo = tmask.shape
     M,C = get_wp_matrix(tmask, nprocj, nproci)
     J,I = M.nonzero()
@@ -374,5 +374,5 @@ def dump_outfile(tmask, choosen_procs,nproci, nprocj):
         OUT[rank,10] = EAST[rank]
         OUT[rank,11] = NORTH[rank]
         OUT[rank,12] = SOUTH[rank]
-    np.savetxt('domdec.txt', OUT, fmt=13*"%5d")
+    np.savetxt(filename, OUT, fmt=13*"%5d")
 

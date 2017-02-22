@@ -1,46 +1,5 @@
-import argparse
-
-def argument():
-    parser = argparse.ArgumentParser(description = '''
-    Creates domdec.txt file for ogstm-bfm model, a file containing
-    this line for each rank:
-    rank i_pos j_pos jpi jpj nimpp njmpp nbondi nbondj west east north south neighbors
-    ''', formatter_class=argparse.RawTextHelpFormatter)
-
-
-    parser.add_argument(   '--mpiprocs','-n',
-                                type = int,
-                                required = True,
-                                help = 'number of MPI ranks of ogstm simulation')
-    parser.add_argument(   '--max_proc_i','-i',
-                                type = int,
-                                required = True,
-                                help = 'Maximum number of subdivision along i')
-    parser.add_argument(   '--max_proc_j','-j',
-                                type = int,
-                                required = True,
-                                help = 'Maximum number of subdivision along j')
-
-    parser.add_argument(   '--maskfile', '-m',
-                                type = str,
-                                default = None,
-                                required = True,
-                                help = ''' Path of maskfile''')
-
-
-    return parser.parse_args()
-
-args = argument()
-nproc = args.mpiprocs
-max_proc_i = args.max_proc_i
-max_proc_j = args.max_proc_j
-
 import numpy as np
-from commons.mask import Mask
 import pylab as pl
-TheMask = Mask(args.maskfile)
-tmask = TheMask.mask_at_level(0)
-jpjglo, jpiglo = tmask.shape
 
 def riparto(lenglo,nprocs):
     ''' Uniform decomposition of a 1d array of size lenglo in nprocs subdomains
@@ -174,7 +133,7 @@ def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
         raise ValueError
     return Needed_procs,Comm_table
         
-def neighbors(M,nproc):
+def neighbors(M,nproc,nproci,nprocj):
     '''
     Generates number of neighbors ranks for each rank,
     corresponding to nowe, noea, nono, noso in ogstm.
@@ -183,6 +142,8 @@ def neighbors(M,nproc):
     Arguments:
     * M     * a 2d array of integers (nproci, nprocj), as provided by get_wp_matrix
     * nproc * integer, the number of MPI ranks
+    * nproci* integer, subdivisions along i
+    * nprocj* integer, subdivisions along j
 
     This method is tested for a M waterpoint matrix associated to nproc, M should be the best choice.
 
@@ -263,6 +224,7 @@ def plot_decomposition(tmask, nproci, nprocj):
     Returns:
     fig, ax : matplotlib handles
     '''
+    jpjglo, jpiglo = tmask.shape
     M,C = get_wp_matrix(tmask, nprocj, nproci)
     J,I = M.nonzero()
     nproc = len(I)
@@ -298,7 +260,7 @@ def plot_decomposition(tmask, nproci, nprocj):
 
 
 
-def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc):
+def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo):
     '''
     Choose of best decomposition on the basis of:
      - fit with the
@@ -307,6 +269,8 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc):
     * USED_PROCS    * output of  candidate_decomposition()
     * COMMUNICATION * idem
     * nproc         * effective number of MPI ranks used in simulation
+    * jpiglo        * integer, global domain size
+    * jpjglo        * integer, global domain size
 
     Returns:
      * nproci, nprocj * integers
@@ -376,50 +340,39 @@ def waterpoints_3d(maskobj, nprocj, nproci):
     return M
 
 
+def dump_outfile(tmask, choosen_procs,nproci, nprocj):
+    jpjglo, jpiglo = tmask.shape
+    M,C = get_wp_matrix(tmask, nprocj, nproci)
+    J,I = M.nonzero()
+    JPI = riparto(jpiglo,nproci)
+    JPJ = riparto(jpjglo,nprocj)
+    Start_I = get_startpoints(JPI) #nimpp
+    Start_J = get_startpoints(JPJ) #njmpp
+    
+    
+    
+    WEST, EAST, NORTH, SOUTH, NBONDI,NBONDJ = neighbors(M, choosen_procs,nproci, nprocj)
+    
+    OUT = np.zeros((choosen_procs,13), dtype=np.int32)
+    for rank in range(choosen_procs):
+        i = I[rank]
+        j = J[rank]
+        jpi = JPI[i]
+        jpj = JPJ[j]
+        nimpp = Start_I[i]
+        njmpp = Start_J[j]
+        OUT[rank, 0] = rank
+        OUT[rank, 1] = i
+        OUT[rank, 2] = j
+        OUT[rank, 3] = jpi
+        OUT[rank, 4] = jpj
+        OUT[rank, 5] = nimpp
+        OUT[rank, 6] = njmpp
+        OUT[rank, 7] = NBONDI[rank]
+        OUT[rank, 8] = NBONDJ[rank]
+        OUT[rank, 9] = WEST[rank]
+        OUT[rank,10] = EAST[rank]
+        OUT[rank,11] = NORTH[rank]
+        OUT[rank,12] = SOUTH[rank]
+    np.savetxt('domdec.txt', OUT, fmt=13*"%5d")
 
-
-
-
-USED_PROCS, COMMUNICATION = candidate_decompositions(tmask, max_proc_i, max_proc_j, nproc)
-
-choosen_procs, nproci, nprocj =  get_best_decomposition(USED_PROCS, COMMUNICATION, nproc)
-
-M,C = get_wp_matrix(tmask, nprocj, nproci)
-J,I = M.nonzero()
-JPI = riparto(jpiglo,nproci)
-JPJ = riparto(jpjglo,nprocj)
-Start_I = get_startpoints(JPI) #nimpp
-Start_J = get_startpoints(JPJ) #njmpp
-
-
-
-WEST, EAST, NORTH, SOUTH, NBONDI,NBONDJ = neighbors(M, choosen_procs)
-
-OUT = np.zeros((choosen_procs,13), dtype=np.int32)
-for rank in range(choosen_procs):
-    i = I[rank]
-    j = J[rank]
-    jpi = JPI[i]
-    jpj = JPJ[j]
-    nimpp = Start_I[i]
-    njmpp = Start_J[j]
-    OUT[rank, 0] = rank
-    OUT[rank, 1] = i
-    OUT[rank, 2] = j
-    OUT[rank, 3] = jpi
-    OUT[rank, 4] = jpj
-    OUT[rank, 5] = nimpp
-    OUT[rank, 6] = njmpp
-    OUT[rank, 7] = NBONDI[rank]
-    OUT[rank, 8] = NBONDJ[rank]
-    OUT[rank, 9] = WEST[rank]
-    OUT[rank,10] = EAST[rank]
-    OUT[rank,11] = NORTH[rank]
-    OUT[rank,12] = SOUTH[rank]
-
-
-fig, ax = plot_decomposition(tmask, nproci, nprocj)
-fig.set_dpi(150)
-outfile='domdec_' + str(choosen_procs) + ".png"
-fig.savefig(outfile)
-np.savetxt('domdec.txt', OUT, fmt=13*"%5d")

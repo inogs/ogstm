@@ -150,7 +150,7 @@
           WRITE(numout,*) ' ndttrc time step freq. for pass. trac.            = ', ndttrc
           WRITE(numout,*) ' lhdf  calls or not trchdf                         = ', lhdf
           WRITE(numout,*) ' activation of rivers                              = ', lrivers
-          WRITE(numout,*) ' activation atmospheric deposition                 = ', latmosh
+          WRITE(numout,*) ' activation atmospheric deposition                 = ', latmosph
           WRITE(numout,*) ' activation of bfm                                 = ', lbfm
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat

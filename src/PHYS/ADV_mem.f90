@@ -15,11 +15,11 @@
        public
 
       INTEGER :: goodpoints, allpoints, tpoints
-      INTEGER :: dimen_jarr,  dimen_jarrt
+      INTEGER :: dimen_jarr!,  dimen_jarrt
       INTEGER :: myji, myjj, myjk, locsum
       INTEGER :: jilef, jjlef, jklef, jirig, jjrig, jkrig
       !INTEGER, allocatable,dimension(:) :: jarr_adv_flx
-      INTEGER, allocatable,dimension(:,:) :: jarr, jarrt
+      INTEGER, allocatable,dimension(:,:) :: jarr!, jarrt
       INTEGER(kind=1), allocatable,dimension(:,:,:) :: advmask
       ! double precision, allocatable,dimension(:,:,:),save :: zti,ztj
       ! double precision, allocatable,dimension(:,:,:),save :: zx,zy,zz,zbuf
@@ -104,8 +104,8 @@
 !       jarr2        = huge(jarr2(1,1))
 !       allocate(jarr3(3, jpk*jpj*jpi))
 !       jarr3        = huge(jarr3(1,1))
-       allocate(jarrt(3, jpk*jpj*jpi))
-       jarrt        = huge(jarrt(1,1))
+!       allocate(jarrt(3, jpk*jpj*jpi))
+!       jarrt        = huge(jarrt(1,1))
 !       allocate(jarr_adv_flx(jpk*jpj*jpi))
 !       jarr_adv_flx = huge(jarr_adv_flx(1))
 

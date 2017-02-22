@@ -101,7 +101,7 @@
 !         jarr1 = 0
 !         jarr2 = 0
 !         jarr3 = 0
-         jarrt = 0
+!         jarrt = 0
 
          write(*,*) "Storing good points ..."
                DO ji = 2,jpim1
@@ -241,18 +241,18 @@
 !            END DO
 !         END DO
 
-               DO ji = 1,jpi
-            DO jj = 1,jpj
-         DO jk = 1,jpk
-                  if(tmask(jk,jj,ji) .NE. 0) then
-                     dimen_jarrt = dimen_jarrt + 1
-                     jarrt(3,dimen_jarrt) = ji
-                     jarrt(2,dimen_jarrt) = jj
-                     jarrt(1,dimen_jarrt) = jk
-                  endif
-               END DO
-            END DO
-         END DO
+!               DO ji = 1,jpi
+!            DO jj = 1,jpj
+!         DO jk = 1,jpk
+!                  if(tmask(jk,jj,ji) .NE. 0) then
+!                     dimen_jarrt = dimen_jarrt + 1
+!                     jarrt(3,dimen_jarrt) = ji
+!                     jarrt(2,dimen_jarrt) = jj
+!                     jarrt(1,dimen_jarrt) = jk
+!                  endif
+!               END DO
+!            END DO
+!         END DO
 
       
 
@@ -891,23 +891,39 @@
           
 
            if(ncor .EQ. 1) then
-              DO ju=1, dimen_jarrt
-                 ji = jarrt(3, ju)
-                 jj = jarrt(2, ju)
-                 jk = jarrt(1, ju)
+           do ji=1,jpi
+           do jj=1,jpj
+           do jk=1,jpk
+               tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ ztj(jk,jj,ji )
+           enddo
+           enddo
+           enddo
 
-                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ ztj(jk,jj,ji )
-
-              END DO
+!              DO ju=1, dimen_jarrt
+!                 ji = jarrt(3, ju)
+!                 jj = jarrt(2, ju)
+!                 jk = jarrt(1, ju)
+!
+!                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ ztj(jk,jj,ji )
+!
+!              END DO
            else
-              DO ju=1, dimen_jarrt
-                 ji = jarrt(3, ju)
-                 jj = jarrt(2, ju)
-                 jk = jarrt(1, ju)
+           do ji=1,jpi
+           do jj=1,jpj
+           do jk=1,jpk
+               tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ (zbuf(jk,jj,ji ) + ztj(jk,jj,ji ))
+           enddo
+           enddo
+           enddo
 
-                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ (zbuf(jk,jj,ji ) + ztj(jk,jj,ji ))
-
-              END DO
+!              DO ju=1, dimen_jarrt
+!                 ji = jarrt(3, ju)
+!                 jj = jarrt(2, ju)
+!                 jk = jarrt(1, ju)
+!
+!                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ (zbuf(jk,jj,ji ) + ztj(jk,jj,ji ))
+!
+!              END DO
            endif
 
         deallocate(zy )  

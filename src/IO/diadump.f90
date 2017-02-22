@@ -30,6 +30,7 @@
       INTEGER irange, jrange
       INTEGER totistart, totiend, relistart, reliend
       INTEGER totjstart, totjend, reljstart, reljend
+      double precision ::  Miss_val =1.e20
 
 
      ! call mppsync()
@@ -54,6 +55,18 @@
        DIR='AVE_FREQ_2/'
       END SELECT
 
+      if (lwp) then
+          totsnIO   = Miss_val
+          tottnIO   = Miss_val
+          totunIO   = Miss_val
+          totvnIO   = Miss_val
+          totwnIO   = Miss_val
+          totavtIO  = Miss_val
+          tote3tIO  = Miss_val
+          totvatmIO = Miss_val
+          totempIO  = Miss_val
+          totqsrIO  = Miss_val
+      endif
 
 !      PHYSICS FIRST!!
       if ( freq_ave_phys.eq.FREQ_GROUP) then
@@ -216,7 +229,7 @@
 
 
       jn_high = 0
-
+      tottrnIO2d = Miss_val
 ! ******************  DIAGNOSTIC OUTPUT   2D *******************
       DO jn = 1, JPTRA_DIA_2D
 
@@ -475,6 +488,7 @@
           vnIO     = 0.
           wnIO     = 0.
           avtIO    = 0.
+          e3tIO    = 0
       endif
 
 

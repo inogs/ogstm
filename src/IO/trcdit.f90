@@ -64,7 +64,7 @@
        ave_counter=ave_counter_2 
        DIR='AVE_FREQ_2/'
       END SELECT
-      tottrnIO = Miss_val
+      if (lwp) tottrnIO = Miss_val
 !  Ghost Shells - Manual s Indexes-
 
       DO jn=1,jptra ! DO LABEL 5

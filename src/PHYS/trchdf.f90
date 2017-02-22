@@ -334,6 +334,17 @@
             END DO
           END DO
 
+
+         DO jf=1,Fsize
+             jk = flx_ridxt(jf,2)
+             jj = flx_ridxt(jf,3)
+             ji = flx_ridxt(jf,4)
+
+             diaflx(5,jf, jn) = diaflx(5,jf, jn) + ztu(jk,jj,ji)
+             diaflx(6,jf, jn) = diaflx(6,jf, jn) + ztv(jk,jj,ji)
+
+          ENDDO
+
 !     Save diffusive fluxes x,y
 !              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
 !                 diaflx(jf,jn ,5) = diaflx(jf,jn ,5) + ztu(jk,jj,ji) 

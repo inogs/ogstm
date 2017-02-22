@@ -15,7 +15,6 @@
 ! CC ======================
 
        USE myalloc
-       ! epascolo USE myalloc_mpp
        USE ADV_mem
        USE DIA_mem
        use mpi
@@ -99,9 +98,9 @@
          big_fact_zcc = 0.
          zbtr_arr = 0.
          jarr  = 0
-         jarr1 = 0
-         jarr2 = 0
-         jarr3 = 0
+!         jarr1 = 0
+!         jarr2 = 0
+!         jarr3 = 0
          jarrt = 0
 
          write(*,*) "Storing good points ..."
@@ -229,18 +228,18 @@
 
       
 
-               DO ji = 2,jpim1
-            DO jj = 2,jpjm1
-         DO jk = 1,jpkm1
-                  if(advmask(jk,jj,ji) .NE. 0) then
-                     dimen_jarr3 = dimen_jarr3 + 1
-                     jarr3(3,dimen_jarr3) = ji
-                     jarr3(2,dimen_jarr3) = jj
-                     jarr3(1,dimen_jarr3) = jk
-                  endif
-               END DO
-            END DO
-         END DO
+!               DO ji = 2,jpim1
+!            DO jj = 2,jpjm1
+!         DO jk = 1,jpkm1
+!                  if(advmask(jk,jj,ji) .NE. 0) then
+!                     dimen_jarr3 = dimen_jarr3 + 1
+!                     jarr3(3,dimen_jarr3) = ji
+!                     jarr3(2,dimen_jarr3) = jj
+!                     jarr3(1,dimen_jarr3) = jk
+!                  endif
+!               END DO
+!            END DO
+!         END DO
 
                DO ji = 1,jpi
             DO jj = 1,jpj
@@ -257,18 +256,18 @@
 
       
 
-      jarr_adv_flx=0
-
-         DO jf=1,Fsize
-            DO ju=1, dimen_jarr3
-               l1 = flx_ridxt(jf,2) .EQ. jarr3(1,ju)
-               l2 = flx_ridxt(jf,3) .EQ. jarr3(2,ju)
-               l3 = flx_ridxt(jf,4) .EQ. jarr3(3,ju)
-               IF ( l1 .AND. l2 .AND. l3) THEN
-                  jarr_adv_flx(ju)= jf
-               END IF
-            END DO
-         END DO
+!      jarr_adv_flx=0
+!
+!         DO jf=1,Fsize
+!            DO ju=1, dimen_jarr3
+!               l1 = flx_ridxt(jf,2) .EQ. jarr3(1,ju)
+!               l2 = flx_ridxt(jf,3) .EQ. jarr3(2,ju)
+!               l3 = flx_ridxt(jf,4) .EQ. jarr3(3,ju)
+!               IF ( l1 .AND. l2 .AND. l3) THEN
+!                  jarr_adv_flx(ju)= jf
+!               END IF
+!            END DO
+!         END DO
 
       adv_initialized=.true.
       endif 
@@ -524,30 +523,51 @@
 
 !! 2. calcul of after field using an upstream advection scheme
 !! -----------------------------------------------------------
-          
-        
-           DO ju=1, dimen_jarr3
-
-              ji = jarr3(3, ju)
-              jj = jarr3(2, ju)
-              jk = jarr3(1, ju)
-              jf = jarr_adv_flx(ju)
-
-              zbtr = zbtr_arr(jk,jj,ji)
-
-              ztj(jk,jj,ji ) = -zbtr* &
+          DO ji =2,jpim1
+          DO jj =2,jpjm1
+          DO jk =1,jpkm1
+              ztj(jk,jj,ji ) = -zbtr_arr(jk,jj,ji)* &
      &          ( zkx(jk,jj,ji ) - zkx(jk,jj,ji-1 ) &
      &          + zky(jk,jj,ji ) - zky(jk,jj- 1,ji ) &
      &          + zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
+          ENDDO
+          ENDDO
+          ENDDO
+
+          DO jf=1,Fsize
+             jk = flx_ridxt(jf,2)
+             jj = flx_ridxt(jf,3)
+             ji = flx_ridxt(jf,4)
+
+             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkz(jk,jj,ji )
+             diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )
+             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkx(jk,jj,ji )
+          ENDDO
 
 
-              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
-                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
-                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
-              END IF
 
-            END DO
+!           DO ju=1, dimen_jarr3
+!
+!              ji = jarr3(3, ju)
+!              jj = jarr3(2, ju)
+!              jk = jarr3(1, ju)
+!              jf = jarr_adv_flx(ju)
+!
+!              zbtr = zbtr_arr(jk,jj,ji)
+!
+!              ztj(jk,jj,ji ) = -zbtr* &
+!     &          ( zkx(jk,jj,ji ) - zkx(jk,jj,ji-1 ) &
+!     &          + zky(jk,jj,ji ) - zky(jk,jj- 1,ji ) &
+!     &          + zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
+!
+!
+!              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
+!                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
+!                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
+!                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
+!              END IF
+!
+!            END DO
 
 !! 2.1 start of antidiffusive correction loop
 
@@ -780,44 +800,86 @@
           
            
             if(ncor .EQ. 1) then
-               DO ju=1, dimen_jarr3
-
-                  ji = jarr3(3, ju)
-                  jj = jarr3(2, ju)
-                  jk = jarr3(1, ju)
-                  jf = jarr_adv_flx(ju)
-
-                  zbtr = zbtr_arr(jk,jj,ji)
-                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
+          DO ji =2,jpim1
+          DO jj =2,jpjm1
+          DO jk =1,jpkm1
+                  ztj(jk,jj,ji ) = -zbtr_arr(jk,jj,ji)*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
      &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )+ ztj(jk,jj,ji )
+          ENDDO
+          ENDDO
+          ENDDO
 
-!     Save advective fluxes x,y,z
-              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                 diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
-                 diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
-                 diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
-              END IF
+         DO jf=1,Fsize
+             jk = flx_ridxt(jf,2)
+             jj = flx_ridxt(jf,3)
+             ji = flx_ridxt(jf,4)
 
-              END DO
+             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkz(jk,jj,ji )
+             diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )
+             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkx(jk,jj,ji )
+          ENDDO
+
+
+!               DO ju=1, dimen_jarr3
+!
+!                  ji = jarr3(3, ju)
+!                  jj = jarr3(2, ju)
+!                  jk = jarr3(1, ju)
+!                  jf = jarr_adv_flx(ju)
+!
+!                  zbtr = zbtr_arr(jk,jj,ji)
+!                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
+!     &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )+ ztj(jk,jj,ji )
+!
+!!     Save advective fluxes x,y,z
+!              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
+!                 diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
+!                 diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
+!                 diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
+!              END IF
+!
+!              END DO
            else
-              DO ju=1, dimen_jarr3
-
-                  ji = jarr3(3, ju)
-                  jj = jarr3(2, ju)
-                  jk = jarr3(1, ju)
-                  jf = jarr_adv_flx(ju)
-
-                  zbtr = zbtr_arr(jk,jj,ji)
-                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
+         DO ji =2,jpim1
+          DO jj =2,jpjm1
+          DO jk =1,jpkm1
+                  ztj(jk,jj,ji ) = -zbtr_arr(jk,jj,ji)*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
      &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
+          ENDDO
+          ENDDO
+          ENDDO
 
-                 !Save advective fluxes x,y,z
-                 IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
-                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
-                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
-                 END IF
-              END DO
+         DO jf=1,Fsize
+             jk = flx_ridxt(jf,2)
+             jj = flx_ridxt(jf,3)
+             ji = flx_ridxt(jf,4)
+
+             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkz(jk,jj,ji )
+             diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )
+             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkx(jk,jj,ji )
+          ENDDO
+
+
+
+
+!              DO ju=1, dimen_jarr3
+!
+!                  ji = jarr3(3, ju)
+!                  jj = jarr3(2, ju)
+!                  jk = jarr3(1, ju)
+!                  jf = jarr_adv_flx(ju)
+!
+!                  zbtr = zbtr_arr(jk,jj,ji)
+!                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
+!     &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
+!
+!                 !Save advective fluxes x,y,z
+!                 IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
+!                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
+!                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
+!                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
+!                 END IF
+!              END DO
 
            endif
 

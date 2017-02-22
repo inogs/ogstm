@@ -120,10 +120,7 @@
 !! passive tracer slab
 !! ===================
 
-!!!$omp    parallel do default(none) private(jv,jk,jj,ji,mytid,ztavg,zdt,z2dtt,ikst,ikstp1,ikenm2,jf,delta_tra,int_tra,Aij,jn)
-!!!$omp&                           shared(dimen_jvzdf,jarr_zdf,ndttrc,rdt,jpk,jpkm1,avt,zwi,
-!!!$omp&                                   zws,zwd,zwy,trb,tra,zwt,zwz,zwx,tmask,e1t,e2t,e3t,e3w,jarr_zdf_flx,Fsize,
-!!!$omp&                                   diaflx)
+
       TRACER_LOOP: DO  jn = 1, jptra
 
 !!!$         mytid = omp_get_thread_num()  ! take the thread ID
@@ -249,7 +246,7 @@
 
          IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
 
-                  diaflx(jf,jn,7) = int_tra(jk)
+                  diaflx(7,jf,jn) = int_tra(jk)
 
          ENDIF
 

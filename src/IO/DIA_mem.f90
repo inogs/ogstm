@@ -48,8 +48,7 @@
        flx_ridxt  = huge(flx_ridxt(1,1))
        allocate(INDflxDUMP    (Fsize             ))  
        INDflxDUMP = huge(INDflxDUMP(1))
-       allocate(diaflx        (Fsize, jptra, 7   )) 
-       diaflx     = huge(diaflx(1,1,1))
+       allocate(diaflx        (7, Fsize, jptra   ))
        diaflx = 0
       END SUBROUTINE alloc_DIA_local_flx
 

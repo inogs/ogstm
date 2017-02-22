@@ -108,12 +108,6 @@
 ! =============
 
 
-!!!$omp    parallel do default(none) private(jv,ji,jj,jk,js,mytid,jf,bottom)
-!!!$omp&                           shared(dimen_jvsed,jarr_sed,jpk, 
-!!!$omp&                                  jpkm1,nsed,zwork,vsed,ogstm_sedipi,
-!!!$omp&                                  trn,sed_idx,ze3tr,e3t,ztra,
-!!!$omp&                                  tra,d2s,jarr_sed_flx,Fsize,diaflx,
-!!!$omp&                                  mbathy,bottom_flux)
 
       MAIN_LOOP: DO jv=1,dimen_jvsed
 
@@ -184,7 +178,7 @@
                  DO js =1,21
                     ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-                         diaflx(jf,sed_idx(js),4) = diaflx(jf,sed_idx(js),4) + zwork(jk,js,1)
+                         diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,1)
                     ENDIF
                  END DO
 

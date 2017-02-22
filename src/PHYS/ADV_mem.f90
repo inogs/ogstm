@@ -15,11 +15,11 @@
        public
 
       INTEGER :: goodpoints, allpoints, tpoints
-      INTEGER :: dimen_jarr, dimen_jarr1, dimen_jarr2, dimen_jarr3, dimen_jarrt 
+      INTEGER :: dimen_jarr,  dimen_jarrt
       INTEGER :: myji, myjj, myjk, locsum
       INTEGER :: jilef, jjlef, jklef, jirig, jjrig, jkrig
-      INTEGER, allocatable,dimension(:) :: jarr_adv_flx
-      INTEGER, allocatable,dimension(:,:) :: jarr, jarr1, jarr2, jarr3, jarrt
+      !INTEGER, allocatable,dimension(:) :: jarr_adv_flx
+      INTEGER, allocatable,dimension(:,:) :: jarr, jarrt
       INTEGER(kind=1), allocatable,dimension(:,:,:) :: advmask
       ! double precision, allocatable,dimension(:,:,:),save :: zti,ztj
       ! double precision, allocatable,dimension(:,:,:),save :: zx,zy,zz,zbuf
@@ -98,16 +98,16 @@
        zbtr_arr     = huge(zbtr_arr(1,1,1))
        allocate(jarr(3, jpk*jpj*jpi))         
        jarr         = huge(jarr(1,1))
-       allocate(jarr1(3, jpk*jpj*jpi))        
-       jarr1        = huge(jarr1(1,1))
-       allocate(jarr2(3, jpk*jpj*jpi))        
-       jarr2        = huge(jarr2(1,1))
-       allocate(jarr3(3, jpk*jpj*jpi))        
-       jarr3        = huge(jarr3(1,1))
-       allocate(jarrt(3, jpk*jpj*jpi))        
+!       allocate(jarr1(3, jpk*jpj*jpi))
+!       jarr1        = huge(jarr1(1,1))
+!       allocate(jarr2(3, jpk*jpj*jpi))
+!       jarr2        = huge(jarr2(1,1))
+!       allocate(jarr3(3, jpk*jpj*jpi))
+!       jarr3        = huge(jarr3(1,1))
+       allocate(jarrt(3, jpk*jpj*jpi))
        jarrt        = huge(jarrt(1,1))
-       allocate(jarr_adv_flx(jpk*jpj*jpi))    
-       jarr_adv_flx = huge(jarr_adv_flx(1))
+!       allocate(jarr_adv_flx(jpk*jpj*jpi))
+!       jarr_adv_flx = huge(jarr_adv_flx(1))
 
 
 #ifdef Mem_Monitor

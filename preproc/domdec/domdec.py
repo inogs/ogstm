@@ -268,7 +268,7 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
     Arguments:
     * USED_PROCS    * output of  candidate_decomposition()
     * COMMUNICATION * idem
-    * nproc         * effective number of MPI ranks used in simulation
+    * max_nproc     * maximum number of MPI ranks we can use in simulation
     * jpiglo        * integer, global domain size
     * jpjglo        * integer, global domain size
 
@@ -276,9 +276,10 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
      * nproci, nprocj * integers
     '''
 
-    CANDIDATES = np.zeros((0,7),np.int)
-
-    for nproc in [max_nproc, max_nproc-1, max_nproc-2, max_nproc-3]:
+    CANDIDATES = np.zeros((0,8),np.int)
+    min_nproc = max_nproc -8
+    iCandidate=0
+    for nproc in range(max_nproc,min_nproc,-1):
         good = USED_PROCS == nproc
 
         J,I = good.nonzero() # poi vanno incrementati di 1
@@ -297,12 +298,13 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
             JPJ = riparto(jpjglo,nprocj)
             xm,ym = np.meshgrid(JPI,JPJ)
             load = (xm*ym).max()
-            linearray = np.array([nproc, nproci, nprocj, JPI.max(), JPJ.max(), load, EFF_COMMUNICATION_LINE[k]],dtype=np.int,ndmin=2)
+            linearray = np.array([nproc, nproci, nprocj, JPI.max(), JPJ.max(), load, EFF_COMMUNICATION_LINE[k], iCandidate],dtype=np.int,ndmin=2)
             CANDIDATES=np.concatenate((CANDIDATES,linearray),axis=0)
+            iCandidate = iCandidate+1
 
     nCandidates,_ = CANDIDATES.shape
     print "There are ", nCandidates, "candidate decompositions"
-    print "nproc, nproci, nprocj, jpi, jpj, jpi*jpj, COMM"
+    print "nproc, nproci, nprocj, jpi, jpj, jpi*jpj, COMM, progr"
     print CANDIDATES
     totalwork = CANDIDATES[:,5]+CANDIDATES[:,6] # domain_size+communication
     choosen = totalwork.argmin()

@@ -49,6 +49,7 @@ def create_init_nc(test):
     os.system("mkdir -p " + test['Dir'].decode() + "/AVE_FREQ_1/")
     os.system("mkdir -p " + test['Dir'].decode() + "/AVE_FREQ_2/")
     os.system("mkdir -p " + test['Dir'].decode() + "/AVE_PHYS/")
+    os.system("mkdir -p " + test['Dir'].decode() + "/FLUXES/")
 
     for var in initVARS:
         filename = "KB/INIT_NWM_KB/init." + var

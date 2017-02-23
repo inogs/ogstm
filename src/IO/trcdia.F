@@ -14,7 +14,7 @@
 !      writes ave files for tracer concentration
       CALL   trcdit(datemean, datefrom, dateend,FREQ_GROUP)
       CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
-      !CALL fluxdump(datemean, datefrom, dateend)
+      CALL fluxdump(datemean, datefrom, dateend,FREQ_GROUP)
 
 
        trcdiaparttime =   MPI_WTIME() - trcdiaparttime  ! cronometer-stop

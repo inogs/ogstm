@@ -186,7 +186,6 @@
          DO  ji = 2,jpim1
             DO jj = 2,jpjm1
                   DO jk = 1,jpk
-                        !print *,allocated(jarr),allocated(zbtr_arr),allocated(e1t),allocated(e2t),allocated(e3t)
                         if(advmask(jk,jj,ji) .NE. 0) then
                         zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
                         dimen_jarr = dimen_jarr + 1
@@ -277,36 +276,28 @@
          jk=1
 
          zdt = rdt*ndttrc
-         !print*,"1---------------------------------------"     
-         !print*,allocated(zbtr_arr),allocated(e1t),allocated(e2t),allocated(e3t)
          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
                DO ji = 2,jpim1
                !dir$ vector aligned
             DO jj = 2,jpjm1
                   zbtr_arr(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(1,jj,ji))
-                  !print *,ji,jj,e1t(jj,ji),e2t(jj,ji),e3t(1,jj,ji),zbtr_arr(1,jj,ji)
                END DO
             END DO
          !$OMP END TASK
-         !  print*,"2---------------------------------------"     
         
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
           !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
-            !print *,jpi,jpj,allocated(zaa),allocated(e2u),allocated(e3u),allocated(un)
             DO ji = 2,jpim1
             !dir$ vector aligned
             DO jj = 2,jpjm1
                   inv_eu(1,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(1,jj,ji) )
-                  !print *,allocated(inv_eu),inv_eu(1,jj,ji)
             END DO
             END DO
              DO ji = 1,jpi
              DO jj = 1,jpj
              !dir$ vector aligned
              DO jk = 1,jpk
-                  !print *,e2u(jj,ji),e3u(jk,jj,ji),un(jk,jj,ji)
                  zaa(jk,jj,ji) = e2u(jj,ji)*e3u(jk,jj,ji) * un(jk,jj,ji)
-                 !print *,ji,jj,jk
              END DO
              END DO
              END DO
@@ -404,7 +395,6 @@
 !!           and mass fluxes calculated above
 !!       calcul of tracer flux in the i and j direction
        
-       !print *,allocated(zx)
      
        allocate(zy(jpk,jpj,jpi))  
        allocate(zx(jpk,jpj,jpi))

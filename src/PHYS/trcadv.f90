@@ -97,7 +97,7 @@
          big_fact_zbb = 0.
          big_fact_zcc = 0.
          zbtr_arr = 0.
-         jarr  = 0
+!         jarr  = 0
 !         jarr1 = 0
 !         jarr2 = 0
 !         jarr3 = 0
@@ -183,21 +183,21 @@
 
          write(*,*) 'trcadv: RANK -> ', myrank, ' good_points -> ', goodpoints
 
-         DO  ji = 2,jpim1
-            DO jj = 2,jpjm1
-                  DO jk = 1,jpk
-                        if(advmask(jk,jj,ji) .NE. 0) then
-                        zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
-                        dimen_jarr = dimen_jarr + 1
-                        jarr(3,dimen_jarr) = ji
-                        jarr(2,dimen_jarr) = jj
-                        jarr(1,dimen_jarr) = jk
-                        else
-                        zbtr_arr(jk,jj,ji) = 0.
-                        endif
-               END DO
-            END DO
-         END DO
+!         DO  ji = 2,jpim1
+!            DO jj = 2,jpjm1
+!                  DO jk = 1,jpk
+!                        if(advmask(jk,jj,ji) .NE. 0) then
+!                        zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
+!                        dimen_jarr = dimen_jarr + 1
+!                        jarr(3,dimen_jarr) = ji
+!                        jarr(2,dimen_jarr) = jj
+!                        jarr(1,dimen_jarr) = jk
+!                        else
+!                        zbtr_arr(jk,jj,ji) = 0.
+!                        endif
+!               END DO
+!            END DO
+!         END DO
 
       !    DO  ji = 2,jpim1
       !       DO jj = 2,jpjm1

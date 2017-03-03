@@ -292,13 +292,15 @@
              do ii =1, jpi
             do jj =1, jpj
            do kk =1, jpk
-                junk = idxt(kk,jj,ii)
-                do jv =1, sizeGLO
-                  if (junk.EQ.idxtGLOBAL(jv))  then
-                  !print *,ii,jj,kk,jv,junk,idxtGLOBAL(jv),counter
-                  counter = counter + 1
-                  endif
-                enddo
+                if (tmask(kk,jj,ii).eq.1) then
+                  junk = idxt(kk,jj,ii)
+                  do jv =1, sizeGLO
+                    if (junk.EQ.idxtGLOBAL(jv)) then
+                       counter = counter + 1
+                       EXIT 
+                    endif
+                  enddo
+                endif
              enddo
             enddo
            enddo

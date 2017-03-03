@@ -95,7 +95,7 @@ END SUBROUTINE
 
       INTEGER jk,jj,ji
       INTEGER reqs1, reqs2, reqr1, reqr2
-      INTEGER jw
+      INTEGER jw, packsize
 
 !!     trcadvparttime = MPI_WTIME()
 
@@ -107,22 +107,22 @@ END SUBROUTINE
 !!
 
 
-      IF(nbondi.eq.0.or.nbondi.eq.1) THEN
-         DO jw=1,WEST_count_send
-              jj = WESTpoints_send(1,jw)
-              jk = WESTpoints_send(2,jw)
-             tw_send(jw) = ptab(jk,jj,2)
-         ENDDO
-      ENDIF
-      IF(nbondi.eq.0.or.nbondi.eq.-1) THEN
-         DO jw=1,EAST_count_send
-             jj = EASTpoints_send(1,jw)
-             jk = EASTpoints_send(2,jw)
-             te_send(jw) = ptab(jk,jj,jpi-1)
-         ENDDO
-
-
-      ENDIF ! PACK_LOOP2
+!      IF(nbondi.eq.0.or.nbondi.eq.1) THEN
+!         DO jw=1,WEST_count_send
+!              jj = WESTpoints_send(1,jw)
+!              jk = WESTpoints_send(2,jw)
+!             tw_send(jw) = ptab(jk,jj,2)
+!         ENDDO
+!      ENDIF
+!      IF(nbondi.eq.0.or.nbondi.eq.-1) THEN
+!         DO jw=1,EAST_count_send
+!             jj = EASTpoints_send(1,jw)
+!             jk = EASTpoints_send(2,jw)
+!             te_send(jw) = ptab(jk,jj,jpi-1)
+!         ENDDO
+!
+!
+!      ENDIF ! PACK_LOOP2
 
 
 !!
@@ -143,23 +143,31 @@ END SUBROUTINE
 !               |     |
 !               v     |
 
+    packsize=jpk*jpj
 
       IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
-          CALL mppsend(2,te_send,EAST_count_send,noea,0,reqs1)
-          CALL mpprecv(1,te_recv,EAST_count_recv,reqr1)
+!          CALL mppsend(2,te_send,EAST_count_send,noea,0,reqs1)
+!          CALL mpprecv(1,te_recv,EAST_count_recv,reqr1)
           !CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs1)
           !CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
+          CALL mppsend(2,ptab(:,:,jpi-1),packsize,noea,0,reqs1)
+          CALL mpprecv(1,ptab(:,:,  jpi),packsize,reqr1)
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
       ELSE IF(nbondi.eq.0) THEN
-          CALL mppsend(1, tw_send,WEST_count_send,nowe,0,reqs1)
-          CALL mppsend(2, te_send,EAST_count_send,noea,0,reqs2)
+          CALL mppsend(1, ptab(:,:    ,2),packsize,nowe,0,reqs1)
+          CALL mppsend(2, ptab(:,:,jpi-1),packsize,noea,0,reqs2)
+          !CALL mppsend(1, tw_send,WEST_count_send,nowe,0,reqs1)
+          !CALL mppsend(2, te_send,EAST_count_send,noea,0,reqs2)
           !CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
           !CALL mppsend(2,t3we_my1(1,1,1,1,1),imigr,noea,0,reqs2)
           !CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
           !CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr2)
-          CALL mpprecv(1,te_recv,EAST_count_recv,reqr1)
-          CALL mpprecv(2,tw_recv,WEST_count_recv,reqr2)
+          CALL mpprecv(1,ptab(:,:,jpi),packsize,reqr1)
+          CALL mpprecv(2,ptab(:,:,  1),packsize,reqr2)
+
+!          CALL mpprecv(1,te_recv,EAST_count_recv,reqr1)
+!          CALL mpprecv(2,tw_recv,WEST_count_recv,reqr2)
 
           CALL mppwait(reqs1)
           CALL mppwait(reqs2)
@@ -168,8 +176,10 @@ END SUBROUTINE
       ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
           !CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
           !CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr1)
-          CALL mppsend(1,tw_send, WEST_count_send, nowe,0, reqs1)
-          CALL mpprecv(2,tw_recv, WEST_count_recv, reqr1)
+          CALL mppsend(1,ptab(:,:,2), packsize, nowe,0, reqs1)
+          CALL mpprecv(2,ptab(:,:,1), packsize, reqr1)
+          !CALL mppsend(1,tw_send, WEST_count_send, nowe,0, reqs1)
+          !CALL mpprecv(2,tw_recv, WEST_count_recv, reqr1)
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
       ENDIF
@@ -181,25 +191,25 @@ END SUBROUTINE
 !!2.3 Write Dirichlet lateral conditions
 !!
 
-      IF(nbondi.eq.0.or.nbondi.eq.1) THEN ! All but west boundary, we received from west
-
-         DO jw=1,WEST_count_recv
-              jj = WESTpoints_recv(1,jw)
-              jk = WESTpoints_recv(2,jw)
-             ptab(jk,jj,1)= tw_recv(jw)
-         ENDDO
-
-      ENDIF
-
-      IF(nbondi.eq.-1.or.nbondi.eq.0) THEN ! All but east boundary, we received from east
-
-        DO jw=1,EAST_count_recv
-              jj = EASTpoints_recv(1,jw)
-              jk = EASTpoints_recv(2,jw)
-             ptab(jk,jj,jpi)= te_recv(jw)
-        ENDDO
-
-      ENDIF ! PACK_LOOP3
+!      IF(nbondi.eq.0.or.nbondi.eq.1) THEN ! All but west boundary, we received from west
+!
+!         DO jw=1,WEST_count_recv
+!              jj = WESTpoints_recv(1,jw)
+!              jk = WESTpoints_recv(2,jw)
+!             ptab(jk,jj,1)= tw_recv(jw)
+!         ENDDO
+!
+!      ENDIF
+!
+!      IF(nbondi.eq.-1.or.nbondi.eq.0) THEN ! All but east boundary, we received from east
+!
+!        DO jw=1,EAST_count_recv
+!              jj = EASTpoints_recv(1,jw)
+!              jk = EASTpoints_recv(2,jw)
+!             ptab(jk,jj,jpi)= te_recv(jw)
+!        ENDDO
+!
+!      ENDIF ! PACK_LOOP3
 
 
 

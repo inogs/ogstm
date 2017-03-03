@@ -69,7 +69,7 @@ my %compile_cmd = (			# command to create .o file from a given source file suffi
       q/.F90/ => q/$(FC) $(CPPDEFS) $(CPPFLAGS) $(FFLAGS) $(OTHERFLAGS) -c/,
       q/.c/   => q/$(CC) $(CPPDEFS) $(CPPFLAGS) $(CFLAGS) $(OTHERFLAGS) -c/,
       q/.f/   => q/$(FC) $(FFLAGS) $(OTHERFLAGS) -c/,
-      q/.f90/ => q/$(FC) $(FFLAGS) $(OTHERFLAGS) -c/              );
+      q/.f90/ => q/$(FC) $(CPPDEFS) $(CPPFLAGS) $(FFLAGS) $(OTHERFLAGS) -c/);
 my %delim_match = ( q/'/ => q/'/,	# hash to find includefile delimiter pair
 		    q/"/ => q/"/,
 		    q/</ => q/>/ );

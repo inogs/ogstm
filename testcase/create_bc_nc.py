@@ -232,8 +232,9 @@ def create_bc_nc(test):
     for wp in range(waterpoints):
         ji = index_inv[wp,2] -1 ; # index_inv is fortran style
         jj = index_inv[wp,1] -1 ;
+        jk = index_inv[wp,0] -1 ; 
         if ( (ji==1) | (jj==1) ) | ( (ji==jpi-2) | (jj==jpj-2) ):
-            gib_index[gib_idxt]=index[0,jj,ji]
+            gib_index[gib_idxt]=index[jk,jj,ji]
             gib_idxt += 1
 
 

@@ -215,7 +215,7 @@
             
             ! $OMP TASK default(shared) private(ji,jj,jk)
                   DO ji = 1,jpi-1
-              DO jj = 1,jpj
+              DO jj = 1,jpj-1
            DO jk = 1,jpk
             !dir$ vector aligned
              ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( trb(jk,jj,ji+1,jn ) - trb(jk,jj,ji,jn ) )*tmask(jk,jj,ji+1) * tmask(jk,jj,ji) *  hdfmask(jk,jj,ji)
@@ -228,7 +228,7 @@
           ! $OMP END TASK
 
                 ! $OMP TASK default(shared) private(ji,jj,jk)
-                DO ji = 1,jpi
+                DO ji = 1,jpi-1
               DO jj = 1,jpj-1
            DO jk = 1,jpk
              !dir$ vector aligned
@@ -263,7 +263,7 @@
             END DO
           END DO
 
-       
+
 
 !!
 !!
@@ -288,7 +288,7 @@
 
             ! $OMP TASK default(shared) private(ji,jj,jk)
                   DO ji = 1,jpi-1
-              DO jj = 1,jpj
+              DO jj = 1,jpj-1
            DO jk = 1,jpk
              !dir$ vector aligned
              ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( zlt(jk,jj,ji+1)  - zlt(jk,jj,ji)  ) * tmask(jk,jj,ji+1) * tmask(jk,jj,ji) * hdfmask(jk,jj,ji)
@@ -299,7 +299,7 @@
           ! $OMP END TASK
 
           ! $OMP TASK default(shared) private(ji,jj,jk)
-               DO ji = 1,jpi
+               DO ji = 1,jpi-1
               DO jj = 1,jpj-1
            DO jk = 1,jpk
               !dir$ vector aligned
@@ -321,8 +321,8 @@
       !        jf = jarr_hdf_flx(jv)
           
       ! $OMP TASKWAIT 
-                  DO ji = 2,jpi
-              DO jj = 2,jpj
+                  DO ji = 2,jpim1
+              DO jj = 2,jpjm1
            DO jk = 1,jpk
 !!   ... horizontal diffusive trends
              !dir$ vector aligned

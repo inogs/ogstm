@@ -406,6 +406,8 @@
           ENDDO
           ENDDO
 
+
+       if (forcing_phys_initialized) then
           DO ji=1,jpi
           DO jj=1,jpj
           DO uk=1,jpk
@@ -416,8 +418,19 @@
           END DO
           END DO
           END DO
-
-
+       else
+          DO ji=1,jpi
+          DO jj=1,jpj
+          DO uk=1,jpk
+                if (tmask(uk,jj,ji) .eq.1) then
+                e3t(uk,jj,ji) = (Umzweigh*  e3tdta(uk,jj,ji,1) + zweigh*e3tdta(uk,jj,ji,2))
+                e3t_back(uk,jj,ji) = e3t(uk,jj,ji)
+                endif ! tmask
+          END DO
+          END DO
+          END DO
+        forcing_phys_initialized = .TRUE.
+        endif
 
 
 !!!$omp parallel default(none) private(mytid,jk,uj,ji)

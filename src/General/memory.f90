@@ -60,7 +60,7 @@
 !!      rau0             : reference volumic mass of the ocean (kg/m3)
 !!      ralpha, rbeta    : thermique and haline expension coef. used
 !!               for linear equation of state (neos=1 or 2)
-
+      LOGICAL forcing_phys_initialized
       INTEGER neos
       double precision rau0, ralpha, rbeta
       double precision  rdt     ! dynamics time step
@@ -719,7 +719,7 @@ subroutine alloc_tot()
 !!    photoperiod
         allocate(DAY_LENGTH(jpj,jpi))   
        DAY_LENGTH = huge(DAY_LENGTH(1,1))
-
+       forcing_phys_initialized = .false.
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
 #endif

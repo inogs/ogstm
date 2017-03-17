@@ -474,37 +474,18 @@
       SUBROUTINE swap_PHYS
          USE myalloc
          IMPLICIT NONE
-         INTEGER :: jk,jj,ji,jdepth,jf
-         
 
-
-              DO ji=1,jpi
-            DO jj=1,jpj
-          DO jdepth=1,jpk
-
-                  udta(jdepth,jj,ji,1)   =  udta(jdepth,jj,ji,2)
-                  e3udta(jdepth,jj,ji,1) =  e3udta(jdepth,jj,ji,2)
-                  vdta(jdepth,jj,ji,1)   =  vdta(jdepth,jj,ji,2)
-                  e3vdta(jdepth,jj,ji,1) =  e3vdta(jdepth,jj,ji,2)
-                  wdta(jdepth,jj,ji,1)   =  wdta(jdepth,jj,ji,2)
-                  e3wdta(jdepth,jj,ji,1) =  e3wdta(jdepth,jj,ji,2)
-                  avtdta(jdepth,jj,ji,1) = avtdta(jdepth,jj,ji,2)
-                    tdta(jdepth,jj,ji,1) = tdta(jdepth,jj,ji,2)
-                    sdta(jdepth,jj,ji,1) = sdta(jdepth,jj,ji,2)
-                  e3tdta(jdepth,jj,ji,1) =  e3tdta(jdepth,jj,ji,2)
-
-              END DO
-            END DO
-          END DO
-
-                        DO jf=1,jpflx
-                   DO ji=1,jpi
-              DO jj=1,jpj
-                flxdta(jj,ji,jf,1) = flxdta(jj,ji,jf,2)
-              END DO
-            END DO
-          END DO
-
+                    udta(:,:,:,1) =    udta(:,:,:,2)
+                  e3udta(:,:,:,1) =  e3udta(:,:,:,2)
+                    vdta(:,:,:,1) =    vdta(:,:,:,2)
+                  e3vdta(:,:,:,1) =  e3vdta(:,:,:,2)
+                    wdta(:,:,:,1) =    wdta(:,:,:,2)
+                  e3wdta(:,:,:,1) =  e3wdta(:,:,:,2)
+                  avtdta(:,:,:,1) =  avtdta(:,:,:,2)
+                    tdta(:,:,:,1) =    tdta(:,:,:,2)
+                    sdta(:,:,:,1) =    sdta(:,:,:,2)
+                  e3tdta(:,:,:,1) =  e3tdta(:,:,:,2)
+                  flxdta(:,:,:,1) =  flxdta(:,:,:,2)
 
 
       END SUBROUTINE swap_PHYS

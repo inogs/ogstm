@@ -362,35 +362,63 @@
 !!!$omp parallel default(none) private(mytid,jj,ji,uk)
 !!!$omp&                       shared(jpk,jpj,jpi,jk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
 !!!$omp&                       zweigh,Umzweigh,tmask,umask,vmask,e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta,e3t_back)
-              DO ji=1,jpi
-            DO jj=1,jpj
+          DO ji=1,jpi
+          DO jj=1,jpj
           DO uk=1,jpk
-
-                if (umask(uk,jj,ji) .NE. 0.0) then
+                if (umask(uk,jj,ji) .eq. 1) then
                 un(uk,jj,ji)  = (Umzweigh*  udta(uk,jj,ji,1) + zweigh*  udta(uk,jj,ji,2))
                 e3u(uk,jj,ji) = (Umzweigh*  e3udta(uk,jj,ji,1) + zweigh*  e3udta(uk,jj,ji,2))
                 endif
+          ENDDO
+          ENDDO
+          ENDDO
 
-                if (vmask(uk,jj,ji) .NE. 0.0) then
+          DO ji=1,jpi
+          DO jj=1,jpj
+          DO uk=1,jpk
+                if (vmask(uk,jj,ji) .eq. 1) then
                 vn(uk,jj,ji)  = (Umzweigh*  vdta(uk,jj,ji,1) + zweigh*  vdta(uk,jj,ji,2))
                 e3v(uk,jj,ji) = (Umzweigh*  e3vdta(uk,jj,ji,1) + zweigh*  e3vdta(uk,jj,ji,2))
                 endif
+          ENDDO
+          ENDDO
+          ENDDO
 
-                if (tmask(uk,jj,ji) .NE. 0.0) then
-
+          DO ji=1,jpi
+          DO jj=1,jpj
+          DO uk=1,jpk
+                if (tmask(uk,jj,ji) .eq.1) then
                  wn(uk,jj,ji) = (Umzweigh*  wdta(uk,jj,ji,1) + zweigh*  wdta(uk,jj,ji,2))
                 avt(uk,jj,ji) = (Umzweigh*avtdta(uk,jj,ji,1) + zweigh*avtdta(uk,jj,ji,2))
                 e3w(uk,jj,ji) = (Umzweigh*  e3wdta(uk,jj,ji,1) + zweigh*  e3wdta(uk,jj,ji,2))
-       
+                endif
+          ENDDO
+          ENDDO
+          ENDDO
+          DO ji=1,jpi
+          DO jj=1,jpj
+          DO uk=1,jpk
+                if (tmask(uk,jj,ji) .eq.1) then
                  tn(uk,jj,ji) = (Umzweigh*  tdta(uk,jj,ji,1) + zweigh*  tdta(uk,jj,ji,2))
                  sn(uk,jj,ji) = (Umzweigh*  sdta(uk,jj,ji,1) + zweigh*  sdta(uk,jj,ji,2))
+                endif
+          ENDDO
+          ENDDO
+          ENDDO
+
+          DO ji=1,jpi
+          DO jj=1,jpj
+          DO uk=1,jpk
+                if (tmask(uk,jj,ji) .eq.1) then          
                 e3t_back(uk,jj,ji) = e3t(uk,jj,ji)
                 e3t(uk,jj,ji) = (Umzweigh*  e3tdta(uk,jj,ji,1) + zweigh*  e3tdta(uk,jj,ji,2))
                 endif ! tmask
-
-              END DO
-            END DO
           END DO
+          END DO
+          END DO
+
+
+
 
 !!!$omp parallel default(none) private(mytid,jk,uj,ji)
 !!!$omp&                       shared(jpk,jpj,jpi,jj,flx,flxdta,

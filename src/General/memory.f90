@@ -98,8 +98,9 @@
 !!      e3t_0, e3w_0()     : vertical scale factors at t- and w-points (m)
 !!
       !dir$ attributes align:64 :: e3t
-      double precision, allocatable :: gdept(:), gdepw(:), e3t_0(:), e3w_0(:)
-      double precision, allocatable,save :: e3t(:,:,:), e3t_back(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
+      double precision, allocatable :: gdept(:), gdepw(:)
+      double precision, allocatable,dimension(:,:,:), save :: e3t, e3t_back, e3u, e3v, e3w
+      double precision, allocatable,dimension(:,:,:), save :: e3t_0, e3u_0, e3v_0, e3w_0
 
 !!----------------------------------------------------------------------
 !!        masks, bathymetry
@@ -109,6 +110,7 @@
 !!      vmask, fmask()
 
       INTEGER, allocatable :: mbathy(:,:)
+      double precision, allocatable, dimension(:,:) :: h_column
 
 
       INTEGER(kind = 1), allocatable, dimension(:,:,:) :: tmask,umask, vmask
@@ -496,10 +498,15 @@ subroutine alloc_tot()
         gdept = huge(gdept(1))
       allocate(gdepw(jpk)) 
         gdepw = huge(gdepw(1))
-      allocate(e3t_0(jpk)) 
-        e3t_0 = huge(e3t_0(1))
-      allocate(e3w_0(jpk)) 
-        e3w_0 = huge(e3w_0(1))
+      allocate(e3t_0(jpk,jpj,jpi))
+        e3t_0 = huge(e3t_0(1,1,1))
+      allocate(e3u_0(jpk,jpj,jpi))
+        e3u_0 = huge(e3u_0(1,1,1))
+      allocate(e3v_0(jpk,jpj,jpi))
+        e3v_0 = huge(e3v_0(1,1,1))
+      allocate(e3w_0(jpk,jpj,jpi))
+        e3w_0 = huge(e3w_0(1,1,1))
+
 
       allocate(e3t(jpk,jpj,jpi)) 
         e3t = huge(e3t(1,1,1))
@@ -517,7 +524,8 @@ subroutine alloc_tot()
 
       allocate(tmask(jpk,jpj,jpi)) 
       tmask = huge(tmask(1,1,1))
-      
+      allocate(h_column(jpj,jpi))
+      h_column = huge(h_column(1,1))
       
       allocate(umask(jpk,jpj,jpi)) 
       umask = huge(umask(1,1,1))

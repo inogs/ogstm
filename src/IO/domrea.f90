@@ -108,7 +108,7 @@
      do ii=1, jpi
        do jj=1, jpj
         do kk=1, jpk
-         if (tmask(kk,jj,ii).NE.0.) then
+         if (tmask(kk,jj,ii).eq.1) then
             mbathy(jj,ii) = mbathy(jj,ii) +1
             NWATERPOINTS = NWATERPOINTS +1
          endif
@@ -125,16 +125,25 @@
        CALL readmask_double_1d(maskfile,'gdept', gdept)
        CALL readmask_double_1d(maskfile,'gdepw', gdepw)
        CALL readmask_double_1d(maskfile,'e3t_0', e3t_0)
-       CALL readmask_double_1d(maskfile,'e3w_0', e3w_0)
 
-      CALL readnc_slice_double (maskfile,'e3t', e3t )
-      CALL readnc_slice_double (maskfile,'e3u', e3u )
-      CALL readnc_slice_double (maskfile,'e3v', e3v )
-      CALL readnc_slice_double (maskfile,'e3w', e3w )
+      CALL readnc_slice_double (maskfile,'e3t_0', e3t_0 )
+      CALL readnc_slice_double (maskfile,'e3u_0', e3u_0 )
+      CALL readnc_slice_double (maskfile,'e3v_0', e3v_0 )
+      CALL readnc_slice_double (maskfile,'e3w_0', e3w_0 )
 
       flxdta(:,:,8 ,2)  = e3u(1,:,:)
       flxdta(:,:,9 ,2)  = e3v(1,:,:)
       flxdta(:,:,10 ,2) = e3t(1,:,:)
+
+      h_column = 0.0
+      DO ii= 1,jpi
+      DO jj= 1,jpj
+      DO kk=1,mbathy(jj,ii)
+           h_column(jj,ii) = h_column(jj,ii) + e3t_0(kk,jj,ii)
+      ENDDO
+      ENDDO
+      ENDDO
+
 
 
 !       Restoration Mask ****************

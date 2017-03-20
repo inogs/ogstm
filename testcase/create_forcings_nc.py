@@ -27,16 +27,15 @@ def create_forcings_nc(test):
     gdepw   =  M.variables['gdepw'].data[0,:,0,0].copy()
     e1v     =  M.variables['e1v'  ].data[0,0,:,:].copy()
     e2u     =  M.variables['e2u'  ].data[0,0,:,:].copy()
-    e3t     =  M.variables['e3t'  ].data[0,:,0,0].copy()
 
-    e3v0    =  M.variables['e3v'  ].data[0,:,:,:].copy()
-    e3u0    =  M.variables['e3u'  ].data[0,:,:,:].copy()
-    e3t0    =  M.variables['e3t'  ].data[0,:,:,:].copy()
-    e3w0    =  M.variables['e3w'  ].data[0,:,:,:].copy()
-   
+    e3v0    =  M.variables['e3v_0'  ].data[0,:,:,:].copy()
+    e3u0    =  M.variables['e3u_0'  ].data[0,:,:,:].copy()
+    e3t0    =  M.variables['e3t_0'  ].data[0,:,:,:].copy()
+    e3w0    =  M.variables['e3w_0'  ].data[0,:,:,:].copy()
+    
     
     M.close()
-
+    e3t = e3t0
     e1v_aux = np.tile(e1v,[jpk,1,1])
     e2u_aux = np.tile(e2u,[jpk,1,1])
 
@@ -94,11 +93,9 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('time_counter' ,'d',('time_counter',)                ); ncvar    = 1.;
         ncvar = ncOUT.createVariable('vosaline'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3S;
         ncvar = ncOUT.createVariable('votemper'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3T;
-        ncvar = ncOUT.createVariable('e3t'          ,'f',('time_counter','deptht','y','x')); ncvar[:] = e3t0;
         ncvar = ncOUT.createVariable('soshfldo'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2Q;
         ncvar = ncOUT.createVariable('sowindsp'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2W;
-        ncvar = ncOUT.createVariable('sossheig'     ,'f',('time_counter','y','x')         ); ncvar[:] = 0.;
-        ncvar = ncOUT.createVariable('sowaflcd'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2F;
+        ncvar = ncOUT.createVariable('sossheig'     ,'f',('time_counter','y','x')         ); ncvar[:] = -0.60;
         ncOUT.close()
 
         # Create U file
@@ -115,8 +112,7 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')                        ); ncvar[:] = Lat;
         ncvar = ncOUT.createVariable('deptht'       ,'f',('deptht',)                      ); ncvar[:] = gdept;
         ncvar = ncOUT.createVariable('time_counter' ,'d',('time_counter',)                ); ncvar    = 1.;
-        ncvar = ncOUT.createVariable('vozocrtx'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3U; 
-        ncvar = ncOUT.createVariable('e3u'          ,'f',('time_counter','deptht','y','x')); ncvar[:] = e3u0; 
+        ncvar = ncOUT.createVariable('vozocrtx'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3U;  
 
         ncOUT.close()
 
@@ -135,7 +131,6 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('deptht'       ,'f',('deptht',)                      ); ncvar[:] = gdept;
         ncvar = ncOUT.createVariable('time_counter'  ,'d',('time_counter',)               ); ncvar    = 1.;
         ncvar = ncOUT.createVariable('vomecrty'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3V; 
-        ncvar = ncOUT.createVariable('e3v'          ,'f',('time_counter','deptht','y','x')); ncvar[:] = e3v0; 
         ncOUT.close()
 
         # Create W file
@@ -153,8 +148,7 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('depthw'       ,'f',('depthw',)                      ); ncvar[:] = gdepw;
         ncvar = ncOUT.createVariable('time_counter' ,'d',('time_counter',)                ); ncvar    = 1.;
         ncvar = ncOUT.createVariable('vovecrtz'     ,'f',('time_counter','depthw','y','x')); ncvar[:] = D3*0.;
-        ncvar = ncOUT.createVariable('votkeavt'     ,'f',('time_counter','depthw','y','x')); ncvar[:] = D3K;        
-        ncvar = ncOUT.createVariable('e3w'          ,'f',('time_counter','depthw','y','x')); ncvar[:] = e3w0;        
+        ncvar = ncOUT.createVariable('votkeavt'     ,'f',('time_counter','depthw','y','x')); ncvar[:] = D3K;               
 
 
         ncOUT.close()

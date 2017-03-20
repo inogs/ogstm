@@ -208,19 +208,6 @@ def create_meshmask_nc(test):
     e2v[0,0,:,-1] =e2v[0,0,:,-2]
     e2v[0,0,-1,:] =e2v[0,0,-2,:]
 
-#    double e3t_0(time, z, y_a, x_a) ;
-    filein             = 'KB'+'/e3t' + 'KB' + '.dat'
-    e3tTOT             = np.loadtxt(filein, dtype=np.double);
-    e3tINT             = interpolate(e3tTOT, jpk)
-    e3t_0                = np.zeros((time,jpk,y_a,x_a),np.double);
-    e3t_0[0,0:jpk,0,0]   = e3tINT[0:jpk];
-
-#    double e3w_0(time, z, y_a, x_a) ;
-    filein             = 'KB'+'/e3w' + 'KB' + '.dat'
-    e3wTOT             = np.loadtxt(filein, dtype=np.double);
-    e3wINT             = interpolate(e3wTOT, jpk)
-    e3w_0              = np.zeros((time,jpk,y_a,x_a),np.double);
-    e3w_0[0,0:jpk,0,0] = e3wINT[0:jpk];
 
 #   double e3t(time, z, y, x) ;
     filein             = 'KB'+'/e3t' + 'KB' + '.dat'
@@ -256,7 +243,7 @@ def create_meshmask_nc(test):
     filein             = 'KB'+'/e3w' + 'KB' + '.dat'
     e3wTOT             = np.loadtxt(filein, dtype=np.double);
     e3wINT             = interpolate(e3wTOT, jpk)
-    e3w                = np.zeros((time,jpk,jpj,jpi),np.double);
+    e3w               = np.zeros((time,jpk,jpj,jpi),np.double);
     for jk in range(jpk):
         for jj in range(jpj):
             for ji in range(jpi):
@@ -316,12 +303,10 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('e2t'   ,'d',('time','z_a', 'y', 'x')  ) ; ncvar[:] = e2t   ;
     ncvar    = ncOUT.createVariable('e2u'   ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = e2u   ;
     ncvar    = ncOUT.createVariable('e2v'   ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = e2v   ;
-    ncvar    = ncOUT.createVariable('e3t_0' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3t_0 ;
-    ncvar    = ncOUT.createVariable('e3w_0' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = e3w_0 ;
-    ncvar    = ncOUT.createVariable('e3t'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3t   ;
-    ncvar    = ncOUT.createVariable('e3u'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3u   ;
-    ncvar    = ncOUT.createVariable('e3v'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3v   ;
-    ncvar    = ncOUT.createVariable('e3w'   ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = e3w   ;
+    ncvar    = ncOUT.createVariable('e3t_0' ,'d',('time','z'  , 'y', 'x'))   ; ncvar[:] = e3t   ;
+    ncvar    = ncOUT.createVariable('e3u_0' ,'d',('time','z'  , 'y', 'x'))   ; ncvar[:] = e3u 
+    ncvar    = ncOUT.createVariable('e3v_0' ,'d',('time','z'  , 'y', 'x'))   ; ncvar[:] = e3v
+    ncvar    = ncOUT.createVariable('e3w_0' ,'d',('time','z'  , 'y', 'x'))   ; ncvar[:] = e3w 
     ncvar    = ncOUT.createVariable('ff'    ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = ff    ;
     ncvar    = ncOUT.createVariable('fmask' ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = fmask ;
     ncvar    = ncOUT.createVariable('gdept' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = gdept ;

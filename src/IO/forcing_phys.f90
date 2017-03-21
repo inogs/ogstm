@@ -314,95 +314,30 @@
    
       Umzweigh  = 1.0 - zweigh
 
-!!!$omp parallel default(none) private(mytid,jj,ji,uk)
-!!!$omp&                       shared(jpk,jpj,jpi,jk,ub,un,udta, vb,vn,vdta,wn,wdta,avt,avtdta,tn,tdta,sn,sdta,
-!!!$omp&                       zweigh,Umzweigh,tmask,umask,vmask,e3u,e3udta,e3v,e3vdta,e3t,e3tdta,e3w,e3wdta,e3t_back)
-          DO ji=1,jpi
-          DO jj=1,jpj
-          DO uk=1,jpk
-                if (umask(uk,jj,ji) .eq. 1) then
-                un(uk,jj,ji)  = (Umzweigh*  udta(uk,jj,ji,1) + zweigh*  udta(uk,jj,ji,2))
-                e3u(uk,jj,ji) = (Umzweigh*  e3udta(uk,jj,ji,1) + zweigh*  e3udta(uk,jj,ji,2))
-                endif
-          ENDDO
-          ENDDO
-          ENDDO
+         un = Umzweigh* udta(:,:,:,1) + zweigh*  udta(:,:,:,2)
+         vn = Umzweigh* vdta(:,:,:,1) + zweigh*  vdta(:,:,:,2)
+         wn = Umzweigh* wdta(:,:,:,1) + zweigh*  wdta(:,:,:,2)
 
-          DO ji=1,jpi
-          DO jj=1,jpj
-          DO uk=1,jpk
-                if (vmask(uk,jj,ji) .eq. 1) then
-                vn(uk,jj,ji)  = (Umzweigh*  vdta(uk,jj,ji,1) + zweigh*  vdta(uk,jj,ji,2))
-                e3v(uk,jj,ji) = (Umzweigh*  e3vdta(uk,jj,ji,1) + zweigh*  e3vdta(uk,jj,ji,2))
-                endif
-          ENDDO
-          ENDDO
-          ENDDO
+         e3u = Umzweigh* e3udta(:,:,:,1) + zweigh* e3udta(:,:,:,2)
+         e3v = Umzweigh* e3vdta(:,:,:,1) + zweigh* e3vdta(:,:,:,2)
+         e3w = Umzweigh* e3wdta(:,:,:,1) + zweigh* e3wdta(:,:,:,2)
 
-          DO ji=1,jpi
-          DO jj=1,jpj
-          DO uk=1,jpk
-                if (tmask(uk,jj,ji) .eq.1) then
-                 wn(uk,jj,ji) = (Umzweigh*  wdta(uk,jj,ji,1) + zweigh*  wdta(uk,jj,ji,2))
-                avt(uk,jj,ji) = (Umzweigh*avtdta(uk,jj,ji,1) + zweigh*avtdta(uk,jj,ji,2))
-                e3w(uk,jj,ji) = (Umzweigh*  e3wdta(uk,jj,ji,1) + zweigh*  e3wdta(uk,jj,ji,2))
-                endif
-          ENDDO
-          ENDDO
-          ENDDO
-          DO ji=1,jpi
-          DO jj=1,jpj
-          DO uk=1,jpk
-                if (tmask(uk,jj,ji) .eq.1) then
-                 tn(uk,jj,ji) = (Umzweigh*  tdta(uk,jj,ji,1) + zweigh*  tdta(uk,jj,ji,2))
-                 sn(uk,jj,ji) = (Umzweigh*  sdta(uk,jj,ji,1) + zweigh*  sdta(uk,jj,ji,2))
-                endif
-          ENDDO
-          ENDDO
-          ENDDO
+         tn  = Umzweigh* tdta(:,:,:,1)   + zweigh* tdta(:,:,:,2)
+         sn  = Umzweigh* sdta(:,:,:,1)   + zweigh* sdta(:,:,:,2)
+         avt = Umzweigh* avtdta(:,:,:,1) + zweigh* avtdta(:,:,:,2)
 
-
-       if (forcing_phys_initialized) then
-          DO ji=1,jpi
-          DO jj=1,jpj
-          DO uk=1,jpk
-                if (tmask(uk,jj,ji) .eq.1) then          
-                e3t_back(uk,jj,ji) = e3t(uk,jj,ji)
-                e3t(uk,jj,ji) = (Umzweigh*  e3tdta(uk,jj,ji,1) + zweigh*  e3tdta(uk,jj,ji,2))
-                endif ! tmask
-          END DO
-          END DO
-          END DO
-       else
-          DO ji=1,jpi
-          DO jj=1,jpj
-          DO uk=1,jpk
-                if (tmask(uk,jj,ji) .eq.1) then
-                e3t(uk,jj,ji) = (Umzweigh*  e3tdta(uk,jj,ji,1) + zweigh*e3tdta(uk,jj,ji,2))
-                e3t_back(uk,jj,ji) = e3t(uk,jj,ji)
-                endif ! tmask
-          END DO
-          END DO
-          END DO
-        forcing_phys_initialized = .TRUE.
+        if (forcing_phys_initialized) then
+           e3t_back = e3t
+           e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
+        else
+          e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
+          e3t_back = e3t
+          forcing_phys_initialized = .TRUE.
         endif
 
+        flx = Umzweigh * flxdta(:,:,:,1) + zweigh * flxdta(:,:,:,2)
 
-!!!$omp parallel default(none) private(mytid,jk,uj,ji)
-!!!$omp&                       shared(jpk,jpj,jpi,jj,flx,flxdta,
-!!!$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
 
-                              DO jf=1,jpflx
-                        DO ji=1,jpi
-                  DO uj=1,jpj
-
-                flx(uj,ji,jf) = ( Umzweigh * flxdta(uj,ji,jf,1)+ zweigh * flxdta(uj,ji,jf,2) )
-                !if(jf==3) write(*,200),ji,uj,flx(uj,ji,jf)
-                        END DO
-                  END DO
-            END DO
-!            STOP
-!            200 FORMAT(' ',I4,I4,D30.23)
 
                   DO ji=1,jpi
             DO uj=1,jpj

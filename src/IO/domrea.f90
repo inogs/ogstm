@@ -67,7 +67,7 @@
       call readnc_global_double_2d(maskfile,'gphit', totgphit)
       endif 
 
-!     call readnc_slice_double_2d(maskfile,'glamt', glamt)
+      call readnc_slice_double_2d(maskfile,'glamt', glamt)
       call readnc_slice_double_2d(maskfile,'glamu', glamu)
       call readnc_slice_double_2d(maskfile,'glamv', glamv)
       call readnc_slice_double_2d(maskfile,'glamf', glamf)

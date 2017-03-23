@@ -140,6 +140,8 @@ SUBROUTINE ogstm_initialize()
 
       call photo_init
 
+      call init_phys
+
 ! Initialization of Biogeochemical recator with 0D approach
 
       call BFM0D_NO_BOXES(1,1,1,1,1)
@@ -320,7 +322,6 @@ SUBROUTINE set_to_zero()
       avt       = 0.0
       tn        = 0.0
       sn        = 0.0
-!      hdivn     = 0.0
 ! Passive tracers arrays set to zero
 
       xpar      = 0.0

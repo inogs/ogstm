@@ -145,7 +145,7 @@
       nomefile = 'FORCINGS/U'//datestring//'.nc'
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf)
-      udta(:,:,:,2) = buf * umask
+      udta(:,:,:,2) = buf * umask * nudgVel
 
       call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
       if (IS_INGV_E3T) then
@@ -158,7 +158,7 @@
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf)
-      vdta(:,:,:,2) = buf*vmask
+      vdta(:,:,:,2) = buf*vmask * nudgVel
       
 
       if (IS_INGV_E3T) then
@@ -173,8 +173,8 @@
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
 
-      call readnc_slice_float(nomefile,'vovecrtz',buf)
-      wdta(:,:,:,2) = buf * tmask
+!      call readnc_slice_float(nomefile,'vovecrtz',buf)
+!      wdta(:,:,:,2) = buf * tmask * nudgVel
 
       call readnc_slice_float(nomefile,'votkeavt',buf)
       avtdta(:,:,:,2) = buf*tmask
@@ -271,18 +271,22 @@
 
 
       call readnc_slice_float_2d(nomefile,'sowindsp',buf2)
-      flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:)
+      flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * nudgT
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2)
-      flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:)
+      flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * nudgT
       flxdta(:,:,jpice ,2) = 0.
       flxdta(:,:,jpemp ,2) = 0.
 
 
+      if (read_W_from_file) then
+          nomefile = 'FORCINGS/W'//datestring//'.nc'
+          call readnc_slice_float(nomefile,'vovecrtz',buf)
+          wdta(:,:,:,2) = buf * tmask * nudgVel
+      else
+          CALL COMPUTE_W()               ! vertical velocity
+      endif
 
 
-
-!     CALL div()               ! Horizontal divergence
-!     CALL wzv()               ! vertical velocity
 
 !        could be written for OpenMP
               DO ji=1,jpi
@@ -379,3 +383,144 @@
 
 
       END SUBROUTINE swap_PHYS
+
+! ************************************************
+!     INIT_PHYS
+!     prepares nudg variables
+! ************************************************
+      SUBROUTINE INIT_PHYS
+      USE myalloc
+      IMPLICIT NONE
+      integer ji, jj,jk
+      double precision reduction_value, alpha
+      double precision lon_limit
+
+      lon_limit = -5.5
+      alpha     = 1.0
+      nudgT     = 1.0
+      nudgVel   = 1.0
+
+      if (internal_nudging) then
+          DO ji=1,jpi
+          DO jj=1,jpj
+              if (glamt(jj,ji).lt.lon_limit) then
+                  reduction_value = 1.e-6
+                  nudgT(jj,ji) = reduction_value
+              endif
+          ENDDO
+          ENDDO
+
+
+          DO ji=1,jpi
+          DO jj=1,jpj
+              if (glamt(jj,ji).lt.lon_limit) then
+                  reduction_value = exp( -alpha*(  (glamt(jj,ji)-lon_limit)**2)  )
+              endif
+              do jk=1,jpk
+                  nudgVel(jk,jj,ji) = reduction_value
+              enddo
+          ENDDO
+          ENDDO
+      endif
+
+
+      END SUBROUTINE INIT_PHYS
+
+
+      SUBROUTINE COMPUTE_W ()
+!---------------------------------------------------------------------
+!
+!                       ROUTINE wzv
+!                     ***************
+!
+!  Purpose :
+!  ---------
+!   Compute the now vertical velocity after the array swap.
+!
+!   Method :
+!   -------
+!   Using the incompressibility hypothesis, the vertical velocity
+!   is computed by integrating the horizontal divergence from the
+!   bottom to the surface.
+!   The boundary conditions are w=0 at the bottom (no flux) and
+!   w=0 at the sea surface (rigid lid).
+!
+
+       USE myalloc
+       IMPLICIT NONE
+
+!----------------------------------------------------------------------
+! local declarations
+! ==================
+      INTEGER ji, jj, jk
+
+
+      double precision zbt
+      double precision zwu(jpj,jpi), zwv(jpj,jpi)
+      double precision hdivn(jpk,jpj,jpi)
+
+      hdivn = 0.0
+      DO jk = 1, jpkm1
+
+
+! 1. Horizontal fluxes
+
+        DO jj = 1, jpjm1
+        DO ji = 1, jpim1
+            zwu(jj,ji) = e2u(jj,ji) * e3u(jk,jj,ji) * udta(jk,jj,ji,2)
+            zwv(jj,ji) = e1v(jj,ji) * e3v(jk,jj,ji) * vdta(jk,jj,ji,2)
+        END DO
+        END DO
+
+
+! 2. horizontal divergence
+
+
+        DO jj = 2, jpjm1
+        DO ji = 2, jpim1
+            zbt = e1t(jj,ji) * e2t(jj,ji) * e3t(jk,jj,ji)
+            hdivn(jk,jj,ji) = (  zwu(jj,ji) - zwu(jj,ji-1  ) &
+                               + zwv(jj,ji) - zwv(jj-1  ,ji)  ) / zbt
+        END DO
+        END DO
+
+
+      END DO
+
+
+! 3. Lateral boundary conditions on hdivn
+
+#ifdef key_mpp
+
+! ... Mpp : export boundary values to neighboring processors
+!     CALL mpplnk_my( hdivn,1, 1, 1 )
+#  else
+!
+! ... mono or macro-tasking: T-point, 3D array, jk-slab
+!     CALL lbc( hdivn, 1, 1, 1, ktask, jpkm1, 1 )
+#endif
+
+
+
+
+! 1. Surface and bottom boundary condition: w=0 (rigid lid and no flux)
+! ----------------------------------------
+      wdta(  1,:,:,2 ) = 0.0
+      wdta(jpk,:,:,2 ) = 0.0
+
+! 2. Computation from the bottom
+! ------------------------------
+     DO ji = 1, jpi
+     DO jj = 1, jpj
+     DO jk = jpkm1, 1, -1
+
+            wdta(jk,jj,ji,2) = wdta(jk+1,jj,ji,2) - e3t(jk,jj,ji)*hdivn(jk,jj,ji)
+
+     END DO
+     END DO
+     END DO
+
+
+END SUBROUTINE COMPUTE_W
+
+

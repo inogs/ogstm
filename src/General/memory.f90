@@ -61,6 +61,7 @@
 !!      ralpha, rbeta    : thermique and haline expension coef. used
 !!               for linear equation of state (neos=1 or 2)
       LOGICAL forcing_phys_initialized
+      LOGICAL read_W_from_file, internal_nudging
       INTEGER neos
       double precision rau0, ralpha, rbeta
       double precision  rdt     ! dynamics time step
@@ -83,7 +84,7 @@
 !!        ff             : coriolis factor
 
 
-      double precision, allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf  !, glamt,
+      double precision, allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf , glamt
       double precision, allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
       double precision, allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
       double precision, allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
@@ -101,6 +102,7 @@
       double precision, allocatable :: gdept(:), gdepw(:)
       double precision, allocatable,dimension(:,:,:), save :: e3t, e3t_back, e3u, e3v, e3w
       double precision, allocatable,dimension(:,:,:), save :: e3t_0, e3u_0, e3v_0, e3w_0
+      double precision, allocatable :: nudgT(:,:) , nudgVel(:,:,:)
 
 !!----------------------------------------------------------------------
 !!        masks, bathymetry
@@ -139,13 +141,12 @@
 !!
       double precision, allocatable, dimension(:,:,:) :: un, vn, wn
       double precision, allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho
-      double precision, allocatable, dimension(:,:,:) :: hdivn
 
-!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+
 !! III. OCEAN PHYSICS
 !! ==================
 
-!!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 
 !!----------------------------------------------------------------------
 !!      lateral diffusivity (tracers)
@@ -527,6 +528,11 @@ subroutine alloc_tot()
       allocate(h_column(jpj,jpi))
       h_column = huge(h_column(1,1))
       
+      allocate(nudgT(jpj,jpi))
+      nudgT = huge(nudgT(1,1))
+      allocate(nudgVel(jpk,jpj,jpi))
+      nudgVel = huge(nudgVel(1,1,1))
+
       allocate(umask(jpk,jpj,jpi)) 
       umask = huge(umask(1,1,1))
       allocate(vmask(jpk,jpj,jpi)) 
@@ -547,8 +553,6 @@ subroutine alloc_tot()
       rhopn  = huge(rhopn(1,1,1))
        allocate(rho(jpk,jpj,jpi))   
       rho    = huge(rho(1,1,1))
-       allocate(hdivn(jpk,jpj,jpi)) 
-      hdivn  = huge(hdivn(1,1,1))
       
       allocate(ahtu(jpk)) 
       ahtu = huge(ahtu(1))

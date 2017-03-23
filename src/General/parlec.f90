@@ -176,7 +176,8 @@
 ! ************* namelist GENERAL_IO  *****************
 
       nwritetrc = 10
-
+      read_W_from_file = .true.
+      internal_nudging = .false.
       REWIND( numnam )
       READ  ( numnam, General_IO )
 

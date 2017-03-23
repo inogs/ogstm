@@ -460,7 +460,8 @@ subroutine alloc_tot()
 
 
       
-
+      allocate(glamt(jpj,jpi))
+      glamt    = huge(glamt(1,1))
       allocate(glamu(jpj,jpi))          
       glamu    = huge(glamu(1,1))
       allocate(glamv(jpj,jpi))          

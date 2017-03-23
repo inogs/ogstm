@@ -130,7 +130,7 @@
 
       character(LEN=17), INTENT(IN) :: datestring
       LOGICAL :: B, IS_INGV_E3T
-      integer  :: jk,jj,ji
+      integer  :: jk,jj,ji, jstart
       ! LOCAL
       character(LEN=30) nomefile
       double precision ssh(jpj,jpi)
@@ -203,13 +203,13 @@
          call readnc_slice_float_2d(nomefile,'sossheig',buf2)
          ssh = buf2*tmask(1,:,:)
 
-          e3t = e3t_0
+          e3tdta(:,:,:,2) = e3t_0
           DO ji= 1,jpi
           DO jj= 1,jpj
           if (tmask(1,jj,ji).eq.1) then  ! to do the division
               correction_e3t=( 1.0 + ssh(jj,ji)/h_column(jj,ji))
               DO jk=1,mbathy(jj,ji)
-                   e3t(jk,jj,ji)  = e3t_0(jk,jj,ji) * correction_e3t
+                   e3tdta(jk,jj,ji,2)  = e3t_0(jk,jj,ji) * correction_e3t
               ENDDO
           endif
           ENDDO
@@ -219,9 +219,9 @@
          e1v_x_e2v = e1v*e2v
          e1t_x_e2t = e1t*e2t
 
-         diff_e3t = e3t - e3t_0
-         e3u = 0.0
-         e3v = 0.0
+         diff_e3t = e3tdta(:,:,:,2) - e3t_0
+         e3udta(:,:,:,2) = 0.0
+         e3vdta(:,:,:,2) = 0.0
 
          DO ji = 1,jpim1
          DO jj = 1,jpjm1
@@ -229,8 +229,8 @@
              s0= e1t_x_e2t(jj,ji ) * diff_e3t(jk,jj,ji)
              s1= e1t_x_e2t(jj,ji+1) * diff_e3t(jk,jj,ji+1)
              s2= e1t_x_e2t(jj+1,ji) * diff_e3t(jk,jj+1,ji)
-             e3u(jk,jj,ji) = 0.5*(umask(jk,jj,ji)/(e1u_x_e2u(jj,ji)) * (s0 + s1))
-             e3v(jk,jj,ji) = 0.5*(vmask(jk,jj,ji)/(e1v_x_e2v(jj,ji)) * (s0 + s2))
+             e3udta(jk,jj,ji,2) = 0.5*(umask(jk,jj,ji)/(e1u_x_e2u(jj,ji)) * (s0 + s1))
+             e3vdta(jk,jj,ji,2) = 0.5*(vmask(jk,jj,ji)/(e1v_x_e2v(jj,ji)) * (s0 + s2))
          ENDDO
          ENDDO
          ENDDO
@@ -238,8 +238,8 @@
          DO ji = 1,jpi
          DO jj = 1,jpj
          DO jk = 1,jpk
-             e3u(jk,jj,ji) = e3u_0(jk,jj,ji) + e3u(jk,jj,ji)
-             e3v(jk,jj,ji) = e3v_0(jk,jj,ji) + e3v(jk,jj,ji)
+             e3udta(jk,jj,ji,2) = e3u_0(jk,jj,ji) + e3udta(jk,jj,ji,2)
+             e3vdta(jk,jj,ji,2) = e3v_0(jk,jj,ji) + e3vdta(jk,jj,ji,2)
          ENDDO
          ENDDO
          ENDDO
@@ -248,21 +248,25 @@
 
          DO ji = 1,jpi
          DO jj = 1,jpj
-             e3w(1,jj,ji) = e3w_0(1,jj,ji) + diff_e3t(1,jj,ji)
+             e3wdta(1,jj,ji,2) = e3w_0(1,jj,ji) + diff_e3t(1,jj,ji)
          ENDDO
          ENDDO
 
          DO ji = 1,jpi
          DO jj = 1,jpj
          DO jk = 2,mbathy(jj,ji)
-              e3w(jk,jj,ji) = e3w_0(jk,jj,ji) + 0.5*( diff_e3t(jk-1,jj,ji) + diff_e3t(jk,jj,ji))
+              e3wdta(jk,jj,ji,2) = e3w_0(jk,jj,ji) + 0.5*( diff_e3t(jk-1,jj,ji) + diff_e3t(jk,jj,ji))
          ENDDO
-         DO jk =  mbathy(jj,ji)+1, jpk
-             e3w(jk,jj,ji) = e3w_0(jk,jj,ji) + diff_e3t(jk-1,jj,ji)
+         jstart = jk
+         DO jk =  jstart, jpk
+             e3wdta(jk,jj,ji,2) = e3w_0(jk,jj,ji) + diff_e3t(jk-1,jj,ji)
          ENDDO
 
          ENDDO
          ENDDO
+
+
+
 
      endif ! IS_INGV_E3T
 

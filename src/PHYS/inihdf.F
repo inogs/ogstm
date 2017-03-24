@@ -112,7 +112,6 @@
           WRITE(numout,*)
           WRITE(numout,9200)
           DO jk = 1, jpk
-            WRITE(numout,9210) jk, ahtt(jk), gdept(jk)
           END DO
       ENDIF
  9200 FORMAT(' level    aht          depth t-level ' )

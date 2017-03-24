@@ -150,7 +150,7 @@
       call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
       if (IS_INGV_E3T) then
           call readnc_slice_float(nomefile,'e3u',buf)
-          e3udta(:,:,:,2) = buf*umask
+          e3udta(:,:,:,2) = buf!*umask
       endif
 
 
@@ -163,7 +163,7 @@
 
       if (IS_INGV_E3T) then
           call readnc_slice_float(nomefile,'e3v',buf)
-          e3vdta(:,:,:,2) = buf*vmask
+          e3vdta(:,:,:,2) = buf!*vmask
       endif
 
 
@@ -181,7 +181,7 @@
 
       if (IS_INGV_E3T) then
           call readnc_slice_float(nomefile,'e3w',buf)
-          e3wdta(:,:,:,2) = buf*tmask
+          e3wdta(:,:,:,2) = buf!*tmask
       endif
 
 
@@ -196,7 +196,7 @@
 
       if (IS_INGV_E3T) then
           call readnc_slice_float(nomefile,'e3t',buf)
-          e3tdta(:,:,:,2) = buf*tmask
+          e3tdta(:,:,:,2) = buf!*tmask
       endif
 
     if (.not.IS_INGV_E3T) then

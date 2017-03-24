@@ -20,8 +20,6 @@
 
       DO jn=1 ,jptra
 
-!!!$omp parallel default(none) private(jk,jj,ji, )
-!!!$omp&                       shared(jpk,jpj,jpi,jn,tmask,traIO,trn,Miss_val,Realcounter,Realcounterp1)
 
 
                 DO ji=1, jpi
@@ -38,11 +36,6 @@
 
       END DO
 
-      ! OPEN(UNIT=10009, FILE='s9.txt', FORM='FORMATTED')
-      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
-      ! WRITE(10009,200),'S9',jn,jk,jj,ji,traIO(jk,jj,ji,jn)
-      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10009)
-
        
 
 
@@ -51,8 +44,6 @@
       Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
       DO jn_high=1 ,jptra_high
 
-!!!$omp parallel default(none) private(jk,jj,ji, ,jn_on_all)
-!!!$omp& shared(jpk,jpj,jpi,jn_high,jptra_high,highfreq_table,tmask,traIO_HIGH,trn,Miss_val,Realcounter,Realcounterp1)
 
 
        
@@ -70,14 +61,9 @@
              END DO
           END DO
    
-!!!$omp    end parallel
 
       END DO
 
-      ! OPEN(UNIT=10010, FILE='s10.txt', FORM='FORMATTED')
-      ! DO jn=1,jptra; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
-      ! WRITE(10010,200),'S10',jn,jk,jj,ji,traIO(jk,jj,ji,jn)
-      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10010)
 
 !     *****************  PHYS *****************************************************
       if (freq_ave_phys.eq.1) then
@@ -138,7 +124,6 @@
            ENDIF
         END DO
       END DO
-      !STOP
 
 
 !     *****************  END PHYS *************************************************
@@ -146,6 +131,7 @@
 
 !     *****************  DIAGNOSTICS **********************************************
 
+      if (lbfm) THEN
 !     FIRST, LOW FREQUENCY
 
       Realcounter   =    REAL(ave_counter_2  , 8)
@@ -153,10 +139,6 @@
 
 
 
-!!!$omp parallel default(none) private(jk,jj,ji, )
-!!!$omp&   shared(jpk,jpj,jpi,jn,tmask,tra_DIA_IO,tra_DIA,Miss_val,Realcounter,Realcounterp1)
-
-      !IF( jn .LE. jptra_dia ) then
 
                DO ji=1, jpi
             DO jj=1, jpj
@@ -169,16 +151,9 @@
                   ENDIF
                END DO
             END DO
-      !ENDIF
       
 
-!!!$omp    end parallel
       END DO
-      ! print *,"---------2",tra_DIA_IO(1,30,15,:)
-      ! OPEN(UNIT=10011, FILE='s11.txt', FORM='FORMATTED')
-      ! DO jn=1,jptra_dia; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
-      ! WRITE(10011,200),'S11',jn,jk,jj,ji,tra_DIA_IO(jn,jk,jj,ji)
-      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10011)
 
 !     *********************  DIAGNOSTICS 2D **********
 
@@ -205,10 +180,6 @@
 
 
 
-!!!$omp parallel default(none) private(jk,jj,ji, ,jn_on_all)
-!!!$omp&   shared(jpk,jpj,jpi,jn_high,jptra_dia_high,highfreq_table_dia, tmask,tra_DIA_IO_HIGH,tra_DIA,Miss_val,
-!!!$omp&   Realcounter,Realcounterp1)
-
      if (jptra_dia_high.gt.0) THEN
              DO ji=1, jpi
              DO jj=1, jpj
@@ -226,13 +197,7 @@
              END DO
              END DO
      endif
-!!!$omp    end parallel
 
-
-      ! OPEN(UNIT=10012, FILE='s12.txt', FORM='FORMATTED')
-      ! DO jn=1,jptra_dia_high; DO jk = 1,jpk; DO jj = 1,jpj; DO ji = 1,jpi;
-      ! WRITE(10012,200),'S12',jn,jk,jj,ji,tra_DIA_IO_HIGH(jk,jj,ji,jn)
-      ! ENDDO;ENDDO;ENDDO;ENDDO;CLOSE(10012)
 
 !     *********************  DIAGNOSTICS 2D **********
 
@@ -254,7 +219,7 @@
         endif
 
 
-      
+      endif ! lfbm
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

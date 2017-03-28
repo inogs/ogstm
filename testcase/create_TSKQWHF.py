@@ -38,7 +38,8 @@ def create_TSKQWHF(test,flnm,D3T,D3SIGMA,D3S,D3K,D2W,D2H,D2F,PAR,Ed380,Ed412,Ed4
     t_0     = float_data['Temp'];# Input data to be interpolated on final grid
     si_0    = float_data['sigma'];# Input data to be interpolated on final grid
     k_0     = float_data['EKD'];# Input data to be interpolated on final grid
-    par_0   = float_data['PAR'];
+    print('PAR is divided by a factor 2.')
+    par_0   = float_data['PAR']*0.5;
     Ed380_0 = float_data['Ed380'];
     Ed412_0 = float_data['Ed412'];
     Ed490_0 = float_data['Ed490'];

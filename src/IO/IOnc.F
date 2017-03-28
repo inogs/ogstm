@@ -693,6 +693,7 @@
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
         integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE,idPa
+        integer idEd380, idEd412, idEd490, idCHL_F
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -721,6 +722,10 @@
         s = nf90_def_var(nc,'vovecrtz' ,     nf90_float, (/xid,yid,depid,timid/),   idW)
         s = nf90_def_var(nc,'votkeavt' ,     nf90_float, (/xid,yid,depid,timid/),idEddy)
         s = nf90_def_var(nc,'par'      ,     nf90_float, (/xid,yid,depid,timid/),idPa)
+        s = nf90_def_var(nc,'Ed380'    ,     nf90_float, (/xid,yid,depid,timid/),idEd380)
+        s = nf90_def_var(nc,'Ed412'    ,     nf90_float, (/xid,yid,depid,timid/),idEd412)
+        s = nf90_def_var(nc,'Ed490'    ,     nf90_float, (/xid,yid,depid,timid/),idEd490)
+        s = nf90_def_var(nc,'CHL_F'    ,     nf90_float, (/xid,yid,depid,timid/),idCHL_F)
 
         s = nf90_def_var(nc,'soshfldo' ,     nf90_float, (/xid,yid,      timid/),   idR)
         s = nf90_def_var(nc,'sowindsp' ,     nf90_float, (/xid,yid,      timid/),  idWs)
@@ -764,6 +769,22 @@
         s = nf90_put_att(nc,idPa, 'units'        ,'umoles/m2/s')
         s = nf90_put_att(nc,idPa, 'missing_value',1.e+20)
 
+        s = nf90_put_att(nc,idEd380, 'long_name'    ,'Ed380')
+        s = nf90_put_att(nc,idEd380, 'units'        ,'spec')
+        s = nf90_put_att(nc,idEd380, 'missing_value',1.e+20)
+
+        s = nf90_put_att(nc,idEd412, 'long_name'    ,'Ed412')
+        s = nf90_put_att(nc,idEd412, 'units'        ,'spec')
+        s = nf90_put_att(nc,idEd412, 'missing_value',1.e+20)
+
+        s = nf90_put_att(nc,idEd490, 'long_name'    ,'Ed490')
+        s = nf90_put_att(nc,idEd490, 'units'        ,'spec')
+        s = nf90_put_att(nc,idEd490, 'missing_value',1.e+20)
+
+        s = nf90_put_att(nc,idCHL_F, 'long_name'    ,'CHL_F')
+        s = nf90_put_att(nc,idCHL_F, 'units'        ,'spec')
+        s = nf90_put_att(nc,idCHL_F, 'missing_value',1.e+20)
+
 !       2D
         s = nf90_put_att(nc,idR   , 'long_name'    ,'Short_Wave_Radiation')
         s = nf90_put_att(nc,idR   , 'units'        ,'W/m2')
@@ -792,6 +813,10 @@
         d2f3d = REAL(totwnIO,4) ; s = nf90_put_var(nc, idW,    d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
         d2f3d = REAL(totavtIO,4); s = nf90_put_var(nc, idEddy, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
         d2f3d = REAL(totxparIO,4); s = nf90_put_var(nc, idPa, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totEd380IO,4); s = nf90_put_var(nc, idEd380, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totEd412IO,4); s = nf90_put_var(nc, idEd412, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totEd490IO,4); s = nf90_put_var(nc, idEd490, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
+        d2f3d = REAL(totCHL_FIO,4); s = nf90_put_var(nc, idCHL_F, d2f3d) ;  call handle_err1(s,counter,fileNetCDF)
 
 !       2D vars
         d2f2d =REAL(totvatmIO,4); s = nf90_put_var(nc, idWs,   d2f2d) ; call handle_err1(s,counter,fileNetCDF)

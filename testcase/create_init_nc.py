@@ -54,7 +54,7 @@ def create_init_nc(test):
     gdeptTOT           = np.loadtxt(filein, dtype=np.double);
 
     for var in initVARS:
-        filename = "COPERNICUS/INIT/"+ 'DYFAMED' + "/init." + var
+        filename = "COPERNICUS/INIT/"+ test['BIO-FLOAT'] + "/init." + var
         datain = np.loadtxt(filename)     
         data_int = interp1d(gdeptTOT,datain,fill_value='extrapolate')
 

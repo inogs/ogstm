@@ -283,6 +283,10 @@
       xpar      = 0.0
       trn       = 0.0
       tra       = 0.0
+      Ed380     = 0.0
+      Ed412     = 0.0
+      Ed490     = 0.0
+      CHL_F     = 0.0
 
       END SUBROUTINE set_to_zero
 

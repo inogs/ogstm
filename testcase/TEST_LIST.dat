@@ -1,0 +1,32 @@
+ 	 Nx 	  Ny 	 Nz 	 nprocx 	 nprocy  	 lon0  	 lat0 	 BIO-FLOAT 	 dx 	 dy 	 start 	 end 	 Directory 	 Code
+3 	3 	400 	1 	1 	7.912860 	43.397598 	lovbio001i 	0.128000 	0.128000 	20121126-12:00:00 	20130124-12:00:00 	RUN-lovbio001i/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	5.544760 	38.375599 	lovbio015c 	0.128000 	0.128000 	20130511-12:00:00 	20150318-12:00:00 	RUN-lovbio015c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	18.532499 	37.725800 	lovbio016c 	0.128000 	0.128000 	20130528-12:00:00 	20150526-12:00:00 	RUN-lovbio016c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	8.542270 	43.765099 	lovbio016d 	0.128000 	0.128000 	20151108-12:00:00 	20160104-12:00:00 	RUN-lovbio016d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	5.008870 	41.950802 	lovbio017b 	0.128000 	0.128000 	20130411-12:00:00 	20140504-12:00:00 	RUN-lovbio017b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	28.031601 	33.599701 	lovbio018c 	0.128000 	0.128000 	20130518-12:00:00 	20150523-12:00:00 	RUN-lovbio018c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	4.863290 	42.257198 	lovbio035b 	0.128000 	0.128000 	20130221-12:00:00 	20140905-12:00:00 	RUN-lovbio035b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	12.311500 	38.978001 	lovbio039b 	0.128000 	0.128000 	20130725-12:00:00 	20140321-12:00:00 	RUN-lovbio039b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	11.980500 	39.662800 	lovbio042c 	0.128000 	0.128000 	20130621-12:00:00 	20130707-12:00:00 	RUN-lovbio042c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	18.521000 	37.743099 	lovbio053b 	0.128000 	0.128000 	20130529-12:00:00 	20150205-12:00:00 	RUN-lovbio053b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	11.965600 	39.716301 	lovbio058c 	0.128000 	0.128000 	20130618-12:00:00 	20150520-12:00:00 	RUN-lovbio058c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	2.928730 	40.992699 	lovbio063c 	0.128000 	0.128000 	20150303-12:00:00 	20151222-12:00:00 	RUN-lovbio063c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+# 3 	3 	400 	1 	1 	7.810850 	43.295300 	lovbio064b 	0.128000 	0.128000 	20130721-12:00:00 	20140313-12:00:00 	RUN-lovbio064b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	7.403660 	43.124001 	lovbio064c 	0.128000 	0.128000 	20140317-12:00:00 	20140907-12:00:00 	RUN-lovbio064c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	20.549400 	37.031601 	lovbio066c 	0.128000 	0.128000 	20140213-12:00:00 	20140522-12:00:00 	RUN-lovbio066c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	28.597099 	34.695000 	lovbio066d 	0.128000 	0.128000 	20140804-12:00:00 	20150520-12:00:00 	RUN-lovbio066d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	5.991600 	40.702599 	lovbio067c 	0.128000 	0.128000 	20140717-12:00:00 	20160105-12:00:00 	RUN-lovbio067c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	4.601790 	41.930901 	lovbio068d 	0.128000 	0.128000 	20140711-12:00:00 	20160101-12:00:00 	RUN-lovbio068d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	6.545310 	37.776798 	lovbio072c 	0.128000 	0.128000 	20140824-12:00:00 	20150910-12:00:00 	RUN-lovbio072c/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	27.041401 	34.621700 	lovbio083d 	0.128000 	0.128000 	20150701-12:00:00 	20151218-12:00:00 	RUN-lovbio083d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	27.158501 	34.583698 	lovbio085d 	0.128000 	0.128000 	20150527-12:00:00 	20160103-12:00:00 	RUN-lovbio085d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	18.515699 	38.301201 	lovbio088d 	0.128000 	0.128000 	20150520-12:00:00 	20151128-12:00:00 	RUN-lovbio088d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	10.669400 	39.293999 	lovbio089d 	0.128000 	0.128000 	20150604-12:00:00 	20151212-12:00:00 	RUN-lovbio089d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	27.802601 	35.612301 	lovbio090d 	0.128000 	0.128000 	20150523-12:00:00 	20151218-12:00:00 	RUN-lovbio090d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	20.046101 	36.723499 	lovbio091d 	0.128000 	0.128000 	20150601-12:00:00 	20160101-12:00:00 	RUN-lovbio091d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	28.203199 	33.461201 	lovbio093d 	0.128000 	0.128000 	20150527-12:00:00 	20151224-12:00:00 	RUN-lovbio093d/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	-0.603042 	36.927799 	ogsbio001b 	0.128000 	0.128000 	20140528-12:00:00 	20150217-12:00:00 	RUN-ogsbio001b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	10.767400 	39.250301 	ogsbio002b 	0.128000 	0.128000 	20150602-12:00:00 	20160102-12:00:00 	RUN-ogsbio002b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	18.311701 	41.534599 	ogsbio003b 	0.128000 	0.128000 	20150329-12:00:00 	20151228-12:00:00 	RUN-ogsbio003b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	20.067200 	36.696602 	ogsbio004b 	0.128000 	0.128000 	20150530-12:00:00 	20160102-12:00:00 	RUN-ogsbio004b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	
+3 	3 	400 	1 	1 	17.703400 	41.832401 	ogsbio006b 	0.128000 	0.128000 	20140221-12:00:00 	20150320-12:00:00 	RUN-ogsbio006b/wrkdir/MODEL 	/pico/scratch/userexternal/plazzari/TILMAN-Ed/ 	

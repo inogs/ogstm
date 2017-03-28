@@ -199,7 +199,8 @@ CC      flxdta         : additional fluxes
       REAL(8), allocatable, dimension(:,:,:)   :: flx
       REAL(8), allocatable, dimension(:,:,:,:) :: tdta,sdta ! : temperature and salinity data array
       REAL(8), allocatable, dimension(:,:,:,:) :: e3tdta,e3udta,e3vdta,e3wdta 
-      REAL(8), allocatable, dimension(:,:,:,:) :: PARdta
+      REAL(8), allocatable, dimension(:,:,:,:) :: CHL_Fdta
+      REAL(8), allocatable, dimension(:,:,:,:) :: PARdta, Ed380dta, Ed412dta, Ed490dta
 
 CC V. DIAGNOSTICS
 CC ==============
@@ -280,6 +281,10 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  avtIO(:,:,:) 
       REAL(8), allocatable ::  xparIO(:,:,:) 
       REAL(8), allocatable ::  PARIO(:,:,:) 
+      REAL(8), allocatable ::  Ed380IO(:,:,:) 
+      REAL(8), allocatable ::  Ed412IO(:,:,:) 
+      REAL(8), allocatable ::  Ed490IO(:,:,:) 
+      REAL(8), allocatable ::  CHL_FIO(:,:,:) 
       REAL(8), allocatable ::  tra_DIA_IO(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
@@ -301,6 +306,10 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totavtIO(:,:,:) 
       REAL(8), allocatable ::  totxparIO(:,:,:) 
       REAL(8), allocatable ::  totPARIO(:,:,:) 
+      REAL(8), allocatable ::  totEd380IO(:,:,:) 
+      REAL(8), allocatable ::  totEd412IO(:,:,:) 
+      REAL(8), allocatable ::  totEd490IO(:,:,:) 
+      REAL(8), allocatable ::  totCHL_FIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
 
 
@@ -360,8 +369,12 @@ CC    Photoperiod formulation
       REAL(8) bottom_flux                 ! (NAMELIST)
 
 CC     optical parameters
-      REAL(8), allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)
-      REAL(8), allocatable :: PAR(:,:,:) !par (photosynthetic available radiation)
+      REAL(8), allocatable :: xpar(:,:,:)  !par (photosynthetic available radiation)
+      REAL(8), allocatable :: PAR(:,:,:)   !par (photosynthetic available radiation)
+      REAL(8), allocatable :: Ed380(:,:,:) !par (photosynthetic available radiation)
+      REAL(8), allocatable :: Ed412(:,:,:) !par (photosynthetic available radiation)
+      REAL(8), allocatable :: Ed490(:,:,:) !par (photosynthetic available radiation)
+      REAL(8), allocatable :: CHL_F(:,:,:) !CHL  from bio float fluorescence
 
 #     endif
 CC----------------------------------------------------------------------
@@ -502,6 +515,10 @@ CC----------------------------------------------------------------------
        allocate(sdta(jpi,jpj,jpk,2))      ; sdta    = huge(sdta(1,1,1,1))
        allocate(e3tdta(jpi,jpj,jpk,2))    ; e3tdta  = huge(e3tdta(1,1,1,1))
        allocate(PARdta(jpi,jpj,jpk,2))    ; PARdta  = huge(PARdta(1,1,1,1))
+       allocate(Ed380dta(jpi,jpj,jpk,2))  ; Ed380dta= huge(Ed380dta(1,1,1,1))
+       allocate(Ed412dta(jpi,jpj,jpk,2))  ; Ed412dta= huge(Ed412dta(1,1,1,1))
+       allocate(Ed490dta(jpi,jpj,jpk,2))  ; Ed490dta= huge(Ed490dta(1,1,1,1))
+       allocate(CHL_Fdta(jpi,jpj,jpk,2))  ; CHL_Fdta= huge(CHL_Fdta(1,1,1,1))
        allocate(e3udta(jpi,jpj,jpk,2))    ; e3udta  = huge(e3udta(1,1,1,1))
        allocate(e3vdta(jpi,jpj,jpk,2))    ; e3vdta  = huge(e3vdta(1,1,1,1))
        allocate(e3wdta(jpi,jpj,jpk,2))    ; e3wdta  = huge(e3wdta(1,1,1,1))
@@ -544,6 +561,10 @@ C     no mpp
        allocate(avtIO (jpi,jpj,jpk))                       ; avtIO         = huge(avtIO(1,1,1))
        allocate(xparIO (jpi,jpj,jpk))                      ; xparIO        = huge(xparIO(1,1,1))
        allocate(PARIO (jpi,jpj,jpk))                       ; PARIO         = huge(PARIO(1,1,1))
+       allocate(Ed380IO (jpi,jpj,jpk))                     ; Ed380IO       = huge(Ed380IO(1,1,1))
+       allocate(Ed412IO (jpi,jpj,jpk))                     ; Ed412IO       = huge(Ed412IO(1,1,1))
+       allocate(Ed490IO (jpi,jpj,jpk))                     ; Ed490IO       = huge(Ed490IO(1,1,1))
+       allocate(CHL_FIO (jpi,jpj,jpk))                     ; CHL_FIO       = huge(CHL_FIO(1,1,1))
        allocate(buf   (jpi,jpj,jpk))                       ; buf           = huge(buf(1,1,1))
        allocate(buf2   (jpi,jpj))                          ; buf2          = huge(buf2(1,1))
        allocate(tra_DIA_IO(jpi,jpj,jpk,jptra_dia))         ; tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
@@ -568,6 +589,10 @@ C     no mpp
        if (lwp)  allocate(totavtIO(jpiglo,jpjglo,jpk)) ; if (lwp) totavtIO  = huge(totavtIO(1,1,1)) 
        if (lwp)  allocate(totxparIO(jpiglo,jpjglo,jpk)) ; if (lwp) totxparIO= huge(totxparIO(1,1,1)) 
        if (lwp)  allocate(totPARIO(jpiglo,jpjglo,jpk)) ; if (lwp) totPARIO= huge(totPARIO(1,1,1)) 
+       if (lwp)  allocate(totEd380IO(jpiglo,jpjglo,jpk)) ; if (lwp) totEd380IO= huge(totEd380IO(1,1,1)) 
+       if (lwp)  allocate(totEd412IO(jpiglo,jpjglo,jpk)) ; if (lwp) totEd412IO= huge(totEd412IO(1,1,1)) 
+       if (lwp)  allocate(totEd490IO(jpiglo,jpjglo,jpk)) ; if (lwp) totEd490IO= huge(totEd490IO(1,1,1)) 
+       if (lwp)  allocate(totCHL_FIO(jpiglo,jpjglo,jpk)) ; if (lwp) totCHL_FIO= huge(totCHL_FIO(1,1,1)) 
        if (lwp)  allocate(tottmaIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottmaIO  = huge(tottmaIO(1,1,1)) 
        if (lwp)  allocate(tottrnIO2d(jpiglo,jpjglo))   ; if (lwp) tottrnIO2d= huge(tottrnIO2d(1,1))
 
@@ -582,8 +607,12 @@ C     no mpp
 #    endif
 
 #ifdef key_trc_bfm
-      allocate(xpar(jpi,jpj,jpk))   ; xpar = huge(xpar(1,1,1))
+      allocate(xpar(jpi,jpj,jpk))  ; xpar = huge(xpar(1,1,1))
       allocate(PAR(jpi,jpj,jpk))   ; PAR = huge(PAR(1,1,1))
+      allocate(Ed380(jpi,jpj,jpk)) ; Ed380 = huge(Ed380(1,1,1))
+      allocate(Ed412(jpi,jpj,jpk)) ; Ed412 = huge(Ed412(1,1,1))
+      allocate(Ed490(jpi,jpj,jpk)) ; Ed490 = huge(Ed490(1,1,1))
+      allocate(CHL_F(jpi,jpj,jpk)) ; CHL_F = huge(CHL_F(1,1,1))
 
 #endif
 

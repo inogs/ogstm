@@ -28,7 +28,7 @@ def do_big_ave_phys(test):
     M.close()
 
 # Retrieving state variables names from model namelist
-    VARS=['vosaline','votemper','vozocrtx','vomecrty','vovecrtz','votkeavt','par']
+    VARS=['vosaline','votemper','vozocrtx','vomecrty','vovecrtz','votkeavt','par','CHL_F']
     nvars=len(VARS)
     check_bool = 0
     for v,var in enumerate(VARS):

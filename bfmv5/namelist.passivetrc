@@ -1,5 +1,5 @@
 
-&NATTRC   
+&NATTRC
    ctrcnm(1)="O2o"
    ctrcun(1)="mmol O2/m3"
    ctrcnm(2)="N1p"
@@ -310,40 +310,65 @@
    diaun(101)="mmol N/m3/d"
    dianm(102)="remZOOp"
    diaun(102)="mmol P/m3/d"
-   dianm(103)="remPBAn"
+   dianm(103)="ruBAn"
    diaun(103)="mmol N/m3/d"
-   dianm(104)="remPBAp"
+   dianm(104)="ruBAp"
    diaun(104)="mmol P/m3/d"
-   dianm(105)="resPPY1c"
+   dianm(105)="ruPPY1c"
    diaun(105)="mg C/m3/d"
-   dianm(106)="resPPY2c"
+   dianm(106)="ruPPY2c"
    diaun(106)="mg C/m3/d"
-   dianm(107)="resPPY3c"
+   dianm(107)="ruPPY3c"
    diaun(107)="mg C/m3/d"
-   dianm(108)="resPPY4c"
+   dianm(108)="ruPPY4c"
    diaun(108)="mg C/m3/d"
    dianm(109)="ruPBAc"
    diaun(109)="mg C/m3/d"
-   dianm(110)="resPBA1c"
+   dianm(110)="loPPY1c"
    diaun(110)="mg C/m3/d"
-   dianm(111)="resMEZ1c"
+   dianm(111)="loPPY2c"
    diaun(111)="mg C/m3/d"
-   dianm(112)="resMEZ2c"
+   dianm(112)="loPPY3c"
    diaun(112)="mg C/m3/d"
-   dianm(113)="resMIZ1c"
+   dianm(113)="loPPY4c"
    diaun(113)="mg C/m3/d"
-   dianm(114)="resMIZ2c"
+   dianm(114)="loBACc"
    diaun(114)="mg C/m3/d"
+   dianm(115)="dN1p"
+   diaun(115)="mmol P/m3/d"
+   dianm(116)="dN3n"
+   diaun(116)="mmol N/m3/d"
+   dianm(117)="dN4n"
+   diaun(117)="mmol N/m3/d"
 
 /
 
-
-&NATTRC_DIAG_2D   
+&NATTRC_DIAG_2D
    dianm(1)="EPCO2air"
-   diaun(1)="C"
+   diaun(1)="uatm"
    dianm(2)="CO2airflux"
-   diaun(2)="-"
-/
+   diaun(2)="mmol/m2/d"
+   dianm(3)="Area2d"
+   diaun(3)="m2"
+   dianm(4)="ThereIsLight"
+   diaun(4)="-"
+   dianm(5)="SUNQ"
+   diaun(5)="h"
+   dianm(6)="totsysc"
+   diaun(6)="g C"
+   dianm(7)="totsysn"
+   diaun(7)="g N"
+   dianm(8)="EWIND"
+   diaun(8)="m/s"
+   dianm(9)="totsysp"
+   diaun(9)="g P"
+   dianm(10)="totsyss"
+   diaun(10)="g Si"
+   dianm(11)="EICE"
+   diaun(11)="-"
 
+
+
+/
 
 

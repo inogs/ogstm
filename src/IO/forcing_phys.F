@@ -340,6 +340,72 @@
 !$omp end parallel
       END DO
 
+      call readnc_slice_float(nomefile,'Ed380',buf);
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,PARdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              Ed380dta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
+      call readnc_slice_float(nomefile,'Ed412',buf);
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,PARdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              Ed412dta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
+
+      call readnc_slice_float(nomefile,'Ed490',buf);
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,PARdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              Ed490dta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
+
+      call readnc_slice_float(nomefile,'CHL_F',buf);
+      DO jk=1,jpk,ntids
+!$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,PARdta,tmask,buf)
+#ifdef __OPENMP
+        mytid = omp_get_thread_num()  ! take the thread ID
+#endif
+         IF (jk+mytid <=jpk) then
+            DO jj= 1,jpj
+            DO ji= 1,jpi
+              CHL_Fdta(ji,jj,jk+mytid,2) = buf(ji,jj,jk+mytid)*tmask(ji,jj,jk+mytid)
+            ENDDO
+            ENDDO
+         ENDIF
+!$omp end parallel
+      END DO
+
       call readnc_slice_float(nomefile,'e3t',buf);
       DO jk=1,jpk,ntids!sdta(:,:,:,2) = buf*tmask;
 !$omp parallel default(none) private(mytid,ji,jj)  shared(jk,jpi,jpj,jpk,e3tdta,tmask,buf)
@@ -497,6 +563,10 @@
                  sn(ji,jj,uk) = (Umzweigh*  sdta(ji,jj,uk,1) + zweigh*  sdta(ji,jj,uk,2))
                 e3t(ji,jj,uk) = (Umzweigh*  e3tdta(ji,jj,uk,1) + zweigh*  e3tdta(ji,jj,uk,2))
                 PAR(ji,jj,uk) = (Umzweigh*  PARdta(ji,jj,uk,1) + zweigh*  PARdta(ji,jj,uk,2))
+                Ed380(ji,jj,uk) = (Umzweigh*  Ed380dta(ji,jj,uk,1) + zweigh*  Ed380dta(ji,jj,uk,2))
+                Ed412(ji,jj,uk) = (Umzweigh*  Ed412dta(ji,jj,uk,1) + zweigh*  Ed412dta(ji,jj,uk,2))
+                Ed490(ji,jj,uk) = (Umzweigh*  Ed490dta(ji,jj,uk,1) + zweigh*  Ed490dta(ji,jj,uk,2))
+                CHL_F(ji,jj,uk) = (Umzweigh*  CHL_Fdta(ji,jj,uk,1) + zweigh*  CHL_Fdta(ji,jj,uk,2))
                 endif ! tmask
 
 
@@ -589,6 +659,10 @@
                     sdta(ji,jj,jdepth,1) = sdta(ji,jj,jdepth,2)
                   e3tdta(ji,jj,jdepth,1) =  e3tdta(ji,jj,jdepth,2)
                   PARdta(ji,jj,jdepth,1) =  PARdta(ji,jj,jdepth,2)
+                  Ed380dta(ji,jj,jdepth,1) =  Ed380dta(ji,jj,jdepth,2)
+                  Ed412dta(ji,jj,jdepth,1) =  Ed412dta(ji,jj,jdepth,2)
+                  Ed490dta(ji,jj,jdepth,1) =  Ed490dta(ji,jj,jdepth,2)
+                  CHL_Fdta(ji,jj,jdepth,1) =  CHL_Fdta(ji,jj,jdepth,2)
 
               END DO
             END DO

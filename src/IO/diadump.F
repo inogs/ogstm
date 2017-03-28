@@ -83,6 +83,10 @@
           totwnIO  (totistart:totiend, totjstart:totjend,:)  = wnIO    (relistart:reliend, reljstart:reljend, :)
           totavtIO (totistart:totiend, totjstart:totjend,:)  = avtIO   (relistart:reliend, reljstart:reljend, :)
           totxparIO (totistart:totiend, totjstart:totjend,:) = xparIO  (relistart:reliend, reljstart:reljend, :)
+          totEd380IO (totistart:totiend, totjstart:totjend,:) = Ed380IO  (relistart:reliend, reljstart:reljend, :)
+          totEd412IO (totistart:totiend, totjstart:totjend,:) = Ed412IO  (relistart:reliend, reljstart:reljend, :)
+          totEd490IO (totistart:totiend, totjstart:totjend,:) = Ed490IO  (relistart:reliend, reljstart:reljend, :)
+          totCHL_FIO (totistart:totiend, totjstart:totjend,:) = CHL_FIO  (relistart:reliend, reljstart:reljend, :)
 
           do idrank = 1, mpi_size_comm-1
 ! **************  rank 0 is receiving from the others their buffer  ****
@@ -107,6 +111,9 @@
       call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
       call MPI_RECV(buffxpar,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 20,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffEd380,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 21,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffEd412,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 22,mpi_comm_world, status, ierr)
+      call MPI_RECV(buffEd490,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 23,mpi_comm_world, status, ierr)
 
 ! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
@@ -127,6 +134,10 @@
                      totwnIO (ji,jj,jk)= buffwn (ind)
                      totavtIO(ji,jj,jk)= buffavt(ind)
                      totxparIO(ji,jj,jk)= buffxpar(ind)
+                     totEd380IO(ji,jj,jk)= buffEd380(ind)
+                     totEd412IO(ji,jj,jk)= buffEd412(ind)
+                     totEd490IO(ji,jj,jk)= buffEd490(ind)
+                     totCHL_FIO(ji,jj,jk)= buffCHL_F(ind)
                  enddo
                 enddo
                enddo
@@ -158,6 +169,10 @@
                    buffwn (ind)= wnIO (ji,jj,jk)
                    buffavt(ind)= avtIO(ji,jj,jk)
                    buffxpar(ind)= xparIO(ji,jj,jk)
+                   buffEd380(ind)= Ed380IO(ji,jj,jk)
+                   buffEd412(ind)= Ed412IO(ji,jj,jk)
+                   buffEd490(ind)= Ed490IO(ji,jj,jk)
+                   buffCHL_F(ind)= CHL_FIO(ji,jj,jk)
               enddo
              enddo
             enddo
@@ -191,6 +206,10 @@
            call MPI_SEND(buffwn  , jpi*jpj*jpk  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
            call MPI_SEND(buffavt , jpi*jpj*jpk  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
            call MPI_SEND(buffxpar, jpi*jpj*jpk  ,mpi_real8, 0, 20, mpi_comm_world,ierr)
+           call MPI_SEND(buffEd380, jpi*jpj*jpk  ,mpi_real8, 0, 21, mpi_comm_world,ierr)
+           call MPI_SEND(buffEd412, jpi*jpj*jpk  ,mpi_real8, 0, 22, mpi_comm_world,ierr)
+           call MPI_SEND(buffEd490, jpi*jpj*jpk  ,mpi_real8, 0, 23, mpi_comm_world,ierr)
+           call MPI_SEND(buffCHL_F, jpi*jpj*jpk  ,mpi_real8, 0, 24, mpi_comm_world,ierr)
 
 
 
@@ -476,6 +495,10 @@
           wnIO     = 0.
           avtIO    = 0.
           xparIO   = 0.
+          Ed380IO  = 0.
+          Ed412IO  = 0.
+          Ed490IO  = 0.
+          CHL_FIO  = 0.
       endif
 
 

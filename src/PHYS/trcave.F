@@ -117,12 +117,20 @@
                 wnIO (ji,jj,jk) =(wnIO (ji,jj,jk)*Realcounter+wn (ji,jj,jk))*Realcounterp1
                 avtIO(ji,jj,jk) =(avtIO(ji,jj,jk)*Realcounter+avt(ji,jj,jk))*Realcounterp1
                 xparIO(ji,jj,jk)=(xparIO(ji,jj,jk)*Realcounter+PAR(ji,jj,jk))*Realcounterp1
+                Ed380IO(ji,jj,jk)=(Ed380IO(ji,jj,jk)*Realcounter+Ed380(ji,jj,jk))*Realcounterp1
+                Ed412IO(ji,jj,jk)=(Ed412IO(ji,jj,jk)*Realcounter+Ed412(ji,jj,jk))*Realcounterp1
+                Ed490IO(ji,jj,jk)=(Ed490IO(ji,jj,jk)*Realcounter+Ed490(ji,jj,jk))*Realcounterp1
+                CHL_FIO(ji,jj,jk)=(CHL_FIO(ji,jj,jk)*Realcounter+CHL_F(ji,jj,jk))*Realcounterp1
              ELSE
                 snIO (ji,jj,jk)=Miss_val
                 tnIO (ji,jj,jk)=Miss_val
                 wnIO (ji,jj,jk)=Miss_val
                 avtIO(ji,jj,jk)=Miss_val
                 xparIO(ji,jj,jk)=Miss_val
+                Ed380IO(ji,jj,jk)=Miss_val
+                Ed412IO(ji,jj,jk)=Miss_val
+                Ed490IO(ji,jj,jk)=Miss_val
+                CHL_FIO(ji,jj,jk)=Miss_val
              ENDIF
 
 

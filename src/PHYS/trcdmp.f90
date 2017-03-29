@@ -67,11 +67,9 @@
           tra_idx=tra_matrix_riv(jn)
 
           DO jv=1, Rsize
-
              ji = riv_ridxt(4,jv)
              jj = riv_ridxt(3,jv)
-             jk = riv_ridxt(2,jv)
-            tra(jk,jj,ji,tra_idx) = tra(jk,jj,ji,tra_idx) + riv(jv,jn)
+            tra(1,jj,ji,tra_idx) = tra(1,jj,ji,tra_idx) + riv(jv,jn)/e3t(1,jj,ji)
           ENDDO
          ENDDO
        ENDIF
@@ -86,7 +84,7 @@
              tra_idx=tra_matrix_atm(jn)
           DO ji=1,jpi
         DO jj=1,jpj
-        tra(1,jj,ji,tra_idx) = tra(1,jj,ji,tra_idx) + atm(jj,ji,jn)
+        tra(1,jj,ji,tra_idx) = tra(1,jj,ji,tra_idx) + atm(jj,ji,jn)/e3t(1,jj,ji)
         ENDDO
         ENDDO
         ENDDO

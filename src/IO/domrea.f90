@@ -327,9 +327,9 @@
 
 
           counter=0
+          kk=1
              do ii =1, jpi
             do jj =1, jpj
-           do kk =1, jpk
                 junk = idxt(kk,jj,ii)
                 do jv =1, RsizeGLO
                    if ( junk.EQ.riv_idxtglo(jv) )  then
@@ -340,7 +340,6 @@
                       riv_ridxt(4,counter) = ii
                    endif
               enddo
-             enddo
             enddo
            enddo
 

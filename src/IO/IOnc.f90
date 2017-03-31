@@ -27,7 +27,6 @@
 
       SUBROUTINE readnc_slice_double(fileNetCDF,varname, M)
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
@@ -71,7 +70,6 @@
 ! ********************************************************************************************
       SUBROUTINE readnc_slice_int1(fileNetCDF,varname, M)
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
@@ -113,14 +111,14 @@
       END SUBROUTINE readnc_slice_int1
 
 ! ********************************************************************************************
-      SUBROUTINE readnc_slice_float(fileNetCDF,varname, M)
+      SUBROUTINE readnc_slice_float(fileNetCDF,varname, M, shift)
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
 
       character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      integer, intent(in)  :: shift
       double precision,intent(inout) ::  M(jpk,jpj,jpi)
       
       real,allocatable,dimension(:,:,:) :: copy_in
@@ -130,8 +128,8 @@
 
       allocate(copy_in(jpi,jpj,jpk))
       counter = 0
-      start    = (/nimpp, njmpp,  1,  1/)
-      thecount = (/jpi,     jpj, jpk, 1/)
+      start    = (/nimpp+shift, njmpp,  1,  1/)
+      thecount = (/jpi,           jpj, jpk, 1/)
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
@@ -204,7 +202,6 @@
 
       SUBROUTINE readnc_slice_double_2d(fileNetCDF,varname, M)
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
@@ -249,13 +246,13 @@
 ! ********************************************************************************************
 ! ********************************************************************************************
 
-     SUBROUTINE readnc_slice_float_2d(fileNetCDF,varname, M)
+     SUBROUTINE readnc_slice_float_2d(fileNetCDF,varname, M,shift)
      USE myalloc
-      ! epascolo USE myalloc_mpp
       USE netcdf
       implicit none
 
       character ,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      integer , intent(in)  :: shift
       double precision,intent(inout) :: M(jpj,jpi)
       real,allocatable,dimension(:,:) :: copy_in
       
@@ -263,10 +260,11 @@
       integer counter
       integer thecount(3), start(3)
 
+
       allocate(copy_in(jpi,jpj))
       counter = 0
-      start    = (/nimpp, njmpp,  1/)
-      thecount = (/jpi,     jpj,  1/)
+      start    = (/nimpp+shift, njmpp,  1/)
+      thecount = (/jpi      ,     jpj,  1/)
 
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
@@ -356,7 +354,6 @@
       counter = 0
       
       start    = (/1,       1,      1, 1/)
-! epascolo warning      
       thecount = (/jpiglo,  jpjglo, 1, 1/)
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
@@ -741,7 +738,6 @@
         s =nf90_enddef(nc)
 
         counter=0
-        ! epascolo warning
         s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4) )
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4) )

@@ -109,7 +109,7 @@ contains
          nomefile(1:27)='BC/CO2_'//datestring//'.nc'
          if(lwp) write(*,'(A,I4,A,A)') "LOAD_CO2 --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:27)
 
-         call readnc_slice_float_2d(nomefile,'CO2',buf2)
+         call readnc_slice_float_2d(nomefile,'CO2',buf2,0)
          co2_IO(:,:,2) = buf2*tmask(1,:,:)
       
 

@@ -144,12 +144,12 @@
 ! U  *********************************************************
       nomefile = 'FORCINGS/U'//datestring//'.nc'
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
-      call readnc_slice_float(nomefile,'vozocrtx',buf)
+      call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask * nudgVel
 
       call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
       if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3u',buf)
+          call readnc_slice_float(nomefile,'e3u',buf,ingv_lon_shift)
           e3udta(:,:,:,2) = buf!*umask
       endif
 
@@ -157,12 +157,12 @@
 
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'vomecrty',buf)
+      call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
       vdta(:,:,:,2) = buf*vmask * nudgVel
       
 
       if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3v',buf)
+          call readnc_slice_float(nomefile,'e3v',buf,ingv_lon_shift)
           e3vdta(:,:,:,2) = buf!*vmask
       endif
 
@@ -176,31 +176,31 @@
 !      call readnc_slice_float(nomefile,'vovecrtz',buf)
 !      wdta(:,:,:,2) = buf * tmask * nudgVel
 
-      call readnc_slice_float(nomefile,'votkeavt',buf)
+      call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
 
       if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3w',buf)
+          call readnc_slice_float(nomefile,'e3w',buf,ingv_lon_shift)
           e3wdta(:,:,:,2) = buf!*tmask
       endif
 
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'votemper',buf)
+      call readnc_slice_float(nomefile,'votemper',buf,ingv_lon_shift)
       tdta(:,:,:,2) = buf*tmask
 
-      call readnc_slice_float(nomefile,'vosaline',buf)
+      call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
       sdta(:,:,:,2) = buf*tmask
 
 
       if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3t',buf)
+          call readnc_slice_float(nomefile,'e3t',buf,ingv_lon_shift)
           e3tdta(:,:,:,2) = buf!*tmask
       endif
 
     if (.not.IS_INGV_E3T) then
-         call readnc_slice_float_2d(nomefile,'sossheig',buf2)
+         call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
          ssh = buf2*tmask(1,:,:)
 
           e3tdta(:,:,:,2) = e3t_0
@@ -273,10 +273,23 @@
 
 
 
+      if (ingv_files_direct_reading) then
+           nomefile = 'FORCINGS/U'//datestring//'.nc'
+           call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
+           taux = buf2*tmask(1,:,:)
 
-      call readnc_slice_float_2d(nomefile,'sowindsp',buf2)
+           nomefile = 'FORCINGS/V'//datestring//'.nc'
+           call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
+           tauy = buf2*tmask(1,:,:)
+
+           call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
+      else
+          call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
+      endif
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * nudgT
-      call readnc_slice_float_2d(nomefile,'soshfldo',buf2)
+
+
+      call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
       flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * nudgT
       flxdta(:,:,jpice ,2) = 0.
       flxdta(:,:,jpemp ,2) = 0.
@@ -284,7 +297,7 @@
 
       if (read_W_from_file) then
           nomefile = 'FORCINGS/W'//datestring//'.nc'
-          call readnc_slice_float(nomefile,'vovecrtz',buf)
+          call readnc_slice_float(nomefile,'vovecrtz',buf,ingv_lon_shift)
           wdta(:,:,:,2) = buf * tmask * nudgVel
       else
           CALL COMPUTE_W()               ! vertical velocity
@@ -527,4 +540,20 @@
 
 END SUBROUTINE COMPUTE_W
 
+
+SUBROUTINE PURE_WIND_SPEED(TAUx, TAUy, sizex,sizey, WSP)
+    IMPLICIT NONE
+    INTEGER, INTENT(IN) :: sizex, sizey
+    double precision, DIMENSION(sizex,sizey), INTENT(IN ) :: TAUx, TAUy
+    double precision, DIMENSION(sizex,sizey), INTENT(OUT) :: WSP
+    ! local
+    double precision rho, Cdrag, K
+    rho    = 1.3 ! kg/m3
+    Cdrag  = 1.5 * 0.001
+
+    K     = sqrt(1/(rho*Cdrag));
+    WSP = (TAUx**2 + TAUy**2)**0.25 * K
+
+
+END SUBROUTINE PURE_WIND_SPEED
 

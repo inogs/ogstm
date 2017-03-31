@@ -61,7 +61,8 @@
 !!      ralpha, rbeta    : thermique and haline expension coef. used
 !!               for linear equation of state (neos=1 or 2)
       LOGICAL forcing_phys_initialized
-      LOGICAL read_W_from_file, internal_nudging
+      LOGICAL read_W_from_file, internal_nudging, ingv_files_direct_reading
+      INTEGER ingv_lon_shift
       INTEGER neos
       double precision rau0, ralpha, rbeta
       double precision  rdt     ! dynamics time step

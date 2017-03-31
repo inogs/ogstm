@@ -288,7 +288,7 @@
       endif
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
-
+      nomefile = 'FORCINGS/T'//datestring//'.nc'
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
       flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.

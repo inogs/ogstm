@@ -447,7 +447,7 @@
       SUBROUTINE COMPUTE_W ()
 !---------------------------------------------------------------------
 !
-!                       ROUTINE wzv
+!                       ROUTINE compute_w
 !                     ***************
 !
 !  Purpose :
@@ -484,8 +484,8 @@
 
         DO jj = 1, jpjm1
         DO ji = 1, jpim1
-            zwu(jj,ji) = e2u(jj,ji) * e3u(jk,jj,ji) * udta(jk,jj,ji,2)
-            zwv(jj,ji) = e1v(jj,ji) * e3v(jk,jj,ji) * vdta(jk,jj,ji,2)
+            zwu(jj,ji) = e2u(jj,ji) * e3udta(jk,jj,ji,2) * udta(jk,jj,ji,2)
+            zwv(jj,ji) = e1v(jj,ji) * e3vdta(jk,jj,ji,2) * vdta(jk,jj,ji,2)
         END DO
         END DO
 
@@ -495,7 +495,7 @@
 
         DO jj = 2, jpjm1
         DO ji = 2, jpim1
-            zbt = e1t(jj,ji) * e2t(jj,ji) * e3t(jk,jj,ji)
+            zbt = e1t(jj,ji) * e2t(jj,ji) * e3tdta(jk,jj,ji,2)
             hdivn(jk,jj,ji) = (  zwu(jj,ji) - zwu(jj,ji-1  ) &
                                + zwv(jj,ji) - zwv(jj-1  ,ji)  ) / zbt
         END DO
@@ -508,13 +508,8 @@
 ! 3. Lateral boundary conditions on hdivn
 
 #ifdef key_mpp
-
 ! ... Mpp : export boundary values to neighboring processors
-!     CALL mpplnk_my( hdivn,1, 1, 1 )
-#  else
-!
-! ... mono or macro-tasking: T-point, 3D array, jk-slab
-!     CALL lbc( hdivn, 1, 1, 1, ktask, jpkm1, 1 )
+     CALL mpplnk_my( hdivn )
 #endif
 
 
@@ -531,7 +526,7 @@
      DO jj = 1, jpj
      DO jk = jpkm1, 1, -1
 
-            wdta(jk,jj,ji,2) = wdta(jk+1,jj,ji,2) - e3t(jk,jj,ji)*hdivn(jk,jj,ji)
+            wdta(jk,jj,ji,2) = wdta(jk+1,jj,ji,2) - e3tdta(jk,jj,ji,2)*hdivn(jk,jj,ji)
 
      END DO
      END DO

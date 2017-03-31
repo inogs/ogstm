@@ -145,7 +145,7 @@
       nomefile = 'FORCINGS/U'//datestring//'.nc'
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
-      udta(:,:,:,2) = buf * umask * nudgVel
+      udta(:,:,:,2) = buf * umask * spongeVel
 
       call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
       if (IS_INGV_E3T) then
@@ -158,7 +158,7 @@
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
-      vdta(:,:,:,2) = buf*vmask * nudgVel
+      vdta(:,:,:,2) = buf*vmask * spongeVel
       
 
       if (IS_INGV_E3T) then
@@ -174,7 +174,7 @@
       nomefile = 'FORCINGS/W'//datestring//'.nc'
 
 !      call readnc_slice_float(nomefile,'vovecrtz',buf)
-!      wdta(:,:,:,2) = buf * tmask * nudgVel
+!      wdta(:,:,:,2) = buf * tmask * spongeVel
 
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
@@ -286,11 +286,11 @@
       else
           call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
       endif
-      flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * nudgT
+      flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
 
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
-      flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * nudgT
+      flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.
       flxdta(:,:,jpemp ,2) = 0.
 
@@ -298,7 +298,7 @@
       if (read_W_from_file) then
           nomefile = 'FORCINGS/W'//datestring//'.nc'
           call readnc_slice_float(nomefile,'vovecrtz',buf,ingv_lon_shift)
-          wdta(:,:,:,2) = buf * tmask * nudgVel
+          wdta(:,:,:,2) = buf * tmask * spongeVel
       else
           CALL COMPUTE_W()               ! vertical velocity
       endif
@@ -403,7 +403,7 @@
 
 ! ************************************************
 !     INIT_PHYS
-!     prepares nudg variables
+!     prepares sponge variables
 ! ************************************************
       SUBROUTINE INIT_PHYS
       USE myalloc
@@ -414,15 +414,15 @@
 
       lon_limit = -5.5
       alpha     = 1.0
-      nudgT     = 1.0
-      nudgVel   = 1.0
+      spongeT     = 1.0
+      spongeVel   = 1.0
 
-      if (internal_nudging) then
+      if (internal_sponging) then
           DO ji=1,jpi
           DO jj=1,jpj
               if (glamt(jj,ji).lt.lon_limit) then
                   reduction_value = 1.e-6
-                  nudgT(jj,ji) = reduction_value
+                  spongeT(jj,ji) = reduction_value
               endif
           ENDDO
           ENDDO
@@ -434,7 +434,7 @@
                   reduction_value = exp( -alpha*(  (glamt(jj,ji)-lon_limit)**2)  )
               endif
               do jk=1,jpk
-                  nudgVel(jk,jj,ji) = reduction_value
+                  spongeVel(jk,jj,ji) = reduction_value
               enddo
           ENDDO
           ENDDO
@@ -464,6 +464,7 @@
 !
 
        USE myalloc
+       USE ogstm_mpi_module
        IMPLICIT NONE
 
 !----------------------------------------------------------------------

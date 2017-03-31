@@ -177,7 +177,7 @@
 
       nwritetrc = 10
       read_W_from_file = .true.
-      internal_nudging = .false.
+      internal_sponging = .false.
       ingv_files_direct_reading = .false.
       if (ingv_files_direct_reading ) then
          ingv_lon_shift   = 222

@@ -61,7 +61,7 @@
 !!      ralpha, rbeta    : thermique and haline expension coef. used
 !!               for linear equation of state (neos=1 or 2)
       LOGICAL forcing_phys_initialized
-      LOGICAL read_W_from_file, internal_nudging, ingv_files_direct_reading
+      LOGICAL read_W_from_file, internal_sponging, ingv_files_direct_reading
       INTEGER ingv_lon_shift
       INTEGER neos
       double precision rau0, ralpha, rbeta
@@ -103,7 +103,7 @@
       double precision, allocatable :: gdept(:), gdepw(:)
       double precision, allocatable,dimension(:,:,:), save :: e3t, e3t_back, e3u, e3v, e3w
       double precision, allocatable,dimension(:,:,:), save :: e3t_0, e3u_0, e3v_0, e3w_0
-      double precision, allocatable :: nudgT(:,:) , nudgVel(:,:,:)
+      double precision, allocatable :: spongeT(:,:) , spongeVel(:,:,:)
 
 !!----------------------------------------------------------------------
 !!        masks, bathymetry
@@ -530,10 +530,10 @@ subroutine alloc_tot()
       allocate(h_column(jpj,jpi))
       h_column = huge(h_column(1,1))
       
-      allocate(nudgT(jpj,jpi))
-      nudgT = huge(nudgT(1,1))
-      allocate(nudgVel(jpk,jpj,jpi))
-      nudgVel = huge(nudgVel(1,1,1))
+      allocate(spongeT(jpj,jpi))
+      spongeT = huge(spongeT(1,1))
+      allocate(spongeVel(jpk,jpj,jpi))
+      spongeVel = huge(spongeVel(1,1,1))
 
       allocate(umask(jpk,jpj,jpi)) 
       umask = huge(umask(1,1,1))

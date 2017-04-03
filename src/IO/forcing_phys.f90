@@ -432,10 +432,10 @@
           DO jj=1,jpj
               if (glamt(jj,ji).lt.lon_limit) then
                   reduction_value = exp( -alpha*(  (glamt(jj,ji)-lon_limit)**2)  )
+                  do jk=1,jpk
+                      spongeVel(jk,jj,ji) = reduction_value
+                  enddo
               endif
-              do jk=1,jpk
-                  spongeVel(jk,jj,ji) = reduction_value
-              enddo
           ENDDO
           ENDDO
       endif

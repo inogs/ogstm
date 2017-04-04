@@ -412,7 +412,7 @@
       double precision reduction_value, alpha
       double precision lon_limit
 
-      lon_limit = -5.5
+      lon_limit = -7.5
       alpha     = 1.0
       spongeT     = 1.0
       spongeVel   = 1.0

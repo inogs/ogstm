@@ -46,7 +46,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
@@ -89,7 +90,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
@@ -133,7 +135,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
@@ -177,7 +180,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
       call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+      call handle_err2(stat, fileNetCDF,varname)
       call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       call handle_err2(stat, fileNetCDF,varname)        
@@ -221,7 +225,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
@@ -269,7 +274,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       
@@ -314,7 +320,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
        call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       call handle_err2(stat, fileNetCDF,varname)        
@@ -358,7 +365,8 @@
 
       stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
       call handle_err1(stat, counter,FileNetCDF)
-      stat = nf90_inq_varid (ncid, varname, VARid)      
+      stat = nf90_inq_varid (ncid, varname, VARid)
+      call handle_err2(stat, fileNetCDF,varname)
       call handle_err1(stat, counter,FileNetCDF)
       stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
       call handle_err2(stat, fileNetCDF,varname)        
@@ -396,7 +404,8 @@
 
         stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
        call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_inq_varid (ncid, varname, VARid)     
+        stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
         stat = nf90_get_var (ncid,VARid,ARRAY,start, thecount)
       
@@ -426,7 +435,8 @@
 
         stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
        call handle_err1(stat, counter,FileNetCDF)
-        stat = nf90_inq_varid (ncid, varname, VARid)     
+        stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
         stat = nf90_get_var (ncid,VARid,ARRAY)           
       
@@ -456,7 +466,8 @@
 
        stat = nf90_open(fileNetCDF, nf90_nowrite, ncid) 
        call handle_err1(stat, counter,FileNetCDF)
-       stat = nf90_inq_varid (ncid, varname, VARid)     
+       stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
        call handle_err1(stat, counter,FileNetCDF)
        stat = nf90_get_var (ncid,VARid,ARRAY)
        call handle_err2(stat, fileNetCDF,varname)       
@@ -517,10 +528,7 @@
        integer :: idB, idN, idLon, idLat, idLev, idTim
        double precision,allocatable,dimension(:,:,:) :: copy_in
        TimeString =fileNetCDF(14:30)
-!      istart=index(fileNetCDF,'00.')+3
-!      iend  =index(fileNetCDF,'.nc')-1
-!      VAR        =fileNetCDF(istart:iend)
-      !print *,"PPPPPPPP",fileNetCDF,VAR, julian
+
 
       s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
 
@@ -589,10 +597,6 @@
          lat_actual_range=(/30.5   , 44.5   /)
        depth_actual_range=(/ 4.9991,4450.068/)
 
-!      istart=index(fileNetCDF,'00.')+3
-!      istart=index(fileNetCDF,'.nc')-3
-!      iend  =index(fileNetCDF,'.nc')-1
-!      VAR        =fileNetCDF(istart:iend)
 
         counter=0
 
@@ -701,10 +705,6 @@
          lat_actual_range=(/30.5   , 44.5   /)
 
 
-!      istart=index(fileNetCDF,'00.')+3
-!      iend  =index(fileNetCDF,'.nc')-1
-!      VAR        =fileNetCDF(istart:iend)
-
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
@@ -773,11 +773,6 @@
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
 
-
-!      istart=index(fileNetCDF,'00.')+3
-!      iend  =index(fileNetCDF,'.nc')-1
-!      VAR        =fileNetCDF(istart:iend)
-        !print *,fileNetCDF," ",VAR," ",datefrom," ", dateTo," ", ave_counter
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
         ! *********** GLOBAL ********************
@@ -856,9 +851,6 @@
        integer idvartime,idgdept,idphit,idlamt,idVAR 
 
 
-!      istart=index(fileNetCDF,'00.')+3
-!      iend  =index(fileNetCDF,'.nc')-1
-!      VAR        =fileNetCDF(istart:iend)
 
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
@@ -910,7 +902,6 @@
 
 
        !****************************************************************************
-       ! physical data were printed as grid3D.dat grid2D.dat files
        SUBROUTINE physDump(fileNetCDF, datefrom, dateTo)
        USE myalloc
        USE netcdf
@@ -1037,7 +1028,6 @@
        s = nf90_put_var(nc, idU,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 
-      !print *,"PIPPO0"
         call switch_index_rout(totvnIO,copy_in,jpiglo,jpjglo,jpk) 
        s = nf90_put_var(nc, idV,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
@@ -1047,22 +1037,14 @@
        s = nf90_put_var(nc, idW,    copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 
-       ! print *,"PIPPO1"
         call switch_index_rout(totavtIO,copy_in,jpiglo,jpjglo,jpk)
        s = nf90_put_var(nc, idEddy, copy_in) 
         call handle_err1(s,counter,fileNetCDF)
-      
-      !  call switch_index_rout(tote3tIO,copy_in,jpiglo,jpjglo,jpk)
-       ! s = nf90_put_var(nc, ide3t, tote3tIO) 
-        !call handle_err1(s,counter,fileNetCDF)
 
-      
-        !print *,"PIPPO2"
         call switch_index_rout(tote3tIO,copy_in,jpiglo,jpjglo,jpk)
         s = nf90_put_var(nc, ide3t, copy_in) 
         call handle_err1(s,counter,fileNetCDF)
 !       2D vars
-       ! print *,"PIPPO3"
         copy_in_2d =transpose(REAL(totvatmIO,4))
        s = nf90_put_var(nc, idWs,   copy_in_2d) 
        call handle_err1(s,counter,fileNetCDF)
@@ -1341,9 +1323,6 @@
        double precision,dimension(z,y,x),intent(in)    :: in_matrix
        double precision,dimension(x,y,z),intent(inout) :: out_matrix
        integer :: i,j,k
-      !  print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
-      !  print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
-      !  print *,x,y,z
 
        DO i=1,x
         DO j=1,y
@@ -1363,9 +1342,6 @@
        real,dimension(z,y,x),intent(in)    :: in_matrix
        real,dimension(x,y,z),intent(inout) :: out_matrix
        integer :: i,j,k
-      !  print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
-      !  print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
-      !  print *,x,y,z
 
        DO i=1,x
         DO j=1,y
@@ -1386,9 +1362,7 @@
        double precision,dimension(z,y,x),intent(in)    :: in_matrix
        real,dimension(x,y,z),intent(inout) :: out_matrix
        integer :: i,j,k
-      !  print *,size(in_matrix,1), size(in_matrix,2), size(in_matrix,3)
-      !  print *,size(out_matrix,1),size(out_matrix,2),size(out_matrix,3)
-      !  print *,x,y,z
+
 
        DO i=1,x
         DO j=1,y

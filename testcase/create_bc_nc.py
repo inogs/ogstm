@@ -167,7 +167,7 @@ def create_bc_nc(test):
         jj = index_inv[wp,1] -1 ;
         jk = index_inv[wp,0] -1 ;
         if ( (ji==1) | (jj==1) ) | ( (ji==jpi-2) | (jj==jpj-2) ):
-            if (jk < 2):
+            if (jk ==0 ):
                 tin_idxt += 1
 
     riv_index=np.ones((tin_idxt),np.int)
@@ -179,7 +179,7 @@ def create_bc_nc(test):
         jj = index_inv[wp,1] -1;
         jk = index_inv[wp,0] -1;
         if ( (ji==1) | (jj==1) ) | ( (ji==jpi-2) | (jj==jpj-2) ):
-            if (jk < 2):
+            if (jk ==0 ):
                 riv_index[tin_idxt]=index[jk,jj,ji]
                 tin_idxt += 1
 

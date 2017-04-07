@@ -1,3 +1,10 @@
          module load profile/advanced
-         module load intel/cs-xe-2015--binary intelmpi/5.0.1--binary
-         module load hdf5/1.8.13_ser--intel--cs-xe-2015--binary netcdf/4.1.3--intel--cs-xe-2015--binary
+         module load autoload
+         module load intel
+         module load intelmpi
+export NETCDF_INC=/pico/scratch/userexternal/gbolzon0/netcdf/include/
+export NETCDFF_INC=/pico/scratch/userexternal/gbolzon0/netcdf/include/
+export NETCDFF_LIB=/pico/scratch/userexternal/gbolzon0/netcdf/lib/  
+export NETCDF_LIB=/pico/scratch/userexternal/gbolzon0/netcdf/lib/
+         
+         

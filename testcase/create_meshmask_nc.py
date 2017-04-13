@@ -329,15 +329,3 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('vmask' ,'d',('time','z', 'y', 'x') )    ; ncvar[:] = vmask
     ncOUT.close()
 
-    outfile = test['Dir'].decode() + '/submask.nc';
-
-    ncOUT=NC.netcdf_file(outfile,"w");
-
-    ncOUT.createDimension('x',jpi);
-    ncOUT.createDimension('y',jpj);
-    ncOUT.createDimension('z',jpk);
-    ncOUT.createDimension('time',time)
-    for var in ['alb','swm','nwm','tyr','adn','ads','aeg','ion','lev','atl','wes','eas','med']:
-        ncvar    = ncOUT.createVariable(var ,'d',('time','z', 'y', 'x') ) ; ncvar[:] = tmask
-    setattr(ncOUT,"SubBasindef","Polygonal_Med_SubBasin_Def")
-    ncOUT.close()

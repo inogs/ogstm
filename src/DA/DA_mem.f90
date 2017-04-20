@@ -48,7 +48,7 @@
       varlistDA(17)='P1s'
 
 
-      if (rank==0) then
+      if (myrank==0) then
         ALLOCATE (CHL_SUP(jpiglo,jpjglo))
         ALLOCATE ( CHLsat(jpiglo,jpjglo),  VAR2D(jpiglo,jpjglo) )
         ALLOCATE ( ERRsat(jpiglo,jpjglo), MISFIT(  jpiglo,jpjglo), cMISFIT(  jpiglo,jpjglo)  )

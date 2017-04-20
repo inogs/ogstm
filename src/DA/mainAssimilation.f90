@@ -29,7 +29,7 @@
       ISLOG = .false.
       ApplyConditions = .false. ! .true.
 
-      if(rank .eq. 0) then
+      if(myrank .eq. 0) then
         open(11,file='var_3d_nml',form='formatted')
         read(11,biolst)
         close(11)
@@ -59,15 +59,15 @@
       CALL trcwriDA(DATEstr)  ! Dumps Before Assimilation real*4
 
       DA_Nprocs = 20
-      if (rank .lt. DA_Nprocs ) then
-          if(rank .eq. 0 .and. sat .eq. 1) then
+      if (myrank .lt. DA_Nprocs ) then
+          if(myrank .eq. 0 .and. sat .eq. 1) then
             call CREATEMISFIT(SATFILE,VARFILE,MISFIT_OPT, ISLOG, MISFIT_FILE) ! produces MISFIT.nc
             write(*,*) 'eof = ',   trim(EOF_FILE)
             write(*,*) 'grid = ',  trim(GRID_FILE)
           endif
 
-          ! if(rank .eq. 0) call system(ScriptName) !//" -t "//DAY)
-          if(rank .eq. 0) then
+          ! if(myrank .eq. 0) call system(ScriptName) !//" -t "//DAY)
+          if(myrank .eq. 0) then
             SysErr = system("../float_preproc/Float_misfit_gen.sh -d ../float_preproc -t "//DAY)
             if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
           endif
@@ -76,7 +76,7 @@
 
 
           call OCEANVAR
-          if(rank .eq. 0) CALL SNUTELL(datestr, ISLOG, ApplyConditions)
+          if(myrank .eq. 0) CALL SNUTELL(datestr, ISLOG, ApplyConditions)
       endif
 
       call mppsync()

@@ -73,9 +73,9 @@
           enddo
 
 ! *************** START COLLECTING DATA *****************************
-      if(rank == 0) then                    ! IF LABEL 1
+      if(myrank == 0) then                    ! IF LABEL 1
           write(*,*) var, ' jn =',jn,jn2,jn_high
-! ******* rank 0 sets indexes of tot matrix where to place its own part
+! ******* myrank 0 sets indexes of tot matrix where to place its own part
           iPd    = nldi
           iPe    = nlei
           jPd    = nldj
@@ -90,14 +90,14 @@
           reljstart = 1 + jPd - 1     ; reljend  = reljstart + jrange - 1
 
 
-!***** START ASSEMBLING ***  rank 0 puts its tracer part in the tot matrix
+!***** START ASSEMBLING ***  myrank 0 puts its tracer part in the tot matrix
 
           tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO_HIGH(relistart:reliend, reljstart:reljend,:,jn_high)
 
 
 
           do idrank = 1, size-1
-! **************  rank 0 is receiving from the others their buffer  ****
+! **************  myrank 0 is receiving from the others their buffer  ****
               call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
               call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
               call MPI_RECV(istart     , 1,                 mpi_integer, idrank, 3,mpi_comm_world, status, ierr)
@@ -108,7 +108,7 @@
               call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
               call MPI_RECV(bufftrn    ,jpi_rec*jpj_rec*jpk,  mpi_real8, idrank, 9,mpi_comm_world, status, ierr) ! ** then tracer buffer
 
-! ******* rank 0 sets indexes of tot matrix where to place buffers of idrank
+! ******* myrank 0 sets indexes of tot matrix where to place buffers of idrank
               irange    = iPe - iPd + 1
               jrange    = jPe - jPd + 1
               totistart = istart + iPd - 1
@@ -119,7 +119,7 @@
               reliend   = relistart + irange - 1
               reljstart = 1 + jPd - 1
               reljend   = reljstart + jrange - 1
-! **** ASSEMBLING *** rank 0 puts in tot matrix buffer received by idrank
+! **** ASSEMBLING *** myrank 0 puts in tot matrix buffer received by idrank
               do jk =1 , jpk
                do jj =totjstart,totjend
                  do ji =totistart,totiend
@@ -132,8 +132,8 @@
           enddo !idrank = 1, size-1
 
 
-      else  ! IF LABEL 1,  if(rank == 0)
-! **** work of the other ranks
+      else  ! IF LABEL 1,  if(myrank == 0)
+! **** work of the other myranks
 ! ****** 1. load  inf buffer their IO matrices
 
 
@@ -150,7 +150,7 @@
 
 
 
-! ******  2.send buffer to rank 0
+! ******  2.send buffer to myrank 0
           call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
           call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
           call MPI_SEND(nimpp, 1,mpi_integer, 0, 3, mpi_comm_world,ierr)
@@ -163,21 +163,21 @@
 
 
 
-      endif ! IF LABEL 1, if(rank == 0)
+      endif ! IF LABEL 1, if(myrank == 0)
 
 !************* END COLLECTING DATA  *****************
 
 
 
 ! *********** START WRITING **************************
-      if(rank == 0) then ! IF LABEL 4
+      if(myrank == 0) then ! IF LABEL 4
 
           d2f3d = REAL(tottrnIO,4)
           !write(*,*) 'writing ', output_file_nc
           CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
           if (isaCHLVAR(VAR)) CHLtot = CHLtot + d2f3d ! remains in RAM, used by snutell
 
-      end if ! IF LABEL 4  if(rank == 0)
+      end if ! IF LABEL 4  if(myrank == 0)
 
 
 !         NIENTE AZZERAMENTO MATRICI
@@ -185,7 +185,7 @@
       END DO ! do jn=1,17 , DO LABEL 5
 
 
-      if (rank==0) then
+      if (myrank==0) then
 
         s = nf90_create(CHLSUP_FOR_DA, NF90_CLOBBER, nc)
         s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)

@@ -39,7 +39,7 @@
 
        julian=datestring2sec(datestring)
 
-       if(lwp)write(*,*) 'trcwri DA --------  rank =',rank,' datestring = ',  datestring
+       if(lwp)write(*,*) 'trcwri DA --------  rank =',myrank,' datestring = ',  datestring
 
        trcwriparttime = MPI_WTIME() ! F79 cronometer-start
 
@@ -52,7 +52,7 @@
       DO jn=1,jptra
       if (.not.isaDAvar(ctrcnm(jn))) CYCLE
 
-        if(rank == 0) then
+        if(myrank == 0) then
            istart = nimpp
            jstart = njmpp
            iPd = nldi
@@ -134,7 +134,7 @@
 
 
 
-        else !rank != 0
+        else !myrank != 0
 
 
             do jk =1 , jpk
@@ -161,10 +161,10 @@
             call MPI_SEND(bufftrn  ,jpi*jpj*jpk,  mpi_real8, 0, 11, mpi_comm_world,ierr)
 !            call MPI_SEND(bufftrb  ,jpi*jpj*jpk,  mpi_real8, 0, 12, mpi_comm_world,ierr)
 
-        endif ! if rank = 0
+        endif ! if myrank = 0
 
 
-        if(rank == 0) then
+        if(myrank == 0) then
 
             varname=ctrcnm(jn)
             BeforeName = 'DA__FREQ_1/RST.'//datestring//'.'//varname//'.nc'
@@ -172,7 +172,7 @@
             CALL write_BeforeAss(BeforeName, varname)
             write(*,*) 'writing ', Beforename
 
-        endif ! if rank = 0
+        endif ! if myrank = 0
       END DO ! DO jn=1,jptra
 
        trcwriparttime = MPI_WTIME() - trcwriparttime

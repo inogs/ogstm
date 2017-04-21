@@ -33,9 +33,6 @@
 
       CHARACTER(LEN=39) output_file_nc  ! DA/ave.20091231-12:00:00.P1n.nc
       CHARACTER(LEN=3)  var
-!!      CHARACTER(LEN=60) bkpname
-!!      CHARACTER(LEN=11) DIR
-!!      logical IsBackup
 
 !----------------------------------------------------------------------
 ! statement functions

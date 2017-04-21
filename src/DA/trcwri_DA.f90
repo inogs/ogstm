@@ -1,4 +1,4 @@
-      SUBROUTINE trcwri(datestring)
+      SUBROUTINE trcwriDA(datestring)
 
 
       USE myalloc
@@ -7,6 +7,8 @@
       USE TIME_MANAGER
       use mpi
       USE ogstm_mpi_module
+      USE DA_mem
+
 
 
       IMPLICIT NONE
@@ -37,7 +39,7 @@
 
        julian=datestring2sec(datestring)
 
-       if(lwp)write(*,*) 'trcwri ------------  myrank =',myrank,' datestring = ',  datestring
+       if(lwp)write(*,*) 'trcwri DA ------------  myrank =',myrank,' datestring = ',  datestring
 
        trcwriparttime = MPI_WTIME() ! cronometer-start
 
@@ -144,9 +146,10 @@
         if(myrank == 0) then
 
             varname=ctrcnm(jn)
-            filename = 'RESTARTS/RST.'//datestring//'.'//varname//'.nc'
-
-        CALL write_restart(filename,varname,julian)
+            BeforeName = 'DA__FREQ_1/RST.'//datestring//'.'//varname//'.nc'
+            ! d2f3d = REAL(tottrn,4)
+            CALL write_BeforeAss(BeforeName, varname)
+            write(*,*) 'writing ', Beforename
 
         endif ! if myrank = 0
       END DO ! DO jn=1,jptra
@@ -157,4 +160,107 @@
 
 
 
-      END SUBROUTINE trcwri
+      END SUBROUTINE trcwriDA
+
+       !****************************************************************************
+       !****************************************************************************
+       !****************************************************************************
+!     writes tottrn on float
+       SUBROUTINE write_BeforeAss(fileNetCDF, VAR)
+
+       USE netcdf
+       USE myalloc
+       USE IO_mem , ONLY : d2f3d
+
+       IMPLICIT NONE
+       CHARACTER*(*) fileNetCDF
+
+       ! local
+       CHARACTER(LEN=3) VAR
+
+
+       integer s, nc, counter
+       integer depid, yid, xid,idN
+
+      s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+
+        ! *********** DIMENSIONS ****************
+        s= nf90_def_dim(nc,'x'   , jpiglo,  xid)
+        s= nf90_def_dim(nc,'y'   , jpjglo,  yid)
+        s= nf90_def_dim(nc,'z'   , jpk   ,depid)
+
+
+        s = nf90_def_var(nc,VAR, nf90_float, (/xid,yid,depid /), idN)
+        s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
+        s =nf90_enddef(nc)
+        s = nf90_put_var(nc, idN,  d2f3d); call handle_err1(s,counter,fileNetCDF)
+        s =nf90_close(nc)
+
+
+       END SUBROUTINE write_BeforeAss
+
+
+       !****************************************************************************
+       !****************************************************************************
+       !****************************************************************************
+!     writes tottrn
+       SUBROUTINE write_restartDA(fileNetCDF, julian)
+
+       USE netcdf
+       USE myalloc
+
+       IMPLICIT NONE
+       CHARACTER*(*) fileNetCDF
+       REAL(8) julian
+
+       ! local
+       CHARACTER(LEN=3) VAR
+       CHARACTER(LEN=6) RSTVAR
+       CHARACTER(LEN=17) TimeString
+
+       integer s, nc, counter
+       integer timid, depid, yid, xid, xaid, yaid, zaid
+       integer idB, idN, idLon, idLat, idLev, idTim
+
+       TimeString =fileNetCDF(14:30)
+       VAR        =fileNetCDF(32:34)
+
+
+      s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+
+      s = nf90_put_att(nc, nf90_global, 'TimeString'     , TimeString)
+        ! *********** DIMENSIONS ****************
+        s= nf90_def_dim(nc,'x'   , jpiglo,  xid)
+        s= nf90_def_dim(nc,'y'   , jpjglo,  yid)
+        s= nf90_def_dim(nc,'z'   , jpk   ,depid)
+        s= nf90_def_dim(nc,'time', 1     ,timid)
+        s= nf90_def_dim(nc,'x_a'      , 1,  xaid)
+        s= nf90_def_dim(nc,'y_a'      , 1,  yaid)
+        s= nf90_def_dim(nc,'z_a'      , 3  ,zaid)
+
+
+       s = nf90_def_var(nc,'nav_lon', nf90_double,  (/xid,yid/), idLon)
+       s = nf90_def_var(nc,'nav_lat', nf90_double,  (/xid,yid/), idLat)
+       s = nf90_def_var(nc,'nav_lev', nf90_double,  (/depid/)  , idLev)
+       s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
+
+
+        RSTVAR='TRN'//VAR;
+        s = nf90_def_var(nc,RSTVAR, nf90_double, (/xid,yid,depid,timid/), idN)
+
+        s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00');
+        s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
+        s =nf90_enddef(nc)
+
+        s = nf90_put_var(nc, idLon,  totglamt); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLat,  totgphit); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idLev,     gdept); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_var(nc, idTim,    julian); call handle_err1(s,counter,fileNetCDF)
+
+        s = nf90_put_var(nc, idN,      tottrn); call handle_err1(s,counter,fileNetCDF)
+
+        s =nf90_close(nc)
+
+
+       END SUBROUTINE write_restartDA

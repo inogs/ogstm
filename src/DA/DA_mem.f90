@@ -14,6 +14,7 @@
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHLsat,VAR2D
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: ERRsat, MISFIT,cMISFIT
       REAL(4), allocatable, dimension (:,:,:) :: CORR, CORR_c, FACTOR
+      REAL(8), allocatable :: tottrn(:,:,:)
 
       !REAL(4), allocatable, dimension (:,:,:) :: FACTORN, FactorNN,FactorNP,FactorNC,FactorNS
       REAL(4), allocatable, dimension (:,:,:) :: CORRN,CORRP,CORRC,CORRS
@@ -67,6 +68,7 @@
         ALLOCATE (   Nfraction(jpiglo, jpjglo, jpk), Pfraction(jpiglo, jpjglo, jpk), Cfraction(jpiglo, jpjglo, jpk))
         ALLOCATE ( CHLfraction(jpiglo, jpjglo, jpk), Sfraction(jpiglo, jpjglo, jpk))
 
+        allocate(tottrn(jpiglo, jpjglo, jpk))      ;  tottrn = huge(tottrn(1,1,1))
 
       endif
       END SUBROUTINE DA_INIT

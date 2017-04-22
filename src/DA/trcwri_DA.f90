@@ -25,6 +25,7 @@
 
 
       CHARACTER(LEN=37) filename
+      CHARACTER(LEN=41) BeforeName
 
       CHARACTER(LEN=3) varname
 

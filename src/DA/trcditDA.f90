@@ -31,6 +31,8 @@
       INTEGER jk,jj,ji, jn, jn_high,i,j,k
       INTEGER ind, jn2, i_contribution, j_contribution
       INTEGER s, nc, counter
+      integer timid, depid, yid, xid, idvar
+
 
       CHARACTER(LEN=39) output_file_nc  ! DA/ave.20091231-12:00:00.P1n.nc
       CHARACTER(LEN=3)  var

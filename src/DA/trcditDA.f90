@@ -14,6 +14,7 @@
       USE calendar
       USE myalloc
       USE IO_mem
+      USE DA_mem
       USE FN_mem
       USE TIME_MANAGER
       use mpi

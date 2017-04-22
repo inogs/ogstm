@@ -1,0 +1,10 @@
+         module load profile/advanced
+         module load autoload
+         module load intel
+         module load intelmpi
+export NETCDF_INC=/pico/scratch/userexternal/gbolzon0/netcdf/include/
+export NETCDFF_INC=/pico/scratch/userexternal/gbolzon0/netcdf/include/
+export NETCDFF_LIB=/pico/scratch/userexternal/gbolzon0/netcdf/lib/  
+export NETCDF_LIB=/pico/scratch/userexternal/gbolzon0/netcdf/lib/
+         
+         

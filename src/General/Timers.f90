@@ -31,6 +31,7 @@
       double precision :: snutelparttime       =0.0, snuteltottime     = 0.0
       double precision :: trcsbcparttime       =0.0, trcsbctottime     = 0.0
       double precision :: checkVparttime       =0.0, checkVtottime     = 0.0
+      double precision :: DAparttime           =0.0, DAtottime         = 0.0
       CONTAINS
 
 

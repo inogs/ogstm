@@ -283,12 +283,12 @@
 
        ! qui dovrei scrivere il RST.after
 
-        filename(32:34)=IVAR ; tottrn = real(CHLfraction* CORR ,8) ; CALL write_restartDA(filename,julian)
-        filename(32:34)=NVAR ; tottrn = real(  Nfraction* CORRN,8) ; CALL write_restartDA(filename,julian)
-        filename(32:34)=PVAR ; tottrn = real(  Pfraction* CORRP,8) ; CALL write_restartDA(filename,julian)
-        filename(32:34)=CVAR ; tottrn = real(  Cfraction* CORRC,8) ; CALL write_restartDA(filename,julian)
+        filename(32:34)=IVAR ; tottrnDA = real(CHLfraction* CORR ,8) ; CALL write_restartDA(filename,julian)
+        filename(32:34)=NVAR ; tottrnDA = real(  Nfraction* CORRN,8) ; CALL write_restartDA(filename,julian)
+        filename(32:34)=PVAR ; tottrnDA = real(  Pfraction* CORRP,8) ; CALL write_restartDA(filename,julian)
+        filename(32:34)=CVAR ; tottrnDA = real(  Cfraction* CORRC,8) ; CALL write_restartDA(filename,julian)
         if (CTYPE.eq.'1')then
-        filename(32:34)=SVAR ; tottrn = real(  Sfraction* CORRS,8) ; CALL write_restartDA(filename,julian)
+        filename(32:34)=SVAR ; tottrnDA = real(  Sfraction* CORRS,8) ; CALL write_restartDA(filename,julian)
         endif
 
         END SUBROUTINE NEWCORRFACTOR

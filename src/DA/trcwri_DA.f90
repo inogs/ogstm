@@ -147,7 +147,13 @@
 
             varname=ctrcnm(jn)
             BeforeName = 'DA__FREQ_1/RST.'//datestring//'.'//varname//'.nc'
-            ! d2f3d = REAL(tottrn,4)
+            do ji=1,jpiglo
+              do jj=1,jpjglo
+                  do jk=1,jpk
+                    tottrnDA(ji,jj,jk) = tottrn(jk,jj,ji)
+                  end do
+              end do
+            end do
             CALL write_BeforeAss(BeforeName, varname)
             write(*,*) 'writing ', Beforename
 
@@ -170,7 +176,7 @@
 
        USE netcdf
        USE myalloc
-       USE IO_mem , ONLY : d2f3d
+       USE DA_mem
 
        IMPLICIT NONE
        CHARACTER*(*) fileNetCDF
@@ -190,10 +196,12 @@
         s= nf90_def_dim(nc,'z'   , jpk   ,depid)
 
 
-        s = nf90_def_var(nc,VAR, nf90_float, (/xid,yid,depid /), idN)
+      !   s = nf90_def_var(nc,VAR, nf90_float, (/xid,yid,depid /), idN)
+        s = nf90_def_var(nc,VAR, nf90_double, (/xid,yid,depid /), idN)
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
-        s = nf90_put_var(nc, idN,  d2f3d); call handle_err1(s,counter,fileNetCDF)
+      !   s = nf90_put_var(nc, idN,  d2f3d); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idN,  tottrnDA); call handle_err1(s,counter,fileNetCDF)
         s =nf90_close(nc)
 
 
@@ -208,6 +216,7 @@
 
        USE netcdf
        USE myalloc
+       USE DA_mem
 
        IMPLICIT NONE
        CHARACTER*(*) fileNetCDF
@@ -258,7 +267,7 @@
 
         s = nf90_put_var(nc, idTim,    julian); call handle_err1(s,counter,fileNetCDF)
 
-        s = nf90_put_var(nc, idN,      tottrn); call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idN,      tottrnDA); call handle_err1(s,counter,fileNetCDF)
 
         s =nf90_close(nc)
 

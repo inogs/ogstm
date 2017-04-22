@@ -51,7 +51,7 @@ include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
 # Search Fortran module to compile
-set( FOLDERS BIO  General  IO  MPI  namelists  PHYS)
+set( FOLDERS BIO  DA  General  IO  MPI  namelists  PHYS)
   foreach(FOLDER ${FOLDERS})
   file(GLOB TMP src/${FOLDER}/*)
   list (APPEND FORTRAN_SOURCES ${TMP})

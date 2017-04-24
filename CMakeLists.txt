@@ -11,6 +11,8 @@ find_package(MPI REQUIRED)
 find_package(NetCDF REQUIRED)
 find_package(BFM REQUIRED)
 find_package(3DVAR REQUIRED)
+find_package(PETSc REQUIRED)
+find_package(PnetCDF REQUIRED)
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
@@ -49,6 +51,7 @@ endif ()
 #include
 include_directories(${BFM_INCLUDES})
 include_directories(${DA_INCLUDES})
+include_directories(${PETSC_INCLUDES})
 include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
@@ -62,4 +65,4 @@ endforeach()
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES})

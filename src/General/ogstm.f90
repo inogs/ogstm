@@ -39,6 +39,7 @@ MODULE OGSTM
       USE check_mem
       USE iso_c_binding
 #endif
+      USE DA_MEM
 
 IMPLICIT NONE
 
@@ -139,6 +140,8 @@ SUBROUTINE ogstm_initialize()
       call trcrst        ! read restarts
 
       call photo_init
+
+      call DA_Init
 
       call init_phys
 

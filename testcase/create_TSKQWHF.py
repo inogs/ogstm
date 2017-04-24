@@ -77,9 +77,9 @@ def create_TSKQWHF(test,flnm,D3T,D3SIGMA,D3S,D3K,D2W,D2H,D2F,PAR,Ed380,Ed412,Ed4
                D3SIGMA[0,jk,jj,ji] = si[jk]
                if jk > 4 :
                    D3K[0,jk,jj,ji] = np.amin([k[jk],D3K[0,jk-1,jj,ji]])
-                   D3K[0,jk,jj,ji] = np.amax([D3K[0,jk,jj,ji],0.00000001])
+                   D3K[0,jk,jj,ji] = np.amax([D3K[0,jk,jj,ji],0.000001])
                else:
-                   D3K[0,jk,jj,ji] = np.amax([k[jk],0.00000001])
+                   D3K[0,jk,jj,ji] = np.amax([k[jk],0.000001])
                PAR[0,jk,jj,ji]   = par_1d[jk]
                Ed380[0,jk,jj,ji] = Ed380_1d[jk]
                Ed412[0,jk,jj,ji] = Ed412_1d[jk]

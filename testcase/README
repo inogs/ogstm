@@ -10,3 +10,19 @@ III) edit the file TEST_LIST.dat to configure your TEST: at the moment
 
 IV) launch the generator script:
      python Main_create_TEST.py
+
+28.III.2017
+
+reference simulation output in POSTPROC REF
++++++++++++++++++++++++++++++++++++++++++++++++++
+commit d49888556d1b726eaf1e5d24e62495401f7c73c4
+Author: Paolo Lazzari <plazzari@ogs.trieste.it>
+Date:   Tue Mar 28 09:09:10 2017 +0200
+
+    :: code to generate the outputs in POSTPROC_REF
++++++++++++++++++++++++++++++++++++++++++++++++++
+
+PROBLEMI nel REFERENCE:
+1) DCM clorofilla modello sempre piu' profondo nel modello del dato.
+2) spessore del DCM maggiore nel dato che nel modello
+3) valori di clorofilla più alti nel dato ma forse c'e' incertezza nella misura

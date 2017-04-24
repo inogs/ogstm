@@ -25,6 +25,7 @@ import plot_hovmoeller_LDNCCC as plot_LDNCCC
 import plot_hovmoeller_LDNC   as plot_LDNC  
 import plot_hovmoeller_CCCCBBBB   as plot_CCCCBBBB  
 import plot_hovmoeller_C_CF as plot_C_CF
+import plot_COMPARE_DCM as plot_CMP_DCM
 import plot_RL_NP as plot_TIL
 import plot_RL_NP_movie as plot_TIL_mov
 import plot_RL_NP_movie_zoom as plot_TIL_mov_z
@@ -37,6 +38,8 @@ import plot_CHL_movie_zoom as plot_CHL_mov_z
 
 
 # MAIN PROGRAM
+
+LIST_POSTPROC = ['POSTPROC_REF','POSTPROC_Kd_1e-04', 'POSTPROC_THETA_DIA_0_5', 'POSTPROC_p_srsX2', 'POSTPROC_alpha-10p', 'POSTPROC_alpha-20p']
 
 TEST_LIST=np.loadtxt('TEST_LIST.dat', dtype=test_conf,skiprows=1,ndmin=1)
 
@@ -52,7 +55,10 @@ for test in TEST_LIST:
 #   plot_LDNCCC.plot_hovmoeller_LDNCCC(test)
 #   plot_LDNC.plot_hovmoeller_LDNC(test)
 #   plot_CCCCBBBB.plot_hovmoeller_CCCCBBBB(test)
-    plot_C_CF.plot_hovmoeller_C_CF(test)
+    for DATADIR in LIST_POSTPROC:
+       for plot_mode in range(3):
+           plot_C_CF.plot_hovmoeller_C_CF(test,DATADIR,plot_mode)
+#   plot_CMP_DCM.plot_COMPARE_DCM(test)
 #   plot_TIL_mov.plot_RL_NP_movie(test)
 #   plot_TIL_mov_z.plot_RL_NP_movie_zoom(test)
 #   plot_TIL_mov_T.plot_RL_NP_movie_T(test)

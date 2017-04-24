@@ -2,7 +2,7 @@
 
       use filenames
       use DA_mem
-      use mpi
+      use ogstm_mpi_module
       use mpi_str, only: Var3DCommunicator
 
       IMPLICIT NONE

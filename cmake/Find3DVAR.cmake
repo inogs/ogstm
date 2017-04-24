@@ -13,6 +13,16 @@
     set (DA_has_interfaces "NO")
  endif (DA_LIBRARIES)
 
+ find_path (EXIT_INCLUDES NAMES c_exit.h HINTS ${DA_INCLUDES}/libfexit NO_DEFAULT_PATH)
+ message(STATUS "EXIT_INCLUDES = ${EXIT_INCLUDES}")
+ find_library( EXIT_LIBRARIES NAMES f_exit HINTS ${EXIT_INCLUDES} )
+ message(STATUS "EXIT library =  ${EXIT_LIBRARIES}  ")
+ if (EXIT_LIBRARIES)
+    set (EXIT_has_interfaces "YES")
+ else (EXIT_LIBRARIES)
+    set (EXIT_has_interfaces "NO")
+ endif (EXIT_LIBRARIES)
+
 include (FindPackageHandleStandardArgs)
 find_package_handle_standard_args (libvar_3d DEFAULT_MSG DA_has_interfaces)
-mark_as_advanced (DA_LIBRARIES DA_INCLUDES)
+mark_as_advanced (DA_LIBRARIES DA_INCLUDES EXIT_LIBRARIES EXIT_INCLUDES)

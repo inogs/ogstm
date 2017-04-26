@@ -60,7 +60,7 @@
         jn2 = GET_INDEX(var)
         jn_high = GET_HIGHFREQ(jn2)
 
-        output_file_nc = 'DA__FREQ_1/ave.'//datemean//'.'//var//'.nc'
+        output_file_nc = 'DA__FREQ_1/ave.'//datemean//'.'//trim(var)//'.nc'
 
 !         In order to avoid zeros in output_file_nc, when we reduce to float32
           do ji=1,jpi

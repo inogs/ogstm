@@ -39,7 +39,9 @@ MODULE OGSTM
       USE check_mem
       USE iso_c_binding
 #endif
+#ifdef ExecDA
       USE DA_MEM
+#endif
 
 IMPLICIT NONE
 
@@ -141,7 +143,9 @@ SUBROUTINE ogstm_initialize()
 
       call photo_init
 
+#ifdef ExecDA
       call DA_Init
+#endif
 
       call init_phys
 

@@ -153,6 +153,7 @@ MODULE module_step
       endif
 
 
+#ifdef ExecDA
 !     We assume we assimilate at 12:00
       call tau2datestring(TAU+24, datefuture)
       if (IsaDataAssimilation(datefuture)) then
@@ -167,7 +168,7 @@ MODULE module_step
         CALL mainAssimilation(DATEstring, datefrom_1)
          if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
       endif
-
+#endif
 
 
 

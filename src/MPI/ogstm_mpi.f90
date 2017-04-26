@@ -1,8 +1,13 @@
 
 MODULE ogstm_mpi_module
 
+#include <petsc/finclude/petscvecdef.h>
+
 USE myalloc
 USE mpi
+
+use mpi_str, only: Var3DCommunicator
+use petscvec, only: PETSC_COMM_WORLD, PETSC_NULL_CHARACTER
 
 implicit NONE
 
@@ -43,11 +48,24 @@ contains
 
 SUBROUTINE mynode
 
-      INTEGER :: ierr
+      INTEGER :: ierr, DA_Nprocs
+      PetscErrorCode :: stat
+
 #ifdef key_mpp_mpi
 
       CALL mpi_comm_rank(mpi_comm_world,myrank,ierr)
       CALL mpi_comm_size(mpi_comm_world,mpi_glcomm_size,ierr)
+
+      DA_Nprocs = 20
+      if(myrank .lt. DA_Nprocs) then
+        call MPI_Comm_split(MPI_COMM_WORLD, DA_Nprocs, myrank, Var3DCommunicator, ierr)
+        
+        PETSC_COMM_WORLD = Var3DCommunicator
+        call PetscInitialize(PETSC_NULL_CHARACTER,stat)
+        CHKERRQ(stat)
+      else
+        call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED, myrank, Var3DCommunicator, ierr)
+      endif
       
 #else
       mpi_glcomm_size = 1

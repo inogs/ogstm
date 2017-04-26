@@ -68,10 +68,10 @@
           endif
 
           ! if(myrank .eq. 0) call system(ScriptName) !//" -t "//DAY)
-          if(myrank .eq. 0) then
-            SysErr = system("../float_preproc/Float_misfit_gen.sh -d ../float_preproc -t "//DAY)
-            if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
-          endif
+          ! if(myrank .eq. 0) then
+          !   SysErr = system("../float_preproc/Float_misfit_gen.sh -d ../float_preproc -t "//DAY)
+          !   if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
+          ! endif
   
           call MPI_Barrier(Var3DCommunicator, ierr)
 

@@ -254,7 +254,7 @@
 
 
         RSTVAR='TRN'//VAR;
-        s = nf90_def_var(nc,RSTVAR, nf90_double, (/xid,yid,depid,timid/), idN)
+        s = nf90_def_var(nc,RSTVAR, nf90_float, (/xid,yid,depid,timid/), idN)
 
         s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00');
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)

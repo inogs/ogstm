@@ -12,7 +12,7 @@
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHLsat,VAR2D
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: ERRsat, MISFIT,cMISFIT
       REAL(4), allocatable, dimension (:,:,:) :: CORR, CORR_c, FACTOR
-      double precision, allocatable :: tottrnDA(:,:,:)
+      REAL(4), allocatable, dimension(:,:,:) :: tottrnDA
 
       !REAL(4), allocatable, dimension (:,:,:) :: FACTORN, FactorNN,FactorNP,FactorNC,FactorNS
       REAL(4), allocatable, dimension (:,:,:) :: CORRN,CORRP,CORRC,CORRS

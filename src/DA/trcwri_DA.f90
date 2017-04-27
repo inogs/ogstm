@@ -151,7 +151,7 @@
             do ji=1,jpiglo
               do jj=1,jpjglo
                   do jk=1,jpk
-                    tottrnDA(ji,jj,jk) = tottrn(jk,jj,ji)
+                    tottrnDA(ji,jj,jk) = REAL(tottrn(jk,jj,ji),4)
                   end do
               end do
             end do
@@ -197,11 +197,9 @@
         s= nf90_def_dim(nc,'z'   , jpk   ,depid)
 
 
-      !   s = nf90_def_var(nc,VAR, nf90_float, (/xid,yid,depid /), idN)
-        s = nf90_def_var(nc,VAR, nf90_double, (/xid,yid,depid /), idN)
+        s = nf90_def_var(nc,VAR, nf90_float, (/xid,yid,depid /), idN)
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
-      !   s = nf90_put_var(nc, idN,  d2f3d); call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idN,  tottrnDA); call handle_err1(s,counter,fileNetCDF)
         s =nf90_close(nc)
 

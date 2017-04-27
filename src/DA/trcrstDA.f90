@@ -23,13 +23,13 @@
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      INTEGER jn, jDA
+      INTEGER jn, jDA, shift
       CHARACTER(LEN=37) filename
       CHARACTER(LEN=6)  varname
       CHARACTER(LEN=43) bkpname
 
 
-
+      shift = 0
 
       DO jn=1, jptra  ! global loop on tracers to read restart
 
@@ -40,7 +40,7 @@
          varname  = 'TRN'//ctrcnm(jn)
          filename = 'RESTARTS/RST.'//datestring//'.'//trim(ctrcnm(jn))//'.nc'
          if (lwp) write(*,*) 'reading ', filename
-         CALL readnc_slice_double(filename,varname, trn(:,:,:,jn) )
+         CALL readnc_slice_float(filename,varname, trn(:,:,:,jn), shift)
 
 
 

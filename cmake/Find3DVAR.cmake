@@ -6,7 +6,7 @@
  message(STATUS "DA library =  ${DA_LIBRARIES}  ")
  if (DA_LIBRARIES)
     find_path (DA_INCLUDES NAMES filenames.mod mpi_str.mod HINTS $ENV{DA_INCLUDE} NO_DEFAULT_PATH)
-#    add_definitions(-Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2)
+    add_definitions(-DExecDA)
     message(STATUS "DA include =  ${DA_INCLUDES}  ")
     set (DA_has_interfaces "YES")
  else (DA_LIBRARIES)

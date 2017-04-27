@@ -33,7 +33,7 @@ get_filename_component (Fortran_COMPILER_NAME ${CMAKE_Fortran_COMPILER} NAME)
 set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
 add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_trc_smolar)
 add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed )
-add_definitions(-Dkey_mpp -Dkey_mpp_mpi -DExecDA)
+add_definitions(-Dkey_mpp -Dkey_mpp_mpi)
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
   set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp

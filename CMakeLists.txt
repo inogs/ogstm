@@ -11,7 +11,7 @@ find_package(MPI REQUIRED)
 find_package(NetCDF REQUIRED)
 find_package(BFM REQUIRED)
 
-# "OPTIONAL" DATA ASSIMILATION PACKAGES
+# DATA ASSIMILATION PACKAGES
 find_package(3DVAR REQUIRED)
 find_package(PETSc REQUIRED)
 find_package(PnetCDF REQUIRED)
@@ -55,16 +55,13 @@ include_directories(${BFM_INCLUDES})
 include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
-# OPTIONAL DATA ASSIMILATION INCLUDE SECTION
+# DATA ASSIMILATION INCLUDE SECTION
 include_directories(${EXIT_INCLUDES})
 include_directories(${DA_INCLUDES})
 include_directories(${PETSC_INCLUDES})
 
 # Search Fortran module to compile
-# FOLDER WITH DATA ASSIMILATION
 set( FOLDERS BIO  DA  General  IO  MPI  namelists  PHYS)
-# FOLDER WITHOUT DATA ASSIMILATION
-# set( FOLDERS BIO  General  IO  MPI  namelists  PHYS)
   foreach(FOLDER ${FOLDERS})
   file(GLOB TMP src/${FOLDER}/*)
   list (APPEND FORTRAN_SOURCES ${TMP})
@@ -73,8 +70,4 @@ endforeach()
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-
-# LINKING STRING WITH DATA ASSIMILATION
 target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${EXIT_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES})
-# LINKING STRING WITHOUT DATA ASSIMILATION
-# target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES})

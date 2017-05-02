@@ -50,6 +50,7 @@
       bufftrn = Miss_val
 
        DO jn=1,jptra
+        if(.not.isDAvar(ctrcnm(jn)))
         if(myrank == 0) then
            istart = nimpp
            jstart = njmpp

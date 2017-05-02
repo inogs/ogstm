@@ -5,6 +5,7 @@
       public
 
       CHARACTER(LEN=35) CHLSUP_FOR_DA
+      integer DA_Nprocs
 
       CHARACTER(LEN=3) ::varlistDA(17)
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHL_SUP

@@ -9,6 +9,7 @@ USE myalloc
 USE mpi
 
 #ifdef ExecDA
+use DA_mem
 use mpi_str, only: Var3DCommunicator
 use petscvec, only: PETSC_COMM_WORLD, PETSC_NULL_CHARACTER
 #endif
@@ -52,7 +53,7 @@ contains
 
 SUBROUTINE mynode
 
-      INTEGER :: ierr, DA_Nprocs
+      INTEGER :: ierr
 #ifdef ExecDA
       PetscErrorCode :: stat
 #endif

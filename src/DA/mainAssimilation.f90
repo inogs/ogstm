@@ -15,7 +15,7 @@
       character (LEN=8) DAY
       character MISFIT_OPT
       logical ISLOG, ApplyConditions
-      integer :: ierr, color, DA_Nprocs
+      integer :: ierr, color
       integer :: biol, bphy, nchl, sat, argo, SysErr, system
       real*8  :: chl_dep
 
@@ -44,7 +44,7 @@
       VARFILE   = 'DA_static_data/MISFIT/VAR2D/var2D.' // MONTH // '.nc'
       EOF_FILE  = 'DA_static_data/3D_VAR/EOF/eof.'  // MONTH // '.nc'
       GRID_FILE = 'DA_static_data/3D_VAR/GRID/BFM_grid.nc'
-      RCORR_FILE = 'DA_static_data/3D_VAR/gradsal.nc'
+      ANIS_FILE = 'DA_static_data/3D_VAR/gradsal.nc'
 
       MISFIT_FILE='DA__FREQ_1/'// DAY // '.chl_mis.nc'
       ARGO_FILE='DA__FREQ_1/'// DAY // '.P_l_arg_mis.dat'
@@ -59,7 +59,6 @@
       ! Sviluppo : se non serve avere il file ave delle DA, la snutell puo' fare il collecting
       CALL trcwriDA(DATEstr)  ! Dumps Before Assimilation real*4
 
-      DA_Nprocs = 20
       if (myrank .lt. DA_Nprocs ) then
           if(myrank .eq. 0 .and. sat .eq. 1) then
             call CREATEMISFIT(SATFILE,VARFILE,MISFIT_OPT, ISLOG, MISFIT_FILE) ! produces MISFIT.nc

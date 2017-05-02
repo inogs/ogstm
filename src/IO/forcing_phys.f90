@@ -147,7 +147,7 @@
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask * spongeVel
 
-      call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
+      IS_INGV_E3T = .false. ! call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
       if (IS_INGV_E3T) then
           call readnc_slice_float(nomefile,'e3u',buf,ingv_lon_shift)
           e3udta(:,:,:,2) = buf!*umask

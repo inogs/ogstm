@@ -176,9 +176,9 @@
 ! ************* namelist GENERAL_IO  *****************
 
       nwritetrc = 10
-      read_W_from_file = .true.
-      internal_sponging = .false.
-      ingv_files_direct_reading = .false.
+      read_W_from_file = .false.
+      internal_sponging = .true.
+      ingv_files_direct_reading = .true.
       if (ingv_files_direct_reading ) then
          ingv_lon_shift   = 222
       else

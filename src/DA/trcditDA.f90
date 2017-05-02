@@ -51,6 +51,7 @@
       call mppsync()
 
       if (lwp)  CHLtot = 0.0
+      if (lwp)  tottrnIO = Miss_val
 
 !  Ghost Shells - Manual s Indexes-
 

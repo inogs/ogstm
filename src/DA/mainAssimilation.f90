@@ -10,7 +10,7 @@
       CHARACTER(LEN=17), INTENT(IN) :: datestr, dateFrom
 
       character(LEN=1024) SATFILE, VARFILE
-      character(LEN=46) SUFFIX
+      character(LEN=49) SUFFIX
       character(LEN=2) MONTH
       character (LEN=8) DAY
       character MISFIT_OPT
@@ -39,7 +39,7 @@
       ! SATDIR li vuole pronti all'uso, già tagliati e interpolati
 
 
-      SUFFIX   = '_d-OC_CNR-L4-CHL-MedOC4_SAM_7KM-MED-REP-v02.nc'
+      SUFFIX   = '_d-OC_CNR-L3-CHL-MedOC4AD4_SAM_1KM-MED-REP-v02.nc'
       SATFILE   = 'SATELLITE/' // DAY // trim(SUFFIX)
       VARFILE   = 'DA_static_data/MISFIT/VAR2D/var2D.' // MONTH // '.nc'
       EOF_FILE  = 'DA_static_data/3D_VAR/EOF/eof.'  // MONTH // '.nc'
@@ -60,7 +60,10 @@
       CALL trcwriDA(DATEstr)  ! Dumps Before Assimilation real*4
 
       if (myrank .lt. DA_Nprocs ) then
-          if(myrank .eq. 0 .and. sat .eq. 1) then
+          if(myrank .eq. 0) then ! .and. sat .eq. 1) then
+            write(*,*) 'satfile=', trim(SATFILE)
+            write(*,*) 'varfile=', trim(VARFILE)
+            write(*,*) 'misfit=', trim(MISFIT_FILE)
             call CREATEMISFIT(SATFILE,VARFILE,MISFIT_OPT, ISLOG, MISFIT_FILE) ! produces MISFIT.nc
             write(*,*) 'eof = ',   trim(EOF_FILE)
             write(*,*) 'grid = ',  trim(GRID_FILE)

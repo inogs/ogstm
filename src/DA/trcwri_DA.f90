@@ -51,7 +51,7 @@
       if (lwp) tottrn = Miss_val
 
        DO jn=1,jptra
-        if(.not.isDAvar(ctrcnm(jn)))
+        if(.not.isDAvar(ctrcnm(jn))) CYCLE
         if(myrank == 0) then
            istart = nimpp
            jstart = njmpp

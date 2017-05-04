@@ -263,8 +263,8 @@
         s = nf90_enddef(ncid)
         call handle_err1(s, counter,FileNetCDF)
 
-        s = nf90_put_var(ncid, ID_lon   , REAL(totglamt(:,jpjglo),4)    ); call handle_err1(s, counter,FileNetCDF)
-        s = nf90_put_var(ncid, ID_lat   , REAL(totgphit(jpiglo,:),4)    ); call handle_err1(s, counter,FileNetCDF)
+        s = nf90_put_var(ncid, ID_lon   , REAL(totglamt(jpjglo,:),4)    ); call handle_err1(s, counter,FileNetCDF)
+        s = nf90_put_var(ncid, ID_lat   , REAL(totgphit(:,jpiglo),4)    ); call handle_err1(s, counter,FileNetCDF)
         s = nf90_put_var(ncid, ID_misf  , MISFIT ); call handle_err1(s, counter,FileNetCDF)
         s = nf90_put_var(ncid, ID_err   , ERRsat ); call handle_err1(s, counter,FileNetCDF)
         s = nf90_put_var(ncid, ID_time  , time   ); call handle_err1(s, counter,FileNetCDF)

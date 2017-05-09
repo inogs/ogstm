@@ -295,6 +295,7 @@
       tra       = 0.0
       tra_ben   = 0.0
       trn_ben   = 0.0
+      flxdta    = 0.0
 
       traIO     = 0.  !      we reset matrix for new average
       D2_FLUX_SURF_IO = 0.  !      we reset matrix for new average

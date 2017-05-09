@@ -23,9 +23,9 @@
       REAL(8) julian
 
 
-      CHARACTER(LEN=37) filename
+      CHARACTER(LEN=38) filename
 
-      CHARACTER(LEN=3) varname
+      CHARACTER(LEN=4) varname
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -164,7 +164,7 @@
         if(rank == 0) then
 
             varname=cbennm(jn)
-            filename = 'RESTARTS/RST.'//datestring//'.'//varname//'.nc'
+            filename = trim('RESTARTS/RST.'//datestring//'.'//trim(varname)//'.nc')
 
         CALL write_restart_ben(filename,julian)
 

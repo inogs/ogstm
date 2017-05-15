@@ -56,7 +56,6 @@ include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
 # DATA ASSIMILATION INCLUDE SECTION
-include_directories(${EXIT_INCLUDES})
 include_directories(${DA_INCLUDES})
 include_directories(${PETSC_INCLUDES})
 
@@ -70,4 +69,4 @@ endforeach()
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${EXIT_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES})

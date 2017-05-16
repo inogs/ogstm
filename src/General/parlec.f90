@@ -20,11 +20,12 @@
 !            &nameos           : ocean physical parameters
 !            &natnum           : numerical schemes
 !            &general_IO       : IO settings
+!            &DA_setup         : Data Assimilation settings
 
 
 
        USE myalloc
-       ! epascolo USE myalloc_mpp
+       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, ApplyConditions
        IMPLICIT NONE
 
 ! local declarations
@@ -39,6 +40,7 @@
 
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
+      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, ApplyConditions
 
 
 
@@ -232,7 +234,15 @@
       WRITE(numout,*) ' '
       ENDIF
 
-
+      REWIND( numnam )
+      READ  ( numnam,DA_setup )
+      IF(lwp) THEN
+      WRITE(numout,*) 'DA setup'
+      WRITE(numout,*) ' '
+      WRITE(numout,*) ' DA_Nprocs      : 3D_var cores', DA_nprocs
+      WRITE(numout,*) ' satfile suffix : ', satfile_suffix
+      WRITE(numout,*) ' ApplyConditions: snutell flag ', ApplyConditions
+      ENDIF
 
 
       CLOSE( numnam)

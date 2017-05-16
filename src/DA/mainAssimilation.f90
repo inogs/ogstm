@@ -10,11 +10,10 @@
       CHARACTER(LEN=17), INTENT(IN) :: datestr, dateFrom
 
       character(LEN=1024) SATFILE, VARFILE
-      character(LEN=49) SUFFIX
       character(LEN=2) MONTH
       character (LEN=8) DAY
       character MISFIT_OPT
-      logical ISLOG, ApplyConditions
+      logical ISLOG
       integer :: ierr, color
       integer :: biol, bphy, nchl, sat, argo, SysErr, system
       real*8  :: chl_dep
@@ -28,7 +27,6 @@
 
       MISFIT_OPT ='2'
       ISLOG = .false.
-      ApplyConditions = .false. ! .true.
 
       if(myrank .eq. 0) then
         open(11,file='var_3d_nml',form='formatted')
@@ -39,8 +37,7 @@
       ! SATDIR li vuole pronti all'uso, già tagliati e interpolati
 
 
-      SUFFIX   = '_d-OC_CNR-L3-CHL-MedOC4AD4_SAM_1KM-MED-REP-v02.nc'
-      SATFILE   = 'SATELLITE/' // DAY // trim(SUFFIX)
+      SATFILE   = 'SATELLITE/' // DAY // trim(satfile_suffix)
       VARFILE   = 'DA_static_data/MISFIT/VAR2D/var2D.' // MONTH // '.nc'
       EOF_FILE  = 'DA_static_data/3D_VAR/EOF/eof.'  // MONTH // '.nc'
       GRID_FILE = 'DA_static_data/3D_VAR/GRID/BFM_grid.nc'

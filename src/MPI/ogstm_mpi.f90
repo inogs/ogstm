@@ -64,7 +64,6 @@ SUBROUTINE mynode
       CALL mpi_comm_size(mpi_comm_world,mpi_glcomm_size,ierr)
 
 #ifdef ExecDA
-      DA_Nprocs = 20
       if(myrank .lt. DA_Nprocs) then
         call MPI_Comm_split(MPI_COMM_WORLD, DA_Nprocs, myrank, Var3DCommunicator, ierr)
         

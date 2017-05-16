@@ -34,7 +34,12 @@
    freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
    save_bkp_group2      = .true.
    isCheckLOG = .false.
+   read_W_from_file = .false.
+   internal_sponging = .true.
+   ingv_files_direct_reading = .true.
+   ingv_lon_shift   = 222
 /
+
 
 
 &Domain_Characteristic

@@ -36,7 +36,7 @@
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,lrivers,lbfm, latmosph, ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux
-      NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG
+      NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG, read_W_from_file, internal_sponging,ingv_files_direct_reading,ingv_lon_shift
 
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
@@ -186,6 +186,7 @@
       else
           ingv_lon_shift   = 0
       endif
+
       REWIND( numnam )
       READ  ( numnam, General_IO )
 

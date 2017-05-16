@@ -1,11 +1,11 @@
-      SUBROUTINE SNUTELL(datestr, ISLOG, ApplyConditions)
+      SUBROUTINE SNUTELL(datestr, ISLOG)
       use myalloc
       use DA_MEM
       use filenames
 
       IMPLICIT NONE
       character*17 datestr
-      logical ISLOG, ApplyConditions
+      logical ISLOG
 
 
       ! LOCAL
@@ -50,7 +50,7 @@
 
            write(ctype, '(i1)') Itype
            write(*,*) 'chiamata NEWCORRFACTOR', Itype
-           CALL NEWCORRFACTOR(datestr,ctype, ApplyConditions)
+           CALL NEWCORRFACTOR(datestr,ctype)
 
         ENDDO
 
@@ -64,7 +64,7 @@
 !****************************************************************************
 !****************************************************************************
 
-      SUBROUTINE NEWCORRFACTOR(datestr, CTYPE, ApplyConditions)
+      SUBROUTINE NEWCORRFACTOR(datestr, CTYPE)
         USE myalloc
         USE DA_MEM
         USE TIME_MANAGER
@@ -89,7 +89,6 @@
         real(4) ONE
         CHARACTER(LEN=37) filename
         real(8) julian
-        logical ApplyConditions
 !        real fillValueAVE
 !        integer(1) fillVAlueCOND
 !        fillValueAVE  = 1.0e+20

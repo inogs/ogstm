@@ -25,7 +25,7 @@
 
 
        USE myalloc
-       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, ApplyConditions
+       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, ApplyConditions
        IMPLICIT NONE
 
 ! local declarations
@@ -40,7 +40,7 @@
 
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
-      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, ApplyConditions
+      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, ApplyConditions
 
 
 

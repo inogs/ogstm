@@ -8,6 +8,7 @@
       integer DA_Nprocs
       LOGICAL ApplyConditions
       character(LEN=200) satfile_suffix
+      character(LEN=40 ) satvarname
 
       CHARACTER(LEN=3) ::varlistDA(17)
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHL_SUP

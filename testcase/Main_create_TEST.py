@@ -26,7 +26,7 @@ import create_init_nc as c_init
 
 import create_init_benthic_nc as c_init_benthic
 
-import create_forcings_nc as c_for
+import create_forcingsW_nc as c_for
 
 import create_bc_nc as c_bc
 

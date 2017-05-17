@@ -307,6 +307,13 @@ def create_meshmask_nc(test):
     vmask[0,:,-2,:] =0.;
     vmask[0,-1,:,:] =0.;
 
+#    calcbenflag (time, z_a, y, x)
+    calcbenmask = 2*np.ones((time,z_a,jpj,jpi),np.int);
+    calcbenmask[0,0,0:5,0:5] = 0
+
+
+
+
     ##############################################################
     # write meshmask netcdf file !
     ##############################################################
@@ -365,7 +372,8 @@ def create_meshmask_nc(test):
 #	short time_steps(time) ;
     ncvar    = ncOUT.createVariable('tmask' ,'d',('time','z', 'y', 'x') )    ; ncvar[:] = tmask 
     ncvar    = ncOUT.createVariable('umask' ,'d',('time','z', 'y', 'x') )    ; ncvar[:] = umask 
-    ncvar    = ncOUT.createVariable('vmask' ,'d',('time','z', 'y', 'x') )    ; ncvar[:] = vmask 
+    ncvar    = ncOUT.createVariable('vmask' ,'d',('time','z', 'y', 'x') )    ; ncvar[:] = vmask
+    ncvar    = ncOUT.createVariable('calcbenmask' ,'d',('time','z_a', 'y', 'x') )    ; ncvar[:] = calcbenmask 
     ncOUT.close()
     
     outfile = test['Dir'] + '/submask.nc';

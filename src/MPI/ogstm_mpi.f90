@@ -62,6 +62,7 @@ SUBROUTINE mynode
 
       CALL mpi_comm_rank(mpi_comm_world,myrank,ierr)
       CALL mpi_comm_size(mpi_comm_world,mpi_glcomm_size,ierr)
+      call parlec ! in order to read DA_Nprocs
 
 #ifdef ExecDA
       if(myrank .lt. DA_Nprocs) then

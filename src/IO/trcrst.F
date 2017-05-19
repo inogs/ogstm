@@ -200,11 +200,13 @@
 
           call readnc_slice_double_2d(bkpname,'soshfldo', qsrIO)
           call readnc_slice_double_2d(bkpname,'sowindsp',vatmIO)
+          call readnc_slice_double_2d(bkpname,'botwastr',botwastrIO) 
           call readnc_slice_double_2d(bkpname,'sowaflcd', empIO)
       else
           snIO      = 0.0
           tnIO      = 0.0
           vatmIO    = 0.0
+          botwastrIO    = 0.0 
           empIO     = 0.0
           qsrIO     = 0.0
           unIO      = 0.0

@@ -59,6 +59,7 @@
 
 
 
+
       ENDIF
 
 
@@ -80,6 +81,7 @@
 
 
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After))
+
 
 
 
@@ -196,7 +198,10 @@
 
 
 ! W *********************************************************
+     
+
       nomefile = 'FORCINGS/W'//datestring//'.nc'
+
       call readnc_slice_float(nomefile,'vovecrtz',buf);
       DO jk=1,jpk,ntids!wdta(:,:,:,2) = buf*tmask;
 !$omp parallel default(none) private(mytid,ji,jj) shared(jk,jpi,jpj,jpk,wdta,tmask,buf)
@@ -266,6 +271,16 @@
       call readnc_slice_float_2d(nomefile,'sowindsp',buf2); flxdta(:,:,jpwind,2) = buf2*tmask(:,:,1);
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2); flxdta(:,:,jpqsr ,2) = buf2*tmask(:,:,1);
                                                             flxdta(:,:,jpice ,2) = 0.
+
+!!!!!!!!!!!!!!!!
+      call EXISTVAR(nomefile,'botwastr',B)
+      if (B) then
+         call readnc_slice_float_2d(nomefile,'botwastr',buf2); flxdta(:,:,jpbotwastr,2) = buf2*tmask(:,:,1);
+      else
+         if(lwp) write(*,*) 'Bottom stress data not found. Forced to zero.'
+         flxdta(:,:,jpbotwastr ,2) = 0.
+      endif 
+!!!!!!!!!!!!!!!!! 
       call EXISTVAR(nomefile,'sowaflcd',B)
       if (B) then
       call readnc_slice_float_2d(nomefile,'sowaflcd',buf2); flxdta(:,:,jpemp ,2) = buf2*tmask(:,:,1)*0.5;
@@ -273,6 +288,7 @@
          if(lwp) write(*,*) 'Evaporation data not found. Forced to zero.'
          flxdta(:,:,jpemp ,2) = 0.
       endif
+!!!!!!!!!!!!!!!!!
 
 !        could be written for OpenMP
           DO jk=1,jpk
@@ -283,6 +299,7 @@
               END DO
             END DO
           END DO
+
 
       END SUBROUTINE LOAD_PHYS
 
@@ -358,7 +375,7 @@
           DO jj=1,jpj,ntids
 !$omp parallel default(none) private(mytid,jk,ji,uj)
 !$omp&                       shared(jpi,jpj,jpk,jj,flx,flxdta,
-!$omp&                              vatm,freeze,emp,qsr,jpwind,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
+!$omp&                              vatm,botwastr,freeze,emp,qsr,jpwind,jpbotwastr,jpice,jpemp,jpqsr,zweigh, Umzweigh,jpflx)
 #ifdef __OPENMP
          mytid = omp_get_thread_num()  ! take the thread ID
 #endif
@@ -374,6 +391,7 @@
 
             DO ji=1,jpi
                   vatm(ji,uj)   = flx(ji,uj,jpwind)
+                  botwastr(ji,uj) = flx(ji,uj,jpbotwastr)
                   freeze(ji,uj) = flx(ji,uj,jpice)
                   emp(ji,uj)    = flx(ji,uj,jpemp)
                   qsr(ji,uj)    = flx(ji,uj,jpqsr)

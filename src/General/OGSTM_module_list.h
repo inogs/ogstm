@@ -17,3 +17,6 @@
        USE check_mem
        USE iso_c_binding
 #endif
+#ifdef key_trc_benthic
+       USE BIOBEN_mem
+#endif

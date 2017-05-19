@@ -13,7 +13,9 @@
 
 !      writes ave files for tracer concentration
       CALL   trcdit(datemean, datefrom, dateend,FREQ_GROUP)
+      CALL   trcdit_benthic(datemean, datefrom, dateend,FREQ_GROUP)
       CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
+      CALL  diawri_benthic(datemean, datefrom, dateend,FREQ_GROUP)
       CALL fluxdump(datemean, datefrom, dateend)
   
 

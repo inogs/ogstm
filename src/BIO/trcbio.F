@@ -37,6 +37,7 @@ CC   --------------
       USE myalloc
       USE myalloc_mpp
       USE BIO_mem
+      USE BIOBEN_mem
       USE BC_mem
 
        IMPLICIT NONE
@@ -46,7 +47,14 @@ CC----------------------------------------------------------------------
 CC local declarations
 CC ==================
       LOGICAL sur,bot
+#ifdef key_trc_benthic
+       REAL(8) st(jptra),so(jptra),sv(4),di(jptra_dia),er(11),di2(jptra_dia_2d) ! Pelagic
+      REAL(8) st_b(jptra_b),so_b(jptra_b),di_b(jptra_dia_b)  ! Benthic                 
+      REAL(8) di2_b(jptra_dia_b_2d)
+      REAL(8) di2_jsur(jptra), di2_jbot(jptra)
+#else
       REAL(8) a(jptra),b(jptra),c(4),d(jptra_dia-2),er(10),d2(jptra_dia_2d)
+#endif
 
       INTEGER ji,jj,jk,jb,jn
       INTEGER jtr,jtrmax,tra_idx
@@ -121,6 +129,7 @@ C
          ENDDO
 
       tra_DIA_2d=0.
+      ben_DIA   =0.
 
       MAIN_LOOP: DO  jb = 1, NBFMPOINTS, ntids
 
@@ -128,7 +137,12 @@ C
 !$omp   parallel default(none) private(ji,jj,jk,mytid,sur,bot,jtr,a,b,c,d,d2,er)
 !$omp&      shared(jb,NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
 !$omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo,NPPF2)
+#ifdef key_trc_benthic
+!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo, calcbenmask,botwastr)
+#else
+!$omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo, NPPF2)
+#endif
+
 
 #ifdef __OPENMP
         mytid = omp_get_thread_num()  ! take the thread ID
@@ -143,11 +157,18 @@ C
 
 
                           sur = (jk .eq. 1)
-                          bot = .FALSE.
+                          bot = (jk .eq. mbathy(ji,jj))
 
                           DO jtr=1, jtrmax
-                             a(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations
+                             st(jtr) = trn(ji,jj,jk,jtr) ! current biogeochemical concentrations
                           END DO
+#ifdef key_trc_benthic
+                          IF (bot) then ! benthic state variables
+                             DO jtr=1, jptra_b
+                                st_b(jtr) = trn_ben(ji,jj,1,jtr) !  benthic 1 layer
+                             END DO
+                          ENDIF
+#endif
 ! Environmental regulating factors (er)
 
                           er(1)  = tn (ji,jj,jk)        ! Temperature (Celsius)
@@ -156,43 +177,68 @@ C
                           er(4)  = ice                  ! from 0 to 1 adimensional
                           er(5)  = co2(ji,jj)           ! CO2 Mixing Ratios (ppm)  390
                           er(6)  = xpar(ji,jj,jk)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                          er(7)  = DAY_LENGTH(ji,jj)    ! fotoperiod expressed in hours
-                          er(8)  = e3t(jk)              ! depth in meters of the given cell
+                          er(7)  = DAY_LENGTH(ji,jj)    ! Photoperiod expressed in hours
+                          er(8)  = e3t(ji,jj,jk)        ! depth in meters of the given cell
                           er(9)  = vatm(ji,jj) * surf_mask(jk) ! wind speed (m/s)
-                          er(10) = PH(ji,jj,jk)         ! PH
+                          er(10) = PH(ji,jj,jk)         ! pH
+#ifdef key_trc_benthic
+                          er(11) = botwastr(ji,jj)
+#endif
 
-                          call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
+                          call BFM0D_Input_EcologyDynamics(sur,bot,st,jtrmax,er)
+#ifdef key_trc_benthic
+                          if (bot) call BFM0D_Input_EcologyDynamics_benthic(st_b,jptra_b,er,calcbenmask(ji,jj))
+#endif
 
                           call BFM0D_reset()
 
                           call EcologyDynamics()
 
                           if (sur) then
-                             call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2)
-                           else
-                              call BFM0D_Output_EcologyDynamics(b, c, d)
-                           endif
+                             call BFM0D_Output_EcologyDynamics_surf(so, sv, di ,di2, di2_jsur)
+                          elseif(bot) then
+                             call BFM0D_Output_EcologyDynamics_bot(so, sv, di ,di2, di2_jbot)
+                             call BFM0D_output_EcologyDynamics_benthic(so_b,di_b,di2_b)
+                          else
+                             call BFM0D_Output_EcologyDynamics(so, sv, di)
+                          endif
 
-                          DO jtr=1, jtrmax
-                             tra(ji,jj,jk,jtr) =tra(ji,jj,jk,jtr) +b(jtr) ! trend
-                          END DO
+                          tra(ji,jj,jk,:) =tra(ji,jj,jk,:) +so(:) ! trend --> add source
 
-                          DO jtr=1,4
-                             sediPI(ji,jj,jk,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
-                          END DO
+                          sediPI(ji,jj,jk,:) = sv(:) ! BFM output of sedimentation speed (m/d)
 
+#ifdef key_trc_benthic
+                          tra_DIA(ji,jj,jk,:) = di(:) ! diagnostic
+#else
                           DO jtr=1,jptra_dia -2
                              tra_DIA(ji,jj,jk,jtr) = d(jtr) ! diagnostic
                           END DO
+#endif
 
                           if (sur) then
-                              DO jtr=1,jptra_dia_2d
-                                 tra_DIA_2d(ji,jj,jtr) = d2(jtr) ! diagnostic
-                              END DO
+                             tra_DIA_2d(ji,jj,:) = di2(:) !  diagnostic pelagic 2d
+                             D2_FLUX_SURF(ji,jj,:) = di2_jsur(:) !  surface fluxes
                           endif
+#ifdef key_trc_benthic
+                          if (bot) then 
+                             DO jtr=1, jptra_b
+                                tra_ben(ji,jj,1,jtr)=so_b(jtr) !  benthic 1 layer
+                             END DO
+                             DO jtr=1,jptra_dia_b
+                                ben_DIA(ji,jj,1,jtr) = di_b(jtr) ! diagnostic benthic
+                             END DO
 
+                             ben_DIA_2d(ji,jj,:) = di2_b(:) 
+                             D2_FLUX_BOT(ji,jj,:) = di2_jbot(:) !  diagnostic pelagic/benthic fluxes
+                          endif
+#endif
+
+#ifdef key_trc_benthic
+                          PH(ji,jj,jk)=di(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
+#else
                           PH(ji,jj,jk)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
                           NPPF2(ji,jj,jk)=d(ppF05) ! Flagellate production 
+#endif
 
 
 

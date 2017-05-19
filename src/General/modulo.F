@@ -94,10 +94,10 @@ CC -------------------------------------------------------
 CC                  z-coordinate (default option)
 CC                  ------------------------------
 CC      gdept, gdepw() : depth of t- and w-points (m)
-CC      e3t, e3w()     : vertical scale factors at t- and w-points (m)
+CC      e3t_0, e3w_0()     : vertical scale factors at t- and w-points (m)
 CC
-      REAL(8), allocatable :: gdept(:), gdepw(:), e3t(:), e3w(:)
-
+      REAL(8), allocatable :: gdept(:), gdepw(:), e3t_0(:), e3w_0(:)
+      REAL(8), allocatable :: e3t(:,:,:), e3u(:,:,:), e3v(:,:,:), e3w(:,:,:)
 
 CC----------------------------------------------------------------------
 CC        masks, bathymetry
@@ -135,6 +135,7 @@ CC      bn2n           : brunt-vaisala frequency (s-2)
 CC
       REAL(8), allocatable, dimension(:,:,:) :: un, vn, wn
       REAL(8), allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho,bn2n
+      REAL(8), allocatable, dimension(:,:,:) :: hdivn
 
 
 CC>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -173,7 +174,7 @@ CC IV. SURFACE FORCING AND DATA
 CC ============================
 CC  surface wind stress at givem time_step
 CC    taux, tauy()   : wind stress components in (i,j) referential
-      REAL(8), allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
+      REAL(8), allocatable, dimension(:,:) :: taux, tauy, vatm, freeze, botwastr
 
 CC----------------------------------------------------------------------
 CC     surface fluxes
@@ -210,6 +211,7 @@ CC ==============
       INTEGER, PARAMETER :: numout = 2   ! unit for output print
       LOGICAL lwp                        ! boolean term for stdout
       INTEGER, PARAMETER :: numnat =80   ! the number of the passive tracer NAMELIST
+      INTEGER, PARAMETER :: numben =81   ! the number of the passive tracer NAMELIST
 
 
 #if defined key_mpp 
@@ -269,6 +271,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  snIO(:,:,:) 
       REAL(8), allocatable ::  tnIO(:,:,:) 
       REAL(8), allocatable ::  vatmIO(:,:) 
+      REAL(8), allocatable ::  botwastrIO(:,:)
       REAL(8), allocatable ::  empIO(:,:) 
       REAL(8), allocatable ::  qsrIO(:,:) 
       REAL(8), allocatable ::  unIO(:,:,:) 
@@ -279,6 +282,9 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO(:,:,:)
       REAL(8), allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
+      REAL(8), allocatable ::  D2_FLUX_SURF(:,:,:),D2_FLUX_BOT(:,:,:)
+      REAL(8), allocatable ::  D2_FLUX_SURF_IO(:,:,:),D2_FLUX_BOT_IO(:,:,:)
+      REAL(8), allocatable ::  D2_FLUX_SURF_IO_HIGH(:,:,:),D2_FLUX_BOT_IO_HIGH(:,:,:)
       REAL(8), allocatable :: tottrn(:,:,:)
       REAL(8), allocatable :: tottrb(:,:,:)
 
@@ -288,6 +294,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totsnIO(:,:,:) 
       REAL(8), allocatable ::  tottnIO(:,:,:) 
       REAL(8), allocatable ::  totvatmIO(:,:) 
+      REAL(8), allocatable ::  totbotwastrIO(:,:)
       REAL(8), allocatable ::  totempIO(:,:) 
       REAL(8), allocatable ::  totqsrIO(:,:) 
       REAL(8), allocatable ::  totunIO(:,:,:) 
@@ -295,6 +302,7 @@ CC    parameters for the control of passive tracers
       REAL(8), allocatable ::  totwnIO(:,:,:) 
       REAL(8), allocatable ::  totavtIO(:,:,:) 
       REAL(8), allocatable ::  tottmaIO(:,:,:) 
+      REAL(8), allocatable ::  totD2_FLUX_SURF_IO(:,:),totD2_FLUX_BOT_IO(:,:)
 
 
       REAL(8), allocatable ::  trb(:,:,:,:)
@@ -429,10 +437,15 @@ CC----------------------------------------------------------------------
       allocate(ff (jpi,jpj))            ;ff       = huge(ff(1,1))
 
 
-      allocate(gdept(jpk)) ;gdept = huge(gdept(1))
-      allocate(gdepw(jpk)) ;gdepw = huge(gdepw(1))
-      allocate(  e3t(jpk)) ;  e3t = huge(e3t(1))
-      allocate(  e3w(jpk)) ;  e3w = huge(e3w(1))
+      allocate(gdept(jpk)) ;  gdept = huge(gdept(1))
+      allocate(gdepw(jpk)) ;  gdepw = huge(gdepw(1))
+      allocate(e3t_0(jpk)) ;  e3t_0 = huge(e3t_0(1))
+      allocate(e3w_0(jpk)) ;  e3w_0 = huge(e3w_0(1))
+
+      allocate(e3t(jpi,jpj,jpk)) ;  e3t = huge(e3t(1,1,1))
+      allocate(e3u(jpi,jpj,jpk)) ;  e3u = huge(e3u(1,1,1))
+      allocate(e3v(jpi,jpj,jpk)) ;  e3v = huge(e3v(1,1,1))
+      allocate(e3w(jpi,jpj,jpk)) ;  e3w = huge(e3w(1,1,1))
 
       allocate(mbathy(jpi,jpj)) ; mbathy = huge(mbathy(1,1))
 
@@ -453,6 +466,7 @@ CC----------------------------------------------------------------------
        allocate(rhopn(jpi,jpj,jpk)) ;rhopn  = huge(rhopn(1,1,1))
        allocate(rho(jpi,jpj,jpk))   ;rho    = huge(rho(1,1,1))
        allocate(bn2n(jpi,jpj,jpk))  ;bn2n   = huge(bn2n(1,1,1))
+       allocate(hdivn(jpi,jpj,jpk)) ;hdivn  = huge(hdivn(1,1,1))
 
       allocate(ahtu(jpk)) ;ahtu = huge(ahtu(1))
       allocate(ahtv(jpk)) ;ahtv = huge(ahtv(1))
@@ -466,6 +480,7 @@ CC----------------------------------------------------------------------
        allocate(taux  (jpi,jpj)) ; taux   = huge(taux(1,1))
        allocate(tauy  (jpi,jpj)) ; tauy   = huge(tauy(1,1))
        allocate(vatm  (jpi,jpj)) ; vatm   = huge(vatm(1,1))
+       allocate(botwastr(jpi,jpj)) ; botwastr  = huge(botwastr(1,1))
        allocate(freeze(jpi,jpj)) ; freeze = huge(freeze(1,1))
 
 
@@ -511,11 +526,14 @@ C     no mpp
        allocate(tra_DIA(jpi,jpj,jpk,jptra_dia))            ; tra_DIA= huge(tra_DIA(1,1,1,1))
        allocate(tra_DIA_2d(jpi,jpj,jptra_dia_2d))          ; tra_DIA_2d= huge(tra_DIA_2d(1,1,1))
        if (lwp) allocate(tottrn(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrn = huge(tottrn(1,1,1)) 
-       if (lwp) allocate(tottrb(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrb = huge(tottrb(1,1,1))
+       if (lwp) allocate(tottrb(jpiglo, jpjglo, jpk))      ;  if (lwp) tottrb = huge(tottrb(1,1,1)) 
+       if (lwp) allocate(totD2_FLUX_SURF_IO(jpiglo, jpjglo))  ;  if (lwp) totD2_FLUX_SURF_IO = huge(totD2_FLUX_SURF_IO(1,1))
+       if (lwp) allocate(totD2_FLUX_BOT_IO(jpiglo, jpjglo))   ;  if (lwp) totD2_FLUX_BOT_IO  = huge(totD2_FLUX_BOT_IO(1,1))
        allocate(traIO(jpi,jpj,jpk,jptra))                  ; traIO  = huge(traIO(1,1,1,1)) 
        allocate(snIO(jpi,jpj,jpk))                         ; snIO   = huge(snIO(1,1,1))
        allocate(tnIO(jpi,jpj,jpk))                         ; tnIO   = huge(tnIO(1,1,1))
        allocate(vatmIO(jpi,jpj))                           ; vatmIO = huge(vatmIO(1,1))
+       allocate(botwastrIO(jpi,jpj))                       ; botwastrIO = huge(botwastrIO(1,1)) 
        allocate(empIO(jpi,jpj))                            ; empIO  = huge(empIO(1,1))
        allocate(qsrIO(jpi,jpj))                            ; qsrIO  = huge(qsrIO(1,1))
        allocate(unIO  (jpi,jpj,jpk))                       ; unIO   = huge(unIO(1,1,1))
@@ -531,6 +549,14 @@ C     no mpp
        allocate(tra_DIA_2d_IO(jpi,jpj,jptra_dia_2d))       ; tra_DIA_2d_IO    = huge(tra_DIA_2d_IO(1,1,1))
        allocate(tra_DIA_2d_IO_HIGH(jpi,jpj,jptra_dia2d_HIGH));tra_DIA_2d_IO_HIGH = huge(tra_DIA_2d_IO_HIGH(1,1,1))
 
+       allocate(D2_FLUX_SURF(jpi,jpj,jptra))                ;D2_FLUX_SURF  = huge(D2_FLUX_SURF(1,1,1))
+       allocate(D2_FLUX_BOT(jpi,jpj,jptra))                 ;D2_FLUX_BOT   = huge(D2_FLUX_BOT(1,1,1))
+
+       allocate(D2_FLUX_SURF_IO(jpi,jpj,jptra))             ;D2_FLUX_SURF_IO = huge(D2_FLUX_SURF_IO(1,1,1))
+       allocate(D2_FLUX_BOT_IO(jpi,jpj,jptra))              ;D2_FLUX_BOT_IO  = huge(D2_FLUX_BOT_IO(1,1,1))
+
+       allocate(D2_FLUX_SURF_IO_HIGH(jpi,jpj,jptra))        ;D2_FLUX_SURF_IO_HIGH = huge(D2_FLUX_SURF_IO_HIGH(1,1,1))
+       allocate(D2_FLUX_BOT_IO_HIGH(jpi,jpj,jptra))         ;D2_FLUX_BOT_IO_HIGH  = huge(D2_FLUX_BOT_IO_HIGH(1,1,1))
 
 
        if (lwp)  allocate(tottrnIO(jpiglo,jpjglo,jpk)) ; if (lwp) tottrnIO  = huge(tottrnIO(1,1,1)) 
@@ -538,6 +564,7 @@ C     no mpp
        if (lwp)  allocate(totsnIO (jpiglo,jpjglo,jpk)) ; if (lwp) totsnIO   = huge(totsnIO(1,1,1))  
        if (lwp)  allocate(tottnIO (jpiglo,jpjglo,jpk)) ; if (lwp) tottnIO   = huge(tottnIO(1,1,1))  
        if (lwp)  allocate(totvatmIO(jpiglo,jpjglo))    ; if (lwp) totvatmIO = huge(totvatmIO(1,1))  
+       if (lwp)  allocate(totbotwastrIO(jpiglo,jpjglo)); if (lwp) totbotwastrIO = huge(totbotwastrIO(1,1))  
        if (lwp)  allocate(totempIO(jpiglo,jpjglo))     ; if (lwp) totempIO  = huge(totempIO(1,1))   
        if (lwp)  allocate(totqsrIO(jpiglo,jpjglo))     ; if (lwp) totqsrIO  = huge(totqsrIO(1,1))   
        if (lwp)  allocate(totunIO(jpiglo,jpjglo,jpk))  ; if (lwp) totunIO   = huge(totunIO(1,1,1))  

@@ -171,8 +171,8 @@ C (including the bottom boundary condition via avt masked)
 C   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwi(jk,mytid+1) = - z2dtt * avt(ji,jj,jk  )/( e3t(jk) * e3w(jk  ) )
-          zws(jk,mytid+1) = - z2dtt * avt(ji,jj,jk+1)/( e3t(jk) * e3w(jk+1) )
+          zwi(jk,mytid+1) = - z2dtt * avt(ji,jj,jk  )/( e3t(ji,jj,jk) * e3w(ji,jj,jk  ) )
+          zws(jk,mytid+1) = - z2dtt * avt(ji,jj,jk+1)/( e3t(ji,jj,jk) * e3w(ji,jj,jk+1) )
           zwd(jk,mytid+1) = 1. - zwi(jk,mytid+1) - zws(jk,mytid+1)
         END DO
 
@@ -248,7 +248,7 @@ C   so that ikstrt=2.
       DO jk=1,jpkm1
 
          z2dtt = zdt * rdt
-         delta_tra(jk) = ( zwx(jk,mytid+1) - zwy(jk,mytid+1) ) / z2dtt * Aij * e3t(jk)! or trn(ji,jj,jk,jn+mytid)
+         delta_tra(jk) = ( zwx(jk,mytid+1) - zwy(jk,mytid+1) ) / z2dtt * Aij * e3t(ji,jj,jk)! or trn(ji,jj,jk,jn+mytid)
 
          IF (jk .EQ. 1) THEN
              int_tra(1)  = 0

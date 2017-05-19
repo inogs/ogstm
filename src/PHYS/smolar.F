@@ -123,7 +123,7 @@ CC
          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(jk))
+                  zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk))
                END DO
             END DO
          END DO
@@ -131,8 +131,8 @@ CC
          DO jk = 1,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3t(jk) )
-                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3t(jk) )
+                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3u(ji,jj,jk) )
+                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3v(ji,jj,jk) )
                END DO
             END DO
          END DO
@@ -140,7 +140,7 @@ CC
          DO jk = 2,jpkm1
             DO jj = 2,jpjm1
                DO ji = 2,jpim1
-                  inv_et(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3w(jk) )
+                  inv_et(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3w(ji,jj,jk) )
                END DO
             END DO
          END DO
@@ -199,7 +199,7 @@ CC
             DO jj = 2,jpjm1
                DO  ji = 2,jpim1
                   if(advmask(ji,jj,jk) .NE. 0) then
-                     zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(jk))
+                     zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk))
                      dimen_jarr = dimen_jarr + 1
                      jarr(1,dimen_jarr) = ji
                      jarr(2,dimen_jarr) = jj
@@ -274,6 +274,28 @@ CC
 
       endif ! end initialization phase
 
+         jk=1
+            DO jj = 2,jpjm1
+               DO ji = 2,jpim1
+                  zbtr_arr(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3t(ji,jj,jk))
+               END DO
+            END DO
+
+            DO jj = 2,jpjm1
+               DO ji = 2,jpim1
+                  inv_eu(ji,jj,jk) = 1./(e1u(ji,jj)*e2u(ji,jj)*e3u(ji,jj,jk) )
+                  inv_ev(ji,jj,jk) = 1./(e1v(ji,jj)*e2v(ji,jj)*e3v(ji,jj,jk) )
+               END DO
+            END DO
+
+            DO jj = 2,jpjm1
+               DO ji = 2,jpim1
+                  inv_et(ji,jj,jk) = 1./(e1t(ji,jj)*e2t(ji,jj)*e3w(ji,jj,jk) )
+               END DO
+            END DO
+
+
+
 
 
       zdt = rdt*ndttrc
@@ -319,12 +341,12 @@ CC
        if (jk+mytid.le.jpk) then
           DO jj = 1,jpj
              DO ji = 1,jpi
-                zaa(ji,jj,jk+mytid) = e2u(ji,jj)*e3t(jk+mytid) * un(ji,jj,jk+mytid)
-                zbb(ji,jj,jk+mytid) = e1v(ji,jj)*e3t(jk+mytid) * vn(ji,jj,jk+mytid)
+                zaa(ji,jj,jk+mytid) = e2u(ji,jj)*e3u(ji,jj,jk+mytid) * un(ji,jj,jk+mytid)
+                zbb(ji,jj,jk+mytid) = e1v(ji,jj)*e3v(ji,jj,jk+mytid) * vn(ji,jj,jk+mytid)
                 zcc(ji,jj,jk+mytid) = e1t(ji,jj)*e2t(ji,jj)      * wn(ji,jj,jk+mytid)
-                big_fact_zaa(ji,jj,jk+mytid) = ( abs(zaa(ji,jj,jk+mytid)) - zdt*zaa(ji,jj,jk+mytid)**2*inv_eu(ji,jj,jk+mytid) )!/(e1u(ji,jj)*e2u(ji,jj)*e3t(jk+mytid) ) )
-                big_fact_zbb(ji,jj,jk+mytid) = ( abs(zbb(ji,jj,jk+mytid)) - zdt*zbb(ji,jj,jk+mytid)**2*inv_ev(ji,jj,jk+mytid) )!/(e1v(ji,jj)*e2v(ji,jj)*e3t(jk+mytid) ) )
-                big_fact_zcc(ji,jj,jk+mytid) = ( abs(zcc(ji,jj,jk+mytid)) - zdt*zcc(ji,jj,jk+mytid)**2*inv_et(ji,jj,jk+mytid) )!/(e1t(ji,jj)*e2t(ji,jj)*e3w(jk+mytid) ) )
+                big_fact_zaa(ji,jj,jk+mytid) = ( abs(zaa(ji,jj,jk+mytid)) - zdt*zaa(ji,jj,jk+mytid)**2*inv_eu(ji,jj,jk+mytid) )!/(e1u(ji,jj)*e2u(ji,jj)*e3t(ji,jj,jk+mytid) ) )
+                big_fact_zbb(ji,jj,jk+mytid) = ( abs(zbb(ji,jj,jk+mytid)) - zdt*zbb(ji,jj,jk+mytid)**2*inv_ev(ji,jj,jk+mytid) )!/(e1v(ji,jj)*e2v(ji,jj)*e3t(ji,jj,jk+mytid) ) )
+                big_fact_zcc(ji,jj,jk+mytid) = ( abs(zcc(ji,jj,jk+mytid)) - zdt*zcc(ji,jj,jk+mytid)**2*inv_et(ji,jj,jk+mytid) )!/(e1t(ji,jj)*e2t(ji,jj)*e3w(ji,jj,jk+mytid) ) )
              END DO
           END DO
 
@@ -379,6 +401,7 @@ C
            DO jj = 1,jpj
              DO ji = 1,jpi
                zkz(ji,jj,1,A) = 0.
+!               zkz(ji,jj,1,A) = fsz(trn(ji,jj,1,B),trn(ji,jj,1,B),zcc(ji,jj,1))
              END DO
            END DO
 
@@ -636,6 +659,16 @@ C 2.3 calcul of the antidiffusive flux
               END DO
             END DO
 !          END DO
+!!!!!!!!!!!!!!!!! To be checked
+!!          DO jj = 2,jpjm1
+!!            DO ji = 2,jpim1
+!!                junk  = zti(ji,jj,2,A)
+!!                junkk = zti(ji,jj,1,A)
+!!                zz(ji,jj,1,A) = big_fact_zaa(ji,jj,1)*(junk - junkk)/(junk + junkk + rtrn)* rsc*(-1.)
+
+!!            END DO
+!!          END DO
+!!!!!!!!!!!!!!!!! 
 
 !                 if(advmask(ji,jj,jk) .NE. 0) then
 
@@ -722,6 +755,7 @@ C                advection by antidiffusive mass fluxes and an upstream scheme
                    junk  = zti(ji,jj,jk,A)
                    zkx(ji,jj,jk,A) = fsx(junk,zti(ji + 1,jj,jk,A),zx(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji + 1,jj,jk,A),zaa(ji,jj,jk))
                    zky(ji,jj,jk,A) = fsy(junk,zti(ji,jj + 1,jk,A),zy(ji,jj,jk,A))!zti(ji,jj,jk,A),zti(ji,jj + 1,jk,A),zbb(ji,jj,jk))
+!!!!!! To be checked   zkz(ji,jj,jk,A) = fsz(junk,junk,zz(ji,jj,jk,A))
                  END DO
               END DO
 

@@ -143,6 +143,14 @@ C   ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
       mytid =0
 #endif
 
+      DO jj = 1,jpj
+         DO ji = 1,jpi
+!           e3t(ji,jj,1) = max(0.3, e3t(ji,jj,1) + wn(ji,jj,1) * rdt)
+!           e3u(ji,jj,1) = max(0.3, e3u(ji,jj,1) + wn(ji,jj,1) * rdt)
+!           e3v(ji,jj,1) = max(0.3, e3v(ji,jj,1) + wn(ji,jj,1) * rdt)
+!           e3w(ji,jj,1) = max(0.3, e3w(ji,jj,1) + wn(ji,jj,1) * rdt)
+         END DO
+      END DO
 
 
 C END of tracer slab

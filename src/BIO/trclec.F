@@ -114,6 +114,9 @@
 
 !      ***********  namelist nattrc_diag_2d DIAGNOSTIC VARIABLES surface or bottom:
 
+      write(*,*) "jptra_dia_2d", jptra_dia_2d
+      write(*,*) "size dianm_2d" , size(dianm_2d)
+
       REWIND(numnat)
       READ(numnat,nattrc_diag_2d)
 

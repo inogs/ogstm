@@ -86,7 +86,8 @@
 
       call parlec      ! read namelist.init
       call time_init
-      call trclec
+      call trclec      ! benthic
+      call benlec      ! pelagic
 
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager
@@ -102,7 +103,9 @@
 
       call inimpp
 
-      call domrea        !   Domain
+      call domrea         !   Domain
+
+      call domrea_benthic !   Domain
 
       call inihdf        !   diffusion horizontal coefficient
 
@@ -111,6 +114,8 @@
       call set_to_zero() ! set to zero some data arrays
 
       call trcrst        ! read restarts
+
+      call trcrst_benthic! read restarts benthic
 
       call photo_init
       call DA_INIT
@@ -162,10 +167,15 @@
       call myalloc_FN()  ; write(*,*)'My_Rank:',Rank,'alloc_FN   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
 
 
+
       call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
       call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
       call myalloc_IO()  ; write(*,*)'My_Rank:',Rank,'alloc_IO   (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+
+#ifdef key_trc_benthic
+      call myalloc_BIOBEN()  ; write(*,*)'My_Rank:',Rank,'alloc_BIOBEN (MB):', mem_all ; mem_all_tot=mem_all_tot+mem_all
+#endif
 
       write(*,*)'My_Rank,',Rank,'Total Allocated Memory (MB):',mem_all_tot
       END SUBROUTINE ALLOC_ALL
@@ -278,11 +288,33 @@
       avt       = 0.0
       tn        = 0.0
       sn        = 0.0
+      hdivn     = 0.0
 ! Passive tracers arrays set to zero
 
       xpar      = 0.0
       trn       = 0.0
       tra       = 0.0
+      tra_ben   = 0.0
+      trn_ben   = 0.0
+      flxdta    = 0.0
+
+      traIO     = 0.  !      we reset matrix for new average
+      D2_FLUX_SURF_IO = 0.  !      we reset matrix for new average
+      D2_FLUX_BOT_IO  = 0.  !      we reset matrix for new average
+      D2_FLUX_SURF    = 0.  !      we reset matrix for new average
+      D2_FLUX_BOT     = 0.  !      we reset matrix for new average
+      traIO_HIGH      = 0.
+      D2_FLUX_SURF_IO_HIGH = 0.  !      we reset matrix for new average
+      D2_FLUX_BOT_IO_HIGH  = 0.  !   
+      ben_DIA_2d_IO       =0.
+      ben_DIA_2d_IO_HIGH  =0.
+      ben_DIA_2d          =0.
+      ben_DIA_IO_HIGH     =0.
+      ben_DIA             =0.
+      ben_DIA_IO          =0.
+      benIO               =0.
+      benIO_HIGH          =0.
+      
 
       END SUBROUTINE set_to_zero
 

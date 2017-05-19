@@ -22,7 +22,7 @@
             vsed          = 3.0,
             photop        = .false.
             atlantic_bfm  = .true.
-            bottom_flux   = 1.
+            bottom_flux   = 0.
 /
 
 &General_IO
@@ -40,11 +40,12 @@
       jperio=0  
 /
 &Number_Fluxes
-      jpflx = 13,
+      jpflx = 14,
       jpwind=3,
       jpemp=4,
       jpice=5,
       jpqsr=6,
       jpkef=7,
+      jpbotwastr=14,
 /
 

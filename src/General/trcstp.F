@@ -46,6 +46,7 @@
       CALL hard_tissue_pump
       CALL checkValues
       CALL trcnxt ! tracers: fields at next time step
+      CALL trcnxt_benthic ! tracers benthic: fields at next time step
 
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime

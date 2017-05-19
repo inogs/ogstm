@@ -1,0 +1,2 @@
+Nx   Ny   Nz   nprocx nprocy lon0     lat0     dx      dy      Start              End               Directory           Code
+10   10   43   1      1      8.78125  43.78125 0.128   0.128   20000101-00:00:00  20010101-00:00:00 TEST01/wrkdir/MODEL ~/TEST_CASE1

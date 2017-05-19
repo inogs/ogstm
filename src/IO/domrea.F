@@ -117,10 +117,26 @@
 ! 4. depth and vertical scale factors
 ! -----------------------------------
 
-       CALL readmask_double_1d(maskfile,'gdept',gdept)
-       CALL readmask_double_1d(maskfile,'gdepw',gdepw)
-       CALL readmask_double_1d(maskfile,'e3t',    e3t)
-       CALL readmask_double_1d(maskfile,'e3w',    e3w)
+       CALL readmask_double_1d(maskfile,'gdept', gdept)
+       CALL readmask_double_1d(maskfile,'gdepw', gdepw)
+       CALL readmask_double_1d(maskfile,'e3t_0', e3t_0)
+       CALL readmask_double_1d(maskfile,'e3w_0', e3w_0)
+
+!     CALL readnc_slice_double (maskfile,'e3t', e3t )
+!     CALL readnc_slice_double (maskfile,'e3u', e3u )
+!     CALL readnc_slice_double (maskfile,'e3v', e3v )
+!     CALL readnc_slice_double (maskfile,'e3w', e3w )
+
+      do kk=1,jpk
+         do jj=1,jpj
+            do ii=1,jpi
+            e3t(ii,jj,kk)= e3t_0(kk)
+            e3u(ii,jj,kk)= e3t_0(kk)
+            e3v(ii,jj,kk)= e3t_0(kk)
+            e3w(ii,jj,kk)= e3w_0(kk)
+            enddo
+         enddo
+      enddo
 
 
 !       Restoration Mask ****************

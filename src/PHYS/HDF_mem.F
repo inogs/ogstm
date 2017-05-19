@@ -17,7 +17,7 @@
       INTEGER, allocatable :: hdfmask(:,:,:)
       INTEGER, allocatable :: jarr_hdf(:,:,:),jarr_hdf_flx(:)
       REAL(8), allocatable :: zta(:)
-      REAL(8), allocatable :: zeeu(:,:,:), zeev(:,:,:), zbtr(:,:)
+      REAL(8), allocatable :: zeeu(:,:,:), zeev(:,:,:), zbtr(:,:,:)
       REAL(8), allocatable :: zlt(:,:,:,:), ztu(:,:,:,:), ztv(:,:,:,:)
 
 CC----------------------------------------------------------------------
@@ -55,7 +55,7 @@ CC----------------------------------------------------------------------
        allocate(zta    (            ntids)) ; zta          = huge(zta(1))
        allocate(zeeu   (jpi,jpj,jpk      )) ; zeeu         = huge(zeeu(1,1,1))
        allocate(zeev   (jpi,jpj,jpk      )) ; zeev         = huge(zeev(1,1,1))
-       allocate(zbtr   (jpi,jpj          )) ; zbtr         = huge(zbtr(1,1)) 
+       allocate(zbtr   (jpi,jpj,jpk      )) ; zbtr         = huge(zbtr(1,1,1)) 
        allocate(zlt    (jpi,jpj,jpk,ntids)) ; zlt          = huge(zlt(1,1,1,1)) 
        allocate(ztu    (jpi,jpj,jpk,ntids)) ; ztu          = huge(ztu(1,1,1,1))
        allocate(ztv    (jpi,jpj,jpk,ntids)) ; ztv          = huge(ztv(1,1,1,1))

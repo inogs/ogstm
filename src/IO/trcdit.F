@@ -32,8 +32,10 @@
       INTEGER ave_counter
 
       CHARACTER(LEN=56) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
+      CHARACTER(LEN=56) output_file_nc_sur, output_file_nc_bot
       CHARACTER(LEN=20)  var
       CHARACTER(LEN=60) bkpname
+      CHARACTER(LEN=60) bkpname_sur, bkpname_bot
       CHARACTER(LEN=11) DIR
       logical IsBackup
 
@@ -72,6 +74,14 @@
       output_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
       bkpname        = DIR//'ave.'//datemean//'.'//trim(var)//'.nc.bkp'
 
+! Atm-Pel flux
+      output_file_nc_sur = DIR//'ave.'//datemean//'.jsur'//trim(var)//'.nc'
+      bkpname_sur        = DIR//'ave.'//datemean//'.jsur'//trim(var)//'.nc.bkp'
+
+! Pel-Bot flux
+      output_file_nc_bot = DIR//'ave.'//datemean//'.jbot'//trim(var)//'.nc'
+      bkpname_bot        = DIR//'ave.'//datemean//'.jbot'//trim(var)//'.nc.bkp'
+
 ! *************** START COLLECTING DATA *****************************
       if(rank == 0) then                    ! IF LABEL 1
 
@@ -93,8 +103,14 @@
 !***** START ASSEMBLING ***  rank 0 puts its tracer part in the tot matrix
           if (FREQ_GROUP.eq.1) then
           tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO_HIGH(relistart:reliend, reljstart:reljend,:,jn_high)
+          totD2_FLUX_SURF_IO(totistart:totiend, totjstart:totjend)= 
+     &        D2_FLUX_SURF_IO_HIGH(relistart:reliend, reljstart:reljend,jn_high)
+          totD2_FLUX_BOT_IO(totistart:totiend, totjstart:totjend) = 
+     &        D2_FLUX_BOT_IO_HIGH(relistart:reliend, reljstart:reljend,jn_high)
           else
           tottrnIO(totistart:totiend, totjstart:totjend,:)= traIO (relistart:reliend, reljstart:reljend,:,jn)
+          totD2_FLUX_SURF_IO(totistart:totiend, totjstart:totjend)= D2_FLUX_SURF_IO(relistart:reliend, reljstart:reljend,jn)
+          totD2_FLUX_BOT_IO(totistart:totiend, totjstart:totjend) = D2_FLUX_BOT_IO(relistart:reliend, reljstart:reljend,jn)
           endif
 
 
@@ -130,6 +146,21 @@
                  enddo
                 enddo
                enddo
+
+              call MPI_RECV(buffDIA2d    ,jpi_rec*jpj_rec   ,  mpi_real8, idrank, 10,mpi_comm_world, status, ierr) ! ** then tracer buffer
+               do jj =totjstart,totjend
+                 do ji =totistart,totiend
+                     ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec
+                     totD2_FLUX_SURF_IO(ji,jj)= buffDIA2d (ind)
+                 enddo
+                enddo
+              call MPI_RECV(buffDIA2d    ,jpi_rec*jpj_rec   ,  mpi_real8, idrank, 11,mpi_comm_world, status, ierr) ! ** then tracer buffer
+               do jj =totjstart,totjend
+                 do ji =totistart,totiend
+                     ind = (ji-totistart+ relistart)+ (jj-totjstart+ reljstart-1)*jpi_rec
+                     totD2_FLUX_BOT_IO(ji,jj)= buffDIA2d (ind)
+                 enddo
+                enddo
 
           enddo !idrank = 1, size-1
 
@@ -172,6 +203,40 @@
           call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
           call MPI_SEND(bufftrn, jpi * jpj * jpk,mpi_real8  , 0, 9, mpi_comm_world,ierr)
 
+        if (FREQ_GROUP.eq.2) then
+            do jj =1 , jpj
+             do ji =1 , jpi
+               ind            =  ji + jpi * (jj-1) 
+               buffDIA2d   (ind)= D2_FLUX_SURF_IO( ji,jj,jn)
+             enddo
+            enddo
+        else ! FREQ_GROUP.eq.1
+            do jj =1 , jpj
+             do ji =1 , jpi
+               ind            =  ji + jpi * (jj-1) 
+               buffDIA2d   (ind)= D2_FLUX_SURF_IO_HIGH( ji,jj,jn_high)
+             enddo
+            enddo
+        endif
+          call MPI_SEND(buffDIA2d, jpi * jpj ,mpi_real8  , 0, 10, mpi_comm_world,ierr)
+
+        if (FREQ_GROUP.eq.2) then
+            do jj =1 , jpj
+             do ji =1 , jpi
+               ind            =  ji + jpi * (jj-1)
+               buffDIA2d   (ind)= D2_FLUX_BOT_IO( ji,jj,jn)
+             enddo
+            enddo
+        else ! FREQ_GROUP.eq.1
+            do jj =1 , jpj
+             do ji =1 , jpi
+               ind            =  ji + jpi * (jj-1)
+               buffDIA2d   (ind)= D2_FLUX_BOT_IO_HIGH( ji,jj,jn_high)
+             enddo
+            enddo
+        endif
+          call MPI_SEND(buffDIA2d, jpi * jpj ,mpi_real8  , 0, 11, mpi_comm_world,ierr)
+
 
 
       endif ! IF LABEL 1, if(rank == 0)
@@ -186,10 +251,16 @@
 
         if (IsBackup) then
           CALL WRITE_AVE_BKP(bkpname,datefrom, dateTo,tottrnIO,ave_counter);
+          CALL WRITE_AVE_2d_BKP(bkpname_sur,datefrom, dateTo,totD2_FLUX_SURF_IO,ave_counter);
+          CALL WRITE_AVE_2d_BKP(bkpname_bot,datefrom, dateTo,totD2_FLUX_BOT_IO,ave_counter);
 
         else
           d2f3d = REAL(tottrnIO,4)
           CALL WRITE_AVE(output_file_nc,datefrom, dateTo, d2f3d);
+          d2f2d = REAL(totD2_FLUX_SURF_IO,4)
+          CALL WRITE_AVE_2D(output_file_nc_sur,datefrom, dateTo, d2f2d);
+          d2f2d = REAL(totD2_FLUX_BOT_IO,4)
+          CALL WRITE_AVE_2D(output_file_nc_bot,datefrom, dateTo, d2f2d);
          endif
 
 
@@ -201,8 +272,12 @@
       if (.not.IsBackup) then
          if (FREQ_GROUP.eq.2) then
             traIO(:,:,:,jn) = 0.  !      we reset matrix for new average
+            D2_FLUX_SURF_IO(:,:,jn) = 0.  !      we reset matrix for new average
+            D2_FLUX_BOT_IO(:,:,jn) = 0.  !      we reset matrix for new average
          else
             traIO_HIGH(:,:,:,jn_high) = 0.
+            D2_FLUX_SURF_IO_HIGH(:,:,jn) = 0.  !      we reset matrix for new average
+            D2_FLUX_BOT_IO_HIGH(:,:,jn) = 0.  !      we reset matrix for new average
          endif
       endif
 

@@ -34,6 +34,7 @@
        USE myalloc_mpp
        USE TIME_MANAGER
        USE BC_mem
+       USE BIOBEN_mem
        USE IO_mem, only: ave_counter_1, ave_counter_2
        IMPLICIT NONE
 
@@ -68,7 +69,7 @@
 
          NOW_datestring = DATEstring ! update time manager module
          NOW_sec        = sec
-
+         NOW_timestep   = TAU
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates
@@ -80,6 +81,7 @@
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
+            CALL trcwri_benthic(DATEstring) ! writes the restart files
 
 
 
@@ -158,8 +160,10 @@
 
 
 ! Call Passive tracer model between synchronization for small parallelisation
+
         CALL trcstp    ! se commento questo non fa calcoli
         call trcave
+        call trcave_benthic()
         ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
         ave_counter_2 = ave_counter_2 +1
 

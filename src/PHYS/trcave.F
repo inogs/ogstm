@@ -60,6 +60,18 @@
                 END DO
              END DO
           END DO
+          DO jj=1, jpj
+             DO ji=1, jpi
+             IF(tmask(ji,jj,1) .NE. 0.) THEN
+            D2_FLUX_SURF_IO(ji,jj,jn+mytid)=(D2_FLUX_SURF_IO(ji,jj,jn+mytid)*Realcounter+D2_FLUX_SURF(ji,jj,jn+mytid))*Realcounterp1
+            D2_FLUX_BOT_IO(ji,jj,jn+mytid)=(D2_FLUX_BOT_IO(ji,jj,jn+mytid)*Realcounter+D2_FLUX_BOT(ji,jj,jn+mytid))*Realcounterp1
+             ELSE
+                D2_FLUX_SURF_IO(ji,jj,jn+mytid)=Miss_val
+                D2_FLUX_BOT_IO(ji,jj,jn+mytid)=Miss_val
+             ENDIF
+             END DO
+          END DO
+
        ENDIF
 !$omp    end parallel
 
@@ -92,6 +104,20 @@
                 END DO
              END DO
           END DO
+          DO jj=1, jpj
+             DO ji=1, jpi
+             IF(tmask(ji,jj,1) .NE. 0.) THEN
+               D2_FLUX_SURF_IO_HIGH(ji,jj,jn_high+mytid)=
+     & (D2_FLUX_SURF_IO_HIGH(ji,jj,jn_high+mytid)*Realcounter+D2_FLUX_SURF(ji,jj,jn_on_all))*Realcounterp1
+               D2_FLUX_BOT_IO_HIGH(ji,jj,jn_high+mytid)=
+     & (D2_FLUX_BOT_IO_HIGH(ji,jj,jn_high+mytid)*Realcounter+D2_FLUX_BOT(ji,jj,jn_on_all))*Realcounterp1
+             ELSE
+               D2_FLUX_SURF_IO_HIGH(ji,jj,jn_high+mytid)=Miss_val
+               D2_FLUX_BOT_IO_HIGH(ji,jj,jn_high+mytid)=Miss_val
+             ENDIF
+             END DO
+          END DO
+
        ENDIF
 !$omp    end parallel
 
@@ -145,10 +171,12 @@
         DO ji=1, jpi
            IF (tmask(ji,jj,1) .NE. 0.) THEN
                vatmIO(ji,jj)=(vatmIO(ji,jj)*Realcounter+vatm(ji,jj))*Realcounterp1
+               botwastrIO(ji,jj)=(botwastrIO(ji,jj)*Realcounter+botwastr(ji,jj))*Realcounterp1
                empIO (ji,jj)=(empIO (ji,jj)*Realcounter+emp (ji,jj))*Realcounterp1
                qsrIO (ji,jj)=(qsrIO (ji,jj)*Realcounter+qsr (ji,jj))*Realcounterp1
            ELSE
                vatmIO(ji,jj)=Miss_val
+               botwastrIO(ji,jj)=Miss_val
                empIO (ji,jj)=Miss_val
                qsrIO (ji,jj)=Miss_val
            ENDIF

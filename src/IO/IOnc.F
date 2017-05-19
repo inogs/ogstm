@@ -692,7 +692,7 @@
         integer s, nc, counter
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
-        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE
+        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE, idBs
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -723,6 +723,7 @@
 
         s = nf90_def_var(nc,'soshfldo' ,     nf90_float, (/xid,yid,      timid/),   idR)
         s = nf90_def_var(nc,'sowindsp' ,     nf90_float, (/xid,yid,      timid/),  idWs)
+        s = nf90_def_var(nc,'botwastr' ,     nf90_float, (/xid,yid,      timid/),  idBs)
         s = nf90_def_var(nc,'sowaflcd' ,     nf90_float, (/xid,yid,      timid/),   idE)
 
 
@@ -768,6 +769,10 @@
         s = nf90_put_att(nc,idWs  , 'units'        ,'m/s')
         s = nf90_put_att(nc,idWs  , 'missing_value',1.e+20)
 
+        s = nf90_put_att(nc,idBs  , 'long_name'    ,'wave_bottom_stress')
+        s = nf90_put_att(nc,idBs  , 'units'        ,'N/m2')
+        s = nf90_put_att(nc,idBs  , 'missing_value',1.e+20)
+
         s = nf90_put_att(nc,idE   , 'long_name'    ,'Concentration/Dilution Water Flux')
         s = nf90_put_att(nc,idE   , 'units'        ,'kg/m*2/s')
         s = nf90_put_att(nc,idE   , 'missing_value',1.e+20)
@@ -789,6 +794,7 @@
 
 !       2D vars
         d2f2d =REAL(totvatmIO,4); s = nf90_put_var(nc, idWs,   d2f2d) ; call handle_err1(s,counter,fileNetCDF)
+        d2f2d =REAL(totbotwastrIO,4); s = nf90_put_var(nc, idBs,   d2f2d) ; call handle_err1(s,counter,fileNetCDF)
         d2f2d =REAL(totempIO ,4); s = nf90_put_var(nc, idE,    d2f2d) ; call handle_err1(s,counter,fileNetCDF)
         d2f2d =REAL(totqsrIO ,4); s = nf90_put_var(nc, idR,    d2f2d) ; call handle_err1(s,counter,fileNetCDF)
 
@@ -815,7 +821,7 @@
         integer s, nc, counter
         integer timid, depid, yid, xid
         integer idvartime, idgdept, idphit, idlamt
-        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE
+        integer idT, idS, idU, idV, idW, idEddy, idR, idWs, idE, idBs
 
 
         s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
@@ -847,6 +853,7 @@
 
         s = nf90_def_var(nc,'soshfldo' ,     nf90_double, (/xid,yid,      timid/),   idR)
         s = nf90_def_var(nc,'sowindsp' ,     nf90_double, (/xid,yid,      timid/),  idWs)
+        s = nf90_def_var(nc,'botwastr' ,     nf90_double, (/xid,yid,      timid/),  idBs)
         s = nf90_def_var(nc,'sowaflcd' ,     nf90_double, (/xid,yid,      timid/),   idE)
 
 
@@ -892,6 +899,10 @@
         s = nf90_put_att(nc,idWs  , 'units'        ,'m/s')
         s = nf90_put_att(nc,idWs  , 'missing_value',1.e+20)
 
+        s = nf90_put_att(nc,idBs  , 'long_name'    ,'wave_bottom_stress')
+        s = nf90_put_att(nc,idBs  , 'units'        ,'N/m2')
+        s = nf90_put_att(nc,idBs  , 'missing_value',1.e+20)
+
         s = nf90_put_att(nc,idE   , 'long_name'    ,'Concentration/Dilution Water Flux')
         s = nf90_put_att(nc,idE   , 'units'        ,'kg/m*2/s')
         s = nf90_put_att(nc,idE   , 'missing_value',1.e+20)
@@ -913,6 +924,7 @@
 
 !       2D vars
         s = nf90_put_var(nc, idWs,  totvatmIO) ; call handle_err1(s,counter,fileNetCDF)
+        s = nf90_put_var(nc, idBs,  totbotwastrIO) ; call handle_err1(s,counter,fileNetCDF) 
         s = nf90_put_var(nc, idE,    totempIO) ; call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idR,    totqsrIO) ; call handle_err1(s,counter,fileNetCDF)
 

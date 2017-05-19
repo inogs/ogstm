@@ -1,0 +1,541 @@
+&NATBEN 
+
+   cbennm(1)="G3c" 
+   cbenun(1)="mg C/m2" 
+   cbennm(2)="G3h" 
+   cbenun(2)="mmol eq/m2" 
+   cbennm(3)="G13c" 
+   cbenun(3)="mg C/m2" 
+   cbennm(4)="G13h" 
+   cbenun(4)="mmol eq/m2" 
+   cbennm(5)="G23c" 
+   cbenun(5)="mg C/m2" 
+   cbennm(6)="G23h" 
+   cbenun(6)="mmol eq/m2" 
+   cbennm(7)="Y1c" 
+   cbenun(7)="mg C/m2" 
+   cbennm(8)="Y1n" 
+   cbenun(8)="mmol N/m2" 
+   cbennm(9)="Y1p" 
+   cbenun(9)="mmol P/m2" 
+   cbennm(10)="Y2c" 
+   cbenun(10)="mg C/m2" 
+   cbennm(11)="Y2n" 
+   cbenun(11)="mmol N/m2" 
+   cbennm(12)="Y2p" 
+   cbenun(12)="mmol P/m2" 
+   cbennm(13)="Y3c" 
+   cbenun(13)="mg C/m2" 
+   cbennm(14)="Y3n" 
+   cbenun(14)="mmol N/m2" 
+   cbennm(15)="Y3p" 
+   cbenun(15)="mmol P/m2" 
+   cbennm(16)="Y4c" 
+   cbenun(16)="mg C/m2" 
+   cbennm(17)="Y4n" 
+   cbenun(17)="mmol N/m2" 
+   cbennm(18)="Y4p" 
+   cbenun(18)="mmol P/m2" 
+   cbennm(19)="Y5c" 
+   cbenun(19)="mg C/m2" 
+   cbennm(20)="Y5n" 
+   cbenun(20)="mmol N/m2" 
+   cbennm(21)="Y5p" 
+   cbenun(21)="mmol P/m2" 
+   cbennm(22)="Q6c" 
+   cbenun(22)="mg C/m2" 
+   cbennm(23)="Q6n" 
+   cbenun(23)="mmol N/m2" 
+   cbennm(24)="Q6p" 
+   cbenun(24)="mmol P/m2" 
+   cbennm(25)="Q6s" 
+   cbenun(25)="mmol Si/m2" 
+   cbennm(26)="Q5c" 
+   cbenun(26)="mg C/m2" 
+   cbennm(27)="Q5n" 
+   cbenun(27)="mmol N/m2" 
+   cbennm(28)="Q5p" 
+   cbenun(28)="mmol P/m2" 
+   cbennm(29)="Q1c" 
+   cbenun(29)="mg C/m2" 
+   cbennm(30)="Q1n" 
+   cbenun(30)="mmol N/m2" 
+   cbennm(31)="Q1p" 
+   cbenun(31)="mmol P/m2" 
+   cbennm(32)="Q11c" 
+   cbenun(32)="mg C/m2" 
+   cbennm(33)="Q11n" 
+   cbenun(33)="mmol N/m2" 
+   cbennm(34)="Q11p" 
+   cbenun(34)="mmol P/m2" 
+   cbennm(35)="H1c" 
+   cbenun(35)="mg C/m2" 
+   cbennm(36)="H1n" 
+   cbenun(36)="mmol N/m2" 
+   cbennm(37)="H1p" 
+   cbenun(37)="mmol P/m2" 
+   cbennm(38)="H2c" 
+   cbenun(38)="mg C/m2" 
+   cbennm(39)="H2n" 
+   cbenun(39)="mmol N/m2" 
+   cbennm(40)="H2p" 
+   cbenun(40)="mmol P/m2" 
+   cbennm(41)="K1p" 
+   cbenun(41)="mmol P/m2" 
+   cbennm(42)="K11p" 
+   cbenun(42)="mmol P/m2" 
+   cbennm(43)="K21p" 
+   cbenun(43)="mmol P/m2" 
+   cbennm(44)="K4n" 
+   cbenun(44)="mmol N/m2" 
+   cbennm(45)="K14n" 
+   cbenun(45)="mmol N/m2" 
+   cbennm(46)="K24n" 
+   cbenun(46)="mmol N/m2" 
+   cbennm(47)="K6r" 
+   cbenun(47)="mmol S--/m2" 
+   cbennm(48)="K16r" 
+   cbenun(48)="mmol S--/m2" 
+   cbennm(49)="K26r" 
+   cbenun(49)="mmol S--/m2" 
+   cbennm(50)="K3n" 
+   cbenun(50)="mmol N/m2" 
+   cbennm(51)="K5s" 
+   cbenun(51)="mmol Si/m2" 
+   cbennm(52)="G2o" 
+   cbenun(52)="mmol O2/m2" 
+   cbennm(53)="G4n" 
+   cbenun(53)="mmol N/m2" 
+   cbennm(54)="D1m" 
+   cbenun(54)="m" 
+   cbennm(55)="D2m" 
+   cbenun(55)="m" 
+   cbennm(56)="D6m" 
+   cbenun(56)="m" 
+   cbennm(57)="D7m" 
+   cbenun(57)="m" 
+   cbennm(58)="D8m" 
+   cbenun(58)="m" 
+   cbennm(59)="D9m" 
+   cbenun(59)="m" 
+/
+
+  &NATBEN_DIAG
+   dibnm(1)="DIA_B_1" 
+   dibun(1)="-" 
+/
+
+  &NATBEN_DIAG_2D
+   dibnm(1)="pmin" 
+   dibun(1)="-" 
+   dibhf(1)=0
+
+   dibnm(2)="sidiss" 
+   dibun(2)="-" 
+   dibhf(2)=0
+
+   dibnm(3)="M1p" 
+   dibun(3)="-" 
+   dibhf(3)=0
+
+   dibnm(4)="M11p" 
+   dibun(4)="-" 
+   dibhf(4)=0
+
+   dibnm(5)="M21p" 
+   dibun(5)="-" 
+   dibhf(5)=0
+
+   dibnm(6)="M4n" 
+   dibun(6)="-" 
+   dibhf(6)=0
+
+   dibnm(7)="M14n" 
+   dibun(7)="-" 
+   dibhf(7)=0
+
+   dibnm(8)="M24n" 
+   dibun(8)="-" 
+   dibhf(8)=0
+
+   dibnm(9)="M3n" 
+   dibun(9)="-" 
+   dibhf(9)=0
+
+   dibnm(10)="M5s" 
+   dibun(10)="-" 
+   dibhf(10)=0
+
+   dibnm(11)="M6r" 
+   dibun(11)="-" 
+   dibhf(11)=0
+
+   dibnm(12)="RI_Fc" 
+   dibun(12)="-" 
+   dibhf(12)=0
+
+   dibnm(13)="RI_Fn" 
+   dibun(13)="-" 
+   dibhf(13)=0
+
+   dibnm(14)="RI_Fp" 
+   dibun(14)="-" 
+   dibhf(14)=0
+
+   dibnm(15)="RI_Fs" 
+   dibun(15)="-" 
+   dibhf(15)=0
+
+   dibnm(16)="ZI_Fc" 
+   dibun(16)="-" 
+   dibhf(16)=0
+
+   dibnm(17)="ZI_Fn" 
+   dibun(17)="-" 
+   dibhf(17)=0
+
+   dibnm(18)="ZI_Fp" 
+   dibun(18)="-" 
+   dibhf(18)=0
+
+   dibnm(19)="ZI_Fs" 
+   dibun(19)="-" 
+   dibhf(19)=0
+
+   dibnm(20)="jZIY3c" 
+   dibun(20)="-" 
+   dibhf(20)=0
+
+   dibnm(21)="jRIY3c" 
+   dibun(21)="-" 
+   dibhf(21)=0
+
+   dibnm(22)="jRIY3n" 
+   dibun(22)="-" 
+   dibhf(22)=0
+
+   dibnm(23)="jRIY3p" 
+   dibun(23)="-" 
+   dibhf(23)=0
+
+   dibnm(24)="jRIY3s" 
+   dibun(24)="-" 
+   dibhf(24)=0
+
+   dibnm(25)="Depth_Ben" 
+   dibun(25)="-" 
+   dibhf(25)=0
+
+   dibnm(26)="ETW_Ben" 
+   dibun(26)="-" 
+   dibhf(26)=0
+
+   dibnm(27)="ERHO_Ben" 
+   dibun(27)="-" 
+   dibhf(27)=0
+
+   dibnm(28)="ESW_Ben" 
+   dibun(28)="-" 
+   dibhf(28)=0
+
+   dibnm(29)="O2o_Ben" 
+   dibun(29)="-" 
+   dibhf(29)=0
+
+   dibnm(30)="N1p_Ben" 
+   dibun(30)="-" 
+   dibhf(30)=0
+
+   dibnm(31)="N3n_Ben" 
+   dibun(31)="-" 
+   dibhf(31)=0
+
+   dibnm(32)="N4n_Ben" 
+   dibun(32)="-" 
+   dibhf(32)=0
+
+   dibnm(33)="N5s_Ben" 
+   dibun(33)="-" 
+   dibhf(33)=0
+
+   dibnm(34)="N6r_Ben" 
+   dibun(34)="-" 
+   dibhf(34)=0
+
+   dibnm(35)="sediR6_Ben" 
+   dibun(35)="-" 
+   dibhf(35)=0
+
+   dibnm(36)="jK4K3n" 
+   dibun(36)="-" 
+   dibhf(36)=0
+
+   dibnm(37)="jK3G4n" 
+   dibun(37)="-" 
+   dibhf(37)=0
+
+   dibnm(38)="jK31K21p" 
+   dibun(38)="-" 
+   dibhf(38)=0
+
+   dibnm(39)="jK34K24n" 
+   dibun(39)="-" 
+   dibhf(39)=0
+
+   dibnm(40)="jK13K3n" 
+   dibun(40)="-" 
+   dibhf(40)=0
+
+   dibnm(41)="jK15K5s" 
+   dibun(41)="-" 
+   dibhf(41)=0
+
+   dibnm(42)="jK36K26r" 
+   dibun(42)="-" 
+   dibhf(42)=0
+
+   dibnm(43)="DICae" 
+   dibun(43)="-" 
+   dibhf(43)=0
+
+   dibnm(44)="DICan" 
+   dibun(44)="-" 
+   dibhf(44)=0
+
+   dibnm(45)="O3c_Ben" 
+   dibun(45)="-" 
+   dibhf(45)=0
+
+   dibnm(46)="O3h_Ben" 
+   dibun(46)="-" 
+   dibhf(46)=0
+
+   dibnm(47)="Acae" 
+   dibun(47)="-" 
+   dibhf(47)=0
+
+   dibnm(48)="Acan" 
+   dibun(48)="-" 
+   dibhf(48)=0
+
+   dibnm(49)="pHae" 
+   dibun(49)="-" 
+   dibhf(49)=0
+
+   dibnm(50)="pHan" 
+   dibun(50)="-" 
+   dibhf(50)=0
+
+   dibnm(51)="pCO2ae" 
+   dibun(51)="-" 
+   dibhf(51)=0
+
+   dibnm(52)="pCO2an" 
+   dibun(52)="-" 
+   dibhf(52)=0
+
+   dibnm(53)="totbenc" 
+   dibun(53)="-" 
+   dibhf(53)=0
+
+   dibnm(54)="totbenn" 
+   dibun(54)="-" 
+   dibhf(54)=0
+
+   dibnm(55)="totbenp" 
+   dibun(55)="-" 
+   dibhf(55)=0
+
+   dibnm(56)="totbens" 
+   dibun(56)="-" 
+   dibhf(56)=0
+
+   dibnm(57)="rrBTo" 
+   dibun(57)="-" 
+   dibhf(57)=0
+
+   dibnm(58)="rrATo" 
+   dibun(58)="-" 
+   dibhf(58)=0
+
+   dibnm(59)="reBTn" 
+   dibun(59)="-" 
+   dibhf(59)=0
+
+   dibnm(60)="reBTp" 
+   dibun(60)="-" 
+   dibhf(60)=0
+
+   dibnm(61)="reATn" 
+   dibun(61)="-" 
+   dibhf(61)=0
+
+   dibnm(62)="reATp" 
+   dibun(62)="-" 
+   dibhf(62)=0
+
+   dibnm(63)="turenh" 
+   dibun(63)="-" 
+   dibhf(63)=0
+
+   dibnm(64)="irrenh" 
+   dibun(64)="-" 
+   dibhf(64)=0
+
+   dibnm(65)="shiftD1m" 
+   dibun(65)="-" 
+   dibhf(65)=0
+
+   dibnm(66)="shiftD2m" 
+   dibun(66)="-" 
+   dibhf(66)=0
+
+   dibnm(67)="jG2K3o" 
+   dibun(67)="-" 
+   dibhf(67)=0
+
+   dibnm(68)="jG2K7o" 
+   dibun(68)="-" 
+   dibhf(68)=0
+
+   dibnm(69)="pdenit" 
+   dibun(69)="-" 
+   dibhf(69)=0
+
+   dibnm(70)="pnit" 
+   dibun(70)="-" 
+   dibhf(70)=0
+
+   dibnm(71)="panox" 
+   dibun(71)="-" 
+   dibhf(71)=0
+
+   dibnm(72)="psid" 
+   dibun(72)="-" 
+   dibhf(72)=0
+
+   dibnm(73)="pdepo" 
+   dibun(73)="-" 
+   dibhf(73)=0
+
+   dibnm(74)="cmin" 
+   dibun(74)="-" 
+   dibhf(74)=0
+
+   dibnm(75)="nmin" 
+   dibun(75)="-" 
+   dibhf(75)=0
+
+   dibnm(76)="jP1Y3c" 
+   dibun(76)="-" 
+   dibhf(76)=0
+
+   dibnm(77)="jP2Y3c" 
+   dibun(77)="-" 
+   dibhf(77)=0
+
+   dibnm(78)="jP3Y3c" 
+   dibun(78)="-" 
+   dibhf(78)=0
+
+   dibnm(79)="jP4Y3c" 
+   dibun(79)="-" 
+   dibhf(79)=0
+
+   dibnm(80)="ppP1_Benc" 
+   dibun(80)="-" 
+   dibhf(80)=0
+
+   dibnm(81)="ppP2_Benc" 
+   dibun(81)="-" 
+   dibhf(81)=0
+
+   dibnm(82)="ppP3_Benc" 
+   dibun(82)="-" 
+   dibhf(82)=0
+
+   dibnm(83)="ppP4_Benc" 
+   dibun(83)="-" 
+   dibhf(83)=0
+
+   dibnm(84)="ppP1_Benn" 
+   dibun(84)="-" 
+   dibhf(84)=0
+
+   dibnm(85)="ppP2_Benn" 
+   dibun(85)="-" 
+   dibhf(85)=0
+
+   dibnm(86)="ppP3_Benn" 
+   dibun(86)="-" 
+   dibhf(86)=0
+
+   dibnm(87)="ppP4_Benn" 
+   dibun(87)="-" 
+   dibhf(87)=0
+
+   dibnm(88)="ppP1_Benp" 
+   dibun(88)="-" 
+   dibhf(88)=0
+
+   dibnm(89)="ppP2_Benp" 
+   dibun(89)="-" 
+   dibhf(89)=0
+
+   dibnm(90)="ppP3_Benp" 
+   dibun(90)="-" 
+   dibhf(90)=0
+
+   dibnm(91)="ppP4_Benp" 
+   dibun(91)="-" 
+   dibhf(91)=0
+
+   dibnm(92)="ppP1_Bens" 
+   dibun(92)="-" 
+   dibhf(92)=0
+
+   dibnm(93)="ppP2_Bens" 
+   dibun(93)="-" 
+   dibhf(93)=0
+
+   dibnm(94)="ppP3_Bens" 
+   dibun(94)="-" 
+   dibhf(94)=0
+
+   dibnm(95)="ppP4_Bens" 
+   dibun(95)="-" 
+   dibhf(95)=0
+
+   dibnm(96)="ppsediPP1_Ben" 
+   dibun(96)="-" 
+   dibhf(96)=0
+
+   dibnm(97)="ppsediPP2_Ben" 
+   dibun(97)="-" 
+   dibhf(97)=0
+
+   dibnm(98)="ppsediPP3_Ben" 
+   dibun(98)="-" 
+   dibhf(98)=0
+
+   dibnm(99)="ppsediPP4_Ben" 
+   dibun(99)="-" 
+   dibhf(99)=0
+
+   dibnm(100)="ppruH1" 
+   dibun(100)="-" 
+   dibhf(100)=0
+
+   dibnm(101)="ppruH2" 
+   dibun(101)="-" 
+   dibhf(101)=0
+
+   dibnm(102)="ppreH1" 
+   dibun(102)="-" 
+   dibhf(102)=0
+
+   dibnm(103)="ppreH2" 
+   dibun(103)="-" 
+   dibhf(103)=0
+
+/

@@ -32,11 +32,12 @@
 
 ! Conc/dilution process
 
-      zse3t = 1. / e3t(1)
 
       Do jn=50,jptra
         DO jj = 1, jpj
             DO ji = 1, jpi
+
+               zse3t = 1. / e3t(ji,jj,1)
 
                   ztra = 1./ rhopn(ji,jj,1) * zse3t * tmask(ji,jj,1) * emp(ji,jj) * trn(ji,jj,1,jn) ! original emps(ji,jj)
                   tra(ji,jj,1,jn) = tra(ji,jj,1,jn) + ztra

@@ -113,6 +113,7 @@ C Frequency of correction if plus module of kt
 !      TOT_FN(:,:)=0
 
 !C Compute vertical integral
+#ifndef key_trc_benthic
       DO jv = 1,dimen_jvsnu, ntids ! cicla sui punti terra 2D
 
 !$omp   parallel default(none) private(mytid,ji,jj,jk,jn,jnn)
@@ -138,6 +139,8 @@ C Frequency of correction if plus module of kt
                END DO
            END DO
            END DO
+#endif
+
 
 
 C Compute correction factor

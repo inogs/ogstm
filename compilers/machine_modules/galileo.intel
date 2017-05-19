@@ -1,0 +1,7 @@
+module purge
+module load profile/advanced
+module load autoload
+module load intel/cs-xe-2015--binary
+module load intelmpi/5.0.2--binary
+module load netcdf/4.1.3--intel--cs-xe-2015--binary
+

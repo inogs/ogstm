@@ -1,0 +1,4 @@
+         module purge
+         module load intel-openmpi
+         export NETCDF_INC=/usr/local/intel/include
+         export NETCDF_LIB=/usr/local/intel/lib

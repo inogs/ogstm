@@ -121,7 +121,14 @@
        CALL readmask_double_1d(maskfile,'gdepw', gdepw)
        CALL readmask_double_1d(maskfile,'e3t_0', e3t_0)
        CALL readmask_double_1d(maskfile,'e3w_0', e3w_0)
-
+#ifdef key_trc_benthic
+       maskfile        = 'benthic_mask.nc'
+       CALL readnc_slice_double_ben(maskfile,'e3t_ben', e3t_ben )
+       CALL readnc_slice_double_ben(maskfile,'e3w_ben', e3w_ben )
+       CALL readmask_double_1d_ben(maskfile,'gdept_ben', gdept_ben )
+       CALL readmask_double_1d_ben(maskfile,'gdepw_ben', gdepw_ben )
+       CALL readnc_slice_int_2d_ben (maskfile,'calcbenmask', calcbenmask )
+#endif
 !     CALL readnc_slice_double (maskfile,'e3t', e3t )
 !     CALL readnc_slice_double (maskfile,'e3u', e3u )
 !     CALL readnc_slice_double (maskfile,'e3v', e3v )

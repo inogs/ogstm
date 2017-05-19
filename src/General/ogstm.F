@@ -86,9 +86,10 @@
 
       call parlec      ! read namelist.init
       call time_init
-      call trclec      ! benthic
+      call trclec      ! pelagic
+#ifdef key_trc_benthic
       call benlec      ! pelagic
-
+#endif
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager
       ! -------------------------
@@ -105,8 +106,6 @@
 
       call domrea         !   Domain
 
-      call domrea_benthic !   Domain
-
       call inihdf        !   diffusion horizontal coefficient
 
       call trccof        ! initialisation of data fields
@@ -114,9 +113,9 @@
       call set_to_zero() ! set to zero some data arrays
 
       call trcrst        ! read restarts
-
+#ifdef key_trc_benthic
       call trcrst_benthic! read restarts benthic
-
+#endif
       call photo_init
       call DA_INIT
 
@@ -294,8 +293,10 @@
       xpar      = 0.0
       trn       = 0.0
       tra       = 0.0
+#ifdef key_trc_benthic
       tra_ben   = 0.0
       trn_ben   = 0.0
+#endif
       flxdta    = 0.0
 
       traIO     = 0.  !      we reset matrix for new average
@@ -305,7 +306,8 @@
       D2_FLUX_BOT     = 0.  !      we reset matrix for new average
       traIO_HIGH      = 0.
       D2_FLUX_SURF_IO_HIGH = 0.  !      we reset matrix for new average
-      D2_FLUX_BOT_IO_HIGH  = 0.  !   
+      D2_FLUX_BOT_IO_HIGH  = 0.  !
+#ifdef key_trc_benthic
       ben_DIA_2d_IO       =0.
       ben_DIA_2d_IO_HIGH  =0.
       ben_DIA_2d          =0.
@@ -314,6 +316,7 @@
       ben_DIA_IO          =0.
       benIO               =0.
       benIO_HIGH          =0.
+#endif
       
 
       END SUBROUTINE set_to_zero

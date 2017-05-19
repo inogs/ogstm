@@ -64,7 +64,7 @@ CC----------------------------------------------------------------------
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
 #endif
-       call getDimension('meshmask.nc','z_ben',jpk_ben)
+       call getDimension('benthic_mask.nc','z_ben',jpk_ben)
 
        allocate(trb_ben(jpi,jpj,jpk_ben,jptra_b))        ; trb_ben    = huge(trb_ben(1,1,1,1))
        allocate(trn_ben(jpi,jpj,jpk_ben,jptra_b))        ; trn_ben    = huge(trn_ben(1,1,1,1))

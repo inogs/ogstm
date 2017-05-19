@@ -34,7 +34,9 @@
        USE myalloc_mpp
        USE TIME_MANAGER
        USE BC_mem
+##ifdef key_trc_benthic
        USE BIOBEN_mem
+#endif
        USE IO_mem, only: ave_counter_1, ave_counter_2
        IMPLICIT NONE
 
@@ -81,8 +83,9 @@
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
+#ifdef key_trc_benthic
             CALL trcwri_benthic(DATEstring) ! writes the restart files
-
+#endif
 
 
             if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
@@ -163,7 +166,9 @@
 
         CALL trcstp    ! se commento questo non fa calcoli
         call trcave
+#ifdef key_trc_benthic
         call trcave_benthic()
+#endif
         ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
         ave_counter_2 = ave_counter_2 +1
 

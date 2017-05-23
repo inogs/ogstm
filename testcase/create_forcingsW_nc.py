@@ -93,9 +93,18 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('sowindsp'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2W;
         ncvar = ncOUT.createVariable('sossheig'     ,'f',('time_counter','y','x')         ); ncvar[:] = 0.;
         ncvar = ncOUT.createVariable('sowaflcd'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2F;
-        ncvar = ncOUT.createVariable('botwastr'     ,'f',('time_counter','y','x')         ); ncvar[:] = 0.045;
-
         ncOUT.close()
+
+        # Create B file
+        outfile = test['Dir'] + '/FORCINGS/B' + date + '.nc'
+        ncOUT   = NC.netcdf_file(outfile,'w')
+        ncOUT.createDimension('x'           ,jpi)
+        ncOUT.createDimension('y'           ,jpj)
+        ncOUT.createDimension('deptht'      ,jpk)
+        ncOUT.createDimension('time_counter',time)
+        ncvar = ncOUT.createVariable('botwastr'     ,'f',('time_counter','y','x')         ); ncvar[:] = 0.045;
+        ncOUT.close()
+
 
         # Create U file
 

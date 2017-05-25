@@ -188,6 +188,7 @@ def create_bc_nc(test):
     riv_N5s=np.zeros(tin_idxt,dtype=float); riv_N5s[0]=1.0*10**(-4)
     riv_O3c=np.zeros(tin_idxt,dtype=float); riv_O3c[0]=0.35
     riv_O3h=np.zeros(tin_idxt,dtype=float); riv_O3h[0]=0.01
+    riv_O2o=np.zeros(tin_idxt,dtype=float); riv_O2o[0]=0.002
 
     for date in TIN_DATE:
         # Create RIV file
@@ -202,7 +203,7 @@ def create_bc_nc(test):
         ncvar = ncOUT.createVariable('riv_N5s'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N5s;
         ncvar = ncOUT.createVariable('riv_O3c'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3c;
         ncvar = ncOUT.createVariable('riv_O3h'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3h;
-
+        ncvar = ncOUT.createVariable('riv_O2o'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O2o;
         ncOUT.close()
 
 # GIB

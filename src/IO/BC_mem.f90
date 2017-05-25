@@ -92,7 +92,7 @@
 !     N5s jn = 4 Silicates        (seasonal)
 
       jn_gib  = 7
-      jn_riv  = 5
+      jn_riv  = 6
       jn_atm  = 2
 
        allocate(resto(jpk,jpj,jpi,jn_gib))   
@@ -140,6 +140,7 @@
           tra_matrix_riv(3) = ppN5s ! silicates
           tra_matrix_riv(4) = ppO3c ! Dic
           tra_matrix_riv(5) = ppO3h ! Alk
+          tra_matrix_riv(6) = ppO2o ! Oxygen
        ENDIF
 
        IF ((lat .NE. 0) .AND. (lon .NE. 0)) THEN

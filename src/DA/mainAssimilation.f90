@@ -75,7 +75,7 @@
 
 
           call OCEANVAR
-          if(myrank .eq. 0) CALL SNUTELL(datestr, ISLOG, ApplyConditions)
+          if(myrank .eq. 0) CALL SNUTELL(datestr, ISLOG)
       endif
 
       call mppsync()

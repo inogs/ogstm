@@ -378,38 +378,6 @@
       END FUNCTION GIBRE_Indexing
 
 
-
-! *************************************************************************
-
-      !     LOGICAL FUNCTION  ATMRE_Indexing()
-      !
-      !     IMPLICIT NONE
-      !
-      !     ! local
-      !     INTEGER kk,jj,ii,jv
-      !     INTEGER counter,junk
-      !
-      !
-      !     counter=0
-      !      do kk =1, jpk
-      !       do jj =1, jpj
-      !        do ii =1, jpi
-      !           junk = idxt(kk,jj,ii)
-      !           do jv =1, AsizeGLO
-      !              if ( junk.EQ.atm_idxtglo(jv) )  then
-      !                 counter = counter + 1
-      !                 atm_ridxt(1,counter) = jv
-      !                 atm_ridxt(2,counter) = ii
-      !                 atm_ridxt(3,counter) = jj
-      !                 atm_ridxt(4,counter) = kk
-      !              endif
-      !         enddo
-      !        enddo
-      !       enddo
-      !      enddo
-      !   ATMRE_Indexing =.true.
-      ! END FUNCTION ATMRE_Indexing
-
 ! *************************************************************************
       LOGICAL FUNCTION  FLXRE_Indexing()
 

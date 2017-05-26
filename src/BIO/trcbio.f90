@@ -81,14 +81,9 @@
       tra_DIA    = 0.
       tra_DIA_2d = 0.
 
-! $omp   parallel do default(none)  private(jb,jk,jj,ji,mytid,sur,bot,jtr,a,b,c,d,d2,er)
-! $omp&      shared(NBFMPOINTS, BFMpoints,tra_idx,tra_matrix_gib,
-! $omp&               restotr,jtrmax,trn,tn,sn,xpar,e3t,vatm,surf_mask,DAY_LENGTH,
-! $omp&             sediPI,PH,tra_DIA,tra_DIA_2d,tra,rho,ice,co2,idxt2glo)
+
 
       MAIN_LOOP: DO  jb = 1, NBFMPOINTS
-
-                 !IF( mytid + jb <= NBFMPOINTS ) THEN
 
 
                  ji = BFMpoints(3, jb)
@@ -101,8 +96,6 @@
 
                           DO jtr=1, jtrmax
                              a(jtr) = trn(jk,jj,ji,jtr) ! current biogeochemical concentrations
-                        !      WRITE(*,200) ,'I',jk,jj,ji,jtr,trn(jk,jj,ji,jtr)
-                             
                           END DO
 ! Environmental regulating factors (er)
 
@@ -116,7 +109,7 @@
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
                           er(9)  = vatm(jj,ji) * surf_mask(jk) ! wind speed (m/s)
                           er(10) = ogstm_PH(jk,jj,ji)         ! PH
-                        !   WRITE(*,201),'ERR',jk,jj,ji,er(:)
+
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
                           call BFM0D_reset()
@@ -131,8 +124,6 @@
 
                           DO jtr=1, jtrmax
                              tra(jk,jj,ji,jtr) =tra(jk,jj,ji,jtr) +b(jtr) ! trend
-                        !      WRITE(*,200),'OB',jk,jj,ji,jtr,b(jtr)
-                        !      WRITE(*,200),'TRA',jk,jj,ji,jtr,tra(jk,jj,ji,jtr)
                           END DO
 
                           DO jtr=1,4
@@ -141,23 +132,14 @@
 
                           DO jtr=1,jptra_dia
                              tra_DIA(jtr,jk,jj,ji) = d(jtr) ! diagnostic
-                        !      WRITE(*,200),'IO3',jk,jj,ji,jtr,tra_DIA(jk,jj,ji,jtr)
                           END DO
                           if (sur) tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
 
 
                           ogstm_PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
-
-
-             !ENDIF
+                          NPPF2(ji,jj,jk)=d(ppF04) ! Flagellate production
 
                 END DO MAIN_LOOP
-! 200    FORMAT(' ',A3,I4,I4,I4,I4,D30.23)
-! 201    FORMAT(' ',A3,I4,I4,I4,10D30.23)
-! 202    FORMAT(' ',A3,I4,I4,I4,10D30.23)
-                
-                          
-! $omp end parallel do
 
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime

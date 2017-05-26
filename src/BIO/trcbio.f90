@@ -77,7 +77,7 @@
 
 ! ---------------- Fuori dai punti BFM
 
-      sediPI     = 0.
+      ogstm_sediPI=0.
       tra_DIA    = 0.
       tra_DIA_2d = 0.
 

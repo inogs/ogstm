@@ -20,7 +20,7 @@
       double precision              :: SMALL
       double precision, allocatable :: tra_FN(:,:,:,:)
       double precision, allocatable :: TOT(:,:),TOT_FN(:,:),FN_CORR(:,:)
-
+      double precision, allocatable :: TOTcalc(:)
 
   
       double precision, allocatable :: FN_ranking(:)
@@ -59,7 +59,8 @@
       !allocate(FN_CORR(jpj*jpi,elements)) 
       ! FN_CORR    = huge(FN_CORR(1,1))
 
-
+      allocate(TOTcalc(jpj*jpi))
+      TOTcalc    =huge(TOTcalc(1))
      
       allocate(FN_ranking(jptra))         
       FN_ranking = huge(FN_ranking(1))

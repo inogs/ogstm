@@ -19,6 +19,7 @@
       double precision, allocatable :: surf_mask(:)
       double precision, allocatable :: ogstm_sedipi(:,:,:,:)
       double precision, allocatable :: ogstm_ph(:,:,:) ! GUESS for FOLLOWS algorithm
+      double precision, allocatable :: NPPF2(:,:,:)
       double precision, allocatable :: ogstm_co2(:,:), co2_IO(:,:,:)
       double precision:: ice
 
@@ -53,7 +54,9 @@
        allocate(ogstm_ph(jpk,jpj,jpi))       
        ogstm_ph        = huge(ogstm_ph(1,1,1))
        ogstm_ph=8.0
-
+       allocate(NPPF2(jpk,jpj,jpi))
+       NPPF2 = 0 ! nut huge, because it will be assigned only in trcBIO in BFMpoints
+                 ! and used in hard_tissue_pump.F also in land points
        ice=0
 
 #ifdef Mem_Monitor

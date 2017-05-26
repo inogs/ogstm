@@ -1,6 +1,6 @@
       MODULE modul_param
 
-      use mem
+      !use mem
 
       IMPLICIT NONE
 
@@ -55,11 +55,11 @@
 #ifdef key_trc_bfm
 
       !! WARNING the var below must be become input parameter
-      INTEGER, parameter :: jptra = 51
-      INTEGER, parameter :: jptra_dia = 21
-      INTEGER, parameter :: jptra_dia_2d = 1
+!      INTEGER, parameter :: jptra = 51
+!      INTEGER, parameter :: jptra_dia = 21
+!      INTEGER, parameter :: jptra_dia_2d = 1
 
-!!#include "BFM_var_list.h"
+#include "BFM_var_list.h"
 
 !! productive layer depth
 

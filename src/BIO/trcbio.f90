@@ -137,7 +137,7 @@
 
 
                           ogstm_PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
-                          NPPF2(ji,jj,jk)=d(ppF04) ! Flagellate production
+                             NPPF2(jk,jj,ji)=d(ppF04) ! Flagellate production
 
                 END DO MAIN_LOOP
 

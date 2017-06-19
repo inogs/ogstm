@@ -12,7 +12,7 @@
       character(LEN=3) Var
       character ctype
       integer i,j,k, Itype
-      integer, parameter :: jpk_200=26
+      integer, parameter :: jpk_200=36
 
 
 
@@ -73,7 +73,7 @@
         character CTYPE
         character*17 datestr
         ! local
-        integer, parameter :: jpk_200=26
+        integer, parameter :: jpk_200=36
         integer i,j,k, SOMMA
 
         LOGICAL,    DIMENSION(jpiglo,jpjglo,jpk) :: COND2, COND3, COND4, Factor_GT1, Factor_LT0, COND

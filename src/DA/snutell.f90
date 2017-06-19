@@ -106,7 +106,7 @@
 
 
 
-        LIM_THETA =  0.01
+        LIM_THETA =  0.001
 
         PVar='P'//CTYPE//'p'
         NVar='P'//CTYPE//'n'

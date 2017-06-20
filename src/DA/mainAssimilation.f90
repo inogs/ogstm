@@ -51,9 +51,6 @@
 
 
       CHLSUP_FOR_DA = 'DA__FREQ_1/chl.' // datestr // '.nc'
-
-      CALL trcditDA(DATEstr, datefrom, DATEstr)! average of 12 h
-      ! Sviluppo : se non serve avere il file ave delle DA, la snutell puo' fare il collecting
       CALL trcwriDA(DATEstr)  ! Dumps Before Assimilation real*4
 
       if (myrank .lt. DA_Nprocs ) then

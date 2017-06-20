@@ -82,7 +82,7 @@
         INTEGER(1), DIMENSION(jpiglo,jpjglo,jpk) :: ICOND5, ICOND6, ICOND7,ICOND8
         character*3 PVar, NVar, CVar, IVAR
         character*3 SVar
-        CHARACTER(LEN=39) AVEFILE  ! DA/ave.20091231-12:00:00.P1n.nc
+        CHARACTER(LEN=39) RST_before  ! DA__FREQ_1/RST.20091231-12:00:00.P1n.nc
         logical B
         real(4) MAX_N_CHL, MAX_P_CHL, MAX_P_C, MAX_N_C
         real(4) OPT_N_C, OPT_P_C, OPT_S_C, LIM_THETA
@@ -118,13 +118,13 @@
 
 
          write(*,*) Pvar, ' ' , Nvar, ' ', Cvar,  ' ', Ivar
-        AVEFILE = 'DA__FREQ_1/ave.'//datestr//'.P1l.nc'
-        AVEFILE(34:36) = PVar ; call readNetCDF_3dvar(AVEFILE,PVar, Pfraction    )
-        AVEFILE(34:36) = NVar ; call readNetCDF_3dvar(AVEFILE,NVar, Nfraction    )
-        AVEFILE(34:36) = IVar ; call readNetCDF_3dvar(AVEFILE,IVar, CHLfraction  )
-        AVEFILE(34:36) = CVar ; call readNetCDF_3dvar(AVEFILE,CVar, Cfraction    )
+        RST_before = 'DA__FREQ_1/RST.'//datestr//'.P1l.nc'
+        RST_before(34:36) = PVar ; call readNetCDF_3dvar(RST_before,PVar, Pfraction    )
+        RST_before(34:36) = NVar ; call readNetCDF_3dvar(RST_before,NVar, Nfraction    )
+        RST_before(34:36) = IVar ; call readNetCDF_3dvar(RST_before,IVar, CHLfraction  )
+        RST_before(34:36) = CVar ; call readNetCDF_3dvar(RST_before,CVar, Cfraction    )
         if (CTYPE.eq.'1')then
-           AVEFILE(34:36) = SVar ; call readNetCDF_3dvar(AVEFILE,SVar, Sfraction    )
+           RST_before(34:36) = SVar ; call readNetCDF_3dvar(RST_before,SVar, Sfraction    )
         endif
 
 

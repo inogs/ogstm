@@ -1,3 +1,6 @@
 # all files into "ready_for_model_namelists" directory
 ready_for_model_namelists
 CMakeLists.txt
+*.pyc
+testcase/TEST0*/
+testcase/TEST_LIST.dat

@@ -40,7 +40,7 @@
          varname  = 'TRN'//ctrcnm(jn)
          filename = 'RESTARTS/RST.'//datestring//'.'//trim(ctrcnm(jn))//'.nc'
          if (lwp) write(*,*) 'reading ', filename
-         CALL readnc_slice_float(filename,varname, trn(:,:,:,jn), shift)
+         CALL readnc_slice_floatDA(filename,varname, trn(:,:,:,jn), shift)
 
 
 
@@ -51,4 +51,49 @@
 
 
       END SUBROUTINE trcrstDA
+
+      SUBROUTINE readnc_slice_floatDA(fileNetCDF,varname, M, shift)
+      USE myalloc
+      USE netcdf
+      USE DA_mem, ONLY : AssimilationLevels
+      implicit none
+
+
+      character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+      integer, intent(in)  :: shift
+      double precision,intent(inout) ::  M(jpk,jpj,jpi)
+      
+      real,allocatable,dimension(:,:,:) :: copy_in
+      integer ncid, stat, VARid,i,j,k
+      integer counter
+      integer thecount(4), start(4)
+
+      allocate(copy_in(jpi,jpj,AssimilationLevels))
+      counter = 0
+      start    = (/nimpp+shift, njmpp,  1,  1/)
+      thecount = (/jpi,           jpj, AssimilationLevels, 1/)
+
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)  
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
+      
+      call handle_err2(stat, fileNetCDF,varname)        
+      call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)                           
+      call handle_err1(stat, counter,FileNetCDF)
+
+      DO i=1,jpi
+        DO j=1,jpj
+          DO k=1,AssimilationLevels
+            M(k,j,i) = real(copy_in(i,j,k),8)
+          ENDDO
+        ENDDO
+      ENDDO   
+      
+      deallocate(copy_in)
+
+      END SUBROUTINE readnc_slice_floatDA
 

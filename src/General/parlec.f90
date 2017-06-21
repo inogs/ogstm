@@ -25,7 +25,7 @@
 
 
        USE myalloc
-       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, ApplyConditions
+       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, ApplyConditions, AssimilationLevels
        IMPLICIT NONE
 
 ! local declarations
@@ -40,7 +40,7 @@
 
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
-      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, ApplyConditions
+      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, ApplyConditions, AssimilationLevels
 
 
 
@@ -243,6 +243,7 @@
       WRITE(numout,*) ' DA_Nprocs      : 3D_var cores', DA_nprocs
       WRITE(numout,*) ' satfile suffix : ', satfile_suffix
       WRITE(numout,*) ' ApplyConditions: snutell flag ', ApplyConditions
+      WRITE(numout,*) ' Assimiliation Levels: ', AssimilationLevels
       ENDIF
 
 

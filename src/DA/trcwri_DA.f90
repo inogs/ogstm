@@ -28,6 +28,7 @@
 
       CHARACTER(LEN=37) filename
       CHARACTER(LEN=41) BeforeName
+      CHARACTER(LEN=39) BeforeNameShort
 
       CHARACTER(LEN=3) varname
 
@@ -36,6 +37,7 @@
       INTEGER totistart, totiend, relistart, reliend
       INTEGER totjstart, totjend, reljstart, reljend
       INTEGER ind1, i_contribution, j_contribution
+      INTEGER SysErr, system
 
 
        filename = 'RST.20111231-15:30:00.N1p.nc'
@@ -152,6 +154,7 @@
 
             varname=ctrcnm(jn)
             BeforeName = 'DA__FREQ_1/RST.'//datestring//'.'//varname//'.nc'
+            BeforeNameShort = 'DA__FREQ_1/RST.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//varname//'.nc'
             do ji=1,jpiglo
               do jj=1,jpjglo
                   do jk=1,jpk
@@ -160,6 +163,13 @@
               end do
             end do
             CALL write_BeforeAss(BeforeName, varname)
+
+            !process 0 creates link to the restart file
+            !since parallel-netcdf seems to do not 
+            !read filenames with colons
+            SysErr = system("ln -sf $PWD/"//BeforeName//" "//BeforeNameShort)
+            if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
+            
             if (isaCHLVAR(varname)) then
               do jk=1,jpk
                 do jj=1,jpjglo

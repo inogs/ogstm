@@ -5,7 +5,8 @@
       public
 
       CHARACTER(LEN=35) CHLSUP_FOR_DA
-      integer DA_Nprocs
+      INTEGER DA_Nprocs
+      INTEGER AssimilationLevels
       LOGICAL ApplyConditions
       character(LEN=200) satfile_suffix
       character(LEN=40 ) satvarname
@@ -33,15 +34,15 @@
       varlistDA( 3)='P3l'
       varlistDA( 4)='P4l'
 
-      varlistDA( 5)='P1n'
-      varlistDA( 6)='P2n'
-      varlistDA( 7)='P3n'
-      varlistDA( 8)='P4n'
+      varlistDA( 5)='P1c'
+      varlistDA( 6)='P2c'
+      varlistDA( 7)='P3c'
+      varlistDA( 8)='P4c'
 
-      varlistDA( 9)='P1c'
-      varlistDA(10)='P2c'
-      varlistDA(11)='P3c'
-      varlistDA(12)='P4c'
+      varlistDA( 9)='P1n'
+      varlistDA(10)='P2n'
+      varlistDA(11)='P3n'
+      varlistDA(12)='P4n'
 
       varlistDA(13)='P1p'
       varlistDA(14)='P2p'

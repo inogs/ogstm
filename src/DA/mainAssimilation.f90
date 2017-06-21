@@ -2,8 +2,10 @@
 
       use filenames
       use DA_mem
+      use DA_Params
       use ogstm_mpi_module
       use mpi_str, only: Var3DCommunicator
+      use calendar
 
       IMPLICIT NONE
 
@@ -14,29 +16,25 @@
       character (LEN=8) DAY
       character MISFIT_OPT
       logical ISLOG
-      integer :: ierr, color
-      integer :: biol, bphy, nchl, sat, argo, SysErr, system
-      real*8  :: chl_dep
+      integer :: ierr, color, ii
+      integer :: SysErr, system
 
-
-      NAMELIST /biolst/ biol, bphy, nchl, chl_dep, sat, argo
 
       DAparttime  = MPI_WTIME()
       MONTH=datestr(5:6)
       DAY  =datestr(1:8)
 
+      ! DA_Params init
+      DA_Date = datestr
+      ShortDate = datestr(1:11)//datestr(13:14)//datestr(16:17)
+      jpk_200 = AssimilationLevels
+      NBioVar = 17
+      DA_JulianDate = datestring2sec(datestr)
+
       MISFIT_OPT ='2'
       ISLOG = .false.
 
-      if(myrank .eq. 0) then
-        open(11,file='var_3d_nml',form='formatted')
-        read(11,biolst)
-        close(11)
-      endif
-
       ! SATDIR li vuole pronti all'uso, già tagliati e interpolati
-
-
       SATFILE   = 'SATELLITE/' // DAY // trim(satfile_suffix)
       VARFILE   = 'DA_static_data/MISFIT/VAR2D/var2D.' // MONTH // '.nc'
       EOF_FILE  = 'DA_static_data/3D_VAR/EOF/eof.'  // MONTH // '.nc'
@@ -54,6 +52,12 @@
       CALL trcwriDA(DATEstr)  ! Dumps Before Assimilation real*4
 
       if (myrank .lt. DA_Nprocs ) then
+
+          allocate(DA_VarList(NBioVar))
+          do ii=1,NBioVar
+            DA_VarList(ii) = varlistDA(ii)
+          enddo
+
           if(myrank .eq. 0) then ! .and. sat .eq. 1) then
             write(*,*) 'satfile=', trim(SATFILE)
             write(*,*) 'varfile=', trim(VARFILE)
@@ -72,7 +76,9 @@
 
 
           call OCEANVAR
-          if(myrank .eq. 0) CALL SNUTELL(datestr, ISLOG)
+
+          ! deallocation of DA_VarList array
+          call clean_da_params
       endif
 
       call mppsync()

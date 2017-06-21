@@ -160,8 +160,16 @@
               end do
             end do
             CALL write_BeforeAss(BeforeName, varname)
-            if (isaCHLVAR(varname)) CHLtot = CHLtot + d2f3d ! remains in RAM, used by snutell
-            write(*,*) 'writing ', Beforename
+            if (isaCHLVAR(varname)) then
+              do jk=1,jpk
+                do jj=1,jpjglo
+                  do ji=1,jpiglo
+                    CHLtot(ji,jj,jk) = CHLtot(ji,jj,jk) + tottrnDA(ji,jj,jk)
+                  end do
+                end do
+              end do
+            endif
+           
 
         endif ! if myrank = 0
       END DO ! DO jn=1,jptra

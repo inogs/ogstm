@@ -41,8 +41,22 @@ def create_grid(test):
     NCout.close()
 
 
+def create_gradsal(test):
+    jpi=test['jpi']
+    jpj=test['jpj']
+    filename=test['Dir'].decode() + "/DA_static_data/3D_VAR/gradsal.nc"
+    NCout = NC.netcdf_file(filename,"w")
+    NCout.createDimension("im", jpi)
+    NCout.createDimension("jm", jpj)
 
-
+    ncvar=NCout.createVariable("kx_n", 'f', ('jm','im'))
+    ncvar[:]=np.random.uniform(0.3,1.5, (jpj,jpi))
+    ncvar= NCout.createVariable("ky_n", 'f', ('jm','im'))
+    ncvar[:]=np.random.uniform(0.5,1.5, (jpj,jpi))
+    ncvar = NCout.createVariable("ratio", 'f', ('jm','im'))
+    ncvar[:]=np.random.uniform(0.4,2.24, (jpj,jpi))
+    NCout.close()
+    
 def create_variance_for_misfit(test):
     jpi=test['jpi']
     jpj=test['jpj']
@@ -75,7 +89,7 @@ def create_variance_for_misfit(test):
 def create_eofs_for_3dvar(test):
     nreg = 14
     neof = 4
-    nlev = 26 #test['jpk']
+    nlev = 36 #test['jpk']
 
     EVA = 0.08 * (np.random.rand(neof,nreg).astype(np.float32) - 0.5 ) + 0.15
     EVC = 12 * np.random.rand(neof,nlev,nreg).astype(np.float32) -6
@@ -185,7 +199,11 @@ def create_dataset(test):
     create_variance_for_misfit(test)
     create_eofs_for_3dvar(test)
     create_misfit_for_3dvar(test)
+    create_gradsal(test)
     print("For the mesh lauch this command:")
+    print("python subgen.py")
     print("./createGridDA meshmask.nc submask.nc ESO -5.7 BFM_grid.nc")
-    print("ncks -d km,1,26 BFM_grid.nc -O DA_static_data/3D_VAR/GRID/BFM_grid.nc")
+    print("ncks -d km,0,35 BFM_grid.nc -O DA_static_data/3D_VAR/GRID/BFM_grid.nc")
+    print("ncks -3 filename -O filename  for all the files in DA_static_data")
     print("make sure to have nreg=14 and neof =4 in var_3d_nml")
+    print("If you work on pico, you can link this /pico/scratch/userexternal/gbolzon0/TEST_3dvar/DA/build/Statics/createGridDA") 

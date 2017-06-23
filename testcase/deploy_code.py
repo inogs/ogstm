@@ -14,9 +14,12 @@ def deploy_code(test):
 #OGSTM
 #######################
 #   ogstm.xx --> executable
-    CODEPATH = test['Code'].decode() + "/ogstm/"
+    CODEPATH = test['Code'].decode() 
     CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
-    os.system("ln -fs  " + CODEPATH +  "bin/ogstm.xx "+ test['Dir'].decode() + "/" )
+    os.system("ln -fs  " + CODEPATH +  "/OGSTM_BUILD/ogstm.xx "+ test['Dir'].decode() + "/" )
 
-    namelists= CODEPATH +  "ready_for_model_namelists/* "
+    namelists= CODEPATH +  "/ogstm/ready_for_model_namelists/* "
     os.system("cp -pf " + namelists + test['Dir'].decode() + "/")
+    
+    os.system("cp subgen.py " + test['Dir'].decode() )
+    print("edit namelist.init to set ingv_files_direct_reading = .false. and ingv_lon_shift = 0")

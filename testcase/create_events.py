@@ -27,8 +27,11 @@ def create_events(test):
     f01 = open(filename,'w')
     f01.close()
 
-
     filename = test['Dir'].decode() + '/restartTimes'
+    f01 = open(filename,'w')
+    f01.close()
+
+    filename = test['Dir'].decode() + '/daTimes'
     f01 = open(filename,'w')
     f01.close()
 

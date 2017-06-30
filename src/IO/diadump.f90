@@ -229,7 +229,7 @@
 
 
       jn_high = 0
-      tottrnIO2d = Miss_val
+      if (lwp ) tottrnIO2d = Miss_val
 ! ******************  DIAGNOSTIC OUTPUT   2D *******************
       DO jn = 1, JPTRA_DIA_2D
 

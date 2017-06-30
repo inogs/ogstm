@@ -160,7 +160,7 @@
 
 ! reset integral of flux
 
-      diaflx = 0
+      IF (Fsize.NE.0 ) diaflx = 0
 
 
       flx_partTime = MPI_WTIME() - flx_partTime

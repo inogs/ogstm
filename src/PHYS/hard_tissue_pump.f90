@@ -89,8 +89,9 @@
            dAlk= 2./12.*RR_P2*NPPF2(jk,jj,ji)*rdt/86400.*tmask(jk,jj,ji)
            tra(jk,jj,ji,ppO3c) = tra(jk,jj,ji,ppO3c) - dDic
            tra(jk,jj,ji,ppO3h) = tra(jk,jj,ji,ppO3h) - dAlk
-           tra_DIA(jk,jj,ji,ppHT1) = - dDic
-           tra_DIA(jk,jj,ji,ppHT2) = - dAlk
+           tra_DIA(ppHT1,jk,jj,ji) = - dDic
+           tra_DIA(ppHT2,jk,jj,ji) = - dAlk
+
 
           END DO
 
@@ -108,8 +109,8 @@
 
               tra(jk,jj,ji,ppO3c) = tra(jk,jj,ji,ppO3c) + dDic 
               tra(jk,jj,ji,ppO3h) = tra(jk,jj,ji,ppO3h) + dAlk 
-              tra_DIA(jk,jj,ji,ppHT1) = tra_DIA(jk,jj,ji,ppHT1) + dDic
-              tra_DIA(jk,jj,ji,ppHT2) = tra_DIA(jk,jj,ji,ppHT2) + dAlk
+              tra_DIA(ppHT1,jk,jj,ji) = tra_DIA(ppHT1,jk,jj,ji) + dDic
+              tra_DIA(ppHT2,jk,jj,ji) = tra_DIA(ppHT2,jk,jj,ji) + dAlk
 
           END DO
 

@@ -74,8 +74,8 @@
 #endif
       IF( mytid + jv <= dimen_jvsnu ) THEN
 
-          ji = jarr_snu(1,jv+mytid)
-          jj = jarr_snu(2,jv+mytid)
+          jj = jarr_snu(1,jv+mytid)
+          ji = jarr_snu(2,jv+mytid)
 
           TOTcalc(jv+mytid) = 0. ! compute total flux due to coccolit.  uptake
           DO jk = 1,jpe          ! loop till the euphotic layer

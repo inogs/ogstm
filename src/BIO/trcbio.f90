@@ -130,7 +130,7 @@
                              ogstm_sediPI(jk,jj,ji,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
                           END DO
 
-                          DO jtr=1,jptra_dia
+                          DO jtr=1,jptra_dia -2 ! We skip the last two ppHT1 and ppHT2
                              tra_DIA(jtr,jk,jj,ji) = d(jtr) ! diagnostic
                           END DO
                           if (sur) tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic

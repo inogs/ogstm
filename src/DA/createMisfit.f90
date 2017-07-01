@@ -16,6 +16,7 @@
           character description*1024
           logical B, ISLOG
           real fillValue, ERRSATuniformVALUE
+          real fillvalue999
 
 
 
@@ -49,13 +50,14 @@
           call readNetCDF_2dvar(VARFILE,'variance',jpiglo,jpjglo,  VAR2D   ) !                around 0.0005
 
 
+          fillvalue999=-999.0
           fillValue = 1.0e+20
 
           do i=1,jpiglo
           do j=1,jpjglo
 
 
-            if ( isnan2(CHLsat(i,j)).or.(CHLsat(i,j).eq.fillValue)) then
+            if ( isnan2(CHLsat(i,j)).or.(CHLsat(i,j).eq.fillValue).or.(CHLsat(i,j).eq.fillvalue999)    ) then
                ERRsat(i,j) = fillValue
                MISFIT(i,j) = fillValue
               cMISFIT(i,j) = fillValue

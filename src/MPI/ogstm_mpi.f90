@@ -121,7 +121,7 @@ END SUBROUTINE
 #ifdef key_mpp_mpi
 
       INTEGER jk,jj,ji
-      INTEGER reqs1, reqs2, reqr1, reqr2, reqr3, reqr4
+      INTEGER reqs1, reqs2, reqr1, reqr2, reqr3, reqr4, reqs3, reqs4
       INTEGER jw, packsize
 
 !!     trcadvparttime = MPI_WTIME()
@@ -270,19 +270,29 @@ END SUBROUTINE
       ENDIF!    PACK_LOOP4
 
 
+!!!  East - West waits
+      IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
+          CALL mppwait(reqr1)
+      ELSE IF(nbondi.eq.0) THEN
+         CALL mppwait(reqr1)
+         CALL mppwait(reqr2)
+      ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
+         CALL mppwait(reqr1)
+      ENDIF
+
 !!
 !!2.2 Migrations
 !!
 !!
 
       IF(nbondj.eq.-1) THEN ! We are at the south side of the domain
-          CALL mppsend(4,tn_send,NORTH_count_send,nono,0,reqs1)
+          CALL mppsend(4,tn_send,NORTH_count_send,nono,0,reqs3)
           CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr3)
           !CALL mppwait(reqs1)
           !CALL mppwait(reqr1)
       ELSE IF(nbondj.eq.0) THEN
-          CALL mppsend(4, tn_send,NORTH_count_send,nono,0,reqs1)
-          CALL mppsend(3, ts_send,SOUTH_count_send,noso,0,reqs2)
+          CALL mppsend(4, tn_send,NORTH_count_send,nono,0,reqs4)
+          CALL mppsend(3, ts_send,SOUTH_count_send,noso,0,reqs3)
           CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr3)
           CALL mpprecv(4,ts_recv,SOUTH_count_recv,reqr4)
 
@@ -291,7 +301,7 @@ END SUBROUTINE
           ! CALL mppwait(reqr1)
           ! CALL mppwait(reqr2)
       ELSE IF(nbondj.eq.1) THEN ! We are at the north side of the domain
-          CALL mppsend(3,ts_send, SOUTH_count_send, noso,0, reqs1)
+          CALL mppsend(3,ts_send, SOUTH_count_send, noso,0, reqs3)
           CALL mpprecv(4,ts_recv, SOUTH_count_recv, reqr4)
           !CALL mppwait(reqs1)
           !CALL mppwait(reqr1)
@@ -333,16 +343,6 @@ END SUBROUTINE
         ENDDO
 
       ENDIF ! PACK_LOOP5
-
-!!!  East - West waits
-      IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
-          CALL mppwait(reqr1)
-      ELSE IF(nbondi.eq.0) THEN
-         CALL mppwait(reqr1)
-         CALL mppwait(reqr2)
-      ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
-         CALL mppwait(reqr1)
-      ENDIF
 
 
 #endif

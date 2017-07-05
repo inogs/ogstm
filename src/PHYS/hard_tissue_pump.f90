@@ -19,7 +19,7 @@
        USE myalloc
        USE FN_mem
        USE BIO_mem
-       USE DA_mem, ONLY : AssimilationLevels ! level corresponding to 200m, set in namelist.init
+       
        IMPLICIT NONE
 
 
@@ -57,7 +57,7 @@
 #endif
 
 ! ***************************************************
-      jpe    =  AssimilationLevels
+      jpe    = jpk_eu
       jpf    = 2 ! CaCO3 dissolution along the whole water column  
       RR_P2  = 0.2   ![]
       dCa    = 1500. ![m]   Mediterranean Sea mean depth

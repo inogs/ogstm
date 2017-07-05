@@ -25,7 +25,9 @@
 
 
        USE myalloc
+#ifdef ExecDA
        USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, ApplyConditions, AssimilationLevels
+#endif
        IMPLICIT NONE
 
 ! local declarations
@@ -35,13 +37,14 @@
 
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,lrivers,lbfm, latmosph, ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux
+      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,lrivers,lbfm, latmosph, ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux,Euphotic_lev
       NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG, read_W_from_file, internal_sponging,ingv_files_direct_reading,ingv_lon_shift
 
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
+#ifdef ExecDA
       NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, ApplyConditions, AssimilationLevels
-
+#endif
 
 
       IF(lwp) THEN
@@ -135,6 +138,7 @@
       photop      = .FALSE.
       atlantic_bfm= .FALSE.
       bottom_flux = 0.
+      Euphotic_lev = 200.
 
       REWIND(numnam)
       READ(numnam,natnum)
@@ -161,6 +165,7 @@
           WRITE(numout,*) ' photoperiod scaling photop                        =', photop
           WRITE(numout,*) ' activation of bfm in atlantic buffer              =', atlantic_bfm
           WRITE(numout,*) ' bottom flux [0,1], 0 -> no flux, 1 -> total flux  =', bottom_flux
+          WRITE(numout,*) ' Euphotic level                                    = ', Euphotic_lev
       ENDIF
 
       IF (vsed .LT. 0.) THEN
@@ -235,6 +240,7 @@
       WRITE(numout,*) ' '
       ENDIF
 
+#ifdef ExecDA
       REWIND( numnam )
       READ  ( numnam,DA_setup )
       IF(lwp) THEN
@@ -245,7 +251,7 @@
       WRITE(numout,*) ' ApplyConditions: snutell flag ', ApplyConditions
       WRITE(numout,*) ' Assimiliation Levels: ', AssimilationLevels
       ENDIF
-
+#endif
 
       CLOSE( numnam)
 

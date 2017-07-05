@@ -26,6 +26,7 @@
             photop        = .false.
             atlantic_bfm  = .true.
             bottom_flux   = 1.
+            Euphotic_lev  = 200.
 /
 
 &General_IO

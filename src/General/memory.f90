@@ -60,6 +60,8 @@
 !!      rau0             : reference volumic mass of the ocean (kg/m3)
 !!      ralpha, rbeta    : thermique and haline expension coef. used
 !!               for linear equation of state (neos=1 or 2)
+      double precision Euphotic_lev
+      INTEGER jpk_eu
       LOGICAL forcing_phys_initialized
       LOGICAL read_W_from_file, internal_sponging, ingv_files_direct_reading
       INTEGER ingv_lon_shift

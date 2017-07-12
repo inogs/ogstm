@@ -147,25 +147,12 @@
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask * spongeVel
 
-      IS_INGV_E3T = .false. ! call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3u',buf,ingv_lon_shift)
-          e3udta(:,:,:,2) = buf!*umask
-      endif
-
-
 
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
       vdta(:,:,:,2) = buf*vmask * spongeVel
       
-
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3v',buf,ingv_lon_shift)
-          e3vdta(:,:,:,2) = buf!*vmask
-      endif
-
 
 
 ! W *********************************************************
@@ -179,11 +166,6 @@
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
 
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3w',buf,ingv_lon_shift)
-          e3wdta(:,:,:,2) = buf!*tmask
-      endif
-
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
@@ -193,106 +175,27 @@
       call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
       sdta(:,:,:,2) = buf*tmask
 
+      nomefile = 'FORCINGS/U'//datestring//'.nc'
+      call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
+      taux = buf2*tmask(1,:,:)*umask(1,:,:)
 
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3t',buf,ingv_lon_shift)
-          e3tdta(:,:,:,2) = buf!*tmask
-      endif
+      nomefile = 'FORCINGS/V'//datestring//'.nc'
+      call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
+      tauy = buf2*tmask(1,:,:)*vmask(1,:,:)
 
-    if (.not.IS_INGV_E3T) then
-         call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
-         ssh = buf2*tmask(1,:,:)
+      call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
 
-          e3tdta(:,:,:,2) = e3t_0
-          DO ji= 1,jpi
-          DO jj= 1,jpj
-          if (tmask(1,jj,ji).eq.1) then  ! to do the division
-              correction_e3t=( 1.0 + ssh(jj,ji)/h_column(jj,ji))
-              DO jk=1,mbathy(jj,ji)
-                   e3tdta(jk,jj,ji,2)  = e3t_0(jk,jj,ji) * correction_e3t
-              ENDDO
-          endif
-          ENDDO
-          ENDDO
-
-         e1u_x_e2u = e1u*e2u
-         e1v_x_e2v = e1v*e2v
-         e1t_x_e2t = e1t*e2t
-
-         diff_e3t = e3tdta(:,:,:,2) - e3t_0
-         e3udta(:,:,:,2) = 0.0
-         e3vdta(:,:,:,2) = 0.0
-
-         DO ji = 1,jpim1
-         DO jj = 1,jpjm1
-         DO jk = 1,jpk
-             s0= e1t_x_e2t(jj,ji ) * diff_e3t(jk,jj,ji)
-             s1= e1t_x_e2t(jj,ji+1) * diff_e3t(jk,jj,ji+1)
-             s2= e1t_x_e2t(jj+1,ji) * diff_e3t(jk,jj+1,ji)
-             e3udta(jk,jj,ji,2) = 0.5*(umask(jk,jj,ji)/(e1u_x_e2u(jj,ji)) * (s0 + s1))
-             e3vdta(jk,jj,ji,2) = 0.5*(vmask(jk,jj,ji)/(e1v_x_e2v(jj,ji)) * (s0 + s2))
-         ENDDO
-         ENDDO
-         ENDDO
-
-         DO ji = 1,jpi
-         DO jj = 1,jpj
-         DO jk = 1,jpk
-             e3udta(jk,jj,ji,2) = e3u_0(jk,jj,ji) + e3udta(jk,jj,ji,2)
-             e3vdta(jk,jj,ji,2) = e3v_0(jk,jj,ji) + e3vdta(jk,jj,ji,2)
-         ENDDO
-         ENDDO
-         ENDDO
-
-
-
-         DO ji = 1,jpi
-         DO jj = 1,jpj
-             e3wdta(1,jj,ji,2) = e3w_0(1,jj,ji) + diff_e3t(1,jj,ji)
-         ENDDO
-         ENDDO
-
-         DO ji = 1,jpi
-         DO jj = 1,jpj
-         DO jk = 2,mbathy(jj,ji)
-              e3wdta(jk,jj,ji,2) = e3w_0(jk,jj,ji) + 0.5*( diff_e3t(jk-1,jj,ji) + diff_e3t(jk,jj,ji))
-         ENDDO
-         jstart = jk
-         DO jk =  jstart, jpk
-             e3wdta(jk,jj,ji,2) = e3w_0(jk,jj,ji) + diff_e3t(jk-1,jj,ji)
-         ENDDO
-
-         ENDDO
-         ENDDO
-
-
-
-
-     endif ! IS_INGV_E3T
-
-
-
-
-      if (ingv_files_direct_reading) then
-           nomefile = 'FORCINGS/U'//datestring//'.nc'
-           call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
-           taux = buf2*tmask(1,:,:)
-
-           nomefile = 'FORCINGS/V'//datestring//'.nc'
-           call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
-           tauy = buf2*tmask(1,:,:)
-
-           call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
-      else
-          call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
-      endif
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
-      nomefile = 'FORCINGS/T'//datestring//'.nc'
+! R *********************************************************
+      nomefile = 'FORCINGS/R'//datestring//'.nc'
+
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
       flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.
-      flxdta(:,:,jpemp ,2) = 0.
+
+      call readnc_slice_float_2d(nomefile,'sowaflcd',buf2,ingv_lon_shift)
+      flxdta(:,:,jpemp ,2) = buf2*tmask(1,:,:) * spongeT
 
 
       if (read_W_from_file) then
@@ -339,22 +242,9 @@
          vn = Umzweigh* vdta(:,:,:,1) + zweigh*  vdta(:,:,:,2)
          wn = Umzweigh* wdta(:,:,:,1) + zweigh*  wdta(:,:,:,2)
 
-         e3u = Umzweigh* e3udta(:,:,:,1) + zweigh* e3udta(:,:,:,2)
-         e3v = Umzweigh* e3vdta(:,:,:,1) + zweigh* e3vdta(:,:,:,2)
-         e3w = Umzweigh* e3wdta(:,:,:,1) + zweigh* e3wdta(:,:,:,2)
-
          tn  = Umzweigh* tdta(:,:,:,1)   + zweigh* tdta(:,:,:,2)
          sn  = Umzweigh* sdta(:,:,:,1)   + zweigh* sdta(:,:,:,2)
          avt = Umzweigh* avtdta(:,:,:,1) + zweigh* avtdta(:,:,:,2)
-
-        if (forcing_phys_initialized) then
-           e3t_back = e3t
-           e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
-        else
-          e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
-          e3t_back = e3t
-          forcing_phys_initialized = .TRUE.
-        endif
 
         flx = Umzweigh * flxdta(:,:,:,1) + zweigh * flxdta(:,:,:,2)
 
@@ -387,15 +277,11 @@
          IMPLICIT NONE
 
                     udta(:,:,:,1) =    udta(:,:,:,2)
-                  e3udta(:,:,:,1) =  e3udta(:,:,:,2)
                     vdta(:,:,:,1) =    vdta(:,:,:,2)
-                  e3vdta(:,:,:,1) =  e3vdta(:,:,:,2)
                     wdta(:,:,:,1) =    wdta(:,:,:,2)
-                  e3wdta(:,:,:,1) =  e3wdta(:,:,:,2)
                   avtdta(:,:,:,1) =  avtdta(:,:,:,2)
                     tdta(:,:,:,1) =    tdta(:,:,:,2)
                     sdta(:,:,:,1) =    sdta(:,:,:,2)
-                  e3tdta(:,:,:,1) =  e3tdta(:,:,:,2)
                   flxdta(:,:,:,1) =  flxdta(:,:,:,2)
 
 
@@ -485,8 +371,8 @@
 
         DO jj = 1, jpjm1
         DO ji = 1, jpim1
-            zwu(jj,ji) = e2u(jj,ji) * e3udta(jk,jj,ji,2) * udta(jk,jj,ji,2)
-            zwv(jj,ji) = e1v(jj,ji) * e3vdta(jk,jj,ji,2) * vdta(jk,jj,ji,2)
+            zwu(jj,ji) = e2u(jj,ji) * e3u(jk,jj,ji) * udta(jk,jj,ji,2)
+            zwv(jj,ji) = e1v(jj,ji) * e3v(jk,jj,ji) * vdta(jk,jj,ji,2)
         END DO
         END DO
 
@@ -496,7 +382,7 @@
 
         DO jj = 2, jpjm1
         DO ji = 2, jpim1
-            zbt = e1t(jj,ji) * e2t(jj,ji) * e3tdta(jk,jj,ji,2)
+            zbt = e1t(jj,ji) * e2t(jj,ji) * e3t(jk,jj,ji)
             hdivn(jk,jj,ji) = (  zwu(jj,ji) - zwu(jj,ji-1  ) &
                                + zwv(jj,ji) - zwv(jj-1  ,ji)  ) / zbt
         END DO
@@ -527,7 +413,7 @@
      DO jj = 1, jpj
      DO jk = jpkm1, 1, -1
 
-            wdta(jk,jj,ji,2) = wdta(jk+1,jj,ji,2) - e3tdta(jk,jj,ji,2)*hdivn(jk,jj,ji)
+            wdta(jk,jj,ji,2) = wdta(jk+1,jj,ji,2) - e3t(jk,jj,ji)*hdivn(jk,jj,ji)
 
      END DO
      END DO

@@ -130,16 +130,16 @@
        enddo
        if (lwp) write(*,*) 'Euphotic level at k = ', jpk_eu
 
-       CALL readmask_double_1d(maskfile,'e3t_0', e3t_0)
-
       CALL readnc_slice_double (maskfile,'e3t_0', e3t_0 )
       CALL readnc_slice_double (maskfile,'e3u_0', e3u_0 )
       CALL readnc_slice_double (maskfile,'e3v_0', e3v_0 )
       CALL readnc_slice_double (maskfile,'e3w_0', e3w_0 )
 
-      flxdta(:,:,8 ,2)  = e3u(1,:,:)
-      flxdta(:,:,9 ,2)  = e3v(1,:,:)
-      flxdta(:,:,10 ,2) = e3t(1,:,:)
+      e3t = e3t_0
+      e3t_back = e3t
+      e3u = e3u_0
+      e3v = e3v_0
+      e3w = e3w_0
 
       h_column = 0.0
       DO ii= 1,jpi
@@ -221,11 +221,13 @@
       !print *,"---",Rsizeglo
       
       CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
-      !print *,riv_idxtglo
-      !print *,Rsize,Rsizeglo
+
       Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
+      print *,riv_idxtglo
+      print *,Rsize,Rsizeglo
 
       if (Rsize.NE. 0) then
+          if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_riv'
           call alloc_DTATRC_local_riv
 
           B=RIVRe_Indexing()

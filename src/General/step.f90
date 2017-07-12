@@ -275,6 +275,8 @@ MODULE module_step
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
 
+      CALL trcsbc ! surface cell processes
+
       IF (lbfm )  CALL trcsms
 
       CALL trczdf ! tracers: vertical diffusion

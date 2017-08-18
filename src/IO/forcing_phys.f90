@@ -276,11 +276,11 @@
       if (ingv_files_direct_reading) then
            nomefile = 'FORCINGS/U'//datestring//'.nc'
            call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
-           taux = buf2*tmask(1,:,:)
+           taux = buf2*tmask(1,:,:)*umask(1,:,:)
 
            nomefile = 'FORCINGS/V'//datestring//'.nc'
            call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
-           tauy = buf2*tmask(1,:,:)
+           tauy = buf2*tmask(1,:,:)*vmask(1,:,:)
 
            call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
       else

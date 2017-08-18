@@ -51,7 +51,6 @@
     DA_Nprocs = 20,
     satfile_suffix = "_d-OC_CNR-L4-CHL-MedOC4_SAM_7KM-MED-REP-v02.nc",
     satvarname     = "CHL"
-    ApplyConditions = .true.
     AssimilationLevels = 36
 /
 

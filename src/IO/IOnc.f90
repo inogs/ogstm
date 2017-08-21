@@ -526,9 +526,12 @@
        integer :: s, nc, counter
        integer :: timid, depid, yid, xid, xaid, yaid, zaid
        integer :: idB, idN, idLon, idLat, idLev, idTim
+       integer shuffle, deflate, deflate_level
        double precision,allocatable,dimension(:,:,:) :: copy_in
        TimeString =fileNetCDF(14:30)
-
+       shuffle       = 0
+       deflate       = 1
+       deflate_level = 4
 
       s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
 
@@ -548,6 +551,8 @@
        s = nf90_def_var(nc,'nav_lev', nf90_double,  (/depid/)  , idLev)
        !s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
         s = nf90_def_var(nc,'TRN'//VAR, nf90_double, (/xid,yid,depid,timid/), idN)
+        s = nf90_def_var_deflate(nc, idN, shuffle, deflate, deflate_level)
+        call handle_err1(s,counter,fileNetCDF)
         !s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00')
       
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
@@ -592,11 +597,14 @@
        integer s, nc, counter
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
+       integer shuffle, deflate, deflate_level
        real lat_actual_range(2), lon_actual_range(2), depth_actual_range(2)
          lon_actual_range=(/-9.25  , 36.0   /)
          lat_actual_range=(/30.5   , 44.5   /)
        depth_actual_range=(/ 4.9991,4450.068/)
-
+       shuffle       = 0
+       deflate       = 1
+       deflate_level = 4
 
         counter=0
 
@@ -633,6 +641,8 @@
        call handle_err1(s,counter,fileNetCDF)
    
         s = nf90_def_var(nc,trim(VAR) ,        nf90_float, (/xid,yid,depid,timid/),  idVAR)
+       call handle_err1(s,counter,fileNetCDF)
+       s = nf90_def_var_deflate(nc, idVAR, shuffle, deflate, deflate_level)
        call handle_err1(s,counter,fileNetCDF)
 
         s = nf90_put_att(nc,idgdept,'units'        ,'meter')

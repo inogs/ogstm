@@ -229,6 +229,10 @@
 
        integer s, nc, counter
        integer depid, yid, xid,idN
+       integer shuffle, deflate, deflate_level
+       shuffle       = 0
+       deflate       = 1
+       deflate_level = 4
 
       s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
 
@@ -239,6 +243,7 @@
 
 
         s = nf90_def_var(nc,VAR, nf90_float, (/xid,yid,depid /), idN)
+        s = nf90_def_var_deflate(nc, idN, shuffle, deflate, deflate_level)
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
         s = nf90_put_var(nc, idN,  tottrnDA); call handle_err1(s,counter,fileNetCDF)
@@ -270,12 +275,16 @@
        integer s, nc, counter
        integer timid, depid, yid, xid, xaid, yaid, zaid
        integer idB, idN, idLon, idLat, idLev, idTim
+       integer shuffle, deflate, deflate_level
+       shuffle       = 0
+       deflate       = 1
+       deflate_level = 4
 
        TimeString =fileNetCDF(14:30)
        VAR        =fileNetCDF(32:34)
 
 
-      s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+      s = nf90_create(fileNetCDF, or(or(nf90_clobber,NF90_HDF5),NF90_HDF5), nc)
 
       s = nf90_put_att(nc, nf90_global, 'TimeString'     , TimeString)
         ! *********** DIMENSIONS ****************
@@ -296,6 +305,8 @@
 
         RSTVAR='TRN'//VAR;
         s = nf90_def_var(nc,RSTVAR, nf90_float, (/xid,yid,depid,timid/), idN)
+        s = nf90_def_var_deflate(nc, idN, shuffle, deflate, deflate_level)
+        call handle_err1(s,counter,fileNetCDF)
 
         s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00');
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)

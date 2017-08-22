@@ -782,6 +782,10 @@
        integer s, nc, counter
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
+       integer shuffle, deflate, deflate_level
+       shuffle       = 0
+       deflate       = 1
+       deflate_level = 4
 
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
@@ -804,6 +808,8 @@
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
 
        s = nf90_def_var(nc,trim(VAR) , nf90_double,(/xid,yid,depid,timid/),  idVAR)
+       s = nf90_def_var_deflate(nc, idVAR, shuffle, deflate, deflate_level)
+       call handle_err1(s,counter,fileNetCDF)
 
         s = nf90_put_att(nc,idgdept,'units'        ,'m')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')

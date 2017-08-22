@@ -179,8 +179,7 @@ END SUBROUTINE
           !CALL mpprecv(1,t3ew_my1(1,1,1,1,2),imigr,reqr1)
           CALL mppsend(2,ptab(:,:,jpi-1),packsize,noea,0,reqs1)
           CALL mpprecv(1,ptab(:,:,  jpi),packsize,reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
+
       ELSE IF(nbondi.eq.0) THEN
           CALL mppsend(1, ptab(:,:    ,2),packsize,nowe,0,reqs1)
           CALL mppsend(2, ptab(:,:,jpi-1),packsize,noea,0,reqs2)
@@ -196,10 +195,6 @@ END SUBROUTINE
 !          CALL mpprecv(1,te_recv,EAST_count_recv,reqr1)
 !          CALL mpprecv(2,tw_recv,WEST_count_recv,reqr2)
 
-          CALL mppwait(reqs1)
-          CALL mppwait(reqs2)
-          CALL mppwait(reqr1)
-          CALL mppwait(reqr2)
       ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
           !CALL mppsend(1,t3ew_my1(1,1,1,1,1),imigr,nowe,0,reqs1)
           !CALL mpprecv(2,t3we_my1(1,1,1,1,2),imigr,reqr1)
@@ -207,8 +202,7 @@ END SUBROUTINE
           CALL mpprecv(2,ptab(:,:,1), packsize, reqr1)
           !CALL mppsend(1,tw_send, WEST_count_send, nowe,0, reqs1)
           !CALL mpprecv(2,tw_recv, WEST_count_recv, reqr1)
-          CALL mppwait(reqs1)
-          CALL mppwait(reqr1)
+
       ENDIF
 
 
@@ -268,6 +262,20 @@ END SUBROUTINE
 
 
       ENDIF!    PACK_LOOP4
+
+
+      IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
+          CALL mppwait(reqs1)
+          CALL mppwait(reqr1)
+      ELSE IF(nbondi.eq.0) THEN
+          CALL mppwait(reqs1)
+          CALL mppwait(reqs2)
+          CALL mppwait(reqr1)
+          CALL mppwait(reqr2)
+      ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
+          CALL mppwait(reqs1)
+          CALL mppwait(reqr1)
+      ENDIF
 
 
 !!

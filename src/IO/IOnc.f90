@@ -511,7 +511,7 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE write_restart(fileNetCDF,VAR, julian)
+       SUBROUTINE write_restart(fileNetCDF,VAR, julian,deflate, deflate_level)
        USE netcdf
        USE myalloc
 
@@ -519,6 +519,7 @@
        CHARACTER*(*),intent(in) :: fileNetCDF
        double precision,intent(in) :: julian
        CHARACTER(*),intent(in) ::  VAR
+       integer, intent(in) :: deflate, deflate_level
 
        ! local
        CHARACTER(LEN=17) :: TimeString
@@ -526,12 +527,10 @@
        integer :: s, nc, counter
        integer :: timid, depid, yid, xid, xaid, yaid, zaid
        integer :: idB, idN, idLon, idLat, idLev, idTim
-       integer shuffle, deflate, deflate_level
+       integer shuffle
        double precision,allocatable,dimension(:,:,:) :: copy_in
        TimeString =fileNetCDF(14:30)
        shuffle       = 0
-       deflate       = 1
-       deflate_level = 4
 
       s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
 
@@ -582,7 +581,7 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE WRITE_AVE(fileNetCDF,VAR, datefrom, dateTo,M)
+       SUBROUTINE WRITE_AVE(fileNetCDF,VAR, datefrom, dateTo,M,deflate, deflate_level)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
@@ -591,20 +590,20 @@
        character(LEN=20),intent(in) :: VAR
        character(LEN=17),intent(in) :: datefrom, dateTo
        double precision, dimension(jpk, jpjglo, jpiglo),intent(in) :: M
+       integer, intent(in) :: deflate, deflate_level
        
        real,allocatable,dimension(:,:,:) :: copy_in
        integer istart,iend
        integer s, nc, counter
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
-       integer shuffle, deflate, deflate_level
+       integer shuffle
        real lat_actual_range(2), lon_actual_range(2), depth_actual_range(2)
          lon_actual_range=(/-9.25  , 36.0   /)
          lat_actual_range=(/30.5   , 44.5   /)
        depth_actual_range=(/ 4.9991,4450.068/)
        shuffle       = 0
-       deflate       = 1
-       deflate_level = 4
+
 
         counter=0
 
@@ -764,28 +763,29 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, VAR,datefrom, dateTo,M, ave_counter)
+       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, VAR,datefrom, dateTo,M, ave_counter, deflate, deflate_level)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
 
        CHARACTER*(*),intent(in) :: fileNetCDF
+       character(LEN=20), intent(in):: VAR
        character(LEN=17),intent(in) :: datefrom, dateTo
        double precision,dimension(jpk, jpjglo, jpiglo),intent(in) :: M
        integer,intent(in) :: ave_counter
+       integer, intent(in) :: deflate, deflate_level
+
 
        !local
        double precision, allocatable,dimension(:,:,:) :: copy_in
-       character(LEN=20) VAR
        integer istart,iend
 
        integer s, nc, counter
        integer timid, depid, yid, xid
        integer idvartime,idgdept,idphit,idlamt,idVAR
-       integer shuffle, deflate, deflate_level
+       integer shuffle
        shuffle       = 0
-       deflate       = 1
-       deflate_level = 4
+
 
 
         s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)

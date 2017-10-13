@@ -26,7 +26,7 @@
 
        USE myalloc
 #ifdef ExecDA
-       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, ApplyConditions, AssimilationLevels
+       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, AssimilationLevels
 #endif
        IMPLICIT NONE
 
@@ -38,12 +38,13 @@
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,lrivers,lbfm, latmosph, ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux,Euphotic_lev
-      NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, isCheckLOG, read_W_from_file, internal_sponging,ingv_files_direct_reading,ingv_lon_shift
+      NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, deflate_ave, deflate_level_ave,deflate_rst, deflate_level_rst, &
+      isCheckLOG, read_W_from_file, internal_sponging,ingv_files_direct_reading,ingv_lon_shift
 
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 #ifdef ExecDA
-      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, ApplyConditions, AssimilationLevels
+      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, AssimilationLevels
 #endif
 
 
@@ -191,6 +192,10 @@
       else
           ingv_lon_shift   = 0
       endif
+      deflate_ave          = 0
+      deflate_level_ave    = 4
+      deflate_rst          = 1
+      deflate_level_rst    = 4
 
       REWIND( numnam )
       READ  ( numnam, General_IO )
@@ -248,7 +253,6 @@
       WRITE(numout,*) ' '
       WRITE(numout,*) ' DA_Nprocs      : 3D_var cores', DA_nprocs
       WRITE(numout,*) ' satfile suffix : ', satfile_suffix
-      WRITE(numout,*) ' ApplyConditions: snutell flag ', ApplyConditions
       WRITE(numout,*) ' Assimiliation Levels: ', AssimilationLevels
       ENDIF
 #endif

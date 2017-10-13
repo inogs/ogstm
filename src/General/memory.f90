@@ -65,6 +65,7 @@
       LOGICAL forcing_phys_initialized
       LOGICAL read_W_from_file, internal_sponging, ingv_files_direct_reading
       INTEGER ingv_lon_shift
+      INTEGER    deflate_ave, deflate_level_ave,deflate_rst, deflate_level_rst
       INTEGER neos
       double precision rau0, ralpha, rbeta
       double precision  rdt     ! dynamics time step

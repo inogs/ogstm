@@ -6,7 +6,7 @@
 !
 !  Purpose :
 !  --------
-!     Reads Domain Decomposition from Dom_Dec_jp?_ascii files
+!     Reads Domain Decomposition from domdec.txt file
 !           Domain size          from meshmask.nc
 
 
@@ -17,23 +17,64 @@
 ! local declarations
 ! ==================
       INTEGER ji,jj,nn
+      INTEGER nproci, nprocj
+      integer, allocatable, dimension(:,:) :: domdec
 
-      call COUNTLINE ('Dom_Dec_jpi.ascii', jpni)
-      call COUNTWORDS('Dom_Dec_jpi.ascii', jpnj)
-      jpnij = jpni*jpnj
+      call COUNTLINE ('domdec.txt', nn)
+      if (nn.ne.mpi_glcomm_size) then
+         if (lwp) write(*,*) 'domdec.txt is not compliant with MPI ranks '
+         STOP
+      endif
+
+        narea = myrank+1
+        allocate(domdec(mpi_glcomm_size,13))
+
+        open(3333,file='domdec.txt', form='formatted')
+        read(3333,*) ((domdec(ji,jj), jj=1,13),ji=1,mpi_glcomm_size)
+        close(3333)
+
+        if (domdec(narea,1).ne.myrank) write(*,*) 'ERROR'
+!        if (lwp) THEN
+!        do ji=1,mpi_glcomm_size
+!        write(*,'(13I3)') domdec(ji,:)
+!        enddo
+!        endif
+        nproci = maxval(domdec(:,2))+1
+        nprocj = maxval(domdec(:,3))+1
+
+        ji     = domdec(narea, 2)+1
+        jj     = domdec(narea, 3)+1
+        jpi    = domdec(narea, 4)
+        jpj    = domdec(narea, 5)
+        nimpp  = domdec(narea, 6)
+        njmpp  = domdec(narea, 7)
+        nbondi = domdec(narea, 8)
+        nbondj = domdec(narea, 9)
+        nowe   = domdec(narea,10)
+        noea   = domdec(narea,11)
+        nono   = domdec(narea,12)
+        noso   = domdec(narea,13)
+
       jpreci = 1
       jprecj = 1
 
-
-
+! -----  from inimpp -----------------------------
+        nlci = jpi
+        nlcj = jpj
+        nldi= 1  +jpreci
+        nlei=nlci-jpreci
+        IF(ji.eq.1) nldi=1 ! western boundary without ghost cell
+        IF(ji.eq.nproci) nlei=nlci
+        nldj= 1  +jprecj
+        nlej=nlcj-jprecj
+        IF(jj.eq.1) nldj=1 ! south boundary without ghost cell
+        IF(jj.eq.nprocj) nlej=nlcj
+        nperio=0
+! ------------------------------------------------
       IF(lwp) THEN
       WRITE(numout,*) ' '
       WRITE(numout,*) 'Dom_Size'
       WRITE(numout,*) ' '
-      WRITE(numout,*) ' number of processors following i : jpni   = ', jpni
-      WRITE(numout,*) ' number of processors following j : jpnj   = ', jpnj
-      WRITE(numout,*) ' '
-      WRITE(numout,*) ' local domains : < or = jpni x jpnj number of processors   = ', jpnij
       WRITE(numout,*) ' number of lines for overlap  jpreci   = ',jpreci
       WRITE(numout,*) ' number of lines for overlap  jprecj   = ',jprecj
       WRITE(numout,*) ' '
@@ -59,26 +100,6 @@
       ENDIF
 
 
-      allocate(ilcit(jpni, jpnj)) ; ilcit = huge(ilcit(1,1))
-      allocate(ilcjt(jpni, jpnj)) ; ilcjt = huge(ilcjt(1,1))
-
-      open(3333,file='Dom_Dec_jpi.ascii', form='formatted')
-      open(3334,file='Dom_Dec_jpj.ascii', form='formatted')
-      
-      read(3333,*) ((ilcit(ji,jj), jj=1,jpnj),ji=1,jpni)
-      read(3334,*) ((ilcjt(ji,jj), jj=1,jpnj),ji=1,jpni)
-      
-      close(3333)
-      close(3334)
-
-      do nn =1, jpni*jpnj
-        if(myrank+1 .EQ. nn) then
-          ji = 1 + mod(nn -1, jpni)
-          jj = 1 + (nn -1)/jpni
-          jpi =  ilcit(ji,jj)
-          jpj =  ilcjt(ji,jj)
-        endif
-      enddo
 
       jpim1=jpi-1
       jpjm1=jpj-1
@@ -111,27 +132,4 @@
 
       END SUBROUTINE COUNTLINE
 ! **************************************************************
-      SUBROUTINE COUNTWORDS(filename,n)
-        IMPLICIT NONE
-        CHARACTER*(*) filename
-        INTEGER N
-        ! local
-        INTEGER I
-        CHARACTER(LEN=1024) str, str_blank
-
-
-        open(unit=21,file=filename, form='formatted')
-        read(21,'(A)') str
-        close(21)
-
-        str_blank=' '//trim(str)
-        N=0
-        do i = 1,len(trim(str))
-         if ((str_blank(i:i).eq.' ').and.(str_blank(i+1:i+1).ne.' ') )  N=N+1
-        enddo
-
-      END SUBROUTINE COUNTWORDS
-
-
-! ***************************************************************
       END SUBROUTINE PARINI

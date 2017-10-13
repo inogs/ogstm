@@ -7,7 +7,6 @@
       CHARACTER(LEN=35) CHLSUP_FOR_DA
       INTEGER DA_Nprocs
       INTEGER AssimilationLevels
-      LOGICAL ApplyConditions
       character(LEN=200) satfile_suffix
       character(LEN=40 ) satvarname
 

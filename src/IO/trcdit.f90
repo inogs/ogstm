@@ -196,11 +196,11 @@
 
 
         if (IsBackup) then
-          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter)
+          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter, deflate_ave, deflate_level_ave)
 
         else
 
-          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, tottrnIO)
+          CALL WRITE_AVE(output_file_nc,var,datefrom, dateTo, tottrnIO, deflate_ave, deflate_level_ave)
       
          endif
 

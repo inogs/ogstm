@@ -213,7 +213,8 @@
        !****************************************************************************
        !****************************************************************************
        !****************************************************************************
-!     writes tottrn on float
+!      writes tottrnDA as float on NetCDF classic file, because at the moment
+!      3d_var uses parallel netcdf that does not work with NetCDF4
        SUBROUTINE write_BeforeAss(fileNetCDF, VAR)
 
        USE netcdf
@@ -221,16 +222,15 @@
        USE DA_mem
 
        IMPLICIT NONE
-       CHARACTER*(*) fileNetCDF
+       CHARACTER*(*), intent(in) :: fileNetCDF
+       CHARACTER(LEN=3),intent(in):: VAR
 
        ! local
-       CHARACTER(LEN=3) VAR
-
 
        integer s, nc, counter
        integer depid, yid, xid,idN
 
-      s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+        s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
 
         ! *********** DIMENSIONS ****************
         s= nf90_def_dim(nc,'x'   , jpiglo,  xid)
@@ -248,68 +248,3 @@
        END SUBROUTINE write_BeforeAss
 
 
-       !****************************************************************************
-       !****************************************************************************
-       !****************************************************************************
-!     writes tottrn
-       SUBROUTINE write_restartDA(fileNetCDF, julian)
-
-       USE netcdf
-       USE myalloc
-       USE DA_mem
-
-       IMPLICIT NONE
-       CHARACTER*(*) fileNetCDF
-       REAL(8) julian
-
-       ! local
-       CHARACTER(LEN=3) VAR
-       CHARACTER(LEN=6) RSTVAR
-       CHARACTER(LEN=17) TimeString
-
-       integer s, nc, counter
-       integer timid, depid, yid, xid, xaid, yaid, zaid
-       integer idB, idN, idLon, idLat, idLev, idTim
-
-       TimeString =fileNetCDF(14:30)
-       VAR        =fileNetCDF(32:34)
-
-
-      s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
-
-      s = nf90_put_att(nc, nf90_global, 'TimeString'     , TimeString)
-        ! *********** DIMENSIONS ****************
-        s= nf90_def_dim(nc,'x'   , jpiglo,  xid)
-        s= nf90_def_dim(nc,'y'   , jpjglo,  yid)
-        s= nf90_def_dim(nc,'z'   , jpk   ,depid)
-        s= nf90_def_dim(nc,'time', 1     ,timid)
-        s= nf90_def_dim(nc,'x_a'      , 1,  xaid)
-        s= nf90_def_dim(nc,'y_a'      , 1,  yaid)
-        s= nf90_def_dim(nc,'z_a'      , 3  ,zaid)
-
-
-       s = nf90_def_var(nc,'nav_lon', nf90_double,  (/xid,yid/), idLon)
-       s = nf90_def_var(nc,'nav_lat', nf90_double,  (/xid,yid/), idLat)
-       s = nf90_def_var(nc,'nav_lev', nf90_double,  (/depid/)  , idLev)
-       s = nf90_def_var(nc,'time'   , nf90_double,  (/timid/)  , idTim)
-
-
-        RSTVAR='TRN'//VAR;
-        s = nf90_def_var(nc,RSTVAR, nf90_float, (/xid,yid,depid,timid/), idN)
-
-        s= nf90_put_att(nc,idTim ,'Units', 'seconds since 1582-10-15 00:00:00');
-        s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
-        s =nf90_enddef(nc)
-
-        s = nf90_put_var(nc, idLon,  totglamt(:,jpjglo)); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idLat,  totgphit(jpiglo,:)); call handle_err1(s,counter,fileNetCDF)
-        s = nf90_put_var(nc, idLev,     gdept); call handle_err1(s,counter,fileNetCDF)
-
-        s = nf90_put_var(nc, idTim,    julian); call handle_err1(s,counter,fileNetCDF)
-
-        s = nf90_put_var(nc, idN,      tottrnDA); call handle_err1(s,counter,fileNetCDF)
-
-        s =nf90_close(nc)
-
-
-       END SUBROUTINE write_restartDA

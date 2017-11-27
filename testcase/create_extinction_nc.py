@@ -23,11 +23,11 @@ def create_extinction_nc(test):
 
     kextfact=np.ones((jpj,jpi),np.float);
 
-    os.system("mkdir -p " + test['Dir'].decode() + '/FORCINGS')
+    os.system("mkdir -p " + test['Dir'].decode() + '/KEXT')
 
     for dd in indata:
 
-        outfile = test['Dir'].decode() + '/FORCINGS/KextF_' + dd['date'].decode() + '.nc'
+        outfile = test['Dir'].decode() + '/KEXT/KextF_' + dd['date'].decode() + '.nc'
 #        print 'creating' + outfile
         ncOUT   = NC.netcdf_file(outfile,"w")
 

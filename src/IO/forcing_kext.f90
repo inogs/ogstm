@@ -106,14 +106,14 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datestring
 
-      character(LEN=35) nomefile
+      character(LEN=31) nomefile
 
-      nomefile='FORCINGS/KextF_yyyy0107-00:00:00.nc'
+      nomefile='KEXT/KextF_yyyy0107-00:00:00.nc'
 
 
 !     Starting I/O
 !    **********************************************************
-      nomefile = 'FORCINGS/KextF_'//datestring//'.nc'
+      nomefile = 'KEXT/KextF_'//datestring//'.nc'
 
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", myrank, " starting reading forcing fields from ", nomefile
 

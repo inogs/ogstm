@@ -26,4 +26,4 @@ datelist ${DIR}/BC/ATM_          > ${DIR}/AtmTimes
 datelist ${DIR}/BC/CO2_          > ${DIR}/carbonTimes
 
 datelist ${DIR}/FORCINGS/U       > ${DIR}/forcingsTimes
-datelist ${DIR}/FORCINGS/KextF_  > ${DIR}/kextTimes
+datelist ${DIR}/KEXT/KextF_      > ${DIR}/kextTimes

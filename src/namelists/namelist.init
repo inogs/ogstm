@@ -18,10 +18,14 @@
             rtrn          = 1.e-25,
             ndttrc        = 1.0,
             ncor          = 1,
+            ladv          = .true.,
             lhdf          = .true.,
             lrivers       = .true.,
             latmosph      = .true.,
             lbfm          = .true.,
+            lzdf          = .true.,
+            lsnu          = .true.,
+            lhtp          = .true.,
             vsed          = 3.0,
             photop        = .false.
             atlantic_bfm  = .true.

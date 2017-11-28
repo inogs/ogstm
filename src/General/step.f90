@@ -262,7 +262,7 @@ MODULE module_step
       integer jn,jk,ji,jj
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
-      CALL trcadv ! tracers: advection
+      IF (ladv) CALL trcadv ! tracers: advection
 
 #    if defined key_trc_dmp
       CALL trcdmp ! tracers: damping for passive tracers
@@ -277,9 +277,9 @@ MODULE module_step
 
       IF (lbfm )  CALL trcsms
 
-      CALL trczdf ! tracers: vertical diffusion
-      CALL snutel
-      CALL hard_tissue_pump
+      IF (lzdf) CALL trczdf ! tracers: vertical diffusion
+      IF (lsnu) CALL snutel
+      IF (lhtp) CALL hard_tissue_pump
       CALL checkValues
       CALL trcnxt ! tracers: fields at next time step
       

@@ -37,7 +37,8 @@
 
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,lhdf,lrivers,lbfm, latmosph, ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux,Euphotic_lev
+      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,ladv, lhdf,lrivers,lbfm, lzdf, lsnu, lhtp, latmosph, &
+      ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux,Euphotic_lev
       NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, deflate_ave, deflate_level_ave,deflate_rst, deflate_level_rst, &
       isCheckLOG, read_W_from_file, internal_sponging,ingv_files_direct_reading,ingv_lon_shift
 
@@ -132,6 +133,11 @@
       ncor        = 1
       ndttrc      = 4.0
       lhdf        = .TRUE.
+      ladv        = .TRUE.
+      lzdf        = .TRUE.
+      lsnu        = .TRUE.
+      lhtp        = .TRUE.
+      lbfm        = .TRUE.
       ahtrb0      = 0.
       trcrat      = 1.
       ahtrc0      = aht0
@@ -156,6 +162,11 @@
           WRITE(numout,*) ' ncor number of corrective phase                   = ', ncor
           WRITE(numout,*) ' ndttrc time step freq. for pass. trac.            = ', ndttrc
           WRITE(numout,*) ' lhdf  calls or not trchdf                         = ', lhdf
+          WRITE(numout,*) ' lzdf  calls or not trczdf                         = ', lzdf
+          WRITE(numout,*) ' ladv  calls or not trcadv                         = ', ladv
+          WRITE(numout,*) ' lsnu  calls or not snutel                         = ', lsnu
+          WRITE(numout,*) ' lhtp  calls or not hard_tissue_pump               = ', lhtp
+
           WRITE(numout,*) ' activation of rivers                              = ', lrivers
           WRITE(numout,*) ' activation atmospheric deposition                 = ', latmosph
           WRITE(numout,*) ' activation of bfm                                 = ', lbfm

@@ -274,6 +274,7 @@ MODULE module_step
       IF (lhdf)   CALL trchdf
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
+      IF (lsbc)  CALL trcsbc ! surface cell processes, default lsbc = False
 
       IF (lbfm )  CALL trcsms
 

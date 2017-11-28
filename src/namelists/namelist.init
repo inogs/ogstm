@@ -22,6 +22,7 @@
             lhdf          = .true.,
             lrivers       = .true.,
             latmosph      = .true.,
+            lsbc          = .false.,
             lbfm          = .true.,
             lzdf          = .true.,
             lsnu          = .true.,

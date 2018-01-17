@@ -130,8 +130,6 @@
        enddo
        if (lwp) write(*,*) 'Euphotic level at k = ', jpk_eu
 
-       CALL readmask_double_1d(maskfile,'e3t_0', e3t_0)
-
       CALL readnc_slice_double (maskfile,'e3t_0', e3t_0 )
       CALL readnc_slice_double (maskfile,'e3u_0', e3u_0 )
       CALL readnc_slice_double (maskfile,'e3v_0', e3v_0 )

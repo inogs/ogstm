@@ -340,9 +340,9 @@
 
          if (.not.IsBackup) then
              if (FREQ_GROUP.eq.2) then
-                tra_DIA_2d_IO(:,:,jn) = 0.
+                tra_DIA_2d_IO(jn,:,:) = 0.
               else
-                tra_DIA_2d_IO_HIGH(:,:,jn_high) = 0.
+                tra_DIA_2d_IO_HIGH(jn_high,:,:) = 0.
               endif
           endif
 

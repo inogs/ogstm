@@ -53,6 +53,7 @@
 <var name="R3c" maxvalue="100000" highfreq="true" comment="max inventato"></var>
 <var name="O3c" maxvalue="200000" highfreq="true" ></var>
 <var name="O3h" maxvalue="20000"  highfreq="true" ></var>	
+<var name="O5c" maxvalue="200000" highfreq="true" ></var>
 </ModelVars>
 
 
@@ -88,6 +89,7 @@
 <var name="flN4N3n"      highfreq="false" ></var> 
 <var name="sediR2"       highfreq="false" ></var> 
 <var name="sediR6"       highfreq="false" ></var> 
+<var name="sediO5"       highfreq="false" ></var>
 <var name="xEPS"         highfreq="false" ></var> 
 <var name="ABIO_eps"     highfreq="false" ></var> 
 <var name="qpcPPY_iiP1"  highfreq="false" ></var> 
@@ -172,7 +174,14 @@
 <var name="resMEZ2c"     highfreq="false" ></var> 
 <var name="resMIZ1c"     highfreq="false" ></var> 
 <var name="resMIZ2c"     highfreq="false" ></var> 
+<var name="qccPPY_iiP1"     highfreq="false" ></var>
+<var name="qccPPY_iiP2"     highfreq="false" ></var>
+<var name="qccPPY_iiP3"     highfreq="false" ></var>
+<var name="qccPPY_iiP4"     highfreq="false" ></var>
+<var name="rcalCARc"     highfreq="false" ></var>
 </Diagnostics>
+
+
 
 
 <Diagnostics_2D>

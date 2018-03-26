@@ -152,9 +152,9 @@ SUBROUTINE ogstm_initialize()
 ! Initialization of Biogeochemical recator with 0D approach
 
       call BFM0D_NO_BOXES(1,1,1,1,1)
-
-!     call BFM0D_INIT_IO_CHANNELS()
-
+#ifndef BFMv2
+     call BFM0D_INIT_IO_CHANNELS()
+#endif
       call Initialize()
 
 END SUBROUTINE ogstm_initialize

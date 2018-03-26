@@ -129,16 +129,20 @@
                           DO jtr=1,4
                              ogstm_sediPI(jk,jj,ji,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
                           END DO
-
+#ifdef BFMv2
                           DO jtr=1,jptra_dia -2 ! We skip the last two ppHT1 and ppHT2
+#else
+                          DO jtr=1,jptra_dia
+#endif
                              tra_DIA(jtr,jk,jj,ji) = d(jtr) ! diagnostic
                           END DO
                           if (sur) tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
 
 
                           ogstm_PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
+#ifdef BFMv2
                              NPPF2(jk,jj,ji)=d(ppF04) ! Flagellate production
-
+#endif
                 END DO MAIN_LOOP
 
                 BIOparttime =  MPI_WTIME() -BIOparttime

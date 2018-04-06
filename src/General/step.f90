@@ -94,16 +94,19 @@ MODULE module_step
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
-
-
+         
+            if (AVE_FREQ1%N .gt.0) then              !  void 1.aveTimes -> no backup
             if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
                call tau2datestring(TauAVEfrom_1, datefrom_1)
                CALL trcdia(datestring, datefrom_1, datestring,1)
             endif
+            endif
 
+            if (AVE_FREQ2%N .gt.0) then
             if (.not.IsAnAveDump(DATEstring,2)) then ! backup conditions group 2
                call tau2datestring(TauAVEfrom_2, datefrom_2)
                if (save_bkp_group2) CALL trcdia(datestring, datefrom_2, datestring,2)
+            endif
             endif
 
          if (lwp) then

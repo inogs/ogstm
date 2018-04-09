@@ -75,7 +75,7 @@
           call MPI_Barrier(Var3DCommunicator, ierr)
 
 
-          call OCEANVAR
+          call BIOVAR
 
           ! deallocation of DA_VarList array
           call clean_da_params

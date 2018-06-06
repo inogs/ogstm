@@ -70,12 +70,12 @@
       call readnc_slice_double_2d(maskfile,'glamt', glamt)
       call readnc_slice_double_2d(maskfile,'glamu', glamu)
       call readnc_slice_double_2d(maskfile,'glamv', glamv)
-      call readnc_slice_double_2d(maskfile,'glamf', glamf)
+      !call readnc_slice_double_2d(maskfile,'glamf', glamf)
 
       call readnc_slice_double_2d(maskfile,'gphit', gphit)
       call readnc_slice_double_2d(maskfile,'gphiu', gphiu)
       call readnc_slice_double_2d(maskfile,'gphiv', gphiv)
-      call readnc_slice_double_2d(maskfile,'gphif', gphif)
+      !call readnc_slice_double_2d(maskfile,'gphif', gphif)
 
 
 ! 2. Horizontal scale factors
@@ -83,12 +83,12 @@
       call readnc_slice_double_2d(maskfile,'e1t', e1t)
       call readnc_slice_double_2d(maskfile,'e1u', e1u)
       call readnc_slice_double_2d(maskfile,'e1v', e1v)
-      call readnc_slice_double_2d(maskfile,'e1f', e1f)
+      !call readnc_slice_double_2d(maskfile,'e1f', e1f)
 
       call readnc_slice_double_2d(maskfile,'e2t', e2t)
       call readnc_slice_double_2d(maskfile,'e2u', e2u)
       call readnc_slice_double_2d(maskfile,'e2v', e2v)
-      call readnc_slice_double_2d(maskfile,'e2f', e2f)
+      !call readnc_slice_double_2d(maskfile,'e2f', e2f)
 
 
 
@@ -116,7 +116,7 @@
        enddo
       enddo
 
-      CALL readnc_slice_double_2d(maskfile,'ff', ff )
+!      CALL readnc_slice_double_2d(maskfile,'ff', ff )
 
 
 ! 4. depth and vertical scale factors
@@ -219,8 +219,7 @@
       !print *,"---",Rsizeglo
       
       CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
-      !print *,riv_idxtglo
-      !print *,Rsize,Rsizeglo
+
       Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
 
       if (Rsize.NE. 0) then

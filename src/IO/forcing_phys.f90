@@ -129,7 +129,7 @@
       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) :: datestring
-      LOGICAL :: B, IS_INGV_E3T
+      LOGICAL :: B, IS_FREE_SURFACE
       integer  :: jk,jj,ji, jstart
       ! LOCAL
       character(LEN=30) nomefile
@@ -147,25 +147,13 @@
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask * spongeVel
 
-      IS_INGV_E3T = .false. ! call EXISTVAR(nomefile,'e3u',IS_INGV_E3T)
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3u',buf,ingv_lon_shift)
-          e3udta(:,:,:,2) = buf!*umask
-      endif
-
-
+      IS_FREE_SURFACE = .true.
 
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
       vdta(:,:,:,2) = buf*vmask * spongeVel
       
-
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3v',buf,ingv_lon_shift)
-          e3vdta(:,:,:,2) = buf!*vmask
-      endif
-
 
 
 ! W *********************************************************
@@ -179,11 +167,6 @@
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
 
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3w',buf,ingv_lon_shift)
-          e3wdta(:,:,:,2) = buf!*tmask
-      endif
-
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
@@ -194,12 +177,8 @@
       sdta(:,:,:,2) = buf*tmask
 
 
-      if (IS_INGV_E3T) then
-          call readnc_slice_float(nomefile,'e3t',buf,ingv_lon_shift)
-          e3tdta(:,:,:,2) = buf!*tmask
-      endif
 
-    if (.not.IS_INGV_E3T) then
+    if (IS_FREE_SURFACE) then
          call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
          ssh = buf2*tmask(1,:,:)
 
@@ -268,7 +247,7 @@
 
 
 
-     endif ! IS_INGV_E3T
+     endif ! IS_FREE_SURFACE
 
 
 
@@ -284,6 +263,7 @@
 
            call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
       else
+          nomefile = 'FORCINGS/T'//datestring//'.nc'
           call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
       endif
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT

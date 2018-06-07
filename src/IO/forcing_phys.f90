@@ -129,7 +129,7 @@
       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) :: datestring
-      LOGICAL :: B, IS_FREE_SURFACE
+      LOGICAL :: B
       integer  :: jk,jj,ji, jstart
       ! LOCAL
       character(LEN=30) nomefile
@@ -147,7 +147,6 @@
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask * spongeVel
 
-      IS_FREE_SURFACE = .true.
 
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
@@ -319,22 +318,26 @@
          vn = Umzweigh* vdta(:,:,:,1) + zweigh*  vdta(:,:,:,2)
          wn = Umzweigh* wdta(:,:,:,1) + zweigh*  wdta(:,:,:,2)
 
-         e3u = Umzweigh* e3udta(:,:,:,1) + zweigh* e3udta(:,:,:,2)
-         e3v = Umzweigh* e3vdta(:,:,:,1) + zweigh* e3vdta(:,:,:,2)
-         e3w = Umzweigh* e3wdta(:,:,:,1) + zweigh* e3wdta(:,:,:,2)
-
          tn  = Umzweigh* tdta(:,:,:,1)   + zweigh* tdta(:,:,:,2)
          sn  = Umzweigh* sdta(:,:,:,1)   + zweigh* sdta(:,:,:,2)
          avt = Umzweigh* avtdta(:,:,:,1) + zweigh* avtdta(:,:,:,2)
 
-        if (forcing_phys_initialized) then
-           e3t_back = e3t
-           e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
-        else
-          e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
-          e3t_back = e3t
-          forcing_phys_initialized = .TRUE.
-        endif
+         IF (IS_FREE_SURFACE) then
+             e3u = Umzweigh* e3udta(:,:,:,1) + zweigh* e3udta(:,:,:,2)
+             e3v = Umzweigh* e3vdta(:,:,:,1) + zweigh* e3vdta(:,:,:,2)
+             e3w = Umzweigh* e3wdta(:,:,:,1) + zweigh* e3wdta(:,:,:,2)
+
+
+
+            if (forcing_phys_initialized) then
+               e3t_back = e3t
+               e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
+            else
+              e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
+              e3t_back = e3t
+              forcing_phys_initialized = .TRUE.
+            endif
+        ENDIF
 
         flx = Umzweigh * flxdta(:,:,:,1) + zweigh * flxdta(:,:,:,2)
 
@@ -346,9 +349,6 @@
                   freeze(uj,ji) = flx(uj,ji,jpice)
                   emp(uj,ji)    = flx(uj,ji,jpemp)
                   qsr(uj,ji)    = flx(uj,ji,jpqsr)
-!                 e3u(uj,ji,1)  = flx(uj,ji,8)
-!                 e3v(uj,ji,1)  = flx(uj,ji,9)
-!                 e3t(uj,ji,1)  = flx(uj,ji,10)
             END DO
        END DO
 
@@ -367,17 +367,19 @@
          IMPLICIT NONE
 
                     udta(:,:,:,1) =    udta(:,:,:,2)
-                  e3udta(:,:,:,1) =  e3udta(:,:,:,2)
                     vdta(:,:,:,1) =    vdta(:,:,:,2)
-                  e3vdta(:,:,:,1) =  e3vdta(:,:,:,2)
                     wdta(:,:,:,1) =    wdta(:,:,:,2)
-                  e3wdta(:,:,:,1) =  e3wdta(:,:,:,2)
                   avtdta(:,:,:,1) =  avtdta(:,:,:,2)
                     tdta(:,:,:,1) =    tdta(:,:,:,2)
                     sdta(:,:,:,1) =    sdta(:,:,:,2)
-                  e3tdta(:,:,:,1) =  e3tdta(:,:,:,2)
                   flxdta(:,:,:,1) =  flxdta(:,:,:,2)
 
+      IF (IS_FREE_SURFACE) then
+                  e3udta(:,:,:,1) =  e3udta(:,:,:,2)
+                  e3vdta(:,:,:,1) =  e3vdta(:,:,:,2)
+                  e3wdta(:,:,:,1) =  e3wdta(:,:,:,2)
+                  e3tdta(:,:,:,1) =  e3tdta(:,:,:,2)
+      ENDIF
 
       END SUBROUTINE swap_PHYS
 
@@ -458,6 +460,8 @@
       double precision hdivn(jpk,jpj,jpi)
 
       hdivn = 0.0
+
+      IF (IS_FREE_SURFACE) THEN
       DO jk = 1, jpkm1
 
 
@@ -484,6 +488,35 @@
 
 
       END DO
+      ELSE
+      DO jk = 1, jpkm1
+
+
+! 1. Horizontal fluxes
+
+        DO jj = 1, jpjm1
+        DO ji = 1, jpim1
+            zwu(jj,ji) = e2u(jj,ji) * e3u(jk,jj,ji) * udta(jk,jj,ji,2)
+            zwv(jj,ji) = e1v(jj,ji) * e3v(jk,jj,ji) * vdta(jk,jj,ji,2)
+        END DO
+        END DO
+
+
+! 2. horizontal divergence
+
+
+        DO jj = 2, jpjm1
+        DO ji = 2, jpim1
+            zbt = e1t(jj,ji) * e2t(jj,ji) * e3t(jk,jj,ji)
+            hdivn(jk,jj,ji) = (  zwu(jj,ji) - zwu(jj,ji-1  ) &
+                               + zwv(jj,ji) - zwv(jj-1  ,ji)  ) / zbt
+        END DO
+        END DO
+
+
+      END DO
+
+      ENDIF
 
 
 ! 3. Lateral boundary conditions on hdivn
@@ -503,6 +536,7 @@
 
 ! 2. Computation from the bottom
 ! ------------------------------
+IF (IS_FREE_SURFACE) THEN
      DO ji = 1, jpi
      DO jj = 1, jpj
      DO jk = jpkm1, 1, -1
@@ -512,7 +546,17 @@
      END DO
      END DO
      END DO
+ELSE
+     DO ji = 1, jpi
+     DO jj = 1, jpj
+     DO jk = jpkm1, 1, -1
 
+            wdta(jk,jj,ji,2) = wdta(jk+1,jj,ji,2) - e3t(jk,jj,ji)*hdivn(jk,jj,ji)
+
+     END DO
+     END DO
+     END DO
+ENDIF
 
 END SUBROUTINE COMPUTE_W
 

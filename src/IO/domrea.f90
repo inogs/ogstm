@@ -135,9 +135,14 @@
       CALL readnc_slice_double (maskfile,'e3v_0', e3v_0 )
       CALL readnc_slice_double (maskfile,'e3w_0', e3w_0 )
 
-      flxdta(:,:,8 ,2)  = e3u(1,:,:)
-      flxdta(:,:,9 ,2)  = e3v(1,:,:)
-      flxdta(:,:,10 ,2) = e3t(1,:,:)
+      IF (.not.IS_FREE_SURFACE) then
+         e3t = e3t_0
+         e3t_back = e3t
+         e3u = e3u_0
+         e3v = e3v_0
+         e3w = e3w_0
+      ENDIF
+
 
       h_column = 0.0
       DO ii= 1,jpi
@@ -290,7 +295,6 @@
       INTEGER FUNCTION COUNT_InSubDomain(sizeGLO,idxtGLOBAL)
           USE modul_param , ONLY: jpk,jpj,jpi
           USE myalloc     , ONLY: idxt
-          ! epascolo USE myalloc_mpp , ONLY: myrank
 
           IMPLICIT NONE
           INTEGER, INTENT(IN) :: sizeGLO
@@ -309,7 +313,9 @@
                   do jv =1, sizeGLO
                     if (junk.EQ.idxtGLOBAL(jv)) then
                        counter = counter + 1
+#IFDEF quick_init
                        EXIT 
+#ENDIF
                     endif
                   enddo
                 endif

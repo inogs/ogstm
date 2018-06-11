@@ -206,7 +206,7 @@
       if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
       if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
 
-      Gsize = COUNT_InSubDomain(Gsizeglo, gib_idxtglo)
+      Gsize = COUNT_InSubDomain_GIB(Gsizeglo, gib_idxtglo)
 
       write(*,*) 'domrea->Gsize   : ', Gsize, 'myrank=', myrank
 
@@ -313,9 +313,6 @@
                   do jv =1, sizeGLO
                     if (junk.EQ.idxtGLOBAL(jv)) then
                        counter = counter + 1
-#IFDEF quick_init
-                       EXIT 
-#ENDIF
                     endif
                   enddo
                 endif
@@ -328,6 +325,56 @@
       END FUNCTION COUNT_InSubDomain
 
 ! *************************************************************************
+
+! *****************************************************************
+!     FUNCTION COUNT_InSubDomain_GIB
+!     RETURNS the number of points of a specific boundary condition
+!     in the subdomain of the current processor
+
+!     It is identical to COUNT_InSubDomain, apart from the
+!     EXIT command, put in order to save time about GIB count at 1/24
+
+
+!     This EXIT command implies that we can apply an only BC to each cell.
+!     Without it we can have e.g. more that one river condition on each cell,
+!     useful in case of degratated model
+
+! *****************************************************************
+      INTEGER FUNCTION COUNT_InSubDomain_GIB(sizeGLO,idxtGLOBAL)
+          USE modul_param , ONLY: jpk,jpj,jpi
+          USE myalloc     , ONLY: idxt
+
+          IMPLICIT NONE
+          INTEGER, INTENT(IN) :: sizeGLO
+          INTEGER, INTENT(IN) :: idxtGLOBAL(sizeGLO)
+
+          ! local
+          INTEGER kk,jj,ii,jv
+          INTEGER counter,junk
+
+           counter = 0
+             do ii =1, jpi
+            do jj =1, jpj
+           do kk =1, jpk
+                if (tmask(kk,jj,ii).eq.1) then
+                  junk = idxt(kk,jj,ii)
+                  do jv =1, sizeGLO
+                    if (junk.EQ.idxtGLOBAL(jv)) then
+                       counter = counter + 1
+                       EXIT
+                    endif
+                  enddo
+                endif
+             enddo
+            enddo
+           enddo
+
+          COUNT_InSubDomain_GIB = counter
+
+      END FUNCTION COUNT_InSubDomain_GIB
+
+! *************************************************************************
+
       LOGICAL FUNCTION RIVRE_Indexing()
           IMPLICIT NONE
           ! local

@@ -344,7 +344,7 @@
       INTEGER(4), allocatable ::  idxt(:,:,:),idxt2glo(:,:,:,:)
 #    endif
 
-      LOGICAL :: IS_FREE_SURFACE = .true.
+      LOGICAL IS_FREE_SURFACE
       LOGICAL lrivers   ! activates rivers
       LOGICAL lbfm      ! activates bfm model
       LOGICAL latmosph  ! activates atmospheric deposition

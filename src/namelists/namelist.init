@@ -32,6 +32,7 @@
             atlantic_bfm  = .true.
             bottom_flux   = 1.
             Euphotic_lev  = 200.
+          is_free_surface = .true.
 /
 
 &General_IO

@@ -28,6 +28,7 @@
             lsnu          = .true.,
             lhtp          = .true.,
             vsed          = 3.0,
+            vsedO5c       = 30.0,
             photop        = .false.
             atlantic_bfm  = .true.
             bottom_flux   = 1.

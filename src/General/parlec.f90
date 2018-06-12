@@ -38,7 +38,7 @@
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,ladv, lhdf,lrivers,lsbc, lbfm, lzdf, lsnu, lhtp, latmosph, &
-      ahtrb0,trcrat,ahtrc0,vsed,photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
+      ahtrb0,trcrat,ahtrc0,vsed,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
       NAMELIST/General_IO/   nwritetrc, freq_ave_phys,save_bkp_group2, deflate_ave, deflate_level_ave,deflate_rst, deflate_level_rst, &
       isCheckLOG, read_W_from_file, internal_sponging,ingv_files_direct_reading,ingv_lon_shift
 
@@ -143,6 +143,7 @@
       trcrat      = 1.
       ahtrc0      = aht0
       vsed        = 3.0
+      vsedO5c     = 30.0
       photop      = .FALSE.
       atlantic_bfm= .FALSE.
       bottom_flux = 0.
@@ -176,6 +177,7 @@
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat
           WRITE(numout,*) ' horizontal eddy diffus. for passive tr            = ', ahtrc0
           WRITE(numout,*) ' detritus sedimentation speed   vsed               =', vsed/86400
+          WRITE(numout,*) ' calcite sedimentation speed    vsedO5c            =', vsedO5c/86400
           WRITE(numout,*) ' photoperiod scaling photop                        =', photop
           WRITE(numout,*) ' activation of bfm in atlantic buffer              =', atlantic_bfm
           WRITE(numout,*) ' bottom flux [0,1], 0 -> no flux, 1 -> total flux  =', bottom_flux
@@ -184,6 +186,10 @@
 
       IF (vsed .LT. 0.) THEN
           write (*,*) 'vsed must be greated than 0 instead it is:', vsed/86400
+          STOP
+      ENDIF
+      IF (vsedO5c .LT. 0.) THEN
+          write (*,*) 'vsedO5c must be greated than 0 instead it is:', vsedO5c/86400
           STOP
       ENDIF
 

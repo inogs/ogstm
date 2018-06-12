@@ -356,6 +356,7 @@
 
 #    if defined key_trc_bfm
       double precision vsed                        ! sedimentation speed (NAMELIST)
+      double precision vsedO5c                     ! sedimentation speed of calcite(NAMELIST)
       double precision bottom_flux                 ! (NAMELIST)
 
 !!     optical parameters

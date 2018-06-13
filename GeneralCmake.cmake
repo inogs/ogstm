@@ -39,7 +39,7 @@ if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})

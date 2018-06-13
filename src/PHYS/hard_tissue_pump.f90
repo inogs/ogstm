@@ -1,6 +1,6 @@
 
       SUBROUTINE hard_tissue_pump()
-#IFDEF BFMv2
+#ifdef BFMv2
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE hard_tissue_pump
@@ -120,5 +120,5 @@
 !$omp end parallel
       END DO ! jv
 
-#ENDIF #BFMv2
+#endif
       END SUBROUTINE hard_tissue_pump

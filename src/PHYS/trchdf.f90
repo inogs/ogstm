@@ -218,7 +218,8 @@
               DO jj = 1,jpj-1
            DO jk = 1,jpk
             !dir$ vector aligned
-             ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( trb(jk,jj,ji+1,jn ) - trb(jk,jj,ji,jn ) )*tmask(jk,jj,ji+1) * tmask(jk,jj,ji) *  hdfmask(jk,jj,ji)
+             ztu(jk,jj,ji) = zeeu(jk,jj,ji) * (trb(jk,jj,ji+1,jn) - trb(jk,jj,ji,jn)) * tmask(jk,jj,ji+1) * tmask(jk,jj,ji) * &
+                 hdfmask(jk,jj,ji)
 
              !ztv(jk,jj,ji)  = zeev(jk,jj,ji) * ( trb(jk,jj+1,ji,jn ) - trb(jk,jj,ji,jn ) )*tmask(jk,jj+1,ji) * tmask(jk,jj,ji)
 
@@ -234,7 +235,8 @@
              !dir$ vector aligned
              !ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( trb(jk,jj,ji+1,jn ) - trb(jk,jj,ji,jn ) )*tmask(jk,jj,ji+1) * tmask(jk,jj,ji)
 
-             ztv(jk,jj,ji)  = zeev(jk,jj,ji) * ( trb(jk,jj+1,ji,jn ) - trb(jk,jj,ji,jn ) )*tmask(jk,jj+1,ji) * tmask(jk,jj,ji) * hdfmask(jk,jj,ji)
+             ztv(jk,jj,ji) = zeev(jk,jj,ji) * (trb(jk,jj+1,ji,jn) - trb(jk,jj,ji,jn)) * tmask(jk,jj+1,ji) * tmask(jk,jj,ji) * &
+                 hdfmask(jk,jj,ji)
 
              END DO
             END DO
@@ -255,7 +257,8 @@
               DO jj = 2,jpj-1
            DO jk = 1,jpk
              !dir$ vector aligned
-             zlt(jk,jj,ji)  = trcrat * ahtt(jk) * (  ztu(jk,jj,ji)  - ztu(jk,jj,ji-1)  + ztv(jk,jj,ji)  - ztv(jk,jj-1,ji)   ) * zbtr(jk,jj,ji) *  hdfmask(jk,jj,ji)
+             zlt(jk,jj,ji) = trcrat * ahtt(jk) * (ztu(jk,jj,ji) - ztu(jk,jj,ji-1) + ztv(jk,jj,ji) - ztv(jk,jj-1,ji)) * &
+                 zbtr(jk,jj,ji) * hdfmask(jk,jj,ji)
  
 !! ... Multiply by the eddy diffusivity coefficient
              !zlt(jk,jj,ji)  = trcrat * ahtt(jk) * zlt(jk,jj,ji) 
@@ -291,7 +294,8 @@
               DO jj = 1,jpj-1
            DO jk = 1,jpk
              !dir$ vector aligned
-             ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( zlt(jk,jj,ji+1)  - zlt(jk,jj,ji)  ) * tmask(jk,jj,ji+1) * tmask(jk,jj,ji) * hdfmask(jk,jj,ji)
+             ztu(jk,jj,ji) = zeeu(jk,jj,ji) * (zlt(jk,jj,ji+1) - zlt(jk,jj,ji)) * tmask(jk,jj,ji+1) * tmask(jk,jj,ji) * &
+                 hdfmask(jk,jj,ji)
 
               END DO
             END DO
@@ -304,7 +308,8 @@
            DO jk = 1,jpk
               !dir$ vector aligned
       !       ztu(jk,jj,ji)  = zeeu(jk,jj,ji) * ( zlt(jk,jj,ji+1)  - zlt(jk,jj,ji)  ) * tmask(jk,jj,ji+1) * tmask(jk,jj,ji)
-             ztv(jk,jj,ji)  = zeev(jk,jj,ji) * ( zlt(jk,jj+1,ji)  - zlt(jk,jj,ji)  ) * tmask(jk,jj+1,ji) * tmask(jk,jj,ji) * hdfmask(jk,jj,ji)
+             ztv(jk,jj,ji) = zeev(jk,jj,ji) * (zlt(jk,jj+1,ji) - zlt(jk,jj,ji)) * tmask(jk,jj+1,ji) * tmask(jk,jj,ji) * &
+                 hdfmask(jk,jj,ji)
 
               END DO
             END DO
@@ -326,7 +331,8 @@
            DO jk = 1,jpk
 !!   ... horizontal diffusive trends
              !dir$ vector aligned
-             tra(jk,jj,ji,jn ) = tra(jk,jj,ji,jn ) + (  ztu(jk,jj,ji)  - ztu(jk,jj,ji-1)  + ztv(jk,jj,ji)  - ztv(jk,jj-1,ji)   ) * zbtr(jk,jj,ji)* hdfmask(jk,jj,ji)
+             tra(jk,jj,ji,jn) = tra(jk,jj,ji,jn) + (ztu(jk,jj,ji) - ztu(jk,jj,ji-1) + ztv(jk,jj,ji) - ztv(jk,jj-1,ji)) * &
+                 zbtr(jk,jj,ji) * hdfmask(jk,jj,ji)
 
 !!   ... add it to the general tracer trends
               !tra(jk,jj,ji,jn ) = tra(jk,jj,ji,jn ) + zta

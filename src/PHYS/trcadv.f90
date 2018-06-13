@@ -306,7 +306,8 @@
             DO jj = 1,jpj
             !dir$ vector aligned
             DO jk = 1,jpk
-             big_fact_zaa(jk,jj,ji) = ( abs(zaa(jk,jj,ji)) - zdt*zaa(jk,jj,ji)**2*inv_eu(jk,jj,ji) )!/(e1u(jj,ji)*e2u(jj,ji)*e3t(jk,jj,ji) ) )
+             big_fact_zaa(jk,jj,ji) = ( abs(zaa(jk,jj,ji)) - zdt*zaa(jk,jj,ji)**2*inv_eu(jk,jj,ji) )
+             !/(e1u(jj,ji)*e2u(jj,ji)*e3t(jk,jj,ji) ) )
             END DO
             END DO
             END DO
@@ -667,9 +668,12 @@
                !junki = zti(jk,jj,ji+1 )
                !junkj = zti(jk,jj+ 1,ji )
                !junkk = zti(jk-1,jj,ji )
-               zx(jk,jj,ji ) = advmask(jk,jj,ji)*(big_fact_zaa(jk,jj,ji)*(zti(jk,jj,ji+1 ) - zti(jk,jj,ji ))/(zti(jk,jj,ji ) + zti(jk,jj,ji+1 ) + rtrn)* rsc)
-               zy(jk,jj,ji ) = advmask(jk,jj,ji)*(big_fact_zbb(jk,jj,ji)*(zti(jk,jj+ 1,ji ) - zti(jk,jj,ji ))/(zti(jk,jj,ji ) + zti(jk,jj+ 1,ji ) + rtrn)* rsc)
-               zz(jk,jj,ji ) = advmask(jk,jj,ji)*(big_fact_zcc(jk,jj,ji)*(zti(jk,jj,ji ) -  zti(jk-1,jj,ji ))/(zti(jk,jj,ji ) +  zti(jk-1,jj,ji ) + rtrn)* rsc*( -1.))
+               zx(jk,jj,ji) = advmask(jk,jj,ji)*(big_fact_zaa(jk,jj,ji)*(zti(jk,jj,ji+1) - zti(jk,jj,ji))/(zti(jk,jj,ji) + &
+                   zti(jk,jj,ji+1) + rtrn)*rsc)
+               zy(jk,jj,ji) = advmask(jk,jj,ji)*(big_fact_zbb(jk,jj,ji)*(zti(jk,jj+1,ji) - zti(jk,jj,ji))/(zti(jk,jj,ji) + &
+                   zti(jk,jj+1,ji) + rtrn)*rsc)
+               zz(jk,jj,ji) = advmask(jk,jj,ji)*(big_fact_zcc(jk,jj,ji)*(zti(jk,jj,ji) - zti(jk-1,jj,ji))/(zti(jk,jj,ji) + &
+                   zti(jk-1,jj,ji) + rtrn)*rsc*(-1.))
 
            END DO
            END DO

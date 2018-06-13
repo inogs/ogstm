@@ -74,7 +74,7 @@ SUBROUTINE mynode
       else
         call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED, myrank, Var3DCommunicator, ierr)
       endif
-#endif !ExecDA
+#endif
 
 #else
       mpi_glcomm_size = 1

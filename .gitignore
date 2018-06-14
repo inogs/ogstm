@@ -5,3 +5,6 @@ CMakeLists.txt
 testcase/TEST0*/
 testcase/TEST_LIST.dat
 bfmv5/namelist.passivetrc_new
+.cproject
+.project
+.settings

@@ -141,7 +141,7 @@
               END DO
 !                Diatoms
               DO js =5,9
-                 DO  jk = 2,jpkm1                 
+                 DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
@@ -182,14 +182,14 @@
 
                  ze3tr = 1./e3t(jk,jj,ji)
 
-                 DO js =1,22
+                 DO js =1,nsed
                     ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
                          diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,1)
                     ENDIF
                  END DO
 
-                 DO js =1,22
+                 DO js =1,nsed
 !!!  d2s convert speed from (m/day) to  (m/s)
                     tra(jk,jj,ji,sed_idx(js)) = tra(jk,jj,ji,sed_idx(js)) + ztra(js,1)*d2s
                  END DO

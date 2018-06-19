@@ -5,8 +5,10 @@ module boundary_file_module
 
     type boundary_file
         char(len=24) :: file_name
-        double precision timestamp
+        char(len=17) :: timestamp
+        double precision time
     contains
+        procedure :: get_time
         final :: destructor
     end type boundary_file
 
@@ -21,8 +23,9 @@ contains
     type(boundary_file) function boundary_file_default
     end function boundary_file_default
 
-    subroutine method_name(self)
+    double precision function get_time(self)
         class(boundary_file), intent(in) :: self
+        get_time = self%time
     end subroutine
     
     subroutine destructor(self)

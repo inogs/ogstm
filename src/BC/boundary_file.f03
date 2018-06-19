@@ -5,9 +5,8 @@ module boundary_file_module
 
     type boundary_file
         char(len=24) :: file_name
-        double precision, dimension(:) :: timestamp
+        double precision timestamp
     contains
-        procedure :: 
         final :: destructor
     end type boundary_file
 

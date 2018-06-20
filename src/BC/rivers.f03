@@ -1,5 +1,5 @@
 module rivers_module
-    use boundary_class
+    use boundary_module
     implicit none
 
     private

@@ -1,14 +1,14 @@
-module rivers_module
-    use boundary_module
+module rivers_mod
+    use boundary_mod
     implicit none
 
     private
 
-    type, extends(boundary) :: rivers
+    type, extends(edge) :: rivers
         integer :: field_name
-        ! - decide wether to put here 'BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc' (or the proper list of files) or to handle from parent
     contains
         procedure :: method_name
+        ! - read indexes (call to readnc_int_1d(), domrea.f90:226)
         final :: destructor
     end type rivers
 
@@ -31,4 +31,4 @@ contains
         class(rivers), intent(in) :: self
     end subroutine
 
-end module rivers_module
+end module rivers_mod

@@ -7,15 +7,17 @@ module bc_mod
     private
 
     type bc
-        type(bc_data), pointer :: m_data
+        ! Eventually this should became an array of m_bc_data, one for each variable
+        type(bc_data), pointer :: m_bc_data => null()
     contains
-        ! procedure :: allocate_memory (domrea.f90:215-216,230:231): should be done in the constructor
+        procedure :: get_file_by_index
+        ! TO DO: add all the procedures that are common to all the derived classes
         final :: destructor
     end type bc
 
     interface bc
         module procedure bc_default
-        module procedure bc_yearly
+        module procedure bc_year
     end interface bc
 
     public :: bc
@@ -23,28 +25,43 @@ module bc_mod
 contains
 
     type(bc) function bc_default(files_namelist)
-        char(len=24), intent(in) :: files_namelist
-        allocate(m_data)
-        m_data = bc_data(files_namelsit)
+
+        character(len=18), intent(in) :: files_namelist
+
+        allocate(bc_default%m_bc_data)
+        bc_default%m_bc_data = bc_data(files_namelist)
+
     end function bc_default
 
     type(bc) function bc_year(files_namelist, start_time_string, end_time_string)
-        char(len=24), intent(in) :: files_namelist
-        char(len=17), intent(in) :: start_time_string
-        char(len=17), intent(in) :: end_time_string
-        allocate(m_data)
-        m_data = bc_data(files_namelsit, start_time_string, end_time_string)
+
+        character(len=23), intent(in) :: files_namelist
+        character(len=17), intent(in) :: start_time_string
+        character(len=17), intent(in) :: end_time_string
+
+        allocate(bc_year%m_bc_data)
+        bc_year%m_bc_data = bc_data(files_namelist, start_time_string, end_time_string)
+
     end function bc_year
 
-    ! subroutine allocate_memory(self)
-    !     class(bc), intent(in) :: self
-    !     write(*, *) 'WARNING: base class (bc) does not implement this method'
-    ! end subroutine
+    character(len=24) function get_file_by_index(self, idx)
+
+        class(bc), intent(in) :: self
+        integer, intent(in) :: idx
+
+        get_file_by_index = self%m_bc_data%get_file_by_index(idx)
+
+    end function get_file_by_index
 
     subroutine destructor(self)
-        class(bc), intent(in) :: self
-        nullify(self%m_data)
-        deallocate(self%m_data)
-    end subroutine
+
+        type(bc), intent(inout) :: self
+        
+        deallocate(self%m_bc_data)
+        write(*, *) 'INFO: m_bc_data deallocated'
+        nullify(self%m_bc_data)
+        write(*, *) 'INFO: m_bc_data deassociated'
+
+    end subroutine destructor
 
 end module bc_mod

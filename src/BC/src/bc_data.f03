@@ -79,7 +79,7 @@ contains
         integer, parameter :: file_unit = 100
         integer :: start_year, end_year, year, n_years
         character(len=4) :: year_string
-        integer :: offset = 0
+        integer :: offset
         integer :: i ! counter
 
         ! open file
@@ -102,6 +102,7 @@ contains
         bc_data_year%m_time_strings(:) = bc_data_year%m_files(:)(5:21)
 
         ! infer times
+        offset = 0
         do year = start_year, end_year
             write(year_string, '(i4)') year
             do i = 1, bc_data_year%m_n_files

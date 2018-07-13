@@ -8,3 +8,7 @@ bfmv5/namelist.passivetrc_new
 .cproject
 .project
 .settings
+*.o
+*.x
+*.mod
+*.out

@@ -46,8 +46,9 @@
 !!!----------------------------------------------------------------------
 !!! local declarations
 !!! ==================
-      logical :: sur,bot
+
 #ifdef BFMv2
+      logical :: sur,bot
       double precision,dimension(jptra) :: a,b
       double precision,dimension(4) :: c
       double precision,dimension(jptra_dia) :: d
@@ -59,6 +60,7 @@
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
       double precision,dimension(jpk,10) :: er
+      double precision,dimension(jptra_dia_2d) :: d2
 #endif
 
 
@@ -166,7 +168,6 @@
       bottom = mbathy(jj,ji)
 
 
-      sur=.True.
                           DO jtr=1, jtrmax
 
                              a(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
@@ -186,24 +187,31 @@
                           er(1:bottom,9)  = vatm(jj,ji) * surf_mask(1:bottom) ! wind speed (m/s)
                           er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
 
-                          call BFM1D_Input_EcologyDynamics(sur,bottom,a,jtrmax,er)
+                          call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 
                          call BFM1D_reset()
 
                          call EcologyDynamics()
 
-                          call BFM1D_Output_EcologyDynamics(b, c, d)
+                         call BFM1D_Output_EcologyDynamics(b, c, d, d2)
 
                           DO jtr=1, jtrmax
                              tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +b(jtr,1:bottom) ! trend
                           END DO
+
                           DO jtr=1,4
                              ogstm_sediPI(1:bottom,jj,ji,jtr) = c(jtr,1:bottom)      ! BFM output of sedimentation speed (m/d)
                           END DO
 
+
+                          DO jk = 1,bottom
                           DO jtr=1,jptra_dia
-                             tra_DIA(jtr, 1:bottom,jj,ji) = d(jtr,1:bottom) ! diagnostic
+                             tra_DIA(jtr, jk ,jj,ji) = d(jtr,jk) ! diagnostic
                           END DO
+                          ENDDO
+
+                         tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
+
                           ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
 
       END DO

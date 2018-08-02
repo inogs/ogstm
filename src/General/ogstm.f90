@@ -149,10 +149,13 @@ SUBROUTINE ogstm_initialize()
 
       call init_phys
 
-! Initialization of Biogeochemical recator with 0D approach
+#ifdef BFMv2
+! Initialization of Biogeochemical reactor with 0D approach
 
       call BFM0D_NO_BOXES(1,1,1,1,1)
-#ifndef BFMv2
+#else
+! Initialization of Biogeochemical reactor with 1D approach
+     call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
      call BFM0D_INIT_IO_CHANNELS()
 #endif
       call Initialize()

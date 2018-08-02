@@ -164,7 +164,7 @@
 !      wdta(:,:,:,2) = buf * tmask * spongeVel
 
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
-      avtdta(:,:,:,2) = buf*tmask
+      avtdta(:,:,:,2) = buf*tmask * spongeVel
 
 
 ! T *********************************************************
@@ -394,7 +394,7 @@
       double precision reduction_value, alpha
       double precision lon_limit
 
-      lon_limit = -7.5
+      lon_limit = -5.5
       alpha     = 1.0
       spongeT     = 1.0
       spongeVel   = 1.0

@@ -145,13 +145,13 @@
       nomefile = 'FORCINGS/U'//datestring//'.nc'
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
-      udta(:,:,:,2) = buf * umask * spongeVel
+      udta(:,:,:,2) = buf * umask
 
 
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
-      vdta(:,:,:,2) = buf*vmask * spongeVel
+      vdta(:,:,:,2) = buf*vmask
       
 
 
@@ -160,11 +160,8 @@
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
 
-!      call readnc_slice_float(nomefile,'vovecrtz',buf)
-!      wdta(:,:,:,2) = buf * tmask * spongeVel
-
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
-      avtdta(:,:,:,2) = buf*tmask * spongeVel
+      avtdta(:,:,:,2) = buf*tmask
 
 
 ! T *********************************************************
@@ -277,10 +274,15 @@
       if (read_W_from_file) then
           nomefile = 'FORCINGS/W'//datestring//'.nc'
           call readnc_slice_float(nomefile,'vovecrtz',buf,ingv_lon_shift)
-          wdta(:,:,:,2) = buf * tmask * spongeVel
       else
           CALL COMPUTE_W()               ! vertical velocity
       endif
+
+          udta(:,:,:,2) =   udta(:,:,:,2) * spongeVel
+          vdta(:,:,:,2) =   vdta(:,:,:,2) * spongeVel
+          wdta(:,:,:,2) =   wdta(:,:,:,2) * spongeVel
+        avtdta(:,:,:,2) = avtdta(:,:,:,2) * spongeVel
+
 
 
 

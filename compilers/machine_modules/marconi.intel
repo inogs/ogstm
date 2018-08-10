@@ -6,4 +6,4 @@ module load intelmpi/2017--binary
 module load petsc/3.7.2--intelmpi--2017--binary 
 module load pnetcdf/1.7--intelmpi--2017--binary
 module load netcdff
-module load cmake/3.5.2
+module load cmake/3.12.0

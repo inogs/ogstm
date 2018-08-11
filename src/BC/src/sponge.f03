@@ -1,7 +1,7 @@
 module sponge_mod
 
     use bc_mod
-    use aux_mod ! TO DO: to be removed
+    use bc_aux_mod
 
     implicit none
 

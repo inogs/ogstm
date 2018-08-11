@@ -30,7 +30,7 @@ SUT:
 tests: all
 
 $(EXE): testSuites.inc SUT
-	$(FC) -o $@ -I$(PFUNIT)/mod -I$(PFUNIT)/include -Itests $(PFUNIT)/include/driver.F90 $(TEST_DIR)/*$(OBJ_EXT) $(SRC_DIR)/*$(OBJ_EXT) -L$(PFUNIT)/lib -lpfunit $(FFLAGS) $(FPPFLAGS)
+	$(FC) -o $@ -I$(PFUNIT)/mod -I$(PFUNIT)/include -Itests $(PFUNIT)/include/driver.F90 $(TEST_DIR)/*$(OBJ_EXT) $(SRC_DIR)/*$(OBJ_EXT) -L$(PFUNIT)/lib -L $(NETCDFF_LIB) -lpfunit -lnetcdff $(FFLAGS) $(FPPFLAGS)
 
 clean: local-E0-clean
 

@@ -6,6 +6,8 @@ endif
 SRCS = $(wildcard *.pf)
 OBJS = $(SRCS:.pf=$(OBJ_EXT))
 
+# Uncomment and replace only for debugging
+# tests: $(OBJS) test_sponge.F90
 tests: $(OBJS)
 
 testSuites.inc: $(SRCS)

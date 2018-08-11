@@ -1,0 +1,53 @@
+module test_sponge_year_mod
+
+    use sponge_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_sponge_year
+
+@TestCase
+    type, extends(TestCase) :: test_sponge_year
+        type(sponge), pointer :: m_sponge => null()
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_sponge_year
+
+contains
+
+    subroutine setUp(this)
+        class(test_sponge_year), intent(inout) :: this
+        allocate(this%m_sponge)
+        this%m_sponge = sponge( &
+            "files_namelist_year.dat", &
+            "gib", &
+            7, &
+            "O2o N1p N3n N5s O3c O3h N6r", &
+            "20170101-00:00:00", &
+            "20190101-00:00:00" &
+        )
+    end subroutine setUp
+
+    subroutine tearDown(this)
+
+        class(test_sponge_year), intent(inout) :: this
+
+        ! explicitly call destructor before deallocating
+        call this%m_sponge%sponge_destructor()
+
+        deallocate(this%m_sponge)
+        write(*, *) 'INFO: m_sponge deallocated'
+        nullify(this%m_sponge)
+        write(*, *) 'INFO: m_sponge deassociated'
+
+    end subroutine tearDown
+
+@Test
+    subroutine test_global_size(this)
+        class(test_sponge_year), intent(inout) :: this
+        @assertEqual(6320, this%m_sponge%get_global_size())
+    end subroutine test_global_size
+
+end module test_sponge_year_mod

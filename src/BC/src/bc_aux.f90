@@ -146,9 +146,9 @@ module bc_aux_mod
 
         !     integer, intent(in) :: sizeGLO
         !     integer, intent(in) :: idxtGLOBAL(sizeGLO)
-            
+
         !     COUNT_InSubDomain_GIB = 1
-        
+
         ! end function COUNT_InSubDomain_GIB
 
 end module bc_aux_mod

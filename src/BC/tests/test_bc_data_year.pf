@@ -24,11 +24,17 @@ contains
     end subroutine setUp
 
     subroutine tearDown(this)
+
         class(test_bc_data_year), intent(inout) :: this
+
+        ! explicitly call destructor before deallocating
+        call this%m_bc_data%bc_data_destructor()
+
         deallocate(this%m_bc_data)
         write(*, *) 'INFO: m_bc_data deallocated'
         nullify(this%m_bc_data)
         write(*, *) 'INFO: m_bc_data deassociated'
+
     end subroutine tearDown
 
 @Test

@@ -19,7 +19,7 @@ module bc_data_mod
         double precision, allocatable, dimension(:) :: m_times
     contains
         procedure :: get_file_by_index
-        final :: destructor
+        procedure :: bc_data_destructor
     end type bc_data
 
     interface bc_data
@@ -137,9 +137,9 @@ contains
 
     end function get_file_by_index
 
-    subroutine destructor(self)
+    subroutine bc_data_destructor(self)
 
-        type(bc_data), intent(inout) :: self
+        class(bc_data), intent(inout) :: self
 
         if (allocated(self%m_files)) then
             deallocate(self%m_files)
@@ -156,6 +156,6 @@ contains
             write(*, *) 'INFO: m_times deallocated'
         endif
 
-    end subroutine destructor
+    end subroutine bc_data_destructor
 
 end module bc_data_mod

@@ -12,7 +12,7 @@ module bc_mod
     contains
         procedure :: get_file_by_index
         ! TO DO: add all the procedures that are common to all the derived classes
-        final :: destructor
+        procedure :: bc_destructor
     end type bc
 
     interface bc
@@ -53,15 +53,18 @@ contains
 
     end function get_file_by_index
 
-    subroutine destructor(self)
+    subroutine bc_destructor(self)
 
-        type(bc), intent(inout) :: self
+        class(bc), intent(inout) :: self
+
+        ! First call bc_data destructor
+        call self%m_bc_data%bc_data_destructor()
         
         deallocate(self%m_bc_data)
         write(*, *) 'INFO: m_bc_data deallocated'
         nullify(self%m_bc_data)
         write(*, *) 'INFO: m_bc_data deassociated'
 
-    end subroutine destructor
+    end subroutine bc_destructor
 
 end module bc_mod

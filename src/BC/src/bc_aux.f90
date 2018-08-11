@@ -1,4 +1,4 @@
-module aux_mod
+module bc_aux_mod
 
     implicit none
 
@@ -103,52 +103,52 @@ module aux_mod
         ! The only reason why it is copied here is that the definition is not inside a module.
         ! Remember to declare, allocate and initialize tmask(:,:,:) inside testing subroutines:
         ! integer(kind=1), allocatable, dimension(:,:,:) :: tmask
-        ! integer function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
+        integer function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
 
-        !     use modul_param, only: jpk, jpj, jpi
-        !     use myalloc, only: idxt
-            
-        !     implicit none
-            
-        !     integer, intent(in) :: sizeGLO
-        !     integer, intent(in) :: idxtGLOBAL(sizeGLO)
-            
-        !     ! local
-        !     integer kk, jj, ii, jv
-        !     integer counter, junk
-            
-        !     counter = 0
-        !     do ii = 1, jpi
-        !         do jj = 1, jpj
-        !             do kk = 1, jpk
-        !                 if (tmask(kk, jj, ii) .eq. 1) then
-        !                     junk = idxt(kk, jj, ii)
-        !                     do jv = 1, sizeGLO
-        !                         if (junk .eq. idxtGLOBAL(jv)) then
-        !                             counter = counter + 1
-        !                             exit
-        !                         endif
-        !                     enddo
-        !                 endif
-        !             enddo
-        !         enddo
-        !     enddo
-            
-        !     COUNT_InSubDomain_GIB = counter
-        
-        ! end function COUNT_InSubDomain_GIB
+            use modul_param, only: jpk, jpj, jpi
+            use myalloc, only: idxt, tmask ! added tmask
 
-        ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
-        ! but just a replacement in order to perform serial unit testing on sponge class.
-        ! The actual version of the function is the commented one above.
-        ! TO DO: this should be avoided and full mpi tests enabled.
-        integer(4) function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
+            implicit none
 
             integer, intent(in) :: sizeGLO
             integer, intent(in) :: idxtGLOBAL(sizeGLO)
-            
-            COUNT_InSubDomain_GIB = 1
-        
+
+            ! local
+            integer kk, jj, ii, jv
+            integer counter, junk
+
+            counter = 0
+            do ii = 1, jpi
+                do jj = 1, jpj
+                    do kk = 1, jpk
+                        if (tmask(kk, jj, ii) .eq. 1) then
+                            junk = idxt(kk, jj, ii)
+                            do jv = 1, sizeGLO
+                                if (junk .eq. idxtGLOBAL(jv)) then
+                                    counter = counter + 1
+                                    exit
+                                endif
+                            enddo
+                        endif
+                    enddo
+                enddo
+            enddo
+
+            COUNT_InSubDomain_GIB = counter
+
         end function COUNT_InSubDomain_GIB
 
-end module aux_mod
+        ! ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
+        ! ! but just a replacement in order to perform serial unit testing on sponge class.
+        ! ! The actual version of the function is the commented one above.
+        ! ! TO DO: this should be avoided and full mpi tests enabled.
+        ! integer(4) function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
+
+        !     integer, intent(in) :: sizeGLO
+        !     integer, intent(in) :: idxtGLOBAL(sizeGLO)
+            
+        !     COUNT_InSubDomain_GIB = 1
+        
+        ! end function COUNT_InSubDomain_GIB
+
+end module bc_aux_mod

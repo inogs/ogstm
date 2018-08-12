@@ -98,6 +98,38 @@ module bc_aux_mod
 
         end subroutine readnc_int_1d
 
+        ! This is exactly the definition of 'readnc_double_1d' which is provided in 'IOnc.f90'.
+        ! The only reason why it is copied here is that the definition is not inside a module.
+        subroutine readnc_double_1d(fileNetCDF, varname, dim1, ARRAY)
+            
+            use netcdf
+            ! use myalloc ! included in original version, but useless
+            
+            implicit none
+            
+            character, intent(in) :: fileNetCDF*(*), varname*(*)
+            integer, intent(in) :: dim1
+            double precision, intent(inout), dimension(dim1) :: ARRAY
+            
+            integer ncid, stat, VARid
+            integer counter
+            
+            counter=0
+            
+            stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_inq_varid(ncid, varname, VARid)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_get_var(ncid, VARid, ARRAY)
+            
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_close(ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+        
+        end subroutine readnc_double_1d
+
         ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
         ! but just a replacement in order to perform serial unit testing on sponge class.
         ! TO DO: this should be avoided and full mpi tests enabled.

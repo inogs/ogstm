@@ -13,16 +13,17 @@ module sponge_mod
         ! no more needed, bounmask should belong to nudging decorator
         ! character(len=15) :: m_bounmask ! 15 chars in order to handle names like 'bounmask_GIB.nc'
         integer(4) :: m_global_size ! BC_mem.f90:20
-        integer(4), allocatable, dimension(:) :: m_global_idxt ! BC_mem.f90:26
+        integer(4), allocatable, dimension(:) :: m_global_idxt ! BC_mem.f90:26; TO DO: find better name
         integer(4) :: m_size ! BC_mem.f90:21
         integer :: m_n_vars ! BC_mem.f90:94
         character(len=3), allocatable, dimension(:) :: m_var_names ! domrea.F90:161-167
         ! no more needed, bounmask should belong to nudging decorator
         ! character(len=5), allocatable, dimension(:) :: m_var_names_bounmask ! domrea.F90:172
-        character(len=12), allocatable, dimension(:) :: m_var_names_idxt ! domrea.F90:204
+        character(len=12), allocatable, dimension(:) :: m_var_names_idxt ! domrea.F90:204; TO DO: find better name
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
-        integer(4), allocatable, dimension(:, :) :: m_ridxt
-        double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc
+        integer(4), allocatable, dimension(:, :) :: m_ridxt ! TO DO: find better name
+        double precision, allocatable, dimension(:) :: m_aux
+        double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name
         double precision, allocatable, dimension(:, :) :: m_values
 
     contains
@@ -39,6 +40,9 @@ module sponge_mod
 
         ! getters
         procedure :: get_global_size
+
+        ! base class methods
+        procedure :: load
 
         ! destructor
         procedure :: sponge_destructor
@@ -64,6 +68,7 @@ contains
     subroutine set_global_idxt(self)
         class(sponge), intent(inout) :: self
         allocate(self%m_global_idxt(self%m_global_size)) ! BC_mem.f90:111
+        self%m_global_idxt(:) = huge(self%m_global_idxt(1))
         call readnc_int_1d(self%get_file_by_index(1), self%m_var_names_idxt(1), self%m_global_size, self%m_global_idxt)
     end subroutine set_global_idxt
 
@@ -117,6 +122,8 @@ contains
         self%m_ridxt(:, :) = huge(self%m_ridxt(1, 1)) ! domrea.f90:216
         call self%reindex() ! domrea.f90:218
 
+        allocate(self%m_aux(self%m_global_size))
+        self%m_aux(:) = huge(self%m_aux(1))
         allocate(self%m_values_dtatrc(self%m_size, 2, self%m_n_vars)) ! domrea.f90:216
         self%m_values_dtatrc(:, :, :) = huge(self%m_values_dtatrc(1, 1, 1)) ! domrea.f90:216
         allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:216
@@ -175,6 +182,21 @@ contains
         get_global_size = self%m_global_size
     end function get_global_size
 
+    subroutine load(self, idx)
+
+        class(sponge), intent(inout) :: self
+        integer, intent(in) :: idx
+        integer :: i, j
+
+        do i = 1, self%m_n_vars
+            call readnc_double_1d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_global_size, self%m_aux)
+            do j = 1, self%m_size
+                self%m_values_dtatrc(j, 2, i) = self%m_aux(self%m_ridxt(1, j))
+            enddo
+        enddo
+
+    end subroutine load
+
     subroutine sponge_destructor(self)
 
         class(sponge), intent(inout) :: self
@@ -202,6 +224,26 @@ contains
         if (allocated(self%m_var_names_data)) then
             deallocate(self%m_var_names_data)
             write(*, *) 'INFO: m_var_names_data deallocated'
+        endif
+
+        if (allocated(self%m_ridxt)) then
+            deallocate(self%m_ridxt)
+            write(*, *) 'INFO: m_ridxt deallocated'
+        endif
+
+        if (allocated(self%m_aux)) then
+            deallocate(self%m_aux)
+            write(*, *) 'INFO: m_aux deallocated'
+        endif
+
+        if (allocated(self%m_values_dtatrc)) then
+            deallocate(self%m_values_dtatrc)
+            write(*, *) 'INFO: m_values_dtatrc deallocated'
+        endif
+
+        if (allocated(self%m_values)) then
+            deallocate(self%m_values)
+            write(*, *) 'INFO: m_values deallocated'
         endif
 
         ! parent class destructor

@@ -11,7 +11,9 @@ module bc_mod
         type(bc_data), pointer :: m_bc_data => null()
     contains
         procedure :: get_file_by_index
-        ! TO DO: add all the procedures that are common to all the derived classes
+        procedure :: load
+        ! procedure :: swap
+        ! procedure :: actualize
         procedure :: bc_destructor
     end type bc
 
@@ -52,6 +54,12 @@ contains
         get_file_by_index = self%m_bc_data%get_file_by_index(idx)
 
     end function get_file_by_index
+
+    subroutine load(self, idx)
+        class(bc), intent(inout) :: self
+        integer, intent(in) :: idx
+        write(*, *) 'WARN: base class does not implement this method'
+    end subroutine load
 
     subroutine bc_destructor(self)
 

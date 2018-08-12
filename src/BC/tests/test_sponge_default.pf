@@ -55,4 +55,12 @@ contains
         @assertEqual(1, this%m_sponge%m_ridxt(1, 1))
     end subroutine test_reindex
 
+@Test
+    subroutine test_load(this)
+        class(test_sponge_default), intent(inout) :: this
+        call this%m_sponge%load(1)
+        ! TO DO: this should be done through a getter. But why is 'm_ridxt' not private?
+        @assertEqual(231.63246154785156, this%m_sponge%m_values_dtatrc(1, 2, 1))
+    end subroutine test_load
+
 end module test_sponge_default_mod

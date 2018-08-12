@@ -99,7 +99,9 @@ module bc_aux_mod
         end subroutine readnc_int_1d
 
         ! This is exactly the definition of 'COUNT_InSubDomain_GIB' which is provided in 'domrea.f90'.
-        ! The only reason why it is copied here is that the definition is not inside a module.
+        ! The only 2 reasons why it is copied here are:
+        ! - the definition is not inside a module;
+        ! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
         integer function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
 
             use modul_param, only: jpk, jpj, jpi
@@ -135,17 +137,47 @@ module bc_aux_mod
 
         end function COUNT_InSubDomain_GIB
 
-        ! ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
-        ! ! but just a replacement in order to perform serial unit testing on sponge class.
-        ! ! The actual version of the function is the commented one above.
-        ! ! TO DO: this should be avoided and full mpi tests enabled.
-        ! integer(4) function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
+        ! This is exactly the definition of 'GIBRE_Indexing' which is provided in 'domrea.f90'.
+        ! The only 2 reasons why it is copied here are:
+        ! - the definition is not inside a module;
+        ! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
+        ! Notes:
+        ! - it has been necessary to pass class members as function arguments;
+        ! - function has been mapped into subroutine, since return value is not used.
+        subroutine GIBRE_Indexing(Gsizeglo, gib_idxtglo, Gsize, gib_ridxt)
 
-        !     integer, intent(in) :: sizeGLO
-        !     integer, intent(in) :: idxtGLOBAL(sizeGLO)
+            use modul_param, only: jpk, jpj, jpi
+            use myalloc, only: idxt
 
-        !     COUNT_InSubDomain_GIB = 1
+            implicit none
 
-        ! end function COUNT_InSubDomain_GIB
+            integer(4), intent(in) :: Gsizeglo
+            integer(4), intent(in) :: gib_idxtglo(Gsizeglo)
+            integer(4), intent(in) :: Gsize
+            integer(4), intent(out) :: gib_ridxt(4, Gsize)
+
+            ! local
+            integer kk, jj, ii, jv
+            integer counter, junk
+            
+            counter=0
+            do ii = 1, jpi
+                do jj = 1, jpj
+                    do kk = 1, jpk
+                        junk = idxt(kk, jj, ii)
+                        do jv = 1, Gsizeglo
+                            if (junk .eq. gib_idxtglo(jv)) then
+                                counter = counter + 1
+                                gib_ridxt(1, counter) = jv
+                                gib_ridxt(2, counter) = kk
+                                gib_ridxt(3, counter) = jj
+                                gib_ridxt(4, counter) = ii
+                            endif
+                        enddo
+                    enddo
+                enddo
+            enddo
+            
+        end subroutine GIBRE_Indexing
 
 end module bc_aux_mod

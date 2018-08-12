@@ -21,8 +21,9 @@ module sponge_mod
         ! character(len=5), allocatable, dimension(:) :: m_var_names_bounmask ! domrea.F90:172
         character(len=12), allocatable, dimension(:) :: m_var_names_idxt ! domrea.F90:204
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
-
-        ! TO DO: other members are missing
+        integer(4), allocatable, dimension(:, :) :: m_ridxt
+        double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc
+        double precision, allocatable, dimension(:, :) :: m_values
 
     contains
 
@@ -30,8 +31,7 @@ module sponge_mod
         procedure :: set_global_size ! BC_mem.f90:70
         procedure :: set_global_idxt ! (call to readnc_int_1d(), domrea.f90:204-207,226)
         procedure :: set_size ! (domrea.f90:209-211,228)
-        ! temporarily switched off, since tests require global variables
-        ! procedure :: reindex ! (domrea.f90:218,233, which should be moved away with the 3D index)
+        procedure :: reindex ! (domrea.f90:218,233, which should be moved away with the 3D index)
         ! procedures to read file 'bounmask.nc' (domrea.F90:169-180): no more needed (see above)
 
         ! delegated constructor
@@ -73,11 +73,11 @@ contains
         self%m_size = COUNT_InSubDomain_GIB(self%m_global_size, self%m_global_idxt)
     end subroutine set_size
 
-    ! temporarily switched off, since tests require global variables
-    ! subroutine reindex(self)
-    !     class(sponge), intent(in) :: self
-    !     ! ...
-    ! end subroutine reindex
+    ! just a wrapper of 'GIBRE_Indexing' (domrea.f90:218)
+    subroutine reindex(self)
+        class(sponge), intent(inout) :: self
+        call GIBRE_Indexing(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
+    end subroutine reindex
     
     ! subroutine init_members(self, bc_name, bounmask, n_vars, vars)
     ! 'bc_name' is used just to avoid system used symbol 'name'
@@ -113,7 +113,14 @@ contains
         call self%set_global_idxt()
         call self%set_size()
 
-        ! TO DO: other members
+        allocate(self%m_ridxt(4, self%m_size)) ! domrea.f90:216
+        self%m_ridxt(:, :) = huge(self%m_ridxt(1, 1)) ! domrea.f90:216
+        call self%reindex() ! domrea.f90:218
+
+        allocate(self%m_values_dtatrc(self%m_size, 2, self%m_n_vars)) ! domrea.f90:216
+        self%m_values_dtatrc(:, :, :) = huge(self%m_values_dtatrc(1, 1, 1)) ! domrea.f90:216
+        allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:216
+        self%m_values(:, :) = huge(self%m_values(1, 1)) ! domrea.f90:216
 
     end subroutine init_members
 

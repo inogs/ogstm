@@ -100,7 +100,6 @@ module bc_aux_mod
 
         ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
         ! but just a replacement in order to perform serial unit testing on sponge class.
-        ! The actual version of the function is the commented one above.
         ! TO DO: this should be avoided and full mpi tests enabled.
         integer(4) function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
 
@@ -110,5 +109,19 @@ module bc_aux_mod
             COUNT_InSubDomain_GIB = 1
 
         end function COUNT_InSubDomain_GIB
+
+        ! WARNING: this is not the actual 'GIBRE_Indexing' subroutine,
+        ! but just a replacement in order to perform serial unit testing on sponge class.
+        ! TO DO: this should be avoided and full mpi tests enabled.
+        subroutine GIBRE_Indexing(Gsizeglo, gib_idxtglo, Gsize, gib_ridxt)
+
+            integer(4), intent(in) :: Gsizeglo
+            integer(4), intent(in) :: gib_idxtglo(Gsizeglo)
+            integer(4), intent(in) :: Gsize
+            integer(4), intent(out) :: gib_ridxt(4, Gsize)
+
+            gib_ridxt(:, :) = 1
+
+        end subroutine GIBRE_Indexing
 
 end module bc_aux_mod

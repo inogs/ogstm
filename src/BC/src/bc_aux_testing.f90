@@ -98,54 +98,17 @@ module bc_aux_mod
 
         end subroutine readnc_int_1d
 
-        ! This is exactly the definition of 'COUNT_InSubDomain_GIB' which is provided in 'domrea.f90'.
-        ! The only reason why it is copied here is that the definition is not inside a module.
-        integer function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
-
-            use modul_param, only: jpk, jpj, jpi
-            use myalloc, only: idxt, tmask ! added tmask
-
-            implicit none
+        ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
+        ! but just a replacement in order to perform serial unit testing on sponge class.
+        ! The actual version of the function is the commented one above.
+        ! TO DO: this should be avoided and full mpi tests enabled.
+        integer(4) function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
 
             integer, intent(in) :: sizeGLO
             integer, intent(in) :: idxtGLOBAL(sizeGLO)
 
-            ! local
-            integer kk, jj, ii, jv
-            integer counter, junk
-
-            counter = 0
-            do ii = 1, jpi
-                do jj = 1, jpj
-                    do kk = 1, jpk
-                        if (tmask(kk, jj, ii) .eq. 1) then
-                            junk = idxt(kk, jj, ii)
-                            do jv = 1, sizeGLO
-                                if (junk .eq. idxtGLOBAL(jv)) then
-                                    counter = counter + 1
-                                    exit
-                                endif
-                            enddo
-                        endif
-                    enddo
-                enddo
-            enddo
-
-            COUNT_InSubDomain_GIB = counter
+            COUNT_InSubDomain_GIB = 1
 
         end function COUNT_InSubDomain_GIB
-
-        ! ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
-        ! ! but just a replacement in order to perform serial unit testing on sponge class.
-        ! ! The actual version of the function is the commented one above.
-        ! ! TO DO: this should be avoided and full mpi tests enabled.
-        ! integer(4) function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
-
-        !     integer, intent(in) :: sizeGLO
-        !     integer, intent(in) :: idxtGLOBAL(sizeGLO)
-
-        !     COUNT_InSubDomain_GIB = 1
-
-        ! end function COUNT_InSubDomain_GIB
 
 end module bc_aux_mod

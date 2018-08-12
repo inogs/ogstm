@@ -17,8 +17,12 @@ module bc_data_mod
         ! time list related members
         integer :: m_n_times
         double precision, allocatable, dimension(:) :: m_times
+        ! interpolation variables
+        integer :: m_prev_idx
+        integer :: m_succ_idx
     contains
         procedure :: get_file_by_index
+        procedure :: get_interpolation_factor
         procedure :: bc_data_destructor
     end type bc_data
 
@@ -60,6 +64,10 @@ contains
             bc_data_default%m_time_strings(i) = bc_data_default%m_files(i)(5:21)
             bc_data_default%m_times(i) = datestring2sec(bc_data_default%m_time_strings(i))
         enddo
+
+        ! initialize interpolation variables
+        bc_data_default%m_prev_idx = 1
+        bc_data_default%m_succ_idx = bc_data_default%m_prev_idx + 1
 
         ! close file
         close(unit=file_unit)
@@ -115,6 +123,10 @@ contains
         ! reset 'bc_data_year%m_time_strings(:)(1:4)' to neutral string
         bc_data_year%m_time_strings(:)(1:4) = 'yyyy'
 
+        ! initialize interpolation variables
+        bc_data_year%m_prev_idx = 1
+        bc_data_year%m_succ_idx = bc_data_year%m_prev_idx + 1
+
         ! close file
         close(unit=file_unit)
 
@@ -136,6 +148,31 @@ contains
         endif
 
     end function get_file_by_index
+
+    ! compute and return linear interpolation factor,
+    ! keeping track of the current time interval (prev and succ times)
+    double precision function get_interpolation_factor(self, current_time_string)
+
+        class(bc_data), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        double precision :: current_time, prev_time, succ_time
+        integer :: i
+
+        current_time = datestring2sec(current_time_string)
+
+        ! TO DO: provide some bound checks
+        i = 1
+        do while(self%m_times(i+1) < current_time)
+            i = i + 1
+        enddo
+        self%m_prev_idx = i
+        prev_time = self%m_times(self%m_prev_idx)
+        self%m_succ_idx = self%m_prev_idx + 1
+        succ_time = self%m_times(self%m_succ_idx)
+
+        get_interpolation_factor = (current_time - prev_time) / (succ_time - prev_time)
+
+    end function get_interpolation_factor
 
     subroutine bc_data_destructor(self)
 

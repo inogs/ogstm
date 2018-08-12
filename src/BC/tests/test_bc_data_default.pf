@@ -46,4 +46,10 @@ contains
         @assertEqual("GIB_20171115-12:00:00.nc", this%m_bc_data%get_file_by_index(4))
     end subroutine test_file_names
 
+@Test
+    subroutine test_get_interpolation_factor(this)
+        class(test_bc_data_default), intent(inout) :: this
+        @assertEqual(1.0, this%m_bc_data%get_interpolation_factor("20170515-12:00:00"))
+    end subroutine test_get_interpolation_factor
+
 end module test_bc_data_default_mod

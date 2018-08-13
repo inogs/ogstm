@@ -36,14 +36,16 @@ module bc_data_mod
 
 contains
 
+
+
     ! TO DO: input file should be read with namelist syntax.
-    ! TO DO: number of characters of 'files_namelist' is hard-coded (18)
+    ! TO DO: number of characters of 'files_namelist' is hard-coded (22)
     ! First entry in 'files_namelist' must be the number of files in the list.
     ! Default constructor infers times from file names:
     ! each file(5:21) must correspond to the fully qualified timestamp ('19700101-00:00:00').
     type(bc_data) function bc_data_default(files_namelist)
 
-        character(len=18), intent(in) :: files_namelist
+        character(len=22), intent(in) :: files_namelist
         integer, parameter :: file_unit = 100
         integer :: i ! counter
 
@@ -74,14 +76,16 @@ contains
 
     end function bc_data_default
 
+
+
     ! TO DO: input files should be read with namelist syntax.
-    ! TO DO: number of characters of 'files_namelist_year' is hard-coded (23)
+    ! TO DO: number of characters of 'files_namelist' is hard-coded (27)
     ! First entry in 'files_namelist' must be the number of files in the list.
     ! Year constructor infers times from file names and simulation duration:
     ! each file(9:21) must correspond to the fully qualified yearly timestamp ('0101-00:00:00').
     type(bc_data) function bc_data_year(files_namelist, start_time_string, end_time_string)
 
-        character(len=23), intent(in) :: files_namelist
+        character(len=27), intent(in) :: files_namelist
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
         integer, parameter :: file_unit = 100
@@ -132,6 +136,8 @@ contains
 
     end function bc_data_year
 
+
+
     ! This is supposed to match the given time to the right file, also with yearly data
     character(len=24) function get_file_by_index(self, idx)
 
@@ -148,6 +154,8 @@ contains
         endif
 
     end function get_file_by_index
+
+
 
     ! compute and return linear interpolation factor,
     ! keeping track of the current time interval (prev and succ times)
@@ -174,6 +182,8 @@ contains
 
     end function get_interpolation_factor
 
+
+
     subroutine bc_data_destructor(self)
 
         class(bc_data), intent(inout) :: self
@@ -194,5 +204,7 @@ contains
         endif
 
     end subroutine bc_data_destructor
+
+
 
 end module bc_data_mod

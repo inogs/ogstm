@@ -26,18 +26,22 @@ module bc_mod
 
 contains
 
+
+
     type(bc) function bc_default(files_namelist)
 
-        character(len=18), intent(in) :: files_namelist
+        character(len=22), intent(in) :: files_namelist
 
         allocate(bc_default%m_bc_data)
         bc_default%m_bc_data = bc_data(files_namelist)
 
     end function bc_default
 
+
+
     type(bc) function bc_year(files_namelist, start_time_string, end_time_string)
 
-        character(len=23), intent(in) :: files_namelist
+        character(len=27), intent(in) :: files_namelist
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
 
@@ -45,6 +49,8 @@ contains
         bc_year%m_bc_data = bc_data(files_namelist, start_time_string, end_time_string)
 
     end function bc_year
+
+
 
     character(len=24) function get_file_by_index(self, idx)
 
@@ -55,22 +61,30 @@ contains
 
     end function get_file_by_index
 
+
+
     subroutine load(self, idx)
         class(bc), intent(inout) :: self
         integer, intent(in) :: idx
         write(*, *) 'WARN: base class does not implement this method'
     end subroutine load
 
+
+
     subroutine swap(self)
         class(bc), intent(inout) :: self
         write(*, *) 'WARN: base class does not implement this method'
     end subroutine swap
 
-    subroutine actualize(weight)
+
+
+    subroutine actualize(self, weight)
         class(bc), intent(inout) :: self
         double precision, intent(in) :: weight
         write(*, *) 'WARN: base class does not implement this method'
     end subroutine actualize
+
+
 
     subroutine bc_destructor(self)
 
@@ -85,5 +99,7 @@ contains
         write(*, *) 'INFO: m_bc_data deassociated'
 
     end subroutine bc_destructor
+
+
 
 end module bc_mod

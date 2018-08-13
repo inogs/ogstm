@@ -21,7 +21,7 @@ contains
         class(test_sponge_default), intent(inout) :: this
         allocate(this%m_sponge)
         this%m_sponge = sponge( &
-            "files_namelist.dat", &
+            "files_namelist_gib.dat", &
             "gib", &
             7, &
             "O2o N1p N3n N5s O3c O3h N6r" &

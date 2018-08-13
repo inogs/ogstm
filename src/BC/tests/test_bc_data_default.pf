@@ -20,7 +20,7 @@ contains
     subroutine setUp(this)
         class(test_bc_data_default), intent(inout) :: this
         allocate(this%m_bc_data)
-        this%m_bc_data = bc_data("files_namelist.dat")
+        this%m_bc_data = bc_data("files_namelist_gib.dat")
     end subroutine setUp
 
     subroutine tearDown(this)

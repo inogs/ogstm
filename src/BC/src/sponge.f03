@@ -43,6 +43,8 @@ module sponge_mod
 
         ! base class methods
         procedure :: load
+        procedure :: swap
+        procedure :: actualize
 
         ! destructor
         procedure :: sponge_destructor
@@ -196,6 +198,33 @@ contains
         enddo
 
     end subroutine load
+
+    subroutine swap(self)
+
+        class(sponge), intent(inout) :: self
+        integer :: i, j
+
+        do i = 1, self%m_n_vars
+            do j = 1, self%m_size
+                self%m_values_dtatrc(j, 1, i) = self%m_values_dtatrc(j, 2, i)
+            enddo
+        enddo
+
+    end subroutine swap
+
+    subroutine actualize(self, weight)
+
+        class(sponge), intent(inout) :: self
+        double precision, intent(in) :: weight
+        integer :: i, j
+
+        do i = 1, self%m_n_vars
+            do j = 1, self%m_size
+                self%m_values(j, i) = (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
+            enddo
+        enddo
+
+    end subroutine actualize
 
     subroutine sponge_destructor(self)
 

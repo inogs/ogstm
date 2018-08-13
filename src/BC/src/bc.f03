@@ -12,8 +12,8 @@ module bc_mod
     contains
         procedure :: get_file_by_index
         procedure :: load
-        ! procedure :: swap
-        ! procedure :: actualize
+        procedure :: swap
+        procedure :: actualize
         procedure :: bc_destructor
     end type bc
 
@@ -60,6 +60,17 @@ contains
         integer, intent(in) :: idx
         write(*, *) 'WARN: base class does not implement this method'
     end subroutine load
+
+    subroutine swap(self)
+        class(bc), intent(inout) :: self
+        write(*, *) 'WARN: base class does not implement this method'
+    end subroutine swap
+
+    subroutine actualize(weight)
+        class(bc), intent(inout) :: self
+        double precision, intent(in) :: weight
+        write(*, *) 'WARN: base class does not implement this method'
+    end subroutine actualize
 
     subroutine bc_destructor(self)
 

@@ -12,3 +12,5 @@ bfmv5/namelist.passivetrc_new
 *.x
 *.mod
 *.out
+*.swp
+*.nc

@@ -3,7 +3,9 @@ module bc_aux_mod
     implicit none
 
     contains
-        
+
+
+
         ! This is exactly the definition of 'handle_err1' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
         subroutine handle_err1(status, mycount, fileNetCDF)
@@ -24,6 +26,8 @@ module bc_aux_mod
 
         end subroutine handle_err1
 
+
+
         ! This is exactly the definition of 'handle_err2' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
         subroutine handle_err2(status, fileNetCDF, varname)
@@ -38,6 +42,8 @@ module bc_aux_mod
             endif
 
         end subroutine handle_err2
+
+
 
         ! This is exactly the definition of 'getDIMENSION' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
@@ -66,6 +72,8 @@ module bc_aux_mod
             call handle_err1(stat, counter,FileNetCDF)
         
         end subroutine getDIMENSION
+
+
 
         ! This is exactly the definition of 'readnc_int_1d' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
@@ -98,11 +106,46 @@ module bc_aux_mod
 
         end subroutine readnc_int_1d
 
-        ! This is exactly the definition of 'COUNT_InSubDomain_GIB' which is provided in 'domrea.f90'.
+
+
+        ! This is exactly the definition of 'readnc_double_1d' which is provided in 'IOnc.f90'.
+        ! The only reason why it is copied here is that the definition is not inside a module.
+        subroutine readnc_double_1d(fileNetCDF, varname, dim1, ARRAY)
+
+            use netcdf
+            ! use myalloc ! included in original version, but useless
+
+            implicit none
+
+            character, intent(in) :: fileNetCDF*(*), varname*(*)
+            integer, intent(in) :: dim1
+            double precision, intent(inout), dimension(dim1) :: ARRAY
+
+            integer ncid, stat, VARid
+            integer counter
+
+            counter=0
+
+            stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_inq_varid(ncid, varname, VARid)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_get_var(ncid, VARid, ARRAY)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_close(ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+
+        end subroutine readnc_double_1d
+
+
+
+        ! This is exactly the definition of 'COUNT_InSubDomain' which is provided in 'domrea.f90'.
         ! The only 2 reasons why it is copied here are:
         ! - the definition is not inside a module;
         ! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
-        integer function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
+        integer function COUNT_InSubDomain(sizeGLO, idxtGLOBAL)
 
             use modul_param, only: jpk, jpj, jpi
             use myalloc, only: idxt, tmask ! added tmask
@@ -133,9 +176,11 @@ module bc_aux_mod
                 enddo
             enddo
 
-            COUNT_InSubDomain_GIB = counter
+            COUNT_InSubDomain = counter
 
-        end function COUNT_InSubDomain_GIB
+        end function COUNT_InSubDomain
+
+
 
         ! This is exactly the definition of 'GIBRE_Indexing' which is provided in 'domrea.f90'.
         ! The only 2 reasons why it is copied here are:
@@ -144,17 +189,17 @@ module bc_aux_mod
         ! Notes:
         ! - it has been necessary to pass class members as function arguments;
         ! - function has been mapped into subroutine, since return value is not used.
-        subroutine GIBRE_Indexing(Gsizeglo, gib_idxtglo, Gsize, gib_ridxt)
+        subroutine RE_Indexing(sizeglo, idxtglo, sizeloc, ridxt)
 
             use modul_param, only: jpk, jpj, jpi
             use myalloc, only: idxt
 
             implicit none
 
-            integer(4), intent(in) :: Gsizeglo
-            integer(4), intent(in) :: gib_idxtglo(Gsizeglo)
-            integer(4), intent(in) :: Gsize
-            integer(4), intent(out) :: gib_ridxt(4, Gsize)
+            integer(4), intent(in) :: sizeglo
+            integer(4), intent(in) :: idxtglo(sizeglo)
+            integer(4), intent(in) :: sizeloc
+            integer(4), intent(out) :: ridxt(4, sizeloc)
 
             ! local
             integer kk, jj, ii, jv
@@ -165,19 +210,21 @@ module bc_aux_mod
                 do jj = 1, jpj
                     do kk = 1, jpk
                         junk = idxt(kk, jj, ii)
-                        do jv = 1, Gsizeglo
-                            if (junk .eq. gib_idxtglo(jv)) then
+                        do jv = 1, sizeglo
+                            if (junk .eq. idxtglo(jv)) then
                                 counter = counter + 1
-                                gib_ridxt(1, counter) = jv
-                                gib_ridxt(2, counter) = kk
-                                gib_ridxt(3, counter) = jj
-                                gib_ridxt(4, counter) = ii
+                                ridxt(1, counter) = jv
+                                ridxt(2, counter) = kk
+                                ridxt(3, counter) = jj
+                                ridxt(4, counter) = ii
                             endif
                         enddo
                     enddo
                 enddo
             enddo
             
-        end subroutine GIBRE_Indexing
+        end subroutine RE_Indexing
+
+
 
 end module bc_aux_mod

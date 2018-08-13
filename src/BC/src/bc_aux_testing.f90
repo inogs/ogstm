@@ -3,7 +3,9 @@ module bc_aux_mod
     implicit none
 
     contains
-        
+
+
+
         ! This is exactly the definition of 'handle_err1' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
         subroutine handle_err1(status, mycount, fileNetCDF)
@@ -24,6 +26,8 @@ module bc_aux_mod
 
         end subroutine handle_err1
 
+
+
         ! This is exactly the definition of 'handle_err2' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
         subroutine handle_err2(status, fileNetCDF, varname)
@@ -38,6 +42,8 @@ module bc_aux_mod
             endif
 
         end subroutine handle_err2
+
+
 
         ! This is exactly the definition of 'getDIMENSION' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
@@ -66,6 +72,8 @@ module bc_aux_mod
             call handle_err1(stat, counter,FileNetCDF)
         
         end subroutine getDIMENSION
+
+
 
         ! This is exactly the definition of 'readnc_int_1d' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
@@ -98,6 +106,8 @@ module bc_aux_mod
 
         end subroutine readnc_int_1d
 
+
+
         ! This is exactly the definition of 'readnc_double_1d' which is provided in 'IOnc.f90'.
         ! The only reason why it is copied here is that the definition is not inside a module.
         subroutine readnc_double_1d(fileNetCDF, varname, dim1, ARRAY)
@@ -122,7 +132,6 @@ module bc_aux_mod
             call handle_err2(stat, fileNetCDF, varname)
             call handle_err1(stat, counter, FileNetCDF)
             stat = nf90_get_var(ncid, VARid, ARRAY)
-            
             call handle_err2(stat, fileNetCDF, varname)
             call handle_err1(stat, counter, FileNetCDF)
             stat = nf90_close(ncid)
@@ -130,30 +139,36 @@ module bc_aux_mod
         
         end subroutine readnc_double_1d
 
-        ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
+
+
+        ! WARNING: this is not the actual 'COUNT_InSubDomain' function,
         ! but just a replacement in order to perform serial unit testing on sponge class.
         ! TO DO: this should be avoided and full mpi tests enabled.
-        integer(4) function COUNT_InSubDomain_GIB(sizeGLO, idxtGLOBAL)
+        integer(4) function COUNT_InSubDomain(sizeGLO, idxtGLOBAL)
 
             integer, intent(in) :: sizeGLO
             integer, intent(in) :: idxtGLOBAL(sizeGLO)
 
-            COUNT_InSubDomain_GIB = 1
+            COUNT_InSubDomain = 1
 
-        end function COUNT_InSubDomain_GIB
+        end function COUNT_InSubDomain
+
+
 
         ! WARNING: this is not the actual 'GIBRE_Indexing' subroutine,
         ! but just a replacement in order to perform serial unit testing on sponge class.
         ! TO DO: this should be avoided and full mpi tests enabled.
-        subroutine GIBRE_Indexing(Gsizeglo, gib_idxtglo, Gsize, gib_ridxt)
+        subroutine RE_Indexing(sizeglo, idxtglo, sizeloc, ridxt)
 
-            integer(4), intent(in) :: Gsizeglo
-            integer(4), intent(in) :: gib_idxtglo(Gsizeglo)
-            integer(4), intent(in) :: Gsize
-            integer(4), intent(out) :: gib_ridxt(4, Gsize)
+            integer(4), intent(in) :: sizeglo
+            integer(4), intent(in) :: idxtglo(sizeglo)
+            integer(4), intent(in) :: sizeloc
+            integer(4), intent(out) :: ridxt(4, sizeloc)
 
-            gib_ridxt(:, :) = 1
+            ridxt(:, :) = 1
 
-        end subroutine GIBRE_Indexing
+        end subroutine RE_Indexing
+
+
 
 end module bc_aux_mod

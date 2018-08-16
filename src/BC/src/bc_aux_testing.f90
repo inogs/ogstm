@@ -149,7 +149,7 @@ module bc_aux_mod
             integer, intent(in) :: sizeGLO
             integer, intent(in) :: idxtGLOBAL(sizeGLO)
 
-            COUNT_InSubDomain = 1
+            COUNT_InSubDomain = sizeGLO
 
         end function COUNT_InSubDomain
 

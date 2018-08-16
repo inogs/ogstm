@@ -56,7 +56,7 @@ contains
     ! just a wrapper of 'getDimension' (BC_mem.f90:71)
     subroutine set_global_size(self)
         class(rivers), intent(inout) :: self
-        call getDimension(self%get_file_by_index(1), self%m_var_names_idxt(1), self%m_global_size)
+        call getDimension(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size)
     end subroutine set_global_size
 
 

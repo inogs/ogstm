@@ -27,6 +27,7 @@ module bc_data_mod
     end type bc_data
 
     interface bc_data
+        module procedure bc_data_empty
         module procedure bc_data_default
         module procedure bc_data_year
         ! (optional) module procedure bc_data_full (time explicitly given)
@@ -35,6 +36,17 @@ module bc_data_mod
     public :: bc_data
 
 contains
+
+
+
+    type(bc_data) function bc_data_empty()
+
+        bc_data_empty%m_n_files = 0
+        bc_data_empty%m_n_times = 0
+        bc_data_empty%m_prev_idx = 0
+        bc_data_empty%m_succ_idx = 0
+
+    end function bc_data_empty
 
 
 

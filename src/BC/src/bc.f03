@@ -18,6 +18,7 @@ module bc_mod
     end type bc
 
     interface bc
+        module procedure bc_empty
         module procedure bc_default
         module procedure bc_year
     end interface bc
@@ -25,6 +26,15 @@ module bc_mod
     public :: bc
 
 contains
+
+
+
+    type(bc) function bc_empty()
+
+        allocate(bc_empty%m_bc_data)
+        bc_empty%m_bc_data = bc_data()
+
+    end function bc_empty
 
 
 

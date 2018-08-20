@@ -141,6 +141,55 @@ module bc_aux_mod
 
 
 
+        ! This is exactly the definition of 'readnc_double_1d' which is provided in 'IOnc.f90'.
+        ! The only reason why it is copied here is that the definition is not inside a module.
+        subroutine readnc_slice_float(fileNetCDF, varname, M, shift)
+            
+            use netcdf
+            ! use myalloc ! included in original version, but useless
+            use modul_param, only: jpk, jpj, jpi
+            
+            implicit none
+            
+            character,intent(in) :: fileNetCDF*(*), varname*(*)
+            integer, intent(in) :: shift
+            double precision, intent(inout) :: M(jpk, jpj, jpi)
+            
+            real, allocatable, dimension(:, :, :) :: copy_in
+            integer ncid, stat, VARid, i, j, k
+            integer counter
+            integer thecount(4), start(4)
+            
+            allocate(copy_in(jpi, jpj, jpk))
+            counter = 0
+            start = (/ nimpp + shift, njmpp, 1, 1 /)
+            thecount = (/ jpi, jpj, jpk, 1 /)
+            
+            stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_inq_varid(ncid, varname, VARid)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_get_var(ncid, VARid, copy_in, start, thecount)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_close(ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            
+            do i=1, jpi
+                do j=1, jpj
+                    do k=1, jpk
+                        M(k, j, i) = real(copy_in(i, j, k), 8)
+                    enddo
+                enddo
+            enddo
+            
+            deallocate(copy_in)
+        
+        end subroutine readnc_slice_float
+
+
+
         ! This is exactly the definition of 'COUNT_InSubDomain' which is provided in 'domrea.f90'.
         ! The only 2 reasons why it is copied here are:
         ! - the definition is not inside a module;

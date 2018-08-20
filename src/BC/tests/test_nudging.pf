@@ -1,0 +1,81 @@
+module test_nudging_mod
+
+    use nudging_mod
+    use sponge_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_nudging
+
+@TestCase
+    type, extends(TestCase) :: test_nudging
+        type(sponge), pointer :: m_sponge => null()
+        type(nudging), pointer :: m_nudging => null()
+        integer(4), dimension(7) :: m_param_vars_idx
+        double precision, dimension(7) :: m_param_rst_corr
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_nudging
+
+contains
+
+    subroutine setUp(this)
+
+        class(test_nudging), intent(inout) :: this
+
+        allocate(this%m_sponge)
+        this%m_sponge = sponge( &
+                "files_namelist_gib.dat", &
+                "gib", &
+                7, &
+                "O2o N1p N3n N5s O3c O3h N6r" &
+            )
+
+        this%m_param_vars_idx = (/ 1, 2, 3, 6, 49, 50, 7 /)
+        this%m_param_rst_corr = (/ 1., 1., 1., 1., 2., 2., 2. /)
+
+        allocate(this%m_nudging)
+        this%m_nudging = nudging(this%m_sponge, &
+                "bounmask.nc", &
+                7, &
+                "O2o N1p N3n N5s O3c O3h N6r", &
+                this%m_param_vars_idx, &
+                this%m_param_rst_corr, &
+                51 &
+            )
+
+    end subroutine setUp
+
+    subroutine tearDown(this)
+
+        class(test_nudging), intent(inout) :: this
+
+        call this%m_sponge%sponge_destructor()
+        deallocate(this%m_sponge)
+        write(*, *) 'INFO: m_sponge deallocated'
+        nullify(this%m_sponge)
+        write(*, *) 'INFO: m_sponge deassociated'
+
+        call this%m_nudging%nudging_destructor()
+        deallocate(this%m_nudging)
+        write(*, *) 'INFO: m_nudging deallocated'
+        nullify(this%m_nudging)
+        write(*, *) 'INFO: m_nudging deassociated'
+
+    end subroutine tearDown
+
+@Test
+    subroutine test_load(this)
+        class(test_nudging), intent(inout) :: this
+        call this%m_nudging%load(1)
+        ! TO DO: this should be done through a getter. But why is 'm_values_dtatrc' not private?
+        ! TO DO: provide a way to get the 'm_bc_no_nudging' pointer
+        !        without refering explicitly to 'm_sponge'.
+        @assertEqual(231.63246154785156, this%m_sponge%m_values_dtatrc(1, 2, 1))
+    end subroutine test_load
+
+    ! TO DO: add one more test
+
+end module test_nudging_mod

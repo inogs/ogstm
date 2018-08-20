@@ -9,6 +9,7 @@ module rivers_mod
 
     type, extends(bc) :: rivers
 
+        ! TO DO: review names
         character(len=3) :: m_name ! ex: 'riv'
         integer(4) :: m_global_size ! BC_mem.f90:20
         integer(4), allocatable, dimension(:) :: m_global_idxt ! BC_mem.f90:26; TO DO: find better name

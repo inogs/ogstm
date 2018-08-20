@@ -9,6 +9,7 @@ module sponge_mod
 
     type, extends(bc) :: sponge
 
+        ! TO DO: review names
         character(len=3) :: m_name ! ex: 'gib'
         ! no more needed, bounmask should belong to nudging decorator
         ! character(len=15) :: m_bounmask ! 15 chars in order to handle names like 'bounmask_GIB.nc'

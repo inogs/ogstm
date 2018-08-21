@@ -13,10 +13,10 @@ module nudging_mod
         integer :: m_n_nudging_vars
         character(len=3), allocatable, dimension(:) :: m_nudging_vars
         character(len=5), allocatable, dimension(:) :: m_nudging_vars_rst
-        integer(4), allocatable, dimension(:) :: m_nudging_vars_idx
-        double precision, allocatable, dimension(:, :, :, :) :: m_rst
-        double precision, allocatable, dimension(:) :: m_rst_corr
-        double precision, allocatable, dimension(:, :, :, :) :: m_rst_tracers
+        integer(4), allocatable, dimension(:) :: m_nudging_vars_idx ! tra_matrix_gib
+        double precision, allocatable, dimension(:, :, :, :) :: m_rst ! resto
+        double precision, allocatable, dimension(:) :: m_rst_corr ! restocorr
+        double precision, allocatable, dimension(:, :, :, :) :: m_rst_tracers ! restotr
 
     contains
 

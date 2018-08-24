@@ -10,6 +10,7 @@ module test_sponge_default_mod
 @TestCase
     type, extends(TestCase) :: test_sponge_default
         type(sponge), pointer :: m_sponge => null()
+        integer(4), dimension(7) :: m_param_var_names_idx
     contains
         procedure :: setUp ! overrrides generic
         procedure :: tearDown ! overrides generic
@@ -19,12 +20,17 @@ contains
 
     subroutine setUp(this)
         class(test_sponge_default), intent(inout) :: this
+        this%m_param_var_names_idx = (/ 1, 2, 3, 6, 49, 50, 7 /)
         allocate(this%m_sponge)
         this%m_sponge = sponge( &
             "files_namelist_gib.dat", &
             "gib", &
             7, &
-            "O2o N1p N3n N5s O3c O3h N6r" &
+            "O2o N1p N3n N5s O3c O3h N6r", &
+            this%m_param_var_names_idx, &
+            1.0d1, &
+            1.0d-6, &
+            -7.5d1 &
         )
     end subroutine setUp
 

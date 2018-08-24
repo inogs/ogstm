@@ -25,15 +25,20 @@ contains
 
         class(test_nudging), intent(inout) :: this
 
+        this%m_param_vars_idx = (/ 1, 2, 3, 6, 49, 50, 7 /)
+
         allocate(this%m_sponge)
         this%m_sponge = sponge( &
                 "files_namelist_gib.dat", &
                 "gib", &
                 7, &
-                "O2o N1p N3n N5s O3c O3h N6r" &
+                "O2o N1p N3n N5s O3c O3h N6r", &
+                this%m_param_vars_idx, &
+                1.0d1, &
+                1.0d-6, &
+                -7.5d1 &
             )
 
-        this%m_param_vars_idx = (/ 1, 2, 3, 6, 49, 50, 7 /)
         this%m_param_rst_corr = (/ 1., 1., 1., 1., 2., 2., 2. /)
 
         allocate(this%m_nudging)

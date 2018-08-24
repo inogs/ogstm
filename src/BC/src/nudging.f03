@@ -26,6 +26,8 @@ module nudging_mod
         procedure :: load
         procedure :: swap
         procedure :: actualize
+        procedure :: apply
+        procedure :: apply_phys
         ! destructor
         procedure :: nudging_destructor
 
@@ -147,6 +149,54 @@ contains
         write(*, *) 'INFO: called actualize from nudging decorator'
 
     end subroutine actualize
+
+
+
+    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182
+
+        class(nudging), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: rst_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+
+        call self%m_bc_no_nudging%apply(e3t, n_tracers, self%m_rst_tracers, trb, tra)
+        write(*, *) 'INFO: called apply from nudging decorator'
+
+    end subroutine apply
+
+
+
+    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182
+
+        class(nudging), intent(inout) :: self
+        double precision, dimension(jpj, jpi), intent(in) :: lat
+        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+
+        call self%m_bc_no_nudging%apply_phys(lat, sponge_t, sponge_vel)
+        write(*, *) 'INFO: called apply_phys from nudging decorator'
+
+    end subroutine apply_phys
 
 
 

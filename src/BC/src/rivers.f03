@@ -18,6 +18,7 @@ module rivers_mod
         character(len=3), allocatable, dimension(:) :: m_var_names
         character(len=12) :: m_name_idxt ! domrea.f90:226; TO DO: find better name
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
+        integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_riv
         integer(4), allocatable, dimension(:, :) :: m_ridxt ! TO DO: find better name
         double precision, allocatable, dimension(:) :: m_aux
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name
@@ -38,6 +39,8 @@ module rivers_mod
         procedure :: load
         procedure :: swap
         procedure :: actualize
+        procedure :: apply
+        procedure :: apply_phys
         ! destructor
         procedure :: rivers_destructor
 
@@ -89,12 +92,13 @@ contains
 
 
     ! 'bc_name' is used just to avoid system used symbol 'name'
-    subroutine init_members(self, bc_name, n_vars, vars)
+    subroutine init_members(self, bc_name, n_vars, vars, var_names_idx)
 
         class(rivers), intent(inout) :: self
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=23), intent(in) :: vars ! 'N3n N1p N5s O3c O3h O2o'; TO DO: more flexible
+        integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer :: i, start_idx, end_idx
 
         self%m_name = bc_name
@@ -103,12 +107,14 @@ contains
 
         allocate(self%m_var_names(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
+        allocate(self%m_var_names_idx(self%m_n_vars))
 
         do i = 1, self%m_n_vars
             end_idx = 4*i - 1
             start_idx = end_idx - 2
             self%m_var_names(i) = vars(start_idx:end_idx)
             self%m_var_names_data(i) = self%m_name//'_'//self%m_var_names(i)
+            self%m_var_names_idx(i) = var_names_idx(i)
         enddo
 
         ! call delegated constructor - related procedures
@@ -134,17 +140,18 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
-    type(rivers) function rivers_default(files_namelist, bc_name, n_vars, vars)
+    type(rivers) function rivers_default(files_namelist, bc_name, n_vars, vars, var_names_idx)
 
         character(len=22), intent(in) :: files_namelist
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=23), intent(in) :: vars
+        integer(4), dimension(n_vars), intent(in) :: var_names_idx
 
         ! parent class constructor
         rivers_default%bc = bc(files_namelist)
 
-        call rivers_default%init_members(bc_name, n_vars, vars)
+        call rivers_default%init_members(bc_name, n_vars, vars, var_names_idx)
 
     end function rivers_default
 
@@ -153,19 +160,20 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
-    type(rivers) function rivers_year(files_namelist, bc_name, n_vars, vars, start_time_string, end_time_string)
+    type(rivers) function rivers_year(files_namelist, bc_name, n_vars, vars, var_names_idx, start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=23), intent(in) :: vars
+        integer(4), dimension(n_vars), intent(in) :: var_names_idx
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
         rivers_year%bc = bc(files_namelist, start_time_string, end_time_string)
 
-        call rivers_year%init_members(bc_name, n_vars, vars)
+        call rivers_year%init_members(bc_name, n_vars, vars, var_names_idx)
 
     end function rivers_year
 
@@ -226,6 +234,63 @@ contains
 
 
 
+    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182        
+
+        class(rivers), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: rst_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+        integer :: i, j, idx_tracer, idx_i, idx_j
+
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                idx_tracer = self%m_var_names_idx(i)
+                do j = 1, self%m_size
+                    idx_i = self%m_ridxt(4, j)
+                    idx_j = self%m_ridxt(3, j)
+                    tra(1, idx_j, idx_i, idx_tracer) = tra(1, idx_j, idx_i, idx_tracer) + &
+                        self%m_values(j, i) / e3t(1, idx_j, idx_i)
+                enddo
+            enddo
+        endif
+
+    end subroutine apply
+
+
+
+    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182
+
+        class(rivers), intent(inout) :: self
+        double precision, dimension(jpj, jpi), intent(in) :: lat
+        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+
+        write(*, *) 'WARN: sponge_t and sponge_val are left untouched by rivers class'
+
+    end subroutine apply_phys
+
+
+
     subroutine rivers_destructor(self)
 
         class(rivers), intent(inout) :: self
@@ -243,6 +308,11 @@ contains
         if (allocated(self%m_var_names_data)) then
             deallocate(self%m_var_names_data)
             write(*, *) 'INFO: m_var_names_data deallocated'
+        endif
+
+        if (allocated(self%m_var_names_idx)) then
+            deallocate(self%m_var_names_idx)
+            write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
         if (allocated(self%m_ridxt)) then

@@ -14,6 +14,8 @@ module bc_mod
         procedure :: load
         procedure :: swap
         procedure :: actualize
+        procedure :: apply
+        procedure :: apply_phys
         procedure :: bc_destructor
     end type bc
 
@@ -93,6 +95,52 @@ contains
         double precision, intent(in) :: weight
         write(*, *) 'WARN: base class does not implement this method'
     end subroutine actualize
+
+
+
+    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182
+
+        class(bc), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: rst_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+
+        write(*, *) 'WARN: base class does not implement this method'
+
+    end subroutine apply
+
+
+
+    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182
+
+        class(bc), intent(inout) :: self
+        double precision, dimension(jpj, jpi), intent(in) :: lat
+        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+
+        write(*, *) 'WARN: base class does not implement this method'
+
+    end subroutine apply_phys
 
 
 

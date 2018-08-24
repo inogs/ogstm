@@ -11,21 +11,22 @@ module sponge_mod
 
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'gib'
-        ! no more needed, bounmask should belong to nudging decorator
-        ! character(len=15) :: m_bounmask ! 15 chars in order to handle names like 'bounmask_GIB.nc'
         integer(4) :: m_global_size ! BC_mem.f90:20
         integer(4), allocatable, dimension(:) :: m_global_idxt ! BC_mem.f90:26; TO DO: find better name
         integer(4) :: m_size ! BC_mem.f90:21
         integer :: m_n_vars ! BC_mem.f90:94
         character(len=3), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
-        ! no more needed, bounmask should belong to nudging decorator
-        ! character(len=5), allocatable, dimension(:) :: m_var_names_bounmask ! domrea.f90:172
         character(len=12), allocatable, dimension(:) :: m_var_names_idxt ! domrea.f90:204; TO DO: find better name
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
+        integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_gib
         integer(4), allocatable, dimension(:, :) :: m_ridxt ! TO DO: find better name
         double precision, allocatable, dimension(:) :: m_aux
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name
         double precision, allocatable, dimension(:, :) :: m_values
+        ! sponge-related members
+        double precision :: m_alpha
+        double precision :: m_reduction_value_t
+        double precision :: m_length
 
     contains
 
@@ -34,7 +35,6 @@ module sponge_mod
         procedure :: set_global_idxt ! (call to readnc_int_1d(), domrea.f90:204-207)
         procedure :: set_size ! (domrea.f90:209-211)
         procedure :: reindex ! (domrea.f90:218, which should be moved away with the 3D index)
-        ! procedures to read file 'bounmask.nc' (domrea.F90:169-180): no more needed (see above)
         ! delegated constructor
         procedure :: init_members ! (memory allocation also in domrea.f90:215-216)
         ! getters
@@ -43,6 +43,8 @@ module sponge_mod
         procedure :: load
         procedure :: swap
         procedure :: actualize
+        procedure :: apply
+        procedure :: apply_phys ! TO DO: declare and implement also in base class
         ! destructor
         procedure :: sponge_destructor
 
@@ -95,31 +97,33 @@ contains
 
     ! subroutine init_members(self, bc_name, bounmask, n_vars, vars)
     ! 'bc_name' is used just to avoid system used symbol 'name'
-    subroutine init_members(self, bc_name, n_vars, vars)
+    subroutine init_members(self, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
         class(sponge), intent(inout) :: self
         character(len=3) :: bc_name
-        ! character(len=15), intent(in) :: bounmask
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars ! 'O2o N1p N3n N5s O3c O3h N6r'; TO DO: more flexible
+        integer(4), dimension(n_vars), intent(in) :: var_names_idx
+        double precision, intent(in) :: alpha
+        double precision, intent(in) :: reduction_value_t
+        double precision, intent(in) :: length
         integer :: i, start_idx, end_idx
 
         self%m_name = bc_name
-        ! self%m_bounmask = bounmask
         self%m_n_vars = n_vars
 
         allocate(self%m_var_names(self%m_n_vars))
-        ! allocate(self%m_var_names_bounmask(self%m_n_vars))
         allocate(self%m_var_names_idxt(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
+        allocate(self%m_var_names_idx(self%m_n_vars))
 
         do i = 1, self%m_n_vars
             end_idx = 4*i - 1
             start_idx = end_idx - 2
             self%m_var_names(i) = vars(start_idx:end_idx)
-            ! self%m_var_names_bounmask(i) = 're'//self%m_var_names(i)
             self%m_var_names_idxt(i) = self%m_name//'_idxt_'//self%m_var_names(i)
             self%m_var_names_data(i) = self%m_name//'_'//self%m_var_names(i)
+            self%m_var_names_idx(i) = var_names_idx(i)
         enddo
 
         ! call delegated constructor - related procedures
@@ -138,51 +142,58 @@ contains
         allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:216
         self%m_values(:, :) = huge(self%m_values(1, 1)) ! domrea.f90:216
 
+        self%m_alpha = alpha
+        self%m_reduction_value_t = reduction_value_t
+        self%m_length = length
+
     end subroutine init_members
 
 
 
-    ! type(sponge) function sponge_default(files_namelist, name, bounmask, n_vars, vars)
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
-    type(sponge) function sponge_default(files_namelist, bc_name, n_vars, vars)
+    type(sponge) function sponge_default(files_namelist, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
         character(len=22), intent(in) :: files_namelist
         character(len=3) :: bc_name
-        ! character(len=15), intent(in) :: bounmask
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
+        integer(4), dimension(n_vars), intent(in) :: var_names_idx
+        double precision, intent(in) :: alpha
+        double precision, intent(in) :: reduction_value_t
+        double precision, intent(in) :: length
 
         ! parent class constructor
         sponge_default%bc = bc(files_namelist)
 
-        ! call sponge_default%init_members(bc_name, bounmask, n_vars, vars)
-        call sponge_default%init_members(bc_name, n_vars, vars)
+        call sponge_default%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
     end function sponge_default
 
 
 
-    ! type(sponge) function sponge_yearly(files_namelist, bc_name, bounmask, n_vars, ...)
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
-    type(sponge) function sponge_year(files_namelist, bc_name, n_vars, vars, start_time_string, end_time_string)
+    type(sponge) function sponge_year(files_namelist, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length, &
+            start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
         character(len=3) :: bc_name
-        ! character(len=15), intent(in) :: bounmask
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
+        integer(4), dimension(n_vars), intent(in) :: var_names_idx
+        double precision, intent(in) :: alpha
+        double precision, intent(in) :: reduction_value_t
+        double precision, intent(in) :: length
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
         sponge_year%bc = bc(files_namelist, start_time_string, end_time_string)
 
-        ! call sponge_year%init_members(bc_name, bounmask, n_vars, vars)
-        call sponge_year%init_members(bc_name, n_vars, vars)
+        call sponge_year%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
     end function sponge_year
 
@@ -243,6 +254,82 @@ contains
 
 
 
+    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182
+
+        class(sponge), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: rst_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k
+        double precision :: z_tracer
+
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                idx_tracer = self%m_var_names_idx(i)
+                do j = 1, self%m_size
+                    idx_i = self%m_ridxt(4, j)
+                    idx_j = self%m_ridxt(3, j)
+                    idx_k = self%m_ridxt(2, j)
+                    z_tracer = rst_tracers(idx_k, idx_j, idx_i, idx_tracer) * &
+                        (self%m_values(j, i) - trb(idx_k, idx_j, idx_i, idx_tracer))
+                    tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
+                enddo
+            enddo
+        endif
+
+    end subroutine apply
+
+
+
+    ! TO DO: provide more flexibility both
+    ! - in the choice of the 'sponge' function
+    ! - in the choice of the interested area
+    ! So far, only a rectangular area in the west boundary has been implemented
+    ! WARNING: sponge_t and sponge_vel will be overwritten every time the method is called!
+    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+
+        ! use modul_param, only: jpk, jpj, jpi
+
+        ! implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        integer, parameter :: jpk = 70
+        integer, parameter :: jpj = 65
+        integer, parameter :: jpi = 182
+
+        class(sponge), intent(inout) :: self
+        double precision, dimension(jpj, jpi), intent(in) :: lat ! glamt
+        double precision, dimension(jpj, jpi), intent(out) :: sponge_t ! spongeT
+        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel ! spongeVel
+
+        integer :: i, j
+        double precision :: reduction_value_vel ! reduction_value (only for sponge_vel)
+
+        do i = 1, jpi
+            do j = 1, jpj
+                if (lat(j, i) < self%m_length) then
+                    sponge_t(j, i) = self%m_reduction_value_t
+                    reduction_value_vel = exp( -self%m_alpha * ((lat(j, i) - self%m_length)**2) )
+                    sponge_vel(:, j, i) = reduction_value_vel
+                endif
+            enddo
+        enddo
+
+    end subroutine apply_phys
+
+
+
     subroutine sponge_destructor(self)
 
         class(sponge), intent(inout) :: self
@@ -270,6 +357,11 @@ contains
         if (allocated(self%m_var_names_data)) then
             deallocate(self%m_var_names_data)
             write(*, *) 'INFO: m_var_names_data deallocated'
+        endif
+
+        if (allocated(self%m_var_names_idx)) then
+            deallocate(self%m_var_names_idx)
+            write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
         if (allocated(self%m_ridxt)) then

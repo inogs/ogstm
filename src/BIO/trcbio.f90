@@ -46,27 +46,15 @@
 !!!----------------------------------------------------------------------
 !!! local declarations
 !!! ==================
-
-#ifdef BFMv2
       logical :: sur,bot
       double precision,dimension(jptra) :: a,b
       double precision,dimension(4) :: c
       double precision,dimension(jptra_dia) :: d
       double precision,dimension(10) :: er
       double precision,dimension(jptra_dia_2d) :: d2
-#else
-      double precision,dimension(jptra,jpk) :: b
-      double precision,dimension(jpk,jptra) :: a
-      double precision,dimension(4,jpk) :: c
-      double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,10) :: er
-      double precision,dimension(jptra_dia_2d) :: d2
-#endif
-
 
       integer :: jk,jj,ji,jb,jn
       integer :: jtr,jtrmax,tra_idx
-      integer :: bottom
 
 
 !!!----------------------------------------------------------------------
@@ -91,9 +79,6 @@
 
       ogstm_sediPI=0.
       tra_DIA    = 0.
-      tra_DIA_2d = 0. ! da sistemare
-
-#ifdef BFMv2
       tra_DIA_2d = 0.
 
 
@@ -108,6 +93,7 @@
 
                           sur = (jk .eq. 1)
                           bot = .FALSE.
+
                           DO jtr=1, jtrmax
                              a(jtr) = trn(jk,jj,ji,jtr) ! current biogeochemical concentrations
                           END DO
@@ -121,14 +107,15 @@
                           er(6)  = xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
                           er(7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
-                          er(9)  = vatm(jj,ji) * surf_mask(jk)  ! wind speed (m/s)
+                          er(9)  = vatm(jj,ji) * surf_mask(jk) ! wind speed (m/s)
                           er(10) = ogstm_PH(jk,jj,ji)         ! PH
 
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
-                         call BFM0D_reset()
+                          call BFM0D_reset()
 
                          call EcologyDynamics()
+
                           if (sur) then
                              call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2)
                            else
@@ -142,81 +129,21 @@
                           DO jtr=1,4
                              ogstm_sediPI(jk,jj,ji,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
                           END DO
-
+#ifdef BFMv2
                           DO jtr=1,jptra_dia -2 ! We skip the last two ppHT1 and ppHT2
+#else
+                          DO jtr=1,jptra_dia
+#endif
                              tra_DIA(jtr,jk,jj,ji) = d(jtr) ! diagnostic
                           END DO
-
                           if (sur) tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
 
+
                           ogstm_PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
-
-                          NPPF2(jk,jj,ji)=d(ppF04) ! Flagellate production
-
-                END DO MAIN_LOOP
-#else
-
-!    Initialization
-      a        = 1.0
-      er       = 1.0
-      er(:,10) = 8.1
-
-
-      DO ji=1,jpi
-      DO jj=1,jpj
-      if (tmask(1,jj,ji).lt.1.0) CYCLE
-      bottom = mbathy(jj,ji)
-
-
-                          DO jtr=1, jtrmax
-
-                             a(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
-
-                          END DO
-
-! Environmental regulating factors (er,:)
-
-                          er(1:bottom,1)  = tn (1:bottom,jj,ji)! Temperature (Celsius)
-                          er(1:bottom,2)  = sn (1:bottom,jj,ji)  ! Salinity PSU
-                          er(1:bottom,3)  = rho(1:bottom,jj,ji)        ! Density Kg/m3
-                          er(1:bottom,4)  = ice                  ! from 0 to 1 adimensional
-                          er(1:bottom,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
-                          er(1:bottom,6)  = xpar(1:bottom,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                          er(1:bottom,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(1:bottom,8)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1:bottom,9)  = vatm(jj,ji) * surf_mask(1:bottom) ! wind speed (m/s)
-                          er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
-
-                          call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
-
-                         call BFM1D_reset()
-
-                         call EcologyDynamics()
-
-                         call BFM1D_Output_EcologyDynamics(b, c, d, d2)
-
-                          DO jtr=1, jtrmax
-                             tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +b(jtr,1:bottom) ! trend
-                          END DO
-
-                          DO jtr=1,4
-                             ogstm_sediPI(1:bottom,jj,ji,jtr) = c(jtr,1:bottom)      ! BFM output of sedimentation speed (m/d)
-                          END DO
-
-
-                          DO jk = 1,bottom
-                          DO jtr=1,jptra_dia
-                             tra_DIA(jtr, jk ,jj,ji) = d(jtr,jk) ! diagnostic
-                          END DO
-                          ENDDO
-
-                         tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
-
-                          ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
-
-      END DO
-      END DO
+#ifdef BFMv2
+                             NPPF2(jk,jj,ji)=d(ppF04) ! Flagellate production
 #endif
+                END DO MAIN_LOOP
 
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime

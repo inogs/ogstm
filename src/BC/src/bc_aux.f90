@@ -146,7 +146,7 @@ module bc_aux_mod
         subroutine readnc_slice_float(fileNetCDF, varname, M, shift)
             
             use netcdf
-            ! use myalloc ! included in original version, but useless
+            use myalloc, only: nimpp, njmpp
             use modul_param, only: jpk, jpj, jpi
             
             implicit none

@@ -256,14 +256,14 @@ contains
 
     subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
 
-        ! use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jpk, jpj, jpi
 
-        ! implicit none
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         class(sponge), intent(inout) :: self
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
@@ -299,14 +299,14 @@ contains
     ! WARNING: sponge_t and sponge_vel will be overwritten every time the method is called!
     subroutine apply_phys(self, lat, sponge_t, sponge_vel)
 
-        ! use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jpk, jpj, jpi
 
-        ! implicit none
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         class(sponge), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lat ! glamt
@@ -343,11 +343,6 @@ contains
             deallocate(self%m_var_names)
             write(*, *) 'INFO: m_var_names deallocated'
         endif
-
-        ! if (allocated(self%m_var_names_bounmask)) then
-        !     deallocate(self%m_var_names_bounmask)
-        !     write(*, *) 'INFO: m_var_names_bounmask deallocated'
-        ! endif
 
         if (allocated(self%m_var_names_idxt)) then
             deallocate(self%m_var_names_idxt)

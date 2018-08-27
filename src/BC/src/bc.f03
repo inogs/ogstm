@@ -100,14 +100,14 @@ contains
 
     subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
 
-        ! use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jpk, jpj, jpi
 
-        ! implicit none
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         class(bc), intent(inout) :: self
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
@@ -124,14 +124,14 @@ contains
 
     subroutine apply_phys(self, lat, sponge_t, sponge_vel)
 
-        ! use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jpk, jpj, jpi
 
-        ! implicit none
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         class(bc), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lat

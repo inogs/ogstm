@@ -246,11 +246,32 @@
       allocate(gibraltar_sponge)
       allocate(gibraltar)
 
-      all_rivers = rivers("files_namelist_riv.dat", "riv", 6, "N1p N3n N5s O3c O3h O2o", (/ 2, 3, 6, 49, 50, 1 /))
-      gibraltar_sponge = sponge("files_namelist_gib.dat", "gib", 7, "O2o N1p N3n N5s O3c O3h N6r", (/ 1, 2, 3, 6, 49, 50, 7 /), &
-          1.0d1, 1.0d-6, -7.5d1)
-      gibraltar = nudging(gibraltar_sponge, "bounmask.nc", 7, "O2o N1p N3n N5s O3c O3h N6r", (/ 1, 2, 3, 6, 49, 50, 7 /), &
-          (/ 1.0d0, 1.0d0, 1.0d0, 1.0d0, 2.0d0, 2.0d0, 2.0d0 /), 51)
+      all_rivers = rivers( &
+          "files_namelist_riv.dat", &
+          "riv", &
+          6, &
+          "N1p N3n N5s O3c O3h O2o", &
+          (/ 2, 3, 6, 49, 50, 1 /) &
+          )
+      gibraltar_sponge = sponge( &
+          "files_namelist_gib.dat", &
+          "gib", &
+          7, &
+          "O2o N1p N3n N5s O3c O3h N6r", &
+          (/ 1, 2, 3, 6, 49, 50, 7 /), &
+          1.0d1, &
+          1.0d-6, &
+          -7.5d1 &
+          )
+      gibraltar = nudging( &
+          gibraltar_sponge, &
+          "bounmask.nc", &
+          7, &
+          "O2o N1p N3n N5s O3c O3h N6r", &
+          (/ 1, 2, 3, 6, 49, 50, 7 /), &
+          (/ 1.0d0, 1.0d0, 1.0d0, 1.0d0, 2.0d0, 2.0d0, 2.0d0 /), &
+          51&
+          )
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

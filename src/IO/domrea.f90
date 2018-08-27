@@ -238,6 +238,24 @@
 
        if(lwp) write(*,*) 'RIV finiti'
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      allocate(all_rivers)
+      allocate(gibraltar_sponge)
+      allocate(gibraltar)
+
+      all_rivers = rivers("files_namelist_riv.dat", "riv", 6, "N1p N3n N5s O3c O3h O2o", (/ 2, 3, 6, 49, 50, 1 /))
+      gibraltar_sponge = sponge("files_namelist_gib.dat", "gib", 7, "O2o N1p N3n N5s O3c O3h N6r", (/ 1, 2, 3, 6, 49, 50, 7 /), &
+          1.0d1, 1.0d-6, -7.5d1)
+      ! gibraltar = nudging(gibraltar_sponge, "bounmask.nc", 7, "O2o N1p N3n N5s O3c O3h N6r", (/ 1, 2, 3, 6, 49, 50, 7 /), &
+      !     (/ 1., 1., 1., 1., 2., 2., 2. /), 51)
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
 ! ******************************************* Atmospherical inputs
       filename       = 'BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'
       ! CALL readnc_int_1d(filename, 'atm_idxt',Asizeglo,atm_idxtglo)

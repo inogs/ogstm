@@ -9,6 +9,18 @@
        USE iso_c_binding
 #endif
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+       use sponge_mod
+       use rivers_mod
+       use nudging_mod
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
        IMPLICIT NONE
 
        public
@@ -34,6 +46,19 @@
       double precision, allocatable, DIMENSION(:,:)     :: gib,riv,atm_aux
       double precision, allocatable, DIMENSION(:,:,:)   :: gib_dtatrc,riv_dtatrc,atm       ! <--bc_gib.load_gib(), bc_tin.
       double precision, allocatable, DIMENSION(:,:,:,:) :: resto,restotr,atm_dtatrc        !array of restoring coeff. for passive tracers
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      type(rivers), pointer :: all_rivers => null()
+      type(sponge), pointer :: gibraltar_sponge => null()
+      type(nudging), pointer :: gibraltar => null()
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
 ! ----------------------------------------------------------------------
       CONTAINS
 !     *******************************************************************

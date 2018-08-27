@@ -1,4 +1,4 @@
-module bc_aux_mod
+module bc_aux_testing_mod
 
     implicit none
 
@@ -226,4 +226,4 @@ module bc_aux_mod
 
 
 
-end module bc_aux_mod
+end module bc_aux_testing_mod

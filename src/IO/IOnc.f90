@@ -532,7 +532,9 @@
        TimeString =fileNetCDF(14:30)
        shuffle       = 0
 
-      s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+       ! Just to try without 'or'
+       ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+       s = nf90_create(fileNetCDF, nf90_clobber, nc)
 
       s = nf90_put_att(nc, nf90_global, 'TimeString'     , TimeString)
         ! *********** DIMENSIONS ****************
@@ -609,7 +611,9 @@
 
         !s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
       
-        s = nf90_create(fileNetCDF,or(or(nf90_clobber,NF90_HDF5),NF90_HDF5),nc)
+        ! Just to try withour 'or'
+        ! s = nf90_create(fileNetCDF,or(or(nf90_clobber,NF90_HDF5),NF90_HDF5),nc)
+        s = nf90_create(fileNetCDF, nf90_clobber, nc)
         call handle_err1(s,counter,fileNetCDF)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions' ,'COARDS')
@@ -715,7 +719,9 @@
 
 
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, nf90_clobber, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
@@ -788,7 +794,9 @@
 
 
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, nf90_clobber, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
@@ -869,7 +877,9 @@
 
 
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, nf90_clobber, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
@@ -936,7 +946,9 @@
         allocate(copy_in(jpiglo,jpjglo,jpk))
         allocate(copy_in_2d(jpiglo,jpjglo))
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, nf90_clobber, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
@@ -1102,7 +1114,9 @@
         allocate(copy_in(jpiglo,jpjglo,jpk))
         allocate(copy_in_2d(jpiglo,jpjglo))
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, nf90_clobber, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,   'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)

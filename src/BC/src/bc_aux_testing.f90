@@ -2,10 +2,6 @@ module bc_aux_testing_mod
 
     implicit none
     
-    integer, parameter :: jpk = 70
-    integer, parameter :: jpj = 65
-    integer, parameter :: jpi = 182
-
     contains
 
 

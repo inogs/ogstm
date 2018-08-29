@@ -2,6 +2,9 @@
 
 EXIT_STATUS=0
 
+module load use.own
+module load netcdf-ogs pfunit-serial
+
 make clean # optional
 
 # modify source codes in order to load the right modules
@@ -24,6 +27,7 @@ if [[ ${EXIT_STATUS} -ne 0 ]]; then
 fi
 
 # cleaning up
+make clean
 cd src
 for f in $(ls *.f03); do
     cat $f | \
@@ -34,5 +38,8 @@ for f in $(ls *.f03); do
     mv $f".tmp" $f
 done
 cd ..
+
+module unload netcdf-ogs pfunit-serial
+module unload use.own
 
 exit ${EXIT_STATUS}

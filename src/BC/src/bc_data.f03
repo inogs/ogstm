@@ -19,10 +19,14 @@ module bc_data_mod
         double precision, allocatable, dimension(:) :: m_times
         ! interpolation variables
         integer :: m_prev_idx
-        integer :: m_succ_idx
+        integer :: m_next_idx
+        logical :: m_new_interval
     contains
         procedure :: get_file_by_index
+        procedure :: get_prev_idx
+        procedure :: get_next_idx
         procedure :: get_interpolation_factor
+        procedure :: new_interval
         procedure :: bc_data_destructor
     end type bc_data
 
@@ -30,7 +34,6 @@ module bc_data_mod
         module procedure bc_data_empty
         module procedure bc_data_default
         module procedure bc_data_year
-        ! (optional) module procedure bc_data_full (time explicitly given)
     end interface bc_data
 
     public :: bc_data
@@ -44,7 +47,8 @@ contains
         bc_data_empty%m_n_files = 0
         bc_data_empty%m_n_times = 0
         bc_data_empty%m_prev_idx = 0
-        bc_data_empty%m_succ_idx = 0
+        bc_data_empty%m_next_idx = 0
+        bc_data_empty%m_new_interval = .false.
 
     end function bc_data_empty
 
@@ -81,7 +85,8 @@ contains
 
         ! initialize interpolation variables
         bc_data_default%m_prev_idx = 1
-        bc_data_default%m_succ_idx = bc_data_default%m_prev_idx + 1
+        bc_data_default%m_next_idx = bc_data_default%m_prev_idx + 1
+        bc_data_default%m_new_interval = .true.
 
         ! close file
         close(unit=file_unit)
@@ -141,7 +146,8 @@ contains
 
         ! initialize interpolation variables
         bc_data_year%m_prev_idx = 1
-        bc_data_year%m_succ_idx = bc_data_year%m_prev_idx + 1
+        bc_data_year%m_next_idx = bc_data_year%m_prev_idx + 1
+        bc_data_year%m_new_interval = .true.
 
         ! close file
         close(unit=file_unit)
@@ -169,13 +175,27 @@ contains
 
 
 
+    integer function get_prev_idx(self)
+        class(bc_data), intent(in) :: self
+        get_prev_idx = self%m_prev_idx
+    end function get_prev_idx
+
+
+
+    integer function get_next_idx(self)
+        class(bc_data), intent(in) :: self
+        get_next_idx = self%m_next_idx
+    end function get_next_idx
+
+
+
     ! compute and return linear interpolation factor,
-    ! keeping track of the current time interval (prev and succ times)
+    ! keeping track of the current time interval (prev and next times)
     double precision function get_interpolation_factor(self, current_time_string)
 
         class(bc_data), intent(inout) :: self
         character(len=17), intent(in) :: current_time_string
-        double precision :: current_time, prev_time, succ_time
+        double precision :: current_time, prev_time, next_time
         integer :: i
 
         current_time = datestring2sec(current_time_string)
@@ -185,14 +205,26 @@ contains
         do while(self%m_times(i+1) < current_time)
             i = i + 1
         enddo
-        self%m_prev_idx = i
+        if (i /= self%m_prev_idx) then
+            self%m_prev_idx = i
+            self%m_next_idx = self%m_prev_idx + 1
+            self%m_new_interval = .true.
+        else
+            self%m_new_interval = .false.
+        endif
         prev_time = self%m_times(self%m_prev_idx)
-        self%m_succ_idx = self%m_prev_idx + 1
-        succ_time = self%m_times(self%m_succ_idx)
+        next_time = self%m_times(self%m_next_idx)
 
-        get_interpolation_factor = (current_time - prev_time) / (succ_time - prev_time)
+        get_interpolation_factor = (current_time - prev_time) / (next_time - prev_time)
 
     end function get_interpolation_factor
+
+
+
+    logical function new_interval(self)
+        class(bc_data), intent(in) :: self
+        new_interval = self%m_new_interval
+    end function new_interval
 
 
 

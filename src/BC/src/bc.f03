@@ -11,6 +11,9 @@ module bc_mod
         type(bc_data), pointer :: m_bc_data => null()
     contains
         procedure :: get_file_by_index
+        procedure :: get_interpolation_factor
+        procedure :: get_prev_idx
+        procedure :: get_next_idx
         procedure :: load
         procedure :: swap
         procedure :: actualize
@@ -72,6 +75,33 @@ contains
         get_file_by_index = self%m_bc_data%get_file_by_index(idx)
 
     end function get_file_by_index
+
+
+
+    double precision function get_interpolation_factor(self, current_time_string, new_data)
+
+        class(bc), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        logical, optional, intent(out) :: new_data
+
+        get_interpolation_factor = self%m_bc_data%get_interpolation_factor(current_time_string)
+        new_data = self%m_bc_data%new_interval()
+
+    end function get_interpolation_factor
+
+
+
+    integer function get_prev_idx(self)
+        class(bc), intent(in) :: self
+        get_prev_idx = self%m_bc_data%get_prev_idx()
+    end function get_prev_idx
+
+
+
+    integer function get_next_idx(self)
+        class(bc), intent(in) :: self
+        get_next_idx = self%m_bc_data%get_next_idx()
+    end function get_next_idx
 
 
 

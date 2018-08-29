@@ -46,4 +46,17 @@ contains
         @assertEqual("GIB_20171115-12:00:00.nc", this%m_bc%get_file_by_index(4))
     end subroutine test_file_names
 
+@Test
+    subroutine test_new_data(this)
+        class(test_bc_default), intent(inout) :: this
+        double precision :: interpolation_factor
+        logical :: new_data
+        interpolation_factor = this%m_bc%get_interpolation_factor("20170814-00:00:00", new_data)
+        @assertTrue(new_data, "should be new data")
+        interpolation_factor = this%m_bc%get_interpolation_factor("20170815-00:00:00", new_data)
+        @assertFalse(new_data, "should be same data")
+        interpolation_factor = this%m_bc%get_interpolation_factor("20170816-00:00:00", new_data)
+        @assertTrue(new_data, "should be new data")
+    end subroutine test_new_data
+
 end module test_bc_default_mod

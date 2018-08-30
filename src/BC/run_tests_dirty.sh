@@ -2,6 +2,8 @@
 
 EXIT_STATUS=0
 
+# TO DO: use flags, do not use sed
+
 module load use.own
 module load netcdf-ogs pfunit-serial
 

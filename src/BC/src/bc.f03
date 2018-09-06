@@ -11,9 +11,10 @@ module bc_mod
         type(bc_data), pointer :: m_bc_data => null()
     contains
         procedure :: get_file_by_index
-        procedure :: get_interpolation_factor
         procedure :: get_prev_idx
         procedure :: get_next_idx
+        procedure :: set_current_interval
+        procedure :: get_interpolation_factor
         procedure :: load
         procedure :: swap
         procedure :: actualize
@@ -78,19 +79,6 @@ contains
 
 
 
-    double precision function get_interpolation_factor(self, current_time_string, new_data)
-
-        class(bc), intent(inout) :: self
-        character(len=17), intent(in) :: current_time_string
-        logical, optional, intent(out) :: new_data
-
-        get_interpolation_factor = self%m_bc_data%get_interpolation_factor(current_time_string)
-        new_data = self%m_bc_data%new_interval()
-
-    end function get_interpolation_factor
-
-
-
     integer function get_prev_idx(self)
         class(bc), intent(in) :: self
         get_prev_idx = self%m_bc_data%get_prev_idx()
@@ -102,6 +90,32 @@ contains
         class(bc), intent(in) :: self
         get_next_idx = self%m_bc_data%get_next_idx()
     end function get_next_idx
+
+
+
+    subroutine set_current_interval(self, current_time_string, new_data)
+
+        class(bc), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        logical, optional, intent(out) :: new_data
+
+        call self%m_bc_data%set_current_interval(current_time_string)
+        new_data = self%m_bc_data%new_interval()
+
+    end subroutine set_current_interval
+
+
+
+    double precision function get_interpolation_factor(self, current_time_string, new_data)
+
+        class(bc), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        logical, optional, intent(out) :: new_data
+
+        get_interpolation_factor = self%m_bc_data%get_interpolation_factor(current_time_string)
+        new_data = self%m_bc_data%new_interval()
+
+    end function get_interpolation_factor
 
 
 

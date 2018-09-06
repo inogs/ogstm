@@ -25,6 +25,7 @@ module bc_data_mod
         procedure :: get_file_by_index
         procedure :: get_prev_idx
         procedure :: get_next_idx
+        procedure :: set_current_interval
         procedure :: get_interpolation_factor
         procedure :: new_interval
         procedure :: bc_data_destructor
@@ -189,13 +190,13 @@ contains
 
 
 
-    ! compute and return linear interpolation factor,
-    ! keeping track of the current time interval (prev and next times)
-    double precision function get_interpolation_factor(self, current_time_string)
+    ! just set current time interval (prev and next times)
+    ! according to current_time_string
+    subroutine set_current_interval(self, current_time_string)
 
         class(bc_data), intent(inout) :: self
         character(len=17), intent(in) :: current_time_string
-        double precision :: current_time, prev_time, next_time
+        double precision :: current_time
         integer :: i
 
         current_time = datestring2sec(current_time_string)
@@ -212,6 +213,22 @@ contains
         else
             self%m_new_interval = .false.
         endif
+
+    end subroutine set_current_interval
+
+
+
+    ! compute and return linear interpolation factor,
+    ! keeping track of the current time interval (prev and next times)
+    double precision function get_interpolation_factor(self, current_time_string)
+
+        class(bc_data), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        double precision :: current_time, prev_time, next_time
+
+        call self%set_current_interval(current_time_string)
+
+        current_time = datestring2sec(current_time_string)
         prev_time = self%m_times(self%m_prev_idx)
         next_time = self%m_times(self%m_next_idx)
 

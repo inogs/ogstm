@@ -27,6 +27,7 @@ module nudging_mod
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_nudging
         procedure :: apply_phys
         ! destructor
         procedure :: nudging_destructor
@@ -113,7 +114,66 @@ contains
 
         call nudging_default%init_members(bc_no_nudging, data_file, n_vars, vars, vars_idx, rst_corr, n_tracers)
 
+        write(*, *) 'INFO: successfully called nudging default constructor'
+
     end function nudging_default
+
+
+
+    character(len=24) function get_file_by_index(self, idx)
+
+        class(nudging), intent(in) :: self
+        integer, intent(in) :: idx
+
+        get_file_by_index = self%m_bc_no_nudging%get_file_by_index(idx)
+
+    end function get_file_by_index
+
+
+
+    integer function get_prev_idx(self)
+        class(nudging), intent(in) :: self
+        get_prev_idx = self%m_bc_no_nudging%get_prev_idx()
+    end function get_prev_idx
+
+
+
+    integer function get_next_idx(self)
+        class(nudging), intent(in) :: self
+        get_next_idx = self%m_bc_no_nudging%get_next_idx()
+    end function get_next_idx
+
+
+
+    subroutine set_current_interval(self, current_time_string, new_data)
+
+        class(nudging), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        logical, optional, intent(out) :: new_data
+
+        if (present(new_data)) then
+            call self%m_bc_no_nudging%set_current_interval(current_time_string, new_data)
+        else
+            call self%m_bc_no_nudging%set_current_interval(current_time_string)
+        endif
+
+    end subroutine set_current_interval
+
+
+
+    double precision function get_interpolation_factor(self, current_time_string, new_data)
+
+        class(nudging), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        logical, optional, intent(out) :: new_data
+
+        if (present(new_data)) then
+            get_interpolation_factor = self%m_bc_no_nudging%get_interpolation_factor(current_time_string, new_data)
+        else
+            get_interpolation_factor = self%m_bc_no_nudging%get_interpolation_factor(current_time_string)
+        endif
+
+    end function get_interpolation_factor
 
 
 
@@ -152,7 +212,31 @@ contains
 
 
 
-    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+    subroutine apply(self, e3t, n_tracers, trb, tra)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
+        class(nudging), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+
+        call self%m_bc_no_nudging%apply_nudging(e3t, n_tracers, self%m_rst_tracers, trb, tra)
+        write(*, *) 'INFO: called apply from nudging decorator'
+
+    end subroutine apply
+
+
+
+    subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -170,10 +254,10 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
 
-        call self%m_bc_no_nudging%apply(e3t, n_tracers, self%m_rst_tracers, trb, tra)
-        write(*, *) 'INFO: called apply from nudging decorator'
+        write(*, *) 'WARN: nudging class does not implement this method'
+        write(*, *) 'WARN: attempt to apply nudging to nudging decorator'
 
-    end subroutine apply
+    end subroutine apply_nudging
 
 
 

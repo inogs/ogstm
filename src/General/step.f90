@@ -142,7 +142,7 @@ MODULE module_step
 !  ---------------------------------------------------------------------
 
       call update_bc(all_rivers, datestring)
-      call update_bc(gibraltar_sponge, datestring)
+      call update_bc(gibraltar, datestring)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

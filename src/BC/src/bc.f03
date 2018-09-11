@@ -19,6 +19,7 @@ module bc_mod
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_nudging
         procedure :: apply_phys
         procedure :: bc_destructor
     end type bc
@@ -40,6 +41,8 @@ contains
         allocate(bc_empty%m_bc_data)
         bc_empty%m_bc_data = bc_data()
 
+        write(*, *) 'INFO: successfully called bc empty constructor'
+
     end function bc_empty
 
 
@@ -50,6 +53,8 @@ contains
 
         allocate(bc_default%m_bc_data)
         bc_default%m_bc_data = bc_data(files_namelist)
+
+        write(*, *) 'INFO: successfully called bc default constructor'
 
     end function bc_default
 
@@ -63,6 +68,8 @@ contains
 
         allocate(bc_year%m_bc_data)
         bc_year%m_bc_data = bc_data(files_namelist, start_time_string, end_time_string)
+
+        write(*, *) 'INFO: successfully called bc empty constructor'
 
     end function bc_year
 
@@ -100,7 +107,9 @@ contains
         logical, optional, intent(out) :: new_data
 
         call self%m_bc_data%set_current_interval(current_time_string)
-        new_data = self%m_bc_data%new_interval()
+        if (present(new_data)) then
+            new_data = self%m_bc_data%new_interval()
+        endif
 
     end subroutine set_current_interval
 
@@ -142,7 +151,30 @@ contains
 
 
 
-    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+    subroutine apply(self, e3t, n_tracers, trb, tra)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
+        class(bc), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+
+        write(*, *) 'WARN: base class does not implement this method'
+
+    end subroutine apply
+
+
+
+    subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -162,7 +194,7 @@ contains
 
         write(*, *) 'WARN: base class does not implement this method'
 
-    end subroutine apply
+    end subroutine apply_nudging
 
 
 

@@ -44,6 +44,7 @@ module sponge_mod
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_nudging
         procedure :: apply_phys ! TO DO: declare and implement also in base class
         ! destructor
         procedure :: sponge_destructor
@@ -82,7 +83,7 @@ contains
     ! just a wrapper of 'COUNT_InSubDomain_GIB' (domrea.f90:209)
     subroutine set_size(self)
         class(sponge), intent(inout) :: self
-        self%m_size = COUNT_InSubDomain(self%m_global_size, self%m_global_idxt)
+        self%m_size = COUNT_InSubDomain_3d(self%m_global_size, self%m_global_idxt)
     end subroutine set_size
 
 
@@ -90,7 +91,7 @@ contains
     ! just a wrapper of 'GIBRE_Indexing' (domrea.f90:218)
     subroutine reindex(self)
         class(sponge), intent(inout) :: self
-        call RE_Indexing(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
+        call RE_Indexing_3d(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
     end subroutine reindex
 
 
@@ -169,6 +170,8 @@ contains
 
         call sponge_default%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
+        write(*, *) 'INFO: successfully called sponge default constructor'
+
     end function sponge_default
 
 
@@ -194,6 +197,8 @@ contains
         sponge_year%bc = bc(files_namelist, start_time_string, end_time_string)
 
         call sponge_year%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
+
+        write(*, *) 'INFO: successfully called sponge year constructor'
 
     end function sponge_year
 
@@ -254,7 +259,31 @@ contains
 
 
 
-    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+    subroutine apply(self, e3t, n_tracers, trb, tra)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
+        class(sponge), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+
+        write(*, *) 'WARN: sponge class does not implement this method'
+        write(*, *) 'WARN: attempt to apply boundary conditions on sponge boundary without nudging'
+
+    end subroutine apply
+
+
+
+    subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -288,7 +317,7 @@ contains
             enddo
         endif
 
-    end subroutine apply
+    end subroutine apply_nudging
 
 
 

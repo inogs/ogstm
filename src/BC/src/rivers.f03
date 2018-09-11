@@ -40,6 +40,7 @@ module rivers_mod
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_nudging
         procedure :: apply_phys
         ! destructor
         procedure :: rivers_destructor
@@ -61,6 +62,7 @@ contains
     subroutine set_global_size(self)
         class(rivers), intent(inout) :: self
         call getDimension(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size)
+        write(*, *) 'INFO: successfully called set_global_size'
     end subroutine set_global_size
 
 
@@ -71,6 +73,7 @@ contains
         allocate(self%m_global_idxt(self%m_global_size)) ! BC_mem.f90:135
         self%m_global_idxt(:) = huge(self%m_global_idxt(1))
         call readnc_int_1d(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size, self%m_global_idxt)
+        write(*, *) 'INFO: successfully called set_global_idxt'
     end subroutine set_global_idxt
 
 
@@ -78,7 +81,8 @@ contains
     ! just a wrapper of 'COUNT_InSubDomain' (domrea.f90:228)
     subroutine set_size(self)
         class(rivers), intent(inout) :: self
-        self%m_size = COUNT_InSubDomain(self%m_global_size, self%m_global_idxt)
+        self%m_size = COUNT_InSubDomain_2d(self%m_global_size, self%m_global_idxt)
+        write(*, *) 'INFO: successfully called set_size. Size = ', self%m_size
     end subroutine set_size
 
 
@@ -86,7 +90,8 @@ contains
     ! just a wrapper of 'RIVRE_Indexing' (domrea.f90:233)
     subroutine reindex(self)
         class(rivers), intent(inout) :: self
-        call RE_Indexing(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
+        call RE_Indexing_2d(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
+        write(*, *) 'INFO: successfully called reindex'
     end subroutine reindex
 
 
@@ -133,6 +138,8 @@ contains
         allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:231
         self%m_values(:, :) = huge(self%m_values(1, 1)) ! domrea.f90:231
 
+        write(*, *) 'INFO: successfully called init_members'
+
     end subroutine init_members
 
 
@@ -152,6 +159,8 @@ contains
         rivers_default%bc = bc(files_namelist)
 
         call rivers_default%init_members(bc_name, n_vars, vars, var_names_idx)
+
+        write(*, *) 'INFO: successfully called rivers default constructor'
 
     end function rivers_default
 
@@ -174,6 +183,8 @@ contains
         rivers_year%bc = bc(files_namelist, start_time_string, end_time_string)
 
         call rivers_year%init_members(bc_name, n_vars, vars, var_names_idx)
+
+        write(*, *) 'INFO: successfully called rivers year constructor'
 
     end function rivers_year
 
@@ -234,7 +245,41 @@ contains
 
 
 
-    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+    subroutine apply(self, e3t, n_tracers, trb, tra)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182        
+
+        class(rivers), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+        integer :: i, j, idx_tracer, idx_i, idx_j
+
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                idx_tracer = self%m_var_names_idx(i)
+                do j = 1, self%m_size
+                    idx_i = self%m_ridxt(4, j)
+                    idx_j = self%m_ridxt(3, j)
+                    tra(1, idx_j, idx_i, idx_tracer) = tra(1, idx_j, idx_i, idx_tracer) + &
+                        self%m_values(j, i) / e3t(1, idx_j, idx_i)
+                enddo
+            enddo
+        endif
+
+    end subroutine apply
+
+
+
+    subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -253,19 +298,9 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
         integer :: i, j, idx_tracer, idx_i, idx_j
 
-        if (self%m_size > 0) then
-            do i = 1, self%m_n_vars
-                idx_tracer = self%m_var_names_idx(i)
-                do j = 1, self%m_size
-                    idx_i = self%m_ridxt(4, j)
-                    idx_j = self%m_ridxt(3, j)
-                    tra(1, idx_j, idx_i, idx_tracer) = tra(1, idx_j, idx_i, idx_tracer) + &
-                        self%m_values(j, i) / e3t(1, idx_j, idx_i)
-                enddo
-            enddo
-        endif
+        write(*, *) 'WARN: rivers class does not implement this method'
 
-    end subroutine apply
+    end subroutine apply_nudging
 
 
 

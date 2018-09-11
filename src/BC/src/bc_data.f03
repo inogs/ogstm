@@ -51,6 +51,8 @@ contains
         bc_data_empty%m_next_idx = 0
         bc_data_empty%m_new_interval = .false.
 
+        write(*, *) 'INFO: successfully called bc_data empty constructor'
+
     end function bc_data_empty
 
 
@@ -91,6 +93,8 @@ contains
 
         ! close file
         close(unit=file_unit)
+
+        write(*, *) 'INFO: successfully called bc_data default constructor'
 
     end function bc_data_default
 
@@ -152,6 +156,8 @@ contains
 
         ! close file
         close(unit=file_unit)
+
+        write(*, *) 'INFO: successfully called bc_data year constructor'
 
     end function bc_data_year
 

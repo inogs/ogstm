@@ -134,8 +134,8 @@ MODULE module_step
 
       CALL forcings_PHYS(DATEstring)
       CALL forcings_KEXT(datestring)
-      CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
-      CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
+      !CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
+      !CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

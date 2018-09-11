@@ -196,47 +196,47 @@
 
 
 ! *********************************   Gibraltar area
-      filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
+      !filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
 
 
-       if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
+      !if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
 
-      CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
+      !CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
 
-      if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
-      if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
+      !if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
+      !if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
 
-      Gsize = COUNT_InSubDomain_GIB(Gsizeglo, gib_idxtglo)
+      !Gsize = COUNT_InSubDomain_GIB(Gsizeglo, gib_idxtglo)
 
-      write(*,*) 'domrea->Gsize   : ', Gsize, 'myrank=', myrank
+      !write(*,*) 'domrea->Gsize   : ', Gsize, 'myrank=', myrank
 
 
-      if (Gsize.NE.0) then
-          if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_gib'
-          call alloc_DTATRC_local_gib
+      !if (Gsize.NE.0) then
+          !if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_gib'
+          !call alloc_DTATRC_local_gib
 
-          B=GIBRe_indexing()
+          !B=GIBRe_indexing()
 
-      endif
+      !endif
 
 ! ********************************  Rivers ******
-      filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'
+      !filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'
       !print *,"---",Rsizeglo
       
-      CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
+      !CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
 
-      Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
+      !Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
 
-      if (Rsize.NE. 0) then
-          call alloc_DTATRC_local_riv
+      !if (Rsize.NE. 0) then
+          !call alloc_DTATRC_local_riv
 
-          B=RIVRe_Indexing()
+          !B=RIVRe_Indexing()
 
-      endif
+      !endif
       !print *,Rsize,Rsizeglo
 
 
-       if(lwp) write(*,*) 'RIV finiti'
+      !if(lwp) write(*,*) 'RIV finiti'
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

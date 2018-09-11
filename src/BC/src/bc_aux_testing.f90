@@ -199,21 +199,35 @@ module bc_aux_testing_mod
         ! WARNING: this is not the actual 'COUNT_InSubDomain' function,
         ! but just a replacement in order to perform serial unit testing on sponge class.
         ! TO DO: this should be avoided and full mpi tests enabled.
-        integer(4) function COUNT_InSubDomain(sizeGLO, idxtGLOBAL)
+        integer(4) function COUNT_InSubDomain_2d(sizeGLO, idxtGLOBAL)
 
             integer, intent(in) :: sizeGLO
             integer, intent(in) :: idxtGLOBAL(sizeGLO)
 
-            COUNT_InSubDomain = sizeGLO
+            COUNT_InSubDomain_2d = sizeGLO
 
-        end function COUNT_InSubDomain
+        end function COUNT_InSubDomain_2d
 
 
 
-        ! WARNING: this is not the actual 'GIBRE_Indexing' subroutine,
+        ! WARNING: this is not the actual 'COUNT_InSubDomain_GIB' function,
         ! but just a replacement in order to perform serial unit testing on sponge class.
         ! TO DO: this should be avoided and full mpi tests enabled.
-        subroutine RE_Indexing(sizeglo, idxtglo, sizeloc, ridxt)
+        integer(4) function COUNT_InSubDomain_3d(sizeGLO, idxtGLOBAL)
+
+            integer, intent(in) :: sizeGLO
+            integer, intent(in) :: idxtGLOBAL(sizeGLO)
+
+            COUNT_InSubDomain_3d = sizeGLO
+
+        end function COUNT_InSubDomain_3d
+
+
+
+        ! WARNING: this is not the actual 'RIVRE_Indexing' subroutine,
+        ! but just a replacement in order to perform serial unit testing on sponge class.
+        ! TO DO: this should be avoided and full mpi tests enabled.
+        subroutine RE_Indexing_2d(sizeglo, idxtglo, sizeloc, ridxt)
 
             integer(4), intent(in) :: sizeglo
             integer(4), intent(in) :: idxtglo(sizeglo)
@@ -222,7 +236,23 @@ module bc_aux_testing_mod
 
             ridxt(:, :) = 1
 
-        end subroutine RE_Indexing
+        end subroutine RE_Indexing_2d
+
+
+
+        ! WARNING: this is not the actual 'GIBRE_Indexing' subroutine,
+        ! but just a replacement in order to perform serial unit testing on sponge class.
+        ! TO DO: this should be avoided and full mpi tests enabled.
+        subroutine RE_Indexing_3d(sizeglo, idxtglo, sizeloc, ridxt)
+
+            integer(4), intent(in) :: sizeglo
+            integer(4), intent(in) :: idxtglo(sizeglo)
+            integer(4), intent(in) :: sizeloc
+            integer(4), intent(out) :: ridxt(4, sizeloc)
+
+            ridxt(:, :) = 1
+
+        end subroutine RE_Indexing_3d
 
 
 

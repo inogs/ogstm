@@ -194,7 +194,47 @@ module bc_aux_mod
         ! The only 2 reasons why it is copied here are:
         ! - the definition is not inside a module;
         ! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
-        integer function COUNT_InSubDomain(sizeGLO, idxtGLOBAL)
+        integer function COUNT_InSubDomain_2d(sizeGLO, idxtGLOBAL)
+
+            use modul_param, only: jpk, jpj, jpi
+            use myalloc, only: idxt, tmask ! added tmask
+
+            implicit none
+
+            integer, intent(in) :: sizeGLO
+            integer, intent(in) :: idxtGLOBAL(sizeGLO)
+
+            ! local
+            integer kk, jj, ii, jv
+            integer counter, junk
+
+            counter = 0
+            do ii = 1, jpi
+                do jj = 1, jpj
+                    do kk = 1, jpk
+                        if (tmask(kk, jj, ii) .eq. 1) then
+                            junk = idxt(kk, jj, ii)
+                            do jv = 1, sizeGLO
+                                if (junk .eq. idxtGLOBAL(jv)) then
+                                    counter = counter + 1
+                                endif
+                            enddo
+                        endif
+                    enddo
+                enddo
+            enddo
+
+            COUNT_InSubDomain_2d = counter
+
+        end function COUNT_InSubDomain_2d
+
+
+
+        ! This is exactly the definition of 'COUNT_InSubDomain_GIB' which is provided in 'domrea.f90'.
+        ! The only 2 reasons why it is copied here are:
+        ! - the definition is not inside a module;
+        ! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
+        integer function COUNT_InSubDomain_3d(sizeGLO, idxtGLOBAL)
 
             use modul_param, only: jpk, jpj, jpi
             use myalloc, only: idxt, tmask ! added tmask
@@ -225,9 +265,52 @@ module bc_aux_mod
                 enddo
             enddo
 
-            COUNT_InSubDomain = counter
+            COUNT_InSubDomain_3d = counter
 
-        end function COUNT_InSubDomain
+        end function COUNT_InSubDomain_3d
+
+
+
+        ! This is exactly the definition of 'RIVRE_Indexing' which is provided in 'domrea.f90'.
+        ! The only 2 reasons why it is copied here are:
+        ! - the definition is not inside a module;
+        ! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
+        ! Notes:
+        ! - it has been necessary to pass class members as function arguments;
+        ! - function has been mapped into subroutine, since return value is not used.
+        subroutine RE_Indexing_2d(sizeglo, idxtglo, sizeloc, ridxt)
+
+            use modul_param, only: jpk, jpj, jpi
+            use myalloc, only: idxt
+
+            implicit none
+
+            integer(4), intent(in) :: sizeglo
+            integer(4), intent(in) :: idxtglo(sizeglo)
+            integer(4), intent(in) :: sizeloc
+            integer(4), intent(out) :: ridxt(4, sizeloc)
+
+            ! local
+            integer jj, ii, jv
+            integer counter, junk
+            
+            counter = 0
+            do ii = 1, jpi
+                do jj = 1, jpj
+                    junk = idxt(1, jj, ii)
+                    do jv = 1, sizeglo
+                        if (junk .eq. idxtglo(jv)) then
+                            counter = counter + 1
+                            ridxt(1, counter) = jv
+                            ridxt(2, counter) = 1
+                            ridxt(3, counter) = jj
+                            ridxt(4, counter) = ii
+                        endif
+                    enddo
+                enddo
+            enddo
+            
+        end subroutine RE_Indexing_2d
 
 
 
@@ -238,7 +321,7 @@ module bc_aux_mod
         ! Notes:
         ! - it has been necessary to pass class members as function arguments;
         ! - function has been mapped into subroutine, since return value is not used.
-        subroutine RE_Indexing(sizeglo, idxtglo, sizeloc, ridxt)
+        subroutine RE_Indexing_3d(sizeglo, idxtglo, sizeloc, ridxt)
 
             use modul_param, only: jpk, jpj, jpi
             use myalloc, only: idxt
@@ -254,7 +337,7 @@ module bc_aux_mod
             integer kk, jj, ii, jv
             integer counter, junk
             
-            counter=0
+            counter = 0
             do ii = 1, jpi
                 do jj = 1, jpj
                     do kk = 1, jpk
@@ -272,7 +355,7 @@ module bc_aux_mod
                 enddo
             enddo
             
-        end subroutine RE_Indexing
+        end subroutine RE_Indexing_3d
 
 
 

@@ -347,6 +347,18 @@ SUBROUTINE ogstm_finalize()
 
       if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      call all_rivers%rivers_destructor()
+      call gibraltar_sponge%sponge_destructor()
+      call gibraltar%nudging_destructor()
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       CLOSE( numout ) ! others units are closed in mppstop
       CLOSE( numnam )
 

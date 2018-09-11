@@ -142,7 +142,7 @@ MODULE module_step
 !  ---------------------------------------------------------------------
 
       call update_bc(all_rivers, datestring)
-      call update_bc(gibraltar, datestring)
+      call update_bc(gibraltar_sponge, datestring)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -297,9 +297,8 @@ MODULE module_step
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      ! TO DO: apply should not have rst_tracers among its parameters: change it!
-      ! call all_rivers%apply()
-      ! call gibraltar%apply()
+      call all_rivers%apply(e3t, jptra, trb, tra)
+      call gibraltar%apply(e3t, jptra, trb, tra)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

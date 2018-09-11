@@ -23,6 +23,11 @@ module nudging_mod
         ! delegated constructor
         procedure init_members
         ! base class methods
+        procedure :: get_file_by_index
+        procedure :: get_prev_idx
+        procedure :: get_next_idx
+        procedure :: set_current_interval
+        procedure :: get_interpolation_factor
         procedure :: load
         procedure :: swap
         procedure :: actualize
@@ -126,6 +131,7 @@ contains
         integer, intent(in) :: idx
 
         get_file_by_index = self%m_bc_no_nudging%get_file_by_index(idx)
+        write(*, *) 'INFO: called get_file_by_index from nudging decorator'
 
     end function get_file_by_index
 
@@ -134,6 +140,7 @@ contains
     integer function get_prev_idx(self)
         class(nudging), intent(in) :: self
         get_prev_idx = self%m_bc_no_nudging%get_prev_idx()
+        write(*, *) 'INFO: called get_prev_idx from nudging decorator'
     end function get_prev_idx
 
 
@@ -141,6 +148,7 @@ contains
     integer function get_next_idx(self)
         class(nudging), intent(in) :: self
         get_next_idx = self%m_bc_no_nudging%get_next_idx()
+        write(*, *) 'INFO: called get_next_idx from nudging decorator'
     end function get_next_idx
 
 
@@ -156,6 +164,7 @@ contains
         else
             call self%m_bc_no_nudging%set_current_interval(current_time_string)
         endif
+        write(*, *) 'INFO: called set_current_interval from nudging decorator'
 
     end subroutine set_current_interval
 
@@ -172,6 +181,7 @@ contains
         else
             get_interpolation_factor = self%m_bc_no_nudging%get_interpolation_factor(current_time_string)
         endif
+        write(*, *) 'INFO: called get_interpolation_factor from nudging decorator'
 
     end function get_interpolation_factor
 

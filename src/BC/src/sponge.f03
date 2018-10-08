@@ -343,17 +343,23 @@ contains
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel ! spongeVel
 
         integer :: i, j
+        integer :: counter
         double precision :: reduction_value_vel ! reduction_value (only for sponge_vel)
+
+        counter = 0
 
         do i = 1, jpi
             do j = 1, jpj
                 if (lat(j, i) < self%m_length) then
+                    counter = counter + 1
                     sponge_t(j, i) = self%m_reduction_value_t
                     reduction_value_vel = exp( -self%m_alpha * ((lat(j, i) - self%m_length)**2) )
                     sponge_vel(:, j, i) = reduction_value_vel
                 endif
             enddo
         enddo
+
+        write(*, *) "form apply_phys: (jpi, jpj, jpk, counter) = ", jpi, jpj, jpk, counter
 
     end subroutine apply_phys
 

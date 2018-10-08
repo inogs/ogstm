@@ -259,9 +259,9 @@
           7, &
           "O2o N1p N3n N5s O3c O3h N6r", &
           (/ 1, 2, 3, 6, 49, 50, 7 /), &
-          1.0d1, &
+          1.0d0, &
           1.0d-6, &
-          -7.5d1 &
+          -7.5d0 &
           )
       gibraltar = nudging( &
           gibraltar_sponge, &

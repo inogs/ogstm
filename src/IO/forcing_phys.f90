@@ -407,8 +407,8 @@
 
       ! lon_limit = -7.5
       ! alpha     = 1.0
-      ! spongeT     = 1.0
-      ! spongeVel   = 1.0
+      spongeT     = 1.0
+      spongeVel   = 1.0
 
       ! if (internal_sponging) then
       !     DO ji=1,jpi

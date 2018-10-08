@@ -394,8 +394,8 @@
       double precision reduction_value, alpha
       double precision lon_limit
 
-      lon_limit = -7.5
-      alpha     = 1.0
+      lon_limit = -7.5d0
+      alpha     = 1.0d0
       spongeT     = 1.0
       spongeVel   = 1.0
 
@@ -403,7 +403,7 @@
           DO ji=1,jpi
           DO jj=1,jpj
               if (glamt(jj,ji).lt.lon_limit) then
-                  reduction_value = 1.e-6
+                  reduction_value = 1.0d-6
                   spongeT(jj,ji) = reduction_value
               endif
           ENDDO

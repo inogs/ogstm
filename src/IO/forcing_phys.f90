@@ -437,7 +437,9 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call gibraltar%apply_phys(glamt, spongeT, spongeVel)
+      if (internal_sponging) then
+          call gibraltar%apply_phys(glamt, spongeT, spongeVel)
+      endif
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

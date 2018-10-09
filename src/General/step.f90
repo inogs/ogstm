@@ -141,8 +141,15 @@ MODULE module_step
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
+      bc_tin_partTime = MPI_WTIME()
       call update_bc(all_rivers, datestring)
+      bc_tin_partTime = MPI_WTIME()    - bc_tin_partTime
+      bc_tin_TotTime  = bc_tin_TotTime + bc_tin_partTime
+
+      bc_gib_partTime = MPI_WTIME()
       call update_bc(gibraltar, datestring)
+      bc_gib_partTime = MPI_WTIME()    - bc_gib_partTime
+      bc_gib_TotTime  = bc_gib_TotTime + bc_gib_partTime
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

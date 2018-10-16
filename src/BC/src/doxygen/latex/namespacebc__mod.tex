@@ -1,0 +1,133 @@
+\hypertarget{namespacebc__mod}{}\subsection{bc\+\_\+mod Module Reference}
+\label{namespacebc__mod}\index{bc\+\_\+mod@{bc\+\_\+mod}}
+\subsubsection*{Data Types}
+\begin{DoxyCompactItemize}
+\item 
+interface \mbox{\hyperlink{structbc__mod_1_1bc}{bc}}
+\end{DoxyCompactItemize}
+\subsubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function \mbox{\hyperlink{namespacebc__mod_ae334c602c9a98a75ca25a7af333bb845}{bc\+\_\+empty}} ()
+\item 
+type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function \mbox{\hyperlink{namespacebc__mod_a67873e29b428f5525f9cb12426dafa43}{bc\+\_\+default}} (files\+\_\+namelist)
+\item 
+type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function \mbox{\hyperlink{namespacebc__mod_a394924f0b959c0b53a721661a6c81249}{bc\+\_\+year}} (files\+\_\+namelist, start\+\_\+time\+\_\+string, end\+\_\+time\+\_\+string)
+\item 
+character(len=24) function \mbox{\hyperlink{namespacebc__mod_a8a4134af9602c4532eb9698c4ab7f5a1}{get\+\_\+file\+\_\+by\+\_\+index}} (self, idx)
+\item 
+integer function \mbox{\hyperlink{namespacebc__mod_a5caff070a863ad08db22d85ca7e0b8b9}{get\+\_\+prev\+\_\+idx}} (self)
+\item 
+integer function \mbox{\hyperlink{namespacebc__mod_a783b0c98351bbb1c0f2262e54ab0ab84}{get\+\_\+next\+\_\+idx}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_a54709c03d02b3a537c61ef98ce464ac6}{set\+\_\+current\+\_\+interval}} (self, current\+\_\+time\+\_\+string, new\+\_\+data)
+\item 
+double precision function \mbox{\hyperlink{namespacebc__mod_a94b8128bcc59330c1612f58d95bd6b33}{get\+\_\+interpolation\+\_\+factor}} (self, current\+\_\+time\+\_\+string, new\+\_\+data)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_a3804f8b1aae5d58c9bb3f7fa88ff29c9}{load}} (self, idx)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_a248045244b644d0fca3b061f2baf93a7}{swap}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_abfb3c3416dd78fb3d2ce69a6574dfd41}{actualize}} (self, weight)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_afabd5e4d5da39a09c755200972516648}{apply}} (self, e3t, n\+\_\+tracers, trb, tra)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_ad4804bde248994bc86adf15286b68d7a}{apply\+\_\+nudging}} (self, e3t, n\+\_\+tracers, rst\+\_\+tracers, trb, tra)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_ac83f910c3a8db513c1a4952f650b279c}{apply\+\_\+phys}} (self, lat, sponge\+\_\+t, sponge\+\_\+vel)
+\item 
+subroutine \mbox{\hyperlink{namespacebc__mod_a27478494ca4ab470a05ec781192c89e4}{bc\+\_\+destructor}} (self)
+\end{DoxyCompactItemize}
+
+
+\subsubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{namespacebc__mod_abfb3c3416dd78fb3d2ce69a6574dfd41}\label{namespacebc__mod_abfb3c3416dd78fb3d2ce69a6574dfd41}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!actualize@{actualize}}
+\index{actualize@{actualize}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{actualize()}{actualize()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::actualize (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self,  }\item[{double precision, intent(in)}]{weight }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_afabd5e4d5da39a09c755200972516648}\label{namespacebc__mod_afabd5e4d5da39a09c755200972516648}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!apply@{apply}}
+\index{apply@{apply}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{apply()}{apply()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::apply (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self,  }\item[{double precision, dimension(jpk, jpj, jpi), intent(in)}]{e3t,  }\item[{integer, intent(in)}]{n\+\_\+tracers,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(in)}]{trb,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(inout)}]{tra }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_ad4804bde248994bc86adf15286b68d7a}\label{namespacebc__mod_ad4804bde248994bc86adf15286b68d7a}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!apply\+\_\+nudging@{apply\+\_\+nudging}}
+\index{apply\+\_\+nudging@{apply\+\_\+nudging}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{apply\+\_\+nudging()}{apply\_nudging()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::apply\+\_\+nudging (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self,  }\item[{double precision, dimension(jpk, jpj, jpi), intent(in)}]{e3t,  }\item[{integer, intent(in)}]{n\+\_\+tracers,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(in)}]{rst\+\_\+tracers,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(in)}]{trb,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(inout)}]{tra }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacebc__mod_ac83f910c3a8db513c1a4952f650b279c}\label{namespacebc__mod_ac83f910c3a8db513c1a4952f650b279c}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!apply\+\_\+phys@{apply\+\_\+phys}}
+\index{apply\+\_\+phys@{apply\+\_\+phys}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{apply\+\_\+phys()}{apply\_phys()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::apply\+\_\+phys (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self,  }\item[{double precision, dimension(jpj, jpi), intent(in)}]{lat,  }\item[{double precision, dimension(jpj, jpi), intent(out)}]{sponge\+\_\+t,  }\item[{double precision, dimension(jpk, jpj, jpi), intent(out)}]{sponge\+\_\+vel }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacebc__mod_a67873e29b428f5525f9cb12426dafa43}\label{namespacebc__mod_a67873e29b428f5525f9cb12426dafa43}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!bc\+\_\+default@{bc\+\_\+default}}
+\index{bc\+\_\+default@{bc\+\_\+default}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{bc\+\_\+default()}{bc\_default()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function bc\+\_\+mod\+::bc\+\_\+default (\begin{DoxyParamCaption}\item[{character(len=22), intent(in)}]{files\+\_\+namelist }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a27478494ca4ab470a05ec781192c89e4}\label{namespacebc__mod_a27478494ca4ab470a05ec781192c89e4}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!bc\+\_\+destructor@{bc\+\_\+destructor}}
+\index{bc\+\_\+destructor@{bc\+\_\+destructor}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{bc\+\_\+destructor()}{bc\_destructor()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::bc\+\_\+destructor (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacebc__mod_ae334c602c9a98a75ca25a7af333bb845}\label{namespacebc__mod_ae334c602c9a98a75ca25a7af333bb845}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!bc\+\_\+empty@{bc\+\_\+empty}}
+\index{bc\+\_\+empty@{bc\+\_\+empty}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{bc\+\_\+empty()}{bc\_empty()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function bc\+\_\+mod\+::bc\+\_\+empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a394924f0b959c0b53a721661a6c81249}\label{namespacebc__mod_a394924f0b959c0b53a721661a6c81249}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!bc\+\_\+year@{bc\+\_\+year}}
+\index{bc\+\_\+year@{bc\+\_\+year}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{bc\+\_\+year()}{bc\_year()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function bc\+\_\+mod\+::bc\+\_\+year (\begin{DoxyParamCaption}\item[{character(len=27), intent(in)}]{files\+\_\+namelist,  }\item[{character(len=17), intent(in)}]{start\+\_\+time\+\_\+string,  }\item[{character(len=17), intent(in)}]{end\+\_\+time\+\_\+string }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a8a4134af9602c4532eb9698c4ab7f5a1}\label{namespacebc__mod_a8a4134af9602c4532eb9698c4ab7f5a1}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!get\+\_\+file\+\_\+by\+\_\+index@{get\+\_\+file\+\_\+by\+\_\+index}}
+\index{get\+\_\+file\+\_\+by\+\_\+index@{get\+\_\+file\+\_\+by\+\_\+index}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{get\+\_\+file\+\_\+by\+\_\+index()}{get\_file\_by\_index()}}
+{\footnotesize\ttfamily character(len=24) function bc\+\_\+mod\+::get\+\_\+file\+\_\+by\+\_\+index (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(in)}]{self,  }\item[{integer, intent(in)}]{idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a94b8128bcc59330c1612f58d95bd6b33}\label{namespacebc__mod_a94b8128bcc59330c1612f58d95bd6b33}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!get\+\_\+interpolation\+\_\+factor@{get\+\_\+interpolation\+\_\+factor}}
+\index{get\+\_\+interpolation\+\_\+factor@{get\+\_\+interpolation\+\_\+factor}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{get\+\_\+interpolation\+\_\+factor()}{get\_interpolation\_factor()}}
+{\footnotesize\ttfamily double precision function bc\+\_\+mod\+::get\+\_\+interpolation\+\_\+factor (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self,  }\item[{character(len=17), intent(in)}]{current\+\_\+time\+\_\+string,  }\item[{logical, intent(out), optional}]{new\+\_\+data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a783b0c98351bbb1c0f2262e54ab0ab84}\label{namespacebc__mod_a783b0c98351bbb1c0f2262e54ab0ab84}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!get\+\_\+next\+\_\+idx@{get\+\_\+next\+\_\+idx}}
+\index{get\+\_\+next\+\_\+idx@{get\+\_\+next\+\_\+idx}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{get\+\_\+next\+\_\+idx()}{get\_next\_idx()}}
+{\footnotesize\ttfamily integer function bc\+\_\+mod\+::get\+\_\+next\+\_\+idx (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(in)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a5caff070a863ad08db22d85ca7e0b8b9}\label{namespacebc__mod_a5caff070a863ad08db22d85ca7e0b8b9}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!get\+\_\+prev\+\_\+idx@{get\+\_\+prev\+\_\+idx}}
+\index{get\+\_\+prev\+\_\+idx@{get\+\_\+prev\+\_\+idx}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{get\+\_\+prev\+\_\+idx()}{get\_prev\_idx()}}
+{\footnotesize\ttfamily integer function bc\+\_\+mod\+::get\+\_\+prev\+\_\+idx (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(in)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a3804f8b1aae5d58c9bb3f7fa88ff29c9}\label{namespacebc__mod_a3804f8b1aae5d58c9bb3f7fa88ff29c9}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!load@{load}}
+\index{load@{load}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::load (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self,  }\item[{integer, intent(in)}]{idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a54709c03d02b3a537c61ef98ce464ac6}\label{namespacebc__mod_a54709c03d02b3a537c61ef98ce464ac6}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!set\+\_\+current\+\_\+interval@{set\+\_\+current\+\_\+interval}}
+\index{set\+\_\+current\+\_\+interval@{set\+\_\+current\+\_\+interval}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{set\+\_\+current\+\_\+interval()}{set\_current\_interval()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::set\+\_\+current\+\_\+interval (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self,  }\item[{character(len=17), intent(in)}]{current\+\_\+time\+\_\+string,  }\item[{logical, intent(out), optional}]{new\+\_\+data }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacebc__mod_a248045244b644d0fca3b061f2baf93a7}\label{namespacebc__mod_a248045244b644d0fca3b061f2baf93a7}} 
+\index{bc\+\_\+mod@{bc\+\_\+mod}!swap@{swap}}
+\index{swap@{swap}!bc\+\_\+mod@{bc\+\_\+mod}}
+\paragraph{\texorpdfstring{swap()}{swap()}}
+{\footnotesize\ttfamily subroutine bc\+\_\+mod\+::swap (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}), intent(inout)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+

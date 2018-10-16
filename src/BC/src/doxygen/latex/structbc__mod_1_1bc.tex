@@ -1,0 +1,196 @@
+\hypertarget{structbc__mod_1_1bc}{}\subsection{bc\+\_\+mod\+:\+:bc Interface Reference}
+\label{structbc__mod_1_1bc}\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+
+
+Inheritance diagram for bc\+\_\+mod\+:\+:bc\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{structbc__mod_1_1bc__inherit__graph}
+\end{center}
+\end{figure}
+\subsubsection*{Private Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_aad031a20982832747243dc3e3fbfce20}{get\+\_\+file\+\_\+by\+\_\+index}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_aa04b9a462194855b7c9111fe67456f0d}{get\+\_\+prev\+\_\+idx}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_abf0c1a16ec610ce08ed379315afc7f55}{get\+\_\+next\+\_\+idx}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_adf9262a425534bd18d98809381034ca1}{set\+\_\+current\+\_\+interval}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_a1d7f33a1fd0c18e5ce50af4690c82846}{get\+\_\+interpolation\+\_\+factor}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_a1c4ee986270f18f4400c4554c06c5f7b}{load}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_a925ae5960dbfc854eab908c52c13f719}{swap}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_a15503494f181d4090774d948cecdce48}{actualize}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_a628eafc79842d1d1d62e043aedf49aa0}{apply}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_a42dc448ba9e50fbb6b1acf03b0d121f3}{apply\+\_\+nudging}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_ad0d03ece320569369a296ff3d4cf10d2}{apply\+\_\+phys}}
+\item 
+procedure \mbox{\hyperlink{structbc__mod_1_1bc_ad38c12a9f905c66965ffe633ead4edd2}{bc\+\_\+destructor}}
+\item 
+type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function \mbox{\hyperlink{structbc__mod_1_1bc_a721ce450ae1ffdc8c9f0c8ef12f045d1}{bc\+\_\+empty}} ()
+\item 
+type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function \mbox{\hyperlink{structbc__mod_1_1bc_a740cece69077685b30af7e619d448b33}{bc\+\_\+default}} (files\+\_\+namelist)
+\item 
+type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function \mbox{\hyperlink{structbc__mod_1_1bc_ad1e474e0627921dd48884966e30f379d}{bc\+\_\+year}} (files\+\_\+namelist, start\+\_\+time\+\_\+string, end\+\_\+time\+\_\+string)
+\end{DoxyCompactItemize}
+\subsubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+type(\mbox{\hyperlink{structbc__data__mod_1_1bc__data}{bc\+\_\+data}}), pointer \mbox{\hyperlink{structbc__mod_1_1bc_a9ec09a6b6f5e1e75406505cb2851051a}{m\+\_\+bc\+\_\+data}} =$>$ null()
+\end{DoxyCompactItemize}
+
+
+\subsubsection{Member Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{structbc__mod_1_1bc_a15503494f181d4090774d948cecdce48}\label{structbc__mod_1_1bc_a15503494f181d4090774d948cecdce48}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!actualize@{actualize}}
+\index{actualize@{actualize}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{actualize()}{actualize()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::actualize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structsponge__mod_1_1sponge_a7d01836ef5f2e2ea4ee11a6c6231baed}{sponge\+\_\+mod\+::sponge}}, \mbox{\hyperlink{structrivers__mod_1_1rivers_a7c1b4c7a383553f4cacdae90725f3249}{rivers\+\_\+mod\+::rivers}}, and \mbox{\hyperlink{structnudging__mod_1_1nudging_ade178a579111036782c7b4570018f0d5}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_a628eafc79842d1d1d62e043aedf49aa0}\label{structbc__mod_1_1bc_a628eafc79842d1d1d62e043aedf49aa0}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!apply@{apply}}
+\index{apply@{apply}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{apply()}{apply()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::apply (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structsponge__mod_1_1sponge_aca76f3cc282e1918ec76c8d6c34d4315}{sponge\+\_\+mod\+::sponge}}, \mbox{\hyperlink{structrivers__mod_1_1rivers_a97eb13e48a07c9020cb1b353d42a5466}{rivers\+\_\+mod\+::rivers}}, and \mbox{\hyperlink{structnudging__mod_1_1nudging_ad5101760abbec7a50024ecc3435eda49}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_a42dc448ba9e50fbb6b1acf03b0d121f3}\label{structbc__mod_1_1bc_a42dc448ba9e50fbb6b1acf03b0d121f3}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!apply\+\_\+nudging@{apply\+\_\+nudging}}
+\index{apply\+\_\+nudging@{apply\+\_\+nudging}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{apply\+\_\+nudging()}{apply\_nudging()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::apply\+\_\+nudging (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structsponge__mod_1_1sponge_a8617d126acfe553a2d478258adaf029f}{sponge\+\_\+mod\+::sponge}}, \mbox{\hyperlink{structrivers__mod_1_1rivers_aaa8c35a085317190f69e097caba60cfb}{rivers\+\_\+mod\+::rivers}}, and \mbox{\hyperlink{structnudging__mod_1_1nudging_a232a6666abdc760493681d65cf8eb8e0}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_ad0d03ece320569369a296ff3d4cf10d2}\label{structbc__mod_1_1bc_ad0d03ece320569369a296ff3d4cf10d2}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!apply\+\_\+phys@{apply\+\_\+phys}}
+\index{apply\+\_\+phys@{apply\+\_\+phys}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{apply\+\_\+phys()}{apply\_phys()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::apply\+\_\+phys (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structsponge__mod_1_1sponge_ab3f6fd55b37a4a4ba7fe9d0ac9f7b9ac}{sponge\+\_\+mod\+::sponge}}, \mbox{\hyperlink{structrivers__mod_1_1rivers_a4f6360b228319a4189289cafc2e3fd74}{rivers\+\_\+mod\+::rivers}}, and \mbox{\hyperlink{structnudging__mod_1_1nudging_a5e52b19bbb3e3481ebaa885040e92802}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_a740cece69077685b30af7e619d448b33}\label{structbc__mod_1_1bc_a740cece69077685b30af7e619d448b33}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!bc\+\_\+default@{bc\+\_\+default}}
+\index{bc\+\_\+default@{bc\+\_\+default}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{bc\+\_\+default()}{bc\_default()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function bc\+\_\+mod\+::bc\+::bc\+\_\+default (\begin{DoxyParamCaption}\item[{character(len=22), intent(in)}]{files\+\_\+namelist }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_ad38c12a9f905c66965ffe633ead4edd2}\label{structbc__mod_1_1bc_ad38c12a9f905c66965ffe633ead4edd2}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!bc\+\_\+destructor@{bc\+\_\+destructor}}
+\index{bc\+\_\+destructor@{bc\+\_\+destructor}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{bc\+\_\+destructor()}{bc\_destructor()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::bc\+\_\+destructor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_a721ce450ae1ffdc8c9f0c8ef12f045d1}\label{structbc__mod_1_1bc_a721ce450ae1ffdc8c9f0c8ef12f045d1}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!bc\+\_\+empty@{bc\+\_\+empty}}
+\index{bc\+\_\+empty@{bc\+\_\+empty}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{bc\+\_\+empty()}{bc\_empty()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function bc\+\_\+mod\+::bc\+::bc\+\_\+empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_ad1e474e0627921dd48884966e30f379d}\label{structbc__mod_1_1bc_ad1e474e0627921dd48884966e30f379d}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!bc\+\_\+year@{bc\+\_\+year}}
+\index{bc\+\_\+year@{bc\+\_\+year}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{bc\+\_\+year()}{bc\_year()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structbc__mod_1_1bc}{bc}}) function bc\+\_\+mod\+::bc\+::bc\+\_\+year (\begin{DoxyParamCaption}\item[{character(len=27), intent(in)}]{files\+\_\+namelist,  }\item[{character(len=17), intent(in)}]{start\+\_\+time\+\_\+string,  }\item[{character(len=17), intent(in)}]{end\+\_\+time\+\_\+string }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_aad031a20982832747243dc3e3fbfce20}\label{structbc__mod_1_1bc_aad031a20982832747243dc3e3fbfce20}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!get\+\_\+file\+\_\+by\+\_\+index@{get\+\_\+file\+\_\+by\+\_\+index}}
+\index{get\+\_\+file\+\_\+by\+\_\+index@{get\+\_\+file\+\_\+by\+\_\+index}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{get\+\_\+file\+\_\+by\+\_\+index()}{get\_file\_by\_index()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::get\+\_\+file\+\_\+by\+\_\+index (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structnudging__mod_1_1nudging_a76b1b1b5a273bab2e43348de8c7721c6}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_a1d7f33a1fd0c18e5ce50af4690c82846}\label{structbc__mod_1_1bc_a1d7f33a1fd0c18e5ce50af4690c82846}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!get\+\_\+interpolation\+\_\+factor@{get\+\_\+interpolation\+\_\+factor}}
+\index{get\+\_\+interpolation\+\_\+factor@{get\+\_\+interpolation\+\_\+factor}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{get\+\_\+interpolation\+\_\+factor()}{get\_interpolation\_factor()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::get\+\_\+interpolation\+\_\+factor (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structnudging__mod_1_1nudging_a55ee89e52a1b3b98d4ff84802f888dd4}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_abf0c1a16ec610ce08ed379315afc7f55}\label{structbc__mod_1_1bc_abf0c1a16ec610ce08ed379315afc7f55}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!get\+\_\+next\+\_\+idx@{get\+\_\+next\+\_\+idx}}
+\index{get\+\_\+next\+\_\+idx@{get\+\_\+next\+\_\+idx}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{get\+\_\+next\+\_\+idx()}{get\_next\_idx()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::get\+\_\+next\+\_\+idx (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structnudging__mod_1_1nudging_afd2889fe6e9aa9560ebb2358efba4dec}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_aa04b9a462194855b7c9111fe67456f0d}\label{structbc__mod_1_1bc_aa04b9a462194855b7c9111fe67456f0d}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!get\+\_\+prev\+\_\+idx@{get\+\_\+prev\+\_\+idx}}
+\index{get\+\_\+prev\+\_\+idx@{get\+\_\+prev\+\_\+idx}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{get\+\_\+prev\+\_\+idx()}{get\_prev\_idx()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::get\+\_\+prev\+\_\+idx (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structnudging__mod_1_1nudging_ad1d7271784597d454bc97108232613cd}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_a1c4ee986270f18f4400c4554c06c5f7b}\label{structbc__mod_1_1bc_a1c4ee986270f18f4400c4554c06c5f7b}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!load@{load}}
+\index{load@{load}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::load (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structsponge__mod_1_1sponge_a0383aabeecf15b7c47bc43c9b4746c60}{sponge\+\_\+mod\+::sponge}}, \mbox{\hyperlink{structrivers__mod_1_1rivers_a4eac45372772ea12c7f18505a4de53ee}{rivers\+\_\+mod\+::rivers}}, and \mbox{\hyperlink{structnudging__mod_1_1nudging_ad0fe3f6011636572c0641ef4b01bba33}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_adf9262a425534bd18d98809381034ca1}\label{structbc__mod_1_1bc_adf9262a425534bd18d98809381034ca1}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!set\+\_\+current\+\_\+interval@{set\+\_\+current\+\_\+interval}}
+\index{set\+\_\+current\+\_\+interval@{set\+\_\+current\+\_\+interval}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{set\+\_\+current\+\_\+interval()}{set\_current\_interval()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::set\+\_\+current\+\_\+interval (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structnudging__mod_1_1nudging_ab17fe87aa8dc77bd4bf0cba14d68969a}{nudging\+\_\+mod\+::nudging}}.
+
+\mbox{\Hypertarget{structbc__mod_1_1bc_a925ae5960dbfc854eab908c52c13f719}\label{structbc__mod_1_1bc_a925ae5960dbfc854eab908c52c13f719}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!swap@{swap}}
+\index{swap@{swap}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{swap()}{swap()}}
+{\footnotesize\ttfamily procedure bc\+\_\+mod\+::bc\+::swap (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+Implemented in \mbox{\hyperlink{structsponge__mod_1_1sponge_abe0102a0a72e189b8871724a21680c43}{sponge\+\_\+mod\+::sponge}}, \mbox{\hyperlink{structrivers__mod_1_1rivers_a7bcfc95d699f097aed2975941cabe059}{rivers\+\_\+mod\+::rivers}}, and \mbox{\hyperlink{structnudging__mod_1_1nudging_a9015b684c729f54ba0fe1abc15b28a49}{nudging\+\_\+mod\+::nudging}}.
+
+
+
+\subsubsection{Member Data Documentation}
+\mbox{\Hypertarget{structbc__mod_1_1bc_a9ec09a6b6f5e1e75406505cb2851051a}\label{structbc__mod_1_1bc_a9ec09a6b6f5e1e75406505cb2851051a}} 
+\index{bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}!m\+\_\+bc\+\_\+data@{m\+\_\+bc\+\_\+data}}
+\index{m\+\_\+bc\+\_\+data@{m\+\_\+bc\+\_\+data}!bc\+\_\+mod\+::bc@{bc\+\_\+mod\+::bc}}
+\paragraph{\texorpdfstring{m\+\_\+bc\+\_\+data}{m\_bc\_data}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structbc__data__mod_1_1bc__data}{bc\+\_\+data}}), pointer bc\+\_\+mod\+::bc\+::m\+\_\+bc\+\_\+data =$>$ null()\hspace{0.3cm}{\ttfamily [private]}}
+

@@ -1,0 +1,514 @@
+\begin{theindex}
+
+  \item {actualize}
+    \subitem {bc\+\_\+mod}, \hyperpage{7}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{20}
+    \subitem {nudging\+\_\+mod}, \hyperpage{10}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{27}
+    \subitem {rivers\+\_\+mod}, \hyperpage{13}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{32}
+    \subitem {sponge\+\_\+mod}, \hyperpage{16}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{38}
+  \item {apply}
+    \subitem {bc\+\_\+mod}, \hyperpage{7}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{20}
+    \subitem {nudging\+\_\+mod}, \hyperpage{10}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{27}
+    \subitem {rivers\+\_\+mod}, \hyperpage{13}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{32}
+    \subitem {sponge\+\_\+mod}, \hyperpage{16}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{38}
+  \item {apply\+\_\+nudging}
+    \subitem {bc\+\_\+mod}, \hyperpage{7}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{20}
+    \subitem {nudging\+\_\+mod}, \hyperpage{10}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{27}
+    \subitem {rivers\+\_\+mod}, \hyperpage{13}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{32}
+    \subitem {sponge\+\_\+mod}, \hyperpage{16}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{38}
+  \item {apply\+\_\+phys}
+    \subitem {bc\+\_\+mod}, \hyperpage{8}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{20}
+    \subitem {nudging\+\_\+mod}, \hyperpage{10}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{27}
+    \subitem {rivers\+\_\+mod}, \hyperpage{13}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{33}
+    \subitem {sponge\+\_\+mod}, \hyperpage{16}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+
+  \indexspace
+
+  \item {bc\+\_\+aux\+\_\+mod}, \hyperpage{3}
+    \subitem {count\+\_\+insubdomain\+\_\+2d}, \hyperpage{3}
+    \subitem {count\+\_\+insubdomain\+\_\+3d}, \hyperpage{3}
+    \subitem {getdimension}, \hyperpage{3}
+    \subitem {handle\+\_\+err1}, \hyperpage{3}
+    \subitem {handle\+\_\+err2}, \hyperpage{4}
+    \subitem {re\+\_\+indexing\+\_\+2d}, \hyperpage{4}
+    \subitem {re\+\_\+indexing\+\_\+3d}, \hyperpage{4}
+    \subitem {readnc\+\_\+double\+\_\+1d}, \hyperpage{4}
+    \subitem {readnc\+\_\+int\+\_\+1d}, \hyperpage{4}
+    \subitem {readnc\+\_\+slice\+\_\+float}, \hyperpage{4}
+  \item {bc\+\_\+data\+\_\+default}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{23}
+  \item {bc\+\_\+data\+\_\+destructor}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{23}
+  \item {bc\+\_\+data\+\_\+empty}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{23}
+  \item {bc\+\_\+data\+\_\+mod}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+default}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+destructor}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+empty}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+year}, \hyperpage{5}
+    \subitem {get\+\_\+file\+\_\+by\+\_\+index}, \hyperpage{6}
+    \subitem {get\+\_\+interpolation\+\_\+factor}, \hyperpage{6}
+    \subitem {get\+\_\+next\+\_\+idx}, \hyperpage{6}
+    \subitem {get\+\_\+prev\+\_\+idx}, \hyperpage{6}
+    \subitem {new\+\_\+interval}, \hyperpage{6}
+    \subitem {set\+\_\+current\+\_\+interval}, \hyperpage{6}
+  \item {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{22}
+    \subitem {bc\+\_\+data\+\_\+default}, \hyperpage{23}
+    \subitem {bc\+\_\+data\+\_\+destructor}, \hyperpage{23}
+    \subitem {bc\+\_\+data\+\_\+empty}, \hyperpage{23}
+    \subitem {bc\+\_\+data\+\_\+year}, \hyperpage{23}
+    \subitem {get\+\_\+file\+\_\+by\+\_\+index}, \hyperpage{23}
+    \subitem {get\+\_\+interpolation\+\_\+factor}, \hyperpage{23}
+    \subitem {get\+\_\+next\+\_\+idx}, \hyperpage{24}
+    \subitem {get\+\_\+prev\+\_\+idx}, \hyperpage{24}
+    \subitem {m\+\_\+files}, \hyperpage{24}
+    \subitem {m\+\_\+n\+\_\+files}, \hyperpage{24}
+    \subitem {m\+\_\+n\+\_\+times}, \hyperpage{24}
+    \subitem {m\+\_\+new\+\_\+interval}, \hyperpage{24}
+    \subitem {m\+\_\+next\+\_\+idx}, \hyperpage{25}
+    \subitem {m\+\_\+prev\+\_\+idx}, \hyperpage{25}
+    \subitem {m\+\_\+time\+\_\+strings}, \hyperpage{25}
+    \subitem {m\+\_\+times}, \hyperpage{25}
+    \subitem {new\+\_\+interval}, \hyperpage{24}
+    \subitem {set\+\_\+current\+\_\+interval}, \hyperpage{24}
+  \item {bc\+\_\+data\+\_\+year}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{5}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{23}
+  \item {bc\+\_\+default}
+    \subitem {bc\+\_\+mod}, \hyperpage{8}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{20}
+  \item {bc\+\_\+destructor}
+    \subitem {bc\+\_\+mod}, \hyperpage{8}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{21}
+  \item {bc\+\_\+empty}
+    \subitem {bc\+\_\+mod}, \hyperpage{8}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{21}
+  \item {bc\+\_\+mod}, \hyperpage{7}
+    \subitem {actualize}, \hyperpage{7}
+    \subitem {apply}, \hyperpage{7}
+    \subitem {apply\+\_\+nudging}, \hyperpage{7}
+    \subitem {apply\+\_\+phys}, \hyperpage{8}
+    \subitem {bc\+\_\+default}, \hyperpage{8}
+    \subitem {bc\+\_\+destructor}, \hyperpage{8}
+    \subitem {bc\+\_\+empty}, \hyperpage{8}
+    \subitem {bc\+\_\+year}, \hyperpage{8}
+    \subitem {get\+\_\+file\+\_\+by\+\_\+index}, \hyperpage{8}
+    \subitem {get\+\_\+interpolation\+\_\+factor}, \hyperpage{9}
+    \subitem {get\+\_\+next\+\_\+idx}, \hyperpage{9}
+    \subitem {get\+\_\+prev\+\_\+idx}, \hyperpage{9}
+    \subitem {load}, \hyperpage{9}
+    \subitem {set\+\_\+current\+\_\+interval}, \hyperpage{9}
+    \subitem {swap}, \hyperpage{9}
+  \item {bc\+\_\+mod\+::bc}, \hyperpage{19}
+    \subitem {actualize}, \hyperpage{20}
+    \subitem {apply}, \hyperpage{20}
+    \subitem {apply\+\_\+nudging}, \hyperpage{20}
+    \subitem {apply\+\_\+phys}, \hyperpage{20}
+    \subitem {bc\+\_\+default}, \hyperpage{20}
+    \subitem {bc\+\_\+destructor}, \hyperpage{21}
+    \subitem {bc\+\_\+empty}, \hyperpage{21}
+    \subitem {bc\+\_\+year}, \hyperpage{21}
+    \subitem {get\+\_\+file\+\_\+by\+\_\+index}, \hyperpage{21}
+    \subitem {get\+\_\+interpolation\+\_\+factor}, \hyperpage{21}
+    \subitem {get\+\_\+next\+\_\+idx}, \hyperpage{21}
+    \subitem {get\+\_\+prev\+\_\+idx}, \hyperpage{21}
+    \subitem {load}, \hyperpage{22}
+    \subitem {m\+\_\+bc\+\_\+data}, \hyperpage{22}
+    \subitem {set\+\_\+current\+\_\+interval}, \hyperpage{22}
+    \subitem {swap}, \hyperpage{22}
+  \item {bc\+\_\+year}
+    \subitem {bc\+\_\+mod}, \hyperpage{8}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{21}
+
+  \indexspace
+
+  \item {count\+\_\+insubdomain\+\_\+2d}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{3}
+  \item {count\+\_\+insubdomain\+\_\+3d}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{3}
+
+  \indexspace
+
+  \item {get\+\_\+file\+\_\+by\+\_\+index}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{6}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{23}
+    \subitem {bc\+\_\+mod}, \hyperpage{8}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{21}
+    \subitem {nudging\+\_\+mod}, \hyperpage{11}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{28}
+  \item {get\+\_\+global\+\_\+size}
+    \subitem {rivers\+\_\+mod}, \hyperpage{14}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{33}
+    \subitem {sponge\+\_\+mod}, \hyperpage{17}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+  \item {get\+\_\+interpolation\+\_\+factor}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{6}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{23}
+    \subitem {bc\+\_\+mod}, \hyperpage{9}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{21}
+    \subitem {nudging\+\_\+mod}, \hyperpage{11}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{28}
+  \item {get\+\_\+next\+\_\+idx}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{6}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+    \subitem {bc\+\_\+mod}, \hyperpage{9}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{21}
+    \subitem {nudging\+\_\+mod}, \hyperpage{11}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{28}
+  \item {get\+\_\+prev\+\_\+idx}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{6}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+    \subitem {bc\+\_\+mod}, \hyperpage{9}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{21}
+    \subitem {nudging\+\_\+mod}, \hyperpage{11}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{28}
+  \item {getdimension}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{3}
+
+  \indexspace
+
+  \item {handle\+\_\+err1}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{3}
+  \item {handle\+\_\+err2}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{4}
+
+  \indexspace
+
+  \item {init\+\_\+members}
+    \subitem {nudging\+\_\+mod}, \hyperpage{11}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{28}
+    \subitem {rivers\+\_\+mod}, \hyperpage{14}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{33}
+    \subitem {sponge\+\_\+mod}, \hyperpage{17}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+
+  \indexspace
+
+  \item {load}
+    \subitem {bc\+\_\+mod}, \hyperpage{9}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{22}
+    \subitem {nudging\+\_\+mod}, \hyperpage{11}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{28}
+    \subitem {rivers\+\_\+mod}, \hyperpage{14}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{33}
+    \subitem {sponge\+\_\+mod}, \hyperpage{17}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+
+  \indexspace
+
+  \item {m\+\_\+alpha}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{40}
+  \item {m\+\_\+aux}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{34}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+bc\+\_\+data}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{22}
+  \item {m\+\_\+bc\+\_\+no\+\_\+nudging}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{29}
+  \item {m\+\_\+data\+\_\+file}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{29}
+  \item {m\+\_\+files}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+  \item {m\+\_\+global\+\_\+idxt}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{34}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+global\+\_\+size}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+length}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+n\+\_\+files}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+  \item {m\+\_\+n\+\_\+nudging\+\_\+vars}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{29}
+  \item {m\+\_\+n\+\_\+times}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+  \item {m\+\_\+n\+\_\+vars}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+name}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+name\+\_\+idxt}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+  \item {m\+\_\+new\+\_\+interval}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+  \item {m\+\_\+next\+\_\+idx}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{25}
+  \item {m\+\_\+nudging\+\_\+vars}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{29}
+  \item {m\+\_\+nudging\+\_\+vars\+\_\+idx}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{30}
+  \item {m\+\_\+nudging\+\_\+vars\+\_\+rst}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{30}
+  \item {m\+\_\+prev\+\_\+idx}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{25}
+  \item {m\+\_\+reduction\+\_\+value\+\_\+t}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+ridxt}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+rst}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{30}
+  \item {m\+\_\+rst\+\_\+corr}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{30}
+  \item {m\+\_\+rst\+\_\+tracers}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{30}
+  \item {m\+\_\+size}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{41}
+  \item {m\+\_\+time\+\_\+strings}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{25}
+  \item {m\+\_\+times}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{25}
+  \item {m\+\_\+values}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{42}
+  \item {m\+\_\+values\+\_\+dtatrc}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{42}
+  \item {m\+\_\+var\+\_\+names}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{35}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{42}
+  \item {m\+\_\+var\+\_\+names\+\_\+data}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{36}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{42}
+  \item {m\+\_\+var\+\_\+names\+\_\+idx}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{36}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{42}
+  \item {m\+\_\+var\+\_\+names\+\_\+idxt}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{42}
+
+  \indexspace
+
+  \item {new\+\_\+interval}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{6}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+  \item {nudging\+\_\+default}
+    \subitem {nudging\+\_\+mod}, \hyperpage{12}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{28}
+  \item {nudging\+\_\+destructor}
+    \subitem {nudging\+\_\+mod}, \hyperpage{12}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{29}
+  \item {nudging\+\_\+mod}, \hyperpage{10}
+    \subitem {actualize}, \hyperpage{10}
+    \subitem {apply}, \hyperpage{10}
+    \subitem {apply\+\_\+nudging}, \hyperpage{10}
+    \subitem {apply\+\_\+phys}, \hyperpage{10}
+    \subitem {get\+\_\+file\+\_\+by\+\_\+index}, \hyperpage{11}
+    \subitem {get\+\_\+interpolation\+\_\+factor}, \hyperpage{11}
+    \subitem {get\+\_\+next\+\_\+idx}, \hyperpage{11}
+    \subitem {get\+\_\+prev\+\_\+idx}, \hyperpage{11}
+    \subitem {init\+\_\+members}, \hyperpage{11}
+    \subitem {load}, \hyperpage{11}
+    \subitem {nudging\+\_\+default}, \hyperpage{12}
+    \subitem {nudging\+\_\+destructor}, \hyperpage{12}
+    \subitem {set\+\_\+current\+\_\+interval}, \hyperpage{12}
+    \subitem {swap}, \hyperpage{12}
+  \item {nudging\+\_\+mod\+::nudging}, \hyperpage{26}
+    \subitem {actualize}, \hyperpage{27}
+    \subitem {apply}, \hyperpage{27}
+    \subitem {apply\+\_\+nudging}, \hyperpage{27}
+    \subitem {apply\+\_\+phys}, \hyperpage{27}
+    \subitem {get\+\_\+file\+\_\+by\+\_\+index}, \hyperpage{28}
+    \subitem {get\+\_\+interpolation\+\_\+factor}, \hyperpage{28}
+    \subitem {get\+\_\+next\+\_\+idx}, \hyperpage{28}
+    \subitem {get\+\_\+prev\+\_\+idx}, \hyperpage{28}
+    \subitem {init\+\_\+members}, \hyperpage{28}
+    \subitem {load}, \hyperpage{28}
+    \subitem {m\+\_\+bc\+\_\+no\+\_\+nudging}, \hyperpage{29}
+    \subitem {m\+\_\+data\+\_\+file}, \hyperpage{29}
+    \subitem {m\+\_\+n\+\_\+nudging\+\_\+vars}, \hyperpage{29}
+    \subitem {m\+\_\+nudging\+\_\+vars}, \hyperpage{29}
+    \subitem {m\+\_\+nudging\+\_\+vars\+\_\+idx}, \hyperpage{30}
+    \subitem {m\+\_\+nudging\+\_\+vars\+\_\+rst}, \hyperpage{30}
+    \subitem {m\+\_\+rst}, \hyperpage{30}
+    \subitem {m\+\_\+rst\+\_\+corr}, \hyperpage{30}
+    \subitem {m\+\_\+rst\+\_\+tracers}, \hyperpage{30}
+    \subitem {nudging\+\_\+default}, \hyperpage{28}
+    \subitem {nudging\+\_\+destructor}, \hyperpage{29}
+    \subitem {set\+\_\+current\+\_\+interval}, \hyperpage{29}
+    \subitem {swap}, \hyperpage{29}
+
+  \indexspace
+
+  \item {re\+\_\+indexing\+\_\+2d}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{4}
+  \item {re\+\_\+indexing\+\_\+3d}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{4}
+  \item {readnc\+\_\+double\+\_\+1d}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{4}
+  \item {readnc\+\_\+int\+\_\+1d}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{4}
+  \item {readnc\+\_\+slice\+\_\+float}
+    \subitem {bc\+\_\+aux\+\_\+mod}, \hyperpage{4}
+  \item {reindex}
+    \subitem {rivers\+\_\+mod}, \hyperpage{14}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{33}
+    \subitem {sponge\+\_\+mod}, \hyperpage{17}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+  \item {rivers\+\_\+default}
+    \subitem {rivers\+\_\+mod}, \hyperpage{14}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{33}
+  \item {rivers\+\_\+destructor}
+    \subitem {rivers\+\_\+mod}, \hyperpage{14}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{33}
+  \item {rivers\+\_\+mod}, \hyperpage{12}
+    \subitem {actualize}, \hyperpage{13}
+    \subitem {apply}, \hyperpage{13}
+    \subitem {apply\+\_\+nudging}, \hyperpage{13}
+    \subitem {apply\+\_\+phys}, \hyperpage{13}
+    \subitem {get\+\_\+global\+\_\+size}, \hyperpage{14}
+    \subitem {init\+\_\+members}, \hyperpage{14}
+    \subitem {load}, \hyperpage{14}
+    \subitem {reindex}, \hyperpage{14}
+    \subitem {rivers\+\_\+default}, \hyperpage{14}
+    \subitem {rivers\+\_\+destructor}, \hyperpage{14}
+    \subitem {rivers\+\_\+year}, \hyperpage{15}
+    \subitem {set\+\_\+global\+\_\+idxt}, \hyperpage{15}
+    \subitem {set\+\_\+global\+\_\+size}, \hyperpage{15}
+    \subitem {set\+\_\+size}, \hyperpage{15}
+    \subitem {swap}, \hyperpage{15}
+  \item {rivers\+\_\+mod\+::rivers}, \hyperpage{31}
+    \subitem {actualize}, \hyperpage{32}
+    \subitem {apply}, \hyperpage{32}
+    \subitem {apply\+\_\+nudging}, \hyperpage{32}
+    \subitem {apply\+\_\+phys}, \hyperpage{33}
+    \subitem {get\+\_\+global\+\_\+size}, \hyperpage{33}
+    \subitem {init\+\_\+members}, \hyperpage{33}
+    \subitem {load}, \hyperpage{33}
+    \subitem {m\+\_\+aux}, \hyperpage{34}
+    \subitem {m\+\_\+global\+\_\+idxt}, \hyperpage{34}
+    \subitem {m\+\_\+global\+\_\+size}, \hyperpage{35}
+    \subitem {m\+\_\+n\+\_\+vars}, \hyperpage{35}
+    \subitem {m\+\_\+name}, \hyperpage{35}
+    \subitem {m\+\_\+name\+\_\+idxt}, \hyperpage{35}
+    \subitem {m\+\_\+ridxt}, \hyperpage{35}
+    \subitem {m\+\_\+size}, \hyperpage{35}
+    \subitem {m\+\_\+values}, \hyperpage{35}
+    \subitem {m\+\_\+values\+\_\+dtatrc}, \hyperpage{35}
+    \subitem {m\+\_\+var\+\_\+names}, \hyperpage{35}
+    \subitem {m\+\_\+var\+\_\+names\+\_\+data}, \hyperpage{36}
+    \subitem {m\+\_\+var\+\_\+names\+\_\+idx}, \hyperpage{36}
+    \subitem {reindex}, \hyperpage{33}
+    \subitem {rivers\+\_\+default}, \hyperpage{33}
+    \subitem {rivers\+\_\+destructor}, \hyperpage{33}
+    \subitem {rivers\+\_\+year}, \hyperpage{34}
+    \subitem {set\+\_\+global\+\_\+idxt}, \hyperpage{34}
+    \subitem {set\+\_\+global\+\_\+size}, \hyperpage{34}
+    \subitem {set\+\_\+size}, \hyperpage{34}
+    \subitem {swap}, \hyperpage{34}
+  \item {rivers\+\_\+year}
+    \subitem {rivers\+\_\+mod}, \hyperpage{15}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{34}
+
+  \indexspace
+
+  \item {set\+\_\+current\+\_\+interval}
+    \subitem {bc\+\_\+data\+\_\+mod}, \hyperpage{6}
+    \subitem {bc\+\_\+data\+\_\+mod\+::bc\+\_\+data}, \hyperpage{24}
+    \subitem {bc\+\_\+mod}, \hyperpage{9}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{22}
+    \subitem {nudging\+\_\+mod}, \hyperpage{12}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{29}
+  \item {set\+\_\+global\+\_\+idxt}
+    \subitem {rivers\+\_\+mod}, \hyperpage{15}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{34}
+    \subitem {sponge\+\_\+mod}, \hyperpage{17}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+  \item {set\+\_\+global\+\_\+size}
+    \subitem {rivers\+\_\+mod}, \hyperpage{15}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{34}
+    \subitem {sponge\+\_\+mod}, \hyperpage{17}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+  \item {set\+\_\+size}
+    \subitem {rivers\+\_\+mod}, \hyperpage{15}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{34}
+    \subitem {sponge\+\_\+mod}, \hyperpage{18}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{39}
+  \item {sponge\+\_\+default}
+    \subitem {sponge\+\_\+mod}, \hyperpage{18}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{40}
+  \item {sponge\+\_\+destructor}
+    \subitem {sponge\+\_\+mod}, \hyperpage{18}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{40}
+  \item {sponge\+\_\+mod}, \hyperpage{15}
+    \subitem {actualize}, \hyperpage{16}
+    \subitem {apply}, \hyperpage{16}
+    \subitem {apply\+\_\+nudging}, \hyperpage{16}
+    \subitem {apply\+\_\+phys}, \hyperpage{16}
+    \subitem {get\+\_\+global\+\_\+size}, \hyperpage{17}
+    \subitem {init\+\_\+members}, \hyperpage{17}
+    \subitem {load}, \hyperpage{17}
+    \subitem {reindex}, \hyperpage{17}
+    \subitem {set\+\_\+global\+\_\+idxt}, \hyperpage{17}
+    \subitem {set\+\_\+global\+\_\+size}, \hyperpage{17}
+    \subitem {set\+\_\+size}, \hyperpage{18}
+    \subitem {sponge\+\_\+default}, \hyperpage{18}
+    \subitem {sponge\+\_\+destructor}, \hyperpage{18}
+    \subitem {sponge\+\_\+year}, \hyperpage{18}
+    \subitem {swap}, \hyperpage{18}
+  \item {sponge\+\_\+mod\+::sponge}, \hyperpage{37}
+    \subitem {actualize}, \hyperpage{38}
+    \subitem {apply}, \hyperpage{38}
+    \subitem {apply\+\_\+nudging}, \hyperpage{38}
+    \subitem {apply\+\_\+phys}, \hyperpage{39}
+    \subitem {get\+\_\+global\+\_\+size}, \hyperpage{39}
+    \subitem {init\+\_\+members}, \hyperpage{39}
+    \subitem {load}, \hyperpage{39}
+    \subitem {m\+\_\+alpha}, \hyperpage{40}
+    \subitem {m\+\_\+aux}, \hyperpage{41}
+    \subitem {m\+\_\+global\+\_\+idxt}, \hyperpage{41}
+    \subitem {m\+\_\+global\+\_\+size}, \hyperpage{41}
+    \subitem {m\+\_\+length}, \hyperpage{41}
+    \subitem {m\+\_\+n\+\_\+vars}, \hyperpage{41}
+    \subitem {m\+\_\+name}, \hyperpage{41}
+    \subitem {m\+\_\+reduction\+\_\+value\+\_\+t}, \hyperpage{41}
+    \subitem {m\+\_\+ridxt}, \hyperpage{41}
+    \subitem {m\+\_\+size}, \hyperpage{41}
+    \subitem {m\+\_\+values}, \hyperpage{42}
+    \subitem {m\+\_\+values\+\_\+dtatrc}, \hyperpage{42}
+    \subitem {m\+\_\+var\+\_\+names}, \hyperpage{42}
+    \subitem {m\+\_\+var\+\_\+names\+\_\+data}, \hyperpage{42}
+    \subitem {m\+\_\+var\+\_\+names\+\_\+idx}, \hyperpage{42}
+    \subitem {m\+\_\+var\+\_\+names\+\_\+idxt}, \hyperpage{42}
+    \subitem {reindex}, \hyperpage{39}
+    \subitem {set\+\_\+global\+\_\+idxt}, \hyperpage{39}
+    \subitem {set\+\_\+global\+\_\+size}, \hyperpage{39}
+    \subitem {set\+\_\+size}, \hyperpage{39}
+    \subitem {sponge\+\_\+default}, \hyperpage{40}
+    \subitem {sponge\+\_\+destructor}, \hyperpage{40}
+    \subitem {sponge\+\_\+year}, \hyperpage{40}
+    \subitem {swap}, \hyperpage{40}
+  \item {sponge\+\_\+year}
+    \subitem {sponge\+\_\+mod}, \hyperpage{18}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{40}
+  \item {swap}
+    \subitem {bc\+\_\+mod}, \hyperpage{9}
+    \subitem {bc\+\_\+mod\+::bc}, \hyperpage{22}
+    \subitem {nudging\+\_\+mod}, \hyperpage{12}
+    \subitem {nudging\+\_\+mod\+::nudging}, \hyperpage{29}
+    \subitem {rivers\+\_\+mod}, \hyperpage{15}
+    \subitem {rivers\+\_\+mod\+::rivers}, \hyperpage{34}
+    \subitem {sponge\+\_\+mod}, \hyperpage{18}
+    \subitem {sponge\+\_\+mod\+::sponge}, \hyperpage{40}
+
+\end{theindex}

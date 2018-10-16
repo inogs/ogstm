@@ -1,0 +1,133 @@
+\hypertarget{namespacerivers__mod}{}\subsection{rivers\+\_\+mod Module Reference}
+\label{namespacerivers__mod}\index{rivers\+\_\+mod@{rivers\+\_\+mod}}
+\subsubsection*{Data Types}
+\begin{DoxyCompactItemize}
+\item 
+interface \mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}
+\end{DoxyCompactItemize}
+\subsubsection*{Functions/\+Subroutines}
+\begin{DoxyCompactItemize}
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_a1b5ad1b541c200f76f6853d0643cff8c}{set\+\_\+global\+\_\+size}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_a343eb9cf977ea49b57ba6749c2af6d24}{set\+\_\+global\+\_\+idxt}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_a0069946854e918ce95bc352a042e4adc}{set\+\_\+size}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_ade2f261a72fc01d0b54f21c4e93bc86b}{reindex}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_a59adda30a3e127948ece594ab4fd18a0}{init\+\_\+members}} (self, bc\+\_\+name, n\+\_\+vars, vars, var\+\_\+names\+\_\+idx)
+\item 
+type(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}) function \mbox{\hyperlink{namespacerivers__mod_a3f4dae3b19d0f77f9f17a8059c9a9bd7}{rivers\+\_\+default}} (files\+\_\+namelist, bc\+\_\+name, n\+\_\+vars, vars, var\+\_\+names\+\_\+idx)
+\item 
+type(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}) function \mbox{\hyperlink{namespacerivers__mod_a16f08543441d9aaf0ebf805e9f68c265}{rivers\+\_\+year}} (files\+\_\+namelist, bc\+\_\+name, n\+\_\+vars, vars, var\+\_\+names\+\_\+idx, start\+\_\+time\+\_\+string, end\+\_\+time\+\_\+string)
+\item 
+integer(4) function \mbox{\hyperlink{namespacerivers__mod_a057ffe419cdf846afa3ce68cbdf8568d}{get\+\_\+global\+\_\+size}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_ad86f8407065f8e1beffbd06052d05eea}{load}} (self, idx)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_a340271fac5c88e55d12cbfd63f064b23}{swap}} (self)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_a75772a76ea5f75ae4e5b10ff9d01b606}{actualize}} (self, weight)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_a020814a802ff4a0fe8f51652fd0e6479}{apply}} (self, e3t, n\+\_\+tracers, trb, tra)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_afea9ef8cef5df5fafc3e107c2f3b0244}{apply\+\_\+nudging}} (self, e3t, n\+\_\+tracers, rst\+\_\+tracers, trb, tra)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_ae617fb601ff0091298f2bfff4dfbae40}{apply\+\_\+phys}} (self, lat, sponge\+\_\+t, sponge\+\_\+vel)
+\item 
+subroutine \mbox{\hyperlink{namespacerivers__mod_ac07ba32b687341d15b82c27c197cd062}{rivers\+\_\+destructor}} (self)
+\end{DoxyCompactItemize}
+
+
+\subsubsection{Function/\+Subroutine Documentation}
+\mbox{\Hypertarget{namespacerivers__mod_a75772a76ea5f75ae4e5b10ff9d01b606}\label{namespacerivers__mod_a75772a76ea5f75ae4e5b10ff9d01b606}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!actualize@{actualize}}
+\index{actualize@{actualize}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{actualize()}{actualize()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::actualize (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self,  }\item[{double precision, intent(in)}]{weight }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_a020814a802ff4a0fe8f51652fd0e6479}\label{namespacerivers__mod_a020814a802ff4a0fe8f51652fd0e6479}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!apply@{apply}}
+\index{apply@{apply}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{apply()}{apply()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::apply (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self,  }\item[{double precision, dimension(jpk, jpj, jpi), intent(in)}]{e3t,  }\item[{integer, intent(in)}]{n\+\_\+tracers,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(in)}]{trb,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(inout)}]{tra }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_afea9ef8cef5df5fafc3e107c2f3b0244}\label{namespacerivers__mod_afea9ef8cef5df5fafc3e107c2f3b0244}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!apply\+\_\+nudging@{apply\+\_\+nudging}}
+\index{apply\+\_\+nudging@{apply\+\_\+nudging}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{apply\+\_\+nudging()}{apply\_nudging()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::apply\+\_\+nudging (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self,  }\item[{double precision, dimension(jpk, jpj, jpi), intent(in)}]{e3t,  }\item[{integer, intent(in)}]{n\+\_\+tracers,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(in)}]{rst\+\_\+tracers,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(in)}]{trb,  }\item[{double precision, dimension(jpk, jpj, jpi, n\+\_\+tracers), intent(inout)}]{tra }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacerivers__mod_ae617fb601ff0091298f2bfff4dfbae40}\label{namespacerivers__mod_ae617fb601ff0091298f2bfff4dfbae40}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!apply\+\_\+phys@{apply\+\_\+phys}}
+\index{apply\+\_\+phys@{apply\+\_\+phys}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{apply\+\_\+phys()}{apply\_phys()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::apply\+\_\+phys (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self,  }\item[{double precision, dimension(jpj, jpi), intent(in)}]{lat,  }\item[{double precision, dimension(jpj, jpi), intent(out)}]{sponge\+\_\+t,  }\item[{double precision, dimension(jpk, jpj, jpi), intent(out)}]{sponge\+\_\+vel }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacerivers__mod_a057ffe419cdf846afa3ce68cbdf8568d}\label{namespacerivers__mod_a057ffe419cdf846afa3ce68cbdf8568d}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!get\+\_\+global\+\_\+size@{get\+\_\+global\+\_\+size}}
+\index{get\+\_\+global\+\_\+size@{get\+\_\+global\+\_\+size}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{get\+\_\+global\+\_\+size()}{get\_global\_size()}}
+{\footnotesize\ttfamily integer(4) function rivers\+\_\+mod\+::get\+\_\+global\+\_\+size (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(in)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_a59adda30a3e127948ece594ab4fd18a0}\label{namespacerivers__mod_a59adda30a3e127948ece594ab4fd18a0}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!init\+\_\+members@{init\+\_\+members}}
+\index{init\+\_\+members@{init\+\_\+members}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{init\+\_\+members()}{init\_members()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::init\+\_\+members (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self,  }\item[{character(len=3)}]{bc\+\_\+name,  }\item[{integer, intent(in)}]{n\+\_\+vars,  }\item[{character(len=23), intent(in)}]{vars,  }\item[{integer(4), dimension(n\+\_\+vars), intent(in)}]{var\+\_\+names\+\_\+idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_ad86f8407065f8e1beffbd06052d05eea}\label{namespacerivers__mod_ad86f8407065f8e1beffbd06052d05eea}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!load@{load}}
+\index{load@{load}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{load()}{load()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::load (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self,  }\item[{integer, intent(in)}]{idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_ade2f261a72fc01d0b54f21c4e93bc86b}\label{namespacerivers__mod_ade2f261a72fc01d0b54f21c4e93bc86b}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!reindex@{reindex}}
+\index{reindex@{reindex}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{reindex()}{reindex()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::reindex (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_a3f4dae3b19d0f77f9f17a8059c9a9bd7}\label{namespacerivers__mod_a3f4dae3b19d0f77f9f17a8059c9a9bd7}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!rivers\+\_\+default@{rivers\+\_\+default}}
+\index{rivers\+\_\+default@{rivers\+\_\+default}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{rivers\+\_\+default()}{rivers\_default()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}) function rivers\+\_\+mod\+::rivers\+\_\+default (\begin{DoxyParamCaption}\item[{character(len=22), intent(in)}]{files\+\_\+namelist,  }\item[{character(len=3)}]{bc\+\_\+name,  }\item[{integer, intent(in)}]{n\+\_\+vars,  }\item[{character(len=23), intent(in)}]{vars,  }\item[{integer(4), dimension(n\+\_\+vars), intent(in)}]{var\+\_\+names\+\_\+idx }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_ac07ba32b687341d15b82c27c197cd062}\label{namespacerivers__mod_ac07ba32b687341d15b82c27c197cd062}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!rivers\+\_\+destructor@{rivers\+\_\+destructor}}
+\index{rivers\+\_\+destructor@{rivers\+\_\+destructor}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{rivers\+\_\+destructor()}{rivers\_destructor()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::rivers\+\_\+destructor (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{namespacerivers__mod_a16f08543441d9aaf0ebf805e9f68c265}\label{namespacerivers__mod_a16f08543441d9aaf0ebf805e9f68c265}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!rivers\+\_\+year@{rivers\+\_\+year}}
+\index{rivers\+\_\+year@{rivers\+\_\+year}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{rivers\+\_\+year()}{rivers\_year()}}
+{\footnotesize\ttfamily type(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}) function rivers\+\_\+mod\+::rivers\+\_\+year (\begin{DoxyParamCaption}\item[{character(len=27), intent(in)}]{files\+\_\+namelist,  }\item[{character(len=3)}]{bc\+\_\+name,  }\item[{integer, intent(in)}]{n\+\_\+vars,  }\item[{character(len=23), intent(in)}]{vars,  }\item[{integer(4), dimension(n\+\_\+vars), intent(in)}]{var\+\_\+names\+\_\+idx,  }\item[{character(len=17), intent(in)}]{start\+\_\+time\+\_\+string,  }\item[{character(len=17), intent(in)}]{end\+\_\+time\+\_\+string }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_a343eb9cf977ea49b57ba6749c2af6d24}\label{namespacerivers__mod_a343eb9cf977ea49b57ba6749c2af6d24}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!set\+\_\+global\+\_\+idxt@{set\+\_\+global\+\_\+idxt}}
+\index{set\+\_\+global\+\_\+idxt@{set\+\_\+global\+\_\+idxt}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{set\+\_\+global\+\_\+idxt()}{set\_global\_idxt()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::set\+\_\+global\+\_\+idxt (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_a1b5ad1b541c200f76f6853d0643cff8c}\label{namespacerivers__mod_a1b5ad1b541c200f76f6853d0643cff8c}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!set\+\_\+global\+\_\+size@{set\+\_\+global\+\_\+size}}
+\index{set\+\_\+global\+\_\+size@{set\+\_\+global\+\_\+size}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{set\+\_\+global\+\_\+size()}{set\_global\_size()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::set\+\_\+global\+\_\+size (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_a0069946854e918ce95bc352a042e4adc}\label{namespacerivers__mod_a0069946854e918ce95bc352a042e4adc}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!set\+\_\+size@{set\+\_\+size}}
+\index{set\+\_\+size@{set\+\_\+size}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{set\+\_\+size()}{set\_size()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::set\+\_\+size (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{namespacerivers__mod_a340271fac5c88e55d12cbfd63f064b23}\label{namespacerivers__mod_a340271fac5c88e55d12cbfd63f064b23}} 
+\index{rivers\+\_\+mod@{rivers\+\_\+mod}!swap@{swap}}
+\index{swap@{swap}!rivers\+\_\+mod@{rivers\+\_\+mod}}
+\paragraph{\texorpdfstring{swap()}{swap()}}
+{\footnotesize\ttfamily subroutine rivers\+\_\+mod\+::swap (\begin{DoxyParamCaption}\item[{class(\mbox{\hyperlink{structrivers__mod_1_1rivers}{rivers}}), intent(inout)}]{self }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [private]}}
+

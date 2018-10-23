@@ -1,3 +1,9 @@
+!> Maps sponge boundaries
+
+!> It maps a boundary which is forced to be closed even if in the OGCM is not.
+!! It needs to know how to modify the velocities at the boundary;
+!! in particular it should be able to set them to zero at the boundary
+!! and to adapt them to the OGCM values according to a given function.
 module sponge_mod
 
     use bc_mod
@@ -62,7 +68,7 @@ contains
 
 
 
-    ! just a wrapper of 'getDimension' (BC_mem.f90:70)
+    !> Just a wrapper of 'getDimension'
     subroutine set_global_size(self)
         class(sponge), intent(inout) :: self
         call getDimension(self%get_file_by_index(1), self%m_var_names_idxt(1), self%m_global_size)
@@ -70,7 +76,7 @@ contains
 
 
 
-    ! just a wrapper of 'readnc_int_1d' (domrea.f90:204-207)
+    !> Just a wrapper of 'readnc_int_1d'
     subroutine set_global_idxt(self)
         class(sponge), intent(inout) :: self
         allocate(self%m_global_idxt(self%m_global_size)) ! BC_mem.f90:111
@@ -80,7 +86,7 @@ contains
 
 
 
-    ! just a wrapper of 'COUNT_InSubDomain_GIB' (domrea.f90:209)
+    !> Just a wrapper of 'COUNT_InSubDomain_3d'
     subroutine set_size(self)
         class(sponge), intent(inout) :: self
         self%m_size = COUNT_InSubDomain_3d(self%m_global_size, self%m_global_idxt)
@@ -88,7 +94,7 @@ contains
 
 
 
-    ! just a wrapper of 'GIBRE_Indexing' (domrea.f90:218)
+    !> Just a wrapper of 'RE_Indexing_3d'
     subroutine reindex(self)
         class(sponge), intent(inout) :: self
         call RE_Indexing_3d(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
@@ -98,6 +104,10 @@ contains
 
     ! subroutine init_members(self, bc_name, bounmask, n_vars, vars)
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Target constructor
+
+    !> Allocates and Initializes all the members that are added to the base class.
     subroutine init_members(self, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
         class(sponge), intent(inout) :: self
@@ -154,6 +164,10 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Default constructor
+
+    !> Calls bc default constructor and target constructor.
     type(sponge) function sponge_default(files_namelist, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
         character(len=22), intent(in) :: files_namelist
@@ -179,6 +193,10 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Periodic constructor
+
+    !> Calls bc periodic constructor and target constructor.
     type(sponge) function sponge_year(files_namelist, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length, &
             start_time_string, end_time_string)
 
@@ -204,6 +222,7 @@ contains
 
 
 
+    !> Global size getter
     integer(4) function get_global_size(self)
         class(sponge), intent(in) :: self
         get_global_size = self%m_global_size
@@ -211,6 +230,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine load(self, idx)
 
         class(sponge), intent(inout) :: self
@@ -228,6 +248,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine swap(self)
 
         class(sponge), intent(inout) :: self
@@ -243,6 +264,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine actualize(self, weight)
 
         class(sponge), intent(inout) :: self
@@ -259,6 +281,9 @@ contains
 
 
 
+    !> Overridden from bc
+
+    !> Actually it does not do anything, since the chosen policy is to use this class always in combination with a nudging.
     subroutine apply(self, e3t, n_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -283,6 +308,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -321,11 +347,14 @@ contains
 
 
 
-    ! TO DO: provide more flexibility both
-    ! - in the choice of the 'sponge' function
-    ! - in the choice of the interested area
-    ! So far, only a rectangular area in the west boundary has been implemented
-    ! WARNING: sponge_t and sponge_vel will be overwritten every time the method is called!
+    !> Overridden from bc
+
+    !> Provides the modified values to adjust both the velocities and the scalar fields of the OGCM.
+    !! TO DO: provide more flexibility both
+    !! in the choice of the 'sponge' function and
+    !! in the choice of the interested area.
+    !! So far, only a rectangular area in the west boundary has been implemented.
+    !> WARNING: sponge_t and sponge_vel will be overwritten every time the method is called.
     subroutine apply_phys(self, lat, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
@@ -359,6 +388,7 @@ contains
 
 
 
+    !> Destructor
     subroutine sponge_destructor(self)
 
         class(sponge), intent(inout) :: self

@@ -1,3 +1,4 @@
+!> Base class from which every boundary types must inherit.
 module bc_mod
 
     use bc_data_mod
@@ -36,6 +37,7 @@ contains
 
 
 
+    !> bc empty constructor
     type(bc) function bc_empty()
 
         allocate(bc_empty%m_bc_data)
@@ -47,6 +49,9 @@ contains
 
 
 
+    !> bc default constructor.
+
+    !> Calls bc_data default contructor.
     type(bc) function bc_default(files_namelist)
 
         character(len=22), intent(in) :: files_namelist
@@ -60,6 +65,9 @@ contains
 
 
 
+    !> bc periodic constructor
+
+    !> Calls bc_data periodic constructor
     type(bc) function bc_year(files_namelist, start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
@@ -75,6 +83,7 @@ contains
 
 
 
+    !> Getter for the data file given the time index
     character(len=24) function get_file_by_index(self, idx)
 
         class(bc), intent(in) :: self
@@ -86,6 +95,7 @@ contains
 
 
 
+    !> Getter for the left extreme of the current time interval
     integer function get_prev_idx(self)
         class(bc), intent(in) :: self
         get_prev_idx = self%m_bc_data%get_prev_idx()
@@ -93,6 +103,7 @@ contains
 
 
 
+    !> Getter for the right extreme of the current time interval
     integer function get_next_idx(self)
         class(bc), intent(in) :: self
         get_next_idx = self%m_bc_data%get_next_idx()
@@ -100,6 +111,10 @@ contains
 
 
 
+    !> Setter of the current time interval
+
+    !> Just sets the current time interval (prev and next indexes) according to current_time_string,
+    !! without computing the interpolation factor.
     subroutine set_current_interval(self, current_time_string, new_data)
 
         class(bc), intent(inout) :: self
@@ -115,6 +130,10 @@ contains
 
 
 
+    !> Linear interpolation factor computation
+
+    !> Computes and returns the linear interpolation factor,
+    !! keeping track of the current time interval (prev and next indexes).
     double precision function get_interpolation_factor(self, current_time_string, new_data)
 
         class(bc), intent(inout) :: self
@@ -128,6 +147,7 @@ contains
 
 
 
+    !> Loads in memory the data of the extreme of a time interval.
     subroutine load(self, idx)
         class(bc), intent(inout) :: self
         integer, intent(in) :: idx
@@ -136,6 +156,7 @@ contains
 
 
 
+    !> Swaps in memory the data of two extremes.
     subroutine swap(self)
         class(bc), intent(inout) :: self
         write(*, *) 'WARN: base class does not implement this method'
@@ -143,6 +164,14 @@ contains
 
 
 
+    !> Sets the right values according to the interpolation weight
+
+    !> Requires a weight to correct the loaded data,
+    !! even if the weight of the linear interpolation can be computed by the class itself
+    !! through its bc_data object.
+    !! In this way the method is more flexible
+    !! when the linear interpolation option is not enabled in the namelist file,
+    !! and the weight needs to be set always to 1.
     subroutine actualize(self, weight)
         class(bc), intent(inout) :: self
         double precision, intent(in) :: weight
@@ -151,6 +180,11 @@ contains
 
 
 
+    !> Applies the tracer values at the boundaries to the final tracers matrix.
+
+    !> Called to set the final values of the tracer fields near the boundaries,
+    !! according to the type of boundary.
+    !! Model output fields are adjusted according to the boundary scheme.
     subroutine apply(self, e3t, n_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -174,6 +208,7 @@ contains
 
 
 
+    !> Used to simplify the apply method if a nudging scheme has to be included in the fields correction.
     subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -198,6 +233,19 @@ contains
 
 
 
+    !> Updates the values of the OGCM at the boundaries.
+
+    !> Used to adjust the values of the velocity fields at the boundaries.
+    !! Velocity fields are imposed to the model,
+    !! usually according to the output of the NEMO Ocean Model or of an equivalent OGCM.
+    !! Anyway they are not computed directly by OGSTM.
+    !! Nevertheless with some specific boundary conditions schemes these outputs still need to be modified at the boundaries.
+    !! This is the case for example of the sponge boundary,
+    !! in which the velocity fields are forcefully set to zero at the boundary of OGSTM,
+    !! in order for it to be closed.
+    !! In such cases, this method is necessary both
+    !! to nullify the velocity field components and
+    !! to smooth the actual values of the OGCM forcing fields.
     subroutine apply_phys(self, lat, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
@@ -220,6 +268,7 @@ contains
 
 
 
+    !> Destructor
     subroutine bc_destructor(self)
 
         class(bc), intent(inout) :: self

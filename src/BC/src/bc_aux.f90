@@ -1,3 +1,4 @@
+!> Auxiliary subroutines and functions
 module bc_aux_mod
 
     implicit none
@@ -7,6 +8,7 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'handle_err1' which is provided in 'IOnc.f90'.
+
         !> The only reason why it is copied here is that the definition is not inside a module.
         subroutine handle_err1(status, mycount, fileNetCDF)
             
@@ -29,6 +31,7 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'handle_err2' which is provided in 'IOnc.f90'.
+
         !> The only reason why it is copied here is that the definition is not inside a module.
         subroutine handle_err2(status, fileNetCDF, varname)
             
@@ -46,6 +49,7 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'getDIMENSION' which is provided in 'IOnc.f90'.
+
         !> The only reason why it is copied here is that the definition is not inside a module.
         subroutine getDIMENSION(fileNetCDF, dimname, n)
             
@@ -76,6 +80,7 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'readnc_int_1d' which is provided in 'IOnc.f90'.
+
         !> The only reason why it is copied here is that the definition is not inside a module.
         subroutine readnc_int_1d(fileNetCDF, varname, dim1, ARRAY)
             
@@ -109,6 +114,7 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'readnc_double_1d' which is provided in 'IOnc.f90'.
+
         !> The only reason why it is copied here is that the definition is not inside a module.
         subroutine readnc_double_1d(fileNetCDF, varname, dim1, ARRAY)
 
@@ -142,6 +148,7 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'readnc_slice_float' which is provided in 'IOnc.f90'.
+
         !> The only reason why it is copied here is that the definition is not inside a module.
         subroutine readnc_slice_float(fileNetCDF, varname, M, shift)
             
@@ -191,9 +198,10 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'COUNT_InSubDomain' which is provided in 'domrea.f90'.
+
         !> The only 2 reasons why it is copied here are:
-        !> - the definition is not inside a module;
-        !> - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
+        !! - the definition is not inside a module;
+        !! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
         integer function COUNT_InSubDomain_2d(sizeGLO, idxtGLOBAL)
 
             use modul_param, only: jpk, jpj, jpi
@@ -231,9 +239,10 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'COUNT_InSubDomain_GIB' which is provided in 'domrea.f90'.
+
         !> The only 2 reasons why it is copied here are:
-        !> - the definition is not inside a module;
-        !> - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
+        !! - the definition is not inside a module;
+        !! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
         integer function COUNT_InSubDomain_3d(sizeGLO, idxtGLOBAL)
 
             use modul_param, only: jpk, jpj, jpi
@@ -272,12 +281,13 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'RIVRE_Indexing' which is provided in 'domrea.f90'.
+
         !> The only 2 reasons why it is copied here are:
-        !> - the definition is not inside a module;
-        !> - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
-        !> Notes:
-        !> - it has been necessary to pass class members as function arguments;
-        !> - function has been mapped into subroutine, since return value is not used.
+        !! - the definition is not inside a module;
+        !! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
+        !! Notes:
+        !! - it has been necessary to pass class members as function arguments;
+        !! - function has been mapped into subroutine, since return value is not used.
         subroutine RE_Indexing_2d(sizeglo, idxtglo, sizeloc, ridxt)
 
             use modul_param, only: jpk, jpj, jpi
@@ -315,12 +325,13 @@ module bc_aux_mod
 
 
         !> This is exactly the definition of 'GIBRE_Indexing' which is provided in 'domrea.f90'.
+
         !> The only 2 reasons why it is copied here are:
-        !> - the definition is not inside a module;
-        !> - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
-        !> Notes:
-        !> - it has been necessary to pass class members as function arguments;
-        !> - function has been mapped into subroutine, since return value is not used.
+        !! - the definition is not inside a module;
+        !! - since it is requiring global variables, it is preferrable to have their dependencies outside the class.
+        !! Notes:
+        !! - it has been necessary to pass class members as function arguments;
+        !! - function has been mapped into subroutine, since return value is not used.
         subroutine RE_Indexing_3d(sizeglo, idxtglo, sizeloc, ridxt)
 
             use modul_param, only: jpk, jpj, jpi

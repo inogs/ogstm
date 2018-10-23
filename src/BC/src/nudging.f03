@@ -1,3 +1,11 @@
+!> Inherits from bc implementing a decorator pattern
+
+!> This pattern is a general pattern in Object-Oriented programming.
+!! Since nudging is inheriting from bc, it is a bc.
+!! Furthermore, associating its pointer to an already instantiated bc object of any kind
+!! (both of base class or any of the derived classes)
+!! it also has a bc, i.e. it can refer inside its methods directly to that object,
+!! decorating it with additional features.
 module nudging_mod
 
     use bc_mod
@@ -49,6 +57,9 @@ contains
 
 
 
+    !> Target constructor
+
+    !> Allocates and Initializes all the members that are added to the base class.
     subroutine init_members(self, bc_no_nudging, data_file, n_vars, vars, vars_idx, rst_corr, n_tracers)
 
         use modul_param, only: jpk, jpj, jpi
@@ -102,8 +113,10 @@ contains
 
 
 
-    ! Default constructor invokes base class empty constructor;
-    ! no other constructors are needed so far
+    !> Default constructor
+
+    !> Calls bc empty constructor and target constructor.
+    !! No other constructors are needed so far.
     type(nudging) function nudging_default(bc_no_nudging, data_file, n_vars, vars, vars_idx, rst_corr, n_tracers)
 
         class(bc), target, intent(in) :: bc_no_nudging
@@ -125,6 +138,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     character(len=24) function get_file_by_index(self, idx)
 
         class(nudging), intent(in) :: self
@@ -137,6 +153,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     integer function get_prev_idx(self)
         class(nudging), intent(in) :: self
         get_prev_idx = self%m_bc_no_nudging%get_prev_idx()
@@ -145,6 +164,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     integer function get_next_idx(self)
         class(nudging), intent(in) :: self
         get_next_idx = self%m_bc_no_nudging%get_next_idx()
@@ -153,6 +175,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine set_current_interval(self, current_time_string, new_data)
 
         class(nudging), intent(inout) :: self
@@ -170,6 +195,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     double precision function get_interpolation_factor(self, current_time_string, new_data)
 
         class(nudging), intent(inout) :: self
@@ -187,6 +215,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine load(self, idx)
 
         class(nudging), intent(inout) :: self
@@ -199,6 +230,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine swap(self)
 
         class(nudging), intent(inout) :: self
@@ -210,6 +244,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine actualize(self, weight)
 
         class(nudging), intent(inout) :: self
@@ -222,6 +259,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object apply_nudging method.
     subroutine apply(self, e3t, n_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -246,6 +286,10 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Actually it does not do anything,
+    !! since there is no need to apply an additional nudging to a nudging object.
     subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -271,6 +315,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine apply_phys(self, lat, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
@@ -294,6 +341,7 @@ contains
 
 
 
+    !> Destructor
     subroutine nudging_destructor(self)
 
         class(nudging), intent(inout) :: self

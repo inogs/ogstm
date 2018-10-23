@@ -1,3 +1,10 @@
+!> Maps rivers boundaries
+
+!> It maps boundaries that in the boundary classification are defined as rivers.
+!! This means that its data files are supposed to contain
+!! the values of a potentially time dependent tracer flow at the boundaries,
+!! i.e. discharges of an amount of tracers from the rivers to the ocean,
+!! with a given seasonal variability.
 module rivers_mod
 
     use bc_mod
@@ -58,7 +65,7 @@ contains
 
 
 
-    ! just a wrapper of 'getDimension' (BC_mem.f90:71)
+    !> Just a wrapper of 'getDimension'
     subroutine set_global_size(self)
         class(rivers), intent(inout) :: self
         call getDimension(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size)
@@ -67,7 +74,7 @@ contains
 
 
 
-    ! just a wrapper of 'readnc_int_1d' (domrea.f90:226)
+    !> Just a wrapper of 'readnc_int_1d'
     subroutine set_global_idxt(self)
         class(rivers), intent(inout) :: self
         allocate(self%m_global_idxt(self%m_global_size)) ! BC_mem.f90:135
@@ -78,7 +85,7 @@ contains
 
 
 
-    ! just a wrapper of 'COUNT_InSubDomain' (domrea.f90:228)
+    !> Just a wrapper of 'COUNT_InSubDomain_2d'
     subroutine set_size(self)
         class(rivers), intent(inout) :: self
         self%m_size = COUNT_InSubDomain_2d(self%m_global_size, self%m_global_idxt)
@@ -87,7 +94,7 @@ contains
 
 
 
-    ! just a wrapper of 'RIVRE_Indexing' (domrea.f90:233)
+    !> Just a wrapper of 'RE_Indexing_2d' (domrea.f90:233)
     subroutine reindex(self)
         class(rivers), intent(inout) :: self
         call RE_Indexing_2d(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
@@ -97,6 +104,10 @@ contains
 
 
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Target constructor
+
+    !> Allocates and Initializes all the members that are added to the base class.
     subroutine init_members(self, bc_name, n_vars, vars, var_names_idx)
 
         class(rivers), intent(inout) :: self
@@ -147,6 +158,10 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Default constructor
+
+    !> Calls bc default constructor and target constructor.
     type(rivers) function rivers_default(files_namelist, bc_name, n_vars, vars, var_names_idx)
 
         character(len=22), intent(in) :: files_namelist
@@ -169,6 +184,10 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Periodic constructor
+
+    !> Calls bc periodic constructor and target constructor.
     type(rivers) function rivers_year(files_namelist, bc_name, n_vars, vars, var_names_idx, start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
@@ -190,6 +209,7 @@ contains
 
 
 
+    !> Global size getter
     integer(4) function get_global_size(self)
         class(rivers), intent(in) :: self
         get_global_size = self%m_global_size
@@ -197,6 +217,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine load(self, idx)
 
         class(rivers), intent(inout) :: self
@@ -214,6 +235,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine swap(self)
 
         class(rivers), intent(inout) :: self
@@ -229,6 +251,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine actualize(self, weight)
 
         class(rivers), intent(inout) :: self
@@ -245,6 +268,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine apply(self, e3t, n_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -279,6 +303,9 @@ contains
 
 
 
+    !> Overridden from bc
+
+    !> Actually it does not do anything, since so far the model does not need this feature for this type of boundary.
     subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -304,6 +331,11 @@ contains
 
 
 
+    !> Overridden from bc
+
+    !> Actually it does not do anything,
+    !! since rivers boundaries, by definition, are closed also in the OGCM;
+    !! velocities are already set to zero and there is no point in modifying them at the boundaries.
     subroutine apply_phys(self, lat, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
@@ -326,6 +358,7 @@ contains
 
 
 
+    !> Destructor
     subroutine rivers_destructor(self)
 
         class(rivers), intent(inout) :: self

@@ -142,7 +142,59 @@ module bc_aux_testing_mod
 
 
         ! WARNING: The only difference from
-        ! the actual definition of 'readnc_double_1d' which is provided in 'IOnc.f90' and this version
+        ! the actual definition of 'readnc_slice_float_2d' which is provided in 'IOnc.f90' and this version
+        ! is that 'jpj', 'jpi', 'nimpp', 'njmpp' are hard coded as parameters
+        ! and copy_in is in double precision
+        subroutine readnc_slice_float_2d(fileNetCDF, varname, M, shift)
+
+            use netcdf
+
+            implicit none
+
+            integer, parameter :: jpj = 65
+            integer, parameter :: jpi = 182
+            integer, parameter :: nimpp = 1
+            integer, parameter :: njmpp = 1
+
+            character, intent(in) :: fileNetCDF*(*), varname*(*)
+            integer, intent(in) :: shift
+            double precision, intent(inout) :: M(jpj,jpi)
+            double precision, allocatable, dimension(:,:) :: copy_in
+
+            integer ncid, stat, VARid, i, j, k
+            integer counter
+            integer thecount(3), start(3)
+
+            allocate(copy_in(jpi,jpj))
+            counter = 0
+            start = (/nimpp + shift, njmpp, 1/)
+            thecount = (/jpi, jpj, 1/)
+
+            stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_inq_varid (ncid, varname, VARid)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_get_var(ncid, VARid, copy_in, start, thecount)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_close(ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+
+            do i=1, jpi
+                do j=1, jpj
+                    M(j,i) = copy_in(i,j)
+                enddo
+            enddo
+
+            deallocate(copy_in)
+
+        end subroutine readnc_slice_float_2d
+
+
+
+        ! WARNING: The only difference from
+        ! the actual definition of 'read_slice_float' which is provided in 'IOnc.f90' and this version
         ! is that 'jpk', 'jpj', 'jpi', 'nimpp', 'njmpp' are hard coded as parameters
         subroutine readnc_slice_float(fileNetCDF, varname, M, shift)
 

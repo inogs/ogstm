@@ -144,6 +144,55 @@ module bc_aux_mod
             call handle_err1(stat, counter, FileNetCDF)
 
         end subroutine readnc_double_1d
+        
+        
+        
+        !> This is exactly the definition of 'readnc_slice_float_2d' which is provided in 'IOnc.f90'.
+
+        !> The only reason why it is copied here is that the definition is not inside a module.
+        !> and copy_in is in double precision
+        subroutine readnc_slice_float_2d(fileNetCDF, varname, M, shift)
+         
+            use netcdf
+            use myalloc, only: nimpp, njmpp
+            use modul_param, only: jpk, jpj, jpi
+
+            implicit none
+            
+            character, intent(in) :: fileNetCDF*(*), varname*(*)
+            integer, intent(in) :: shift
+            double precision, intent(inout) :: M(jpj,jpi)
+            double precision, allocatable, dimension(:,:) :: copy_in
+            
+            integer ncid, stat, VARid, i, j, k
+            integer counter
+            integer thecount(3), start(3)
+            
+            allocate(copy_in(jpi,jpj))
+            counter = 0
+            start = (/nimpp + shift, njmpp, 1/)
+            thecount = (/jpi, jpj, 1/)
+            
+            stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_inq_varid (ncid, varname, VARid)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_get_var(ncid, VARid, copy_in, start, thecount)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_close(ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            
+            do i=1, jpi
+                do j=1, jpj
+                    M(j,i) = copy_in(i,j)
+                enddo
+            enddo
+            
+            deallocate(copy_in)
+            
+        end subroutine readnc_slice_float_2d
 
 
 

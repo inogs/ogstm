@@ -18,30 +18,23 @@ module rivers_mod
 
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'riv'
-        integer(4) :: m_global_size ! BC_mem.f90:20
-        integer(4), allocatable, dimension(:) :: m_global_idxt ! BC_mem.f90:26; TO DO: find better name
-        integer(4) :: m_size ! BC_mem.f90:21
         integer :: m_n_vars ! BC_mem.f90:95
         character(len=3), allocatable, dimension(:) :: m_var_names
-        character(len=12) :: m_name_idxt ! domrea.f90:226; TO DO: find better name
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_riv
-        integer(4), allocatable, dimension(:, :) :: m_ridxt ! TO DO: find better name
-        double precision, allocatable, dimension(:) :: m_aux
+        double precision, allocatable, dimension(:,:) :: m_buffer ! replaces m_aux, now it is a 2D matrix
+        integer(4) :: m_size
+        integer(4), allocatable, dimension(:,:) :: m_river_points ! a lookup matrix
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name
         double precision, allocatable, dimension(:, :) :: m_values
 
     contains
 
-        ! delegated constructor - related procedures
-        procedure :: set_global_size ! BC_mem.f90:71
-        procedure :: set_global_idxt ! (call to readnc_int_1d(), domrea.f90:226)
-        procedure :: set_size ! (domrea.f90:228)
-        procedure :: reindex ! (domrea.f90:233, which should be moved away with the 3D index)
-        ! delegated constructor
-        procedure :: init_members ! (memory allocation also in domrea.f90:230:231)
-        ! getters
-        procedure :: get_global_size
+        ! target constructor - related procedures
+        procedure :: allocate_buffer
+        procedure :: set_river_points
+        ! target constructor
+        procedure :: init_members
         ! base class methods
         procedure :: load
         procedure :: swap
@@ -65,41 +58,69 @@ contains
 
 
 
-    !> Just a wrapper of 'getDimension'
-    subroutine set_global_size(self)
+    !> Allocates and initializes to 0 2d buffer matrix
+    subroutine allocate_buffer(self)
+
+        use modul_param, only: jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
         class(rivers), intent(inout) :: self
-        call getDimension(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size)
-        write(*, *) 'INFO: successfully called set_global_size'
-    end subroutine set_global_size
+
+        allocate(self%m_buffer(jpj, jpi))
+        self%m_buffer = 0.0d0
+
+    end subroutine allocate_buffer
 
 
 
-    !> Just a wrapper of 'readnc_int_1d'
-    subroutine set_global_idxt(self)
+    !> Defines a lookup matrix for the coordinates of the river points
+    subroutine set_river_points(self)
+
+        use modul_param, only: jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
         class(rivers), intent(inout) :: self
-        allocate(self%m_global_idxt(self%m_global_size)) ! BC_mem.f90:135
-        self%m_global_idxt(:) = huge(self%m_global_idxt(1))
-        call readnc_int_1d(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size, self%m_global_idxt)
-        write(*, *) 'INFO: successfully called set_global_idxt'
-    end subroutine set_global_idxt
+        integer(4), allocatable, dimension(:,:) :: river_points_aux ! TO DO: better use a 'stack' data structure
+        integer :: i, j, counter
 
+        ! TO DO: implement one more dimension to account for different geometries for different variables
+        call readnc_slice_float_2d(self%get_file_by_index(1), self%m_var_names_data(1), self%m_buffer, 0)
 
+        ! This is set to the largest dimension.
+        ! Once computed, the real size will be used instead to allocate the right amount of memory
+        allocate(river_points_aux(2, jpj*jpi))
 
-    !> Just a wrapper of 'COUNT_InSubDomain_2d'
-    subroutine set_size(self)
-        class(rivers), intent(inout) :: self
-        self%m_size = COUNT_InSubDomain_2d(self%m_global_size, self%m_global_idxt)
-        write(*, *) 'INFO: successfully called set_size. Size = ', self%m_size
-    end subroutine set_size
+        counter = 0
+        do i = 1, jpi
+            do j = 1, jpj
+                if (self%m_buffer(j, i) < 1.0d20) then
+                    counter = counter + 1
+                    river_points_aux(1, counter) = jpi
+                    river_points_aux(2, counter) = jpj
+                endif
+            enddo
+        enddo
+        self%m_size = counter
 
+        ! TO DO: set condition for size = 0
+        ! allcoate aux matrix
+        allocate(self%m_river_points(2, self%m_size))
+        ! copy
+        self%m_river_points(:, :) = river_points_aux(:, 1:self%m_size)
 
+        deallocate(river_points_aux)
 
-    !> Just a wrapper of 'RE_Indexing_2d' (domrea.f90:233)
-    subroutine reindex(self)
-        class(rivers), intent(inout) :: self
-        call RE_Indexing_2d(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
-        write(*, *) 'INFO: successfully called reindex'
-    end subroutine reindex
+    end subroutine set_river_points
 
 
 
@@ -119,7 +140,6 @@ contains
 
         self%m_name = bc_name
         self%m_n_vars = n_vars
-        self%m_name_idxt = self%m_name//'_idxt'
 
         allocate(self%m_var_names(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
@@ -134,16 +154,9 @@ contains
         enddo
 
         ! call delegated constructor - related procedures
-        call self%set_global_size()
-        call self%set_global_idxt()
-        call self%set_size()
+        call self%allocate_buffer()
+        call self%set_river_points()
 
-        allocate(self%m_ridxt(4, self%m_size)) ! domrea.f90:231
-        self%m_ridxt(:, :) = huge(self%m_ridxt(1, 1)) ! domrea.f90:231
-        call self%reindex() ! domrea.f90:233
-
-        allocate(self%m_aux(self%m_global_size))
-        self%m_aux(:) = huge(self%m_aux(1))
         allocate(self%m_values_dtatrc(2, self%m_size, self%m_n_vars)) ! domrea.f90:216; TO DO: which shape?
         self%m_values_dtatrc(:, :, :) = huge(self%m_values_dtatrc(1, 1, 1)) ! domrea.f90:231
         allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:231
@@ -209,14 +222,6 @@ contains
 
 
 
-    !> Global size getter
-    integer(4) function get_global_size(self)
-        class(rivers), intent(in) :: self
-        get_global_size = self%m_global_size
-    end function get_global_size
-
-
-
     !> Overridden from bc
     subroutine load(self, idx)
 
@@ -225,9 +230,9 @@ contains
         integer :: i, j
 
         do i = 1, self%m_n_vars
-            call readnc_double_1d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_global_size, self%m_aux)
+            call readnc_slice_float_2d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer, 0)
             do j = 1, self%m_size
-                self%m_values_dtatrc(2, j, i) = self%m_aux(self%m_ridxt(1, j))
+                self%m_values_dtatrc(2, j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
             enddo
         enddo
 
@@ -291,8 +296,8 @@ contains
             do i = 1, self%m_n_vars
                 idx_tracer = self%m_var_names_idx(i)
                 do j = 1, self%m_size
-                    idx_i = self%m_ridxt(4, j)
-                    idx_j = self%m_ridxt(3, j)
+                    idx_i = self%m_river_points(1, j)
+                    idx_j = self%m_river_points(2, j)
                     tra(1, idx_j, idx_i, idx_tracer) = tra(1, idx_j, idx_i, idx_tracer) + &
                         self%m_values(j, i) / e3t(1, idx_j, idx_i)
                 enddo
@@ -363,11 +368,6 @@ contains
 
         class(rivers), intent(inout) :: self
 
-        if (allocated(self%m_global_idxt)) then
-            deallocate(self%m_global_idxt)
-            write(*, *) 'INFO: m_global_idxt deallocated'
-        endif
-
         if (allocated(self%m_var_names)) then
             deallocate(self%m_var_names)
             write(*, *) 'INFO: m_var_names deallocated'
@@ -383,14 +383,14 @@ contains
             write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
-        if (allocated(self%m_ridxt)) then
-            deallocate(self%m_ridxt)
-            write(*, *) 'INFO: m_ridxt deallocated'
+        if (allocated(self%m_buffer)) then
+            deallocate(self%m_buffer)
+            write(*, *) 'INFO: m_buffer deallocated'
         endif
 
-        if (allocated(self%m_aux)) then
-            deallocate(self%m_aux)
-            write(*, *) 'INFO: m_aux deallocated'
+        if (allocated(self%m_river_points)) then
+            deallocate(self%m_river_points)
+            write(*, *) 'INFO: m_river_points deallocated'
         endif
 
         if (allocated(self%m_values_dtatrc)) then

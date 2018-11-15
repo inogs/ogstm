@@ -22,7 +22,7 @@ module rivers_mod
         character(len=3), allocatable, dimension(:) :: m_var_names
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_riv
-        double precision, allocatable, dimension(:,:) :: m_buffer ! replaces m_aux, now it is a 2D matrix
+        double precision, allocatable, dimension(:, :) :: m_buffer ! replaces m_aux, now it is a 2D matrix
         integer(4) :: m_size
         integer(4), allocatable, dimension(:,:) :: m_river_points ! a lookup matrix
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name

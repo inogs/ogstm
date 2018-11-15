@@ -81,7 +81,7 @@ MODULE module_step
 
          NOW_datestring = DATEstring ! update time manager module
          NOW_sec        = sec
-
+         COMMON_DATESTRING = DATEstring
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates
@@ -89,7 +89,7 @@ MODULE module_step
 
          if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
          if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
-
+         !write(*,*) is_night(DATEstring)
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files

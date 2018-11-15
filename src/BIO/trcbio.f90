@@ -35,7 +35,6 @@
 !!!   --------------
 
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE BIO_mem
       USE BC_mem
       USE mpi
@@ -118,7 +117,11 @@
                           er(3)  = rho(jk,jj,ji)        ! Density Kg/m3
                           er(4)  = ice                  ! from 0 to 1 adimensional
                           er(5)  = ogstm_co2(jj,ji)           ! CO2 Mixing Ratios (ppm)  390
-                          er(6)  = xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          if (is_night(COMMON_DATEstring)) then
+                              er(6)  = 0.001       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          else
+                              er(6)  = 2.0 * xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          endif
                           er(7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
                           er(9)  = vatm(jj,ji) * surf_mask(jk)  ! wind speed (m/s)
@@ -181,7 +184,16 @@
                           er(1:bottom,3)  = rho(1:bottom,jj,ji)        ! Density Kg/m3
                           er(1:bottom,4)  = ice                  ! from 0 to 1 adimensional
                           er(1:bottom,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
-                          er(1:bottom,6)  = xpar(1:bottom,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          do jk=1, bottom
+                          er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                          enddo
+                          !if (is_night(COMMON_DATEstring))  then
+                          !    er(1:bottom,6)  = 0.001      
+                          !else
+                          !    er(1:bottom,6)  = 2.0*xpar(1:bottom,jj,ji)
+                          !endif
+                          !write(*,*) 'XPAR',  er(1,6)
+
                           er(1:bottom,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
                           er(1:bottom,8)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
                           er(1:bottom,9)  = vatm(jj,ji) * surf_mask(1:bottom) ! wind speed (m/s)

@@ -24,7 +24,7 @@ module rivers_mod
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_riv
         double precision, allocatable, dimension(:, :) :: m_buffer ! replaces m_aux, now it is a 2D matrix
         integer(4) :: m_size
-        integer(4), allocatable, dimension(:,:) :: m_river_points ! a lookup matrix
+        integer(4), allocatable, dimension(:, :) :: m_river_points ! a lookup matrix
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name
         double precision, allocatable, dimension(:, :) :: m_values
 

@@ -58,7 +58,7 @@ contains
 
 
 
-    !> Allocates and initializes to 0 2d buffer matrix
+    !> Allocates and sets to 0 the 2d buffer matrix
     subroutine allocate_buffer(self)
 
         use modul_param, only: jpj, jpi
@@ -90,7 +90,7 @@ contains
         ! integer, parameter :: jpi = 182
 
         class(rivers), intent(inout) :: self
-        integer(4), allocatable, dimension(:,:) :: river_points_aux ! TO DO: better use a 'stack' data structure
+        integer(4), allocatable, dimension(:, :) :: river_points_aux ! TO DO: better use a 'stack' data structure
         integer :: i, j, counter
 
         ! TO DO: implement one more dimension to account for different geometries for different variables
@@ -113,7 +113,7 @@ contains
         self%m_size = counter
 
         ! TO DO: set condition for size = 0
-        ! allcoate aux matrix
+        ! allocate lookup matrix
         allocate(self%m_river_points(2, self%m_size))
         ! copy
         self%m_river_points(:, :) = river_points_aux(:, 1:self%m_size)

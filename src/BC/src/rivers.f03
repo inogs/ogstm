@@ -103,7 +103,8 @@ contains
         counter = 0
         do i = 1, jpi
             do j = 1, jpj
-                if (self%m_buffer(j, i) < 1.0d20) then
+                ! upper / lower bounds have been decreased by one order of magnitude to avoid floating point issues
+                if ((self%m_buffer(j, i) < 1.0d19) .and. (self%m_buffer(j, i) > -1.0d-1)) then
                     counter = counter + 1
                     river_points_aux(1, counter) = jpi
                     river_points_aux(2, counter) = jpj

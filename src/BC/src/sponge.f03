@@ -17,16 +17,13 @@ module sponge_mod
 
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'gib'
-        integer(4) :: m_global_size ! BC_mem.f90:20
-        integer(4), allocatable, dimension(:) :: m_global_idxt ! BC_mem.f90:26; TO DO: find better name
-        integer(4) :: m_size ! BC_mem.f90:21
         integer :: m_n_vars ! BC_mem.f90:94
         character(len=3), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
-        character(len=12), allocatable, dimension(:) :: m_var_names_idxt ! domrea.f90:204; TO DO: find better name
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_gib
-        integer(4), allocatable, dimension(:, :) :: m_ridxt ! TO DO: find better name
-        double precision, allocatable, dimension(:) :: m_aux
+        double precision, allocatable, dimension(:, :, :) :: m_buffer ! replaces m_aux, now it is a 3D matrix
+        integer(4) :: m_size ! BC_mem.f90:21
+        integer(4), allocatable, dimension(:, :) :: m_sponge_points ! a lookup matrix
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name
         double precision, allocatable, dimension(:, :) :: m_values
         ! sponge-related members
@@ -36,22 +33,18 @@ module sponge_mod
 
     contains
 
-        ! delegated constructor - related procedures
-        procedure :: set_global_size ! BC_mem.f90:70
-        procedure :: set_global_idxt ! (call to readnc_int_1d(), domrea.f90:204-207)
-        procedure :: set_size ! (domrea.f90:209-211)
-        procedure :: reindex ! (domrea.f90:218, which should be moved away with the 3D index)
-        ! delegated constructor
+        ! target constructor - related procedures
+        procedure :: allocate_buffer
+        procedure :: set_sponge_points
+        ! target constructor
         procedure :: init_members ! (memory allocation also in domrea.f90:215-216)
-        ! getters
-        procedure :: get_global_size
         ! base class methods
         procedure :: load
         procedure :: swap
         procedure :: actualize
         procedure :: apply
         procedure :: apply_nudging
-        procedure :: apply_phys ! TO DO: declare and implement also in base class
+        procedure :: apply_phys
         ! destructor
         procedure :: sponge_destructor
 
@@ -68,37 +61,75 @@ contains
 
 
 
-    !> Just a wrapper of 'getDimension'
-    subroutine set_global_size(self)
+    !> Allocates and sets to 0 the 3d buffer matrix
+    subroutine allocate_buffer(self)
+
+        use modul_param, only: jpj, jpi, jpk
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+
         class(sponge), intent(inout) :: self
-        call getDimension(self%get_file_by_index(1), self%m_var_names_idxt(1), self%m_global_size)
-    end subroutine set_global_size
+
+        allocate(self%m_buffer(jpk, jpj, jpi))
+        self%m_buffer = 0.0d0
+
+    end subroutine allocate_buffer
 
 
 
-    !> Just a wrapper of 'readnc_int_1d'
-    subroutine set_global_idxt(self)
+    !> Defines a lookup matrix for the coordinates of the river points
+    subroutine set_sponge_points(self)
+
+        use modul_param, only: jpj, jpi, jpk
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+
         class(sponge), intent(inout) :: self
-        allocate(self%m_global_idxt(self%m_global_size)) ! BC_mem.f90:111
-        self%m_global_idxt(:) = huge(self%m_global_idxt(1))
-        call readnc_int_1d(self%get_file_by_index(1), self%m_var_names_idxt(1), self%m_global_size, self%m_global_idxt)
-    end subroutine set_global_idxt
+        integer(4), allocatable, dimension(:, :) :: sponge_points_aux ! TO DO: better use a 'stack' data structure
+        integer :: i, j, k, counter
 
+        ! TO DO: implement one more dimension to account for different geometries for different variables
+        ! TO DO: single or double precision?
+        call readnc_slice_double(self%get_file_by_index(1), self%m_var_names_data(1), self%m_buffer)
 
+        ! This is set to the largest dimension.
+        ! Once computed, the real size will be used instead to allocate the right amount of memory
+        allocate(sponge_points_aux(3, jpj*jpi*jpk))
 
-    !> Just a wrapper of 'COUNT_InSubDomain_3d'
-    subroutine set_size(self)
-        class(sponge), intent(inout) :: self
-        self%m_size = COUNT_InSubDomain_3d(self%m_global_size, self%m_global_idxt)
-    end subroutine set_size
+        counter = 0
+        do i = 1, jpi
+            do j = 1, jpj
+                do k = 1, jpk
+                    if (self%m_buffer(k, j, i) < 1.0d20) then
+                        counter = counter + 1
+                        sponge_points_aux(1, counter) = jpi
+                        sponge_points_aux(2, counter) = jpj
+                        sponge_points_aux(3, counter) = jpk
+                    endif
+                enddo
+            enddo
+        enddo
+        self%m_size = counter
 
+        ! TO DO: set condition for size = 0
+        ! allcoate lookup matrix
+        allocate(self%m_sponge_points(3, self%m_size))
+        ! copy
+        self%m_sponge_points(:, :) = sponge_points_aux(:, 1:self%m_size)
 
+        deallocate(sponge_points_aux)
 
-    !> Just a wrapper of 'RE_Indexing_3d'
-    subroutine reindex(self)
-        class(sponge), intent(inout) :: self
-        call RE_Indexing_3d(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
-    end subroutine reindex
+    end subroutine set_sponge_points
 
 
 
@@ -124,7 +155,6 @@ contains
         self%m_n_vars = n_vars
 
         allocate(self%m_var_names(self%m_n_vars))
-        allocate(self%m_var_names_idxt(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
         allocate(self%m_var_names_idx(self%m_n_vars))
 
@@ -132,22 +162,14 @@ contains
             end_idx = 4*i - 1
             start_idx = end_idx - 2
             self%m_var_names(i) = vars(start_idx:end_idx)
-            self%m_var_names_idxt(i) = self%m_name//'_idxt_'//self%m_var_names(i)
             self%m_var_names_data(i) = self%m_name//'_'//self%m_var_names(i)
             self%m_var_names_idx(i) = var_names_idx(i)
         enddo
 
         ! call delegated constructor - related procedures
-        call self%set_global_size()
-        call self%set_global_idxt()
-        call self%set_size()
+        call self%allocate_buffer()
+        call self%set_sponge_points()
 
-        allocate(self%m_ridxt(4, self%m_size)) ! domrea.f90:216
-        self%m_ridxt(:, :) = huge(self%m_ridxt(1, 1)) ! domrea.f90:216
-        call self%reindex() ! domrea.f90:218
-
-        allocate(self%m_aux(self%m_global_size))
-        self%m_aux(:) = huge(self%m_aux(1))
         allocate(self%m_values_dtatrc(self%m_size, 2, self%m_n_vars)) ! domrea.f90:216; TO DO: which shape?
         self%m_values_dtatrc(:, :, :) = huge(self%m_values_dtatrc(1, 1, 1)) ! domrea.f90:216
         allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:216
@@ -222,14 +244,6 @@ contains
 
 
 
-    !> Global size getter
-    integer(4) function get_global_size(self)
-        class(sponge), intent(in) :: self
-        get_global_size = self%m_global_size
-    end function get_global_size
-
-
-
     !> Overridden from bc
     subroutine load(self, idx)
 
@@ -238,9 +252,13 @@ contains
         integer :: i, j
 
         do i = 1, self%m_n_vars
-            call readnc_double_1d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_global_size, self%m_aux)
+            call readnc_slice_double(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
             do j = 1, self%m_size
-                self%m_values_dtatrc(j, 2, i) = self%m_aux(self%m_ridxt(1, j))
+                self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
+                    self%m_sponge_points(3, j), &
+                    self%m_sponge_points(2, j), &
+                    self%m_sponge_points(1, j) &
+                    )
             enddo
         enddo
 
@@ -333,9 +351,9 @@ contains
             do i = 1, self%m_n_vars
                 idx_tracer = self%m_var_names_idx(i)
                 do j = 1, self%m_size
-                    idx_i = self%m_ridxt(4, j)
-                    idx_j = self%m_ridxt(3, j)
-                    idx_k = self%m_ridxt(2, j)
+                    idx_i = self%m_sponge_points(1, j)
+                    idx_j = self%m_sponge_points(2, j)
+                    idx_k = self%m_sponge_points(3, j)
                     z_tracer = rst_tracers(idx_k, idx_j, idx_i, idx_tracer) * &
                         (self%m_values(j, i) - trb(idx_k, idx_j, idx_i, idx_tracer))
                     tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
@@ -393,19 +411,9 @@ contains
 
         class(sponge), intent(inout) :: self
 
-        if (allocated(self%m_global_idxt)) then
-            deallocate(self%m_global_idxt)
-            write(*, *) 'INFO: m_global_idxt deallocated'
-        endif
-
         if (allocated(self%m_var_names)) then
             deallocate(self%m_var_names)
             write(*, *) 'INFO: m_var_names deallocated'
-        endif
-
-        if (allocated(self%m_var_names_idxt)) then
-            deallocate(self%m_var_names_idxt)
-            write(*, *) 'INFO: m_var_names_idxt deallocated'
         endif
 
         if (allocated(self%m_var_names_data)) then
@@ -418,14 +426,14 @@ contains
             write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
-        if (allocated(self%m_ridxt)) then
-            deallocate(self%m_ridxt)
-            write(*, *) 'INFO: m_ridxt deallocated'
+        if (allocated(self%m_buffer)) then
+            deallocate(self%m_buffer)
+            write(*, *) 'INFO: m_buffer deallocated'
         endif
 
-        if (allocated(self%m_aux)) then
-            deallocate(self%m_aux)
-            write(*, *) 'INFO: m_aux deallocated'
+        if (allocated(self%m_sponge_points)) then
+            deallocate(self%m_sponge_points)
+            write(*, *) 'INFO: m_sponge_points deallocated'
         endif
 
         if (allocated(self%m_values_dtatrc)) then

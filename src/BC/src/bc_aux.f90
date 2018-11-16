@@ -243,6 +243,55 @@ module bc_aux_mod
             deallocate(copy_in)
         
         end subroutine readnc_slice_float
+        
+        
+        
+        !> This is exactly the definition of 'readnc_slice_double' which is provided in 'IOnc.f90'.
+
+        !> The only reason why it is copied here is that the definition is not inside a module.
+        subroutine readnc_slice_double(fileNetCDF, varname, M)
+            
+            use myalloc
+            use netcdf
+            
+            implicit none
+            
+            character,intent(in) :: fileNetCDF*(*), varname*(*)
+            double precision, intent(inout) :: M(jpk, jpj, jpi)
+            
+            double precision, allocatable, dimension(:, :, :) :: copy_in
+            integer ncid, stat, VARid, i, j, k
+            integer counter
+            integer thecount(4), start(4)
+            
+            allocate(copy_in(jpi, jpj, jpk))
+            counter = 0
+            start = (/nimpp, njmpp, 1, 1/)
+            thecount = (/jpi, jpj, jpk, 1/)
+            
+            stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_inq_varid(ncid, varname, VARid)
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_get_var(ncid, VARid, copy_in, start, thecount)
+            
+            call handle_err2(stat, fileNetCDF, varname)
+            call handle_err1(stat, counter, FileNetCDF)
+            stat = nf90_close(ncid)
+            call handle_err1(stat, counter, FileNetCDF)
+            
+            do i = 1, jpi
+                do j = 1, jpj
+                    do k = 1, jpk
+                        M(k, j, i) = copy_in(i, j, k)
+                    enddo
+                enddo
+            enddo
+            
+            deallocate(copy_in)
+
+        end subroutine readnc_slice_double
 
 
 

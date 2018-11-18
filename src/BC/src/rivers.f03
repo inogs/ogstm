@@ -231,7 +231,7 @@ contains
         integer :: i, j
 
         do i = 1, self%m_n_vars
-            call readnc_slice_double_2d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer, 0)
+            call readnc_slice_double_2d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
             do j = 1, self%m_size
                 self%m_values_dtatrc(2, j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
             enddo

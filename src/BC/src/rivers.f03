@@ -106,8 +106,8 @@ contains
                 ! upper / lower bounds have been decreased by one order of magnitude to avoid floating point issues
                 if ((self%m_buffer(j, i) < 1.0d19) .and. (self%m_buffer(j, i) > -1.0d-1)) then
                     counter = counter + 1
-                    river_points_aux(1, counter) = jpi
-                    river_points_aux(2, counter) = jpj
+                    river_points_aux(1, counter) = i
+                    river_points_aux(2, counter) = j
                 endif
             enddo
         enddo

@@ -113,9 +113,9 @@ contains
                     ! upper / lower bounds have been decreased by one order of magnitude to avoid floating point issues
                     if ((self%m_buffer(k, j, i) < 1.0d19) .and. (self%m_buffer(k, j, i) > -1.0d-1)) then
                         counter = counter + 1
-                        sponge_points_aux(1, counter) = jpi
-                        sponge_points_aux(2, counter) = jpj
-                        sponge_points_aux(3, counter) = jpk
+                        sponge_points_aux(1, counter) = i
+                        sponge_points_aux(2, counter) = j
+                        sponge_points_aux(3, counter) = k
                     endif
                 enddo
             enddo

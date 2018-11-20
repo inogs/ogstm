@@ -242,7 +242,7 @@
           CHARACTER(LEN=20) :: dianm_2d(jptra_dia_2d)
           CHARACTER(LEN=20) :: diaun_2d(jptra_dia_2d)
           INTEGER           :: diahf_2d(jptra_dia_2d)
-
+          CHARACTER(LEN=17) :: COMMON_DATESTRING
 !!    parameters for the control of passive tracers
 
 

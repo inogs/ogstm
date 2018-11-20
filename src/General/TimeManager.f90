@@ -659,5 +659,42 @@
 
       END SUBROUTINE MIDDLEDATE
 
+!=======================================================================
+
+
+       logical FUNCTION is_night(datestring)
+       IMPLICIT NONE
+       CHARACTER(LEN=17), INTENT(IN) :: datestring
+
+       ! LOCAL
+       INTEGER  :: year, month, day
+       double precision  :: sec, DAWN, SUNSET
+       DAWN   = 3600.*6
+       SUNSET = 3600.*18
+
+       is_night = .TRUE.
+       call read_date_string(datestring, year, month, day, sec)
+
+       if ((sec.gt.DAWN).and.(sec.le.SUNSET)) THEN
+           is_night = .FALSE.
+       endif
+
+       END FUNCTION is_night
+
+       double precision FUNCTION INSTANT_PAR(datestring,MEAN_PAR)
+       IMPLICIT NONE
+       CHARACTER(LEN=17), INTENT(IN) :: datestring
+       double precision, INTENT(IN) :: MEAN_PAR ! daily integral 
+       ! LOCAL
+       INTEGER  :: year, month, day
+       double precision :: POSITIVE_VALUE, sec, PI
+      
+       PI = 3.141592653589793
+
+       call read_date_string(datestring, year, month, day, sec)
+       POSITIVE_VALUE = cos(2*PI*sec/86400. -PI )
+       INSTANT_PAR=MAX(0.001, PI*POSITIVE_VALUE*MEAN_PAR )
+       END FUNCTION INSTANT_PAR
+
 
       END MODULE TIME_MANAGER

@@ -17,9 +17,9 @@
 
       INTEGER :: dimen_jvsed
 #ifdef BFMv2
-      INTEGER :: nsed=22 ! number of sedimenting state variables
+      INTEGER :: nsed=21 ! number of sedimenting state variables
 #else
-      INTEGER :: nsed=23
+      INTEGER :: nsed=22
 #endif 
       INTEGER, allocatable :: sed_idx(:)
       INTEGER, allocatable :: jarr_sed(:,:),jarr_sed_flx(:,:)

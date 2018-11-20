@@ -50,10 +50,4 @@ contains
 
     end subroutine tearDown
 
-@Test
-    subroutine test_global_size(this)
-        class(test_sponge_year), intent(inout) :: this
-        @assertEqual(6320, this%m_sponge%get_global_size())
-    end subroutine test_global_size
-
 end module test_sponge_year_mod

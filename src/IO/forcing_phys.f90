@@ -389,38 +389,61 @@
 ! ************************************************
       SUBROUTINE INIT_PHYS
       USE myalloc
-      IMPLICIT NONE
-      integer ji, jj,jk
-      double precision reduction_value, alpha
-      double precision lon_limit
 
-      lon_limit = -7.5d0
-      alpha     = 1.0d0
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      use BC_mem
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      IMPLICIT NONE
+      ! integer ji, jj,jk
+      ! double precision reduction_value, alpha
+      ! double precision lon_limit
+
+      ! lon_limit = -7.5
+      ! alpha     = 1.0
       spongeT     = 1.0
       spongeVel   = 1.0
 
+      ! if (internal_sponging) then
+      !     DO ji=1,jpi
+      !     DO jj=1,jpj
+      !         if (glamt(jj,ji).lt.lon_limit) then
+      !             reduction_value = 1.e-6
+      !             spongeT(jj,ji) = reduction_value
+      !         endif
+      !     ENDDO
+      !     ENDDO
+
+
+      !     DO ji=1,jpi
+      !     DO jj=1,jpj
+      !         if (glamt(jj,ji).lt.lon_limit) then
+      !             reduction_value = exp( -alpha*(  (glamt(jj,ji)-lon_limit)**2)  )
+      !             do jk=1,jpk
+      !                 spongeVel(jk,jj,ji) = reduction_value
+      !             enddo
+      !         endif
+      !     ENDDO
+      !     ENDDO
+      ! endif
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       if (internal_sponging) then
-          DO ji=1,jpi
-          DO jj=1,jpj
-              if (glamt(jj,ji).lt.lon_limit) then
-                  reduction_value = 1.0d-6
-                  spongeT(jj,ji) = reduction_value
-              endif
-          ENDDO
-          ENDDO
-
-
-          DO ji=1,jpi
-          DO jj=1,jpj
-              if (glamt(jj,ji).lt.lon_limit) then
-                  reduction_value = exp( -alpha*(  (glamt(jj,ji)-lon_limit)**2)  )
-                  do jk=1,jpk
-                      spongeVel(jk,jj,ji) = reduction_value
-                  enddo
-              endif
-          ENDDO
-          ENDDO
+          call gibraltar%apply_phys(glamt, spongeT, spongeVel)
       endif
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
 
 
       END SUBROUTINE INIT_PHYS

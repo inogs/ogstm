@@ -49,4 +49,16 @@ contains
         enddo
     end subroutine test_file_names
 
+@Test
+    subroutine test_new_interval(this)
+        class(test_bc_data_year), intent(inout) :: this
+        double precision :: interpolation_factor
+        interpolation_factor = this%m_bc_data%get_interpolation_factor("20170814-00:00:00")
+        @assertTrue(this%m_bc_data%new_interval(), "should be new interval")
+        interpolation_factor = this%m_bc_data%get_interpolation_factor("20170815-00:00:00")
+        @assertFalse(this%m_bc_data%new_interval(), "should be same interval")
+        interpolation_factor = this%m_bc_data%get_interpolation_factor("20170816-00:00:00")
+        @assertTrue(this%m_bc_data%new_interval(), "should be new interval")
+    end subroutine test_new_interval
+
 end module test_bc_data_year_mod

@@ -1,3 +1,7 @@
+!> This is a wrapper over the data structures which contains the full dataset needed by the boundary.
+
+!> The dataset consists of a series of files referring to some specific times
+!! distributed along the whole simulation period.
 module bc_data_mod
     
     use calendar
@@ -19,10 +23,15 @@ module bc_data_mod
         double precision, allocatable, dimension(:) :: m_times
         ! interpolation variables
         integer :: m_prev_idx
-        integer :: m_succ_idx
+        integer :: m_next_idx
+        logical :: m_new_interval
     contains
         procedure :: get_file_by_index
+        procedure :: get_prev_idx
+        procedure :: get_next_idx
+        procedure :: set_current_interval
         procedure :: get_interpolation_factor
+        procedure :: new_interval
         procedure :: bc_data_destructor
     end type bc_data
 
@@ -30,7 +39,6 @@ module bc_data_mod
         module procedure bc_data_empty
         module procedure bc_data_default
         module procedure bc_data_year
-        ! (optional) module procedure bc_data_full (time explicitly given)
     end interface bc_data
 
     public :: bc_data
@@ -39,12 +47,16 @@ contains
 
 
 
+    !> bc_data empty constructor
     type(bc_data) function bc_data_empty()
 
         bc_data_empty%m_n_files = 0
         bc_data_empty%m_n_times = 0
         bc_data_empty%m_prev_idx = 0
-        bc_data_empty%m_succ_idx = 0
+        bc_data_empty%m_next_idx = 0
+        bc_data_empty%m_new_interval = .false.
+
+        write(*, *) 'INFO: successfully called bc_data empty constructor'
 
     end function bc_data_empty
 
@@ -55,6 +67,11 @@ contains
     ! First entry in 'files_namelist' must be the number of files in the list.
     ! Default constructor infers times from file names:
     ! each file(5:21) must correspond to the fully qualified timestamp ('19700101-00:00:00').
+
+    !> bc_data default constructor
+
+    !> Infers the time each file refers to from a time string contained in the file name itself.
+    !! In this case the files and times lists will have the same length.
     type(bc_data) function bc_data_default(files_namelist)
 
         character(len=22), intent(in) :: files_namelist
@@ -81,10 +98,13 @@ contains
 
         ! initialize interpolation variables
         bc_data_default%m_prev_idx = 1
-        bc_data_default%m_succ_idx = bc_data_default%m_prev_idx + 1
+        bc_data_default%m_next_idx = bc_data_default%m_prev_idx + 1
+        bc_data_default%m_new_interval = .true.
 
         ! close file
         close(unit=file_unit)
+
+        write(*, *) 'INFO: successfully called bc_data default constructor'
 
     end function bc_data_default
 
@@ -95,6 +115,13 @@ contains
     ! First entry in 'files_namelist' must be the number of files in the list.
     ! Year constructor infers times from file names and simulation duration:
     ! each file(9:21) must correspond to the fully qualified yearly timestamp ('0101-00:00:00').
+
+    !> bc_data periodic constructor
+
+    !> It is used to handle yearly periodic boundary conditions (e.g. climatological).
+    !! Here only the constant part of the time string (i.e. month, day, hour etc.) is inferred from the files,
+    !! and the list of times is computed and replicated for every simulation year, form start to end year.
+    !! Therefore, this constructor accepts two arguments more (simulation start and end times).
     type(bc_data) function bc_data_year(files_namelist, start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
@@ -141,16 +168,21 @@ contains
 
         ! initialize interpolation variables
         bc_data_year%m_prev_idx = 1
-        bc_data_year%m_succ_idx = bc_data_year%m_prev_idx + 1
+        bc_data_year%m_next_idx = bc_data_year%m_prev_idx + 1
+        bc_data_year%m_new_interval = .true.
 
         ! close file
         close(unit=file_unit)
+
+        write(*, *) 'INFO: successfully called bc_data year constructor'
 
     end function bc_data_year
 
 
 
     ! This is supposed to match the given time to the right file, also with yearly data
+
+    !> Getter for the data file given the time index
     character(len=24) function get_file_by_index(self, idx)
 
         class(bc_data), intent(in) :: self
@@ -169,13 +201,31 @@ contains
 
 
 
-    ! compute and return linear interpolation factor,
-    ! keeping track of the current time interval (prev and succ times)
-    double precision function get_interpolation_factor(self, current_time_string)
+    !> Getter for the left extreme of the current time interval
+    integer function get_prev_idx(self)
+        class(bc_data), intent(in) :: self
+        get_prev_idx = self%m_prev_idx
+    end function get_prev_idx
+
+
+
+    !> Getter for the right extreme of the current time interval
+    integer function get_next_idx(self)
+        class(bc_data), intent(in) :: self
+        get_next_idx = self%m_next_idx
+    end function get_next_idx
+
+
+
+    !> Setter of the current time interval
+
+    !> Just sets the current time interval (prev and next indexes) according to current_time_string,
+    !! without computing the interpolation factor.
+    subroutine set_current_interval(self, current_time_string)
 
         class(bc_data), intent(inout) :: self
         character(len=17), intent(in) :: current_time_string
-        double precision :: current_time, prev_time, succ_time
+        double precision :: current_time
         integer :: i
 
         current_time = datestring2sec(current_time_string)
@@ -185,17 +235,52 @@ contains
         do while(self%m_times(i+1) < current_time)
             i = i + 1
         enddo
-        self%m_prev_idx = i
-        prev_time = self%m_times(self%m_prev_idx)
-        self%m_succ_idx = self%m_prev_idx + 1
-        succ_time = self%m_times(self%m_succ_idx)
+        if (i /= self%m_prev_idx) then
+            self%m_prev_idx = i
+            self%m_next_idx = self%m_prev_idx + 1
+            self%m_new_interval = .true.
+        else
+            self%m_new_interval = .false.
+        endif
 
-        get_interpolation_factor = (current_time - prev_time) / (succ_time - prev_time)
+    end subroutine set_current_interval
+
+
+
+    !> Linear interpolation factor computation
+
+    !> Computes and returns the linear interpolation factor,
+    !! keeping track of the current time interval (prev and next indexes).
+    double precision function get_interpolation_factor(self, current_time_string)
+
+        class(bc_data), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        double precision :: current_time, prev_time, next_time
+
+        call self%set_current_interval(current_time_string)
+
+        current_time = datestring2sec(current_time_string)
+        prev_time = self%m_times(self%m_prev_idx)
+        next_time = self%m_times(self%m_next_idx)
+
+        get_interpolation_factor = (current_time - prev_time) / (next_time - prev_time)
 
     end function get_interpolation_factor
 
 
 
+    !> New interval getter
+
+    !> Boolean getter to check whether the interval has changed or not
+    !! after the last call either to set_current_interval or to get_interpolation_factor.
+    logical function new_interval(self)
+        class(bc_data), intent(in) :: self
+        new_interval = self%m_new_interval
+    end function new_interval
+
+
+
+    !> Destructor
     subroutine bc_data_destructor(self)
 
         class(bc_data), intent(inout) :: self

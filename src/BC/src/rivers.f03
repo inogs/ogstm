@@ -1,3 +1,10 @@
+!> Maps rivers boundaries
+
+!> It maps boundaries that in the boundary classification are defined as rivers.
+!! This means that its data files are supposed to contain
+!! the values of a potentially time dependent tracer flow at the boundaries,
+!! i.e. discharges of an amount of tracers from the rivers to the ocean,
+!! with a given seasonal variability.
 module rivers_mod
 
     use bc_mod
@@ -11,35 +18,29 @@ module rivers_mod
 
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'riv'
-        integer(4) :: m_global_size ! BC_mem.f90:20
-        integer(4), allocatable, dimension(:) :: m_global_idxt ! BC_mem.f90:26; TO DO: find better name
-        integer(4) :: m_size ! BC_mem.f90:21
         integer :: m_n_vars ! BC_mem.f90:95
         character(len=3), allocatable, dimension(:) :: m_var_names
-        character(len=12) :: m_name_idxt ! domrea.f90:226; TO DO: find better name
         character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_riv
-        integer(4), allocatable, dimension(:, :) :: m_ridxt ! TO DO: find better name
-        double precision, allocatable, dimension(:) :: m_aux
+        double precision, allocatable, dimension(:, :) :: m_buffer ! replaces m_aux, now it is a 2D matrix
+        integer(4) :: m_size
+        integer(4), allocatable, dimension(:, :) :: m_river_points ! a lookup matrix
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc ! TO DO: find better name
         double precision, allocatable, dimension(:, :) :: m_values
 
     contains
 
-        ! delegated constructor - related procedures
-        procedure :: set_global_size ! BC_mem.f90:71
-        procedure :: set_global_idxt ! (call to readnc_int_1d(), domrea.f90:226)
-        procedure :: set_size ! (domrea.f90:228)
-        procedure :: reindex ! (domrea.f90:233, which should be moved away with the 3D index)
-        ! delegated constructor
-        procedure :: init_members ! (memory allocation also in domrea.f90:230:231)
-        ! getters
-        procedure :: get_global_size
+        ! target constructor - related procedures
+        procedure :: allocate_buffer
+        procedure :: set_river_points
+        ! target constructor
+        procedure :: init_members
         ! base class methods
         procedure :: load
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_nudging
         procedure :: apply_phys
         ! destructor
         procedure :: rivers_destructor
@@ -57,41 +58,78 @@ contains
 
 
 
-    ! just a wrapper of 'getDimension' (BC_mem.f90:71)
-    subroutine set_global_size(self)
+    !> Allocates and sets to 0 the 2d buffer matrix
+    subroutine allocate_buffer(self)
+
+        use modul_param, only: jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
         class(rivers), intent(inout) :: self
-        call getDimension(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size)
-    end subroutine set_global_size
+
+        allocate(self%m_buffer(jpj, jpi))
+        self%m_buffer = 0.0d0
+
+    end subroutine allocate_buffer
 
 
 
-    ! just a wrapper of 'readnc_int_1d' (domrea.f90:226)
-    subroutine set_global_idxt(self)
+    !> Defines a lookup matrix for the coordinates of the river points
+    subroutine set_river_points(self)
+
+        use modul_param, only: jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
         class(rivers), intent(inout) :: self
-        allocate(self%m_global_idxt(self%m_global_size)) ! BC_mem.f90:135
-        self%m_global_idxt(:) = huge(self%m_global_idxt(1))
-        call readnc_int_1d(self%get_file_by_index(1), self%m_name_idxt, self%m_global_size, self%m_global_idxt)
-    end subroutine set_global_idxt
+        integer(4), allocatable, dimension(:, :) :: river_points_aux ! TO DO: better use a 'stack' data structure
+        integer :: i, j, counter
 
+        ! TO DO: implement one more dimension to account for different geometries for different variables
+        call readnc_slice_float_2d(self%get_file_by_index(1), self%m_var_names_data(1), self%m_buffer, 0)
 
+        ! This is set to the largest dimension.
+        ! Once computed, the real size will be used instead to allocate the right amount of memory
+        allocate(river_points_aux(2, jpj*jpi))
 
-    ! just a wrapper of 'COUNT_InSubDomain' (domrea.f90:228)
-    subroutine set_size(self)
-        class(rivers), intent(inout) :: self
-        self%m_size = COUNT_InSubDomain(self%m_global_size, self%m_global_idxt)
-    end subroutine set_size
+        counter = 0
+        do i = 1, jpi
+            do j = 1, jpj
+                ! upper / lower bounds have been decreased by one order of magnitude to avoid floating point issues
+                if ((self%m_buffer(j, i) < 1.0d19) .and. (self%m_buffer(j, i) > -1.0d-1)) then
+                    counter = counter + 1
+                    river_points_aux(1, counter) = i
+                    river_points_aux(2, counter) = j
+                endif
+            enddo
+        enddo
+        self%m_size = counter
 
+        ! TO DO: set condition for size = 0
+        ! allocate lookup matrix
+        allocate(self%m_river_points(2, self%m_size))
+        ! copy
+        self%m_river_points(:, :) = river_points_aux(:, 1:self%m_size)
 
+        deallocate(river_points_aux)
 
-    ! just a wrapper of 'RIVRE_Indexing' (domrea.f90:233)
-    subroutine reindex(self)
-        class(rivers), intent(inout) :: self
-        call RE_Indexing(self%m_global_size, self%m_global_idxt, self%m_size, self%m_ridxt)
-    end subroutine reindex
+    end subroutine set_river_points
 
 
 
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Target constructor
+
+    !> Allocates and Initializes all the members that are added to the base class.
     subroutine init_members(self, bc_name, n_vars, vars, var_names_idx)
 
         class(rivers), intent(inout) :: self
@@ -103,7 +141,6 @@ contains
 
         self%m_name = bc_name
         self%m_n_vars = n_vars
-        self%m_name_idxt = self%m_name//'_idxt'
 
         allocate(self%m_var_names(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
@@ -118,20 +155,15 @@ contains
         enddo
 
         ! call delegated constructor - related procedures
-        call self%set_global_size()
-        call self%set_global_idxt()
-        call self%set_size()
+        call self%allocate_buffer()
+        call self%set_river_points()
 
-        allocate(self%m_ridxt(4, self%m_size)) ! domrea.f90:231
-        self%m_ridxt(:, :) = huge(self%m_ridxt(1, 1)) ! domrea.f90:231
-        call self%reindex() ! domrea.f90:233
-
-        allocate(self%m_aux(self%m_global_size))
-        self%m_aux(:) = huge(self%m_aux(1))
         allocate(self%m_values_dtatrc(2, self%m_size, self%m_n_vars)) ! domrea.f90:216; TO DO: which shape?
         self%m_values_dtatrc(:, :, :) = huge(self%m_values_dtatrc(1, 1, 1)) ! domrea.f90:231
         allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:231
         self%m_values(:, :) = huge(self%m_values(1, 1)) ! domrea.f90:231
+
+        write(*, *) 'INFO: successfully called init_members'
 
     end subroutine init_members
 
@@ -140,6 +172,10 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Default constructor
+
+    !> Calls bc default constructor and target constructor.
     type(rivers) function rivers_default(files_namelist, bc_name, n_vars, vars, var_names_idx)
 
         character(len=22), intent(in) :: files_namelist
@@ -153,6 +189,8 @@ contains
 
         call rivers_default%init_members(bc_name, n_vars, vars, var_names_idx)
 
+        write(*, *) 'INFO: successfully called rivers default constructor'
+
     end function rivers_default
 
 
@@ -160,6 +198,10 @@ contains
     ! TO DO: check if it is true that the constructor has to be always overloaded
     ! TO DO: final version of the constructor should receive everything from a single namelist
     ! 'bc_name' is used just to avoid system used symbol 'name'
+
+    !> Periodic constructor
+
+    !> Calls bc periodic constructor and target constructor.
     type(rivers) function rivers_year(files_namelist, bc_name, n_vars, vars, var_names_idx, start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
@@ -175,17 +217,13 @@ contains
 
         call rivers_year%init_members(bc_name, n_vars, vars, var_names_idx)
 
+        write(*, *) 'INFO: successfully called rivers year constructor'
+
     end function rivers_year
 
 
 
-    integer(4) function get_global_size(self)
-        class(rivers), intent(in) :: self
-        get_global_size = self%m_global_size
-    end function get_global_size
-
-
-
+    !> Overridden from bc
     subroutine load(self, idx)
 
         class(rivers), intent(inout) :: self
@@ -193,9 +231,9 @@ contains
         integer :: i, j
 
         do i = 1, self%m_n_vars
-            call readnc_double_1d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_global_size, self%m_aux)
+            call readnc_slice_double_2d(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
             do j = 1, self%m_size
-                self%m_values_dtatrc(2, j, i) = self%m_aux(self%m_ridxt(1, j))
+                self%m_values_dtatrc(2, j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
             enddo
         enddo
 
@@ -203,6 +241,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine swap(self)
 
         class(rivers), intent(inout) :: self
@@ -218,6 +257,7 @@ contains
 
 
 
+    !> Overridden from bc
     subroutine actualize(self, weight)
 
         class(rivers), intent(inout) :: self
@@ -234,21 +274,21 @@ contains
 
 
 
-    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+    !> Overridden from bc
+    subroutine apply(self, e3t, n_tracers, trb, tra)
 
-        ! use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jpk, jpj, jpi
 
-        ! implicit none
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182        
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182        
 
         class(rivers), intent(inout) :: self
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
         integer, intent(in) :: n_tracers
-        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: rst_tracers
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
         integer :: i, j, idx_tracer, idx_i, idx_j
@@ -257,8 +297,8 @@ contains
             do i = 1, self%m_n_vars
                 idx_tracer = self%m_var_names_idx(i)
                 do j = 1, self%m_size
-                    idx_i = self%m_ridxt(4, j)
-                    idx_j = self%m_ridxt(3, j)
+                    idx_i = self%m_river_points(1, j)
+                    idx_j = self%m_river_points(2, j)
                     tra(1, idx_j, idx_i, idx_tracer) = tra(1, idx_j, idx_i, idx_tracer) + &
                         self%m_values(j, i) / e3t(1, idx_j, idx_i)
                 enddo
@@ -269,16 +309,49 @@ contains
 
 
 
-    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+    !> Overridden from bc
 
-        ! use modul_param, only: jpk, jpj, jpi
+    !> Actually it does not do anything, since so far the model does not need this feature for this type of boundary.
+    subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
 
-        ! implicit none
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182        
+
+        class(rivers), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: rst_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+        integer :: i, j, idx_tracer, idx_i, idx_j
+
+        write(*, *) 'WARN: rivers class does not implement this method'
+
+    end subroutine apply_nudging
+
+
+
+    !> Overridden from bc
+
+    !> Actually it does not do anything,
+    !! since rivers boundaries, by definition, are closed also in the OGCM;
+    !! velocities are already set to zero and there is no point in modifying them at the boundaries.
+    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         class(rivers), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lat
@@ -291,14 +364,10 @@ contains
 
 
 
+    !> Destructor
     subroutine rivers_destructor(self)
 
         class(rivers), intent(inout) :: self
-
-        if (allocated(self%m_global_idxt)) then
-            deallocate(self%m_global_idxt)
-            write(*, *) 'INFO: m_global_idxt deallocated'
-        endif
 
         if (allocated(self%m_var_names)) then
             deallocate(self%m_var_names)
@@ -315,14 +384,14 @@ contains
             write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
-        if (allocated(self%m_ridxt)) then
-            deallocate(self%m_ridxt)
-            write(*, *) 'INFO: m_ridxt deallocated'
+        if (allocated(self%m_buffer)) then
+            deallocate(self%m_buffer)
+            write(*, *) 'INFO: m_buffer deallocated'
         endif
 
-        if (allocated(self%m_aux)) then
-            deallocate(self%m_aux)
-            write(*, *) 'INFO: m_aux deallocated'
+        if (allocated(self%m_river_points)) then
+            deallocate(self%m_river_points)
+            write(*, *) 'INFO: m_river_points deallocated'
         endif
 
         if (allocated(self%m_values_dtatrc)) then

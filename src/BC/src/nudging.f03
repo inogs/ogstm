@@ -1,3 +1,11 @@
+!> Inherits from bc implementing a decorator pattern
+
+!> This pattern is a general pattern in Object-Oriented programming.
+!! Since nudging is inheriting from bc, it is a bc.
+!! Furthermore, associating its pointer to an already instantiated bc object of any kind
+!! (both of base class or any of the derived classes)
+!! it also has a bc, i.e. it can refer inside its methods directly to that object,
+!! decorating it with additional features.
 module nudging_mod
 
     use bc_mod
@@ -23,10 +31,16 @@ module nudging_mod
         ! delegated constructor
         procedure init_members
         ! base class methods
+        procedure :: get_file_by_index
+        procedure :: get_prev_idx
+        procedure :: get_next_idx
+        procedure :: set_current_interval
+        procedure :: get_interpolation_factor
         procedure :: load
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_nudging
         procedure :: apply_phys
         ! destructor
         procedure :: nudging_destructor
@@ -43,9 +57,12 @@ contains
 
 
 
+    !> Target constructor
+
+    !> Allocates and Initializes all the members that are added to the base class.
     subroutine init_members(self, bc_no_nudging, data_file, n_vars, vars, vars_idx, rst_corr, n_tracers)
 
-        ! use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jpk, jpj, jpi
         use netcdf
         use bc_aux_mod
 
@@ -61,9 +78,9 @@ contains
         integer, intent(in) :: n_tracers
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         integer :: i, start_idx, end_idx
 
@@ -96,8 +113,10 @@ contains
 
 
 
-    ! Default constructor invokes base class empty constructor;
-    ! no other constructors are needed so far
+    !> Default constructor
+
+    !> Calls bc empty constructor and target constructor.
+    !! No other constructors are needed so far.
     type(nudging) function nudging_default(bc_no_nudging, data_file, n_vars, vars, vars_idx, rst_corr, n_tracers)
 
         class(bc), target, intent(in) :: bc_no_nudging
@@ -113,10 +132,92 @@ contains
 
         call nudging_default%init_members(bc_no_nudging, data_file, n_vars, vars, vars_idx, rst_corr, n_tracers)
 
+        write(*, *) 'INFO: successfully called nudging default constructor'
+
     end function nudging_default
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
+    character(len=24) function get_file_by_index(self, idx)
+
+        class(nudging), intent(in) :: self
+        integer, intent(in) :: idx
+
+        get_file_by_index = self%m_bc_no_nudging%get_file_by_index(idx)
+        write(*, *) 'INFO: called get_file_by_index from nudging decorator'
+
+    end function get_file_by_index
+
+
+
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
+    integer function get_prev_idx(self)
+        class(nudging), intent(in) :: self
+        get_prev_idx = self%m_bc_no_nudging%get_prev_idx()
+        write(*, *) 'INFO: called get_prev_idx from nudging decorator'
+    end function get_prev_idx
+
+
+
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
+    integer function get_next_idx(self)
+        class(nudging), intent(in) :: self
+        get_next_idx = self%m_bc_no_nudging%get_next_idx()
+        write(*, *) 'INFO: called get_next_idx from nudging decorator'
+    end function get_next_idx
+
+
+
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
+    subroutine set_current_interval(self, current_time_string, new_data)
+
+        class(nudging), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        logical, optional, intent(out) :: new_data
+
+        if (present(new_data)) then
+            call self%m_bc_no_nudging%set_current_interval(current_time_string, new_data)
+        else
+            call self%m_bc_no_nudging%set_current_interval(current_time_string)
+        endif
+        write(*, *) 'INFO: called set_current_interval from nudging decorator'
+
+    end subroutine set_current_interval
+
+
+
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
+    double precision function get_interpolation_factor(self, current_time_string, new_data)
+
+        class(nudging), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        logical, optional, intent(out) :: new_data
+
+        if (present(new_data)) then
+            get_interpolation_factor = self%m_bc_no_nudging%get_interpolation_factor(current_time_string, new_data)
+        else
+            get_interpolation_factor = self%m_bc_no_nudging%get_interpolation_factor(current_time_string)
+        endif
+        write(*, *) 'INFO: called get_interpolation_factor from nudging decorator'
+
+    end function get_interpolation_factor
+
+
+
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine load(self, idx)
 
         class(nudging), intent(inout) :: self
@@ -129,6 +230,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine swap(self)
 
         class(nudging), intent(inout) :: self
@@ -140,6 +244,9 @@ contains
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine actualize(self, weight)
 
         class(nudging), intent(inout) :: self
@@ -152,16 +259,47 @@ contains
 
 
 
-    subroutine apply(self, e3t, n_tracers, rst_tracers, trb, tra)
+    !> Overridden from bc.
 
-        ! use modul_param, only: jpk, jpj, jpi
+    !> Redirects to the decorated object apply_nudging method.
+    subroutine apply(self, e3t, n_tracers, trb, tra)
 
-        ! implicit none
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
+
+        class(nudging), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        integer, intent(in) :: n_tracers
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+
+        call self%m_bc_no_nudging%apply_nudging(e3t, n_tracers, self%m_rst_tracers, trb, tra)
+        write(*, *) 'INFO: called apply from nudging decorator'
+
+    end subroutine apply
+
+
+
+    !> Overridden from bc.
+
+    !> Actually it does not do anything,
+    !! since there is no need to apply an additional nudging to a nudging object.
+    subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         class(nudging), intent(inout) :: self
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
@@ -170,23 +308,26 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
 
-        call self%m_bc_no_nudging%apply(e3t, n_tracers, self%m_rst_tracers, trb, tra)
-        write(*, *) 'INFO: called apply from nudging decorator'
+        write(*, *) 'WARN: nudging class does not implement this method'
+        write(*, *) 'WARN: attempt to apply nudging to nudging decorator'
 
-    end subroutine apply
+    end subroutine apply_nudging
 
 
 
+    !> Overridden from bc.
+
+    !> Redirects to the decorated object method.
     subroutine apply_phys(self, lat, sponge_t, sponge_vel)
 
-        ! use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jpk, jpj, jpi
 
-        ! implicit none
+        implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        integer, parameter :: jpk = 70
-        integer, parameter :: jpj = 65
-        integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 70
+        ! integer, parameter :: jpj = 65
+        ! integer, parameter :: jpi = 182
 
         class(nudging), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lat
@@ -200,6 +341,7 @@ contains
 
 
 
+    !> Destructor
     subroutine nudging_destructor(self)
 
         class(nudging), intent(inout) :: self

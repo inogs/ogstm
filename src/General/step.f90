@@ -10,6 +10,17 @@ MODULE module_step
       USE mod_cbc
       USE mod_gibbc
       USE mod_tinbc
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      use bc_update_mod
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       USE ogstm_mpi_module
 
 
@@ -123,8 +134,27 @@ MODULE module_step
 
       CALL forcings_PHYS(DATEstring)
       CALL forcings_KEXT(datestring)
-      CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
-      CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
+      !CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
+      !CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      bc_tin_partTime = MPI_WTIME()
+      call update_bc(all_rivers, datestring)
+      bc_tin_partTime = MPI_WTIME()    - bc_tin_partTime
+      bc_tin_TotTime  = bc_tin_TotTime + bc_tin_partTime
+
+      bc_gib_partTime = MPI_WTIME()
+      call update_bc(gibraltar, datestring)
+      bc_gib_partTime = MPI_WTIME()    - bc_gib_partTime
+      bc_gib_TotTime  = bc_gib_TotTime + bc_gib_partTime
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
@@ -268,7 +298,19 @@ MODULE module_step
       IF (ladv) CALL trcadv ! tracers: advection
 
 #    if defined key_trc_dmp
-      CALL trcdmp ! tracers: damping for passive tracers
+      CALL trcdmp ! tracers: damping for passive tracerstrcstp
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      call all_rivers%apply(e3t, jptra, trb, tra)
+      call gibraltar%apply(e3t, jptra, trb, tra)
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
 #    endif
 
 ! tracers: horizontal diffusion IF namelist flags are activated

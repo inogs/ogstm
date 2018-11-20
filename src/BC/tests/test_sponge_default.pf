@@ -49,19 +49,6 @@ contains
     end subroutine tearDown
 
 @Test
-    subroutine test_global_size(this)
-        class(test_sponge_default), intent(inout) :: this
-        @assertEqual(6320, this%m_sponge%get_global_size())
-    end subroutine test_global_size
-
-@Test
-    subroutine test_reindex(this)
-        class(test_sponge_default), intent(inout) :: this
-        ! TO DO: this should be done through a getter. But why is 'm_ridxt' not private?
-        @assertEqual(1, this%m_sponge%m_ridxt(1, 1))
-    end subroutine test_reindex
-
-@Test
     subroutine test_load(this)
         class(test_sponge_default), intent(inout) :: this
         call this%m_sponge%load(1)

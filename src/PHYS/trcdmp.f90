@@ -45,35 +45,35 @@
 
 ! Boundary conditions fo Gib area
 
-       IF (Gsize .NE. 0) THEN
-         DO jn=1, jn_gib
-          tra_idx=tra_matrix_gib(jn)
-          DO jv=1, Gsize
-             ji = gib_ridxt(4,jv)
-             jj = gib_ridxt(3,jv)
-             jk = gib_ridxt(2,jv)
-             ztra = restotr(jk,jj,ji,tra_idx) * ( gib(jv,jn)-trb(jk,jj,ji,tra_idx) )
-             tra(jk,jj,ji,tra_idx) = tra(jk,jj,ji,tra_idx) + ztra
-          ENDDO
-         ENDDO
-       ENDIF
+       !IF (Gsize .NE. 0) THEN
+         !DO jn=1, jn_gib
+          !tra_idx=tra_matrix_gib(jn)
+          !DO jv=1, Gsize
+             !ji = gib_ridxt(4,jv)
+             !jj = gib_ridxt(3,jv)
+             !jk = gib_ridxt(2,jv)
+             !ztra = restotr(jk,jj,ji,tra_idx) * ( gib(jv,jn)-trb(jk,jj,ji,tra_idx) )
+             !tra(jk,jj,ji,tra_idx) = tra(jk,jj,ji,tra_idx) + ztra
+          !ENDDO
+         !ENDDO
+       !ENDIF
 
 
 ! Boundary conditions for rivers
 
-       if ( lrivers ) THEN
-       IF (Rsize .NE. 0) THEN
-         DO jn=1, jn_riv
-          tra_idx=tra_matrix_riv(jn)
+       !if ( lrivers ) THEN
+       !IF (Rsize .NE. 0) THEN
+         !DO jn=1, jn_riv
+          !tra_idx=tra_matrix_riv(jn)
 
-          DO jv=1, Rsize
-             ji = riv_ridxt(4,jv)
-             jj = riv_ridxt(3,jv)
-            tra(1,jj,ji,tra_idx) = tra(1,jj,ji,tra_idx) + riv(jv,jn)/e3t(1,jj,ji)
-          ENDDO
-         ENDDO
-       ENDIF
-       ENDIF
+          !DO jv=1, Rsize
+             !ji = riv_ridxt(4,jv)
+             !jj = riv_ridxt(3,jv)
+            !tra(1,jj,ji,tra_idx) = tra(1,jj,ji,tra_idx) + riv(jv,jn)/e3t(1,jj,ji)
+          !ENDDO
+         !ENDDO
+       !ENDIF
+       !ENDIF
 
 
 ! Boundary conditions for Atmosphere

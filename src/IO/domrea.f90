@@ -261,7 +261,7 @@
           (/ 1, 2, 3, 6, 49, 50, 7 /), &
           1.0d0, &
           1.0d-6, &
-          -7.5d0 &
+          -5.5d0 &
           )
       gibraltar = nudging( &
           gibraltar_sponge, &

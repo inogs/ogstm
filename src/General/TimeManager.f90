@@ -693,7 +693,7 @@
 
        call read_date_string(datestring, year, month, day, sec)
        POSITIVE_VALUE = cos(2*PI*sec/86400. -PI )
-       INSTANT_PAR=MAX(0.001, PI*POSITIVE_VALUE*MEAN_PAR )
+       INSTANT_PAR=MAX(1.0d-3, PI*POSITIVE_VALUE*MEAN_PAR )
        END FUNCTION INSTANT_PAR
 
 

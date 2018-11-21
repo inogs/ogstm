@@ -182,8 +182,8 @@
                           er(1:bottom,1)  = tn (1:bottom,jj,ji)! Temperature (Celsius)
                           er(1:bottom,2)  = sn (1:bottom,jj,ji)  ! Salinity PSU
                           er(1:bottom,3)  = rho(1:bottom,jj,ji)        ! Density Kg/m3
-                          er(1:bottom,4)  = ice                  ! from 0 to 1 adimensional
-                          er(1:bottom,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
+                          er(1       ,4)  = ice                  ! from 0 to 1 adimensional
+                          er(1       ,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
                           do jk=1, bottom
                           er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
                           enddo
@@ -194,9 +194,9 @@
                           !endif
                           !write(*,*) 'XPAR',  er(1,6)
 
-                          er(1:bottom,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
+                          er(1       ,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
                           er(1:bottom,8)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1:bottom,9)  = vatm(jj,ji) * surf_mask(1:bottom) ! wind speed (m/s)
+                          er(1       ,9)  = vatm(jj,ji)                ! wind speed (m/s)
                           er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
 
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)

@@ -151,6 +151,11 @@ MODULE module_step
       bc_gib_partTime = MPI_WTIME()    - bc_gib_partTime
       bc_gib_TotTime  = bc_gib_TotTime + bc_gib_partTime
 
+      bc_dar_partTime = MPI_WTIME()
+      call update_bc(dardanelles, datestring)
+      bc_dar_partTime = MPI_WTIME()    - bc_dar_partTime
+      bc_dar_TotTime  = bc_dar_TotTime + bc_dar_partTime
+
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
@@ -295,6 +300,16 @@ MODULE module_step
       integer jn,jk,ji,jj
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      call dardanelles%set_null_flux(jptra, tra)
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       IF (ladv) CALL trcadv ! tracers: advection
 
 #    if defined key_trc_dmp
@@ -306,6 +321,7 @@ MODULE module_step
 
       call all_rivers%apply(e3t, jptra, trb, tra)
       call gibraltar%apply(e3t, jptra, trb, tra)
+      call dardanelles%apply(e3t, jptra, trb, tra)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

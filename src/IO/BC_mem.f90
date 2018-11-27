@@ -15,6 +15,7 @@
 
        use sponge_mod
        use rivers_mod
+       use hard_open_mod
        use nudging_mod
 
 ! ----------------------------------------------------------------------
@@ -53,6 +54,7 @@
 
       type(rivers), pointer :: all_rivers => null()
       type(sponge), pointer :: gibraltar_sponge => null()
+      type(hard_open), pointer :: dardanelles => null()
       type(nudging), pointer :: gibraltar => null()
 
 ! ----------------------------------------------------------------------

@@ -357,6 +357,7 @@ SUBROUTINE ogstm_finalize()
       call all_rivers%rivers_destructor()
       call gibraltar_sponge%sponge_destructor()
       call gibraltar%nudging_destructor()
+      call dardanelles%hard_open_destructor()
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

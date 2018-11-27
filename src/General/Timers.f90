@@ -11,6 +11,7 @@
       double precision :: bc_atm_partTime      =0.0, bc_atm_TotTime       = 0.0
       double precision :: bc_tin_partTime      =0.0, bc_tin_TotTime       = 0.0
       double precision :: bc_gib_partTime      =0.0, bc_gib_TotTime       = 0.0
+      double precision :: bc_dar_partTime      =0.0, bc_dar_TotTime       = 0.0
       double precision :: density_partTime     =0.0, density_TotTime      = 0.0
       double precision :: ave_partTime         =0.0, ave_TotTime          = 0.0
       double precision :: flx_partTime         =0.0, flx_TotTime          = 0.0

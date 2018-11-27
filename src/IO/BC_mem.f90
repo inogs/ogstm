@@ -54,8 +54,8 @@
 
       type(rivers), pointer :: all_rivers => null()
       type(sponge), pointer :: gibraltar_sponge => null()
-      type(hard_open), pointer :: dardanelles => null()
       type(nudging), pointer :: gibraltar => null()
+      type(hard_open), pointer :: dardanelles => null()
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

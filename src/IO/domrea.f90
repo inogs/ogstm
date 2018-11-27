@@ -245,6 +245,7 @@
       allocate(all_rivers)
       allocate(gibraltar_sponge)
       allocate(gibraltar)
+      allocate(dardanelles)
 
       all_rivers = rivers( &
           "files_namelist_riv.dat", &
@@ -272,7 +273,6 @@
           (/ 1.0d0, 1.0d0, 1.0d0, 1.0d0, 2.0d0, 2.0d0, 2.0d0 /), &
           51&
           )
-
       dardanelles = hard_open( &
           "files_namelist_ope.dat", &
           "ope", &

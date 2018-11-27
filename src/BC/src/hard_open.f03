@@ -71,13 +71,13 @@ contains
         integer :: i, idx
 
         self%m_n_missing_vars = n_tracers - self%m_n_vars
-        allocate(self%m_missing_vars(self%m_n_missing_vars))
+        allocate(self%m_missing_var_names_idx(self%m_n_missing_vars))
 
         idx = 0
         do i = 1, n_tracers
             if (all(self%m_var_names_idx /= i)) then
                 idx = idx + 1
-                self%m_missing_vars(idx) = i
+                self%m_missing_var_names_idx(idx) = i
             endif
         enddo
 
@@ -173,33 +173,33 @@ contains
             case(0) ! northern boundary
 
                 do i = 1, self%m_size
-                    self%m_neighbors(1, j) = self%m_hard_open_points(1, j)
-                    self%m_neighbors(2, j) = self%m_hard_open_points(2, j) - 1
-                    self%m_neighbors(3, j) = self%m_hard_open_points(3, j)
+                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i)
+                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i) - 1
+                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
                 enddo
 
             case(1) ! eastern boundary
 
                 do i = 1, self%m_size
-                    self%m_neighbors(1, j) = self%m_hard_open_points(1, j) - 1
-                    self%m_neighbors(2, j) = self%m_hard_open_points(2, j)
-                    self%m_neighbors(3, j) = self%m_hard_open_points(3, j)
+                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i) - 1
+                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
+                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
                 enddo
 
             case(2) ! southern boundary
 
                 do i = 1, self%m_size
-                    self%m_neighbors(1, j) = self%m_hard_open_points(1, j)
-                    self%m_neighbors(2, j) = self%m_hard_open_points(2, j) + 1
-                    self%m_neighbors(3, j) = self%m_hard_open_points(3, j)
+                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i)
+                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i) + 1
+                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
                 enddo
 
             case(3) ! western boundary
 
                 do i = 1, self%m_size
-                    self%m_neighbors(1, j) = self%m_hard_open_points(1, j) + 1
-                    self%m_neighbors(2, j) = self%m_hard_open_points(2, j)
-                    self%m_neighbors(3, j) = self%m_hard_open_points(3, j)
+                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i) + 1
+                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
+                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
                 enddo
 
         end select
@@ -226,6 +226,7 @@ contains
 
         self%m_name = bc_name
         self%m_n_vars = n_vars
+        self%m_geometry = geometry
 
         allocate(self%m_var_names(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
@@ -249,8 +250,6 @@ contains
         self%m_values_dtatrc(:, :, :) = huge(self%m_values_dtatrc(1, 1, 1))
         allocate(self%m_values(self%m_size, self%m_n_vars))
         self%m_values(:, :) = huge(self%m_values(1, 1))
-
-        self%m_geometry = geometry
 
     end subroutine init_members
 
@@ -291,7 +290,7 @@ contains
     !> Periodic constructor
 
     !> Calls bc periodic constructor and target constructor.
-    type(hard_open) function hard_open_year(files_namelist, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry &
+    type(hard_open) function hard_open_year(files_namelist, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
             start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
@@ -448,7 +447,7 @@ contains
         ! integer, parameter :: jpj = 380
         ! integer, parameter :: jpi = 1085
 
-        class(rivers), intent(inout) :: self
+        class(hard_open), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lat
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
@@ -500,7 +499,7 @@ contains
             enddo
         endif
 
-    end subroutine set_flux_null
+    end subroutine set_null_flux
 
 
 

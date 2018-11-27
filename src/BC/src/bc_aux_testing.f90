@@ -151,8 +151,8 @@ module bc_aux_testing_mod
 
             implicit none
 
-            integer, parameter :: jpj = 65
-            integer, parameter :: jpi = 182
+            integer, parameter :: jpj = 380
+            integer, parameter :: jpi = 1085
             integer, parameter :: nimpp = 1
             integer, parameter :: njmpp = 1
 
@@ -203,9 +203,9 @@ module bc_aux_testing_mod
 
             implicit none
 
-            integer, parameter :: jpk = 70
-            integer, parameter :: jpj = 65
-            integer, parameter :: jpi = 182
+            integer, parameter :: jpk = 125
+            integer, parameter :: jpj = 380
+            integer, parameter :: jpi = 1085
             integer, parameter :: nimpp = 1
             integer, parameter :: njmpp = 1
 
@@ -254,8 +254,8 @@ module bc_aux_testing_mod
 
             implicit none
 
-            integer, parameter :: jpj = 65
-            integer, parameter :: jpi = 182
+            integer, parameter :: jpj = 380
+            integer, parameter :: jpi = 1085
             integer, parameter :: nimpp = 1
             integer, parameter :: njmpp = 1
 
@@ -305,9 +305,9 @@ module bc_aux_testing_mod
 
             implicit none
 
-            integer, parameter :: jpk = 70
-            integer, parameter :: jpj = 65
-            integer, parameter :: jpi = 182
+            integer, parameter :: jpk = 125
+            integer, parameter :: jpj = 380
+            integer, parameter :: jpi = 1085
             integer, parameter :: nimpp = 1
             integer, parameter :: njmpp = 1
 

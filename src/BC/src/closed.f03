@@ -273,9 +273,9 @@ contains
         implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        ! integer, parameter :: jpk = 70
-        ! integer, parameter :: jpj = 65
-        ! integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 125
+        ! integer, parameter :: jpj = 380
+        ! integer, parameter :: jpi = 1085
 
         class(closed), intent(inout) :: self
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
@@ -298,9 +298,9 @@ contains
         implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        ! integer, parameter :: jpk = 70
-        ! integer, parameter :: jpj = 65
-        ! integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 125
+        ! integer, parameter :: jpj = 380
+        ! integer, parameter :: jpi = 1085
 
         class(closed), intent(inout) :: self
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
@@ -341,9 +341,9 @@ contains
         implicit none
 
         ! TO DO: to be removed. Find a way to enable both testing and production code.
-        ! integer, parameter :: jpk = 70
-        ! integer, parameter :: jpj = 65
-        ! integer, parameter :: jpi = 182
+        ! integer, parameter :: jpk = 125
+        ! integer, parameter :: jpj = 380
+        ! integer, parameter :: jpi = 1085
 
         class(closed), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lat ! glamt

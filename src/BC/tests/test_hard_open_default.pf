@@ -49,64 +49,65 @@ contains
 
 @Test
     subroutine test_missing_tracers(this)
-        class(test_hard_open_default), intent(in) :: this
-        @asserEqual(4, this%m_hard_open%m_missing_vars(1))
-        @asserEqual(5, this%m_hard_open%m_missing_vars(2))
-        @asserEqual(7, this%m_hard_open%m_missing_vars(3))
-        @asserEqual(48, this%m_hard_open%m_missing_vars(44))
-        @asserEqual(51, this%m_hard_open%m_missing_vars(45))
+        class(test_hard_open_default), intent(inout) :: this
+        @assertEqual(4, this%m_hard_open%m_missing_var_names_idx(1))
+        @assertEqual(5, this%m_hard_open%m_missing_var_names_idx(2))
+        @assertEqual(7, this%m_hard_open%m_missing_var_names_idx(3))
+        @assertEqual(48, this%m_hard_open%m_missing_var_names_idx(44))
+        @assertEqual(51, this%m_hard_open%m_missing_var_names_idx(45))
     end subroutine test_missing_tracers
 
 @Test
+    subroutine test_file_names(this)
+        class(test_hard_open_default), intent(inout) :: this
+        @assertEqual("OPE_20170630-00:00:00.nc", this%m_hard_open%get_file_by_index(1))
+        @assertEqual("OPE_20171230-00:00:00.nc", this%m_hard_open%get_file_by_index(2))
+    end subroutine test_file_names
+
+@Test
     subroutine test_size(this)
-        class(test_hard_open_default), intent(in) :: this
-        @assertEqual(29, this%m_hard_open%m_size)
+        class(test_hard_open_default), intent(inout) :: this
+        @assertEqual(32, this%m_hard_open%m_size)
     end subroutine test_size
 
 @Test
     subroutine test_hard_open_points(this)
-        class(test_hard_open_default), intent(in) :: this
-        @assertEqual(841, this%m_hard_open%m_hard_open_points(1, 1))
-        @assertEqual(841, this%m_hard_open%m_hard_open_points(1, 2))
-        @assertEqual(841, this%m_hard_open%m_hard_open_points(1, 29))
-        @assertAny( &
-            this%m_hard_open%m_hard_open_points(2, 1) == 235 &
-            this%m_hard_open%m_hard_open_points(2, 1) == 236 &
-            this%m_hard_open%m_hard_open_points(2, 1) == 237 &
-        )
-        @assertAny( &
-            this%m_hard_open%m_hard_open_points(2, 2) == 235 &
-            this%m_hard_open%m_hard_open_points(2, 2) == 236 &
-            this%m_hard_open%m_hard_open_points(2, 2) == 237 &
-        )
-        @assertAny( &
-            this%m_hard_open%m_hard_open_points(2, 29) == 235 &
-            this%m_hard_open%m_hard_open_points(2, 29) == 236 &
-            this%m_hard_open%m_hard_open_points(2, 29) == 237 &
-        )
+
+        class(test_hard_open_default), intent(inout) :: this
+
+        @assertEqual(842, this%m_hard_open%m_hard_open_points(1, 1))
+        @assertEqual(842, this%m_hard_open%m_hard_open_points(1, 2))
+        @assertEqual(842, this%m_hard_open%m_hard_open_points(1, 32))
+
+        @assertGreaterThanOrEqual(this%m_hard_open%m_hard_open_points(2, 1), 236)
+        @assertLessThanOrEqual(this%m_hard_open%m_hard_open_points(2, 1), 238)
+
+        @assertGreaterThanOrEqual(this%m_hard_open%m_hard_open_points(2, 2), 236)
+        @assertLessThanOrEqual(this%m_hard_open%m_hard_open_points(2, 2), 238)
+
+        @assertGreaterThanOrEqual(this%m_hard_open%m_hard_open_points(2, 32), 236)
+        @assertLessThanOrEqual(this%m_hard_open%m_hard_open_points(2, 32), 238)
+
     end subroutine test_hard_open_points
 
 @Test
     subroutine test_neighbors(this)
-        class(test_hard_open_default), intent(in) :: this
-        @assertEqual(840, this%m_hard_open%m_neighbors(1, 1))
-        @assertEqual(840, this%m_hard_open%m_neighbors(1, 2))
-        @assertEqual(840, this%m_hard_open%m_neighbors(1, 29))
-        @assertAny( &
-            this%m_hard_open%m_neighbors(2, 1) == 235 &
-            this%m_hard_open%m_neighbors(2, 1) == 236 &
-            this%m_hard_open%m_neighbors(2, 1) == 237 &
-        )
-        @assertAny( &
-            this%m_hard_open%m_neighbors(2, 2) == 235 &
-            this%m_hard_open%m_neighbors(2, 2) == 236 &
-            this%m_hard_open%m_neighbors(2, 2) == 237 &
-        )
-        @assertAny( &
-            this%m_hard_open%m_neighbors(2, 29) == 235 &
-            this%m_hard_open%m_neighbors(2, 29) == 236 &
-            this%m_hard_open%m_neighbors(2, 29) == 237 &
-        )
+
+        class(test_hard_open_default), intent(inout) :: this
+
+        @assertEqual(841, this%m_hard_open%m_neighbors(1, 1))
+        @assertEqual(841, this%m_hard_open%m_neighbors(1, 2))
+        @assertEqual(841, this%m_hard_open%m_neighbors(1, 32))
+
+        @assertGreaterThanOrEqual(this%m_hard_open%m_neighbors(2, 1), 236)
+        @assertLessThanOrEqual(this%m_hard_open%m_neighbors(2, 1), 238)
+
+        @assertGreaterThanOrEqual(this%m_hard_open%m_neighbors(2, 2), 236)
+        @assertLessThanOrEqual(this%m_hard_open%m_neighbors(2, 2), 238)
+
+        @assertGreaterThanOrEqual(this%m_hard_open%m_neighbors(2, 32), 236)
+        @assertLessThanOrEqual(this%m_hard_open%m_neighbors(2, 32), 238)
+
     end subroutine test_neighbors
 
 end module test_hard_open_default_mod

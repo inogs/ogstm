@@ -7,8 +7,8 @@ SRCS = $(wildcard *.pf)
 OBJS = $(SRCS:.pf=$(OBJ_EXT))
 
 # Uncomment and replace only for debugging
-# tests: $(OBJS) test_nudging.F90
-tests: $(OBJS)
+tests: $(OBJS) test_hard_open_default.F90
+# tests: $(OBJS)
 
 testSuites.inc: $(SRCS)
 

@@ -1,0 +1,112 @@
+module test_hard_open_default_mod
+
+    use hard_open_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_hard_open_default
+
+@TestCase
+    type, extends(TestCase) :: test_hard_open_default
+        type(hard_open), pointer :: m_hard_open => null()
+        integer(4), dimension(6) :: m_param_var_names_idx
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_hard_open_default
+
+contains
+
+    subroutine setUp(this)
+        class(test_hard_open_default), intent(inout) :: this
+        this%m_param_var_names_idx = (/ 2, 3, 1, 6, 49, 50 /)
+        allocate(this%m_hard_open)
+        this%m_hard_open = hard_open( &
+            "files_namelist_ope.dat", &
+            "ope", &
+            6, &
+            "N1p N3n O2o N5s O3c O3h", &
+            this%m_param_var_names_idx, &
+            51, &
+            1 &
+        )
+    end subroutine setUp
+
+    subroutine tearDown(this)
+
+        class(test_hard_open_default), intent(inout) :: this
+
+        ! explicitly call destructor before deallocating
+        call this%m_hard_open%hard_open_destructor()
+
+        deallocate(this%m_hard_open)
+        write(*, *) 'INFO: m_hard_open deallocated'
+        nullify(this%m_hard_open)
+        write(*, *) 'INFO: m_hard_open deassociated'
+
+    end subroutine tearDown
+
+@Test
+    subroutine test_missing_tracers(this)
+        class(test_hard_open_default), intent(in) :: this
+        @asserEqual(4, this%m_hard_open%m_missing_vars(1))
+        @asserEqual(5, this%m_hard_open%m_missing_vars(2))
+        @asserEqual(7, this%m_hard_open%m_missing_vars(3))
+        @asserEqual(48, this%m_hard_open%m_missing_vars(44))
+        @asserEqual(51, this%m_hard_open%m_missing_vars(45))
+    end subroutine test_missing_tracers
+
+@Test
+    subroutine test_size(this)
+        class(test_hard_open_default), intent(in) :: this
+        @assertEqual(29, this%m_hard_open%m_size)
+    end subroutine test_size
+
+@Test
+    subroutine test_hard_open_points(this)
+        class(test_hard_open_default), intent(in) :: this
+        @assertEqual(841, this%m_hard_open%m_hard_open_points(1, 1))
+        @assertEqual(841, this%m_hard_open%m_hard_open_points(1, 2))
+        @assertEqual(841, this%m_hard_open%m_hard_open_points(1, 29))
+        @assertAny( &
+            this%m_hard_open%m_hard_open_points(2, 1) == 235 &
+            this%m_hard_open%m_hard_open_points(2, 1) == 236 &
+            this%m_hard_open%m_hard_open_points(2, 1) == 237 &
+        )
+        @assertAny( &
+            this%m_hard_open%m_hard_open_points(2, 2) == 235 &
+            this%m_hard_open%m_hard_open_points(2, 2) == 236 &
+            this%m_hard_open%m_hard_open_points(2, 2) == 237 &
+        )
+        @assertAny( &
+            this%m_hard_open%m_hard_open_points(2, 29) == 235 &
+            this%m_hard_open%m_hard_open_points(2, 29) == 236 &
+            this%m_hard_open%m_hard_open_points(2, 29) == 237 &
+        )
+    end subroutine test_hard_open_points
+
+@Test
+    subroutine test_neighbors(this)
+        class(test_hard_open_default), intent(in) :: this
+        @assertEqual(840, this%m_hard_open%m_neighbors(1, 1))
+        @assertEqual(840, this%m_hard_open%m_neighbors(1, 2))
+        @assertEqual(840, this%m_hard_open%m_neighbors(1, 29))
+        @assertAny( &
+            this%m_hard_open%m_neighbors(2, 1) == 235 &
+            this%m_hard_open%m_neighbors(2, 1) == 236 &
+            this%m_hard_open%m_neighbors(2, 1) == 237 &
+        )
+        @assertAny( &
+            this%m_hard_open%m_neighbors(2, 2) == 235 &
+            this%m_hard_open%m_neighbors(2, 2) == 236 &
+            this%m_hard_open%m_neighbors(2, 2) == 237 &
+        )
+        @assertAny( &
+            this%m_hard_open%m_neighbors(2, 29) == 235 &
+            this%m_hard_open%m_neighbors(2, 29) == 236 &
+            this%m_hard_open%m_neighbors(2, 29) == 237 &
+        )
+    end subroutine test_neighbors
+
+end module test_hard_open_default_mod

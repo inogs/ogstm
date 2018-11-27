@@ -5,12 +5,12 @@ endif
 
 SRC_DIR_GENERAL=/home/marco/MHPC/OGS_code/devel/ModelBuild/ogstm/src/General
 
-SUT: nudging$(OBJ_EXT) open$(OBJ_EXT) sponge$(OBJ_EXT) rivers$(OBJ_EXT) bc$(OBJ_EXT) bc_data$(OBJ_EXT)
+SUT: nudging$(OBJ_EXT) hard_open$(OBJ_EXT) sponge$(OBJ_EXT) rivers$(OBJ_EXT) bc$(OBJ_EXT) bc_data$(OBJ_EXT)
 
 nudging$(OBJ_EXT): nudging.f03 bc$(OBJ_EXT) bc_aux_testing$(OBJ_EXT)
 	$(FC) -c -I$(NETCDFF_INCLUDE) $(FFLAGS) -std=f2003 $<
 
-open$(OBJ_EXT): open.f03 bc$(OBJ_EXT) bc_aux_testing$(OBJ_EXT)
+hard_open$(OBJ_EXT): hard_open.f03 bc$(OBJ_EXT) bc_aux_testing$(OBJ_EXT)
 	$(FC) -c -I$(NETCDFF_INCLUDE) $(FFLAGS) -std=f2003 $<
 
 sponge$(OBJ_EXT): sponge.f03 bc$(OBJ_EXT) bc_aux_testing$(OBJ_EXT)

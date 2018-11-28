@@ -332,12 +332,12 @@ MODULE module_step
 ! tracers: horizontal diffusion IF namelist flags are activated
 ! -----------------------------
 
-      IF (lhdf)   CALL trchdf
+      IF (lhdf) CALL trchdf
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
-      IF (lsbc)  CALL trcsbc ! surface cell processes, default lsbc = False
+      IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
 
-      IF (lbfm )  CALL trcsms
+      IF (lbfm) CALL trcsms
 
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
 

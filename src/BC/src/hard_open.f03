@@ -401,14 +401,13 @@ contains
         integer :: i, j, idx_tracer, idx_i, idx_j, idx_k
         double precision :: z_tracer
 
-        idx_i = self%m_hard_open_points(1, j)
-        idx_j = self%m_hard_open_points(2, j)
-        idx_k = self%m_hard_open_points(3, j)
-
         if (self%m_size > 0) then
             do i = 1, self%m_n_vars
                 idx_tracer = self%m_var_names_idx(i)
                 do j = 1, self%m_size
+                    idx_i = self%m_hard_open_points(1, j)
+                    idx_j = self%m_hard_open_points(2, j)
+                    idx_k = self%m_hard_open_points(3, j)
                     z_tracer = self%m_damping_factor * (self%m_values(j, i) - trb(idx_k, idx_j, idx_i, idx_tracer))
                     tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
                 enddo

@@ -345,7 +345,7 @@ MODULE module_step
 
       IF (lhtp) CALL hard_tissue_pump
 
-      CALL checkValues
+      ! CALL checkValues
 
       CALL trcnxt ! tracers: fields at next time step
       

@@ -340,31 +340,14 @@ MODULE module_step
       IF (lbfm )  CALL trcsms
 
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
+
       IF (lsnu) CALL snutel
+
       IF (lhtp) CALL hard_tissue_pump
 
-! ----------------------------------------------------------------------
-!  BEGIN BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
-      call dardanelles%apply(e3t, jptra, trb, tra) ! here to force the boundary values at the end of the timestep
-
-! ----------------------------------------------------------------------
-!  END BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
       CALL checkValues
+
       CALL trcnxt ! tracers: fields at next time step
-
-! ----------------------------------------------------------------------
-!  BEGIN BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
-      call dardanelles%apply(e3t, jptra, trb, tra) ! here to force the boundary values at the end of the timestep
-
-! ----------------------------------------------------------------------
-!  END BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
       
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime

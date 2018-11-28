@@ -300,16 +300,6 @@ MODULE module_step
       integer jn,jk,ji,jj
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
-! ----------------------------------------------------------------------
-!  BEGIN BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
-      call dardanelles%set_null_flux(jptra, tra)
-
-! ----------------------------------------------------------------------
-!  END BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
       IF (ladv) CALL trcadv ! tracers: advection
 
 #    if defined key_trc_dmp
@@ -346,6 +336,16 @@ MODULE module_step
       IF (lhtp) CALL hard_tissue_pump
 
       ! CALL checkValues
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      call dardanelles%set_null_flux(jptra, tra)
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
 
       CALL trcnxt ! tracers: fields at next time step
       

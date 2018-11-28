@@ -25,6 +25,7 @@ module hard_open_mod
         double precision, allocatable, dimension(:, :, :) :: m_values_dtatrc
         double precision, allocatable, dimension(:, :) :: m_values
         integer(4) :: m_geometry ! 0=North; 1=East; 2=South; 3=West
+        double precision :: m_damping_factor
 
     contains
 
@@ -213,7 +214,7 @@ contains
     !> Target constructor
 
     !> Allocates and Initializes all the members that are added to the base class.
-    subroutine init_members(self, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry)
+    subroutine init_members(self, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
 
         class(hard_open), intent(inout) :: self
         character(len=3) :: bc_name
@@ -222,11 +223,13 @@ contains
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
         integer(4) :: geometry
+        double precision :: damping_coeff
         integer :: i, start_idx, end_idx
 
         self%m_name = bc_name
         self%m_n_vars = n_vars
         self%m_geometry = geometry
+        self%m_damping_factor = 1.0d0 / damping_coeff
 
         allocate(self%m_var_names(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
@@ -262,7 +265,8 @@ contains
     !> Default constructor
 
     !> Calls bc default constructor and target constructor.
-    type(hard_open) function hard_open_default(files_namelist, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry)
+    type(hard_open) function hard_open_default(files_namelist, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
+            damping_coeff)
 
         character(len=22), intent(in) :: files_namelist
         character(len=3) :: bc_name
@@ -271,11 +275,12 @@ contains
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
         integer(4) :: geometry
+        double precision :: damping_coeff
 
         ! parent class constructor
         hard_open_default%bc = bc(files_namelist)
 
-        call hard_open_default%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry)
+        call hard_open_default%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
 
         write(*, *) 'INFO: successfully called hard_open default constructor'
 
@@ -291,7 +296,7 @@ contains
 
     !> Calls bc periodic constructor and target constructor.
     type(hard_open) function hard_open_year(files_namelist, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
-            start_time_string, end_time_string)
+            damping_coeff, start_time_string, end_time_string)
 
         character(len=27), intent(in) :: files_namelist
         character(len=3) :: bc_name
@@ -300,13 +305,14 @@ contains
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
         integer(4) :: geometry
+        double precision :: damping_coeff
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
         hard_open_year%bc = bc(files_namelist, start_time_string, end_time_string)
 
-        call hard_open_year%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry)
+        call hard_open_year%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
 
         write(*, *) 'INFO: successfully called hard_open year constructor'
 
@@ -371,7 +377,11 @@ contains
 
     !> Overridden from bc
 
-    !> Force all the open boundary points to the data values
+    !> Force all the open boundary points to the data values.
+    !! They are not directly set to that value, but forced to it through a sort of hard nudging.
+    !! This is just a more appropriate way to assign the values at the boundary cells,
+    !! and a nudging on an arbitrary large set of cells can of course still be applied in the usual way through the decorator.
+    !! A damping factor which should be of the same order of magnitude of a timestep is passed to the constructor.
     subroutine apply(self, e3t, n_tracers, trb, tra)
 
         use modul_param, only: jpk, jpj, jpi
@@ -389,17 +399,18 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
         integer :: i, j, idx_tracer, idx_i, idx_j, idx_k
+        double precision :: z_tracer
+
+        idx_i = self%m_hard_open_points(1, j)
+        idx_j = self%m_hard_open_points(2, j)
+        idx_k = self%m_hard_open_points(3, j)
 
         if (self%m_size > 0) then
             do i = 1, self%m_n_vars
                 idx_tracer = self%m_var_names_idx(i)
                 do j = 1, self%m_size
-                    tra( &
-                        self%m_hard_open_points(3, j), &
-                        self%m_hard_open_points(2, j), &
-                        self%m_hard_open_points(1, j), &
-                        idx_tracer &
-                    ) = self%m_values(j, i)
+                    z_tracer = self%m_damping_factor * (self%m_values(j, i) - trb(idx_k, idx_j, idx_i, idx_tracer))
+                    tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
                 enddo
             enddo
         endif

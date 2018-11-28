@@ -29,7 +29,8 @@ contains
             "N1p N3n O2o N5s O3c O3h", &
             this%m_param_var_names_idx, &
             51, &
-            1 &
+            1, &
+            600.0d0 &
         )
     end subroutine setUp
 

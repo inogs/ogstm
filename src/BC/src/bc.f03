@@ -43,7 +43,7 @@ contains
         allocate(bc_empty%m_bc_data)
         bc_empty%m_bc_data = bc_data()
 
-        write(*, *) 'INFO: successfully called bc empty constructor'
+        ! write(*, *) 'INFO: successfully called bc empty constructor'
 
     end function bc_empty
 
@@ -59,7 +59,7 @@ contains
         allocate(bc_default%m_bc_data)
         bc_default%m_bc_data = bc_data(files_namelist)
 
-        write(*, *) 'INFO: successfully called bc default constructor'
+        ! write(*, *) 'INFO: successfully called bc default constructor'
 
     end function bc_default
 
@@ -77,7 +77,7 @@ contains
         allocate(bc_year%m_bc_data)
         bc_year%m_bc_data = bc_data(files_namelist, start_time_string, end_time_string)
 
-        write(*, *) 'INFO: successfully called bc empty constructor'
+        ! write(*, *) 'INFO: successfully called bc empty constructor'
 
     end function bc_year
 
@@ -277,9 +277,9 @@ contains
         call self%m_bc_data%bc_data_destructor()
         
         deallocate(self%m_bc_data)
-        write(*, *) 'INFO: m_bc_data deallocated'
+        ! write(*, *) 'INFO: m_bc_data deallocated'
         nullify(self%m_bc_data)
-        write(*, *) 'INFO: m_bc_data deassociated'
+        ! write(*, *) 'INFO: m_bc_data deassociated'
 
     end subroutine bc_destructor
 

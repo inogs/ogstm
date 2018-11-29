@@ -282,7 +282,7 @@ contains
 
         call hard_open_default%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
 
-        write(*, *) 'INFO: successfully called hard_open default constructor'
+        ! write(*, *) 'INFO: successfully called hard_open default constructor'
 
     end function hard_open_default
 
@@ -314,7 +314,7 @@ contains
 
         call hard_open_year%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
 
-        write(*, *) 'INFO: successfully called hard_open year constructor'
+        ! write(*, *) 'INFO: successfully called hard_open year constructor'
 
     end function hard_open_year
 
@@ -520,47 +520,47 @@ contains
 
         if (allocated(self%m_var_names)) then
             deallocate(self%m_var_names)
-            write(*, *) 'INFO: m_var_names deallocated'
+            ! write(*, *) 'INFO: m_var_names deallocated'
         endif
 
         if (allocated(self%m_var_names_data)) then
             deallocate(self%m_var_names_data)
-            write(*, *) 'INFO: m_var_names_data deallocated'
+            ! write(*, *) 'INFO: m_var_names_data deallocated'
         endif
 
         if (allocated(self%m_var_names_idx)) then
             deallocate(self%m_var_names_idx)
-            write(*, *) 'INFO: m_var_names_idx deallocated'
+            ! write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
         if (allocated(self%m_missing_var_names_idx)) then
             deallocate(self%m_missing_var_names_idx)
-            write(*, *) 'INFO: m_missing_var_names_idx deallocated'
+            ! write(*, *) 'INFO: m_missing_var_names_idx deallocated'
         endif
 
         if (allocated(self%m_buffer)) then
             deallocate(self%m_buffer)
-            write(*, *) 'INFO: m_buffer deallocated'
+            ! write(*, *) 'INFO: m_buffer deallocated'
         endif
 
         if (allocated(self%m_hard_open_points)) then
             deallocate(self%m_hard_open_points)
-            write(*, *) 'INFO: m_hard_open_points deallocated'
+            ! write(*, *) 'INFO: m_hard_open_points deallocated'
         endif
 
         if (allocated(self%m_neighbors)) then
             deallocate(self%m_neighbors)
-            write(*, *) 'INFO: m_neighbors deallocated'
+            ! write(*, *) 'INFO: m_neighbors deallocated'
         endif
 
         if (allocated(self%m_values_dtatrc)) then
             deallocate(self%m_values_dtatrc)
-            write(*, *) 'INFO: m_values_dtatrc deallocated'
+            ! write(*, *) 'INFO: m_values_dtatrc deallocated'
         endif
 
         if (allocated(self%m_values)) then
             deallocate(self%m_values)
-            write(*, *) 'INFO: m_values deallocated'
+            ! write(*, *) 'INFO: m_values deallocated'
         endif
 
         ! parent class destructor

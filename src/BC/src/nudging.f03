@@ -132,7 +132,7 @@ contains
 
         call nudging_default%init_members(bc_no_nudging, data_file, n_vars, vars, vars_idx, rst_corr, n_tracers)
 
-        write(*, *) 'INFO: successfully called nudging default constructor'
+        ! write(*, *) 'INFO: successfully called nudging default constructor'
 
     end function nudging_default
 
@@ -147,7 +147,7 @@ contains
         integer, intent(in) :: idx
 
         get_file_by_index = self%m_bc_no_nudging%get_file_by_index(idx)
-        write(*, *) 'INFO: called get_file_by_index from nudging decorator'
+        ! write(*, *) 'INFO: called get_file_by_index from nudging decorator'
 
     end function get_file_by_index
 
@@ -159,7 +159,7 @@ contains
     integer function get_prev_idx(self)
         class(nudging), intent(in) :: self
         get_prev_idx = self%m_bc_no_nudging%get_prev_idx()
-        write(*, *) 'INFO: called get_prev_idx from nudging decorator'
+        ! write(*, *) 'INFO: called get_prev_idx from nudging decorator'
     end function get_prev_idx
 
 
@@ -170,7 +170,7 @@ contains
     integer function get_next_idx(self)
         class(nudging), intent(in) :: self
         get_next_idx = self%m_bc_no_nudging%get_next_idx()
-        write(*, *) 'INFO: called get_next_idx from nudging decorator'
+        ! write(*, *) 'INFO: called get_next_idx from nudging decorator'
     end function get_next_idx
 
 
@@ -189,7 +189,7 @@ contains
         else
             call self%m_bc_no_nudging%set_current_interval(current_time_string)
         endif
-        write(*, *) 'INFO: called set_current_interval from nudging decorator'
+        ! write(*, *) 'INFO: called set_current_interval from nudging decorator'
 
     end subroutine set_current_interval
 
@@ -209,7 +209,7 @@ contains
         else
             get_interpolation_factor = self%m_bc_no_nudging%get_interpolation_factor(current_time_string)
         endif
-        write(*, *) 'INFO: called get_interpolation_factor from nudging decorator'
+        ! write(*, *) 'INFO: called get_interpolation_factor from nudging decorator'
 
     end function get_interpolation_factor
 
@@ -224,7 +224,7 @@ contains
         integer, intent(in) :: idx
 
         call self%m_bc_no_nudging%load(idx)
-        write(*, *) 'INFO: called load from nudging decorator'
+        ! write(*, *) 'INFO: called load from nudging decorator'
 
     end subroutine load
 
@@ -238,7 +238,7 @@ contains
         class(nudging), intent(inout) :: self
 
         call self%m_bc_no_nudging%swap()
-        write(*, *) 'INFO: called swap from nudging decorator'
+        ! write(*, *) 'INFO: called swap from nudging decorator'
 
     end subroutine swap
 
@@ -253,7 +253,7 @@ contains
         double precision, intent(in) :: weight
 
         call self%m_bc_no_nudging%actualize(weight)
-        write(*, *) 'INFO: called actualize from nudging decorator'
+        ! write(*, *) 'INFO: called actualize from nudging decorator'
 
     end subroutine actualize
 
@@ -280,7 +280,7 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
 
         call self%m_bc_no_nudging%apply_nudging(e3t, n_tracers, self%m_rst_tracers, trb, tra)
-        write(*, *) 'INFO: called apply from nudging decorator'
+        ! write(*, *) 'INFO: called apply from nudging decorator'
 
     end subroutine apply
 
@@ -335,7 +335,7 @@ contains
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
 
         call self%m_bc_no_nudging%apply_phys(lat, sponge_t, sponge_vel)
-        write(*, *) 'INFO: called apply_phys from nudging decorator'
+        ! write(*, *) 'INFO: called apply_phys from nudging decorator'
 
     end subroutine apply_phys
 
@@ -348,36 +348,36 @@ contains
 
         ! just deassociate pointer (destructor will be invoked outside)
         nullify(self%m_bc_no_nudging)
-        write(*, *) 'INFO: m_bc_no_nudging deassociated'
+        ! write(*, *) 'INFO: m_bc_no_nudging deassociated'
 
         if (allocated(self%m_nudging_vars)) then
             deallocate(self%m_nudging_vars)
-            write(*, *) 'INFO: m_nudging_vars deallocated'
+            ! write(*, *) 'INFO: m_nudging_vars deallocated'
         endif
 
         if (allocated(self%m_nudging_vars_rst)) then
             deallocate(self%m_nudging_vars_rst)
-            write(*, *) 'INFO: m_nudging_vars_rst deallocated'
+            ! write(*, *) 'INFO: m_nudging_vars_rst deallocated'
         endif
 
         if (allocated(self%m_nudging_vars_idx)) then
             deallocate(self%m_nudging_vars_idx)
-            write(*, *) 'INFO: m_nudging_vars_idx deallocated'
+            ! write(*, *) 'INFO: m_nudging_vars_idx deallocated'
         endif
 
         if (allocated(self%m_rst)) then
             deallocate(self%m_rst)
-            write(*, *) 'INFO: m_rst deallocated'
+            ! write(*, *) 'INFO: m_rst deallocated'
         endif
 
         if (allocated(self%m_rst_corr)) then
             deallocate(self%m_rst_corr)
-            write(*, *) 'INFO: m_rst_corr deallocated'
+            ! write(*, *) 'INFO: m_rst_corr deallocated'
         endif
 
         if (allocated(self%m_rst_tracers)) then
             deallocate(self%m_rst_tracers)
-            write(*, *) 'INFO: m_rst_tracers deallocated'
+            ! write(*, *) 'INFO: m_rst_tracers deallocated'
         endif
 
         ! parent class destructor

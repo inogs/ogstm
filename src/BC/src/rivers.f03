@@ -163,8 +163,6 @@ contains
         allocate(self%m_values(self%m_size, self%m_n_vars)) ! domrea.f90:231
         self%m_values(:, :) = huge(self%m_values(1, 1)) ! domrea.f90:231
 
-        write(*, *) 'INFO: successfully called init_members'
-
     end subroutine init_members
 
 
@@ -189,7 +187,7 @@ contains
 
         call rivers_default%init_members(bc_name, n_vars, vars, var_names_idx)
 
-        write(*, *) 'INFO: successfully called rivers default constructor'
+        ! write(*, *) 'INFO: successfully called rivers default constructor'
 
     end function rivers_default
 
@@ -217,7 +215,7 @@ contains
 
         call rivers_year%init_members(bc_name, n_vars, vars, var_names_idx)
 
-        write(*, *) 'INFO: successfully called rivers year constructor'
+        ! write(*, *) 'INFO: successfully called rivers year constructor'
 
     end function rivers_year
 
@@ -371,37 +369,37 @@ contains
 
         if (allocated(self%m_var_names)) then
             deallocate(self%m_var_names)
-            write(*, *) 'INFO: m_var_names deallocated'
+            ! write(*, *) 'INFO: m_var_names deallocated'
         endif
 
         if (allocated(self%m_var_names_data)) then
             deallocate(self%m_var_names_data)
-            write(*, *) 'INFO: m_var_names_data deallocated'
+            ! write(*, *) 'INFO: m_var_names_data deallocated'
         endif
 
         if (allocated(self%m_var_names_idx)) then
             deallocate(self%m_var_names_idx)
-            write(*, *) 'INFO: m_var_names_idx deallocated'
+            ! write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
         if (allocated(self%m_buffer)) then
             deallocate(self%m_buffer)
-            write(*, *) 'INFO: m_buffer deallocated'
+            ! write(*, *) 'INFO: m_buffer deallocated'
         endif
 
         if (allocated(self%m_river_points)) then
             deallocate(self%m_river_points)
-            write(*, *) 'INFO: m_river_points deallocated'
+            ! write(*, *) 'INFO: m_river_points deallocated'
         endif
 
         if (allocated(self%m_values_dtatrc)) then
             deallocate(self%m_values_dtatrc)
-            write(*, *) 'INFO: m_values_dtatrc deallocated'
+            ! write(*, *) 'INFO: m_values_dtatrc deallocated'
         endif
 
         if (allocated(self%m_values)) then
             deallocate(self%m_values)
-            write(*, *) 'INFO: m_values deallocated'
+            ! write(*, *) 'INFO: m_values deallocated'
         endif
 
         ! parent class destructor

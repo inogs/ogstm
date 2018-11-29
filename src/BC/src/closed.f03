@@ -168,7 +168,7 @@ contains
 
         call closed_default%init_members(bc_name, n_vars, vars, var_names_idx)
 
-        write(*, *) 'INFO: successfully called closed default constructor'
+        ! write(*, *) 'INFO: successfully called closed default constructor'
 
     end function closed_default
 
@@ -196,7 +196,7 @@ contains
 
         call closed_year%init_members(bc_name, n_vars, vars, var_names_idx)
 
-        write(*, *) 'INFO: successfully called closed year constructor'
+        ! write(*, *) 'INFO: successfully called closed year constructor'
 
     end function closed_year
 
@@ -363,47 +363,47 @@ contains
 
         if (allocated(self%m_global_idxt)) then
             deallocate(self%m_global_idxt)
-            write(*, *) 'INFO: m_global_idxt deallocated'
+            ! write(*, *) 'INFO: m_global_idxt deallocated'
         endif
 
         if (allocated(self%m_var_names)) then
             deallocate(self%m_var_names)
-            write(*, *) 'INFO: m_var_names deallocated'
+            ! write(*, *) 'INFO: m_var_names deallocated'
         endif
 
         if (allocated(self%m_var_names_idxt)) then
             deallocate(self%m_var_names_idxt)
-            write(*, *) 'INFO: m_var_names_idxt deallocated'
+            ! write(*, *) 'INFO: m_var_names_idxt deallocated'
         endif
 
         if (allocated(self%m_var_names_data)) then
             deallocate(self%m_var_names_data)
-            write(*, *) 'INFO: m_var_names_data deallocated'
+            ! write(*, *) 'INFO: m_var_names_data deallocated'
         endif
 
         if (allocated(self%m_var_names_idx)) then
             deallocate(self%m_var_names_idx)
-            write(*, *) 'INFO: m_var_names_idx deallocated'
+            ! write(*, *) 'INFO: m_var_names_idx deallocated'
         endif
 
         if (allocated(self%m_ridxt)) then
             deallocate(self%m_ridxt)
-            write(*, *) 'INFO: m_ridxt deallocated'
+            ! write(*, *) 'INFO: m_ridxt deallocated'
         endif
 
         if (allocated(self%m_aux)) then
             deallocate(self%m_aux)
-            write(*, *) 'INFO: m_aux deallocated'
+            ! write(*, *) 'INFO: m_aux deallocated'
         endif
 
         if (allocated(self%m_values_dtatrc)) then
             deallocate(self%m_values_dtatrc)
-            write(*, *) 'INFO: m_values_dtatrc deallocated'
+            ! write(*, *) 'INFO: m_values_dtatrc deallocated'
         endif
 
         if (allocated(self%m_values)) then
             deallocate(self%m_values)
-            write(*, *) 'INFO: m_values deallocated'
+            ! write(*, *) 'INFO: m_values deallocated'
         endif
 
         ! parent class destructor

@@ -56,7 +56,7 @@ contains
         bc_data_empty%m_next_idx = 0
         bc_data_empty%m_new_interval = .false.
 
-        write(*, *) 'INFO: successfully called bc_data empty constructor'
+        ! write(*, *) 'INFO: successfully called bc_data empty constructor'
 
     end function bc_data_empty
 
@@ -104,7 +104,7 @@ contains
         ! close file
         close(unit=file_unit)
 
-        write(*, *) 'INFO: successfully called bc_data default constructor'
+        ! write(*, *) 'INFO: successfully called bc_data default constructor'
 
     end function bc_data_default
 
@@ -174,7 +174,7 @@ contains
         ! close file
         close(unit=file_unit)
 
-        write(*, *) 'INFO: successfully called bc_data year constructor'
+        ! write(*, *) 'INFO: successfully called bc_data year constructor'
 
     end function bc_data_year
 
@@ -287,17 +287,17 @@ contains
 
         if (allocated(self%m_files)) then
             deallocate(self%m_files)
-            write(*, *) 'INFO: m_files deallocated'
+            ! write(*, *) 'INFO: m_files deallocated'
         endif
 
         if (allocated(self%m_time_strings)) then
             deallocate(self%m_time_strings)
-            write(*, *) 'INFO: m_time_strings deallocated'
+            ! write(*, *) 'INFO: m_time_strings deallocated'
         endif
 
         if (allocated(self%m_times)) then
             deallocate(self%m_times)
-            write(*, *) 'INFO: m_times deallocated'
+            ! write(*, *) 'INFO: m_times deallocated'
         endif
 
     end subroutine bc_data_destructor

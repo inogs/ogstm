@@ -151,7 +151,9 @@ contains
         ! allcoate lookup matrix
         allocate(self%m_hard_open_points(3, self%m_size))
         ! copy
-        self%m_hard_open_points(:, :) = hard_open_points_aux(:, 1:self%m_size)
+        if (self%m_size > 0) then
+            self%m_hard_open_points(:, :) = hard_open_points_aux(:, 1:self%m_size)
+        endif
 
         deallocate(hard_open_points_aux)
 
@@ -169,41 +171,45 @@ contains
         ! allcoate lookup matrix
         allocate(self%m_neighbors(3, self%m_size))
 
-        select case(self%m_geometry)
-        
-            case(0) ! northern boundary
+        if (self%m_size > 0) then
+            
+            select case(self%m_geometry)
 
-                do i = 1, self%m_size
-                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i)
-                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i) - 1
-                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
-                enddo
+                case(0) ! northern boundary
+                    
+                    do i = 1, self%m_size
+                        self%m_neighbors(1, i) = self%m_hard_open_points(1, i)
+                        self%m_neighbors(2, i) = self%m_hard_open_points(2, i) - 1
+                        self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
+                    enddo
+                
+                case(1) ! eastern boundary
+                    
+                    do i = 1, self%m_size
+                        self%m_neighbors(1, i) = self%m_hard_open_points(1, i) - 1
+                        self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
+                        self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
+                    enddo
+                
+                case(2) ! southern boundary
+                    
+                    do i = 1, self%m_size
+                        self%m_neighbors(1, i) = self%m_hard_open_points(1, i)
+                        self%m_neighbors(2, i) = self%m_hard_open_points(2, i) + 1
+                        self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
+                    enddo
+                
+                case(3) ! western boundary
+                    
+                    do i = 1, self%m_size
+                        self%m_neighbors(1, i) = self%m_hard_open_points(1, i) + 1
+                        self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
+                        self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
+                    enddo
 
-            case(1) ! eastern boundary
+            end select
 
-                do i = 1, self%m_size
-                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i) - 1
-                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
-                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
-                enddo
-
-            case(2) ! southern boundary
-
-                do i = 1, self%m_size
-                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i)
-                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i) + 1
-                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
-                enddo
-
-            case(3) ! western boundary
-
-                do i = 1, self%m_size
-                    self%m_neighbors(1, i) = self%m_hard_open_points(1, i) + 1
-                    self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
-                    self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
-                enddo
-
-        end select
+        endif
 
     end subroutine set_neighbors
 
@@ -327,16 +333,18 @@ contains
         integer, intent(in) :: idx
         integer :: i, j
 
-        do i = 1, self%m_n_vars
-            call readnc_slice_double(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
-            do j = 1, self%m_size
-                self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
-                    self%m_hard_open_points(3, j), &
-                    self%m_hard_open_points(2, j), &
-                    self%m_hard_open_points(1, j) &
-                )
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                call readnc_slice_double(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
+                do j = 1, self%m_size
+                    self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
+                        self%m_hard_open_points(3, j), &
+                        self%m_hard_open_points(2, j), &
+                        self%m_hard_open_points(1, j) &
+                    )
+                enddo
             enddo
-        enddo
+        endif
 
     end subroutine load
 
@@ -348,11 +356,13 @@ contains
         class(hard_open), intent(inout) :: self
         integer :: i, j
 
-        do i = 1, self%m_n_vars
-            do j = 1, self%m_size
-                self%m_values_dtatrc(j, 1, i) = self%m_values_dtatrc(j, 2, i)
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                do j = 1, self%m_size
+                    self%m_values_dtatrc(j, 1, i) = self%m_values_dtatrc(j, 2, i)
+                enddo
             enddo
-        enddo
+        endif
 
     end subroutine swap
 
@@ -365,11 +375,13 @@ contains
         double precision, intent(in) :: weight
         integer :: i, j
 
-        do i = 1, self%m_n_vars
-            do j = 1, self%m_size
-                self%m_values(j, i) = (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                do j = 1, self%m_size
+                    self%m_values(j, i) = (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
+                enddo
             enddo
-        enddo
+        endif
 
     end subroutine actualize
 

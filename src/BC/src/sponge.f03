@@ -126,7 +126,9 @@ contains
         ! allcoate lookup matrix
         allocate(self%m_sponge_points(3, self%m_size))
         ! copy
-        self%m_sponge_points(:, :) = sponge_points_aux(:, 1:self%m_size)
+        if (self%m_size > 0) then
+            self%m_sponge_points(:, :) = sponge_points_aux(:, 1:self%m_size)
+        endif
 
         deallocate(sponge_points_aux)
 
@@ -252,16 +254,18 @@ contains
         integer, intent(in) :: idx
         integer :: i, j
 
-        do i = 1, self%m_n_vars
-            call readnc_slice_double(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
-            do j = 1, self%m_size
-                self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
-                    self%m_sponge_points(3, j), &
-                    self%m_sponge_points(2, j), &
-                    self%m_sponge_points(1, j) &
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                call readnc_slice_double(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
+                do j = 1, self%m_size
+                    self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
+                        self%m_sponge_points(3, j), &
+                        self%m_sponge_points(2, j), &
+                        self%m_sponge_points(1, j) &
                     )
+                enddo
             enddo
-        enddo
+        endif
 
     end subroutine load
 
@@ -273,11 +277,13 @@ contains
         class(sponge), intent(inout) :: self
         integer :: i, j
 
-        do i = 1, self%m_n_vars
-            do j = 1, self%m_size
-                self%m_values_dtatrc(j, 1, i) = self%m_values_dtatrc(j, 2, i)
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                do j = 1, self%m_size
+                    self%m_values_dtatrc(j, 1, i) = self%m_values_dtatrc(j, 2, i)
+                enddo
             enddo
-        enddo
+        endif
 
     end subroutine swap
 
@@ -290,11 +296,13 @@ contains
         double precision, intent(in) :: weight
         integer :: i, j
 
-        do i = 1, self%m_n_vars
-            do j = 1, self%m_size
-                self%m_values(j, i) = (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
+        if (self%m_size > 0) then
+            do i = 1, self%m_n_vars
+                do j = 1, self%m_size
+                    self%m_values(j, i) = (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
+                enddo
             enddo
-        enddo
+        endif
 
     end subroutine actualize
 

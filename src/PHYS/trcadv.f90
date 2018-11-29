@@ -530,9 +530,9 @@
              jj = flx_ridxt(jf,3)
              ji = flx_ridxt(jf,4)
 
-             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkz(jk,jj,ji )
+             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkx(jk,jj,ji )
              diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )
-             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkx(jk,jj,ji )
+             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )
           ENDDO
 
 
@@ -808,9 +808,9 @@
              jj = flx_ridxt(jf,3)
              ji = flx_ridxt(jf,4)
 
-             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkz(jk,jj,ji )
+             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkx(jk,jj,ji )
              diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )
-             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkx(jk,jj,ji )
+             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )
           ENDDO
 
 
@@ -848,9 +848,9 @@
              jj = flx_ridxt(jf,3)
              ji = flx_ridxt(jf,4)
 
-             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkz(jk,jj,ji )
+             diaflx(1,jf, jn) = diaflx(1,jf, jn) + zkx(jk,jj,ji )
              diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )
-             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkx(jk,jj,ji )
+             diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )
           ENDDO
 
 

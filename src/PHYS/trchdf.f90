@@ -346,8 +346,8 @@
              jj = flx_ridxt(jf,3)
              ji = flx_ridxt(jf,4)
 
-             diaflx(5,jf, jn) = diaflx(5,jf, jn) + ztu(jk,jj,ji)
-             diaflx(6,jf, jn) = diaflx(6,jf, jn) + ztv(jk,jj,ji)
+             diaflx(5,jf, jn) = diaflx(5,jf, jn) - ztu(jk,jj,ji) ! in diffusion we invert face orientation
+             diaflx(6,jf, jn) = diaflx(6,jf, jn) - ztv(jk,jj,ji)
 
           ENDDO
 

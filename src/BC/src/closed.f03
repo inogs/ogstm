@@ -157,7 +157,7 @@ contains
     !> Calls bc default constructor and target constructor.
     type(closed) function closed_default(filenames_list, bc_name, n_vars, vars, var_names_idx)
 
-        character(len=25), intent(in) :: filenames_list
+        character(len=22), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
@@ -183,7 +183,7 @@ contains
     !> Calls bc periodic constructor and target constructor.
     type(closed) function closed_year(filenames_list, bc_name, n_vars, vars, var_names_idx, start_time_string, end_time_string)
 
-        character(len=25), intent(in) :: filenames_list
+        character(len=22), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars

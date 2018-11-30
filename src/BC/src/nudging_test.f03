@@ -34,7 +34,7 @@ contains
 
     type(nudging) function nudging_default(filenames_list, bc_no_nudging, decoration)
 
-        character(len=25), intent(in) :: filenames_list
+        character(len=22), intent(in) :: filenames_list
         class(bc), target, intent(in) :: bc_no_nudging
         integer, intent(in) :: decoration
 

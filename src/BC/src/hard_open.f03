@@ -274,7 +274,7 @@ contains
     type(hard_open) function hard_open_default(filenames_list, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
             damping_coeff)
 
-        character(len=25), intent(in) :: filenames_list
+        character(len=22), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=23), intent(in) :: vars
@@ -304,7 +304,7 @@ contains
     type(hard_open) function hard_open_year(filenames_list, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
             damping_coeff, start_time_string, end_time_string)
 
-        character(len=25), intent(in) :: filenames_list
+        character(len=22), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars

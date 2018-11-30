@@ -74,7 +74,7 @@ contains
     !! In this case the files and times lists will have the same length.
     type(bc_data) function bc_data_default(filenames_list)
 
-        character(len=25), intent(in) :: filenames_list
+        character(len=22), intent(in) :: filenames_list
         integer, parameter :: file_unit = 100
         integer :: i ! counter
 
@@ -124,7 +124,7 @@ contains
     !! Therefore, this constructor accepts two arguments more (simulation start and end times).
     type(bc_data) function bc_data_year(filenames_list, start_time_string, end_time_string)
 
-        character(len=25), intent(in) :: filenames_list
+        character(len=22), intent(in) :: filenames_list
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
         integer, parameter :: file_unit = 100

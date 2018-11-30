@@ -16,7 +16,7 @@ module bc_data_mod
     type bc_data
         ! file list related members
         integer :: m_n_files
-        character(len=24), allocatable, dimension(:) :: m_files
+        character(len=27), allocatable, dimension(:) :: m_files
         character(len=17), allocatable, dimension(:) :: m_time_strings
         ! time list related members
         integer :: m_n_times
@@ -92,7 +92,7 @@ contains
         read(file_unit, *) bc_data_default%m_files
 
         do i = 1, bc_data_default%m_n_files
-            bc_data_default%m_time_strings(i) = bc_data_default%m_files(i)(5:21)
+            bc_data_default%m_time_strings(i) = bc_data_default%m_files(i)(8:24)
             bc_data_default%m_times(i) = datestring2sec(bc_data_default%m_time_strings(i))
         enddo
 
@@ -150,7 +150,7 @@ contains
 
         ! get file names and time strings
         read(file_unit, *) bc_data_year%m_files
-        bc_data_year%m_time_strings(:) = bc_data_year%m_files(:)(5:21)
+        bc_data_year%m_time_strings(:) = bc_data_year%m_files(:)(8:24)
 
         ! infer times
         offset = 0

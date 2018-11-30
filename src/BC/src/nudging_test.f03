@@ -32,14 +32,14 @@ contains
 
 
 
-    type(nudging) function nudging_default(files_namelist, bc_no_nudging, decoration)
+    type(nudging) function nudging_default(filenames_list, bc_no_nudging, decoration)
 
-        character(len=22), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         class(bc), target, intent(in) :: bc_no_nudging
         integer, intent(in) :: decoration
 
         ! parent class constructor
-        nudging_default%bc = bc(files_namelist)
+        nudging_default%bc = bc(filenames_list)
 
         ! pointer to bc_no_nudging association
         nudging_default%m_bc_no_nudging => bc_no_nudging

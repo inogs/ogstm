@@ -63,8 +63,8 @@ contains
 
 
     ! TO DO: input file should be read with namelist syntax.
-    ! TO DO: number of characters of 'files_namelist' is hard-coded (22)
-    ! First entry in 'files_namelist' must be the number of files in the list.
+    ! TO DO: number of characters of 'filenames_list' is hard-coded (22)
+    ! First entry in 'filenames_list' must be the number of files in the list.
     ! Default constructor infers times from file names:
     ! each file(5:21) must correspond to the fully qualified timestamp ('19700101-00:00:00').
 
@@ -72,14 +72,14 @@ contains
 
     !> Infers the time each file refers to from a time string contained in the file name itself.
     !! In this case the files and times lists will have the same length.
-    type(bc_data) function bc_data_default(files_namelist)
+    type(bc_data) function bc_data_default(filenames_list)
 
-        character(len=22), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         integer, parameter :: file_unit = 100
         integer :: i ! counter
 
         ! open file
-        open(unit=file_unit, file=files_namelist)
+        open(unit=file_unit, file=filenames_list)
 
         ! get number of files and allocate memory accordingly
         read(file_unit, *) bc_data_default%m_n_files
@@ -111,8 +111,8 @@ contains
 
 
     ! TO DO: input files should be read with namelist syntax.
-    ! TO DO: number of characters of 'files_namelist' is hard-coded (27)
-    ! First entry in 'files_namelist' must be the number of files in the list.
+    ! TO DO: number of characters of 'filenames_list' is hard-coded (27)
+    ! First entry in 'filenames_list' must be the number of files in the list.
     ! Year constructor infers times from file names and simulation duration:
     ! each file(9:21) must correspond to the fully qualified yearly timestamp ('0101-00:00:00').
 
@@ -122,9 +122,9 @@ contains
     !! Here only the constant part of the time string (i.e. month, day, hour etc.) is inferred from the files,
     !! and the list of times is computed and replicated for every simulation year, form start to end year.
     !! Therefore, this constructor accepts two arguments more (simulation start and end times).
-    type(bc_data) function bc_data_year(files_namelist, start_time_string, end_time_string)
+    type(bc_data) function bc_data_year(filenames_list, start_time_string, end_time_string)
 
-        character(len=27), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
         integer, parameter :: file_unit = 100
@@ -134,7 +134,7 @@ contains
         integer :: i ! counter
 
         ! open file
-        open(unit=file_unit, file=files_namelist)
+        open(unit=file_unit, file=filenames_list)
 
         ! get number of files and allocate memory accordingly
         read(file_unit, *) bc_data_year%m_n_files

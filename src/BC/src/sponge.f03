@@ -193,9 +193,9 @@ contains
     !> Default constructor
 
     !> Calls bc default constructor and target constructor.
-    type(sponge) function sponge_default(files_namelist, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
+    type(sponge) function sponge_default(filenames_list, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
-        character(len=22), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
@@ -205,7 +205,7 @@ contains
         double precision, intent(in) :: length
 
         ! parent class constructor
-        sponge_default%bc = bc(files_namelist)
+        sponge_default%bc = bc(filenames_list)
 
         call sponge_default%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 
@@ -222,10 +222,10 @@ contains
     !> Periodic constructor
 
     !> Calls bc periodic constructor and target constructor.
-    type(sponge) function sponge_year(files_namelist, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length, &
+    type(sponge) function sponge_year(filenames_list, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length, &
             start_time_string, end_time_string)
 
-        character(len=27), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
@@ -237,7 +237,7 @@ contains
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
-        sponge_year%bc = bc(files_namelist, start_time_string, end_time_string)
+        sponge_year%bc = bc(filenames_list, start_time_string, end_time_string)
 
         call sponge_year%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
 

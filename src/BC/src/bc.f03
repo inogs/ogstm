@@ -52,12 +52,12 @@ contains
     !> bc default constructor.
 
     !> Calls bc_data default contructor.
-    type(bc) function bc_default(files_namelist)
+    type(bc) function bc_default(filenames_list)
 
-        character(len=22), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
 
         allocate(bc_default%m_bc_data)
-        bc_default%m_bc_data = bc_data(files_namelist)
+        bc_default%m_bc_data = bc_data(filenames_list)
 
         ! write(*, *) 'INFO: successfully called bc default constructor'
 
@@ -68,14 +68,14 @@ contains
     !> bc periodic constructor
 
     !> Calls bc_data periodic constructor
-    type(bc) function bc_year(files_namelist, start_time_string, end_time_string)
+    type(bc) function bc_year(filenames_list, start_time_string, end_time_string)
 
-        character(len=27), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
 
         allocate(bc_year%m_bc_data)
-        bc_year%m_bc_data = bc_data(files_namelist, start_time_string, end_time_string)
+        bc_year%m_bc_data = bc_data(filenames_list, start_time_string, end_time_string)
 
         ! write(*, *) 'INFO: successfully called bc empty constructor'
 

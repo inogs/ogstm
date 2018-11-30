@@ -271,10 +271,10 @@ contains
     !> Default constructor
 
     !> Calls bc default constructor and target constructor.
-    type(hard_open) function hard_open_default(files_namelist, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
+    type(hard_open) function hard_open_default(filenames_list, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
             damping_coeff)
 
-        character(len=22), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=23), intent(in) :: vars
@@ -284,7 +284,7 @@ contains
         double precision :: damping_coeff
 
         ! parent class constructor
-        hard_open_default%bc = bc(files_namelist)
+        hard_open_default%bc = bc(filenames_list)
 
         call hard_open_default%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
 
@@ -301,10 +301,10 @@ contains
     !> Periodic constructor
 
     !> Calls bc periodic constructor and target constructor.
-    type(hard_open) function hard_open_year(files_namelist, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
+    type(hard_open) function hard_open_year(filenames_list, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
             damping_coeff, start_time_string, end_time_string)
 
-        character(len=27), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
@@ -316,7 +316,7 @@ contains
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
-        hard_open_year%bc = bc(files_namelist, start_time_string, end_time_string)
+        hard_open_year%bc = bc(filenames_list, start_time_string, end_time_string)
 
         call hard_open_year%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
 

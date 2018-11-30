@@ -155,16 +155,16 @@ contains
     !> Default constructor
 
     !> Calls bc default constructor and target constructor.
-    type(closed) function closed_default(files_namelist, bc_name, n_vars, vars, var_names_idx)
+    type(closed) function closed_default(filenames_list, bc_name, n_vars, vars, var_names_idx)
 
-        character(len=22), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
 
         ! parent class constructor
-        closed_default%bc = bc(files_namelist)
+        closed_default%bc = bc(filenames_list)
 
         call closed_default%init_members(bc_name, n_vars, vars, var_names_idx)
 
@@ -181,9 +181,9 @@ contains
     !> Periodic constructor
 
     !> Calls bc periodic constructor and target constructor.
-    type(closed) function closed_year(files_namelist, bc_name, n_vars, vars, var_names_idx, start_time_string, end_time_string)
+    type(closed) function closed_year(filenames_list, bc_name, n_vars, vars, var_names_idx, start_time_string, end_time_string)
 
-        character(len=27), intent(in) :: files_namelist
+        character(len=25), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
         character(len=27), intent(in) :: vars
@@ -192,7 +192,7 @@ contains
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
-        closed_year%bc = bc(files_namelist, start_time_string, end_time_string)
+        closed_year%bc = bc(filenames_list, start_time_string, end_time_string)
 
         call closed_year%init_members(bc_name, n_vars, vars, var_names_idx)
 

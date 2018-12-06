@@ -122,8 +122,6 @@ contains
     !! Here only the constant part of the time string (i.e. month, day, hour etc.) is inferred from the files,
     !! and the list of times is computed and replicated for every simulation year, form start to end year.
     !! Therefore, this constructor accepts two arguments more (simulation start and end times).
-    !! Important WARNING: even if it is periodic, first file provided should be anyway the first file
-    !! which is supposed to be read.
     type(bc_data) function bc_data_year(filenames_list, start_time_string, end_time_string)
 
         character(len=22), intent(in) :: filenames_list

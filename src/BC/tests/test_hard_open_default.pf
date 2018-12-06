@@ -61,8 +61,8 @@ contains
 @Test
     subroutine test_file_names(this)
         class(test_hard_open_default), intent(inout) :: this
-        @assertEqual("OPE_20161230-00:00:00.nc", this%m_hard_open%get_file_by_index(1))
-        @assertEqual("OPE_20170630-00:00:00.nc", this%m_hard_open%get_file_by_index(2))
+        @assertEqual("BC/OPE_20161230-00:00:00.nc", this%m_hard_open%get_file_by_index(1))
+        @assertEqual("BC/OPE_20170630-00:00:00.nc", this%m_hard_open%get_file_by_index(2))
     end subroutine test_file_names
 
 @Test

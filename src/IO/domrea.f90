@@ -252,7 +252,9 @@
           "riv", &
           6, &
           "N1p N3n N5s O3c O3h O2o", &
-          (/ 2, 3, 6, 49, 50, 1 /) &
+          (/ 2, 3, 6, 49, 50, 1 /), &
+          DATESTART, &
+          DATE__END &
           )
       gibraltar_sponge = sponge( &
           "files_namelist_gib.dat", &
@@ -262,7 +264,9 @@
           (/ 1, 2, 3, 6, 49, 50, 7 /), &
           1.0d0, &
           1.0d-6, &
-          -5.5d0 &
+          -5.5d0, &
+          DATESTART, &
+          DATE__END &
           )
       gibraltar = nudging( &
           gibraltar_sponge, &
@@ -281,7 +285,9 @@
           (/ 2, 3, 1, 6, 49, 50 /), &
           jptra, &
           1, &
-          600.0d0 &
+          600.0d0, &
+          DATESTART, &
+          DATE__END &
         )
 
 ! ----------------------------------------------------------------------

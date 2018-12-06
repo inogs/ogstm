@@ -307,7 +307,7 @@ contains
         character(len=22), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
-        character(len=27), intent(in) :: vars
+        character(len=23), intent(in) :: vars
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
         integer(4) :: geometry

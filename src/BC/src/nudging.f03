@@ -141,7 +141,7 @@ contains
     !> Overridden from bc.
 
     !> Redirects to the decorated object method.
-    character(len=24) function get_file_by_index(self, idx)
+    character(len=27) function get_file_by_index(self, idx)
 
         class(nudging), intent(in) :: self
         integer, intent(in) :: idx

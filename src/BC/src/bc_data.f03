@@ -144,6 +144,8 @@ contains
         ! get number of years and allocate memory accordingly
         read(start_time_string, '(i4)') start_year
         read(end_time_string, '(i4)') end_year
+        start_year = start_year - 1 ! in order to provide also previous year files for interpolation, if necessary
+        end_year = end_year + 1 ! in order to provide also next year files for interpolation, if necessary
         n_years = end_year - start_year + 1
         bc_data_year%m_n_times = bc_data_year%m_n_files * n_years
         allocate(bc_data_year%m_times(bc_data_year%m_n_times))

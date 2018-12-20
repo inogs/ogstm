@@ -287,8 +287,8 @@
       dardanelles = hard_open( &
           "files_namelist_ope.dat", &
           "ope", &
-          6, &
-          "N1p N3n O2o N5s O3c O3h", &
+          5, &
+          "N1p N3n N5s O3c O3h", &
           (/ 2, 3, 1, 6, 49, 50 /), &
           jptra, &
           1, &

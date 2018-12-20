@@ -225,7 +225,7 @@ contains
         class(hard_open), intent(inout) :: self
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
-        character(len=23), intent(in) :: vars ! 'N1p N3n O2o N5s O3c O3h'; TO DO: more flexible
+        character(len=19), intent(in) :: vars ! 'N1p N3n N5s O3c O3h'; TO DO: more flexible
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
         integer(4) :: geometry
@@ -277,7 +277,7 @@ contains
         character(len=22), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
-        character(len=23), intent(in) :: vars
+        character(len=19), intent(in) :: vars
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
         integer(4) :: geometry
@@ -307,7 +307,7 @@ contains
         character(len=22), intent(in) :: filenames_list
         character(len=3) :: bc_name
         integer, intent(in) :: n_vars
-        character(len=23), intent(in) :: vars
+        character(len=19), intent(in) :: vars
         integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
         integer(4) :: geometry

@@ -33,6 +33,9 @@
       INTEGER ierr
 
       CHARACTER(LEN=11) maskfile
+
+      character(len=10) bfmmask_file
+
       CHARACTER(LEN=50) filename
       CHARACTER(LEN=3), DIMENSION(7) :: var_nc
       CHARACTER(LEN=5) nomevar01
@@ -42,6 +45,9 @@
 ! To read only one meshmask.nc
 
       maskfile        = 'meshmask.nc'
+
+      bfmmask_file = 'bfmmask.nc'
+
       filename='BC/TI_yyyy0215-00:00:00.nc' ! 26 chars
 
 
@@ -101,6 +107,7 @@
       CALL readnc_slice_int1 (maskfile,'tmask', tmask )
 !      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
 
+      call readnc_slice_logical(bfmmask_file, 'bfmmask', bfmmask)
 
 !      Initialization of mbathy
       mbathy(:,:) = 0

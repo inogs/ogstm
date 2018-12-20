@@ -120,6 +120,11 @@
 
 
       INTEGER(kind = 1), allocatable, dimension(:,:,:) :: tmask,umask, vmask
+
+      ! logical bfmmask is derived from bfmmask.nc
+      ! it is supposed to map those points for which bfmv5 has to be resolved
+      integer(1), allocatable, dimension(:, :, :) :: bfmmask
+
       INTEGER NBFMPOINTS, NBFMPOINTS_SUP, NWATERPOINTS
       INTEGER, allocatable, dimension(:,:) :: BFMpoints
 
@@ -544,6 +549,10 @@ subroutine alloc_tot()
       umask = huge(umask(1,1,1))
       allocate(vmask(jpk,jpj,jpi)) 
       vmask = huge(vmask(1,1,1))
+
+      allocate(bfmmask(jpk, jpj, jpi))
+      bfmmask = huge(bfmmask(1, 1, 1))
+
        allocate(un(jpk,jpj,jpi))    
       un     = huge(un(1,1,1))
        allocate(vn(jpk,jpj,jpi))    

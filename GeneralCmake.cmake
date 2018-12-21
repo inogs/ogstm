@@ -32,16 +32,13 @@ add_definitions(-Dkey_mpp -Dkey_mpp_mpi)
 IF (BFMv2)
     add_definitions(-DBFMv2)
 ENDIF()
+
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  # set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
-  # set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source") #-qopenmp
   set (CMAKE_Fortran_FLAGS_RELEASE "-std=f2003 -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
   set (CMAKE_Fortran_FLAGS_DEBUG   "-std=f2003 -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source") #-qopenmp
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
-  # set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  # set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
   set (CMAKE_Fortran_FLAGS_RELEASE "-std=f2003 -O2  -fimplicit-none -cpp  -ffixed-line-length-132")
   set (CMAKE_Fortran_FLAGS_DEBUG   "-std=f2003 -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
 else ()

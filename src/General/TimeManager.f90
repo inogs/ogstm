@@ -33,9 +33,9 @@
       !PRIVATE :: CheckInForcings
 
       TYPE (TIME_CONTAINER) :: TC_FOR
-      TYPE (TIME_CONTAINER) :: TC_TIN
+      ! TYPE (TIME_CONTAINER) :: TC_TIN
       TYPE (TIME_CONTAINER) :: TC_ATM
-      TYPE (TIME_CONTAINER) :: TC_GIB
+      ! TYPE (TIME_CONTAINER) :: TC_GIB
       TYPE (TIME_CONTAINER) :: TC_LEX
       TYPE (TIME_CONTAINER) :: TC_CO2
 
@@ -191,15 +191,15 @@
       if (.not.CheckDatelist(DATESTART,TC_FOR)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATESTART,TC_TIN)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATESTART,TC_TIN)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATESTART,TC_ATM)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATESTART,TC_GIB)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATESTART,TC_GIB)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATESTART,TC_LEX)) then 
        B = .false.
        endif
@@ -210,15 +210,15 @@
       if (.not.CheckDatelist(DATE__END,TC_FOR)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATE__END,TC_TIN)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATE__END,TC_TIN)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATE__END,TC_ATM)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATE__END,TC_GIB)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATE__END,TC_GIB)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATE__END,TC_LEX)) then 
        B = .false.
        endif
@@ -341,14 +341,14 @@
       TC_FOR%Filename    = 'forcingsTimes'
       TC_FOR%Name        = 'Forcings'
 
-      TC_TIN%Filename    = 'RiversTimes'
-      TC_TIN%Name        = 'Terrestrial Inputs'
+      ! TC_TIN%Filename    = 'RiversTimes'
+      ! TC_TIN%Name        = 'Terrestrial Inputs'
 
       TC_ATM%Filename    = 'AtmTimes'
       TC_ATM%Name        = 'Atmospherical'
 
-      TC_GIB%Filename    = 'GibTimes'
-      TC_GIB%Name        = 'Gibraltar'
+      ! TC_GIB%Filename    = 'GibTimes'
+      ! TC_GIB%Name        = 'Gibraltar'
 
       TC_CO2%Filename    = 'carbonTimes'
       TC_CO2%Name        = 'Co2 surface value'
@@ -372,9 +372,9 @@
       CLOSE(TheUnit)
 
       call Load_Time_container(TC_FOR)
-      call Load_Time_container(TC_TIN)
+      ! call Load_Time_container(TC_TIN)
       call Load_Time_container(TC_ATM)
-      call Load_Time_container(TC_GIB)
+      ! call Load_Time_container(TC_GIB)
       call Load_Time_container(TC_LEX)
       call Load_Time_container(TC_CO2)
 
@@ -512,9 +512,9 @@
 
       if (datestring(5:17).eq.'0101-00:00:00') then
          call TimeExtension(datestring,TC_FOR)
-         call TimeExtension(datestring,TC_TIN)
+         ! call TimeExtension(datestring,TC_TIN)
          call TimeExtension(datestring,TC_ATM)
-         call TimeExtension(datestring,TC_GIB)
+         ! call TimeExtension(datestring,TC_GIB)
          call TimeExtension(datestring,TC_LEX)
          call TimeExtension(datestring,TC_CO2)
       endif

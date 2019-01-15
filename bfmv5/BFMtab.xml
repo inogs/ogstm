@@ -199,6 +199,7 @@
 <var name="BFM1D_exR2cc_iiP2"     highfreq="false" ></var>
 <var name="BFM1D_exR2cc_iiP3"     highfreq="false" ></var>
 <var name="BFM1D_exR2cc_iiP4"     highfreq="false" ></var>
+<var name="ffCO2"                 highfreq="false" ></var>
 
 </Diagnostics>
 

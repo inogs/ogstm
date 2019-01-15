@@ -298,7 +298,7 @@ SUBROUTINE time_init
             write(*,*) 'BeforeForcings', TC_FOR%Before, 'AfterForcing', TC_FOR%After
             ! write(*,*) 'BeforeRivers',   TC_TIN%Before, 'AfterRivers',  TC_TIN%After
             ! write(*,*) 'BeforeGib',      TC_GIB%Before, 'AfterGib',     TC_GIB%After
-            write(*,*) 'BeforeAtm',      TC_ATM%Before, 'AfterAtm',     TC_GIB%After
+            write(*,*) 'BeforeAtm',      TC_ATM%Before, 'AfterAtm',     TC_ATM%After
             write(*,*) 'BeforeCo2',      TC_CO2%Before, 'AfterCo2',     TC_CO2%After
             write(*,*) 'BeforeKex',      TC_LEX%Before, 'AfterKex',     TC_LEX%After
 

@@ -86,9 +86,9 @@
 
         atmfile='BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'!//char(0)
       
-        gibfile='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'!//char(0)
+        ! gibfile='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'!//char(0)
       
-        rivfile='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'!//char(0)
+        ! rivfile='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'!//char(0)
       
 
          call getDimension(atmfile,'lat',lat)

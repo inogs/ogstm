@@ -8,8 +8,8 @@ MODULE module_step
       USE mpi
       USE mod_atmbc
       USE mod_cbc
-      USE mod_gibbc
-      USE mod_tinbc
+      ! USE mod_gibbc
+      ! USE mod_tinbc
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

@@ -28,9 +28,9 @@ contains
             7, &
             "O2o N1p N3n N5s O3c O3h N6r", &
             this%m_param_var_names_idx, &
-            1.0d1, &
+            4.0d0, &
             1.0d-6, &
-            -7.5d1 &
+            -7.5d0 &
         )
     end subroutine setUp
 
@@ -48,12 +48,24 @@ contains
 
     end subroutine tearDown
 
+!@Test
+!    subroutine test_load(this)
+!        class(test_sponge_default), intent(inout) :: this
+!        call this%m_sponge%load(1)
+!        ! TO DO: this should be done through a getter. But why is 'm_ridxt' not private?
+!        @assertEqual(231.63246154785156, this%m_sponge%m_values_dtatrc(1, 2, 1))
+!    end subroutine test_load
+
 @Test
-    subroutine test_load(this)
+    subroutine test_tracer_names(this)
         class(test_sponge_default), intent(inout) :: this
-        call this%m_sponge%load(1)
-        ! TO DO: this should be done through a getter. But why is 'm_ridxt' not private?
-        @assertEqual(231.63246154785156, this%m_sponge%m_values_dtatrc(1, 2, 1))
-    end subroutine test_load
+        @assertEqual("O2o", this%m_sponge%m_var_names(1))
+        @assertEqual("N1p", this%m_sponge%m_var_names(2))
+        @assertEqual("N3n", this%m_sponge%m_var_names(3))
+        @assertEqual("N5s", this%m_sponge%m_var_names(4))
+        @assertEqual("O3c", this%m_sponge%m_var_names(5))
+        @assertEqual("O3h", this%m_sponge%m_var_names(6))
+        @assertEqual("N6r", this%m_sponge%m_var_names(7))
+    end subroutine test_tracer_names
 
 end module test_sponge_default_mod

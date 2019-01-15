@@ -41,7 +41,7 @@ contains
     subroutine test_file_names(this)
         class(test_bc_data_year), intent(inout) :: this
         integer :: i ! counter
-        do i = 0, 8, 4
+        do i = 0, 16, 4
             @assertEqual("BC/GIB_yyyy0215-12:00:00.nc", this%m_bc_data%get_file_by_index(i + 1))
             @assertEqual("BC/GIB_yyyy0515-12:00:00.nc", this%m_bc_data%get_file_by_index(i + 2))
             @assertEqual("BC/GIB_yyyy0815-12:00:00.nc", this%m_bc_data%get_file_by_index(i + 3))

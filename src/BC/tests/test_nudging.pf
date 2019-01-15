@@ -34,9 +34,9 @@ contains
                 7, &
                 "O2o N1p N3n N5s O3c O3h N6r", &
                 this%m_param_vars_idx, &
-                1.0d1, &
+                4.0d0, &
                 1.0d-6, &
-                -7.5d1 &
+                -7.5d0 &
             )
 
         this%m_param_rst_corr = (/ 1., 1., 1., 1., 2., 2., 2. /)
@@ -71,21 +71,21 @@ contains
 
     end subroutine tearDown
 
-@Test
-    subroutine test_rst_tracers(this)
-        class(test_nudging), intent(inout) :: this
-        ! TO DO: this should be done through a getter. But why is 'm_rst_tracers' not private?
-        @assertEqual(2.7777778450399637E-004, this%m_nudging%m_rst_tracers(1, 13, 2, 1))
-    end subroutine test_rst_tracers
+!@Test
+!    subroutine test_rst_tracers(this)
+!        class(test_nudging), intent(inout) :: this
+!        ! TO DO: this should be done through a getter. But why is 'm_rst_tracers' not private?
+!        @assertEqual(2.7777778450399637E-004, this%m_nudging%m_rst_tracers(1, 13, 2, 1))
+!    end subroutine test_rst_tracers
 
-@Test
-    subroutine test_load(this)
-        class(test_nudging), intent(inout) :: this
-        call this%m_nudging%load(1)
-        ! TO DO: this should be done through a getter. But why is 'm_values_dtatrc' not private?
-        ! TO DO: provide a way to get the 'm_bc_no_nudging' pointer
-        !        without refering explicitly to 'm_sponge'.
-        @assertEqual(231.63246154785156, this%m_sponge%m_values_dtatrc(1, 2, 1))
-    end subroutine test_load
+!@Test
+!    subroutine test_load(this)
+!        class(test_nudging), intent(inout) :: this
+!        call this%m_nudging%load(1)
+!        ! TO DO: this should be done through a getter. But why is 'm_values_dtatrc' not private?
+!        ! TO DO: provide a way to get the 'm_bc_no_nudging' pointer
+!        !        without refering explicitly to 'm_sponge'.
+!        @assertEqual(231.63246154785156, this%m_sponge%m_values_dtatrc(1, 2, 1))
+!    end subroutine test_load
 
 end module test_nudging_mod

@@ -23,14 +23,14 @@ contains
         this%m_param_var_names_idx = (/ 1, 2, 3, 6, 49, 50, 7 /)
         allocate(this%m_sponge)
         this%m_sponge = sponge( &
-            "files_namelist_year_gib.dat", &
+            "files_namelist_gib.dat", &
             "gib", &
             7, &
             "O2o N1p N3n N5s O3c O3h N6r", &
             this%m_param_var_names_idx, &
-            1.0d1, &
+            4.0d0, &
             1.0d-6, &
-            -7.5d1, &
+            -7.5d0, &
             "20170101-00:00:00", &
             "20190101-00:00:00" &
         )
@@ -49,5 +49,29 @@ contains
         write(*, *) 'INFO: m_sponge deassociated'
 
     end subroutine tearDown
+
+@Test
+    subroutine test_file_names(this)
+        class(test_sponge_year), intent(inout) :: this
+        integer :: i ! counter
+        do i = 0, 16, 4
+            @assertEqual("BC/GIB_yyyy0215-12:00:00.nc", this%m_sponge%get_file_by_index(i + 1))
+            @assertEqual("BC/GIB_yyyy0515-12:00:00.nc", this%m_sponge%get_file_by_index(i + 2))
+            @assertEqual("BC/GIB_yyyy0815-12:00:00.nc", this%m_sponge%get_file_by_index(i + 3))
+            @assertEqual("BC/GIB_yyyy1115-12:00:00.nc", this%m_sponge%get_file_by_index(i + 4))
+        enddo
+    end subroutine test_file_names
+
+@Test
+    subroutine test_tracer_names(this)
+        class(test_sponge_year), intent(inout) :: this
+        @assertEqual("O2o", this%m_sponge%m_var_names(1))
+        @assertEqual("N1p", this%m_sponge%m_var_names(2))
+        @assertEqual("N3n", this%m_sponge%m_var_names(3))
+        @assertEqual("N5s", this%m_sponge%m_var_names(4))
+        @assertEqual("O3c", this%m_sponge%m_var_names(5))
+        @assertEqual("O3h", this%m_sponge%m_var_names(6))
+        @assertEqual("N6r", this%m_sponge%m_var_names(7))
+    end subroutine test_tracer_names
 
 end module test_sponge_year_mod

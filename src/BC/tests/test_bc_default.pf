@@ -40,10 +40,12 @@ contains
 @Test
     subroutine test_file_names(this)
         class(test_bc_default), intent(inout) :: this
-        @assertEqual("GIB_20170215-12:00:00.nc", this%m_bc%get_file_by_index(1))
-        @assertEqual("GIB_20170515-12:00:00.nc", this%m_bc%get_file_by_index(2))
-        @assertEqual("GIB_20170815-12:00:00.nc", this%m_bc%get_file_by_index(3))
-        @assertEqual("GIB_20171115-12:00:00.nc", this%m_bc%get_file_by_index(4))
+        @assertEqual("BC/GIB_20161115-12:00:00.nc", this%m_bc%get_file_by_index(1))
+        @assertEqual("BC/GIB_20170215-12:00:00.nc", this%m_bc%get_file_by_index(2))
+        @assertEqual("BC/GIB_20170515-12:00:00.nc", this%m_bc%get_file_by_index(3))
+        @assertEqual("BC/GIB_20170815-12:00:00.nc", this%m_bc%get_file_by_index(4))
+        @assertEqual("BC/GIB_20171115-12:00:00.nc", this%m_bc%get_file_by_index(5))
+        @assertEqual("BC/GIB_20180215-12:00:00.nc", this%m_bc%get_file_by_index(6))
     end subroutine test_file_names
 
 @Test

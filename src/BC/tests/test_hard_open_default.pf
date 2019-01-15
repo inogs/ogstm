@@ -10,7 +10,7 @@ module test_hard_open_default_mod
 @TestCase
     type, extends(TestCase) :: test_hard_open_default
         type(hard_open), pointer :: m_hard_open => null()
-        integer(4), dimension(6) :: m_param_var_names_idx
+        integer(4), dimension(5) :: m_param_var_names_idx
     contains
         procedure :: setUp ! overrrides generic
         procedure :: tearDown ! overrides generic
@@ -20,13 +20,13 @@ contains
 
     subroutine setUp(this)
         class(test_hard_open_default), intent(inout) :: this
-        this%m_param_var_names_idx = (/ 2, 3, 1, 6, 49, 50 /)
+        this%m_param_var_names_idx = (/ 2, 3, 6, 49, 50 /)
         allocate(this%m_hard_open)
         this%m_hard_open = hard_open( &
-            "files_namelist_ope.dat", &
-            "ope", &
-            6, &
-            "N1p N3n O2o N5s O3c O3h", &
+            "files_namelist_dar.dat", &
+            "dar", &
+            5, &
+            "N1p N3n N5s O3c O3h", &
             this%m_param_var_names_idx, &
             51, &
             1, &
@@ -51,18 +51,20 @@ contains
 @Test
     subroutine test_missing_tracers(this)
         class(test_hard_open_default), intent(inout) :: this
-        @assertEqual(4, this%m_hard_open%m_missing_var_names_idx(1))
-        @assertEqual(5, this%m_hard_open%m_missing_var_names_idx(2))
-        @assertEqual(7, this%m_hard_open%m_missing_var_names_idx(3))
-        @assertEqual(48, this%m_hard_open%m_missing_var_names_idx(44))
-        @assertEqual(51, this%m_hard_open%m_missing_var_names_idx(45))
+        @assertEqual(1, this%m_hard_open%m_missing_var_names_idx(1))
+        @assertEqual(4, this%m_hard_open%m_missing_var_names_idx(2))
+        @assertEqual(7, this%m_hard_open%m_missing_var_names_idx(4))
+        @assertEqual(48, this%m_hard_open%m_missing_var_names_idx(45))
+        @assertEqual(51, this%m_hard_open%m_missing_var_names_idx(46))
     end subroutine test_missing_tracers
 
 @Test
     subroutine test_file_names(this)
         class(test_hard_open_default), intent(inout) :: this
-        @assertEqual("BC/OPE_20170630-00:00:00.nc", this%m_hard_open%get_file_by_index(1))
-        @assertEqual("BC/OPE_20171230-00:00:00.nc", this%m_hard_open%get_file_by_index(2))
+        @assertEqual("BC/OPE_20161130-00:00:00.nc", this%m_hard_open%get_file_by_index(1))
+        @assertEqual("BC/OPE_20170530-00:00:00.nc", this%m_hard_open%get_file_by_index(2))
+        @assertEqual("BC/OPE_20171130-00:00:00.nc", this%m_hard_open%get_file_by_index(3))
+        @assertEqual("BC/OPE_20180530-00:00:00.nc", this%m_hard_open%get_file_by_index(4))
     end subroutine test_file_names
 
 @Test
@@ -137,21 +139,17 @@ contains
         @assertEqual(11.0, this%m_hard_open%m_values(2, 2))
         @assertEqual(11.0, this%m_hard_open%m_values(32, 2))
 
-        @assertEqual(12.0, this%m_hard_open%m_values(1, 3))
-        @assertEqual(12.0, this%m_hard_open%m_values(2, 3))
-        @assertEqual(12.0, this%m_hard_open%m_values(32, 3))
+        @assertEqual(13.0, this%m_hard_open%m_values(1, 3))
+        @assertEqual(13.0, this%m_hard_open%m_values(2, 3))
+        @assertEqual(13.0, this%m_hard_open%m_values(32, 3))
 
-        @assertEqual(13.0, this%m_hard_open%m_values(1, 4))
-        @assertEqual(13.0, this%m_hard_open%m_values(2, 4))
-        @assertEqual(13.0, this%m_hard_open%m_values(32, 4))
+        @assertEqual(14.0, this%m_hard_open%m_values(1, 4))
+        @assertEqual(14.0, this%m_hard_open%m_values(2, 4))
+        @assertEqual(14.0, this%m_hard_open%m_values(32, 4))
 
-        @assertEqual(14.0, this%m_hard_open%m_values(1, 5))
-        @assertEqual(14.0, this%m_hard_open%m_values(2, 5))
-        @assertEqual(14.0, this%m_hard_open%m_values(32, 5))
-
-        @assertEqual(15.0, this%m_hard_open%m_values(1, 6))
-        @assertEqual(15.0, this%m_hard_open%m_values(2, 6))
-        @assertEqual(15.0, this%m_hard_open%m_values(32, 6))
+        @assertEqual(15.0, this%m_hard_open%m_values(1, 5))
+        @assertEqual(15.0, this%m_hard_open%m_values(2, 5))
+        @assertEqual(15.0, this%m_hard_open%m_values(32, 5))
     
     end subroutine test_values
 

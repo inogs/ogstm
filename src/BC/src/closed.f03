@@ -334,7 +334,7 @@ contains
     !> Actually it does not do anything,
     !! since closed boundaries, by definition, are closed also in the OGCM;
     !! velocities are already set to zero and there is no point in modifying them at the boundaries.
-    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+    subroutine apply_phys(self, lon, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -346,7 +346,7 @@ contains
         ! integer, parameter :: jpi = 1085
 
         class(closed), intent(inout) :: self
-        double precision, dimension(jpj, jpi), intent(in) :: lat ! glamt
+        double precision, dimension(jpj, jpi), intent(in) :: lon ! glamt
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t ! spongeT
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel ! spongeVel
 

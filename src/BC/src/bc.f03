@@ -246,7 +246,7 @@ contains
     !! In such cases, this method is necessary both
     !! to nullify the velocity field components and
     !! to smooth the actual values of the OGCM forcing fields.
-    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+    subroutine apply_phys(self, lon, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -258,7 +258,7 @@ contains
         ! integer, parameter :: jpi = 1085
 
         class(bc), intent(inout) :: self
-        double precision, dimension(jpj, jpi), intent(in) :: lat
+        double precision, dimension(jpj, jpi), intent(in) :: lon
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
 

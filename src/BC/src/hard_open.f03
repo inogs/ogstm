@@ -187,7 +187,6 @@ contains
                     
                     do i = 1, self%m_size
                         self%m_neighbors(1, i) = self%m_hard_open_points(1, i) - 1
-                        write(*, *) 'INFO: eastern boundary x done'
                         self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
                         self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
                     enddo

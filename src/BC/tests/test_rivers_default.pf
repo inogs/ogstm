@@ -10,7 +10,6 @@ module test_rivers_default_mod
 @TestCase
     type, extends(TestCase) :: test_rivers_default
         type(rivers), pointer :: m_rivers => null()
-        integer(4), dimension(6) :: m_param_var_names_idx
     contains
         procedure :: setUp ! overrrides generic
         procedure :: tearDown ! overrides generic
@@ -20,15 +19,8 @@ contains
 
     subroutine setUp(this)
         class(test_rivers_default), intent(inout) :: this
-        this%m_param_var_names_idx = (/ 2, 3, 6, 49, 50, 1 /)
         allocate(this%m_rivers)
-        this%m_rivers = rivers( &
-            "files_namelist_riv.dat", &
-            "riv", &
-            6, &
-            "N1p N3n N5s O3c O3h O2o", &
-            this%m_param_var_names_idx &
-        )
+        this%m_rivers = rivers("riv", "riv.nml", "files_namelist_riv.dat")
     end subroutine setUp
 
     subroutine tearDown(this)

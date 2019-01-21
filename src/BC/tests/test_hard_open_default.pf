@@ -10,7 +10,6 @@ module test_hard_open_default_mod
 @TestCase
     type, extends(TestCase) :: test_hard_open_default
         type(hard_open), pointer :: m_hard_open => null()
-        integer(4), dimension(5) :: m_param_var_names_idx
     contains
         procedure :: setUp ! overrrides generic
         procedure :: tearDown ! overrides generic
@@ -20,18 +19,8 @@ contains
 
     subroutine setUp(this)
         class(test_hard_open_default), intent(inout) :: this
-        this%m_param_var_names_idx = (/ 2, 3, 6, 49, 50 /)
         allocate(this%m_hard_open)
-        this%m_hard_open = hard_open( &
-            "files_namelist_dar.dat", &
-            "dar", &
-            5, &
-            "N1p N3n N5s O3c O3h", &
-            this%m_param_var_names_idx, &
-            51, &
-            1, &
-            600.0d0 &
-        )
+        this%m_hard_open = hard_open("dar", "dar.nml", "files_namelist_dar.dat", 51)
     end subroutine setUp
 
     subroutine tearDown(this)

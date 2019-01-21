@@ -12,8 +12,6 @@ module test_nudging_mod
     type, extends(TestCase) :: test_nudging
         type(sponge), pointer :: m_sponge => null()
         type(nudging), pointer :: m_nudging => null()
-        integer(4), dimension(7) :: m_param_vars_idx
-        double precision, dimension(7) :: m_param_rst_corr
     contains
         procedure :: setUp ! overrrides generic
         procedure :: tearDown ! overrides generic
@@ -25,31 +23,11 @@ contains
 
         class(test_nudging), intent(inout) :: this
 
-        this%m_param_vars_idx = (/ 1, 2, 3, 6, 49, 50, 7 /)
-
         allocate(this%m_sponge)
-        this%m_sponge = sponge( &
-                "files_namelist_gib.dat", &
-                "gib", &
-                7, &
-                "O2o N1p N3n N5s O3c O3h N6r", &
-                this%m_param_vars_idx, &
-                4.0d0, &
-                1.0d-6, &
-                -7.5d0 &
-            )
-
-        this%m_param_rst_corr = (/ 1., 1., 1., 1., 2., 2., 2. /)
+        this%m_sponge = sponge("gib", "gib.nml", "files_namelist_gib.dat")
 
         allocate(this%m_nudging)
-        this%m_nudging = nudging(this%m_sponge, &
-                "bounmask.nc", &
-                7, &
-                "O2o N1p N3n N5s O3c O3h N6r", &
-                this%m_param_vars_idx, &
-                this%m_param_rst_corr, &
-                51 &
-            )
+        this%m_nudging = nudging(this%m_sponge, "gib.nml", 51)
 
     end subroutine setUp
 
@@ -70,6 +48,18 @@ contains
         write(*, *) 'INFO: m_nudging deassociated'
 
     end subroutine tearDown
+
+@Test
+    subroutine test_tracer_names(this)
+        class(test_nudging), intent(inout) :: this
+        @assertEqual("O2o", this%m_nudging%m_nudging_vars(1))
+        @assertEqual("N1p", this%m_nudging%m_nudging_vars(2))
+        @assertEqual("N3n", this%m_nudging%m_nudging_vars(3))
+        @assertEqual("N5s", this%m_nudging%m_nudging_vars(4))
+        @assertEqual("O3c", this%m_nudging%m_nudging_vars(5))
+        @assertEqual("O3h", this%m_nudging%m_nudging_vars(6))
+        @assertEqual("N6r", this%m_nudging%m_nudging_vars(7))
+    end subroutine test_tracer_names
 
 !@Test
 !    subroutine test_rst_tracers(this)

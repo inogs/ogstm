@@ -13,8 +13,8 @@ module hard_open_mod
 
         character(len=3) :: m_name ! ex: 'ope'
         integer :: m_n_vars
-        character(len=3), allocatable, dimension(:) :: m_var_names
-        character(len=7), allocatable, dimension(:) :: m_var_names_data
+        character(len=20), allocatable, dimension(:) :: m_var_names
+        character(len=20), allocatable, dimension(:) :: m_var_names_data
         integer(4), allocatable, dimension(:) :: m_var_names_idx
         integer :: m_n_missing_vars
         integer(4), allocatable, dimension(:) :: m_missing_var_names_idx
@@ -124,7 +124,7 @@ contains
         integer :: i, j, k, counter
 
         ! TO DO: implement one more dimension to account for different geometries for different variables
-        call readnc_slice_double(self%get_file_by_index(1), self%m_var_names_data(1), self%m_buffer)
+        call readnc_slice_double(self%get_file_by_index(1), trim(self%m_var_names_data(1)), self%m_buffer)
 
         ! This is set to the largest dimension.
         ! Once computed, the real size will be used instead to allocate the right amount of memory
@@ -187,6 +187,7 @@ contains
                     
                     do i = 1, self%m_size
                         self%m_neighbors(1, i) = self%m_hard_open_points(1, i) - 1
+                        write(*, *) 'INFO: eastern boundary x done'
                         self%m_neighbors(2, i) = self%m_hard_open_points(2, i)
                         self%m_neighbors(3, i) = self%m_hard_open_points(3, i)
                     enddo
@@ -220,34 +221,53 @@ contains
     !> Target constructor
 
     !> Allocates and Initializes all the members that are added to the base class.
-    subroutine init_members(self, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
+    subroutine init_members(self, bc_name, namelist_file, n_tracers)
 
         class(hard_open), intent(inout) :: self
-        character(len=3) :: bc_name
-        integer, intent(in) :: n_vars
-        character(len=19), intent(in) :: vars ! 'N1p N3n N5s O3c O3h'; TO DO: more flexible
-        integer(4), dimension(n_vars), intent(in) :: var_names_idx
+        character(len=3), intent(in) :: bc_name
+        character(len=7), intent(in) :: namelist_file
         integer, intent(in) :: n_tracers
+
+        integer :: n_vars
+        character(len=20), allocatable, dimension(:) :: vars
+        integer(4), allocatable, dimension(:) :: var_names_idx
         integer(4) :: geometry
         double precision :: damping_coeff
-        integer :: i, start_idx, end_idx
+        integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files
+        integer :: i
+        namelist /vars_dimension/ n_vars
+        namelist /core/ vars, var_names_idx, geometry, damping_coeff
 
         self%m_name = bc_name
-        self%m_n_vars = n_vars
-        self%m_geometry = geometry
-        self%m_damping_factor = 1.0d0 / damping_coeff
 
+        ! read vars dimension parameters from namelist file
+        open(unit=file_unit, file=namelist_file)
+        rewind(file_unit)
+        read(file_unit, vars_dimension)
+
+        self%m_n_vars = n_vars
+
+        ! allocate local arrays
+        allocate(vars(self%m_n_vars))
+        allocate(var_names_idx(self%m_n_vars))
+
+        ! allocate class members
         allocate(self%m_var_names(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
         allocate(self%m_var_names_idx(self%m_n_vars))
 
+        ! read core parameters from namelist file
+        rewind(file_unit)
+        read(file_unit, core)
+
         do i = 1, self%m_n_vars
-            end_idx = 4*i - 1
-            start_idx = end_idx - 2
-            self%m_var_names(i) = vars(start_idx:end_idx)
-            self%m_var_names_data(i) = self%m_var_names(i) ! changed conventions, now just same as var names
+            self%m_var_names(i) = vars(i)
+            self%m_var_names_data(i) = trim(self%m_var_names(i)) ! changed conventions, now just same as var names
             self%m_var_names_idx(i) = var_names_idx(i)
         enddo
+
+        self%m_geometry = geometry
+        self%m_damping_factor = 1.0d0 / damping_coeff
 
         ! call delegated constructor - related procedures
         call self%set_missing_tracers(n_tracers)
@@ -260,6 +280,13 @@ contains
         allocate(self%m_values(self%m_size, self%m_n_vars))
         self%m_values(:, :) = huge(self%m_values(1, 1))
 
+        ! deallocation
+        deallocate(vars)
+        deallocate(var_names_idx)
+
+        ! close file
+        close(unit=file_unit)
+
     end subroutine init_members
 
 
@@ -271,22 +298,17 @@ contains
     !> Default constructor
 
     !> Calls bc default constructor and target constructor.
-    type(hard_open) function hard_open_default(filenames_list, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
-            damping_coeff)
+    type(hard_open) function hard_open_default(bc_name, namelist_file, filenames_list, n_tracers)
 
+        character(len=3), intent(in) :: bc_name
+        character(len=7), intent(in) :: namelist_file
         character(len=22), intent(in) :: filenames_list
-        character(len=3) :: bc_name
-        integer, intent(in) :: n_vars
-        character(len=19), intent(in) :: vars
-        integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
-        integer(4) :: geometry
-        double precision :: damping_coeff
 
         ! parent class constructor
         hard_open_default%bc = bc(filenames_list)
 
-        call hard_open_default%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
+        call hard_open_default%init_members(bc_name, namelist_file, n_tracers)
 
         ! write(*, *) 'INFO: successfully called hard_open default constructor'
 
@@ -301,24 +323,19 @@ contains
     !> Periodic constructor
 
     !> Calls bc periodic constructor and target constructor.
-    type(hard_open) function hard_open_year(filenames_list, bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, &
-            damping_coeff, start_time_string, end_time_string)
+    type(hard_open) function hard_open_year(bc_name, namelist_file, filenames_list, n_tracers, start_time_string, end_time_string)
 
+        character(len=3), intent(in) :: bc_name
+        character(len=7), intent(in) :: namelist_file
         character(len=22), intent(in) :: filenames_list
-        character(len=3) :: bc_name
-        integer, intent(in) :: n_vars
-        character(len=19), intent(in) :: vars
-        integer(4), dimension(n_vars), intent(in) :: var_names_idx
         integer, intent(in) :: n_tracers
-        integer(4) :: geometry
-        double precision :: damping_coeff
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
         hard_open_year%bc = bc(filenames_list, start_time_string, end_time_string)
 
-        call hard_open_year%init_members(bc_name, n_vars, vars, var_names_idx, n_tracers, geometry, damping_coeff)
+        call hard_open_year%init_members(bc_name, namelist_file, n_tracers)
 
         ! write(*, *) 'INFO: successfully called hard_open year constructor'
 
@@ -335,7 +352,7 @@ contains
 
         if (self%m_size > 0) then
             do i = 1, self%m_n_vars
-                call readnc_slice_double(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
+                call readnc_slice_double(self%get_file_by_index(idx), trim(self%m_var_names_data(i)), self%m_buffer)
                 do j = 1, self%m_size
                     self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
                         self%m_hard_open_points(3, j), &
@@ -458,7 +475,7 @@ contains
     !> Overridden from bc
 
     !> Actually it does not do anything, since velocity fields from the OGCM are not modified
-    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+    subroutine apply_phys(self, lon, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -470,7 +487,7 @@ contains
         ! integer, parameter :: jpi = 1085
 
         class(hard_open), intent(inout) :: self
-        double precision, dimension(jpj, jpi), intent(in) :: lat
+        double precision, dimension(jpj, jpi), intent(in) :: lon
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
 

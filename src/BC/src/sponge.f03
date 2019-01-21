@@ -18,8 +18,8 @@ module sponge_mod
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'gib'
         integer :: m_n_vars ! BC_mem.f90:94
-        character(len=3), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
-        character(len=7), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
+        character(len=20), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
+        character(len=20), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_gib
         double precision, allocatable, dimension(:, :, :) :: m_buffer ! replaces m_aux, now it is a 3D matrix
         integer(4) :: m_size ! BC_mem.f90:21
@@ -100,7 +100,7 @@ contains
 
         ! TO DO: implement one more dimension to account for different geometries for different variables
         ! TO DO: single or double precision?
-        call readnc_slice_double(self%get_file_by_index(1), self%m_var_names_data(1), self%m_buffer)
+        call readnc_slice_double(self%get_file_by_index(1), trim(self%m_var_names_data(1)), self%m_buffer)
 
         ! This is set to the largest dimension.
         ! Once computed, the real size will be used instead to allocate the right amount of memory
@@ -142,30 +142,48 @@ contains
     !> Target constructor
 
     !> Allocates and Initializes all the members that are added to the base class.
-    subroutine init_members(self, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
+    subroutine init_members(self, bc_name, namelist_file)
 
         class(sponge), intent(inout) :: self
-        character(len=3) :: bc_name
-        integer, intent(in) :: n_vars
-        character(len=27), intent(in) :: vars ! 'O2o N1p N3n N5s O3c O3h N6r'; TO DO: more flexible
-        integer(4), dimension(n_vars), intent(in) :: var_names_idx
-        double precision, intent(in) :: alpha
-        double precision, intent(in) :: reduction_value_t
-        double precision, intent(in) :: length
-        integer :: i, start_idx, end_idx
+        character(len=3), intent(in) :: bc_name
+        character(len=7), intent(in) :: namelist_file
+
+        integer :: n_vars
+        character(len=20), allocatable, dimension(:) :: vars
+        integer(4), allocatable, dimension(:) :: var_names_idx
+        double precision :: alpha
+        double precision :: reduction_value_t
+        double precision :: length
+        integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files
+        integer :: i
+        namelist /vars_dimension/ n_vars
+        namelist /core/ vars, var_names_idx, alpha, reduction_value_t, length
 
         self%m_name = bc_name
+
+        ! read vars dimension parameters from namelist file
+        open(unit=file_unit, file=namelist_file)
+        rewind(file_unit)
+        read(file_unit, vars_dimension)
+
         self%m_n_vars = n_vars
 
+        ! allocate local arrays
+        allocate(vars(self%m_n_vars))
+        allocate(var_names_idx(self%m_n_vars))
+
+        ! allocate class members
         allocate(self%m_var_names(self%m_n_vars))
         allocate(self%m_var_names_data(self%m_n_vars))
         allocate(self%m_var_names_idx(self%m_n_vars))
 
+        ! read core parameters from namelist file
+        rewind(file_unit)
+        read(file_unit, core)
+
         do i = 1, self%m_n_vars
-            end_idx = 4*i - 1
-            start_idx = end_idx - 2
-            self%m_var_names(i) = vars(start_idx:end_idx)
-            self%m_var_names_data(i) = self%m_name//'_'//self%m_var_names(i)
+            self%m_var_names(i) = vars(i)
+            self%m_var_names_data(i) = self%m_name//'_'//trim(self%m_var_names(i))
             self%m_var_names_idx(i) = var_names_idx(i)
         enddo
 
@@ -182,6 +200,13 @@ contains
         self%m_reduction_value_t = reduction_value_t
         self%m_length = length
 
+        ! deallocation
+        deallocate(vars)
+        deallocate(var_names_idx)
+
+        ! close file
+        close(unit=file_unit)
+
     end subroutine init_members
 
 
@@ -193,21 +218,16 @@ contains
     !> Default constructor
 
     !> Calls bc default constructor and target constructor.
-    type(sponge) function sponge_default(filenames_list, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
+    type(sponge) function sponge_default(bc_name, namelist_file, filenames_list)
 
+        character(len=3), intent(in) :: bc_name
+        character(len=7), intent(in) :: namelist_file
         character(len=22), intent(in) :: filenames_list
-        character(len=3) :: bc_name
-        integer, intent(in) :: n_vars
-        character(len=27), intent(in) :: vars
-        integer(4), dimension(n_vars), intent(in) :: var_names_idx
-        double precision, intent(in) :: alpha
-        double precision, intent(in) :: reduction_value_t
-        double precision, intent(in) :: length
 
         ! parent class constructor
         sponge_default%bc = bc(filenames_list)
 
-        call sponge_default%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
+        call sponge_default%init_members(bc_name, namelist_file)
 
         ! write(*, *) 'INFO: successfully called sponge default constructor'
 
@@ -222,24 +242,18 @@ contains
     !> Periodic constructor
 
     !> Calls bc periodic constructor and target constructor.
-    type(sponge) function sponge_year(filenames_list, bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length, &
-            start_time_string, end_time_string)
+    type(sponge) function sponge_year(bc_name, namelist_file, filenames_list, start_time_string, end_time_string)
 
+        character(len=3), intent(in) :: bc_name
+        character(len=7), intent(in) :: namelist_file
         character(len=22), intent(in) :: filenames_list
-        character(len=3) :: bc_name
-        integer, intent(in) :: n_vars
-        character(len=27), intent(in) :: vars
-        integer(4), dimension(n_vars), intent(in) :: var_names_idx
-        double precision, intent(in) :: alpha
-        double precision, intent(in) :: reduction_value_t
-        double precision, intent(in) :: length
         character(len=17), intent(in) :: start_time_string
         character(len=17), intent(in) :: end_time_string
 
         ! parent class constructor
         sponge_year%bc = bc(filenames_list, start_time_string, end_time_string)
 
-        call sponge_year%init_members(bc_name, n_vars, vars, var_names_idx, alpha, reduction_value_t, length)
+        call sponge_year%init_members(bc_name, namelist_file)
 
         ! write(*, *) 'INFO: successfully called sponge year constructor'
 
@@ -256,7 +270,7 @@ contains
 
         if (self%m_size > 0) then
             do i = 1, self%m_n_vars
-                call readnc_slice_double(self%get_file_by_index(idx), self%m_var_names_data(i), self%m_buffer)
+                call readnc_slice_double(self%get_file_by_index(idx), trim(self%m_var_names_data(i)), self%m_buffer)
                 do j = 1, self%m_size
                     self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
                         self%m_sponge_points(3, j), &
@@ -382,7 +396,7 @@ contains
     !! in the choice of the interested area.
     !! So far, only a rectangular area in the west boundary has been implemented.
     !> WARNING: sponge_t and sponge_vel will be overwritten every time the method is called.
-    subroutine apply_phys(self, lat, sponge_t, sponge_vel)
+    subroutine apply_phys(self, lon, sponge_t, sponge_vel)
 
         use modul_param, only: jpk, jpj, jpi
 
@@ -394,7 +408,7 @@ contains
         ! integer, parameter :: jpi = 1085
 
         class(sponge), intent(inout) :: self
-        double precision, dimension(jpj, jpi), intent(in) :: lat ! glamt
+        double precision, dimension(jpj, jpi), intent(in) :: lon ! glamt
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t ! spongeT
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel ! spongeVel
 
@@ -403,9 +417,9 @@ contains
 
         do i = 1, jpi
             do j = 1, jpj
-                if (lat(j, i) < self%m_length) then
+                if (lon(j, i) < self%m_length) then
                     sponge_t(j, i) = self%m_reduction_value_t
-                    reduction_value_vel = exp( -self%m_alpha * ((lat(j, i) - self%m_length)**2) )
+                    reduction_value_vel = exp( -self%m_alpha * ((lon(j, i) - self%m_length)**2) )
                     sponge_vel(:, j, i) = reduction_value_vel
                 endif
             enddo

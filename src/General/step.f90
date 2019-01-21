@@ -15,7 +15,7 @@ MODULE module_step
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      use bc_update_mod
+      use bc_handle_mod
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

@@ -1,4 +1,4 @@
-module bc_update_mod
+module bc_handle_mod
 
     use TIME_MANAGER
     use myalloc
@@ -77,4 +77,4 @@ contains
         
     end subroutine update_bc
 
-end module bc_update_mod
+end module bc_handle_mod

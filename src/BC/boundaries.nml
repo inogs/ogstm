@@ -1,0 +1,5 @@
+! name, type, namelist_file, filenames_list, periodic, nudging
+
+riv, RIV, riv.nml, files_namelist_riv.dat, T, T
+gib, SPO, gib.nml, files_namelist_gib.dat, T, F
+dar, OPE, dar.nml, files_namelist_dar.dat, T, F

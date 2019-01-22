@@ -84,7 +84,7 @@ SUBROUTINE ogstm_initialize()
      
       ! *********************************************
 
-      OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
+
 
       CALL mynode() !  Nodes selection
 
@@ -92,6 +92,7 @@ SUBROUTINE ogstm_initialize()
       lwp = narea.EQ.1
 
       IF(lwp) THEN
+          OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
           WRITE(numout,*) ' '
           WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
           WRITE(numout,*) '                  Geofisica Sperimentale'
@@ -350,7 +351,7 @@ SUBROUTINE ogstm_finalize()
 
       if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
 
-      CLOSE( numout ) ! others units are closed in mppstop
+      if(lwp) CLOSE( numout ) ! others units are closed in mppstop
       CLOSE( numnam )
 
       END SUBROUTINE ogstm_finalize

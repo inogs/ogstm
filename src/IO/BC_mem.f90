@@ -13,10 +13,7 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-       use sponge_mod
-       use rivers_mod
-       use hard_open_mod
-       use nudging_mod
+       use bc_mod
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -52,10 +49,10 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      type(rivers), pointer :: all_rivers => null()
-      type(sponge), pointer :: gibraltar_sponge => null()
-      type(nudging), pointer :: gibraltar => null()
-      type(hard_open), pointer :: dardanelles => null()
+      class(bc), pointer :: all_rivers => null()
+      class(bc), pointer :: gibraltar_sponge => null()
+      class(bc), pointer :: gibraltar => null()
+      class(bc), pointer :: dardanelles => null()
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

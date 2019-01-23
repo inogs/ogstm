@@ -24,6 +24,16 @@
       USE TIME_MANAGER
       USE mpi
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      use bc_handle_mod
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       IMPLICIT NONE
 
 ! local declarations
@@ -249,53 +259,57 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      allocate(all_rivers)
-      allocate(gibraltar_sponge)
-      allocate(gibraltar)
-      allocate(dardanelles)
+!      allocate(all_rivers)
+!      allocate(gibraltar_sponge)
+!      allocate(gibraltar)
+!      allocate(dardanelles)
+!
+!      all_rivers = rivers( &
+!          "files_namelist_riv.dat", &
+!          "riv", &
+!          6, &
+!          "N1p N3n N5s O3c O3h O2o", &
+!          (/ 2, 3, 6, 49, 50, 1 /), &
+!          DATESTART, &
+!          DATE__END &
+!          )
+!      gibraltar_sponge = sponge( &
+!          "files_namelist_gib.dat", &
+!          "gib", &
+!          7, &
+!          "O2o N1p N3n N5s O3c O3h N6r", &
+!          (/ 1, 2, 3, 6, 49, 50, 7 /), &
+!          4.0d0, &
+!          1.0d-6, &
+!          -7.5d0, &
+!          DATESTART, &
+!          DATE__END &
+!          )
+!      gibraltar = nudging( &
+!          gibraltar_sponge, &
+!          "bounmask.nc", &
+!          7, &
+!          "O2o N1p N3n N5s O3c O3h N6r", &
+!          (/ 1, 2, 3, 6, 49, 50, 7 /), &
+!          (/ 1.0d0, 1.0d0, 1.0d0, 1.0d0, 2.0d0, 2.0d0, 2.0d0 /), &
+!          jptra &
+!          )
+!      dardanelles = hard_open( &
+!          "files_namelist_ope.dat", &
+!          "ope", &
+!          5, &
+!          "N1p N3n N5s O3c O3h", &
+!          (/ 2, 3, 6, 49, 50 /), &
+!          jptra, &
+!          1, &
+!          600.0d0, &
+!          DATESTART, &
+!          DATE__END &
+!        )
 
-      all_rivers = rivers( &
-          "files_namelist_riv.dat", &
-          "riv", &
-          6, &
-          "N1p N3n N5s O3c O3h O2o", &
-          (/ 2, 3, 6, 49, 50, 1 /), &
-          DATESTART, &
-          DATE__END &
-          )
-      gibraltar_sponge = sponge( &
-          "files_namelist_gib.dat", &
-          "gib", &
-          7, &
-          "O2o N1p N3n N5s O3c O3h N6r", &
-          (/ 1, 2, 3, 6, 49, 50, 7 /), &
-          4.0d0, &
-          1.0d-6, &
-          -7.5d0, &
-          DATESTART, &
-          DATE__END &
-          )
-      gibraltar = nudging( &
-          gibraltar_sponge, &
-          "bounmask.nc", &
-          7, &
-          "O2o N1p N3n N5s O3c O3h N6r", &
-          (/ 1, 2, 3, 6, 49, 50, 7 /), &
-          (/ 1.0d0, 1.0d0, 1.0d0, 1.0d0, 2.0d0, 2.0d0, 2.0d0 /), &
-          jptra &
-          )
-      dardanelles = hard_open( &
-          "files_namelist_ope.dat", &
-          "ope", &
-          5, &
-          "N1p N3n N5s O3c O3h", &
-          (/ 2, 3, 6, 49, 50 /), &
-          jptra, &
-          1, &
-          600.0d0, &
-          DATESTART, &
-          DATE__END &
-        )
+      all_rivers => bc_init("riv, RIV, riv.nml, files_namelist_riv.dat, T, F")
+      gibraltar => bc_init("gib, SPO, gib.nml, files_namelist_gib.dat, T, T")
+      dardanelles => bc_init("dar, OPE, dar.nml, files_namelist_dar.dat, T, F")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

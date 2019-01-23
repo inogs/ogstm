@@ -142,17 +142,17 @@ MODULE module_step
 !  ---------------------------------------------------------------------
 
       bc_tin_partTime = MPI_WTIME()
-      call update_bc(all_rivers, datestring)
+      call bc_update(all_rivers, datestring)
       bc_tin_partTime = MPI_WTIME()    - bc_tin_partTime
       bc_tin_TotTime  = bc_tin_TotTime + bc_tin_partTime
 
       bc_gib_partTime = MPI_WTIME()
-      call update_bc(gibraltar, datestring)
+      call bc_update(gibraltar, datestring)
       bc_gib_partTime = MPI_WTIME()    - bc_gib_partTime
       bc_gib_TotTime  = bc_gib_TotTime + bc_gib_partTime
 
       bc_dar_partTime = MPI_WTIME()
-      call update_bc(dardanelles, datestring)
+      call bc_update(dardanelles, datestring)
       bc_dar_partTime = MPI_WTIME()    - bc_dar_partTime
       bc_dar_TotTime  = bc_dar_TotTime + bc_dar_partTime
 
@@ -341,7 +341,7 @@ MODULE module_step
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call dardanelles%set_null_flux(jptra, tra)
+      ! call dardanelles%set_null_flux(jptra, tra)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

@@ -9,6 +9,10 @@
 module nudging_mod
 
     use bc_mod
+    use rivers_mod
+    use sponge_mod
+    use hard_open_mod
+    use bc_aux_mod
 
     implicit none
 
@@ -370,8 +374,32 @@ contains
 
         class(nudging), intent(inout) :: self
 
-        ! just deassociate pointer (destructor will be invoked outside)
+        class(bc), pointer :: bc_ptr ! auxiliary pointer to guarantee polymorphism
+
+        bc_ptr => self%m_bc_no_nudging
+
+        ! First call bc_no_nudging destructor according to its type.
+        ! Only derived types (but not nudging (yet)) are supported
+        select type (bc_ptr)
+
+            class is (rivers)
+
+                call bc_ptr%rivers_destructor()
+
+            class is (sponge)
+
+                call bc_ptr%sponge_destructor()
+
+            class is (hard_open)
+
+                call bc_ptr%hard_open_destructor()
+
+        end select
+
+        ! Then deallocate and nullyfy bc_no_nudging
+        deallocate(self%m_bc_no_nudging)
         nullify(self%m_bc_no_nudging)
+
         ! write(*, *) 'INFO: m_bc_no_nudging deassociated'
 
         if (allocated(self%m_nudging_vars)) then

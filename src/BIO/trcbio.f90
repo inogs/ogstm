@@ -167,7 +167,7 @@
 
       DO ji=1,jpi
       DO jj=1,jpj
-      if (.not.(bfmmask(1,jj,ji))) CYCLE
+      if (bfmmask(1,jj,ji) == 0) CYCLE
       bottom = mbathy(jj,ji)
 
 

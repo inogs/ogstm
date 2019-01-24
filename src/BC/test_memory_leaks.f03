@@ -1,36 +1,33 @@
 program test_memory_leaks
 
-    use bc_data_mod
+    use bc_mod
+    use sponge_mod
+    use nudging_mod
 
     implicit none
 
-    type(bc_data), pointer :: m_bc_data => null()
-    character(len=24), dimension(4) :: reference_list
-    character(len=24) :: tmp_file
-    integer :: i ! counter
+    type(sponge), pointer :: gibraltar_no_nudging => null()
+    type(nudging), pointer :: gibraltar_nudging => null()
+    class(bc), pointer :: gibraltar => null()
+    character(len=27), parameter :: reference = "BC/GIB_20161115-12:00:00.nc"
 
-    reference_list = [ &
-        "GIB_20170215-12:00:00.nc", &
-        "GIB_20170515-12:00:00.nc", &
-        "GIB_20170815-12:00:00.nc", &
-        "GIB_20171115-12:00:00.nc" &
-        ]
+    allocate(gibraltar_no_nudging)
+    gibraltar_no_nudging = sponge("gib", "gib.nml", "files_namelist_gib.dat")
+    allocate(gibraltar_nudging)
+    gibraltar_nudging = nudging(gibraltar_no_nudging, "gib.nml", 51)
+    gibraltar => gibraltar_nudging
 
-    allocate(m_bc_data)
-    m_bc_data = bc_data("files_namelist.dat")
+    ! do something
+    if (gibraltar%get_file_by_index(1) == reference) then
+        write(*, *) 'INFO: gibraltar initialized correctly'
+    else
+        write(*, *) 'WARN: gibraltar initialization failed'
+    endif
 
-    do i = 1, 4
-        tmp_file = m_bc_data%get_file_by_index(i)
-        if (tmp_file .eq. reference_list(i)) then
-            write(*, *) 'PASSED'
-        else
-            write(*, *) 'FAILED'
-        endif
-    enddo
-
-    deallocate(m_bc_data)
-    write(*, *) 'INFO: m_bc_data deallocated'
-    nullify(m_bc_data)
-    write(*, *) 'INFO: m_bc_data deassociated'
+    ! deallocate
+    select type(gibraltar)
+        class is (nudging)
+            call gibraltar%nudging_destructor()
+    end select
 
 end program test_memory_leaks

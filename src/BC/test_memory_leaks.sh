@@ -1,7 +1,7 @@
 #!/bin/bash
 
-LD_BC_DIR="./OGSTM_BUILD/CMakeFiles/ogstm_lib.dir/src/BC/"
-LD_General_DIR="./OGSTM_BUILD/CMakeFiles/ogstm_lib.dir/src/General/"
+LD_BC_DIR="../../../OGSTM_BUILD/CMakeFiles/ogstm_lib.dir/src/BC/"
+LD_General_DIR="../../../OGSTM_BUILD/CMakeFiles/ogstm_lib.dir/src/General/"
 
 gfortran -c -std=f2003 -I./OGSTM_BUILD/ -o test_memory_leaks.o test_memory_leaks.f03
 gfortran -L${NETCDFF_LIB} -lnetcdff \

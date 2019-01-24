@@ -43,6 +43,16 @@ MODULE OGSTM
       USE DA_MEM
 #endif
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      use bc_handle_mod
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
 IMPLICIT NONE
 
 CONTAINS
@@ -353,10 +363,9 @@ SUBROUTINE ogstm_finalize()
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call all_rivers%rivers_destructor()
-      call gibraltar_sponge%sponge_destructor()
-      call gibraltar%nudging_destructor()
-      call dardanelles%hard_open_destructor()
+      call bc_destructor_wrapper(all_rivers)
+      call bc_destructor_wrapper(gibraltar)
+      call bc_destructor_wrapper(dardanelles)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

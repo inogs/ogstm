@@ -14,6 +14,7 @@ contains
 
 
 
+    !> Just a parser for the string contained in 'boundaries.nml'
     subroutine bc_string_parser(bc_string, bc_name, bc_type, namelist_file, filenames_list, periodic, nudged)
 
         character(len=47), intent(in) :: bc_string
@@ -80,10 +81,10 @@ contains
 
 
     !> Boundary conditions factory method
-    function bc_init(bc_string) result(bc_ptr)
+    function bc_init(bc_string) result(bc_iter)
 
         character(len=47), intent(in) :: bc_string
-        class(bc), pointer :: bc_ptr
+        class(bc), pointer :: bc_iter
 
         character(len=3) :: bc_name
         character(len=1) :: bc_type
@@ -93,10 +94,17 @@ contains
         logical :: nudged
 
         ! internal bc pointers are nullified every time the function is called
+        ! ideally, one should have a single pointer of class bc,
+        ! the issue with this is that function like constructors cannot be used;
+        ! only standard methods can be used and a separate 'init' method should be provided.
+        ! Anyway this is not a big deal, since it requires only the declaration of one pointer per class;
+        ! the case construct was still necessary.
         type(rivers), pointer :: m_bc_rivers => null()
         type(sponge), pointer :: m_bc_sponge => null()
         type(hard_open), pointer :: m_bc_hard_open => null()
         type(nudging), pointer :: m_bc_nudging => null()
+
+        bc_iter => null()
 
         call bc_string_parser(bc_string, bc_name, bc_type, namelist_file, filenames_list, periodic, nudged)
 
@@ -116,9 +124,9 @@ contains
                 if (nudged) then
                     allocate(m_bc_nudging)
                     m_bc_nudging = nudging(m_bc_rivers, namelist_file, jptra) ! jptra is a global variable
-                    bc_ptr => m_bc_nudging
+                    bc_iter => m_bc_nudging
                 else
-                    bc_ptr => m_bc_rivers
+                    bc_iter => m_bc_rivers
                 endif
 
             case("C") ! closed
@@ -139,9 +147,9 @@ contains
                 if (nudged) then
                     allocate(m_bc_nudging)
                     m_bc_nudging = nudging(m_bc_sponge, namelist_file, jptra) ! jptra is a global variable
-                    bc_ptr => m_bc_nudging
+                    bc_iter => m_bc_nudging
                 else
-                    bc_ptr => m_bc_sponge
+                    bc_iter => m_bc_sponge
                 endif
 
             case("O") ! hard-open
@@ -157,14 +165,50 @@ contains
                 if (nudged) then
                     allocate(m_bc_nudging)
                     m_bc_nudging = nudging(m_bc_hard_open, namelist_file, jptra) ! jptra is a global variable
-                    bc_ptr => m_bc_nudging
+                    bc_iter => m_bc_nudging
                 else
-                    bc_ptr => m_bc_hard_open
+                    bc_iter => m_bc_hard_open
                 endif
 
         end select
 
     end function bc_init
+
+
+
+    subroutine bc_destructor_wrapper(bc_iter)
+
+        class(bc), target, intent(inout) :: bc_iter
+
+        class(bc), pointer :: m_bc => null()
+
+        m_bc => bc_iter
+
+        select type (m_bc)
+
+            type is (bc)
+
+                call m_bc%bc_destructor()
+
+            class is (rivers)
+
+                call m_bc%rivers_destructor()
+
+            class is (sponge)
+
+                call m_bc%sponge_destructor()
+
+            class is (hard_open)
+
+                call m_bc%hard_open_destructor()
+
+            class is (nudging)
+
+                call m_bc%nudging_destructor()
+
+        end select
+
+    end subroutine bc_destructor_wrapper
 
 
 

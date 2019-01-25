@@ -18,14 +18,12 @@ contains
     subroutine bc_string_parser(bc_string, bc_name, bc_type, namelist_file, filenames_list, periodic, nudged)
 
         character(len=47), intent(in) :: bc_string
-
         character(len=3), intent(out) :: bc_name
         character(len=1), intent(out) :: bc_type
         character(len=7), intent(out) :: namelist_file
         character(len=22), intent(out) :: filenames_list
         logical, intent(out) :: periodic
         logical, intent(out) :: nudged
-
         character(len=3) :: bc_type_str
         character(len=1) :: periodic_str
         character(len=1) :: nudged_str
@@ -85,7 +83,6 @@ contains
 
         character(len=47), intent(in) :: bc_string
         class(bc), pointer :: bc_iter
-
         character(len=3) :: bc_name
         character(len=1) :: bc_type
         character(len=7) :: namelist_file
@@ -179,33 +176,21 @@ contains
     subroutine bc_destructor_wrapper(bc_iter)
 
         class(bc), target, intent(inout) :: bc_iter
-
         class(bc), pointer :: m_bc => null()
 
         m_bc => bc_iter
 
         select type (m_bc)
-
             type is (bc)
-
                 call m_bc%bc_destructor()
-
             class is (rivers)
-
                 call m_bc%rivers_destructor()
-
             class is (sponge)
-
                 call m_bc%sponge_destructor()
-
             class is (hard_open)
-
                 call m_bc%hard_open_destructor()
-
             class is (nudging)
-
                 call m_bc%nudging_destructor()
-
         end select
 
     end subroutine bc_destructor_wrapper

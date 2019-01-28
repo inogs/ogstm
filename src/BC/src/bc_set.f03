@@ -48,6 +48,7 @@ contains
 
         ! open file
         open(unit=file_unit, file=bcs_namelist)
+        write(*, *) 'INFO: reading from file ', bcs_namelist
 
         ! get number of boundaries and allocate memory accordingly
         read(file_unit, *) bc_set_default%m_n_bcs

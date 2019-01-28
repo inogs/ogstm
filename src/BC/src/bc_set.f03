@@ -23,9 +23,9 @@ module bc_set_mod
         integer :: m_n_bcs
         type(bc_container), allocatable, dimension(:) :: m_bcs
     contains
-        !procedure :: update
-        !procedure :: apply
-        !procedure :: apply_phys
+        procedure :: update
+        procedure :: apply
+        procedure :: apply_phys
         procedure :: bc_set_destructor
     end type bc_set
 
@@ -64,6 +64,63 @@ contains
         close(unit=file_unit)
 
     end function bc_set_default
+
+
+
+    subroutine update(self, current_time_string)
+
+        class(bc_set), intent(inout) :: self
+        character(len=17), intent(in) :: current_time_string
+        integer :: i
+
+        do i = 1, self%m_n_bcs
+            call bc_update(self%m_bcs(i)%content, current_time_string)
+        enddo
+
+    end subroutine update
+
+
+
+    subroutine apply(self, e3t, trb, tra)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        class(bc_set), intent(inout) :: self
+        double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+        integer :: i
+
+        do i = 1, self%m_n_bcs
+            call self%m_bcs(i)%content%apply(e3t, jptra, trb, tra)
+        enddo
+
+    end subroutine apply
+
+
+
+    subroutine apply_phys(self, lon, sponge_t, sponge_vel, internal_sponging)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        class(bc_set), intent(inout) :: self
+        double precision, dimension(jpj, jpi), intent(in) :: lon
+        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+        logical, intent(in) :: internal_sponging ! internal_sponging is set from global namelist file
+        integer :: i
+
+        if (internal_sponging) then
+            do i = 1, self%m_n_bcs
+                call self%m_bcs(i)%content%apply_phys(lon, sponge_t, sponge_vel)
+            enddo
+        endif
+
+    end subroutine apply_phys
 
 
 

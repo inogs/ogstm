@@ -89,8 +89,8 @@ contains
 
         class(bc_set), intent(inout) :: self
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
-        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
-        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+        double precision, dimension(jpk, jpj, jpi, jptra), intent(in) :: trb
+        double precision, dimension(jpk, jpj, jpi, jptra), intent(inout) :: tra
         integer :: i
 
         do i = 1, self%m_n_bcs

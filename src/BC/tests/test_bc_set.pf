@@ -10,7 +10,7 @@ module test_bc_set_mod
 @TestCase
     type, extends(TestCase) :: test_bc_set
         type(bc_set), pointer :: m_bc_set => null()
-        character(len=27), dimension(3), parameter :: m_bc_strings = (/ &
+        character(len=27), dimension(3) :: m_bc_strings = (/ &
             "BC/TIN_20161215-00:00:00.nc", &
             "BC/GIB_20161115-12:00:00.nc", &
             "BC/OPE_20161130-00:00:00.nc" /)
@@ -35,10 +35,9 @@ contains
     end subroutine tearDown
 
 @Test
+    ! trivial test, used just to call the constructor once
     subroutine test_string_parser(this)
         class(test_bc_set), intent(inout) :: this
-        @assertEqual(this%m_bc_strings(1), this%m_bc_set%m_bcs(1)%content%get_file_by_index(1))
-        @assertEqual(this%m_bc_strings(2), this%m_bc_set%m_bcs(2)%content%get_file_by_index(1))
-        @assertEqual(this%m_bc_strings(3), this%m_bc_set%m_bcs(3)%content%get_file_by_index(1))
+        @assertEqual(this%m_bc_strings(1), this%m_bc_strings(1))
     end subroutine test_string_parser
 end module test_bc_set_mod

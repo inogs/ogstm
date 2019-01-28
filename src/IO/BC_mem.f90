@@ -13,7 +13,7 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-       use bc_mod
+       use bc_set_mod
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -49,10 +49,7 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      class(bc), pointer :: all_rivers => null()
-      class(bc), pointer :: gibraltar_sponge => null()
-      class(bc), pointer :: gibraltar => null()
-      class(bc), pointer :: dardanelles => null()
+      type(bc_set), pointer :: boundaries => null()
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

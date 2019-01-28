@@ -28,7 +28,7 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      use bc_handle_mod
+      use bc_set_mod
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -259,9 +259,8 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      all_rivers => bc_init("riv, RIV, riv.nml, files_namelist_riv.dat, T, F")
-      gibraltar => bc_init("gib, SPO, gib.nml, files_namelist_gib.dat, T, T")
-      dardanelles => bc_init("dar, OPE, dar.nml, files_namelist_dar.dat, T, F")
+      allocate(boundaries)
+      boundaries = bc_set("boundaries.nml")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

@@ -47,7 +47,7 @@ MODULE OGSTM
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      use bc_handle_mod
+      use bc_set_mod
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -363,9 +363,7 @@ SUBROUTINE ogstm_finalize()
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call bc_destructor_wrapper(all_rivers)
-      call bc_destructor_wrapper(gibraltar)
-      call bc_destructor_wrapper(dardanelles)
+      call boundaries%bc_set_destructor()
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

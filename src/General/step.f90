@@ -15,7 +15,7 @@ MODULE module_step
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      use bc_handle_mod
+      use bc_set_mod
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -141,20 +141,10 @@ MODULE module_step
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      bc_tin_partTime = MPI_WTIME()
-      call bc_update(all_rivers, datestring)
-      bc_tin_partTime = MPI_WTIME()    - bc_tin_partTime
-      bc_tin_TotTime  = bc_tin_TotTime + bc_tin_partTime
-
-      bc_gib_partTime = MPI_WTIME()
-      call bc_update(gibraltar, datestring)
-      bc_gib_partTime = MPI_WTIME()    - bc_gib_partTime
-      bc_gib_TotTime  = bc_gib_TotTime + bc_gib_partTime
-
-      bc_dar_partTime = MPI_WTIME()
-      call bc_update(dardanelles, datestring)
-      bc_dar_partTime = MPI_WTIME()    - bc_dar_partTime
-      bc_dar_TotTime  = bc_dar_TotTime + bc_dar_partTime
+      !bc_tin_partTime = MPI_WTIME()
+      call boundaries%update(datestring)
+      !bc_tin_partTime = MPI_WTIME()    - bc_tin_partTime
+      !bc_tin_TotTime  = bc_tin_TotTime + bc_tin_partTime
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -309,9 +299,7 @@ MODULE module_step
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call all_rivers%apply(e3t, jptra, trb, tra)
-      call gibraltar%apply(e3t, jptra, trb, tra)
-      call dardanelles%apply(e3t, jptra, trb, tra)
+      call boundaries%apply(e3t, trb, tra)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

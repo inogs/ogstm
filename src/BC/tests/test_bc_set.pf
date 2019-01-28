@@ -1,0 +1,33 @@
+module test_bc_set_mod
+
+    use bc_set_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_bc_set
+
+@TestCase
+    type, extends(TestCase) :: test_bc_set
+        type(bc_set), pointer :: m_bc_set => null()
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_bc_set
+
+contains
+
+    subroutine setUp(this)
+        class(test_bc_set), intent(inout) :: this
+        allocate(this%m_bc_set)
+        this%m_bc_set = bc_set("boundaries.nml")
+    end subroutine setUp
+
+    subroutine tearDown(this)
+        class(test_bc_set), intent(inout) :: this
+        call this%m_bc_set%bc_set_destructor()
+        deallocate(this%m_bc_set)
+        nullify(this%m_bc_set)
+    end subroutine tearDown
+
+end module test_bc_set_mod

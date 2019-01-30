@@ -2,7 +2,12 @@
 MODULE ogstm_mpi_module
 
 #ifdef ExecDA
+#include <petscversion.h>
+#if PETSC_VERSION_GE(3,8,0)
+#include "petsc/finclude/petscvec.h"
+#else
 #include <petsc/finclude/petscvecdef.h>
+#endif
 #endif
 
 USE myalloc

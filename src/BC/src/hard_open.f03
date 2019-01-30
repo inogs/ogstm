@@ -426,20 +426,61 @@ contains
         integer, intent(in) :: n_tracers
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
-        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k
+        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k, idx_i_neigh, idx_j_neigh, idx_k_neigh
         double precision :: z_tracer
 
         if (self%m_size > 0) then
+
+            ! First loop: provided variables.
+            ! Values are taken from the data input and set through a strong nudging with a very small damping factor
+            ! (which anyway is set from the boundary namelist)
             do i = 1, self%m_n_vars
+
                 idx_tracer = self%m_var_names_idx(i)
+
                 do j = 1, self%m_size
+
                     idx_i = self%m_hard_open_points(1, j)
                     idx_j = self%m_hard_open_points(2, j)
                     idx_k = self%m_hard_open_points(3, j)
-                    z_tracer = self%m_damping_factor * (self%m_values(j, i) - trb(idx_k, idx_j, idx_i, idx_tracer))
+
+                    z_tracer = self%m_damping_factor * ( &
+                        self%m_values(j, i) - &
+                        trb(idx_k, idx_j, idx_i, idx_tracer) &
+                        )
                     tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
+
                 enddo
+
             enddo
+
+            ! Second loop: missing variables.
+            ! Values are taken from the neighbour cells and set through a strong nudging with a very small damping factor
+            ! (which is the same used before)
+            do i = 1, self%m_n_missing_vars
+
+                idx_tracer = self%m_missing_var_names_idx(i)
+
+                do j = 1, self%m_size
+
+                    idx_i = self%m_hard_open_points(1, j)
+                    idx_j = self%m_hard_open_points(2, j)
+                    idx_k = self%m_hard_open_points(3, j)
+
+                    idx_i_neigh = self%m_neighbors(1, j)
+                    idx_j_neigh = self%m_neighbors(2, j)
+                    idx_k_neigh = self%m_neighbors(3, j)
+
+                    z_tracer = self%m_damping_factor * ( &
+                        trb(idx_k_neigh, idx_j_neigh, idx_i_neigh, idx_tracer) - &
+                        trb(idx_k, idx_j, idx_i, idx_tracer) &
+                        )
+                    tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
+
+                enddo
+
+            enddo
+
         endif
 
     end subroutine apply

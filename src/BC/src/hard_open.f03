@@ -43,8 +43,6 @@ module hard_open_mod
         procedure :: apply
         procedure :: apply_nudging
         procedure :: apply_phys
-        ! new method for the hard open boundary
-        procedure :: set_null_flux
         ! destructor
         procedure :: hard_open_destructor
 
@@ -534,51 +532,6 @@ contains
         write(*, *) 'WARN: sponge_t and sponge_val are left untouched by hard_open class'
 
     end subroutine apply_phys
-
-
-
-    !> New method developed for the open boundary
-
-    !> The aim is to set the concentrations of the missing tracers on the open boundary cells
-    !! to the same values of the neighbor cells, in order to guarantee a null flux condition.
-    !! This method is supposed to be called immediately before the call to the advection subroutine,
-    !! in order to have no advection for the missing tracers at the boundary.
-    subroutine set_null_flux(self, n_tracers, tra)
-
-        use modul_param, only: jpk, jpj, jpi
-
-        implicit none
-
-        ! TO DO: to be removed. Find a way to enable both testing and production code.
-        ! integer, parameter :: jpk = 125
-        ! integer, parameter :: jpj = 380
-        ! integer, parameter :: jpi = 1085
-
-        class(hard_open), intent(inout) :: self
-        integer, intent(in) :: n_tracers
-        double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
-        integer :: i, j, idx_tracer
-
-        if (self%m_size > 0) then
-            do i = 1, self%m_n_missing_vars
-                idx_tracer = self%m_missing_var_names_idx(i)
-                do j = 1, self%m_size
-                    tra( &
-                        self%m_hard_open_points(3, j), &
-                        self%m_hard_open_points(2, j), &
-                        self%m_hard_open_points(1, j), &
-                        idx_tracer &
-                    ) = tra( &
-                        self%m_neighbors(3, j), &
-                        self%m_neighbors(2, j), &
-                        self%m_neighbors(1, j), &
-                        idx_tracer &
-                    )
-                enddo
-            enddo
-        endif
-
-    end subroutine set_null_flux
 
 
 

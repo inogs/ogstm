@@ -325,16 +325,6 @@ MODULE module_step
 
       ! CALL checkValues
 
-! ----------------------------------------------------------------------
-!  BEGIN BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
-      ! call dardanelles%set_null_flux(jptra, tra)
-
-! ----------------------------------------------------------------------
-!  END BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
       CALL trcnxt ! tracers: fields at next time step
       
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop

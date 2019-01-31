@@ -4,6 +4,7 @@
 !! It features an array of pointers to bc class objects, containing all the boundary conditions.
 module bc_set_mod
 
+    use myalloc, only: lwp
     use bc_mod
     use rivers_mod
     use sponge_mod
@@ -49,7 +50,7 @@ contains
 
         ! open file
         open(unit=file_unit, file=bcs_namelist)
-        write(*, *) 'INFO: reading from file ', bcs_namelist
+        if (lwp) write(*, *) 'INFO: reading from file ', bcs_namelist
 
         ! get number of boundaries and allocate memory accordingly
         read(file_unit, *) bc_set_default%m_n_bcs
@@ -58,7 +59,7 @@ contains
         ! get info for each boundary and initialize boundaries accordingly
         do i = 1, bc_set_default%m_n_bcs
             read(file_unit, *) bc_string
-            write(*, *) 'INFO: initializing boundary with bc_string = ', bc_string
+            if (lwp) write(*, *) 'INFO: initializing boundary with bc_string = ', bc_string
             bc_set_default%m_bcs(i)%content => bc_init(bc_string)
         enddo
 

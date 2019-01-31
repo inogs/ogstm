@@ -243,7 +243,7 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
+      call boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

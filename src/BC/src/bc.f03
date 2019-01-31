@@ -291,7 +291,7 @@ contains
         integer, intent(in) :: n_vars_dia_2d
         double precision, dimension(n_vars_dia_2d, jpj, jpi), intent(inout) :: tra_dia_2d
 
-        write(*, *) 'WARN: base class does not implement this method. Only hard open overrides it'
+        ! write(*, *) 'WARN: base class does not implement this method. Only hard open overrides it'
 
     end subroutine fix_diagnostic_vars
 

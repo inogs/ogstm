@@ -350,7 +350,6 @@
 #    endif
 
       LOGICAL IS_FREE_SURFACE
-      LOGICAL lrivers   ! activates rivers
       LOGICAL lbfm      ! activates bfm model
       LOGICAL latmosph  ! activates atmospheric deposition
 

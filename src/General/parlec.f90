@@ -37,7 +37,7 @@
 
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,ladv, lhdf,lrivers,lsbc, lbfm, lzdf, lsnu, lhtp, latmosph, &
+      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, lhtp, latmosph, &
       ahtrb0,trcrat,ahtrc0,vsed,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
       NAMELIST/General_IO/ nwritetrc, freq_ave_phys, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift
@@ -170,7 +170,6 @@
           WRITE(numout,*) ' lsnu  calls or not snutel                         = ', lsnu
           WRITE(numout,*) ' lhtp  calls or not hard_tissue_pump               = ', lhtp
           WRITE(numout,*) ' lsbc  calls or not trcsbc                         = ', lsbc
-          WRITE(numout,*) ' activation of rivers                              = ', lrivers
           WRITE(numout,*) ' activation atmospheric deposition                 = ', latmosph
           WRITE(numout,*) ' activation of bfm                                 = ', lbfm
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0

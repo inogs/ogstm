@@ -43,6 +43,7 @@ module hard_open_mod
         procedure :: apply
         procedure :: apply_nudging
         procedure :: apply_phys
+        procedure :: fix_diagnostic_vars ! overridden only by hard open class
         ! destructor
         procedure :: hard_open_destructor
 
@@ -532,6 +533,55 @@ contains
         write(*, *) 'WARN: sponge_t and sponge_val are left untouched by hard_open class'
 
     end subroutine apply_phys
+
+
+
+    !> Overridden only by hard_open class
+
+    !> It is supposed to assign values to the two diagnostic variables matrixes
+    !> in the open boundary cells, where by default bfm is not executed.
+    !> Values are set to be equal to the values of the neighbor cells.
+    subroutine fix_diagnostic_vars(self, n_vars_dia, tra_dia, n_vars_dia_2d, tra_dia_2d)
+
+        use modul_param, only: jpk, jpj, jpi
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+        ! integer, parameter :: jpk = 125
+        ! integer, parameter :: jpj = 380
+        ! integer, parameter :: jpi = 1085
+
+        class(hard_open), intent(inout) :: self
+        integer, intent(in) :: n_vars_dia
+        double precision, dimension(n_vars_dia, jpk, jpj, jpi), intent(inout) :: tra_dia
+        integer, intent(in) :: n_vars_dia_2d
+        double precision, dimension(n_vars_dia_2d, jpj, jpi), intent(inout) :: tra_dia_2d
+        integer :: i, j, idx_i, idx_j, idx_k, idx_i_neigh, idx_j_neigh, idx_k_neigh
+
+        do i = 1, self%m_size
+
+            idx_i = self%m_hard_open_points(1, i)
+            idx_j = self%m_hard_open_points(2, i)
+            idx_k = self%m_hard_open_points(3, i)
+
+            idx_i_neigh = self%m_neighbors(1, i)
+            idx_j_neigh = self%m_neighbors(2, i)
+            idx_k_neigh = self%m_neighbors(3, i)
+
+            ! Set contributes on open boundary points equal to those on neighbor points for 3d matrix
+            do j = 1, n_vars_dia
+                tra_dia(j, idx_k, idx_j, idx_i) = tra_dia(j, idx_k_neigh, idx_j_neigh, idx_i_neigh)
+            enddo
+
+            ! Set contributes on open boundary points equal to those on neighbor points for 2d matrix
+            do j = 1, n_vars_dia_2d
+                tra_dia_2d(j, idx_j, idx_i) = tra_dia_2d(j, idx_j_neigh, idx_i_neigh)
+            enddo
+
+        enddo
+
+    end subroutine fix_diagnostic_vars
 
 
 

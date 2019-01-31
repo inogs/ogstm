@@ -290,7 +290,6 @@ contains
         double precision, dimension(n_vars_dia, jpk, jpj, jpi), intent(inout) :: tra_dia
         integer, intent(in) :: n_vars_dia_2d
         double precision, dimension(n_vars_dia_2d, jpj, jpi), intent(inout) :: tra_dia_2d
-        integer :: i, j, idx_i, idx_j, idx_k, idx_i_neigh, idx_j_neigh, idx_k_neigh
 
         write(*, *) 'WARN: base class does not implement this method. Only hard open overrides it'
 

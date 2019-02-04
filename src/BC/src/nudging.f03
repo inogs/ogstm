@@ -397,7 +397,8 @@ contains
         end select
 
         ! Then deallocate and nullyfy bc_no_nudging
-        deallocate(self%m_bc_no_nudging)
+        ! WARN: following line has been commented due tu a bug of the Intel compiler
+        ! deallocate(self%m_bc_no_nudging)
         nullify(self%m_bc_no_nudging)
 
         ! write(*, *) 'INFO: m_bc_no_nudging deassociated'

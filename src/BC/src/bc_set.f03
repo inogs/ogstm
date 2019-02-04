@@ -153,6 +153,7 @@ contains
 
         do i = 1, self%m_n_bcs
             call bc_destructor_wrapper(self%m_bcs(i)%content)
+            if (lwp) write(*, *) 'WARN: possible memory leaks in nudging destructor!'
         enddo
 
         deallocate(self%m_bcs)

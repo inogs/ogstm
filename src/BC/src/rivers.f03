@@ -252,12 +252,28 @@ contains
         integer :: i, j
 
         if (self%m_size > 0) then
-            do i = 1, self%m_n_vars
-                call readnc_slice_double_2d(self%get_file_by_index(idx), trim(self%m_var_names_data(i)), self%m_buffer)
-                do j = 1, self%m_size
-                    self%m_values_dtatrc(2, j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
+
+            if (self%const_data()) then
+
+                ! directly operate on self%m_values
+                do i = 1, self%m_n_vars
+                    call readnc_slice_double_2d(self%get_file_by_index(idx), trim(self%m_var_names_data(i)), self%m_buffer)
+                    do j = 1, self%m_size
+                        self%m_values(j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
+                    enddo
                 enddo
-            enddo
+
+            else
+                
+                do i = 1, self%m_n_vars
+                    call readnc_slice_double_2d(self%get_file_by_index(idx), trim(self%m_var_names_data(i)), self%m_buffer)
+                    do j = 1, self%m_size
+                        self%m_values_dtatrc(2, j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
+                    enddo
+                enddo
+
+            endif
+
         endif
 
     end subroutine load
@@ -271,11 +287,17 @@ contains
         integer :: i, j
 
         if (self%m_size > 0) then
-            do i = 1, self%m_n_vars
-                do j = 1, self%m_size
-                    self%m_values_dtatrc(1, j, i) = self%m_values_dtatrc(2, j, i)
+            
+            if (.not.(self%const_data())) then
+                
+                do i = 1, self%m_n_vars
+                    do j = 1, self%m_size
+                        self%m_values_dtatrc(1, j, i) = self%m_values_dtatrc(2, j, i)
+                    enddo
                 enddo
-            enddo
+
+            endif
+
         endif
 
     end subroutine swap
@@ -290,11 +312,18 @@ contains
         integer :: i, j
 
         if (self%m_size > 0) then
-            do i = 1, self%m_n_vars
-                do j = 1, self%m_size
-                    self%m_values(j, i) = (1.0 - weight) * self%m_values_dtatrc(1, j, i) + weight * self%m_values_dtatrc(2, j, i)
+
+            if (.not.(self%const_data())) then
+                
+                do i = 1, self%m_n_vars
+                    do j = 1, self%m_size
+                        self%m_values(j, i) = &
+                            (1.0 - weight) * self%m_values_dtatrc(1, j, i) + weight * self%m_values_dtatrc(2, j, i)
+                    enddo
                 enddo
-            enddo
+
+            endif
+
         endif
 
     end subroutine actualize

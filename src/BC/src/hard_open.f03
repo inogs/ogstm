@@ -424,7 +424,8 @@ contains
                 
                 do i = 1, self%m_n_vars
                     do j = 1, self%m_size
-                        self%m_values(j, i) = (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
+                        self%m_values(j, i) = &
+                            (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
                     enddo
                 enddo
 

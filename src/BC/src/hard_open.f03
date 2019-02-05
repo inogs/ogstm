@@ -394,7 +394,7 @@ contains
         if (self%m_size > 0) then
 
             ! if const_data(), do nothing
-            if (.not(self%const_data())) then
+            if (.not.(self%const_data())) then
                 
                 do i = 1, self%m_n_vars
                     do j = 1, self%m_size
@@ -420,7 +420,7 @@ contains
         if (self%m_size > 0) then
 
             ! if const_data(), do nothing
-            if (.not(self%const_data())) then
+            if (.not.(self%const_data())) then
                 
                 do i = 1, self%m_n_vars
                     do j = 1, self%m_size

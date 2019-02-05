@@ -16,6 +16,7 @@ module bc_data_mod
     type bc_data
         ! file list related members
         integer :: m_n_files
+        logical :: m_const ! true when a single file is provided, only for periodic files
         character(len=27), allocatable, dimension(:) :: m_files
         character(len=17), allocatable, dimension(:) :: m_time_strings
         ! time list related members
@@ -27,6 +28,7 @@ module bc_data_mod
         logical :: m_new_interval
     contains
         procedure :: get_file_by_index
+        procedure :: const
         procedure :: get_prev_idx
         procedure :: get_next_idx
         procedure :: set_current_interval
@@ -51,6 +53,7 @@ contains
     type(bc_data) function bc_data_empty()
 
         bc_data_empty%m_n_files = 0
+        bc_data_empty%m_const = .false. ! always false for empty constructor
         bc_data_empty%m_n_times = 0
         bc_data_empty%m_prev_idx = 0
         bc_data_empty%m_next_idx = 0
@@ -77,6 +80,8 @@ contains
         character(len=22), intent(in) :: filenames_list
         integer, parameter :: file_unit = 100
         integer :: i ! counter
+
+        bc_data_default%m_const = .false. ! always false for default constructor
 
         ! open file
         open(unit=file_unit, file=filenames_list)
@@ -141,6 +146,13 @@ contains
         allocate(bc_data_year%m_files(bc_data_year%m_n_files))
         allocate(bc_data_year%m_time_strings(bc_data_year%m_n_files))
         
+        ! check wether periodic boundary data are constant or not
+        if (bc_data_year%m_n_files == 1) then
+            bc_data_year%m_const = .true.
+        else
+            bc_data_year%m_const = .false.
+        endif
+
         ! get number of years and allocate memory accordingly
         read(start_time_string, '(i4)') start_year
         read(end_time_string, '(i4)') end_year
@@ -179,6 +191,16 @@ contains
         ! write(*, *) 'INFO: successfully called bc_data year constructor'
 
     end function bc_data_year
+
+
+
+    !> Constant data getter
+
+    !> Boolean getter to check whether data are constant or not
+    logical function const(self)
+        class(bc_data), intent(in) :: self
+        const = self%m_const
+    end function const
 
 
 
@@ -230,19 +252,31 @@ contains
         double precision :: current_time
         integer :: i
 
-        current_time = datestring2sec(current_time_string)
+        if (self%m_const) then
 
-        ! TO DO: provide some bound checks
-        i = 1
-        do while(self%m_times(i+1) < current_time)
-            i = i + 1
-        enddo
-        if (i /= self%m_prev_idx) then
-            self%m_prev_idx = i
-            self%m_next_idx = self%m_prev_idx + 1
-            self%m_new_interval = .true.
-        else
+            ! in this case, it does nothing, and acts like interval never changes
+            ! prev and next idx are set respectively to 1 nad 2 by the constructor
+            ! and are left untouched
             self%m_new_interval = .false.
+
+        else
+            
+            current_time = datestring2sec(current_time_string)
+            
+            ! TO DO: provide some bound checks
+            i = 1
+            do while(self%m_times(i+1) < current_time)
+                i = i + 1
+            enddo
+
+            if (i /= self%m_prev_idx) then
+                self%m_prev_idx = i
+                self%m_next_idx = self%m_prev_idx + 1
+                self%m_new_interval = .true.
+            else
+                self%m_new_interval = .false.
+            endif
+
         endif
 
     end subroutine set_current_interval
@@ -261,11 +295,20 @@ contains
 
         call self%set_current_interval(current_time_string)
 
-        current_time = datestring2sec(current_time_string)
-        prev_time = self%m_times(self%m_prev_idx)
-        next_time = self%m_times(self%m_next_idx)
+        if (self%m_const) then
 
-        get_interpolation_factor = (current_time - prev_time) / (next_time - prev_time)
+            ! no need either to set interval nor to compute factor for constant data
+            get_interpolation_factor = 1.0d0
+
+        else
+    
+            current_time = datestring2sec(current_time_string)
+            prev_time = self%m_times(self%m_prev_idx)
+            next_time = self%m_times(self%m_next_idx)
+            
+            get_interpolation_factor = (current_time - prev_time) / (next_time - prev_time)
+
+        endif
 
     end function get_interpolation_factor
 

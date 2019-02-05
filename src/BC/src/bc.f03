@@ -11,6 +11,7 @@ module bc_mod
         ! Eventually this should became an array of m_bc_data, one for each variable
         type(bc_data), pointer :: m_bc_data => null()
     contains
+        procedure :: const_data
         procedure :: get_file_by_index
         procedure :: get_prev_idx
         procedure :: get_next_idx
@@ -84,6 +85,16 @@ contains
 
 
 
+    !> Constant data getter
+
+    !> Boolean getter to check whether data are constant or not
+    logical function const_data(self)
+        class(bc), intent(in) :: self
+        const_data = self%m_bc_data%const()
+    end function const_data
+
+
+
     !> Getter for the data file given the time index
     character(len=27) function get_file_by_index(self, idx)
 
@@ -142,7 +153,9 @@ contains
         logical, optional, intent(out) :: new_data
 
         get_interpolation_factor = self%m_bc_data%get_interpolation_factor(current_time_string)
-        new_data = self%m_bc_data%new_interval()
+        if (present(new_data)) then
+            new_data = self%m_bc_data%new_interval()
+        endif
 
     end function get_interpolation_factor
 

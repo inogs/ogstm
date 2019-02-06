@@ -26,9 +26,8 @@
       double precision julian
 
 
-      CHARACTER(LEN=37) filename
-      CHARACTER(LEN=41) BeforeName
-      CHARACTER(LEN=39) BeforeNameShort
+      CHARACTER(LEN=45) BeforeName
+      CHARACTER(LEN=43) BeforeNameShort
 
       CHARACTER(LEN=3) varname
 
@@ -40,7 +39,6 @@
       INTEGER SysErr, system
 
 
-       filename = 'RST.20111231-15:30:00.N1p.nc'
 
        julian=datestring2sec(datestring)
 
@@ -153,8 +151,8 @@
         if(myrank == 0) then
 
             varname=ctrcnm(jn)
-            BeforeName = 'DA__FREQ_1/RST.'//datestring//'.'//varname//'.nc'
-            BeforeNameShort = 'DA__FREQ_1/RST.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//varname//'.nc'
+            BeforeName = 'DA__FREQ_1/RSTbefore.'//datestring//'.'//varname//'.nc'
+            BeforeNameShort = 'DA__FREQ_1/RSTbefore.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//varname//'.nc'
             do ji=1,jpiglo
               do jj=1,jpjglo
                   do jk=1,jpk

@@ -372,6 +372,10 @@ SUBROUTINE ogstm_finalize()
       if (lwp) CLOSE( numout ) ! others units are closed in mppstop
       CLOSE( numnam )
 
+      ! clean memory
+      call clean_memory
+      call clean_memory_bio
+
       END SUBROUTINE ogstm_finalize
 
 END MODULE OGSTM

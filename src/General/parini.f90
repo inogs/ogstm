@@ -107,8 +107,7 @@
       jpij=jpi*jpj
       jpkbm1=jpkb-1
 
-
-
+      deallocate(domdec)
 
       CLOSE(numnam)
       CONTAINS

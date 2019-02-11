@@ -753,4 +753,188 @@ subroutine alloc_tot()
   
         END subroutine alloc_tot
 
+
+
+        subroutine clean_memory()
+
+            ! myalloc (memory.f90)
+
+#ifdef key_mpp
+            deallocate(EASTpoints_send)
+            deallocate(WESTpoints_send)
+            deallocate(NORTHpoints_send)
+            deallocate(SOUTHpoints_send)
+            deallocate(EASTpoints_recv)
+            deallocate(WESTpoints_recv)
+            deallocate(NORTHpoints_recv)
+            deallocate(SOUTHpoints_recv)
+            deallocate(te_send)
+            deallocate(tw_send)
+            deallocate(tn_send)
+            deallocate(ts_send)
+            deallocate(te_recv)
+            deallocate(tw_recv)
+            deallocate(tn_recv)
+            deallocate(ts_recv)
+#endif
+
+            deallocate(BFMpoints)
+            
+            deallocate(mindi)
+            deallocate(mindj)
+            deallocate(nimppt)
+            deallocate(njmppt)
+            deallocate(nlcit)
+            deallocate(nlcjt)
+            deallocate(nldit)
+            deallocate(nldjt)
+            deallocate(nleit)
+            deallocate(nlejt)
+            
+            deallocate(glamt)
+            deallocate(glamu)
+            deallocate(glamv)
+            deallocate(glamf)
+            deallocate(gphit)
+            deallocate(gphiu)
+            deallocate(gphiv)
+            deallocate(gphif)
+            deallocate(e1t)
+            deallocate(e1u)
+            deallocate(e1v)
+            deallocate(e1f)
+            deallocate(e2t)
+            deallocate(e2u)
+            deallocate(e2v)
+            deallocate(e2f)
+            deallocate(ff)
+            
+            deallocate(gdept)
+            deallocate(gdepw)
+            deallocate(e3t_0)
+            deallocate(e3u_0)
+            deallocate(e3v_0)
+            deallocate(e3w_0)
+            
+            deallocate(e3t)
+            deallocate(e3t_back)
+            deallocate(e3u)
+            deallocate(e3v)
+            deallocate(e3w)
+            
+            deallocate(mbathy)
+            
+            deallocate(tmask)
+            deallocate(h_column)
+            
+            deallocate(spongeT)
+            deallocate(spongeVel)
+            
+            deallocate(umask)
+            deallocate(vmask)
+            
+            deallocate(bfmmask)
+            
+            deallocate(un)
+            deallocate(vn)
+            deallocate(wn)
+            deallocate(tn)
+            deallocate(sn)
+            deallocate(rdn)
+            deallocate(rhopn)
+            deallocate(rho)
+            
+            deallocate(ahtu)
+            deallocate(ahtv)
+            deallocate(ahtw)
+            deallocate(ahtt)
+            
+            deallocate(avt)
+            deallocate(avtb)
+            
+            deallocate(taux)
+            deallocate(tauy)
+            deallocate(vatm)
+            deallocate(freeze)
+            
+            deallocate(qt)
+            deallocate(q)
+            deallocate(emp)
+            deallocate(runoff)
+            
+            deallocate(qsr)
+            
+            deallocate(udta)
+            deallocate(vdta)
+            deallocate(wdta)
+            deallocate(avtdta)
+            deallocate(flxdta)
+            deallocate(flx)
+            deallocate(tdta)
+            deallocate(sdta)
+            deallocate(e3tdta)
+            deallocate(e3udta)
+            deallocate(e3vdta)
+            deallocate(e3wdta)
+            
+            deallocate(trn)
+            deallocate(tra)
+            deallocate(tra_DIA)
+            deallocate(tra_DIA_2d)
+            deallocate(traIO)
+            deallocate(snIO)
+            deallocate(tnIO)
+            deallocate(vatmIO)
+            deallocate(empIO)
+            deallocate(qsrIO)
+            deallocate(unIO)
+            deallocate(vnIO)
+            deallocate(wnIO)
+            deallocate(avtIO)
+            deallocate(e3tIO)
+            deallocate(buf)
+            deallocate(buf2)
+            deallocate(tra_DIA_IO)
+            deallocate(traIO_HIGH)
+            deallocate(tra_DIA_IO_HIGH)
+            
+            deallocate(tra_DIA_2d_IO)
+            deallocate(tra_DIA_2d_IO_HIGH)
+            
+            if(lwp) then
+                deallocate(tottrn)
+                deallocate(tottrb)
+                deallocate(tottrnIO)
+                deallocate(tottrbIO)
+                deallocate(totsnIO)
+                deallocate(tottnIO)
+                deallocate(totvatmIO)
+                deallocate(totempIO)
+                deallocate(totqsrIO)
+                deallocate(totunIO)
+                deallocate(totvnIO)
+                deallocate(totwnIO)
+                deallocate(totavtIO)
+                deallocate(tote3tIO)
+                deallocate(tottmaIO)
+                deallocate(tottrnIO2d)
+                deallocate(totglamt)
+                deallocate(totgphit)
+            endif
+            
+            deallocate(trb)
+
+# if defined key_trc_dmp
+            deallocate(idxt)
+            deallocate(idxt2glo)
+# endif
+
+#ifdef key_trc_bfm
+            deallocate(xpar)
+#endif
+
+            deallocate(DAY_LENGTH)
+
+        end subroutine clean_memory
+
         END MODULE 

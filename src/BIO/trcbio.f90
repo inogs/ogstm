@@ -93,7 +93,7 @@
           surf_mask(1) = 1.
 ! -------------------------------------------------
 
-          tra_idx = tra_matrix_gib(1)
+          ! tra_idx = tra_matrix_gib(1)
           jtrmax=jptra
 
 ! ---------------- Fuori dai punti BFM

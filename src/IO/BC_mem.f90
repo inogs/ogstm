@@ -113,11 +113,12 @@
 !     N5s jn = 4 Silicates        (seasonal)
 
       jn_gib  = 7
-      jn_riv  = 6
+      ! jn_riv  = 6
       jn_atm  = 2
 
-       ! allocate(resto(jpk,jpj,jpi,jn_gib))
-       ! resto   = huge(resto(1,1,1,1))
+       ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
+       allocate(resto(jpk,jpj,jpi,jn_gib))
+       resto   = huge(resto(1,1,1,1))
        ! allocate(restotr(jpk,jpj,jpi,jptra))
        ! restotr = huge(restotr(1,1,1,1))
 
@@ -281,6 +282,9 @@
 
 
       subroutine clean_memory_bc()
+
+          ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
+          deallocate(resto)
 
           if ((lat /= 0) .and. (lon /= 0)) then
               deallocate(tra_matrix_atm)

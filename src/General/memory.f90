@@ -924,10 +924,10 @@ subroutine alloc_tot()
             
             deallocate(trb)
 
-# if defined key_trc_dmp
+#ifdef key_trc_dmp
             deallocate(idxt)
             deallocate(idxt2glo)
-# endif
+#endif
 
 #ifdef key_trc_bfm
             deallocate(xpar)
@@ -935,6 +935,14 @@ subroutine alloc_tot()
 
             deallocate(DAY_LENGTH)
 
+            ! trclec
+
+            deallocate(highfreq_table)
+            deallocate(highfreq_table_dia)
+            deallocate(highfreq_table_dia2d)
+
         end subroutine clean_memory
 
-        END MODULE 
+
+
+        END MODULE myalloc

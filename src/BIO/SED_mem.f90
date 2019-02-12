@@ -96,5 +96,19 @@
 #endif
 
       END subroutine myalloc_SED
+      
+      
+      
+      subroutine clean_memory_sed
+
+          deallocate(sed_idx)
+          deallocate(jarr_sed)
+          deallocate(jarr_sed_flx)
+          deallocate(ztra)
+          deallocate(zwork)
+
+      end subroutine clean_memory_sed
+
+
 
       END MODULE 

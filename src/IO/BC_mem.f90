@@ -116,52 +116,52 @@
       jn_riv  = 6
       jn_atm  = 2
 
-       allocate(resto(jpk,jpj,jpi,jn_gib))   
-       resto   = huge(resto(1,1,1,1))
-       allocate(restotr(jpk,jpj,jpi,jptra))  
-       restotr = huge(restotr(1,1,1,1))
+       ! allocate(resto(jpk,jpj,jpi,jn_gib))
+       ! resto   = huge(resto(1,1,1,1))
+       ! allocate(restotr(jpk,jpj,jpi,jptra))
+       ! restotr = huge(restotr(1,1,1,1))
 
        ! IF (Gsizeglo .NE. 0) THEN
 
-           allocate(tra_matrix_gib(jn_gib))
-       tra_matrix_gib = huge(tra_matrix_gib(1))
-           allocate(restocorr(jn_gib))
-       restocorr      = huge(restocorr(1))                  !Correction to restoration for O3c and O3h
+           ! allocate(tra_matrix_gib(jn_gib))
+       ! tra_matrix_gib = huge(tra_matrix_gib(1))
+           ! allocate(restocorr(jn_gib))
+       ! restocorr      = huge(restocorr(1))                  !Correction to restoration for O3c and O3h
        !     allocate(gib_aux(       Gsizeglo))
        ! gib_aux        = huge(gib_aux(1))
        !     allocate(gib_idxtglo(   Gsizeglo))
        ! gib_idxtglo    = huge(gib_idxtglo(1))
 
-          tra_matrix_gib(1) = ppO2o
-       restocorr(1)=1. ! dissolved Oxygen
-          tra_matrix_gib(2) = ppN1p
-       restocorr(2)=1. ! phosphates
-          tra_matrix_gib(3) = ppN3n
-       restocorr(3)=1. ! nitrates
-          tra_matrix_gib(4) = ppN5s
-       restocorr(4)=1. ! silicates
-          tra_matrix_gib(5) = ppO3c
-       restocorr(5)=2. ! Dic
-          tra_matrix_gib(6) = ppO3h
-       restocorr(6)=2. ! Alk
-          tra_matrix_gib(7) = ppN6r
-       restocorr(7)=2. ! N6r
+          ! tra_matrix_gib(1) = ppO2o
+       ! restocorr(1)=1. ! dissolved Oxygen
+          ! tra_matrix_gib(2) = ppN1p
+       ! restocorr(2)=1. ! phosphates
+          ! tra_matrix_gib(3) = ppN3n
+       ! restocorr(3)=1. ! nitrates
+          ! tra_matrix_gib(4) = ppN5s
+       ! restocorr(4)=1. ! silicates
+          ! tra_matrix_gib(5) = ppO3c
+       ! restocorr(5)=2. ! Dic
+          ! tra_matrix_gib(6) = ppO3h
+       ! restocorr(6)=2. ! Alk
+          ! tra_matrix_gib(7) = ppN6r
+       ! restocorr(7)=2. ! N6r
        ! ENDIF
 
        ! IF (Rsizeglo .NE. 0) THEN
-           allocate(tra_matrix_riv(jn_riv))
-       tra_matrix_riv = huge(tra_matrix_riv(1))
+           ! allocate(tra_matrix_riv(jn_riv))
+       ! tra_matrix_riv = huge(tra_matrix_riv(1))
        !     allocate(riv_aux(       Rsizeglo))
        ! riv_aux        = huge(riv_aux(1))
        !     allocate(riv_idxtglo(   Rsizeglo))
        ! riv_idxtglo    = huge(riv_idxtglo(1))
 
-          tra_matrix_riv(1) = ppN1p ! phosphates
-          tra_matrix_riv(2) = ppN3n ! nitrates
-          tra_matrix_riv(3) = ppN5s ! silicates
-          tra_matrix_riv(4) = ppO3c ! Dic
-          tra_matrix_riv(5) = ppO3h ! Alk
-          tra_matrix_riv(6) = ppO2o ! Oxygen
+          ! tra_matrix_riv(1) = ppN1p ! phosphates
+          ! tra_matrix_riv(2) = ppN3n ! nitrates
+          ! tra_matrix_riv(3) = ppN5s ! silicates
+          ! tra_matrix_riv(4) = ppO3c ! Dic
+          ! tra_matrix_riv(5) = ppO3h ! Alk
+          ! tra_matrix_riv(6) = ppO2o ! Oxygen
        ! ENDIF
 
        IF ((lat .NE. 0) .AND. (lon .NE. 0)) THEN
@@ -200,14 +200,14 @@
 #endif
 
 
-       if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
+       ! if(lwp) write(*,*) 'BC_mem -> Gsize : ', Gsize
 
-       allocate(gib_ridxt (4, Gsize        )) 
-       gib_ridxt  = huge(gib_ridxt(1,1))
-       allocate(gib_dtatrc(Gsize, 2, jn_gib)) 
-       gib_dtatrc = huge(gib_dtatrc(1,1,1))
-       allocate(gib       (Gsize,    jn_gib)) 
-       gib        = huge(gib(1,1))
+       ! allocate(gib_ridxt (4, Gsize        ))
+       ! gib_ridxt  = huge(gib_ridxt(1,1))
+       ! allocate(gib_dtatrc(Gsize, 2, jn_gib))
+       ! gib_dtatrc = huge(gib_dtatrc(1,1,1))
+       ! allocate(gib       (Gsize,    jn_gib))
+       ! gib        = huge(gib(1,1))
 
 
 #ifdef Mem_Monitor
@@ -236,12 +236,12 @@
 #endif
 
 
-       allocate(riv_ridxt (4, Rsize       )) 
-       riv_ridxt  = huge(riv_ridxt(1,1))
-       allocate(riv_dtatrc(2,Rsize,jn_riv)) 
-       riv_dtatrc = huge(riv_dtatrc(1,1,1))
-       allocate(riv       (Rsize,   jn_riv)) 
-       riv        = huge(riv(1,1))
+       ! allocate(riv_ridxt (4, Rsize       ))
+       ! riv_ridxt  = huge(riv_ridxt(1,1))
+       ! allocate(riv_dtatrc(2,Rsize,jn_riv))
+       ! riv_dtatrc = huge(riv_dtatrc(1,1,1))
+       ! allocate(riv       (Rsize,   jn_riv))
+       ! riv        = huge(riv(1,1))
 
 
 #ifdef Mem_Monitor
@@ -277,5 +277,22 @@
       mem_all=get_mem(err) - aux_mem
 #endif
       END SUBROUTINE alloc_DTATRC_local_atm
+
+
+
+      subroutine clean_memory_bc()
+
+          if ((lat /= 0) .and. (lon /= 0)) then
+              deallocate(tra_matrix_atm)
+              deallocate(atm_aux)
+              deallocate(atm_idxtglo)
+          endif
+
+          deallocate(atm_dtatrc)
+          deallocate(atm)
+
+      end subroutine clean_memory_bc
+
+
 
       END MODULE

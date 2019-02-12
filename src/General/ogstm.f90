@@ -364,6 +364,7 @@ SUBROUTINE ogstm_finalize()
 !  ---------------------------------------------------------------------
 
       call boundaries%bc_set_destructor()
+      deallocate(boundaries)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -373,8 +374,13 @@ SUBROUTINE ogstm_finalize()
       CLOSE( numnam )
 
       ! clean memory
-      call clean_memory
-      call clean_memory_bio
+      call clean_memory()
+      call clean_memory_bio()
+      call clean_memory_fn()
+      call clean_memory_opt()
+      call clean_memory_sed()
+      call unload_timestrings()
+      call clean_memory_bc()
 
       END SUBROUTINE ogstm_finalize
 

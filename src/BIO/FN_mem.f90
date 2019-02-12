@@ -78,4 +78,16 @@
       END subroutine myalloc_FN
 
 
+
+      subroutine clean_memory_fn
+
+          deallocate(jarr_snu)
+          deallocate(tra_FN)
+          deallocate(TOTcalc)
+          deallocate(FN_ranking)
+
+      end subroutine clean_memory_fn
+
+
+
       END MODULE FN_mem

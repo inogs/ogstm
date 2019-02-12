@@ -286,6 +286,17 @@
       END SUBROUTINE Load_Dump_container
 
 
+
+      subroutine unload_dump_container(struct)
+
+          type(DUMP_CONTAINER) struct
+
+          deallocate(struct%Timestrings)
+
+      end subroutine unload_dump_container
+
+
+
       ! *************************************************
       SUBROUTINE Load_Time_container(STRUCT)
       integer I,N
@@ -320,6 +331,20 @@
       endif
 
       END SUBROUTINE Load_Time_container
+
+
+
+      subroutine unload_time_container(struct)
+
+          type(TIME_CONTAINER) struct
+
+          deallocate(struct%Timestrings)
+          deallocate(struct%Times)
+          if (struct%Periodic) then
+              deallocate(struct%TimeStringsExtended)
+          endif
+
+      end subroutine unload_time_container
 
 
 
@@ -387,6 +412,24 @@
 #endif
 
       END SUBROUTINE Load_Timestrings
+
+
+
+      subroutine unload_timestrings()
+
+          call unload_time_container(TC_FOR)
+          call unload_time_container(TC_ATM)
+          call unload_time_container(TC_LEX)
+          call unload_time_container(TC_CO2)
+
+          call unload_dump_container(RESTARTS)
+          call unload_dump_container(AVE_FREQ1)
+          call unload_dump_container(AVE_FREQ2)
+#ifdef ExecDA
+          call unload_dump_container(DA_TIMES)
+#endif
+
+      end subroutine unload_timestrings
 
 
       ! potrei fare

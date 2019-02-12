@@ -175,25 +175,25 @@
 !       Restoration Mask ****************
 
 
-      var_nc(1) = 'O2o'
-      var_nc(2) = 'N1p'
-      var_nc(3) = 'N3n'
-      var_nc(4) = 'N5s'
-      var_nc(5) = 'O3c'
-      var_nc(6) = 'O3h'
-      var_nc(7) = 'N6r'
+      ! var_nc(1) = 'O2o'
+      ! var_nc(2) = 'N1p'
+      ! var_nc(3) = 'N3n'
+      ! var_nc(4) = 'N5s'
+      ! var_nc(5) = 'O3c'
+      ! var_nc(6) = 'O3h'
+      ! var_nc(7) = 'N6r'
 
-      IF (NWATERPOINTS.GT.0) THEN
-      do jn=1,jn_gib
+      ! IF (NWATERPOINTS.GT.0) THEN
+      ! do jn=1,jn_gib
 
-         nomevar01='re'//var_nc(jn)
-         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn),0)
-      
+      !    nomevar01='re'//var_nc(jn)
+      !    call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn),0)
+      !
+      ! enddo
+      ! ELSE
+      !   resto=0.0
+      ! ENDIF
 
-      enddo
-      ELSE
-        resto=0.0
-      ENDIF
       call readnc_slice_int   ('bounmask.nc','index',idxt)
       
 

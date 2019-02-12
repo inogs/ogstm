@@ -74,4 +74,48 @@
        diaflxBuff = huge(diaflxBuff(1,1))
       END SUBROUTINE alloc_DIA_MPI_flx
 
+
+
+      subroutine clean_memory_dia()
+          
+          deallocate(INDFluxGlo)
+
+          ! conditional deallocation is chosen only in case of
+          ! conditional allocation
+
+          if (allocated(flx_ridxt)) then
+              deallocate(flx_ridxt)
+          endif
+
+          if (allocated(INDflxDUMP)) then
+              deallocate(INDflxDUMP)
+          endif
+
+          if (allocated(diaflx)) then
+              deallocate(diaflx)
+          endif
+
+          if (allocated(INDflxDUMPZERO)) then
+              deallocate(INDflxDUMPZERO)
+          endif
+
+          if (allocated(MflxDumpGlo)) then
+              deallocate(MflxDumpGlo)
+          endif
+
+          if (allocated(MflxDumpGlo_FLOAT)) then
+              deallocate(MflxDumpGlo_FLOAT)
+          endif
+
+          if (allocated(INDflxDUMPglo)) then
+              deallocate(INDflxDUMPglo)
+          endif
+
+          deallocate(INDflxBuff)
+          deallocate(diaflxBuff)
+
+      end subroutine clean_memory_dia
+
+
+
       END MODULE DIA_mem

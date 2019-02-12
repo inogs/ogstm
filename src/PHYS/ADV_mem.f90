@@ -116,7 +116,24 @@
 
       END subroutine myalloc_ADV
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-     
+
+
+
+      subroutine clean_memory_adv()
+
+          deallocate(advmask)
+          deallocate(zaa)
+          deallocate(zbb)
+          deallocate(zcc)
+          deallocate(inv_eu)
+          deallocate(inv_ev)
+          deallocate(inv_et)
+          deallocate(big_fact_zaa)
+          deallocate(big_fact_zbb)
+          deallocate(big_fact_zcc)
+          deallocate(zbtr_arr)
+
+      end subroutine clean_memory_adv
 
 
 

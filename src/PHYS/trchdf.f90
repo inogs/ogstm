@@ -365,6 +365,12 @@
 
         END DO TRACER_LOOP
         ! $OMP END TASKLOOP
+
+        ! deallocate(hdfmask)
+        ! deallocate(zeeu)
+        ! deallocate(zeev)
+        ! deallocate(zbtr)
+
              deallocate(zlt) 
              deallocate(ztu) 
              deallocate(ztv) 

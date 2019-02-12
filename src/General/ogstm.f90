@@ -381,8 +381,14 @@ SUBROUTINE ogstm_finalize()
       call clean_memory_sed()
       call unload_timestrings()
       call clean_memory_bc()
+      call clean_memory_dia()
+      call clean_memory_io()
+      call clean_memory_adv()
+      call clean_memory_zdf()
 
       END SUBROUTINE ogstm_finalize
+
+
 
 END MODULE OGSTM
 

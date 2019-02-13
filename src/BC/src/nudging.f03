@@ -73,7 +73,7 @@ contains
         implicit none
 
         class(nudging), intent(inout) :: self
-        class(bc), target, intent(in) :: bc_no_nudging
+        class(bc), pointer, intent(in) :: bc_no_nudging
         character(len=7), intent(in) :: namelist_file
         integer, intent(in) :: n_tracers
 
@@ -151,7 +151,7 @@ contains
     !! No other constructors are needed so far.
     type(nudging) function nudging_default(bc_no_nudging, namelist_file, n_tracers)
 
-        class(bc), target, intent(in) :: bc_no_nudging
+        class(bc), pointer, intent(in) :: bc_no_nudging
         character(len=7), intent(in) :: namelist_file
         integer, intent(in) :: n_tracers
 
@@ -398,7 +398,7 @@ contains
 
         ! Then deallocate and nullyfy bc_no_nudging
         ! WARN: following line has been commented due tu a bug of the Intel compiler
-        ! deallocate(self%m_bc_no_nudging)
+        deallocate(self%m_bc_no_nudging)
         nullify(self%m_bc_no_nudging)
 
         ! write(*, *) 'INFO: m_bc_no_nudging deassociated'

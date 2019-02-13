@@ -83,6 +83,7 @@ contains
 
         character(len=47), intent(in) :: bc_string
         class(bc), pointer :: bc_iter
+        class(bc), pointer :: bc_aux
         character(len=3) :: bc_name
         character(len=1) :: bc_type
         character(len=7) :: namelist_file
@@ -102,6 +103,7 @@ contains
         type(nudging), pointer :: m_bc_nudging => null()
 
         bc_iter => null()
+        bc_aux => null()
 
         call bc_string_parser(bc_string, bc_name, bc_type, namelist_file, filenames_list, periodic, nudged)
 
@@ -119,8 +121,9 @@ contains
                 endif
 
                 if (nudged) then
+                    bc_aux => m_bc_rivers
                     allocate(m_bc_nudging)
-                    m_bc_nudging = nudging(m_bc_rivers, namelist_file, jptra) ! jptra is a global variable
+                    m_bc_nudging = nudging(bc_aux, namelist_file, jptra) ! jptra is a global variable
                     bc_iter => m_bc_nudging
                 else
                     bc_iter => m_bc_rivers
@@ -142,8 +145,9 @@ contains
                 endif
 
                 if (nudged) then
+                    bc_aux => m_bc_sponge
                     allocate(m_bc_nudging)
-                    m_bc_nudging = nudging(m_bc_sponge, namelist_file, jptra) ! jptra is a global variable
+                    m_bc_nudging = nudging(bc_aux, namelist_file, jptra) ! jptra is a global variable
                     bc_iter => m_bc_nudging
                 else
                     bc_iter => m_bc_sponge
@@ -160,8 +164,9 @@ contains
                 endif
 
                 if (nudged) then
+                    bc_aux => m_bc_hard_open
                     allocate(m_bc_nudging)
-                    m_bc_nudging = nudging(m_bc_hard_open, namelist_file, jptra) ! jptra is a global variable
+                    m_bc_nudging = nudging(bc_aux, namelist_file, jptra) ! jptra is a global variable
                     bc_iter => m_bc_nudging
                 else
                     bc_iter => m_bc_hard_open

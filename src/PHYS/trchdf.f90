@@ -168,7 +168,9 @@
              END DO
           END DO
 
-! !! 0. Initialization of metric arrays (for z- or s-coordinates)
+        hdf_initialized=.true.
+        ENDIF
+!  Metric arrays calculated out of the initialisation phase(for z- or s-coordinates)
 ! !! ----------------------------------
                 DO ji = 1, jpi
               DO jj = 1, jpj
@@ -181,8 +183,7 @@
               END DO
            END DO
 
-        hdf_initialized=.true.
-        ENDIF
+
 
      
              allocate(zlt    (jpk,jpj,jpi)) 

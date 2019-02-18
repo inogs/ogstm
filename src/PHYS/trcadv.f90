@@ -104,33 +104,6 @@
 !         jarrt = 0
 
          write(*,*) "Storing good points ..."
-               DO ji = 2,jpim1
-            DO jj = 2,jpjm1
-                  !dir$ vector aligned
-         DO jk = 1,jpkm1
-                  zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
-               END DO
-            END DO
-         END DO
-
-               DO ji = 2,jpim1
-            DO jj = 2,jpjm1
-            !dir$ vector aligned
-         DO jk = 1,jpkm1
-                  inv_eu(jk,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(jk,jj,ji) )
-                  inv_ev(jk,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(jk,jj,ji) )
-               END DO
-            END DO
-         END DO
-
-               DO ji = 2,jpim1
-            DO jj = 2,jpjm1
-            !dir$ vector aligned
-         DO jk = 2,jpkm1
-                  inv_et(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji) )
-               END DO
-            END DO
-         END DO
 
          allpoints = 0
 
@@ -277,22 +250,32 @@
 
          zdt = rdt*ndttrc
          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
-               DO ji = 2,jpim1
-               !dir$ vector aligned
-            DO jj = 2,jpjm1
-                  zbtr_arr(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(1,jj,ji))
-               END DO
-            END DO
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
+            !dir$ vector aligned
+         DO jk = 1,jpkm1
+                  zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
+         END DO
+         END DO
+         END DO
          !$OMP END TASK
         
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
           !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
-            DO ji = 2,jpim1
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
             !dir$ vector aligned
-            DO jj = 2,jpjm1
-                  inv_eu(1,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(1,jj,ji) )
-            END DO
-            END DO
+         DO jk = 1,jpkm1
+                  inv_eu(jk,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(jk,jj,ji) )
+         END DO
+         END DO
+         END DO
+
+
+
+
              DO ji = 1,jpi
              DO jj = 1,jpj
              !dir$ vector aligned
@@ -316,12 +299,16 @@
            
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk)  default(none) &
           !$OMP shared(inv_ev,e1v,e2v,e3v,vn,zdt,zbb,big_fact_zbb)
-                 DO ji = 2,jpim1
-                 !dir$ vector aligned
-                 DO jj = 2,jpjm1
-                  inv_ev(1,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(1,jj,ji) )
-                 END DO
-                 END DO          
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
+            !dir$ vector aligned
+         DO jk = 1,jpkm1
+                  inv_ev(jk,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(jk,jj,ji) )
+         END DO
+         END DO
+         END DO
+
 
                  DO ji = 1,jpi
                  DO jj = 1,jpj
@@ -344,12 +331,16 @@
              
             !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
             !$OMP shared(inv_et,e1t,e2t,e3w,wn,zcc,zdt,big_fact_zcc)   
-               DO ji = 2,jpim1
-               !dir$ vector aligned
-               DO jj = 2,jpjm1
-                  inv_et(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(1,jj,ji) )
-               END DO
-               END DO
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
+            !dir$ vector aligned
+         DO jk = 1,jpkm1
+                  inv_et(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji) )
+         END DO
+         END DO
+         END DO
+
 
                DO ji = 1,jpi
                DO jj = 1,jpj

@@ -187,45 +187,45 @@ SUBROUTINE ALLOC_ALL
        print *,"mem_all",mem_all
 #endif
 
-      write(*,*)'My_Rank=',myrank,': Memory Allocation - Basal - (MB):',  mem_all 
+       !write(*,*)'My_Rank=',myrank,': Memory Allocation - Basal - (MB):',  mem_all
        mem_all_tot=mem_all_tot+mem_all
 
       call   alloc_tot() 
-       write(*,*)'My_Rank:',myrank,'alloc_init (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_init (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_OPT() 
-       write(*,*)'My_Rank:',myrank,'alloc_OPT  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_OPT  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_ADV() 
-       write(*,*)'My_Rank:',myrank,'alloc_ADV  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_ADV  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       !call myalloc_HDF() 
       ! write(*,*)'My_Rank:',myrank,'alloc_HDF  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_ZDF() 
-       write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 
 
 #ifdef key_trc_dmp
 !     needs Time_Manager
       call alloc_DTATRC()
-       write(*,*)'My_Rank:',myrank,'alloc_TRC  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_TRC  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 #endif
       call alloc_DIA()   
-       write(*,*)'My_Rank:',myrank,'alloc_DIA  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_DIA  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 
       call myalloc_BIO() 
-       write(*,*)'My_Rank:',myrank,'alloc_BIO  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_BIO  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_SED() 
-       write(*,*)'My_Rank:',myrank,'alloc_SED  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_SED  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 
       call myalloc_FN()  
-       write(*,*)'My_Rank:',myrank,'alloc_FN   (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_FN   (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       
       

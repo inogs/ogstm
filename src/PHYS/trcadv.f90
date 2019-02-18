@@ -97,40 +97,8 @@
          big_fact_zbb = 0.
          big_fact_zcc = 0.
          zbtr_arr = 0.
-!         jarr  = 0
-!         jarr1 = 0
-!         jarr2 = 0
-!         jarr3 = 0
-!         jarrt = 0
 
          write(*,*) "Storing good points ..."
-               DO ji = 2,jpim1
-            DO jj = 2,jpjm1
-                  !dir$ vector aligned
-         DO jk = 1,jpkm1
-                  zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
-               END DO
-            END DO
-         END DO
-
-               DO ji = 2,jpim1
-            DO jj = 2,jpjm1
-            !dir$ vector aligned
-         DO jk = 1,jpkm1
-                  inv_eu(jk,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(jk,jj,ji) )
-                  inv_ev(jk,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(jk,jj,ji) )
-               END DO
-            END DO
-         END DO
-
-               DO ji = 2,jpim1
-            DO jj = 2,jpjm1
-            !dir$ vector aligned
-         DO jk = 2,jpkm1
-                  inv_et(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji) )
-               END DO
-            END DO
-         END DO
 
          allpoints = 0
 
@@ -183,90 +151,7 @@
 
          write(*,*) 'trcadv: RANK -> ', myrank, ' good_points -> ', goodpoints
 
-!         DO  ji = 2,jpim1
-!            DO jj = 2,jpjm1
-!                  DO jk = 1,jpk
-!                        if(advmask(jk,jj,ji) .NE. 0) then
-!                        zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
-!                        dimen_jarr = dimen_jarr + 1
-!                        jarr(3,dimen_jarr) = ji
-!                        jarr(2,dimen_jarr) = jj
-!                        jarr(1,dimen_jarr) = jk
-!                        else
-!                        zbtr_arr(jk,jj,ji) = 0.
-!                        endif
-!               END DO
-!            END DO
-!         END DO
 
-      !    DO  ji = 2,jpim1
-      !       DO jj = 2,jpjm1
-      !             DO jk = 2,jpk
-      !                   if(advmask(jk,jj,ji) .NE. 0) then
-      !                   dimen_jarr1 = dimen_jarr1 + 1
-      !                   jarr1(3,dimen_jarr1) = ji
-      !                   jarr1(2,dimen_jarr1) = jj
-      !                   jarr1(1,dimen_jarr1) = jk
-      !                   endif
-      !          END DO
-      !       END DO
-      !    END DO
-
-      !    DO ji = 2,jpim1
-      !       DO jj = 2,jpjm1
-      !             DO jk = 2,jpkm1
-      !                   if(advmask(jk,jj,ji) .NE. 0) then
-      !                   dimen_jarr2 = dimen_jarr2 + 1
-      !                   jarr2(3,dimen_jarr2) = ji
-      !                   jarr2(2,dimen_jarr2) = jj
-      !                   jarr2(1,dimen_jarr2) = jk
-      !                   endif
-      !          END DO
-      !       END DO
-      !    END DO
-
-      
-
-!               DO ji = 2,jpim1
-!            DO jj = 2,jpjm1
-!         DO jk = 1,jpkm1
-!                  if(advmask(jk,jj,ji) .NE. 0) then
-!                     dimen_jarr3 = dimen_jarr3 + 1
-!                     jarr3(3,dimen_jarr3) = ji
-!                     jarr3(2,dimen_jarr3) = jj
-!                     jarr3(1,dimen_jarr3) = jk
-!                  endif
-!               END DO
-!            END DO
-!         END DO
-
-!               DO ji = 1,jpi
-!            DO jj = 1,jpj
-!         DO jk = 1,jpk
-!                  if(tmask(jk,jj,ji) .NE. 0) then
-!                     dimen_jarrt = dimen_jarrt + 1
-!                     jarrt(3,dimen_jarrt) = ji
-!                     jarrt(2,dimen_jarrt) = jj
-!                     jarrt(1,dimen_jarrt) = jk
-!                  endif
-!               END DO
-!            END DO
-!         END DO
-
-      
-
-!      jarr_adv_flx=0
-!
-!         DO jf=1,Fsize
-!            DO ju=1, dimen_jarr3
-!               l1 = flx_ridxt(jf,2) .EQ. jarr3(1,ju)
-!               l2 = flx_ridxt(jf,3) .EQ. jarr3(2,ju)
-!               l3 = flx_ridxt(jf,4) .EQ. jarr3(3,ju)
-!               IF ( l1 .AND. l2 .AND. l3) THEN
-!                  jarr_adv_flx(ju)= jf
-!               END IF
-!            END DO
-!         END DO
 
       adv_initialized=.true.
       endif 
@@ -277,22 +162,32 @@
 
          zdt = rdt*ndttrc
          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
-               DO ji = 2,jpim1
-               !dir$ vector aligned
-            DO jj = 2,jpjm1
-                  zbtr_arr(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(1,jj,ji))
-               END DO
-            END DO
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
+            !dir$ vector aligned
+         DO jk = 1,jpkm1
+                  zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
+         END DO
+         END DO
+         END DO
          !$OMP END TASK
         
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
           !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
-            DO ji = 2,jpim1
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
             !dir$ vector aligned
-            DO jj = 2,jpjm1
-                  inv_eu(1,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(1,jj,ji) )
-            END DO
-            END DO
+         DO jk = 1,jpkm1
+                  inv_eu(jk,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(jk,jj,ji) )
+         END DO
+         END DO
+         END DO
+
+
+
+
              DO ji = 1,jpi
              DO jj = 1,jpj
              !dir$ vector aligned
@@ -316,12 +211,16 @@
            
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk)  default(none) &
           !$OMP shared(inv_ev,e1v,e2v,e3v,vn,zdt,zbb,big_fact_zbb)
-                 DO ji = 2,jpim1
-                 !dir$ vector aligned
-                 DO jj = 2,jpjm1
-                  inv_ev(1,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(1,jj,ji) )
-                 END DO
-                 END DO          
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
+            !dir$ vector aligned
+         DO jk = 1,jpkm1
+                  inv_ev(jk,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(jk,jj,ji) )
+         END DO
+         END DO
+         END DO
+
 
                  DO ji = 1,jpi
                  DO jj = 1,jpj
@@ -344,12 +243,16 @@
              
             !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
             !$OMP shared(inv_et,e1t,e2t,e3w,wn,zcc,zdt,big_fact_zcc)   
-               DO ji = 2,jpim1
-               !dir$ vector aligned
-               DO jj = 2,jpjm1
-                  inv_et(1,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(1,jj,ji) )
-               END DO
-               END DO
+
+         DO ji = 1,jpi
+         DO jj = 1,jpj
+            !dir$ vector aligned
+         DO jk = 1,jpkm1
+                  inv_et(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji) )
+         END DO
+         END DO
+         END DO
+
 
                DO ji = 1,jpi
                DO jj = 1,jpj
@@ -536,29 +439,6 @@
           ENDDO
 
 
-
-!           DO ju=1, dimen_jarr3
-!
-!              ji = jarr3(3, ju)
-!              jj = jarr3(2, ju)
-!              jk = jarr3(1, ju)
-!              jf = jarr_adv_flx(ju)
-!
-!              zbtr = zbtr_arr(jk,jj,ji)
-!
-!              ztj(jk,jj,ji ) = -zbtr* &
-!     &          ( zkx(jk,jj,ji ) - zkx(jk,jj,ji-1 ) &
-!     &          + zky(jk,jj,ji ) - zky(jk,jj- 1,ji ) &
-!     &          + zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
-!
-!
-!              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-!                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
-!                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
-!                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
-!              END IF
-!
-!            END DO
 
 !! 2.1 start of antidiffusive correction loop
 
@@ -814,25 +694,7 @@
           ENDDO
 
 
-!               DO ju=1, dimen_jarr3
-!
-!                  ji = jarr3(3, ju)
-!                  jj = jarr3(2, ju)
-!                  jk = jarr3(1, ju)
-!                  jf = jarr_adv_flx(ju)
-!
-!                  zbtr = zbtr_arr(jk,jj,ji)
-!                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
-!     &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )+ ztj(jk,jj,ji )
-!
-!!     Save advective fluxes x,y,z
-!              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-!                 diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
-!                 diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
-!                 diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
-!              END IF
-!
-!              END DO
+
            else
          DO ji =2,jpim1
           DO jj =2,jpjm1
@@ -856,24 +718,7 @@
 
 
 
-!              DO ju=1, dimen_jarr3
-!
-!                  ji = jarr3(3, ju)
-!                  jj = jarr3(2, ju)
-!                  jk = jarr3(1, ju)
-!                  jf = jarr_adv_flx(ju)
-!
-!                  zbtr = zbtr_arr(jk,jj,ji)
-!                  ztj(jk,jj,ji ) = -zbtr*( zkx(jk,jj,ji ) - zkx(jk,jj,ji - 1 ) &
-!     &              + zky(jk,jj,ji ) - zky(jk,jj- 1,ji )+ zkz(jk,jj,ji ) - zkz(jk+1,jj,ji ) )
-!
-!                 !Save advective fluxes x,y,z
-!                 IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-!                    diaflx(jf, jn,3) = diaflx(jf, jn,3) + zkx(jk,jj,ji )
-!                    diaflx(jf, jn,2) = diaflx(jf, jn,2) + zky(jk,jj,ji )
-!                    diaflx(jf, jn,1) = diaflx(jf, jn,1) + zkz(jk,jj,ji )
-!                 END IF
-!              END DO
+
 
            endif
 
@@ -893,14 +738,7 @@
            enddo
            enddo
 
-!              DO ju=1, dimen_jarrt
-!                 ji = jarrt(3, ju)
-!                 jj = jarrt(2, ju)
-!                 jk = jarrt(1, ju)
-!
-!                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ ztj(jk,jj,ji )
-!
-!              END DO
+
            else
            do ji=1,jpi
            do jj=1,jpj
@@ -910,14 +748,7 @@
            enddo
            enddo
 
-!              DO ju=1, dimen_jarrt
-!                 ji = jarrt(3, ju)
-!                 jj = jarrt(2, ju)
-!                 jk = jarrt(1, ju)
-!
-!                 tra(jk,jj,ji, jn) = tra(jk,jj,ji, jn)+ (zbuf(jk,jj,ji ) + ztj(jk,jj,ji ))
-!
-!              END DO
+
            endif
 
         deallocate(zy )  

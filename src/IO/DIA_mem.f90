@@ -78,7 +78,9 @@
 
       subroutine clean_memory_dia()
           
+          if (allocated(INDFluxGlo)) then
           deallocate(INDFluxGlo)
+          endif
 
           ! conditional deallocation is chosen only in case of
           ! conditional allocation

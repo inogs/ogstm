@@ -1154,7 +1154,7 @@
         integer ave_counter
         integer s, nc, counter
         integer timid, depid, yid, xid
-        integer idvartime, idgdept, idphit, idlamt
+        integer  idgdept, idphit, idlamt
         integer idT, idS, idU, idV, idW, idEddy, ide3t, idR, idWs, idE
         double precision,allocatable,dimension(:,:,:) :: copy_in
         double precision,allocatable,dimension(:,:) :: copy_in_2d
@@ -1176,9 +1176,8 @@
         s= nf90_def_dim(nc,'deptht'      , jpk   ,depid)
         s= nf90_def_dim(nc,'time_counter', NF90_UNLIMITED,timid)
 
-
+        
         ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time_counter',  nf90_double,(/timid/),           idvartime)
         s = nf90_def_var(nc,'deptht',        nf90_float, (/depid/),             idgdept)
         s = nf90_def_var(nc,'nav_lat',       nf90_float, (/yid/),                idphit)
         s = nf90_def_var(nc,'nav_lon',       nf90_float, (/xid/),                idlamt)
@@ -1196,7 +1195,6 @@
         s = nf90_def_var(nc,'sowaflcd' ,     nf90_double, (/xid,yid,      timid/),   idE)
 
 
-        !s = nf90_put_att(nc,idvartime,'units', UnitsTime )
 
         s = nf90_put_att(nc,idgdept,'units'        ,'m')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')

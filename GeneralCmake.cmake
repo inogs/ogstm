@@ -29,14 +29,18 @@ set(CMAKE_Fortran_COMPILER ${MPI_Fortran_COMPILER})
 add_definitions(-Dkey_trahdfcoef1d -Dkey_trahdfbilap -Dkey_trc_smolar)
 add_definitions(-Dkey_trc_hdfbilap -Dkey_trc_dmp -Dkey_kef -Dkey_trc_sed )
 add_definitions(-Dkey_mpp -Dkey_mpp_mpi)
+IF (BFMv2)
+    add_definitions(-DBFMv2)
+ENDIF()
+
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE "-fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source") #-qopenmp
+  set (CMAKE_Fortran_FLAGS_RELEASE "-std=f2003 -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-std=f2003 -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source") #-qopenmp
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
-  set (CMAKE_Fortran_FLAGS_RELEASE "-O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  set (CMAKE_Fortran_FLAGS_DEBUG   "-O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -align array64byte")
+  set (CMAKE_Fortran_FLAGS_RELEASE "-std=f2003 -O2  -fimplicit-none -cpp  -ffixed-line-length-132")
+  set (CMAKE_Fortran_FLAGS_DEBUG   "-std=f2003 -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
@@ -51,7 +55,7 @@ include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
 # Search Fortran module to compile
-set( FOLDERS BIO  General  IO  MPI  namelists  PHYS)
+set( FOLDERS BIO  General  IO  MPI  namelists  PHYS BC)
   foreach(FOLDER ${FOLDERS})
   file(GLOB TMP src/${FOLDER}/*)
   list (APPEND FORTRAN_SOURCES ${TMP})

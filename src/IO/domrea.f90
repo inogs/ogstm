@@ -24,6 +24,16 @@
       USE TIME_MANAGER
       USE mpi
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      use bc_set_mod
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       IMPLICIT NONE
 
 ! local declarations
@@ -33,6 +43,9 @@
       INTEGER ierr
 
       CHARACTER(LEN=11) maskfile
+
+      character(len=10) bfmmask_file
+
       CHARACTER(LEN=50) filename
       CHARACTER(LEN=3), DIMENSION(7) :: var_nc
       CHARACTER(LEN=5) nomevar01
@@ -42,6 +55,9 @@
 ! To read only one meshmask.nc
 
       maskfile        = 'meshmask.nc'
+
+      bfmmask_file = 'bfmmask.nc'
+
       filename='BC/TI_yyyy0215-00:00:00.nc' ! 26 chars
 
 
@@ -70,12 +86,12 @@
       call readnc_slice_double_2d(maskfile,'glamt', glamt)
       call readnc_slice_double_2d(maskfile,'glamu', glamu)
       call readnc_slice_double_2d(maskfile,'glamv', glamv)
-      call readnc_slice_double_2d(maskfile,'glamf', glamf)
+      !call readnc_slice_double_2d(maskfile,'glamf', glamf)
 
       call readnc_slice_double_2d(maskfile,'gphit', gphit)
       call readnc_slice_double_2d(maskfile,'gphiu', gphiu)
       call readnc_slice_double_2d(maskfile,'gphiv', gphiv)
-      call readnc_slice_double_2d(maskfile,'gphif', gphif)
+      !call readnc_slice_double_2d(maskfile,'gphif', gphif)
 
 
 ! 2. Horizontal scale factors
@@ -83,12 +99,12 @@
       call readnc_slice_double_2d(maskfile,'e1t', e1t)
       call readnc_slice_double_2d(maskfile,'e1u', e1u)
       call readnc_slice_double_2d(maskfile,'e1v', e1v)
-      call readnc_slice_double_2d(maskfile,'e1f', e1f)
+      !call readnc_slice_double_2d(maskfile,'e1f', e1f)
 
       call readnc_slice_double_2d(maskfile,'e2t', e2t)
       call readnc_slice_double_2d(maskfile,'e2u', e2u)
       call readnc_slice_double_2d(maskfile,'e2v', e2v)
-      call readnc_slice_double_2d(maskfile,'e2f', e2f)
+      !call readnc_slice_double_2d(maskfile,'e2f', e2f)
 
 
 
@@ -101,6 +117,7 @@
       CALL readnc_slice_int1 (maskfile,'tmask', tmask )
 !      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
 
+      call readnc_slice_logical(bfmmask_file, 'bfmmask', bfmmask)
 
 !      Initialization of mbathy
       mbathy(:,:) = 0
@@ -116,7 +133,7 @@
        enddo
       enddo
 
-      CALL readnc_slice_double_2d(maskfile,'ff', ff )
+!      CALL readnc_slice_double_2d(maskfile,'ff', ff )
 
 
 ! 4. depth and vertical scale factors
@@ -135,9 +152,14 @@
       CALL readnc_slice_double (maskfile,'e3v_0', e3v_0 )
       CALL readnc_slice_double (maskfile,'e3w_0', e3w_0 )
 
-      flxdta(:,:,8 ,2)  = e3u(1,:,:)
-      flxdta(:,:,9 ,2)  = e3v(1,:,:)
-      flxdta(:,:,10 ,2) = e3t(1,:,:)
+      IF (.not.IS_FREE_SURFACE) then
+         e3t = e3t_0
+         e3t_back = e3t
+         e3u = e3u_0
+         e3v = e3v_0
+         e3w = e3w_0
+      ENDIF
+
 
       h_column = 0.0
       DO ii= 1,jpi
@@ -152,7 +174,7 @@
 
 !       Restoration Mask ****************
 
-
+      ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
       var_nc(1) = 'O2o'
       var_nc(2) = 'N1p'
       var_nc(3) = 'N3n'
@@ -166,12 +188,12 @@
 
          nomevar01='re'//var_nc(jn)
          call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn),0)
-      
 
       enddo
       ELSE
         resto=0.0
       ENDIF
+
       call readnc_slice_int   ('bounmask.nc','index',idxt)
       
 
@@ -191,48 +213,58 @@
 
 
 ! *********************************   Gibraltar area
-      filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
+      !filename  ='BC/GIB_'//TC_GIB%TimeStrings(1)//'.nc'
 
 
-       if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
+      !if (lwp) write(*,*) 'domrea->filename: ', filename, '    '
 
-      CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
+      !CALL readnc_int_1d(filename, 'gib_idxt_N1p', Gsizeglo, gib_idxtglo)
 
-      if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
-      if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
+      !if (lwp) write(*,*) 'domrea->readnc_int_1d  finita'
+      !if (lwp) write(*,*) 'domrea->Gsizeglo', Gsizeglo
 
-      Gsize = COUNT_InSubDomain(Gsizeglo, gib_idxtglo)
+      !Gsize = COUNT_InSubDomain_GIB(Gsizeglo, gib_idxtglo)
 
-      write(*,*) 'domrea->Gsize   : ', Gsize, 'myrank=', myrank
+      !write(*,*) 'domrea->Gsize   : ', Gsize, 'myrank=', myrank
 
 
-      if (Gsize.NE.0) then
-          if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_gib'
-          call alloc_DTATRC_local_gib
+      !if (Gsize.NE.0) then
+          !if (lwp) write(*,*) 'domrea-> lancio alloc_DTATRC_local_gib'
+          !call alloc_DTATRC_local_gib
 
-          B=GIBRe_indexing()
+          !B=GIBRe_indexing()
 
-      endif
+      !endif
 
 ! ********************************  Rivers ******
-      filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'
+      !filename       ='BC/TIN_'//TC_TIN%TimeStrings(1)//'.nc'
       !print *,"---",Rsizeglo
       
-      CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
-      !print *,riv_idxtglo
+      !CALL readnc_int_1d(filename, 'riv_idxt', Rsizeglo, riv_idxtglo)
+
+      !Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
+
+      !if (Rsize.NE. 0) then
+          !call alloc_DTATRC_local_riv
+
+          !B=RIVRe_Indexing()
+
+      !endif
       !print *,Rsize,Rsizeglo
-      Rsize = COUNT_InSubDomain(Rsizeglo,riv_idxtglo)
-
-      if (Rsize.NE. 0) then
-          call alloc_DTATRC_local_riv
-
-          B=RIVRe_Indexing()
-
-      endif
-      !print *,Rsize,Rsizeglo
 
 
-       if(lwp) write(*,*) 'RIV finiti'
+      !if(lwp) write(*,*) 'RIV finiti'
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      allocate(boundaries)
+      boundaries = bc_set("boundaries.nml")
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
 
 ! ******************************************* Atmospherical inputs
       filename       = 'BC/ATM_'//TC_ATM%TimeStrings(1)//'.nc'
@@ -291,7 +323,6 @@
       INTEGER FUNCTION COUNT_InSubDomain(sizeGLO,idxtGLOBAL)
           USE modul_param , ONLY: jpk,jpj,jpi
           USE myalloc     , ONLY: idxt
-          ! epascolo USE myalloc_mpp , ONLY: myrank
 
           IMPLICIT NONE
           INTEGER, INTENT(IN) :: sizeGLO
@@ -310,7 +341,6 @@
                   do jv =1, sizeGLO
                     if (junk.EQ.idxtGLOBAL(jv)) then
                        counter = counter + 1
-                       EXIT 
                     endif
                   enddo
                 endif
@@ -323,6 +353,56 @@
       END FUNCTION COUNT_InSubDomain
 
 ! *************************************************************************
+
+! *****************************************************************
+!     FUNCTION COUNT_InSubDomain_GIB
+!     RETURNS the number of points of a specific boundary condition
+!     in the subdomain of the current processor
+
+!     It is identical to COUNT_InSubDomain, apart from the
+!     EXIT command, put in order to save time about GIB count at 1/24
+
+
+!     This EXIT command implies that we can apply an only BC to each cell.
+!     Without it we can have e.g. more that one river condition on each cell,
+!     useful in case of degratated model
+
+! *****************************************************************
+      INTEGER FUNCTION COUNT_InSubDomain_GIB(sizeGLO,idxtGLOBAL)
+          USE modul_param , ONLY: jpk,jpj,jpi
+          USE myalloc     , ONLY: idxt
+
+          IMPLICIT NONE
+          INTEGER, INTENT(IN) :: sizeGLO
+          INTEGER, INTENT(IN) :: idxtGLOBAL(sizeGLO)
+
+          ! local
+          INTEGER kk,jj,ii,jv
+          INTEGER counter,junk
+
+           counter = 0
+             do ii =1, jpi
+            do jj =1, jpj
+           do kk =1, jpk
+                if (tmask(kk,jj,ii).eq.1) then
+                  junk = idxt(kk,jj,ii)
+                  do jv =1, sizeGLO
+                    if (junk.EQ.idxtGLOBAL(jv)) then
+                       counter = counter + 1
+                       EXIT
+                    endif
+                  enddo
+                endif
+             enddo
+            enddo
+           enddo
+
+          COUNT_InSubDomain_GIB = counter
+
+      END FUNCTION COUNT_InSubDomain_GIB
+
+! *************************************************************************
+
       LOGICAL FUNCTION RIVRE_Indexing()
           IMPLICIT NONE
           ! local

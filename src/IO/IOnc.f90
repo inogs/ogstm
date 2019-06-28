@@ -113,6 +113,53 @@
       END SUBROUTINE readnc_slice_int1
 
 ! ********************************************************************************************
+
+      subroutine readnc_slice_logical(fileNetCDF, varname, M)
+
+          use myalloc
+          use netcdf
+
+          implicit none
+
+          character, intent(in) :: fileNetCDF*(*), varname*(*)
+          integer(1), intent(inout) :: M(jpk, jpj, jpi)
+
+          integer(1), allocatable, dimension(:, :, :) :: copy_in
+          integer ncid, stat, VARid, i, j, k
+          integer counter
+          integer thecount(4), start(4)
+
+          allocate(copy_in(jpi, jpj, jpk))
+          counter = 0
+          start = (/ nimpp, njmpp, 1, 1 /)
+          thecount = (/ jpi, jpj, jpk, 1 /)
+
+          stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+          call handle_err1(stat, counter, FileNetCDF)
+          stat = nf90_inq_varid(ncid, varname, VARid)
+          call handle_err2(stat, fileNetCDF, varname)
+          call handle_err1(stat, counter, FileNetCDF)
+          stat = nf90_get_var(ncid, VARid, copy_in, start, thecount)
+
+          call handle_err2(stat, fileNetCDF, varname)
+          call handle_err1(stat, counter, FileNetCDF)
+          stat = nf90_close(ncid)
+          call handle_err1(stat, counter, FileNetCDF)
+
+          do i = 1, jpi
+              do j = 1, jpj
+                  do k = 1, jpk
+                      M(k, j, i) = copy_in(i, j, k)
+                  enddo
+              enddo
+          enddo
+
+          deallocate(copy_in)
+
+      end subroutine readnc_slice_logical
+
+! ********************************************************************************************
+
       SUBROUTINE readnc_slice_float(fileNetCDF,varname, M, shift)
       USE myalloc
       USE netcdf
@@ -532,7 +579,9 @@
        TimeString =fileNetCDF(14:30)
        shuffle       = 0
 
-      s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+       ! Just to try without 'or'
+       ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+       s = nf90_create(fileNetCDF, NF90_HDF5, nc)
 
       s = nf90_put_att(nc, nf90_global, 'TimeString'     , TimeString)
         ! *********** DIMENSIONS ****************
@@ -609,7 +658,9 @@
 
         !s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
       
-        s = nf90_create(fileNetCDF,or(or(nf90_clobber,NF90_HDF5),NF90_HDF5),nc)
+        ! Just to try withour 'or'
+        ! s = nf90_create(fileNetCDF,or(or(nf90_clobber,NF90_HDF5),NF90_HDF5),nc)
+        s = nf90_create(fileNetCDF, NF90_HDF5, nc)
         call handle_err1(s,counter,fileNetCDF)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions' ,'COARDS')
@@ -715,7 +766,9 @@
 
 
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, NF90_HDF5, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
@@ -788,7 +841,9 @@
 
 
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, NF90_HDF5, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
@@ -869,7 +924,9 @@
 
 
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, NF90_HDF5, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
@@ -936,7 +993,9 @@
         allocate(copy_in(jpiglo,jpjglo,jpk))
         allocate(copy_in_2d(jpiglo,jpjglo))
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, NF90_HDF5, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     , datefrom)
@@ -1095,14 +1154,16 @@
         integer ave_counter
         integer s, nc, counter
         integer timid, depid, yid, xid
-        integer idvartime, idgdept, idphit, idlamt
+        integer  idgdept, idphit, idlamt
         integer idT, idS, idU, idV, idW, idEddy, ide3t, idR, idWs, idE
         double precision,allocatable,dimension(:,:,:) :: copy_in
         double precision,allocatable,dimension(:,:) :: copy_in_2d
         allocate(copy_in(jpiglo,jpjglo,jpk))
         allocate(copy_in_2d(jpiglo,jpjglo))
 
-        s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        ! Just to try without 'or'
+        ! s = nf90_create(fileNetCDF, or(nf90_clobber,NF90_HDF5), nc)
+        s = nf90_create(fileNetCDF, NF90_HDF5, nc)
         ! *********** GLOBAL ********************
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,   'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
@@ -1115,9 +1176,8 @@
         s= nf90_def_dim(nc,'deptht'      , jpk   ,depid)
         s= nf90_def_dim(nc,'time_counter', NF90_UNLIMITED,timid)
 
-
+        
         ! ********** VARIABLES *****************
-        s = nf90_def_var(nc,'time_counter',  nf90_double,(/timid/),           idvartime)
         s = nf90_def_var(nc,'deptht',        nf90_float, (/depid/),             idgdept)
         s = nf90_def_var(nc,'nav_lat',       nf90_float, (/yid/),                idphit)
         s = nf90_def_var(nc,'nav_lon',       nf90_float, (/xid/),                idlamt)
@@ -1135,7 +1195,6 @@
         s = nf90_def_var(nc,'sowaflcd' ,     nf90_double, (/xid,yid,      timid/),   idE)
 
 
-        !s = nf90_put_att(nc,idvartime,'units', UnitsTime )
 
         s = nf90_put_att(nc,idgdept,'units'        ,'m')
         s = nf90_put_att(nc,idgdept,'positive'     ,'down')

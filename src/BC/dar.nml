@@ -1,0 +1,24 @@
+&VARS_DIMENSION
+
+    n_vars = 5
+
+/
+
+&CORE
+
+    vars(1) = "N1p"
+    vars(2) = "N3n"
+    vars(3) = "N5s"
+    vars(4) = "O3c"
+    vars(5) = "O3h"
+
+    var_names_idx(1) = 2
+    var_names_idx(2) = 3
+    var_names_idx(3) = 6
+    var_names_idx(4) = 49
+    var_names_idx(5) = 50
+
+    geometry = 1
+    damping_coeff = 600.0d0
+
+/

@@ -20,7 +20,6 @@
             ncor          = 1,
             ladv          = .true.,
             lhdf          = .true.,
-            lrivers       = .true.,
             latmosph      = .true.,
             lsbc          = .true.,
             lbfm          = .true.,
@@ -28,10 +27,12 @@
             lsnu          = .true.,
             lhtp          = .true.,
             vsed          = 3.0,
+            vsedO5c       = 30.0,
             photop        = .false.
             atlantic_bfm  = .true.
             bottom_flux   = 1.
             Euphotic_lev  = 200.
+          is_free_surface = .true.
 /
 
 &General_IO

@@ -33,9 +33,9 @@
       !PRIVATE :: CheckInForcings
 
       TYPE (TIME_CONTAINER) :: TC_FOR
-      TYPE (TIME_CONTAINER) :: TC_TIN
+      ! TYPE (TIME_CONTAINER) :: TC_TIN
       TYPE (TIME_CONTAINER) :: TC_ATM
-      TYPE (TIME_CONTAINER) :: TC_GIB
+      ! TYPE (TIME_CONTAINER) :: TC_GIB
       TYPE (TIME_CONTAINER) :: TC_LEX
       TYPE (TIME_CONTAINER) :: TC_CO2
 
@@ -191,15 +191,15 @@
       if (.not.CheckDatelist(DATESTART,TC_FOR)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATESTART,TC_TIN)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATESTART,TC_TIN)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATESTART,TC_ATM)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATESTART,TC_GIB)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATESTART,TC_GIB)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATESTART,TC_LEX)) then 
        B = .false.
        endif
@@ -210,15 +210,15 @@
       if (.not.CheckDatelist(DATE__END,TC_FOR)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATE__END,TC_TIN)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATE__END,TC_TIN)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATE__END,TC_ATM)) then 
        B = .false.
        endif
-      if (.not.CheckDatelist(DATE__END,TC_GIB)) then 
-       B = .false.
-       endif
+      ! if (.not.CheckDatelist(DATE__END,TC_GIB)) then
+       ! B = .false.
+       ! endif
       if (.not.CheckDatelist(DATE__END,TC_LEX)) then 
        B = .false.
        endif
@@ -286,6 +286,17 @@
       END SUBROUTINE Load_Dump_container
 
 
+
+      subroutine unload_dump_container(struct)
+
+          type(DUMP_CONTAINER) struct
+
+          deallocate(struct%Timestrings)
+
+      end subroutine unload_dump_container
+
+
+
       ! *************************************************
       SUBROUTINE Load_Time_container(STRUCT)
       integer I,N
@@ -323,6 +334,20 @@
 
 
 
+      subroutine unload_time_container(struct)
+
+          type(TIME_CONTAINER) struct
+
+          deallocate(struct%Timestrings)
+          deallocate(struct%Times)
+          if (struct%Periodic) then
+              deallocate(struct%TimeStringsExtended)
+          endif
+
+      end subroutine unload_time_container
+
+
+
       ! ****************************************************
       !** Lettura dei tempi di :
       ! * Inizio e fine simulazione,
@@ -341,14 +366,14 @@
       TC_FOR%Filename    = 'forcingsTimes'
       TC_FOR%Name        = 'Forcings'
 
-      TC_TIN%Filename    = 'RiversTimes'
-      TC_TIN%Name        = 'Terrestrial Inputs'
+      ! TC_TIN%Filename    = 'RiversTimes'
+      ! TC_TIN%Name        = 'Terrestrial Inputs'
 
       TC_ATM%Filename    = 'AtmTimes'
       TC_ATM%Name        = 'Atmospherical'
 
-      TC_GIB%Filename    = 'GibTimes'
-      TC_GIB%Name        = 'Gibraltar'
+      ! TC_GIB%Filename    = 'GibTimes'
+      ! TC_GIB%Name        = 'Gibraltar'
 
       TC_CO2%Filename    = 'carbonTimes'
       TC_CO2%Name        = 'Co2 surface value'
@@ -372,9 +397,9 @@
       CLOSE(TheUnit)
 
       call Load_Time_container(TC_FOR)
-      call Load_Time_container(TC_TIN)
+      ! call Load_Time_container(TC_TIN)
       call Load_Time_container(TC_ATM)
-      call Load_Time_container(TC_GIB)
+      ! call Load_Time_container(TC_GIB)
       call Load_Time_container(TC_LEX)
       call Load_Time_container(TC_CO2)
 
@@ -387,6 +412,24 @@
 #endif
 
       END SUBROUTINE Load_Timestrings
+
+
+
+      subroutine unload_timestrings()
+
+          call unload_time_container(TC_FOR)
+          call unload_time_container(TC_ATM)
+          call unload_time_container(TC_LEX)
+          call unload_time_container(TC_CO2)
+
+          call unload_dump_container(RESTARTS)
+          call unload_dump_container(AVE_FREQ1)
+          call unload_dump_container(AVE_FREQ2)
+#ifdef ExecDA
+          call unload_dump_container(DA_TIMES)
+#endif
+
+      end subroutine unload_timestrings
 
 
       ! potrei fare
@@ -512,9 +555,9 @@
 
       if (datestring(5:17).eq.'0101-00:00:00') then
          call TimeExtension(datestring,TC_FOR)
-         call TimeExtension(datestring,TC_TIN)
+         ! call TimeExtension(datestring,TC_TIN)
          call TimeExtension(datestring,TC_ATM)
-         call TimeExtension(datestring,TC_GIB)
+         ! call TimeExtension(datestring,TC_GIB)
          call TimeExtension(datestring,TC_LEX)
          call TimeExtension(datestring,TC_CO2)
       endif
@@ -658,6 +701,43 @@
       call write_date_string(datestring, year, month, day, seconds)
 
       END SUBROUTINE MIDDLEDATE
+
+!=======================================================================
+
+
+       logical FUNCTION is_night(datestring)
+       IMPLICIT NONE
+       CHARACTER(LEN=17), INTENT(IN) :: datestring
+
+       ! LOCAL
+       INTEGER  :: year, month, day
+       double precision  :: sec, DAWN, SUNSET
+       DAWN   = 3600.*6
+       SUNSET = 3600.*18
+
+       is_night = .TRUE.
+       call read_date_string(datestring, year, month, day, sec)
+
+       if ((sec.gt.DAWN).and.(sec.le.SUNSET)) THEN
+           is_night = .FALSE.
+       endif
+
+       END FUNCTION is_night
+
+       double precision FUNCTION INSTANT_PAR(datestring,MEAN_PAR)
+       IMPLICIT NONE
+       CHARACTER(LEN=17), INTENT(IN) :: datestring
+       double precision, INTENT(IN) :: MEAN_PAR ! daily integral 
+       ! LOCAL
+       INTEGER  :: year, month, day
+       double precision :: POSITIVE_VALUE, sec, PI
+      
+       PI = 3.141592653589793
+
+       call read_date_string(datestring, year, month, day, sec)
+       POSITIVE_VALUE = cos(2*PI*sec/86400. -PI )
+       INSTANT_PAR=MAX(1.0d-3, PI*POSITIVE_VALUE*MEAN_PAR )
+       END FUNCTION INSTANT_PAR
 
 
       END MODULE TIME_MANAGER

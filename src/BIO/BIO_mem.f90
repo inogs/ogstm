@@ -65,4 +65,21 @@
 
       END subroutine myalloc_BIO
 
+
+
+      subroutine clean_memory_bio()
+
+            deallocate(bfm_trn)
+            deallocate(bfm_tra)
+            deallocate(surf_mask)
+            deallocate(ogstm_co2)
+            deallocate(co2_IO)
+            deallocate(ogstm_sedipi)
+            deallocate(ogstm_ph)
+            deallocate(NPPF2)
+
+      end subroutine clean_memory_bio
+
+
+
       END MODULE 

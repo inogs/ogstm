@@ -1,0 +1,52 @@
+module test_bc_year_mod
+
+    use bc_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_bc_year
+
+@TestCase
+    type, extends(TestCase) :: test_bc_year
+        type(bc), pointer :: m_bc => null()
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_bc_year
+
+contains
+
+    subroutine setUp(this)
+        class(test_bc_year), intent(inout) :: this
+        allocate(this%m_bc)
+        this%m_bc = bc("files_namelist_gib.dat", "20170101-00:00:00", "20190101-00:00:00")
+    end subroutine setUp
+
+    subroutine tearDown(this)
+
+        class(test_bc_year), intent(inout) :: this
+
+        ! explicitly call destructor before deallocating
+        call this%m_bc%bc_destructor()
+
+        deallocate(this%m_bc)
+        write(*, *) 'INFO: m_bc deallocated'
+        nullify(this%m_bc)
+        write(*, *) 'INFO: m_bc deassociated'
+
+    end subroutine tearDown
+
+@Test
+    subroutine test_file_names(this)
+        class(test_bc_year), intent(inout) :: this
+        integer :: i ! counter
+        do i = 0, 16, 4
+            @assertEqual("BC/GIB_yyyy0215-12:00:00.nc", this%m_bc%get_file_by_index(i + 1))
+            @assertEqual("BC/GIB_yyyy0515-12:00:00.nc", this%m_bc%get_file_by_index(i + 2))
+            @assertEqual("BC/GIB_yyyy0815-12:00:00.nc", this%m_bc%get_file_by_index(i + 3))
+            @assertEqual("BC/GIB_yyyy1115-12:00:00.nc", this%m_bc%get_file_by_index(i + 4))
+        enddo
+    end subroutine test_file_names
+
+end module test_bc_year_mod

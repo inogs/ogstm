@@ -1,0 +1,69 @@
+module test_bc_data_default_mod
+
+    use bc_data_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_bc_data_default
+
+@TestCase
+    type, extends(TestCase) :: test_bc_data_default
+        type(bc_data), pointer :: m_bc_data => null()
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_bc_data_default
+
+contains
+
+    subroutine setUp(this)
+        class(test_bc_data_default), intent(inout) :: this
+        allocate(this%m_bc_data)
+        this%m_bc_data = bc_data("files_namelist_gib.dat")
+    end subroutine setUp
+
+    subroutine tearDown(this)
+
+        class(test_bc_data_default), intent(inout) :: this
+
+        ! explicitly call destructor before deallocating
+        call this%m_bc_data%bc_data_destructor()
+
+        deallocate(this%m_bc_data)
+        write(*, *) 'INFO: m_bc_data deallocated'
+        nullify(this%m_bc_data)
+        write(*, *) 'INFO: m_bc_data deassociated'
+
+    end subroutine tearDown
+
+@Test
+    subroutine test_file_names(this)
+        class(test_bc_data_default), intent(inout) :: this
+        @assertEqual("BC/GIB_20161115-12:00:00.nc", this%m_bc_data%get_file_by_index(1))
+        @assertEqual("BC/GIB_20170215-12:00:00.nc", this%m_bc_data%get_file_by_index(2))
+        @assertEqual("BC/GIB_20170515-12:00:00.nc", this%m_bc_data%get_file_by_index(3))
+        @assertEqual("BC/GIB_20170815-12:00:00.nc", this%m_bc_data%get_file_by_index(4))
+        @assertEqual("BC/GIB_20171115-12:00:00.nc", this%m_bc_data%get_file_by_index(5))
+        @assertEqual("BC/GIB_20180215-12:00:00.nc", this%m_bc_data%get_file_by_index(6))
+    end subroutine test_file_names
+
+@Test
+    subroutine test_get_interpolation_factor(this)
+        class(test_bc_data_default), intent(inout) :: this
+        @assertEqual(1.0, this%m_bc_data%get_interpolation_factor("20170515-12:00:00"))
+    end subroutine test_get_interpolation_factor
+
+@Test
+    subroutine test_new_interval(this)
+        class(test_bc_data_default), intent(inout) :: this
+        double precision :: interpolation_factor
+        interpolation_factor = this%m_bc_data%get_interpolation_factor("20170814-00:00:00")
+        @assertTrue(this%m_bc_data%new_interval(), "should be new interval")
+        interpolation_factor = this%m_bc_data%get_interpolation_factor("20170815-00:00:00")
+        @assertFalse(this%m_bc_data%new_interval(), "should be same interval")
+        interpolation_factor = this%m_bc_data%get_interpolation_factor("20170816-00:00:00")
+        @assertTrue(this%m_bc_data%new_interval(), "should be new interval")
+    end subroutine test_new_interval
+
+end module test_bc_data_default_mod

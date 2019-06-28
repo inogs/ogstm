@@ -1,0 +1,5 @@
+ADD_TEST_SUITE(test_bc_data_default_mod_suite)
+ADD_TEST_SUITE(test_bc_default_mod_suite)
+ADD_TEST_SUITE(test_hard_open_default_mod_suite)
+ADD_TEST_SUITE(test_rivers_default_mod_suite)
+ADD_TEST_SUITE(test_sponge_default_mod_suite)

@@ -2,7 +2,12 @@
 MODULE ogstm_mpi_module
 
 #ifdef ExecDA
+#include <petscversion.h>
+#if PETSC_VERSION_GE(3,8,0)
+#include "petsc/finclude/petscvec.h"
+#else
 #include <petsc/finclude/petscvecdef.h>
+#endif
 #endif
 
 USE myalloc
@@ -74,7 +79,7 @@ SUBROUTINE mynode
       else
         call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED, myrank, Var3DCommunicator, ierr)
       endif
-#endif !ExecDA
+#endif
 
 #else
       mpi_glcomm_size = 1

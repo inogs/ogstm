@@ -8,8 +8,19 @@ MODULE module_step
       USE mpi
       USE mod_atmbc
       USE mod_cbc
-      USE mod_gibbc
-      USE mod_tinbc
+      ! USE mod_gibbc
+      ! USE mod_tinbc
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      use bc_set_mod
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       USE ogstm_mpi_module
 
 
@@ -81,7 +92,7 @@ MODULE module_step
 
          NOW_datestring = DATEstring ! update time manager module
          NOW_sec        = sec
-
+         COMMON_DATESTRING = DATEstring
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates
@@ -89,21 +100,24 @@ MODULE module_step
 
          if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
          if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
-
+         !write(*,*) is_night(DATEstring)
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
-
-
+         
+            if (AVE_FREQ1%N .gt.0) then              !  void 1.aveTimes -> no backup
             if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
                call tau2datestring(TauAVEfrom_1, datefrom_1)
                CALL trcdia(datestring, datefrom_1, datestring,1)
             endif
+            endif
 
+            if (AVE_FREQ2%N .gt.0) then
             if (.not.IsAnAveDump(DATEstring,2)) then ! backup conditions group 2
                call tau2datestring(TauAVEfrom_2, datefrom_2)
                if (save_bkp_group2) CALL trcdia(datestring, datefrom_2, datestring,2)
+            endif
             endif
 
          if (lwp) then
@@ -120,8 +134,22 @@ MODULE module_step
 
       CALL forcings_PHYS(DATEstring)
       CALL forcings_KEXT(datestring)
-      CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
-      CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
+      !CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
+      !CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      !bc_tin_partTime = MPI_WTIME()
+      call boundaries%update(datestring)
+      !bc_tin_partTime = MPI_WTIME()    - bc_tin_partTime
+      !bc_tin_TotTime  = bc_tin_TotTime + bc_tin_partTime
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
@@ -265,23 +293,38 @@ MODULE module_step
       IF (ladv) CALL trcadv ! tracers: advection
 
 #    if defined key_trc_dmp
-      CALL trcdmp ! tracers: damping for passive tracers
+      CALL trcdmp ! tracers: damping for passive tracerstrcstp
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      call boundaries%apply(e3t, trb, tra)
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
 #    endif
 
 ! tracers: horizontal diffusion IF namelist flags are activated
 ! -----------------------------
 
-      IF (lhdf)   CALL trchdf
+      IF (lhdf) CALL trchdf
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
-      IF (lsbc)  CALL trcsbc ! surface cell processes, default lsbc = False
+      IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
 
-      IF (lbfm )  CALL trcsms
+      IF (lbfm) CALL trcsms
 
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
+
       IF (lsnu) CALL snutel
+
       IF (lhtp) CALL hard_tissue_pump
-      CALL checkValues
+
+      ! CALL checkValues
+
       CALL trcnxt ! tracers: fields at next time step
       
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop

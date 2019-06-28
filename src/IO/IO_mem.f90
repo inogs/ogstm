@@ -101,4 +101,33 @@
 
 
 
+      subroutine clean_memory_io()
+
+          deallocate(buffglamt)
+          deallocate(buffgphit)
+          deallocate(bufftrn)
+          deallocate(bufftrb)
+          deallocate(buffsn)
+          deallocate(bufftn)
+          deallocate(buffvatm)
+          deallocate(buffemp)
+          deallocate(buffqsr)
+          deallocate(buffun)
+          deallocate(buffvn)
+          deallocate(buffwn)
+          deallocate(buffavt)
+          deallocate(buffe3t)
+          deallocate(bufftma)
+          deallocate(bufftrIO)
+          deallocate(buffDIA)
+          deallocate(buffDIA2d)
+          
+          if (lwp) then
+              deallocate(d2f2d)
+          endif
+
+      end subroutine clean_memory_io
+
+
+
       END MODULE 

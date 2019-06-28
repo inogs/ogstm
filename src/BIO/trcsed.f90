@@ -126,7 +126,6 @@
                     zwork(jk,js,1) = 0.
 
                  END DO
-
               END DO
 
 ! 1.2 tracer flux at w-point: we use -vsed (downward flux)
@@ -135,54 +134,62 @@
              
 
 !                Particulate
-                 DO js =1,4
-                  DO  jk = 2,jpkm1
+              DO js =1,4
+                 DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -vsed * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-               END DO
+              END DO
 !                Diatoms
-                 DO js =5,9
-                  DO  jk = 2,jpkm1                 
+              DO js =5,9
+                 DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-               END DO
+              END DO
 !                Flagellates
-                 DO js =10,13
-                  DO  jk = 2,jpkm1
+              DO js =10,13
+                 DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-               END DO
+              END DO
 !                Picophytoplankton
-                 DO js =14,17
-                  DO  jk = 2,jpkm1
+              DO js =14,17
+                 DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
-               END DO
+              END DO
 !                Dinoflagellates
-                 DO js =18,21
-                  DO  jk = 2,jpkm1
+              DO js =18,21
+                 DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 
+#ifndef BFMv2
+!                Calcite
+              DO js =22,22
+                 DO  jk = 2,jpkm1
+                    zwork(jk,js,1) = - vsedO5c * trn(jk-1,jj,ji, sed_idx(js))
+                 END DO
+              END DO
+#endif
                bottom = mbathy(jj,ji) + 1
                zwork(bottom,:,1) = bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
 
 ! 1.3 tracer flux divergence at t-point added to the general trend
 
               DO  jk = 1,jpkm1
-                 jf=  jarr_sed_flx(jk,jV)
+                  jf=  jarr_sed_flx(jk,jV)
 
                  ze3tr = 1./e3t(jk,jj,ji)
 
-                 DO js =1,21
+                 DO js =1,nsed
                     ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
                          diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,1)
                     ENDIF
                  END DO
 
-                 DO js =1,21
+                 DO js =1,nsed
 !!!  d2s convert speed from (m/day) to  (m/s)
                     tra(jk,jj,ji,sed_idx(js)) = tra(jk,jj,ji,sed_idx(js)) + ztra(js,1)*d2s
                  END DO
@@ -191,9 +198,8 @@
                   trbio(jk,jj,ji,8) = ztra
 #endif
 
-
-                END DO
-#ENDIF
+              END DO
+#endif
 
 
       END DO MAIN_LOOP

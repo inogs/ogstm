@@ -39,7 +39,9 @@
           flux_file = 'FLUXES/flux.'//datemean//'.nc'
 
 
-          s = nf90_create(flux_file, or(nf90_clobber,NF90_HDF5), nc)
+          ! Just to try without 'or'
+          ! s = nf90_create(flux_file, or(nf90_clobber,NF90_HDF5), nc)
+          s = nf90_create(flux_file, NF90_HDF5, nc)
 
           s = nf90_put_att(nc, nf90_global, 'Time_Start'     , datefrom)
           s = nf90_put_att(nc, nf90_global, 'Time___End'     ,  dateend)
@@ -138,7 +140,7 @@
                    if ( (jj .EQ. 1) .OR. (jj .EQ. jpj) ) INDflxBuff(jf) = 0 ! Ghost cell value has index 0
                enddo
            endif
-           call MPI_SEND(INDflxBuff  , FsizeMax  ,mpi_integer, 0, 1, mpi_comm_world,status,ierr)
+           call MPI_SEND(INDflxBuff, FsizeMax, mpi_integer, 0, 1, mpi_comm_world, ierr)
            DO jn=1,jptra
                IF (Fsize .GT. 0) THEN
                    DO jf=1,Fsize
@@ -149,8 +151,8 @@
                        endif
                    ENDDO
                ENDIF
-               call MPI_SEND(INDflxBuff  , FsizeMax, mpi_integer, 0, 2, mpi_comm_world,status, ierr)
-               call MPI_SEND(diaflxBuff  , FsizeMax*7, mpi_real8, 0, 3, mpi_comm_world, status, ierr)
+               call MPI_SEND(INDflxBuff, FsizeMax, mpi_integer, 0, 2, mpi_comm_world, ierr)
+               call MPI_SEND(diaflxBuff, FsizeMax*7, mpi_real8, 0, 3, mpi_comm_world, ierr)
            END DO ! loop on myrank for each tracers
 
 

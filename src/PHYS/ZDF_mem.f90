@@ -67,5 +67,23 @@
 
 
       END subroutine myalloc_ZDF
+      
+      
+      
+      subroutine clean_memory_zdf()
+
+          deallocate(jarr_zdf)
+          deallocate(jarr_zdf_flx)
+          deallocate(zwd)
+          deallocate(zws)
+          deallocate(zwi)
+          deallocate(zwx)
+          deallocate(zwy)
+          deallocate(zwz)
+          deallocate(zwt)
+
+      end subroutine clean_memory_zdf
+
+
 
       END MODULE 

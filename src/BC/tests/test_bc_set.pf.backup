@@ -1,0 +1,43 @@
+module test_bc_set_mod
+
+    use bc_set_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_bc_set
+
+@TestCase
+    type, extends(TestCase) :: test_bc_set
+        type(bc_set), pointer :: m_bc_set => null()
+        character(len=27), dimension(3) :: m_bc_strings = (/ &
+            "BC/TIN_20161215-00:00:00.nc", &
+            "BC/GIB_20161115-12:00:00.nc", &
+            "BC/OPE_20161130-00:00:00.nc" /)
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_bc_set
+
+contains
+
+    subroutine setUp(this)
+        class(test_bc_set), intent(inout) :: this
+        allocate(this%m_bc_set)
+        this%m_bc_set = bc_set("boundaries.nml")
+    end subroutine setUp
+
+    subroutine tearDown(this)
+        class(test_bc_set), intent(inout) :: this
+        call this%m_bc_set%bc_set_destructor()
+        deallocate(this%m_bc_set)
+        nullify(this%m_bc_set)
+    end subroutine tearDown
+
+@Test
+    ! trivial test, used just to call the constructor once
+    subroutine test_string_parser(this)
+        class(test_bc_set), intent(inout) :: this
+        @assertEqual(this%m_bc_strings(1), this%m_bc_strings(1))
+    end subroutine test_string_parser
+end module test_bc_set_mod

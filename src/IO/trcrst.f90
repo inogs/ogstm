@@ -13,7 +13,6 @@
 
        USE calendar
        USE myalloc
-       ! epascolo USE myalloc_mpp
        USE TIME_MANAGER
        USE IO_MEM , ONLY : ave_counter_1, ave_counter_2, existFilebkp
 
@@ -24,7 +23,7 @@
 ! ==================
       INTEGER jn, jn_high
       CHARACTER(LEN=37) filename
-      CHARACTER(LEN=43) bkpname
+      CHARACTER(LEN=100) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread
 
@@ -127,14 +126,14 @@
            INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_IO_HIGH(:,:,:,jn_high) )
+             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_IO_HIGH(jn_high,:,:,:) )
                     if (.not.bkp1hasbeenread) then
                       call get_att_int( bkpname,'ave_counter', ave_counter_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
            else
-              tra_DIA_IO_HIGH(:,:,:,jn_high) = 0.0
+              tra_DIA_IO_HIGH(jn_high,:,:,:) = 0.0
            endif
 
           ENDIF
@@ -151,7 +150,7 @@
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,dianm_2d(jn), tra_DIA_2d_IO(jn,:,:) )
+             CALL readnc_slice_double_2d(bkpname,dianm_2d(jn), tra_DIA_2d_IO(jn,:,:) )
              if (.not.bkp2hasbeenread) then
                 call get_att_int( bkpname,'ave_counter', ave_counter_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
@@ -167,7 +166,7 @@
            INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
+             CALL readnc_slice_double_2d(bkpname,trim(dianm(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
                     if (.not.bkp1hasbeenread) then
                       call get_att_int( bkpname,'ave_counter', ave_counter_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)

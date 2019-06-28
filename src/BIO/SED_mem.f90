@@ -16,7 +16,11 @@
 
 
       INTEGER :: dimen_jvsed
+#ifdef BFMv2
       INTEGER :: nsed=21 ! number of sedimenting state variables
+#else
+      INTEGER :: nsed=22
+#endif 
       INTEGER, allocatable :: sed_idx(:)
       INTEGER, allocatable :: jarr_sed(:,:),jarr_sed_flx(:,:)
       double precision, allocatable :: ztra(:,:)
@@ -74,7 +78,9 @@
        sed_idx(19) = ppP4n
        sed_idx(20) = ppP4p
        sed_idx(21) = ppP4l
-
+#ifndef BFMv2
+       sed_idx(22) = ppO5c
+#endif
        allocate(jarr_sed(2, jpi*jpj))        
        jarr_sed     = huge(jarr_sed(1,1))
        allocate(jarr_sed_flx(jpk,jpi*jpj)) 
@@ -90,5 +96,19 @@
 #endif
 
       END subroutine myalloc_SED
+      
+      
+      
+      subroutine clean_memory_sed
+
+          deallocate(sed_idx)
+          deallocate(jarr_sed)
+          deallocate(jarr_sed_flx)
+          deallocate(ztra)
+          deallocate(zwork)
+
+      end subroutine clean_memory_sed
+
+
 
       END MODULE 

@@ -43,6 +43,16 @@ MODULE OGSTM
       USE DA_MEM
 #endif
 
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      use bc_set_mod
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
 IMPLICIT NONE
 
 CONTAINS
@@ -84,14 +94,13 @@ SUBROUTINE ogstm_initialize()
      
       ! *********************************************
 
-      OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
-
       CALL mynode() !  Nodes selection
 
       narea = myrank+1
       lwp = narea.EQ.1
 
       IF(lwp) THEN
+          OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
           WRITE(numout,*) ' '
           WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
           WRITE(numout,*) '                  Geofisica Sperimentale'
@@ -149,12 +158,15 @@ SUBROUTINE ogstm_initialize()
 
       call init_phys
 
-! Initialization of Biogeochemical recator with 0D approach
+#ifdef BFMv2
+! Initialization of Biogeochemical reactor with 0D approach
 
       call BFM0D_NO_BOXES(1,1,1,1,1)
-
-!     call BFM0D_INIT_IO_CHANNELS()
-
+#else
+! Initialization of Biogeochemical reactor with 1D approach
+      call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
+      call BFM0D_INIT_IO_CHANNELS()
+#endif
       call Initialize()
 
 END SUBROUTINE ogstm_initialize
@@ -175,45 +187,45 @@ SUBROUTINE ALLOC_ALL
        print *,"mem_all",mem_all
 #endif
 
-      write(*,*)'My_Rank=',myrank,': Memory Allocation - Basal - (MB):',  mem_all 
+       !write(*,*)'My_Rank=',myrank,': Memory Allocation - Basal - (MB):',  mem_all
        mem_all_tot=mem_all_tot+mem_all
 
       call   alloc_tot() 
-       write(*,*)'My_Rank:',myrank,'alloc_init (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_init (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_OPT() 
-       write(*,*)'My_Rank:',myrank,'alloc_OPT  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_OPT  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_ADV() 
-       write(*,*)'My_Rank:',myrank,'alloc_ADV  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_ADV  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       !call myalloc_HDF() 
       ! write(*,*)'My_Rank:',myrank,'alloc_HDF  (MB):', mem_all 
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_ZDF() 
-       write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 
 
 #ifdef key_trc_dmp
 !     needs Time_Manager
       call alloc_DTATRC()
-       write(*,*)'My_Rank:',myrank,'alloc_TRC  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_TRC  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 #endif
       call alloc_DIA()   
-       write(*,*)'My_Rank:',myrank,'alloc_DIA  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_DIA  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 
       call myalloc_BIO() 
-       write(*,*)'My_Rank:',myrank,'alloc_BIO  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_BIO  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       call myalloc_SED() 
-       write(*,*)'My_Rank:',myrank,'alloc_SED  (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_SED  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
 
       call myalloc_FN()  
-       write(*,*)'My_Rank:',myrank,'alloc_FN   (MB):', mem_all 
+       !write(*,*)'My_Rank:',myrank,'alloc_FN   (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
       
       
@@ -277,25 +289,25 @@ SUBROUTINE time_init
 
 
         call TimeExtension(DATESTART,TC_FOR)
-        call TimeExtension(DATESTART,TC_TIN)
+        ! call TimeExtension(DATESTART,TC_TIN)
         call TimeExtension(DATESTART,TC_ATM)
-        call TimeExtension(DATESTART,TC_GIB)
+        ! call TimeExtension(DATESTART,TC_GIB)
         call TimeExtension(DATESTART,TC_LEX)
         call TimeExtension(DATESTART,TC_CO2)
 
 
         call TimeInterpolation(sec,TC_FOR, TC_FOR%Before, TC_FOR%After, t_interp)
-        call TimeInterpolation(sec,TC_TIN, TC_TIN%Before, TC_TIN%After, t_interp)
+        ! call TimeInterpolation(sec,TC_TIN, TC_TIN%Before, TC_TIN%After, t_interp)
         call TimeInterpolation(sec,TC_ATM, TC_ATM%Before, TC_ATM%After, t_interp)
-        call TimeInterpolation(sec,TC_GIB, TC_GIB%Before, TC_GIB%After, t_interp)
+        ! call TimeInterpolation(sec,TC_GIB, TC_GIB%Before, TC_GIB%After, t_interp)
         call TimeInterpolation(sec,TC_LEX, TC_LEX%Before, TC_LEX%After, t_interp)
         call TimeInterpolation(sec,TC_CO2, TC_CO2%Before, TC_CO2%After, t_interp)
 
         if (lwp) then
             write(*,*) 'BeforeForcings', TC_FOR%Before, 'AfterForcing', TC_FOR%After
-            write(*,*) 'BeforeRivers',   TC_TIN%Before, 'AfterRivers',  TC_TIN%After
-            write(*,*) 'BeforeGib',      TC_GIB%Before, 'AfterGib',     TC_GIB%After
-            write(*,*) 'BeforeAtm',      TC_ATM%Before, 'AfterAtm',     TC_GIB%After
+            ! write(*,*) 'BeforeRivers',   TC_TIN%Before, 'AfterRivers',  TC_TIN%After
+            ! write(*,*) 'BeforeGib',      TC_GIB%Before, 'AfterGib',     TC_GIB%After
+            write(*,*) 'BeforeAtm',      TC_ATM%Before, 'AfterAtm',     TC_ATM%After
             write(*,*) 'BeforeCo2',      TC_CO2%Before, 'AfterCo2',     TC_CO2%After
             write(*,*) 'BeforeKex',      TC_LEX%Before, 'AfterKex',     TC_LEX%After
 
@@ -347,10 +359,36 @@ SUBROUTINE ogstm_finalize()
 
       if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
 
-      CLOSE( numout ) ! others units are closed in mppstop
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      call boundaries%bc_set_destructor()
+      deallocate(boundaries)
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+      if (lwp) CLOSE( numout ) ! others units are closed in mppstop
       CLOSE( numnam )
 
+      ! clean memory
+      call clean_memory()
+      call clean_memory_bio()
+      call clean_memory_fn()
+      call clean_memory_opt()
+      call clean_memory_sed()
+      call unload_timestrings()
+      call clean_memory_bc()
+      call clean_memory_dia()
+      call clean_memory_io()
+      call clean_memory_adv()
+      call clean_memory_zdf()
+
       END SUBROUTINE ogstm_finalize
+
+
 
 END MODULE OGSTM
 

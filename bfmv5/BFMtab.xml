@@ -1,191 +1,222 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
 <ModelVars>
-<var name="O2o" maxvalue="1000" highfreq="true" ></var>
-<var name="N1p" maxvalue= "5."  highfreq="true" ></var>
-<var name="N3n" maxvalue="500"  highfreq="true" ></var>
-<var name="N4n" maxvalue="20"   highfreq="true" ></var>
-<var name="O4n" maxvalue="240." highfreq="true" ></var>
-<var name="N5s" maxvalue="250"  highfreq="true" ></var>
-<var name="N6r" maxvalue=".5"   highfreq="true" ></var>	
-<var name="B1c" maxvalue="500"  highfreq="true" ></var>
-<var name="B1n" maxvalue="15"   highfreq="true" ></var>
-<var name="B1p" maxvalue="1.5"  highfreq="true" ></var>
-<var name="P1c" maxvalue="200"  highfreq="true" ></var>
-<var name="P1n" maxvalue="5"    highfreq="true" ></var>
-<var name="P1p" maxvalue="0.2"  highfreq="true" ></var>
-<var name="P1l" maxvalue="2"    highfreq="true" ></var>
-<var name="P1s" maxvalue="2.5"  highfreq="true" ></var>
-<var name="P2c" maxvalue="125"  highfreq="true" ></var>
-<var name="P2n" maxvalue="4"    highfreq="true" ></var>
-<var name="P2p" maxvalue="0.5"  highfreq="true" ></var>
-<var name="P2l" maxvalue="1.5"  highfreq="true" ></var>
-<var name="P3c" maxvalue="200"  highfreq="true" ></var>
-<var name="P3n" maxvalue="6"    highfreq="true" ></var>
-<var name="P3p" maxvalue="0.5"  highfreq="true" ></var>
-<var name="P3l" maxvalue="4"    highfreq="true" ></var>
-<var name="P4c" maxvalue="100"  highfreq="true" ></var>
-<var name="P4n" maxvalue="0.6"  highfreq="true" ></var>
-<var name="P4p" maxvalue="0.1"  highfreq="true" ></var>
-<var name="P4l" maxvalue="1.5"  highfreq="true" ></var>
-<var name="Z3c" maxvalue="18"   highfreq="true" ></var>
-<var name="Z3n" maxvalue="0.3"  highfreq="true" ></var>
-<var name="Z3p" maxvalue="0.1"  highfreq="true" ></var>
-<var name="Z4c" maxvalue="100"  highfreq="true" ></var>
-<var name="Z4n" maxvalue="1.5"  highfreq="true" ></var>
-<var name="Z4p" maxvalue="0.3"  highfreq="true" ></var>
-<var name="Z5c" maxvalue="80"   highfreq="true" ></var>
-<var name="Z5n" maxvalue="3"    highfreq="true" ></var>
-<var name="Z5p" maxvalue="0.2"  highfreq="true" ></var>
-<var name="Z6c" maxvalue="100"  highfreq="true" ></var>
-<var name="Z6n" maxvalue="4"    highfreq="true" ></var>
-<var name="Z6p" maxvalue="0.3"  highfreq="true" ></var>
-<var name="R1c" maxvalue="60"   highfreq="true" ></var>
-<var name="R1n" maxvalue="3"    highfreq="true" ></var>
-<var name="R1p" maxvalue="0.3"  highfreq="true" ></var>
-<var name="R1s" maxvalue="0.1"  highfreq="true" ></var>
-<var name="R2c" maxvalue="500"  highfreq="true" ></var>
-<var name="R6c" maxvalue="200"  highfreq="true" ></var>
-<var name="R6n" maxvalue="4"    highfreq="true" ></var>
-<var name="R6p" maxvalue="0.5"  highfreq="true" ></var>
-<var name="R6s" maxvalue="3"    highfreq="true" ></var>
-<var name="R7c" maxvalue="3000"  highfreq="true" ></var>
-<var name="R3c" maxvalue="100000" highfreq="true" comment="max inventato"></var>
-<var name="O3c" maxvalue="200000" highfreq="true" ></var>
-<var name="O3h" maxvalue="20000"  highfreq="true" ></var>	
+<var name="O2o" maxvalue="1000" highfreq="true" dump="false" ></var>
+<var name="N1p" maxvalue= "5."  highfreq="true" dump="false" ></var>
+<var name="N3n" maxvalue="500"  highfreq="true" dump="false" ></var>
+<var name="N4n" maxvalue="20"   highfreq="true" dump="false" ></var>
+<var name="O4n" maxvalue="240." highfreq="false" dump="false" ></var>
+<var name="N5s" maxvalue="250"  highfreq="true" dump="false" ></var>
+<var name="N6r" maxvalue=".5"   highfreq="false" dump="false" ></var>	
+<var name="B1c" maxvalue="500"  highfreq="false" dump="false" ></var>
+<var name="B1n" maxvalue="15"   highfreq="false" dump="false" ></var>
+<var name="B1p" maxvalue="1.5"  highfreq="false" dump="false" ></var>
+<var name="P1c" maxvalue="200"  highfreq="true" dump="false" ></var>
+<var name="P1n" maxvalue="5"    highfreq="false" dump="false" ></var>
+<var name="P1p" maxvalue="0.2"  highfreq="false" dump="false" ></var>
+<var name="P1l" maxvalue="2"    highfreq="true" dump="false" ></var>
+<var name="P1s" maxvalue="2.5"  highfreq="false" dump="false" ></var>
+<var name="P2c" maxvalue="125"  highfreq="true" dump="false" ></var>
+<var name="P2n" maxvalue="4"    highfreq="false" dump="false" ></var>
+<var name="P2p" maxvalue="0.5"  highfreq="false" dump="false" ></var>
+<var name="P2l" maxvalue="1.5"  highfreq="true" dump="false" ></var>
+<var name="P3c" maxvalue="200"  highfreq="true" dump="false" ></var>
+<var name="P3n" maxvalue="6"    highfreq="false" dump="false" ></var>
+<var name="P3p" maxvalue="0.5"  highfreq="false" dump="false" ></var>
+<var name="P3l" maxvalue="4"    highfreq="true" dump="false" ></var>
+<var name="P4c" maxvalue="100"  highfreq="true" dump="false" ></var>
+<var name="P4n" maxvalue="0.6"  highfreq="false" dump="false" ></var>
+<var name="P4p" maxvalue="0.1"  highfreq="false" dump="false" ></var>
+<var name="P4l" maxvalue="1.5"  highfreq="true" dump="false" ></var>
+<var name="Z3c" maxvalue="18"   highfreq="false" dump="false" ></var>
+<var name="Z3n" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+<var name="Z3p" maxvalue="0.1"  highfreq="false" dump="false" ></var>
+<var name="Z4c" maxvalue="100"  highfreq="false" dump="false" ></var>
+<var name="Z4n" maxvalue="1.5"  highfreq="false" dump="false" ></var>
+<var name="Z4p" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+<var name="Z5c" maxvalue="80"   highfreq="false" dump="false" ></var>
+<var name="Z5n" maxvalue="3"    highfreq="false" dump="false" ></var>
+<var name="Z5p" maxvalue="0.2"  highfreq="false" dump="false" ></var>
+<var name="Z6c" maxvalue="100"  highfreq="false" dump="false" ></var>
+<var name="Z6n" maxvalue="4"    highfreq="false" dump="false" ></var>
+<var name="Z6p" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+<var name="R1c" maxvalue="60"   highfreq="false" dump="false" ></var>
+<var name="R1n" maxvalue="3"    highfreq="false" dump="false" ></var>
+<var name="R1p" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+<var name="R1s" maxvalue="0.1"  highfreq="false" dump="false" ></var>
+<var name="R2c" maxvalue="500"  highfreq="false" dump="false" ></var>
+<var name="R6c" maxvalue="200"  highfreq="false" dump="false" ></var>
+<var name="R6n" maxvalue="4"    highfreq="false" dump="false" ></var>
+<var name="R6p" maxvalue="0.5"  highfreq="false" dump="false" ></var>
+<var name="R6s" maxvalue="3"    highfreq="false" dump="false" ></var>
+<var name="R7c" maxvalue="3000"  highfreq="false" dump="false" ></var>
+<var name="R3c" maxvalue="100000" highfreq="false" comment="max inventato" dump="false" ></var>
+<var name="O3c" maxvalue="200000" highfreq="false" dump="false" ></var>
+<var name="O3h" maxvalue="20000"  highfreq="false" dump="false" ></var>	
+<var name="O5c" maxvalue="200000" highfreq="false" dump="false" ></var>
 </ModelVars>
 
 
 
 <Diagnostics>
-<var name="ETW"          highfreq="false" description="temperatura" ></var> 
-<var name="ESW"          highfreq="false" ></var> 
-<var name="ERHO"         highfreq="false" ></var> 
-<var name="EIR"          highfreq="false" ></var> 
-<var name="ESS"          highfreq="false" ></var> 
-<var name="EPR"          highfreq="false" ></var> 
-<var name="Depth"        highfreq="false" ></var> 
-<var name="Volume"       highfreq="false" ></var> 
-<var name="DIC"          highfreq="false" ></var> 
-<var name="Area"         highfreq="false" ></var> 
-<var name="CO2"          highfreq="false" ></var> 
-<var name="pCO2"         highfreq="false" ></var> 
-<var name="HCO3"         highfreq="false" ></var> 
-<var name="CO3"          highfreq="false" ></var> 
-<var name="ALK"          highfreq="false" ></var> 
-<var name="pH"           highfreq="false" ></var> 
-<var name="OCalc"        highfreq="false" ></var> 
-<var name="OArag"        highfreq="false" ></var> 
-<var name="totpelc"      highfreq="false" ></var> 
-<var name="totpeln"      highfreq="false" ></var> 
-<var name="totpelp"      highfreq="false" ></var> 
-<var name="totpels"      highfreq="false" ></var> 
-<var name="cxoO2"        highfreq="false" ></var> 
-<var name="eO2mO2"       highfreq="false" ></var> 
-<var name="Chla"         highfreq="false" ></var> 
-<var name="flPTN6r"      highfreq="false" ></var> 
-<var name="flN3O4n"      highfreq="false" ></var> 
-<var name="flN4N3n"      highfreq="false" ></var> 
-<var name="sediR2"       highfreq="false" ></var> 
-<var name="sediR6"       highfreq="false" ></var> 
-<var name="xEPS"         highfreq="false" ></var> 
-<var name="ABIO_eps"     highfreq="false" ></var> 
-<var name="qpcPPY_iiP1"  highfreq="false" ></var> 
-<var name="qpcPPY_iiP2"  highfreq="false" ></var> 
-<var name="qpcPPY_iiP3"  highfreq="false" ></var> 
-<var name="qpcPPY_iiP4"  highfreq="false" ></var> 
-<var name="qncPPY_iiP1"  highfreq="false" ></var> 
-<var name="qncPPY_iiP2"  highfreq="false" ></var> 
-<var name="qncPPY_iiP3"  highfreq="false" ></var> 
-<var name="qncPPY_iiP4"  highfreq="false" ></var> 
-<var name="qscPPY_iiP1"  highfreq="false" ></var> 
-<var name="qscPPY_iiP2"  highfreq="false" ></var> 
-<var name="qscPPY_iiP3"  highfreq="false" ></var> 
-<var name="qscPPY_iiP4"  highfreq="false" ></var> 
-<var name="qlcPPY_iiP1"  highfreq="false" ></var> 
-<var name="qlcPPY_iiP2"  highfreq="false" ></var> 
-<var name="qlcPPY_iiP3"  highfreq="false" ></var> 
-<var name="qlcPPY_iiP4"  highfreq="false" ></var> 
-<var name="qpcMEZ_iiZ3"  highfreq="false" ></var> 
-<var name="qpcMEZ_iiZ4"  highfreq="false" ></var> 
-<var name="qncMEZ_iiZ3"  highfreq="false" ></var> 
-<var name="qncMEZ_iiZ4"  highfreq="false" ></var> 
-<var name="qpcMIZ_iiZ5"  highfreq="false" ></var> 
-<var name="qpcMIZ_iiZ6"  highfreq="false" ></var> 
-<var name="qncMIZ_iiZ5"  highfreq="false" ></var> 
-<var name="qncMIZ_iiZ6"  highfreq="false" ></var> 
-<var name="qpcOMT_iiR1"  highfreq="false" ></var> 
-<var name="qpcOMT_iiR2"  highfreq="false" ></var> 
-<var name="qpcOMT_iiR3"  highfreq="false" ></var> 
-<var name="qpcOMT_iiR6"  highfreq="false" ></var> 
-<var name="qncOMT_iiR1"  highfreq="false" ></var> 
-<var name="qncOMT_iiR2"  highfreq="false" ></var> 
-<var name="qncOMT_iiR3"  highfreq="false" ></var> 
-<var name="qncOMT_iiR6"  highfreq="false" ></var> 
-<var name="qscOMT_iiR1"  highfreq="false" ></var> 
-<var name="qscOMT_iiR2"  highfreq="false" ></var> 
-<var name="qscOMT_iiR3"  highfreq="false" ></var> 
-<var name="qscOMT_iiR6"  highfreq="false" ></var> 
-<var name="qpcPBA_iiB1"  highfreq="false" ></var> 
-<var name="qncPBA_iiB1"  highfreq="false" ></var> 
-<var name="sediPPY_iiP1" highfreq="false" ></var> 
-<var name="sediPPY_iiP2" highfreq="false" ></var> 
-<var name="sediPPY_iiP3" highfreq="false" ></var> 
-<var name="sediPPY_iiP4" highfreq="false" ></var> 
-<var name="sediMIZ_iiZ5" highfreq="false" ></var> 
-<var name="sediMIZ_iiZ6" highfreq="false" ></var> 
-<var name="sediMEZ_iiZ3" highfreq="false" ></var> 
-<var name="sediMEZ_iiZ4" highfreq="false" ></var> 
-<var name="sunPPY_iiP1"  highfreq="false" ></var> 
-<var name="sunPPY_iiP2"  highfreq="false" ></var> 
-<var name="sunPPY_iiP3"  highfreq="false" ></var> 
-<var name="sunPPY_iiP4"  highfreq="false" ></var> 
-<var name="eiPPY_iiP1"   highfreq="false" ></var> 
-<var name="eiPPY_iiP2"   highfreq="false" ></var> 
-<var name="eiPPY_iiP3"   highfreq="false" ></var> 
-<var name="eiPPY_iiP4"   highfreq="false" ></var> 
-<var name="ELiPPY_iiP1"  highfreq="false" ></var> 
-<var name="ELiPPY_iiP2"  highfreq="false" ></var> 
-<var name="ELiPPY_iiP3"  highfreq="false" ></var> 
-<var name="ELiPPY_iiP4"  highfreq="false" ></var> 
-<var name="ruPPYc"       highfreq="false" ></var> 
-<var name="resPPYc"      highfreq="false" ></var> 
-<var name="resPBAc"      highfreq="false" ></var> 
-<var name="resZOOc"      highfreq="false" ></var> 
-<var name="ruPPYn"       highfreq="false" ></var> 
-<var name="ruPPYp"       highfreq="false" ></var> 
-<var name="ruPPYs"       highfreq="false" ></var> 
-<var name="exPPYc"       highfreq="false" ></var> 
-<var name="ruZOOc"       highfreq="false" ></var> 
-<var name="resPELo"      highfreq="false" ></var> 
-<var name="remZOOn"      highfreq="false" ></var> 
-<var name="remZOOp"      highfreq="false" ></var> 
-<var name="remPBAn"      highfreq="false" ></var> 
-<var name="remPBAp"      highfreq="false" ></var> 
-<var name="resPPY1c"     highfreq="false" ></var> 
-<var name="resPPY2c"     highfreq="false" ></var> 
-<var name="resPPY3c"     highfreq="false" ></var> 
-<var name="resPPY4c"     highfreq="false" ></var> 
-<var name="ruPBAc"       highfreq="false" ></var> 
-<var name="resPBA1c"     highfreq="false" ></var> 
-<var name="resMEZ1c"     highfreq="false" ></var> 
-<var name="resMEZ2c"     highfreq="false" ></var> 
-<var name="resMIZ1c"     highfreq="false" ></var> 
-<var name="resMIZ2c"     highfreq="false" ></var> 
+<var name="ETW"          highfreq="false" description="temperatura" dump="false" ></var> 
+<var name="ESW"          highfreq="false" dump="false" ></var> 
+<var name="ERHO"         highfreq="false" dump="false" ></var> 
+<var name="EIR"          highfreq="false" dump="false" ></var> 
+<var name="ESS"          highfreq="false" dump="false" ></var> 
+<var name="EPR"          highfreq="false" dump="false" ></var> 
+<var name="Depth"        highfreq="false" dump="false" ></var> 
+<var name="Volume"       highfreq="false" dump="false" ></var> 
+<var name="DIC"          highfreq="true" dump="true" ></var> 
+<var name="Area"         highfreq="false" dump="false" ></var> 
+<var name="CO2"          highfreq="false" dump="false" ></var> 
+<var name="pCO2"         highfreq="true" dump="true" ></var> 
+<var name="HCO3"         highfreq="false" dump="false" ></var> 
+<var name="CO3"          highfreq="false" dump="false" ></var> 
+<var name="ALK"          highfreq="true" dump="true" ></var> 
+<var name="pH"           highfreq="true" dump="true" comment="mandatory" ></var> 
+<var name="OCalc"        highfreq="false" dump="false" ></var> 
+<var name="OArag"        highfreq="false" dump="false" ></var> 
+<var name="totpelc"      highfreq="false" dump="false" ></var> 
+<var name="totpeln"      highfreq="false" dump="false" ></var> 
+<var name="totpelp"      highfreq="false" dump="false" ></var> 
+<var name="totpels"      highfreq="false" dump="false" ></var> 
+<var name="cxoO2"        highfreq="false" dump="false" ></var> 
+<var name="eO2mO2"       highfreq="false" dump="false" ></var> 
+<var name="Chla"         highfreq="true" dump="false" ></var> 
+<var name="flPTN6r"      highfreq="false" dump="false" ></var> 
+<var name="flN3O4n"      highfreq="false" dump="false" ></var> 
+<var name="flN4N3n"      highfreq="false" dump="false" ></var> 
+<var name="sediR2"       highfreq="false" dump="false" ></var> 
+<var name="sediR6"       highfreq="false" dump="false" ></var> 
+<var name="sediO5"       highfreq="false" dump="false" ></var>
+<var name="xEPS"         highfreq="false" dump="false" ></var> 
+<var name="ABIO_eps"     highfreq="false" dump="false" ></var> 
+<var name="qpcPPY_iiP1"  highfreq="false" dump="false" ></var> 
+<var name="qpcPPY_iiP2"  highfreq="false" dump="false" ></var> 
+<var name="qpcPPY_iiP3"  highfreq="false" dump="false" ></var> 
+<var name="qpcPPY_iiP4"  highfreq="false" dump="false" ></var> 
+<var name="qncPPY_iiP1"  highfreq="false" dump="false" ></var> 
+<var name="qncPPY_iiP2"  highfreq="false" dump="false" ></var> 
+<var name="qncPPY_iiP3"  highfreq="false" dump="false" ></var> 
+<var name="qncPPY_iiP4"  highfreq="false" dump="false" ></var> 
+<var name="qscPPY_iiP1"  highfreq="false" dump="false" ></var> 
+<var name="qscPPY_iiP2"  highfreq="false" dump="false" ></var> 
+<var name="qscPPY_iiP3"  highfreq="false" dump="false" ></var> 
+<var name="qscPPY_iiP4"  highfreq="false" dump="false" ></var> 
+<var name="qlcPPY_iiP1"  highfreq="false" dump="false" ></var> 
+<var name="qlcPPY_iiP2"  highfreq="false" dump="false" ></var> 
+<var name="qlcPPY_iiP3"  highfreq="false" dump="false" ></var> 
+<var name="qlcPPY_iiP4"  highfreq="false" dump="false" ></var> 
+<var name="qpcMEZ_iiZ3"  highfreq="false" dump="false" ></var> 
+<var name="qpcMEZ_iiZ4"  highfreq="false" dump="false" ></var> 
+<var name="qncMEZ_iiZ3"  highfreq="false" dump="false" ></var> 
+<var name="qncMEZ_iiZ4"  highfreq="false" dump="false" ></var> 
+<var name="qpcMIZ_iiZ5"  highfreq="false" dump="false" ></var> 
+<var name="qpcMIZ_iiZ6"  highfreq="false" dump="false" ></var> 
+<var name="qncMIZ_iiZ5"  highfreq="false" dump="false" ></var> 
+<var name="qncMIZ_iiZ6"  highfreq="false" dump="false" ></var> 
+<var name="qpcOMT_iiR1"  highfreq="false" dump="false" ></var> 
+<var name="qpcOMT_iiR2"  highfreq="false" dump="false" ></var> 
+<var name="qpcOMT_iiR3"  highfreq="false" dump="false" ></var> 
+<var name="qpcOMT_iiR6"  highfreq="false" dump="false" ></var> 
+<var name="qncOMT_iiR1"  highfreq="false" dump="false" ></var> 
+<var name="qncOMT_iiR2"  highfreq="false" dump="false" ></var> 
+<var name="qncOMT_iiR3"  highfreq="false" dump="false" ></var> 
+<var name="qncOMT_iiR6"  highfreq="false" dump="false" ></var> 
+<var name="qscOMT_iiR1"  highfreq="false" dump="false" ></var> 
+<var name="qscOMT_iiR2"  highfreq="false" dump="false" ></var> 
+<var name="qscOMT_iiR3"  highfreq="false" dump="false" ></var> 
+<var name="qscOMT_iiR6"  highfreq="false" dump="false" ></var> 
+<var name="qpcPBA_iiB1"  highfreq="false" dump="false" ></var> 
+<var name="qncPBA_iiB1"  highfreq="false" dump="false" ></var> 
+<var name="sediPPY_iiP1" highfreq="false" dump="false" ></var> 
+<var name="sediPPY_iiP2" highfreq="false" dump="false" ></var> 
+<var name="sediPPY_iiP3" highfreq="false" dump="false" ></var> 
+<var name="sediPPY_iiP4" highfreq="false" dump="false" ></var> 
+<var name="sediMIZ_iiZ5" highfreq="false" dump="false" ></var> 
+<var name="sediMIZ_iiZ6" highfreq="false" dump="false" ></var> 
+<var name="sediMEZ_iiZ3" highfreq="false" dump="false" ></var> 
+<var name="sediMEZ_iiZ4" highfreq="false" dump="false" ></var> 
+<var name="sunPPY_iiP1"  highfreq="false" dump="false" ></var> 
+<var name="sunPPY_iiP2"  highfreq="false" dump="false" ></var> 
+<var name="sunPPY_iiP3"  highfreq="false" dump="false" ></var> 
+<var name="sunPPY_iiP4"  highfreq="false" dump="false" ></var> 
+<var name="eiPPY_iiP1"   highfreq="false" dump="false" ></var> 
+<var name="eiPPY_iiP2"   highfreq="false" dump="false" ></var> 
+<var name="eiPPY_iiP3"   highfreq="false" dump="false" ></var> 
+<var name="eiPPY_iiP4"   highfreq="false" dump="false" ></var> 
+<var name="ELiPPY_iiP1"  highfreq="false" dump="false" ></var> 
+<var name="ELiPPY_iiP2"  highfreq="false" dump="false" ></var> 
+<var name="ELiPPY_iiP3"  highfreq="false" dump="false" ></var> 
+<var name="ELiPPY_iiP4"  highfreq="false" dump="false" ></var> 
+<var name="ruPPYc"       highfreq="true"  dump="true" comment="deve essere true"></var> 
+<var name="resPPYc"      highfreq="true"  dump="true" comment="deve essere true"></var> 
+<var name="netPPYc"      highfreq="false" dump="false" ></var> 
+<var name="resPBAc"      highfreq="false" dump="false" ></var> 
+<var name="resZOOc"      highfreq="false" dump="false" ></var> 
+<var name="ruPPYn"       highfreq="false" dump="false" ></var> 
+<var name="ruPPYp"       highfreq="false" dump="false" ></var> 
+<var name="ruPPYs"       highfreq="false" dump="false" ></var> 
+<var name="exPPYc"       highfreq="false" dump="false" ></var> 
+<var name="exPPYcR1"     highfreq="false" dump="false" ></var> 
+<var name="exPPYcR2"     highfreq="false" dump="false" ></var> 
+<var name="exPPYcR3"     highfreq="false" dump="false" ></var> 
+<var name="exPPYcR6"     highfreq="false" dump="false" ></var> 
+<var name="ruZOOc"       highfreq="false" dump="false" ></var> 
+<var name="resPELo"      highfreq="false" dump="false" ></var> 
+<var name="remZOOn"      highfreq="false" dump="false" ></var> 
+<var name="remZOOp"      highfreq="false" dump="false" ></var> 
+<var name="remPBAn"      highfreq="false" dump="false" ></var> 
+<var name="remPBAp"      highfreq="false" dump="false" ></var> 
+<var name="resPPY1c"     highfreq="false" dump="false" ></var> 
+<var name="resPPY2c"     highfreq="false" dump="false" ></var> 
+<var name="resPPY3c"     highfreq="false" dump="false" ></var> 
+<var name="resPPY4c"     highfreq="false" dump="false" ></var> 
+<var name="ruPBAc"       highfreq="false" dump="false" ></var> 
+<var name="resPBA1c"     highfreq="false" dump="false" ></var> 
+<var name="resMEZ1c"     highfreq="false" dump="false" ></var> 
+<var name="resMEZ2c"     highfreq="false" dump="false" ></var> 
+<var name="resMIZ1c"     highfreq="false" dump="false" ></var> 
+<var name="resMIZ2c"     highfreq="false" dump="false" ></var> 
+<var name="O3c_concdilu_flux"     highfreq="false" dump="false" ></var> 
+<var name="O3h_concdilu_flux"     highfreq="false" dump="false" ></var> 
+<var name="qccPPY_iiP1"     highfreq="false" dump="false" ></var>
+<var name="qccPPY_iiP2"     highfreq="false" dump="false" ></var>
+<var name="qccPPY_iiP3"     highfreq="false" dump="false" ></var>
+<var name="qccPPY_iiP4"     highfreq="false" dump="false" ></var>
+<var name="rcalCARc"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_rsp_iiP1"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_rsp_iiP2"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_rsp_iiP3"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_rsp_iiP4"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_exR2ac_iiP1"     highfreq="true" dump="true" comment="servono alla ppn" ></var>
+<var name="BFM1D_exR2ac_iiP2"     highfreq="true" dump="true" ></var>
+<var name="BFM1D_exR2ac_iiP3"     highfreq="true" dump="true" ></var>
+<var name="BFM1D_exR2ac_iiP4"     highfreq="true" dump="true" ></var>
+
+<var name="BFM1D_exR2cc_iiP1"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_exR2cc_iiP2"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_exR2cc_iiP3"     highfreq="false" dump="false" ></var>
+<var name="BFM1D_exR2cc_iiP4"     highfreq="false" dump="false" ></var>
+<var name="ffCO2"                 highfreq="false" dump="true" ></var>
+
 </Diagnostics>
 
 
+
+
 <Diagnostics_2D>
-<var name="EPCO2air"   highfreq="false" ></var>
-<var name="CO2airflux" highfreq="false" ></var>
-<var name="Area2d"   highfreq="false" ></var>
-<var name="ThereIsLight" highfreq="false" ></var>
-<var name="SUNQ" highfreq="false" ></var>
-<var name="totsysc" highfreq="false" ></var>
-<var name="totsysn" highfreq="false" ></var>
-<var name="EWIND" highfreq="false" ></var>
-<var name="totsysp" highfreq="false" ></var>
-<var name="totsyss" highfreq="false" ></var>
-<var name="EICE" highfreq="false" ></var>
+<var name="EPCO2air"   highfreq="false" dump="false" ></var>
+<var name="CO2airflux" highfreq="true" dump="true" ></var>
+<var name="Area2d"   highfreq="false" dump="false" ></var>
+<var name="ThereIsLight" highfreq="false" dump="false" ></var>
+<var name="SUNQ" highfreq="false" dump="false" ></var>
+<var name="totsysc" highfreq="false" dump="true" ></var>
+<var name="totsysn" highfreq="false" dump="false" ></var>
+<var name="EWIND" highfreq="false" dump="false" ></var>
+<var name="totsysp" highfreq="false" dump="false" ></var>
+<var name="totsyss" highfreq="false" dump="false" ></var>
+<var name="EICE" highfreq="false" dump="false" ></var>
 </Diagnostics_2D>
 </root>

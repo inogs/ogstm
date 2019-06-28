@@ -1,0 +1,60 @@
+module test_rivers_default_mod
+
+    use rivers_mod
+    use pfunit_mod
+
+    implicit none
+
+    public :: test_rivers_default
+
+@TestCase
+    type, extends(TestCase) :: test_rivers_default
+        type(rivers), pointer :: m_rivers => null()
+    contains
+        procedure :: setUp ! overrrides generic
+        procedure :: tearDown ! overrides generic
+    end type test_rivers_default
+
+contains
+
+    subroutine setUp(this)
+        class(test_rivers_default), intent(inout) :: this
+        allocate(this%m_rivers)
+        this%m_rivers = rivers("riv", "riv.nml", "files_namelist_riv.dat")
+    end subroutine setUp
+
+    subroutine tearDown(this)
+
+        class(test_rivers_default), intent(inout) :: this
+
+        ! explicitly call destructor before deallocating
+        call this%m_rivers%rivers_destructor()
+
+        deallocate(this%m_rivers)
+        write(*, *) 'INFO: m_rivers deallocated'
+        nullify(this%m_rivers)
+        write(*, *) 'INFO: m_rivers deassociated'
+
+    end subroutine tearDown
+
+!@Test
+!    subroutine test_load(this)
+!        class(test_rivers_default), intent(inout) :: this
+!        call this%m_rivers%load(1)
+!        ! TO DO: this should be done through a getter. But why is 'm_values_dtatrc' not private?
+!        ! value is not correct but rivers are ordered in a different way, so failures can happen
+!        @assertEqual(1.8267703580931993E-006, this%m_rivers%m_values_dtatrc(2, 37, 1))
+!    end subroutine test_load
+
+@Test
+    subroutine test_tracer_names(this)
+        class(test_rivers_default), intent(inout) :: this
+        @assertEqual("N1p", this%m_rivers%m_var_names(1))
+        @assertEqual("N3n", this%m_rivers%m_var_names(2))
+        @assertEqual("N5s", this%m_rivers%m_var_names(3))
+        @assertEqual("O3c", this%m_rivers%m_var_names(4))
+        @assertEqual("O3h", this%m_rivers%m_var_names(5))
+        @assertEqual("O2o", this%m_rivers%m_var_names(6))
+    end subroutine test_tracer_names
+
+end module test_rivers_default_mod

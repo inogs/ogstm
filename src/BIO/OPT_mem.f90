@@ -65,4 +65,21 @@
 
       END subroutine myalloc_OPT
 
+
+
+      subroutine clean_memory_opt
+
+          deallocate(itabe)
+          deallocate(imaske)
+          deallocate(zpar)
+          deallocate(xEPS_ogstm)
+          deallocate(zpar0m)
+          deallocate(zpar100)
+          deallocate(kef)
+          deallocate(kextIO)
+
+      end subroutine clean_memory_opt
+
+
+
       END MODULE 

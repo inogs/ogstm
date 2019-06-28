@@ -122,6 +122,8 @@ contains
             ENDDO
           ENDDO
 
+          deallocate(M1)
+
           !call exit
       END SUBROUTINE LOAD_ATM
 

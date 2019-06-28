@@ -94,7 +94,7 @@
 
 
         ! NaN number of VAR2D must result in a NaN in MISFIT
-          if (OPTION.eq.'2') then
+          if ((OPTION.eq.'2').or.(VAR2D(i,j).eq.0.)) then
              do i=1,jpiglo
              do j=1,jpjglo
                if (VAR2D(i,j).eq.fillValue) then

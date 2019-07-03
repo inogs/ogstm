@@ -174,7 +174,7 @@
 
 
           DO I=1,17
-          if (varlistDA(I).eq.string) THEN
+          if (DA_varlist(I).eq.string) THEN
             IsaDAvar = .true.
             CYCLE
           endif
@@ -193,7 +193,7 @@
 
 
           DO I=1,4
-          if (varlistDA(I).eq.string) THEN
+          if (DA_varlist(I).eq.string) THEN
             IsaCHLvar = .true.
             CYCLE
           endif
@@ -201,6 +201,14 @@
 
       END FUNCTION IsaCHLvar
 
+      FUNCTION ConvertDate(OgstmDate) RESULT(MyDate)
 
+        implicit none
+        CHARACTER(LEN=17), INTENT(IN)  :: OgstmDate
+        CHARACTER(LEN=15) :: MyDate
+
+        MyDate = OgstmDate(1:11)//OgstmDate(13:14)//OgstmDate(16:17)
+
+      END FUNCTION
 
       END MODULE

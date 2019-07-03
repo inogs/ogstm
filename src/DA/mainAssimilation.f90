@@ -6,7 +6,7 @@
       use DA_Params
       use drv_str
 ! -----------------------
-      !use ogstm_mpi_module
+      use ogstm_mpi_module
       use mpi_str, only: Var3DCommunicator
       use calendar, only: datestring2sec
 
@@ -71,7 +71,7 @@
                call CREATEMISFIT(SATFILE,VARFILE,MISFIT_OPT, ISLOG, MISFIT_FILE) ! produces MISFIT.nc
                write(*,*) 'eof = ',   trim(EOF_FILE_CHL)
                write(*,*) 'grid = ',  trim(GRID_FILE)
-             if
+             endif
 
 
             if (drv%argo_obs.eq.1) then

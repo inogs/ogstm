@@ -344,6 +344,59 @@
 
 
 ! ************************************************************
+
+     SUBROUTINE readnc_OASIM_float_2d(fileNetCDF,varname, M, OASIM_lon, OASIM_lat)
+     USE myalloc
+      USE netcdf
+      implicit none
+
+      character ,intent(in)          :: fileNetCDF*(*) ,varname*(*)
+      double precision,intent(inout) :: M(33,12,18,48)  ! lon, lat, day period, wave length
+      double precision,intent(out)   :: OASIM_lon(18,48), OASIM_lat(18,48)  
+
+      real                           :: copy_in(48,18,33,12)
+      integer ncid, stat, VARid, i, j, h, wl
+      integer counter
+      integer thecount(4), start(4)
+
+      counter = 0
+      start    = (/170, 120,  1,  1 /)
+      thecount = (/48 ,  18,  33, 12/)
+
+      stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_inq_varid (ncid, varname, VARid)
+       call handle_err2(stat, fileNetCDF,varname)
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_get_var (ncid,VARid,copy_in,start, thecount)
+
+      call handle_err2(stat, fileNetCDF,varname)
+       call handle_err1(stat, counter,FileNetCDF)
+      stat = nf90_close(ncid)
+       call handle_err1(stat, counter,FileNetCDF)
+
+      DO i=1,48
+         DO j=1,18
+           DO h=1,12
+             DO wl=1,33
+                M(wl,h,j,i) = real(copy_in(i,j,wl,h),8) ! permutaion of indexes i,j
+             ENDDO
+           ENDDO
+         ENDDO
+      ENDDO
+
+      DO i=1,48
+        DO j=1,18
+            OASIM_lon(j,i) = real(-10.5,8) + real(i-1,8) 
+            OASIM_lat(j,i) = real( 29.5,8) + real(j-1,8) 
+        ENDDO
+      ENDDO
+
+     END SUBROUTINE readnc_OASIM_float_2d
+
+
+! ************************************************************
+
       SUBROUTINE readnc_global_double(fileNetCDF,varname, M)
       USE myalloc
       USE netcdf

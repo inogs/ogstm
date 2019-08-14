@@ -6,6 +6,7 @@
 
 
       double precision :: forcing_phys_partTime=0.0, forcing_phys_TotTime = 0.0
+      double precision :: forcing_rt_partTime  =0.0, forcing_rt_TotTime = 0.0
       double precision :: forcing_kext_partTime=0.0, forcing_kext_TotTime = 0.0
       double precision :: bc_Co2_partTime      =0.0, bc_Co2_TotTime       = 0.0
       double precision :: bc_atm_partTime      =0.0, bc_atm_TotTime       = 0.0
@@ -41,6 +42,7 @@
 
       SUBROUTINE reset_Timers()
       forcing_phys_TotTime = 0.0
+      forcing_rt_TotTime   = 0.0
       forcing_kext_TotTime = 0.0
       bc_Co2_TotTime       = 0.0
       bc_atm_TotTime       = 0.0

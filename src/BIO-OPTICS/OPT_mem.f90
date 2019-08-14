@@ -23,7 +23,16 @@
       double precision, allocatable :: kef(:,:)
       double precision, allocatable :: kextIO(:,:,:)
       real, allocatable :: zkef_f (:,:)
-!!!$omp threadprivate (zpar0m,zpar100, zpar, xEPS_ogstm)
+  
+ 
+      integer, parameter            :: nwl=33                     
+! Radiative transfer model parameter OASIM Native coordinates
+      double precision              :: Ed_0m_COARSE(33,12,18,48), Es_0m_COARSE(33,12,18,48) ! lon, lat, day period, wave length
+      double precision              :: OASIM_lon(18,48), OASIM_lat(18,48)  
+! Radiative transfer model parameter OGSTM coordinates    
+      double precision,allocatable  :: Ed_0m(:,:,:), Es_0m(:,:,:) ! lon, lat, day period, wave length
+      
+      integer                       :: day_RTcheck
 !----------------------------------------------------------------------
       CONTAINS
 
@@ -58,6 +67,13 @@
 #if ! defined  key_kef
        kef(:,:) = 0.04
 #endif
+
+! radiative transfer model
+       allocate(Ed_0m(nwl,jpj,jpi))
+       Ed_0m  =huge(Ed_0m(1,1,1))
+       allocate(Es_0m(nwl,jpj,jpi))
+       Es_0m  =huge(Es_0m(1,1,1))
+
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem

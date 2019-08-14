@@ -266,7 +266,8 @@
 
       nomefile = 'FORCINGS/T'//datestring//'.nc'
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
-      flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
+      flxdta(:,:,jpqsr ,2) = 0.
+!bioptimo     flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.
       flxdta(:,:,jpemp ,2) = 0.
 

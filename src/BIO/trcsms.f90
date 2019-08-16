@@ -33,6 +33,8 @@
 !! this first routines are parallelized on vertical slab
 
        CALL trcopt ! tracers: optical model
+
+       CALL trc3streams
        
        CALL trcbio ! tracers: biological model
 

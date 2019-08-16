@@ -25,14 +25,44 @@
       real, allocatable :: zkef_f (:,:)
   
  
-      integer, parameter            :: nwl=33                     
+      integer, parameter            :: nchl=4 
+      integer, parameter            :: nlt=33                     
+      integer                       :: lam(33)
 ! Radiative transfer model parameter OASIM Native coordinates
       double precision              :: Ed_0m_COARSE(33,12,18,48), Es_0m_COARSE(33,12,18,48) ! lon, lat, day period, wave length
       double precision              :: OASIM_lon(18,48), OASIM_lat(18,48)  
 ! Radiative transfer model parameter OGSTM coordinates    
-      double precision,allocatable  :: Ed_0m(:,:,:), Es_0m(:,:,:) ! lon, lat, day period, wave length
+      double precision,allocatable  :: Ed_0m(:,:,:), Es_0m(:,:,:) ! wav, lat, lon
       
       integer                       :: day_RTcheck
+! in-water model
+      double precision              :: aw(33),bw(33)
+      double precision              :: ac(4,33),bc(4,33)
+      double precision              :: zenith_angle
+
+      double precision,allocatable  :: Edaux(:), Esaux(:)
+      double precision,allocatable  :: cd(:,:),Cs(:,:),Bu(:,:),Cu(:,:),Bs(:,:),Fd(:,:),Bd(:,:) 
+      double precision,allocatable  :: au(:,:),as(:,:),bquad(:,:),cquad(:,:),sqarg(:,:)
+      double precision,allocatable  :: inhoD(:,:),inhox(:,:),inhoy(:,:)
+      double precision,allocatable  :: D(:,:),a_m(:,:),a_p(:,:)
+      double precision,allocatable  :: r_m(:,:),r_p(:,:)
+      double precision,allocatable  :: e_m(:,:),e_p(:,:)
+      double precision,allocatable  :: zeta0(:),eta0(:)
+      double precision,allocatable  :: alpha(:,:),beta(:,:),gamm(:,:),delta(:,:)
+      double precision,allocatable  :: eps(:,:),zeta(:,:),eta(:,:),theta(:,:)
+!     double precision,allocatable  :: vD(:,:),vL(:,:),vU(:,:),WW(:,:),WW1(:,:)
+!     double precision,allocatable  :: sol(:,:),sol_p(:,:),sol_m(:,:)
+      double precision,allocatable  :: err_RT(:)
+! Additional variables for approximate model
+      double precision, allocatable        :: a1(:,:),a2(:,:),S(:,:)    
+      double precision, allocatable        :: SEdz(:,:),a2ma1(:,:),rM(:,:),rN(:,:),c2(:,:) 
+      double precision, allocatable        :: Ta2z(:,:), Eutmp(:,:)
+
+! Outputs of radiative transfer model 
+      double precision,allocatable  :: Ed(:,:,:,:), Es(:,:,:,:), Eu(:,:,:,:) ! depth, lat, lon, wave length
+      double precision,allocatable  :: PAR(:,:,:,:) ! depth, lat, lon, phyto
+
+
 !----------------------------------------------------------------------
       CONTAINS
 
@@ -69,10 +99,38 @@
 #endif
 
 ! radiative transfer model
-       allocate(Ed_0m(nwl,jpj,jpi))
+
+       allocate(Ed_0m(nlt,jpj,jpi))
        Ed_0m  =huge(Ed_0m(1,1,1))
-       allocate(Es_0m(nwl,jpj,jpi))
+       allocate(Es_0m(nlt,jpj,jpi))
        Es_0m  =huge(Es_0m(1,1,1))
+
+
+       call lidata()
+
+       allocate(Edaux(nlt))
+       allocate(Esaux(nlt))
+       allocate(cd(jpk,nlt),Cs(jpk,nlt),Bu(jpk,nlt),Cu(jpk,nlt),Bs(jpk,nlt),Fd(jpk,nlt),Bd(jpk,nlt))
+       allocate(au(jpk,nlt),as(jpk,nlt),bquad(jpk,nlt),cquad(jpk,nlt),sqarg(jpk,nlt))
+       allocate(inhoD(jpk,nlt),inhox(jpk,nlt),inhoy(jpk,nlt))
+       allocate(D(jpk,nlt),a_m(jpk,nlt),a_p(jpk,nlt))
+       allocate(r_m(jpk,nlt),r_p(jpk,nlt))
+       allocate(e_m(jpk,nlt),e_p(jpk,nlt))
+       allocate(zeta0(nlt),eta0(nlt))
+       allocate(alpha(jpk-1,nlt),beta(jpk-1,nlt),gamm(jpk-1,nlt),delta(jpk-1,nlt))
+       allocate(eps(jpk-1,nlt),zeta(jpk-1,nlt),eta(jpk-1,nlt),theta(jpk-1,nlt))
+!      allocate(vD(2*jpk-1,nlt),vL(2*jpk-1,nlt),vU(2*jpk-1,nlt))
+!      allocate(WW(2*jpk-1,nlt), WW1(2*jpk-1,nlt))
+!      allocate(sol(2*jpk-1,nlt),sol_p(jpk,nlt),sol_m(jpk,nlt))
+       allocate(err_RT(nlt))
+! Additional variables for approximate model
+       allocate(a1(jpk,nlt),a2(jpk,nlt),S(jpk,nlt))
+       allocate(SEdz(jpk,nlt),a2ma1(jpk,nlt),rM(jpk,nlt),rN(jpk,nlt),c2(jpk,nlt))
+       allocate(Ta2z(jpk,nlt), Eutmp(jpk,nlt))
+
+! Allocate output variables
+       allocate(Ed(jpk,jpj,jpi,nlt),Es(jpk,jpj,jpi,nlt),Eu(jpk,jpj,jpi,nlt))
+
 
 
 #ifdef Mem_Monitor

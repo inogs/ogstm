@@ -130,7 +130,7 @@
 
               qsr(jj,ji) = 0.0
 
-              do wl=1,nwl
+              do wl=1,nlt
                  qsr(jj,ji) = qsr(jj,ji) + Ed_0m(wl,jj,ji) + Es_0m(wl,jj,ji) 
               enddo
 

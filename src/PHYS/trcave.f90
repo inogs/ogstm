@@ -2,6 +2,7 @@
       USE myalloc
       USE IO_mem
       USE FN_mem
+      USE OPT_mem
       use mpi
 
       implicit none
@@ -220,6 +221,28 @@
 
 
       endif ! lfbm
+!     *********************  DIAGNOSTICS RT **********
+
+             DO ji=1, jpi
+             DO jj=1, jpj
+             DO jk=1, jpk
+                IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                DO jn_high=1, nlt
+                   Ed_DIA_IO(jk,jj,ji,jn_high )= &
+     &            (Ed_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Ed(jk,jj,ji,jn_high))*Realcounterp1
+                   Es_DIA_IO(jk,jj,ji,jn_high )= &
+     &            (Es_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Es(jk,jj,ji,jn_high))*Realcounterp1
+                   Eu_DIA_IO(jk,jj,ji,jn_high )= &
+     &            (Eu_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Eu(jk,jj,ji,jn_high))*Realcounterp1
+                 END DO
+                ELSE
+                   Ed_DIA_IO(jk,jj,ji,: )=Miss_val
+                   Es_DIA_IO(jk,jj,ji,: )=Miss_val
+                   Eu_DIA_IO(jk,jj,ji,: )=Miss_val
+                ENDIF
+             END DO
+             END DO
+             END DO
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

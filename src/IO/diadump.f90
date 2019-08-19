@@ -4,6 +4,7 @@
       USE myalloc
       USE IO_mem
       USE FN_mem
+      USE OPT_mem
       USE TIME_MANAGER
       use mpi
       USE ogstm_mpi_module

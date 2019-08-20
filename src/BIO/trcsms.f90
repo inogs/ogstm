@@ -1,4 +1,4 @@
-      SUBROUTINE trcsms
+      SUBROUTINE trcsms(datestring)
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE trcsms
@@ -6,23 +6,22 @@
 !!!
 !!!  PURPOSE :
 !!!  ---------
-!!!    time loop of ogstm for passive tracer
 !!!
 !!   METHOD :
 !!   -------
-!!      compute the well/spring evolution
 !!
 !!   INPUT :
 !!   -----
 !!
 !!   EXTERNAL :
 !!   --------
-!!      trcbio, trcsed, trcopt for NPZD or NNPZDDOM models
 
 
        USE myalloc
        USE mpi
        IMPLICIT NONE
+
+       character(LEN=17), INTENT(IN) ::  datestring
 
 
 !! this ROUTINE is called only every ndttrc time step
@@ -34,7 +33,7 @@
 
        CALL trcopt ! tracers: optical model
 
-       CALL trc3streams
+       CALL trc3streams(datestring)
        
        CALL trcbio ! tracers: biological model
 

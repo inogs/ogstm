@@ -34,11 +34,13 @@
 ! Radiative transfer model parameter OGSTM coordinates    
       double precision,allocatable  :: Ed_0m(:,:,:), Es_0m(:,:,:) ! wav, lat, lon
       
-      integer                       :: day_RTcheck
+      INTEGER                       :: day_RTcheck
 ! in-water model
+      INTEGER                       :: it_check
       double precision              :: aw(33),bw(33)
       double precision              :: ac(4,33),bc(4,33)
       double precision              :: zenith_angle
+     
 
       double precision,allocatable  :: Edaux(:), Esaux(:)
       double precision,allocatable  :: cd(:,:),Cs(:,:),Bu(:,:),Cu(:,:),Bs(:,:),Fd(:,:),Bd(:,:) 
@@ -61,6 +63,8 @@
 ! Outputs of radiative transfer model 
       double precision,allocatable  :: Ed(:,:,:,:), Es(:,:,:,:), Eu(:,:,:,:) ! depth, lat, lon, wave length
       double precision,allocatable  :: PAR(:,:,:,:) ! depth, lat, lon, phyto
+      double precision,allocatable  :: Ed_DIA_IO(:,:,:,:),Es_DIA_IO(:,:,:,:),Eu_DIA_IO(:,:,:,:)
+      double precision,allocatable  :: Ed_DIA_IO_HIGH(:,:,:,:),Es_DIA_IO_HIGH(:,:,:,:),Eu_DIA_IO_HIGH(:,:,:,:)
 
 
 !----------------------------------------------------------------------
@@ -130,8 +134,21 @@
 
 ! Allocate output variables
        allocate(Ed(jpk,jpj,jpi,nlt),Es(jpk,jpj,jpi,nlt),Eu(jpk,jpj,jpi,nlt))
+       allocate(PAR(jpk,jpj,jpi,nchl))
+       allocate(Ed_DIA_IO(jpk,jpj,jpi,nlt),Es_DIA_IO(jpk,jpj,jpi,nlt),Eu_DIA_IO(jpk,jpj,jpi,nlt))
+       allocate(Ed_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Es_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Eu_DIA_IO_HIGH(jpk,jpj,jpi,nlt))
 
 
+      Ed(:,:,:,:)   = 0.0d0
+      Es(:,:,:,:)   = 0.0d0
+      Eu(:,:,:,:)   = 0.0d0 
+      PAR(:,:,:,:)  = 0.0d0
+      Ed_DIA_IO(:,:,:,:)   = 0.0d0
+      Es_DIA_IO(:,:,:,:)   = 0.0d0
+      Eu_DIA_IO(:,:,:,:)   = 0.0d0
+      Ed_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
+      Es_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
+      Eu_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem

@@ -121,7 +121,7 @@
 
 ! lower vector 
 
-      vL(1,:) = 0.
+      vL(1,:) = 0.0d0
       do k =1,bottom-1 
          ii = 2*k   
          vL(ii,:)   = alpha(k,:)
@@ -139,7 +139,7 @@
       enddo
  
       vU(2*bottom-2,:)  = gamm(bottom-1,:)
-      vU(2*bottom-1,:)  = 0.
+      vU(2*bottom-1,:)  = 0.0d0
  
 !  constant vector
 
@@ -155,41 +155,41 @@
 
 ! controls
 
-      do ii=1,nlt
+!     do ii=1,nlt
 
-         if ((Edtop(ii) + Estop(ii)) < 0.0001) then 
+!         if ((Edtop(ii) + Estop(ii)) < 0.0001) then 
 !           write(*,*) 'Edtop(ii) + Estop(ii), nl->', ii
-            vL(:,ii) = 0.
-            vD(:,ii) = 0.0001d0
-            vU(:,ii) = 0.
+!           vL(:,ii) = 0.
+!           vD(:,ii) = 0.0001d0
+!           vU(:,ii) = 0.
 !           write(*,*) '---------------------'
-         endif
+!        endif
 
-         if ( sum(abs(vL(:,ii))) < 0.0001) then 
+!        if ( sum(abs(vL(:,ii))) < 0.0001) then 
 !           write(*,*) 'vL, nl->', ii
 !           vL(:,ii) = 0.
 !           vD(:,ii) = 1.
 !           vU(:,ii) = 0.
 !           write(*,*) '---------------------'
-         endif
+!        endif
 
-         if ( sum(abs(vD(2:2*bottom-1,ii))) < 0.0001d0) then 
+!        if ( sum(abs(vD(2:2*bottom-1,ii))) < 0.0001d0) then 
 !           write(*,*) 'vD, nl->', ii
-            vL(:,ii) = 0.
-            vD(:,ii) = 1.0d0
-            vU(:,ii) = 0.
+!           vL(:,ii) = 0.
+!           vD(:,ii) = 1.0d0
+!           vU(:,ii) = 0.
 !           write(*,*) '---------------------'
-         endif
+!        endif
 
-         if (sum(abs(vU(:,ii))) < 0.0001) then 
+!        if (sum(abs(vU(:,ii))) < 0.0001) then 
 !           write(*,*) 'vU, nl->', ii
 !           vL(:,ii) = 0.
 !           vD(:,ii) = 1.
 !           vU(:,ii) = 0.
 !           write(*,*) '---------------------'
-         endif
+!        endif
 
-      enddo
+!     enddo
 
       sol(:,:) = 0.0d0
 

@@ -1495,7 +1495,7 @@
        DO i=1,x
         DO j=1,y
           DO k=1,z
-            out_matrix(i,j,k) = REAL(max(in_matrix(k,j,i),1.D-11),4)
+            out_matrix(i,j,k) = REAL(in_matrix(k,j,i),4)
           ENDDO
         ENDDO
       ENDDO   

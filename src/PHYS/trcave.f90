@@ -17,7 +17,7 @@
 
 !     FIRST, LOW FREQUENCY
       Realcounter   =    REAL(ave_counter_2  , 8)
-      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+      Realcounterp1 = 1.0d0/REAL(ave_counter_2+1, 8)
 
       DO jn=1 ,jptra
 
@@ -42,7 +42,7 @@
 
 
       Realcounter   =    REAL(ave_counter_1  , 8)! ****************** HIGH FREQUENCY
-      Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+      Realcounterp1 = 1.0d0/REAL(ave_counter_1+1, 8)
       DO jn_high=1 ,jptra_high
 
 
@@ -69,10 +69,10 @@
 !     *****************  PHYS *****************************************************
       if (freq_ave_phys.eq.1) then
           Realcounter   =    REAL(ave_counter_1  , 8)
-          Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+          Realcounterp1 = 1.0d0/REAL(ave_counter_1+1, 8)
       else
           Realcounter   =    REAL(ave_counter_2  , 8)
-          Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+          Realcounterp1 = 1.0d0/REAL(ave_counter_2+1, 8)
       endif
 
 
@@ -136,7 +136,7 @@
 !     FIRST, LOW FREQUENCY
 
       Realcounter   =    REAL(ave_counter_2  , 8)
-      Realcounterp1 = 1./REAL(ave_counter_2+1, 8)
+      Realcounterp1 = 1.0d0/REAL(ave_counter_2+1, 8)
 
 
 
@@ -176,7 +176,7 @@
 
 
       Realcounter   =    REAL(ave_counter_1  , 8) ! ****************** HIGH FREQUENCY
-      Realcounterp1 = 1./REAL(ave_counter_1+1, 8)
+      Realcounterp1 = 1.0d0/REAL(ave_counter_1+1, 8)
 
 
 
@@ -230,8 +230,10 @@
                 DO jn_high=1, nlt
                    Ed_DIA_IO(jk,jj,ji,jn_high )= &
      &            (Ed_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Ed(jk,jj,ji,jn_high))*Realcounterp1
+
                    Es_DIA_IO(jk,jj,ji,jn_high )= &
      &            (Es_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Es(jk,jj,ji,jn_high))*Realcounterp1
+
                    Eu_DIA_IO(jk,jj,ji,jn_high )= &
      &            (Eu_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Eu(jk,jj,ji,jn_high))*Realcounterp1
                  END DO

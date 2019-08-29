@@ -27,14 +27,14 @@
       real(8), INTENT(OUT)   :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),Eu0(nlt)     
 
 ! local variables
-      real(8), parameter     :: rd=1.5   !these are taken from Ackleson, et al. 1994 (JGR)
-      real(8), parameter     :: ru=3.0
+      real(8), parameter     :: rd=1.5d0   !these are taken from Ackleson, et al. 1994 (JGR)
+      real(8), parameter     :: ru=3.0d0
       integer                :: jk,b
       real(8)                :: rmus, rmuu
 
 !  Constants
-      rmus = 1.0/0.83            !avg cosine diffuse down
-      rmuu = 1.0/0.4             !avg cosine diffuse up
+      rmus = 1.0d0/0.83d0            !avg cosine diffuse down
+      rmuu = 1.0d0/0.4d0             !avg cosine diffuse up
       b = bottom 
 !  Downwelling irradiance: Edz, Esz
 !  Compute irradiance components at depth
@@ -51,8 +51,8 @@
       cquad(1:b,:)  = Bs(1:b,:)*Bu(1:b,:) - Cs(1:b,:)*Cu(1:b,:)
       sqarg(1:b,:)  = bquad(1:b,:)*bquad(1:b,:) - 4.0*cquad(1:b,:)
 !     sqarg(1:b,:) = max(0.0000000001,sqarg(1:b,:))
-      a1(1:b,:)     = 0.5*(-bquad(1:b,:) + sqrt(sqarg(1:b,:)))
-      a2(1:b,:)     = 0.5*(-bquad(1:b,:) - sqrt(sqarg(1:b,:)))
+      a1(1:b,:)     = 0.5d0*(-bquad(1:b,:) + sqrt(sqarg(1:b,:)))
+      a2(1:b,:)     = 0.5d0*(-bquad(1:b,:) - sqrt(sqarg(1:b,:)))
       S(1:b,:)      = -(Bu(1:b,:)*Bd(1:b,:) + Cu(1:b,:)*Fd(1:b,:))
 
       Edaux = Edtop
@@ -70,14 +70,14 @@
          c2(jk,:)    = Esaux(:) - rM(jk,:) + rN(jk,:) 
          Ta2z(jk,:)  = exp(a2(jk,:)*zd(jk))
          Esz(jk,:)   = c2(jk,:)*Ta2z(jk,:) + rM(jk,:) - rN(jk,:)
-         Esz(jk,:)   = max(Esz(jk,:),0.0)
+         Esz(jk,:)   = max(Esz(jk,:),0.0d0)
          Eutmp(jk,:) = ((a2(jk,:)+Cs(jk,:))*c2(jk,:))*Ta2z(jk,:)  &
                   + Cs(jk,:)*rM(jk,:) - Cs(jk,:)*rN(jk,:) - Fd(jk,:)*Edz(jk,:)
          Euz(jk,:)   = Eutmp(jk,:)/Bu(jk,:)
-         Euz(jk,:)   = max(Euz(jk,:),0.0)
+         Euz(jk,:)   = max(Euz(jk,:),0.0d0)
       enddo
 
-      Eu0(:) = -1.0 
+      Eu0(:) = -1.0d0 
 
       return
       end

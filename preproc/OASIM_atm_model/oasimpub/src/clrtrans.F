@@ -186,7 +186,7 @@ c
          tlog = alog(1.0E-36+t)
          fac = a0 + a1*tlog + a2*tlog*tlog + a3*tlog*tlog*tlog
          wfac(nl) = min(fac,1.0)
-         wfac(nl) = max(wfac,0.0) !BIOPTIMOD corection: from fac to wfac
+         wfac(nl) = max(wfac(nl),0.0) !BIOPTIMOD corection: from fac to wfac
         else
          fac = b0 + b1*rlam + b2*rlam*rlam + b3*rlam*rlam*rlam
          wfac(nl) = max(fac,0.0)

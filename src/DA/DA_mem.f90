@@ -173,7 +173,7 @@
           IsaDAvar = .false.
 
 
-          DO I=1,17
+          DO I=1,NBioVar
           if (DA_varlist(I).eq.string) THEN
             IsaDAvar = .true.
             CYCLE

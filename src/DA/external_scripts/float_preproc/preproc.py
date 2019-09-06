@@ -25,6 +25,16 @@ def argument():
                                 required = True,
                                 help = '''output directory, where aveScan.py will run.
                                            Usually called PROFILATORE''')
+    parser.add_argument(   '--variable','-v',
+                                type = str,
+                                default = None,
+                                required = True,
+                                help = ''' Model variable''')
+    parser.add_argument(   '--deplim','-d',
+                                type = str,
+                                default = None,
+                                required = True,
+                                help = ''' Depth of assimilation''')
     return parser.parse_args()
 
 args = argument()
@@ -35,8 +45,10 @@ import os
 from commons import timerequestors
 from commons.Timelist import TimeList
 from commons.layer import Layer
+import datetime
 import pylab as pl
 from commons.utils import addsep
+from instruments.var_conversions import LOVFLOATVARS
 import basins.OGS as OGS
 from instruments import lovbio_float as bio_float
 from instruments.var_conversions import LOVFLOATVARS
@@ -50,45 +62,57 @@ import qualitycheck
 idate0=args.inputdate
 BASEDIR=addsep(args.basedir)
 INPUTDIR=addsep(args.inputdir)
+varmod = args.variable
 
+errbase = 0.24 #(Mignot et al., 2019)
 
 # DATE INTERVAL 
 year=int(idate0[0:4])
 month=int(idate0[4:6])
 day=int(idate0[6:8])
 #idate1 data del float, cambio per DA ogni 3days
-idate1=timerequestors.Interval_req(year,month,day, days=3)
+idate1=timerequestors.Interval_req(year,month,day, days=1)
+idate1.time_interval.end_time = datetime.datetime(year,month,day,23,59)
 print idate1.string
 
 #idate2 data del modello
 idate2=timerequestors.Daily_req(year,month,day)
+idate2.time_interval.end_time = datetime.datetime(year,month,day,23,59)
 print idate2
+
+errorfloat=[0.0690, 0.0969, 0.0997, 0.0826, 0.0660, 0.0500, 0.0360, 0.0140, 0.0320, 0.0390, 0.0340, 0.0490]
 
 
 # Variable name
-VARLIST = ['N3n']      #'N3n','O2o']
+VARLIST = [varmod]      #'N3n','O2o']
 read_adjusted = [True] #,False,False]
+
+DICTflag = {'P_l': 0,
+            'N3n': 1}
+
 
 # MASK of the domain
 TheMask=Mask(args.maskfile)
 nav_lev = TheMask.zlevels
 
-layer=Layer(0,200)     #layer of the Float profile???? 
+deplim = np.int(args.deplim)
+layer=Layer(0,deplim)     #layer of the Float profile???? 
 # new depth from 0 to 200 meters with 1 meter of resolution 
-NewPres=np.linspace(0,200,201)
+NewPres=np.linspace(0,deplim,deplim+1)
 dimnewpress=len(NewPres)              # data interpolated on the vertical Z
 
 f = open(idate0+"."+VARLIST[0]+"_arg_mis.dat","w")        # OUTPUT x il 3DVAR
 
-iniz="     \n"
+iniz="       \n"
 f.writelines(iniz)
 
 # LIST of profiles for the selected variable in VARLIST
 # in the interval idate1.time_interval in the mediterranean area 
 Profilelist_1=bio_float.FloatSelector(LOVFLOATVARS[VARLIST[0]],idate1.time_interval,OGS.med)
-TL = TimeList.fromfilenames(idate2.time_interval, INPUTDIR,"RST.*00:00*.nc",filtervar="N1p",prefix="RST.")
+TL = TimeList.fromfilenames(idate2.time_interval, INPUTDIR,"RSTbefore.*00:00*.nc",filtervar=varmod,prefix="RSTbefore.")
 TL.inputFrequency = 'weekly'
 M = Matchup_Manager(Profilelist_1, TL ,BASEDIR)
+
 
 
 
@@ -96,6 +120,7 @@ M = Matchup_Manager(Profilelist_1, TL ,BASEDIR)
 WMOlist=bio_float.get_wmo_list(Profilelist_1)
 nWMO=len(WMOlist)              #NUMBER OF float IN THE SELECTED PERIOD
 
+print "nWMO", nWMO
 totallines=0
 for wmo in WMOlist :
 #for ind in np.arange(0,1):
@@ -174,13 +199,22 @@ for wmo in WMOlist :
           errore2=0.0146/0.102    # 0.102 valor medio delle std dei float per Aug
 
           if (AllProfiles.shape[0]>0):
-             totallines+=(AllProfiles.shape[0]*200/5)  
+             totallines+=(AllProfiles.shape[0]*deplim/5)  
              for jp in  np.arange(0,AllProfiles.shape[0]):
-                for lev in range(0,200,5):
-                   testo ="\t%i\t%i\t%10.5f\t%10.5f\t%10.5f" %(1,1,AllProfiles[jp,lev,4],AllProfiles[jp,lev,3],lev)
+                for lev in range(0,deplim,5):
+                   testo ="\t%i\t%i\t%10.5f\t%10.5f\t%10.5f" %(1,DICTflag[VARLIST[0]],AllProfiles[jp,lev,4],AllProfiles[jp,lev,3],lev)
                    testo +="\t%10.5f\t%10.5f" %(0.2, AllProfiles[jp,lev,2] )
 # errore fisso 0.01, da commentare se si vuole usare i valori delle std di seguito
-	           testo +="\t%10.5f\t%i\n"  %(0.01, AllProfiles[jp,lev,5])
+# testo +="\t%10.5f\t%i\n"  %(0.01, AllProfiles[jp,lev,5])
+# errore fisso che aumenta  verso il fondo
+                   if varmod=='N3n':
+                       if lev<=250:
+                          errnut = errbase
+                       if lev>250:
+                          errnut = errbase*80**((lev-250.)/(600.-250.))
+                       testo +="\t%10.5f\t%i\n"  %(errnut, AllProfiles[jp,lev,5])
+                   if varmod=='P_l':
+                       testo +="\t%10.5f\t%i\n"  %(errorfloat[month-1], AllProfiles[jp,lev,5])
 # da scommentare le 4 righe di seguito, se si vuole usare come errori le std dei float:
 #                   if (month<5):
 #                       testo +="\t%10.5f\t%i\n"  %(errore1*np.std(AllProfiles[jp,:,1],0),AllProfiles[jp,lev,5])
@@ -194,13 +228,14 @@ for wmo in WMOlist :
  	  print "Goodlist vuota"
         del Goodlist
         
-f.close
+#f.close()
 
-f = open(idate0+"."+VARLIST[0]+"_arg_mis.dat","w")        # OUTPUT x il 3DVAR
+#f = open(idate0+"."+VARLIST[0]+"_arg_mis.dat","w")        # OUTPUT x il 3DVAR
 f.seek(0)
 iniz="%i" %(totallines)
 f.writelines(iniz)
 #f.close
+f.close()
 
 
 

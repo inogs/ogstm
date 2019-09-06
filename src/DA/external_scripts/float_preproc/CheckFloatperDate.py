@@ -84,7 +84,7 @@ dimnewpress=len(NewPres)              # data interpolated on the vertical Z
 # LIST of profiles for the selected variable in VARLIST
 # in the interval idate1.time_interval in the mediterranean area 
 Profilelist_1=bio_float.FloatSelector(LOVFLOATVARS[VARLIST[0]],idate1.time_interval,OGS.med)
-TL = TimeList.fromfilenames(idate2.time_interval, INPUTDIR,"RST.*.nc",filtervar="P_l",prefix="RST.")
+TL = TimeList.fromfilenames(idate2.time_interval, INPUTDIR,"RSTbefore.*.nc",filtervar="P_l",prefix="RSTbefore.")
 TL.inputFrequency = 'weekly'
 M = Matchup_Manager(Profilelist_1, TL ,BASEDIR)
 

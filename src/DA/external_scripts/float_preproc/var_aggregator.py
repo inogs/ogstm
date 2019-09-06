@@ -95,10 +95,12 @@ SingleVar_filelist.sort()
 TheMask=Mask(args.maskfile)
 
 for N1pfile in SingleVar_filelist[rank::nranks]:
+    print N1pfile
     dailyAve  = os.path.basename(N1pfile)
     print "writing ", dailyAve
 
     if args.tmpdir:
+        print N1pfile
         G.WriteAggregateAvefiles(TheMask, N1pfile, TMPOUTdir, RD)
     
     if args.chlsupdir:    

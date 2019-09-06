@@ -9,6 +9,7 @@
 !          Biological assimilation set-up
 !
 !  chl_assim       - Chlorophyll assimilation
+!  chl_upnut       - Nutrient update based on chl assimilation chl_upnut
 !  nut             - Nutrient assimilation
 !  nphyto          - Number of phytoplankton species
 !  chl_dep         - Minimum depth for chlorophyll
@@ -20,15 +21,16 @@
 !
 ! ---
 &biolst
- chl_assim = 1
-    nut    = 1
+ chl_assim = @@ASS_P_l@@
+ chl_upnut = @@ASS_P_lN3n@@
+    nut    = @@ASS_N3n@@
    nphyto  = 4
    chl_dep = 0.0
    ncmp    = 5
 ApplyConditions = .true.
-    N3n    = 1
-    updateN1p = 0
-    O2o    = 1
+    N3n    = @@ASS_N3n@@
+    updateN1p = @@ASS_N3n@@
+    O2o    = 0
 /
 !------------------------------------------------------------
 !
@@ -50,7 +52,7 @@ ApplyConditions = .true.
 &params
  sat_obs  = @@SAT_OBS@@
   argo    = @@ARGO@@
- uniformL = 0
-  anisL   = 0
+ uniformL = 1
+  anisL   = 1
 /
 !------------------------------------------------------------

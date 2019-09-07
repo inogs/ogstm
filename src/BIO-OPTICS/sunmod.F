@@ -46,9 +46,9 @@ c  vertical (up), North (no), and East (ea) vectors frame
       sunn = 0.0D0
       sune = 0.0D0
       do j = 1,3
-       sunv = sunv + sung(j)*up(ji,jj,j)
-       sunn = sunn + sung(j)*no(ji,jj,j)
-       sune = sune + sung(j)*ea(ji,jj,j)
+       sunv = sunv + sung(j)*up(jj,ji,j)
+       sunn = sunn + sung(j)*no(jj,ji,j)
+       sune = sune + sung(j)*ea(jj,ji,j)
       enddo
 c
 c  Compute the solar zenith 

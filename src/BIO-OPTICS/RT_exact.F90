@@ -99,7 +99,7 @@
          delta(k,:) = ( inhox(k+1,:) - inhox(k,:) - (inhoy(k+1,:) - inhoy(k,:) ) & 
                     * r_m(k+1,:) ) * Edz(k,:) !! Check if Edz(k) is correct
 
-         eps(k,:)   = 1.0d0-r_m(k,:)*r_p(k,:) 
+         epsRT(k,:)   = 1.0d0-r_m(k,:)*r_p(k,:) 
          zeta(k,:)  = -(r_p(k+1,:)-r_p(k,:))
          eta(k,:)   = -e_m(k+1,:)*(1.0d0-r_p(k,:)*r_m(k+1,:) )
          theta(k,:) = ( inhoy(k+1,:) - inhoy(k,:) - (inhox(k+1,:) - inhox(k,:) ) & 
@@ -125,7 +125,7 @@
       do k =1,bottom-1 
          ii = 2*k   
          vL(ii,:)   = alpha(k,:)
-         vL(ii+1,:) = eps(k,:)
+         vL(ii+1,:) = epsRT(k,:)
       enddo
   
 ! Upper vector 

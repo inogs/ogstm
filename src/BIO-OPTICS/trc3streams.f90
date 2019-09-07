@@ -21,9 +21,9 @@
 
       INTEGER :: jk,jj,ji,jl,bottom
       INTEGER :: MODE ! 0-exact, 1-approx
-      INTEGER :: year, month, day
+      INTEGER :: year, month, day, ihr
       INTEGER :: it_actual
-      double precision :: rmud
+      double precision :: solz(jpj,jpi), rmud(jpj,jpi)
       double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt)
       double precision :: CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk)
       double precision :: Eu_0m(nlt)
@@ -41,6 +41,7 @@
 
       call read_date_string(datestring, year, month, day, sec)
       it_actual = int(sec/3600.d0)
+      ihr       = it_actual + 1
       
       if (lwp) write(*,*) "it_actual", it_actual
       if (lwp) write(*,*) "it_check", it_check
@@ -69,9 +70,9 @@
              if (bfmmask(1,jj,ji) == 0) CYCLE
 
 !to be completed       
-             zenith_angle = 0.0d0
+             call sfcsolz(year,day,ihr,solz) 
 !to be completed       
-             call getrmud(zenith_angle,rmud)
+             call getrmud(solz,rmud)
 
              bottom = mbathy(jj,ji)
              bottom = min(bottom,37) ! Stop at approx 500 mt
@@ -108,7 +109,7 @@
     
                  NAPz(1:bottom)   =  trn(1:bottom,jj,ji,ppR6c) 
     
-                 call edeseu(MODE,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eu_0m)
+                 call edeseu(MODE,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,NAPz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m)
     
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)

@@ -12,10 +12,6 @@
 
        public
 
-!----------------------------------------------------------------------
-! Common/comcoh/  : ADVection matrix
-! ---------------------------------------------------------------------
-
 
       INTEGER, allocatable :: itabe(:),imaske(:,:) 
       double precision, allocatable :: zpar(:,:),xEPS_ogstm(:,:)
@@ -39,8 +35,22 @@
       INTEGER                       :: it_check
       double precision              :: aw(33),bw(33)
       double precision              :: ac(4,33),bc(4,33)
-      double precision              :: zenith_angle
-     
+! Variables related to computation of solar zenith angle
+      double precision              :: rad 
+      integer                       :: imon, nutime 
+      double precision              :: dpsi, eps
+      double precision,allocatable  :: up(:,:,:),no(:,:,:),ea(:,:,:)
+
+! Avergae cosine computation
+      double precision, parameter  :: refrac_idx = 1.341D0
+! Constant of aberration
+      double precision, parameter  :: xk = 0.0056932D0
+!  compute irradiance every hours
+      logical                      ::  ifst = .TRUE.
+      integer, parameter           ::  nstps1 = 5
+!     integer, parameter           ::  iprt   = 12
+      double precision             ::  delmin, hrsec, hrsrt, hrend, delh, delx   
+      integer                      ::  nstps
 
       double precision,allocatable  :: Edaux(:), Esaux(:)
       double precision,allocatable  :: cd(:,:),Cs(:,:),Bu(:,:),Cu(:,:),Bs(:,:),Fd(:,:),Bd(:,:) 
@@ -51,7 +61,7 @@
       double precision,allocatable  :: e_m(:,:),e_p(:,:)
       double precision,allocatable  :: zeta0(:),eta0(:)
       double precision,allocatable  :: alpha(:,:),beta(:,:),gamm(:,:),delta(:,:)
-      double precision,allocatable  :: eps(:,:),zeta(:,:),eta(:,:),theta(:,:)
+      double precision,allocatable  :: epsRT(:,:),zeta(:,:),eta(:,:),theta(:,:)
 !     double precision,allocatable  :: vD(:,:),vL(:,:),vU(:,:),WW(:,:),WW1(:,:)
 !     double precision,allocatable  :: sol(:,:),sol_p(:,:),sol_m(:,:)
       double precision,allocatable  :: err_RT(:)
@@ -104,11 +114,23 @@
 
 ! radiative transfer model
 
+       rad    = 180.0D0/dacos(-1.0D0) ! initialization of radians
+       imon   = 1
+       nutime = -99999
+
        allocate(Ed_0m(nlt,jpj,jpi))
        Ed_0m  =huge(Ed_0m(1,1,1))
        allocate(Es_0m(nlt,jpj,jpi))
        Es_0m  =huge(Es_0m(1,1,1))
 
+       allocate(up(jpj,jpi,3))
+       up     =huge(up(1,1,1))
+
+       allocate(no(jpj,jpi,3))
+       no     =huge(no(1,1,1))
+
+       allocate(ea(jpj,jpi,3))
+       ea     =huge(ea(1,1,1))
 
        call lidata()
 
@@ -122,7 +144,7 @@
        allocate(e_m(jpk,nlt),e_p(jpk,nlt))
        allocate(zeta0(nlt),eta0(nlt))
        allocate(alpha(jpk-1,nlt),beta(jpk-1,nlt),gamm(jpk-1,nlt),delta(jpk-1,nlt))
-       allocate(eps(jpk-1,nlt),zeta(jpk-1,nlt),eta(jpk-1,nlt),theta(jpk-1,nlt))
+       allocate(epsRT(jpk-1,nlt),zeta(jpk-1,nlt),eta(jpk-1,nlt),theta(jpk-1,nlt))
 !      allocate(vD(2*jpk-1,nlt),vL(2*jpk-1,nlt),vU(2*jpk-1,nlt))
 !      allocate(WW(2*jpk-1,nlt), WW1(2*jpk-1,nlt))
 !      allocate(sol(2*jpk-1,nlt),sol_p(jpk,nlt),sol_m(jpk,nlt))

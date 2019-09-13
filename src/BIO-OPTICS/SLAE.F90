@@ -39,19 +39,19 @@ contains
 
                    do i=2,n-1                                                        !express x_i via x_{i+1} in the similar way
                       den = diag(i,j) + a(i-1,j)*Ldiag(i,j)
-                      if (den == 0.0d0) then 
-                         den_r = 0.0d0
+                      if (den .GE. 0.0d0) then 
+                         den_r = 1.0D0/(den + 0.000001D0)
                       else
-                         den_r = 1.0d0/den
+                         den_r = 1.0d0/(den - 0.000001D0)
                       endif
                       a(i,:) = -Udiag(i,:)*den_r
                       b(i,:) = ( rhs(i,j) - b(i-1,j)*Ldiag(i,j) ) * den_r
                    enddo
                    den =  Ldiag(n,j)*a(n-1,j) + diag(n,j) 
-                   if (den == 0.0d0) then 
-                         den_r = 0.0d0
+                   if (den .GE. 0.0d0) then 
+                         den_r = 1.0D0/(den + 0.000001D0)
                    else
-                         den_r = 1.0d0/den
+                         den_r = 1.0d0/(den - 0.000001D0)
                    endif
                    x(n,j) = ( rhs(n,j) - Ldiag(n,j)*b(n-1,j) ) * den_r  !exclude x_{n-1} and solve the last equation to get x_n
                    do i=n-1,1,-1                                        !use the connections to get all x_i one by one

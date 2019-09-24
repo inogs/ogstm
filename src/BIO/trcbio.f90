@@ -36,6 +36,7 @@
 
       USE myalloc
       USE BIO_mem
+      USE OPT_mem, ONLY: PAR
       USE BC_mem
       USE mpi
 
@@ -68,7 +69,7 @@
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,10) :: er
+      double precision,dimension(jpk,14) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 #endif
 
@@ -189,19 +190,23 @@
 
 ! Environmental regulating factors (er,:)
 
-                          er(1:bottom,1)  = tn (1:bottom,jj,ji)! Temperature (Celsius)
-                          er(1:bottom,2)  = sn (1:bottom,jj,ji)  ! Salinity PSU
-                          er(1:bottom,3)  = rho(1:bottom,jj,ji)        ! Density Kg/m3
-                          er(1       ,4)  = ice                  ! from 0 to 1 adimensional
-                          er(1       ,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
-                          er(1:bottom,6)  = xpar(1:bottom,jj,ji)
+                          er(1:bottom,1)  = tn (1:bottom,jj,ji)   ! Temperature (Celsius)
+                          er(1:bottom,2)  = sn (1:bottom,jj,ji)   ! Salinity PSU
+                          er(1:bottom,3)  = rho(1:bottom,jj,ji)   ! Density Kg/m3
+                          er(1       ,4)  = ice                   ! from 0 to 1 adimensional
+                          er(1       ,5)  = ogstm_co2(jj,ji)      ! CO2 Mixing Ratios (ppm)  390
+                          er(1:bottom,6)  = PAR(1:bottom,jj,ji,1) ! PAR for diatoms
+                          er(1:bottom,7)  = PAR(1:bottom,jj,ji,2) ! PAR for flagellates
+                          er(1:bottom,8)  = PAR(1:bottom,jj,ji,3) ! PAR for pico phytoplankton
+                          er(1:bottom,9)  = PAR(1:bottom,jj,ji,4) ! PAR for dinoflagellates
+                          er(1:bottom,10) = PAR(1:bottom,jj,ji,5) ! total PAR for CDOM
 !                         do jk=1, bottom
 !                         er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
 !                         enddo
-                          er(1       ,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(1:bottom,8)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1       ,9)  = vatm(jj,ji)                ! wind speed (m/s)
-                          er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
+                          er(1       ,11)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
+                          er(1:bottom,12)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
+                          er(1       ,13)  = vatm(jj,ji)                ! wind speed (m/s)
+                          er(1:bottom,14) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
 
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 

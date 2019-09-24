@@ -76,22 +76,9 @@
 
       call sfcsolz(year, day_of_year, ihr, solz) 
 
-      solz(:,:) = 0.0D0
-
       call getrmud(solz,rmud)
 
 
-      if (myrank .EQ. 35) then
-
-          write(*,*) "-----------solar zenith angle----------"
-          write(*,*) solz
-          write(*,*) "----------- rmud ----------"
-          write(*,*) rmud
-          write(*,*) "----------------------------"
-
-      endif
-           
-      
       PARz(:,:) = 0.0D0
 ! Start computing  RT when and where needed
 
@@ -131,10 +118,10 @@
 
              else
              
-                 CHLz(1:bottom,1) = 1.0d0! trn(1:bottom,jj,ji,ppP1l)
-                 CHLz(1:bottom,2) = 0.0d0!  trn(1:bottom,jj,ji,ppP2l)
-                 CHLz(1:bottom,3) = 0.0d0! trn(1:bottom,jj,ji,ppP3l)
-                 CHLz(1:bottom,4) = 0.0d0! trn(1:bottom,jj,ji,ppP4l)
+                 CHLz(1:bottom,1) = trn(1:bottom,jj,ji,ppP1l)
+                 CHLz(1:bottom,2) = trn(1:bottom,jj,ji,ppP2l)
+                 CHLz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3l)
+                 CHLz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4l)
                 
                  CDOMz(1:bottom)  = 0.0d0 ! trn(1:bottom,jj,ji,ppR1c) !!!! WARNING TO BE FIXED
     

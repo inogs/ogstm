@@ -2,18 +2,18 @@
       USE myalloc
       USE OPT_mem
       IMPLICIT NONE
-c  Computes solar zenith angle at surface given location 
-c  and time.  
-c
+!  Computes solar zenith angle at surface given location 
+!  and time.  
+!
       integer, intent(IN)   :: iyr, iday, ihr
       double precision, intent(OUT)  :: solz(jpj,jpi)
 
-C local variables
+! local variables
       integer               :: ji, jj, it
       double precision      :: hr, gmt, csza, sunz, rs
       double precision      :: cosunz, rsza, sza
-c
-c  Set up
+!
+!  Set up
       if (ifst) then
        call localvec
 !      nstps1 = 5
@@ -21,16 +21,19 @@ c  Set up
 
        nstps = nstps1
        hrsec = 1.0d0/3600.0d0
-       hrsrt = 1.0d0
-       hrend = 0.0d0
-!      iprt = 12
+!      original values integration is done the hors before
+!      hrsrt = 1.0d0
+!      hrend = 0.0d0
+!      we integrate for the following our
+       hrsrt = 0.0d0
+       hrend = 1.0d0
 
        delh = delmin/60.0d0         !time interval in fraction of hour
        delx = delh*3600.0d0  !integration interval in seconds
        ifst = .FALSE.
       endif
-c
-c  Integrate to obtain mean cosine solar zenith angle
+!
+!  Integrate to obtain mean cosine solar zenith angle
       solz = -1.0d0
       hr = real(ihr,8)
 
@@ -54,11 +57,15 @@ c  Integrate to obtain mean cosine solar zenith angle
              csza = csza + cos(sunz/rad)
            enddo   !end of it loop
 
+!          csza*delx is the integral, hrsec is the normalization factor 
+
            cosunz = csza*delx*hrsec*rad
-           rsza = acos(cosunz/rad)
-           sza = rsza*rad
+
+           rsza = acos(cosunz/rad) ! average angle in radians
+           sza = rsza*rad ! conversion in degrees
+
            solz(jj,ji) = min(sza,90.0d0)
-           solz(jj,ji) = max(solz(jj,ji),0.0)
+           solz(jj,ji) = max(solz(jj,ji),0.0d0)
 
        enddo
       enddo

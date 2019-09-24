@@ -1,4 +1,4 @@
-      subroutine radmod_ex(bottom,zd,Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eu0)
+      subroutine radmod_ex(V_POSITION, bottom,zd,Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eu0,PARz)
       USE OPT_mem
       USE Tridiagonal
       IMPLICIT NONE
@@ -17,17 +17,21 @@
       double precision, INTENT(IN)    :: zd(jpk)
       double precision, INTENT(IN)    :: rmud
       double precision, INTENT(IN)    :: a(jpk,nlt),bt(jpk,nlt),bb(jpk,nlt)
-      double precision, INTENT(INOUT) :: Edtop(nlt),Estop(nlt)
+      CHARACTER(*), INTENT(IN)        :: V_POSITION
+      double precision, INTENT(IN)    :: Edtop(nlt),Estop(nlt)
       double precision, INTENT(OUT)   :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),Eu0(nlt)     
+      double precision, INTENT(OUT)   :: PARz(jpk,nchl+1)
 
 ! local variables
       double precision, parameter        :: rd=1.5d0   !these are taken from Ackleson, et al. 1994 (JGR)
       double precision, parameter        :: ru=3.0d0
-      integer                            :: k,ii,b
+      integer                            :: k,ii,b,p,nl
       double precision                   :: rmus, rmuu
+      double precision                   :: Edzm(jpk,nlt),Edza(jpk,nlt)
       double precision                   :: vD(2*bottom-1,nlt),vL(2*bottom-1,nlt),vU(2*bottom-1,nlt)
       double precision                   :: WW(2*bottom-1,nlt),WW1(2*bottom-1,nlt),sol(2*bottom-1,nlt)
       double precision                   :: sol_p(2*bottom-1,nlt), sol_m(2*bottom-1,nlt)
+      double precision                   :: aux1(nlt), aux2(nlt)
 
 !  Constants
       rmus = 1.0d0/0.83d0            !avg cosine diffuse down
@@ -84,6 +88,7 @@
             Edaux(:) = Edz(k-1,:)
          endif
          Edz(k,:)   = Edaux(:)*exp(-cd(k,:)*zd(k))
+         Edzm(k,:)  = Edaux(:)*exp(-0.5D0*cd(k,:)*zd(k))   ! mid cell
       enddo
 
 ! Imposing boundary conditions
@@ -215,17 +220,82 @@
 !     write(*,*)  'sol_m', sol_m(1,:)
 !     write(*,*)  'r_m', r_m(1,:)
 !     write(*,*)  'inhox', inhox(1,:)
+      SELECT CASE (TRIM(V_POSITION))
 
-      do k =1,bottom
+         CASE ("BOTTOM")
 
-         Esz(k,:) = sol_p(k,:)*exp(-a_p(k,:)*zd(k)) + sol_m(k,:)*r_m(k,:) + inhox(k,:)*Edz(k,:)
-         Euz(k,:) = sol_p(k,:)*r_p(k,:)*exp(-a_p(k,:)*zd(k)) + sol_m(k,:) + inhoy(k,:)*Edz(k,:)
+             do k =1,bottom
 
-      enddo
+                aux1(:)  = exp(-a_p(k,:)*zd(k))
 
-! surface upward diffuse radiance
+                Esz(k,:) = sol_p(k,:)*aux1(:) + sol_m(k,:)*r_m(k,:) + inhox(k,:)*Edz(k,:)
+                Euz(k,:) = sol_p(k,:)*r_p(k,:)*aux1(:) + sol_m(k,:) + inhoy(k,:)*Edz(k,:)
+
+             enddo
+
+         CASE ("MID")
+
+             do k =1,bottom
+
+                aux1(:)  = exp(-a_p(k,:)*zd(k)*0.5D0)
+                aux2(:)  = exp(-a_m(k,:)*zd(k)*0.5D0)
+                Edz(k,:) = Edzm(k,:) 
+                Esz(k,:) = sol_p(k,:) * aux1(:)          + sol_m(k,:)*r_m(k,:)*aux2(:) + inhox(k,:)*Edzm(k,:)
+                Euz(k,:) = sol_p(k,:)*r_p(k,:) * aux1(:) + sol_m(k,:)*aux2(:)          + inhoy(k,:)*Edzm(k,:)
+
+             enddo
+
+         CASE ("AVERAGE")
+
+             do k =1,bottom
+
+                if (k .EQ. 1) then
+                    Edza(k,:) = (Edtop(:) -  Edz(k,:)) /( zd(k) * cd(k,:) + 0.000001d0 ) 
+                else
+                    Edza(k,:) = (Edz(k-1,:) -  Edz(k,:)) /( zd(k) * cd(k,:) + 0.000001d0 )
+                endif
+
+                aux1(:)  = ( 1.0D0 - exp(-a_p(k,:)*zd(k)) )/( zd(k) * a_p(k,:) + 0.000001d0 )
+                aux2(:)  = ( 1.0D0 - exp( -a_m(k,:) *zd(k) ) ) /( zd(k) * a_m(k,:) + 0.000001d0 )
+
+                Esz(k,:) = sol_p(k,:)* aux1(:)  + sol_m(k,:)*r_m(k,:) * aux2(:) + inhox(k,:)*Edza(k,:)
+                Euz(k,:) = sol_p(k,:)*r_p(k,:) * aux1(:) + sol_m(k,:) * aux2(:) + inhoy(k,:)*Edza(k,:)
+
+             enddo
+
+             Edz(:,:) = Edza(:,:)
+
+         CASE DEFAULT
+
+             STOP
+
+       END SELECT
+
+
+! surface upward diffuse radiance at depth = 0 
       Eu0(:) = sol_p(1,:)*r_p(1,:) + sol_m(1,:)*exp(-a_m(1,:)*zd(1)) + inhoy(1,:) * Edtop(:)
 !     write(*,*) 'Eu', Eu
+
+! compute PAR for each PFT using scalar irradiance
+      PARz(:,:) = 0.0D0
+
+      do p =1,nchl
+         do nl =5,19   ! 400 to 700 nm 
+            do k =1,bottom
+
+               PARz(k,p) = PARz(k,p) + WtoQ(nl) * ac(p,nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu )   
+
+            enddo
+         enddo
+      enddo
+        
+      do nl =5,19   ! 400 to 700 nm 
+         do k =1,bottom
+
+            PARz(k,nchl+1) = PARz(k,nchl+1) + WtoQ(nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu )   
+
+         enddo
+      enddo
       
       return
       end

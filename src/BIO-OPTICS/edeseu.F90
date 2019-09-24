@@ -1,4 +1,4 @@
-      subroutine edeseu(MODE,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eutop)
+      subroutine edeseu(MODE,V_POSITION,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eutop,PARz)
       USE myalloc
       USE mpi
       USE OPT_mem
@@ -14,15 +14,18 @@
 !  final is quanta for phytoplankton growth.
  
       integer :: n, nl, jk 
-      integer :: MODE
-      integer :: bottom
-      double precision :: rmud
-      double precision :: dzRT(jpk)
-      double precision :: Edz(jpk,nlt),Esz(jpk,nlt)
-      double precision :: Euz(jpk,nlt)
-      double precision :: Edtop(nlt),Estop(nlt)
+      integer, INTENT(IN)          :: MODE
+      character(*), INTENT(IN)     :: V_POSITION
+      integer, INTENT(IN)          :: bottom
+      double precision, INTENT(IN) :: rmud
+      double precision, INTENT(IN) :: dzRT(jpk)
+      double precision, INTENT(IN) :: CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk)
+      double precision, INTENT(IN) :: Edtop(nlt),Estop(nlt)
+      double precision, INTENT(OUT) :: Edz(jpk,nlt),Esz(jpk,nlt)
+      double precision, INTENT(OUT) :: Euz(jpk,nlt)
+      double precision, INTENT(OUT) :: PARz(jpk,nchl+1)
       double precision, intent(OUT) :: Eutop(nlt)
-      double precision :: CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk)
+!     Local variables
       double precision :: Etop
       double precision :: Plte
       double precision :: actot(jpk,nlt),bctot(jpk,nlt),bbctot(jpk,nlt) 
@@ -62,11 +65,11 @@
        enddo
        
        if (MODE == 1) then ! condition on level < 200 mt
-           call radmod(bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop)
+           call radmod(V_POSITION,bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop,PARz)
        endif 
 ! condition on level > 200 mt
        if ( MODE ==0) then
-           call radmod_ex(bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop)
+           call radmod_ex(V_POSITION,bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop,PARz)
        endif
 
 

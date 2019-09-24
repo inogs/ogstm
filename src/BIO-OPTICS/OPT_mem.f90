@@ -24,6 +24,7 @@
       integer, parameter            :: nchl=4 
       integer, parameter            :: nlt=33                     
       integer                       :: lam(33)
+      double precision              :: WtoQ(33)
 ! Radiative transfer model parameter OASIM Native coordinates
       double precision              :: Ed_0m_COARSE(33,12,18,48), Es_0m_COARSE(33,12,18,48) ! lon, lat, day period, wave length
       double precision              :: OASIM_lon(18,48), OASIM_lat(18,48)  
@@ -48,7 +49,6 @@
 !  compute irradiance every hours
       logical                      ::  ifst = .TRUE.
       integer, parameter           ::  nstps1 = 5
-!     integer, parameter           ::  iprt   = 12
       double precision             ::  delmin, hrsec, hrsrt, hrend, delh, delx   
       integer                      ::  nstps
 
@@ -83,6 +83,10 @@
       subroutine myalloc_OPT()
       INTEGER  :: err
       double precision  :: aux_mem
+
+! local variables 
+      INTEGER           :: nl
+      double precision  :: h, c, hc, oavo, hcoavo, rlamm
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
@@ -156,7 +160,7 @@
 
 ! Allocate output variables
        allocate(Ed(jpk,jpj,jpi,nlt),Es(jpk,jpj,jpi,nlt),Eu(jpk,jpj,jpi,nlt))
-       allocate(PAR(jpk,jpj,jpi,nchl))
+       allocate(PAR(jpk,jpj,jpi,nchl+1)) ! last index total par
        allocate(Ed_DIA_IO(jpk,jpj,jpi,nlt),Es_DIA_IO(jpk,jpj,jpi,nlt),Eu_DIA_IO(jpk,jpj,jpi,nlt))
        allocate(Ed_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Es_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Eu_DIA_IO_HIGH(jpk,jpj,jpi,nlt))
 
@@ -171,6 +175,17 @@
       Ed_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
       Es_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
       Eu_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
+
+      h = 6.6256E-34   !Plancks constant J sec
+      c = 2.998E8      !speed of light m/sec
+      hc = 1.0D0/(h*c)
+      oavo = 1.0D0/6.023E23   ! 1/Avogadros number
+      hcoavo = hc*oavo
+      do nl = 1,nlt
+       rlamm = real(lam(nl),8)*1.0E-9  !lambda in m
+       WtoQ(nl) = rlamm*hcoavo        !Watts to quanta conversion
+      enddo
+
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem

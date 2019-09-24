@@ -100,9 +100,6 @@
                 MODE = 1 ! approximate solution
              endif
        
-             Ed_0m(:,jj,ji) =1.0d0
-             Es_0m(:,jj,ji) =1.0d0
-
              if ((maxval(Ed_0m(:,jj,ji)) < 0.0001d0) .AND. (maxval(Es_0m(:,jj,ji))< 0.0001d0)) then
   
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)

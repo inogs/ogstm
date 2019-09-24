@@ -182,8 +182,8 @@
       oavo = 1.0D0/6.023E23   ! 1/Avogadros number
       hcoavo = hc*oavo
       do nl = 1,nlt
-       rlamm = real(lam(nl),8)*1.0E-9  !lambda in m
-       WtoQ(nl) = rlamm*hcoavo        !Watts to quanta conversion
+       rlamm = real(lam(nl),8)*1.0E-9      !lambda in m
+       WtoQ(nl) = rlamm*hcoavo*1000000.0D0 !Watts to micro mol quanta conversion
       enddo
 
 

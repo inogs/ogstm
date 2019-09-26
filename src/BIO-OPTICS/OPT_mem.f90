@@ -36,6 +36,7 @@
       INTEGER                       :: it_check
       double precision              :: aw(33),bw(33)
       double precision              :: ac(4,33),bc(4,33)
+      double precision              :: acdom(33)
 ! Variables related to computation of solar zenith angle
       double precision              :: rad 
       integer                       :: imon, nutime 
@@ -185,15 +186,34 @@
        rlamm = real(lam(nl),8)*1.0E-9      !lambda in m
        WtoQ(nl) = rlamm*hcoavo*1000000.0D0 !Watts to micro mol quanta conversion
       enddo
+        acdom(:)= 0.0D0
 
-
+        acdom(1)= 0.22551574188177717D0
+        acdom(2)= 0.09083684151542067D0
+        acdom(3)= 0.059386382359410544D0
+        acdom(4)= 0.038825022434750785D0
+        acdom(5)= 0.02538262657482852D0
+        acdom(6)= 0.016594394321856793D0
+        acdom(7)= 0.010848913610160271D0
+        acdom(8)= 0.007092691919806757D0
+        acdom(9)= 0.004636987672404267D0
+        acdom(10)= 0.003031522434237488D0
+        acdom(11)= 0.001981917770447754D0
+        acdom(12)= 0.0012957179549306537D0
+        acdom(13)= 0.0008471012489838992D0
+        acdom(14)= 0.0005538092015314285D0
+        acdom(15)= 0.0003620637226881347D0
+        acdom(16)= 0.0002367063221851343D0
+        acdom(17)= 0.00015475144139385152D0
+        
+        
 #ifdef Mem_Monitor
-      mem_all=get_mem(err) - aux_mem
+              mem_all=get_mem(err) - aux_mem
 #endif
-
+        
       END subroutine myalloc_OPT
-
-
+        
+        
 
       subroutine clean_memory_opt
 

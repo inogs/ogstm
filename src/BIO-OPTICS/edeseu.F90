@@ -29,7 +29,7 @@
       double precision :: Etop
       double precision :: Plte
       double precision :: actot(jpk,nlt),bctot(jpk,nlt),bbctot(jpk,nlt) 
-      double precision :: acdom(nlt),anap(nlt)
+      double precision :: anap(nlt)
       double precision :: a(jpk,nlt), bt(jpk,nlt), bb(jpk,nlt) 
       double precision :: bbc(4)
       data bbc /0.002d0, 0.00071d0, 0.001955d0, 0.0029d0/
@@ -37,7 +37,6 @@
       data bbw /0.5d0/       !backscattering to forward scattering ratio
  
 !  Compute irradiance with depth
-       acdom(:) = 0.0d0 
        anap(:)  = 0.0d0
 
        do nl = 1,nlt

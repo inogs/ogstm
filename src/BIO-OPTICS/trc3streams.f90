@@ -120,7 +120,7 @@
                  CHLz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3l)
                  CHLz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4l)
                 
-                 CDOMz(1:bottom)  = 0.0d0 ! trn(1:bottom,jj,ji,ppR1c) !!!! WARNING TO BE FIXED
+                 CDOMz(1:bottom)  = trn(1:bottom,jj,ji,ppR1l) 
     
                  NAPz(1:bottom)   = 0.0d0 ! trn(1:bottom,jj,ji,ppR6c) 
     

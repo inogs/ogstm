@@ -33,6 +33,8 @@ plt.xlim(350,700)
 plt.ylim(0,2) 
 plt.xlabel(r'$\lambda$ [nm]') 
 plt.ylabel('$a^{CDOM} [m^{-1}]$') 
-plt.show() 
+#plt.show() 
 
-print(acdom_bin)
+for i in range(len(lam)-1):
+    mystring = 'acdom(' + str (i+1) + ')= ' + str(acdom_bin[i]/12)  + 'D0'
+    print(mystring)

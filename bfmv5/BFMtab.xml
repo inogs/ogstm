@@ -43,6 +43,7 @@
 <var name="R1c" maxvalue="60"   highfreq="false" dump="false" ></var>
 <var name="R1n" maxvalue="3"    highfreq="false" dump="false" ></var>
 <var name="R1p" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+<var name="R1l" maxvalue="0.3"  highfreq="false" dump="false" ></var>
 <var name="R1s" maxvalue="0.1"  highfreq="false" dump="false" ></var>
 <var name="R2c" maxvalue="500"  highfreq="false" dump="false" ></var>
 <var name="R6c" maxvalue="200"  highfreq="false" dump="false" ></var>
@@ -63,6 +64,11 @@
 <var name="ESW"          highfreq="false" dump="false" ></var> 
 <var name="ERHO"         highfreq="false" dump="false" ></var> 
 <var name="EIR"          highfreq="false" dump="false" ></var> 
+<var name="PAR_phyto1"   highfreq="false" dump="true" ></var> 
+<var name="PAR_phyto2"   highfreq="false" dump="true" ></var> 
+<var name="PAR_phyto3"   highfreq="false" dump="true" ></var> 
+<var name="PAR_phyto4"   highfreq="false" dump="true" ></var> 
+<var name="PAR"          highfreq="false" dump="true" ></var> 
 <var name="ESS"          highfreq="false" dump="false" ></var> 
 <var name="EPR"          highfreq="false" dump="false" ></var> 
 <var name="Depth"        highfreq="false" dump="false" ></var> 
@@ -128,6 +134,10 @@
 <var name="qscOMT_iiR2"  highfreq="false" dump="false" ></var> 
 <var name="qscOMT_iiR3"  highfreq="false" dump="false" ></var> 
 <var name="qscOMT_iiR6"  highfreq="false" dump="false" ></var> 
+<var name="qlcOMT_iiR1"  highfreq="false" dump="false" ></var> 
+<var name="qlcOMT_iiR2"  highfreq="false" dump="false" ></var> 
+<var name="qlcOMT_iiR3"  highfreq="false" dump="false" ></var> 
+<var name="qlcOMT_iiR6"  highfreq="false" dump="false" ></var> 
 <var name="qpcPBA_iiB1"  highfreq="false" dump="false" ></var> 
 <var name="qncPBA_iiB1"  highfreq="false" dump="false" ></var> 
 <var name="sediPPY_iiP1" highfreq="false" dump="false" ></var> 

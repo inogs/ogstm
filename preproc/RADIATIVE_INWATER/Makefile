@@ -3,77 +3,63 @@
 #
 # Arnau Miro - UPC (ESEIAAT)
 
+# Config
+#
+OGSTM_SRC  = /galileo/home/userexternal/plazzari/CODE/ogstm/src
+OGSTM_COMP = /galileo/home/userexternal/plazzari/CODE/ogstm/compilers
+BUILDDIR   = build
+COMPILERS  = x86_64.LINUX.intel
+
+# Sources and Objects
+#
+SOURCES := $(shell find $(OGSTM_SRC)  -name '*.f90' -or  -name '*.F90' -or -name '*.F' )
+SRC_OUT := $(shell find "$(OGSTM_SRC)/BC/src/"  -name '*.f90' -or  -name '*.F90' -or -name '*.F')
+SRC_OUT += $(OGSTM_SRC)/General/ogstm.f90
+SOURCES := $(filter-out $(SRC_OUT),$(SOURCES))
+# Convert .f90, .F90 and .F to .o
+OBJECTS := $(SOURCES:.f90=.o)
+OBJECTS := $(OBJECTS:.F90=.o)
+OBJECTS := $(OBJECTS:.F=.o)
+# Change to build dir
+OBJECTS := $(foreach obj,$(OBJECTS),$(patsubst $(shell dirname $(obj))/%,$(BUILDDIR)/%,$(obj)))
+
 # Compilers
 #
-CC       = icc
-CFLAGS   = -Ofast -xHost -Wall -fPIC
-#-std=gnu11
-CXX      = icpc
-CXXFLAGS = -Ofast -xHost -Wall -fPIC
-#-std=c++11
-BUILDDIR = BUILD
-OGSTM_PATH = /galileo/home/userexternal/plazzari/CODE/ogstm
-GENERAL_PATH = $(OGSTM_PATH)/General
-BIO_OPTICS_PATH = $(OGSTM_PATH)/BIO-OPTICS
-MPI_PATH = $(OGSTM_PATH)/MPI
+include $(OGSTM_COMP)/$(COMPILERS).inc
 
-SOURCES := $(shell find $(OGSTM_PATH)  -name '*.f90' -or  -name '*.F90' -or -name '*.F' )
-# Get list of object files, with paths
-OBJECTS := $(patsubst $(SOURCES)/%.f90,$(BUILDDIR)/%.o,$(SOURCES))
-#OBJECTS += $(patsubst $(BUILDDIR)/,$(SOURCES:%.F90=%.o))
-#OBJECTS += $(patsubst $(BUILDDIR)/,$(SOURCES:%.F=%.o))
+LIBS = -logstm
 
-
-
-default:
-	@echo "Compile with make <option> to generate a program."
-	@echo "Options:"
-
-# One rule to compile them all, one rule to find them,
-# One rule to bring them all and in the compiler link them.
-all: libs search_neg join_case join_probe \
-	time_average cs-toolslib
-	@echo "All programs compiled successfully"
-
-# Deprecated binaries in favor of the cs-toolslib
-bin: export_field
-	@echo "All programs compiled successfully"
+# Default
+#
+default: ogstm.a compute.xx
 
 # Applications
 #
+compute.xx: compute.o
+	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) $(LIBS)
+
 # Libraries
 #
-libs: ogstm.a
-	@echo "Libraries compiled successfully"
-general.o: $(wildcard $(GENERAL_PATH)/*.F90)
-	@echo $(OBJECTS)
-
-ogstm.a: general.o
+ogstm.a: $(OBJECTS)
 	ar rc $@ $<
 	ranlib $@
-	@mv $@ $(LPATH)
 
 # Generic object makers
 #
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $< $(DFLAGS)
-
-%.o: %.cpp
-	$(CXX) $(CXXFLAGS) -c -o $@ $< $(DFLAGS)
-
+$(OBJECTS): $(SOURCES)
+	@mkdir -p $(BUILDDIR)
+	$(FC) $(FFLAGS) -c -o $@ $<
 %.o: %.F90
-	$(FC) $(FCLAGS) -c -o $@ $< $(DFLAGS)
-
+	$(FC) $(FFLAGS) -c -o $@ $<
 %.o: %.f90
-	$(FC) $(FCLAGS) -c -o $@ $< $(DFLAGS)
-
+	$(FC) $(FFLAGS) -c -o $@ $<
 %.o: %.F
-	$(FC) $(FCLAGS) -c -o $@ $< $(DFLAGS)
+	$(FC) $(FFLAGS) -c -o $@ $<
 
 # Clean
 #
-clean:
-	@rm -f *.o */*.o
-
 remove_libs:
-	@rm -f *.a */*.a
+	@rm -f *.a
+
+clean: remove_libs
+	@rm -f build

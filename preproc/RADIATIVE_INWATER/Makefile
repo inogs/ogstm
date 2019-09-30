@@ -48,9 +48,9 @@ default: libs apps
 .PHONY: apps
 apps: compute.xx compute2.xx
 
-compute.xx: compute.o
+compute.xx: compute.F90
 	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm_lib -L./
-compute2.xx: compute.o
+compute2.xx: compute.F90
 	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm -L./
 
 # Dirs
@@ -65,7 +65,7 @@ dirs:
 libs: libogstm_lib.a libogstm.a
 
 libogstm_lib.a: 
-	@ln -s $(OGSTM_BLD)libogstm_lib.a .
+	@ln -s $(OGSTM_BLD)/libogstm_lib.a .
 libogstm.a: dirs modules objects
 	ar qc $@ $(MODULES) $(OBJECTS)
 	ranlib $@
@@ -211,7 +211,6 @@ objects: $(OBJECTS)
 
 $(OBJECTS): $(SOURCES)
 	$(FC) $(FFLAGS) -I build/ -c -o $@ $<
-	@mv *.optrpt $(OPTRTDIR)
 
 # Clean
 #

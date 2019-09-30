@@ -16,10 +16,11 @@ COMPILERS = x86_64.LINUX.intel
 #
 SOURCES := $(shell find $(OGSTM_SRC)  -name '*.f90' -or  -name '*.F90' -or -name '*.F' )
 SRC_OUT := $(shell find "$(OGSTM_SRC)/BC/src/"  -name '*.f90' -or  -name '*.F90' -or -name '*.F')
-SRC_OUT += $(OGSTM_SRC)/General/ogstm.f90
+SRC_OUT += $(shell find $(OGSTM_SRC)  -name '*.f03' -or -name '*.pf' -or -name '*.backup' )
 SOURCES := $(filter-out $(SRC_OUT),$(SOURCES))
 # Modules
-SRC_MOD := $(shell grep -rl "END MODULE" $(OGSTM_SRC))
+SRC_MOD := $(shell grep -Ril "end module" $(OGSTM_SRC)/*)
+SRC_MOD := $(filter-out $(SRC_OUT),$(SRC_MOD))
 SOURCES := $(filter-out $(SRC_MOD),$(SOURCES))
 # Convert .f90, .F90 and .F to .o
 OBJECTS := $(SOURCES:.f90=.o)
@@ -47,9 +48,9 @@ default: libs apps
 .PHONY: apps
 apps: compute.xx compute2.xx
 
-compute.xx: compute.o
+compute.xx: compute.F90
 	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm_lib -L./
-compute2.xx: compute.o
+compute2.xx: compute.F90
 	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm -L./
 
 # Dirs
@@ -64,7 +65,7 @@ dirs:
 libs: libogstm_lib.a libogstm.a
 
 libogstm_lib.a: 
-	@ln -s $(OGSTM_BLD)libogstm_lib.a .
+	@ln -s $(OGSTM_BLD)/libogstm_lib.a .
 libogstm.a: dirs modules objects
 	ar qc $@ $(MODULES) $(OBJECTS)
 	ranlib $@
@@ -206,11 +207,10 @@ build/ogstm.o: $(OGSTM_SRC)/General/ogstm.f90
 # Objects
 #
 .PHONY: objects
-objects: $(OBJECTS):
+objects: $(OBJECTS)
 
 $(OBJECTS): $(SOURCES)
 	$(FC) $(FFLAGS) -I build/ -c -o $@ $<
-	@mv *.optrpt $(OPTRTDIR)
 
 # Clean
 #

@@ -5,12 +5,20 @@
 
 # Configuration
 #
-OGSTM_SRC = /galileo/home/userexternal/plazzari/CODE/ogstm/src
-OGSTM_CMP = /galileo/home/userexternal/plazzari/CODE/ogstm/compilers
-OGSTM_BLD = /galileo/home/userexternal/plazzari/CODE/OGSTM_BUILD
+OGSTM_DIR = ../../../ogstm
+BFM_DIR   = ../../../bfm
+OGSTM_BLD = ../../../OGSTM_BUILD
 BUILDDIR  = build
 OPTRTDIR  = optrpt
 COMPILERS = x86_64.LINUX.intel
+
+# Environment
+#
+OGSTM_SRC = $(OGSTM_DIR)/src
+OGSTM_CMP = $(OGSTM_DIR)/compilers
+OGSTM_INC = $(OGSTM_BLD)
+BFM_INC   = ${BFM_DIR}/include
+BFM_LIB   = ${BFM_DIR}/lib
 
 # Sources and Objects
 #
@@ -39,7 +47,13 @@ include $(OGSTM_CMP)/$(COMPILERS).inc
 #
 # One rule to compile them all, one rule to find them,
 # One rule to bring them all and in the compiler link them.
-default: libs apps
+default: dirs libs apps
+
+# Dirs
+#
+.PHONY: dirs
+dirs:
+	@mkdir -p $(BUILDDIR) $(OPTRTDIR)
 
 # Applications
 #
@@ -48,24 +62,18 @@ default: libs apps
 .PHONY: apps
 apps: compute.xx compute2.xx
 
-compute.xx: compute.F90
-	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm_lib -L./
-compute2.xx: compute.F90
-	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm -L./
-
-# Dirs
-#
-.PHONY: dirs
-dirs:
-	@mkdir -p $(BUILDDIR) $(OPTRTDIR)
+compute.xx: libogstm_lib.a compute.F90
+	$(FC) $(FFLAGS) -I $(OGSTM_INC) -o $@ $< $(LDFLAGS) -logstm_lib -L./
+compute2.xx: libogstm.a compute.F90
+	$(FC) $(FFLAGS) -I $(BUILDDIR) -o $@ $< $(LDFLAGS) -logstm -L./
 
 # Libraries
 #
 .PHONY:libs
 libs: libogstm_lib.a libogstm.a
 
-libogstm_lib.a: 
-	@ln -s $(OGSTM_BLD)/libogstm_lib.a .
+libogstm_lib.a: $(OGSTM_BLD)/libogstm_lib.a
+	@ln -s $< $@
 libogstm.a: dirs modules objects
 	ar qc $@ $(MODULES) $(OBJECTS)
 	ranlib $@
@@ -214,10 +222,18 @@ $(OBJECTS): $(SOURCES)
 
 # Clean
 #
-.PHONY: remove_libs
-remove_libs:
+.PHONY: clean
+clean: 
+	@rm -rf *.o *.optrpt $(BUILDDIR) $(OPTRTDIR)
+
+.PHONY: clean_libs
+clean_libs:
 	@rm -f *.a
 
-.PHONY: clean
-clean: remove_libs
-	@rm -f $(BUILDDIR)/* $(OPTRTDIR)/*
+.PHONY: clean_apps
+clean_apps: 
+	@rm -rf *.xx
+
+.PHONY: cleanall
+cleanall: clean clean_libs clean_apps
+

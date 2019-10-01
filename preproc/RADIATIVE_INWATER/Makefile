@@ -16,6 +16,7 @@ COMPILERS = x86_64.LINUX.intel
 #
 OGSTM_SRC = $(OGSTM_DIR)/src
 OGSTM_CMP = $(OGSTM_DIR)/compilers
+OGSTM_INC = $(OGSTM_BLD)
 BFM_INC   = ${BFM_DIR}/include
 BFM_LIB   = ${BFM_DIR}/lib
 
@@ -62,9 +63,9 @@ dirs:
 apps: compute.xx compute2.xx
 
 compute.xx: libogstm_lib.a compute.F90
-	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -L./
+	$(FC) $(FFLAGS) -I $(OGSTM_INC) -o $@ $< $(LDFLAGS) -logstm_lib -L./
 compute2.xx: libogstm.a compute.F90
-	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -L./
+	$(FC) $(FFLAGS) -I $(BUILDDIR) -o $@ $< $(LDFLAGS) -logstm -L./
 
 # Libraries
 #

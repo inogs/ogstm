@@ -26,7 +26,7 @@ double precision, allocatable :: Edz(:,:),Esz(:,:),Euz(:,:),PARz(:,:)
 double precision, allocatable :: CHLz(:,:),CDOMz(:),NAPz(:)
 double precision :: Eu_0m(nlt)
 
-
+OUTPUT_FILE='pippo.nc'
 
 datestring='20000101-12:00:00'
 
@@ -35,13 +35,17 @@ dT =1800.0D0
 jpi  = 1
 jpj  = 1
 
-call getarg(1, INPUT_OASIM_FILE)
+call getarg(1, datestring)
 
-write (*,*) "INPUT_OASIM_FILE= ", INPUT_OASIM_FILE
+write (*,*) "datesring= ", datestring
+
+allocate(glamt(jpj,jpi),gphit(jpj,jpi))
+
+gphit(1,1) = 35.0D0
 
 call getarg(2, INPUT_ACDOM_FILE)
 
-write (*,*) " INPUT_ACDOM_FILE= ", INPUT_ACDOM_FILE
+write (*,*) " LATITUDE= ", INPUT_ACDOM_FILE
 
 call getarg(3, INPUT_APHY_FILE)
 
@@ -55,15 +59,13 @@ call getarg(5, INPUT_PFT_FILE)
 
 write (*,*) " INPUT_PFT_FILE= ", INPUT_PFT_FILE
 
-call getarg(6, OUTPUT_FILE)
+!call getarg(6, OUTPUT_FILE)
 
 write (*,*) " OUTPUT_FILE= ", OUTPUT_FILE
 
-!call OPEN_AVE_edeu(OUTPUT_FILE, 'Edz', 'Esz', 'Euz', nc)
-
-
-
 jpk = 7
+
+call OPEN_AVE_edeseu(TRIM(OUTPUT_FILE), jpk,  'Edz', 'Esz', 'Euz', nc)
 
 call  myalloc_OPT()
 
@@ -76,7 +78,6 @@ enddo
 allocate(e3t(jpk,1,1))
 allocate(Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),PARz(jpk,nchl+1))
 allocate(CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk))
-allocate(glamt(jpj,jpi),gphit(jpj,jpi))
 
 e3t(1,1,1) = 4.0
 e3t(2,1,1) = 5.0
@@ -86,7 +87,6 @@ e3t(5,1,1) = 10.0
 e3t(6,1,1) = 20.0
 e3t(7,1,1) = 10.0
 
-gphit(1,1) = 35.0D0
 
 !call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"diatoms", P(:,1))
 !call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"chlorophytes", P(:,2))
@@ -137,7 +137,9 @@ do i=1,33 ! PAR RANGE
      write(*,*) lam(i), Edz(1,i),Esz(1,i),Euz(1,i), Eu_0m(i)
 enddo
 
+call WRITE_AVE_edeseu(TRIM(OUTPUT_FILE), nc, jpk, 'Edz', 'Esz', 'Euz', Ed_0m, Es_0m, Eu_0m, Edz, Esz, Euz)
 
-!call CLOSE_AVE_edeu(OUTPUT_FILE,nc)
+
+call CLOSE_AVE_edeseu(TRIM(OUTPUT_FILE),nc)
 
 end program

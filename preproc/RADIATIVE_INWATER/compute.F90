@@ -45,7 +45,7 @@ call getarg(6, OUTPUT_FILE)
 
 write (*,*) " OUTPUT_FILE= ", OUTPUT_FILE
 
-call OPEN_AVE_edeu(OUTPUT_FILE, 'Edz', 'Esz', 'Euz', nc)
+!call OPEN_AVE_edeu(OUTPUT_FILE, 'Edz', 'Esz', 'Euz', nc)
 
 call lidata(lam,aw,bw,ac,bc)
 
@@ -64,11 +64,11 @@ H(6) = 20.0
 H(7) = 10.0
 
 P(:,:) = 0.0
-call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"diatoms", P(:,1))
-call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"chlorophytes", P(:,2))
-call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"cyanobacteria", P(:,3))
-call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"coccolitophores", P(:,4))
-call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"dinoflagellates", P(:,5))
+!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"diatoms", P(:,1))
+!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"chlorophytes", P(:,2))
+!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"cyanobacteria", P(:,3))
+!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"coccolitophores", P(:,4))
+!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"dinoflagellates", P(:,5))
 
 CHLT(:) = 0.
 
@@ -78,18 +78,18 @@ enddo
 
 write(*,*) 'CHLT', CHLT
 
-call readnc_boussole_acdom(TRIM(INPUT_ACDOM_FILE),'acdom', 1, acdom)
+!call readnc_boussole_acdom(TRIM(INPUT_ACDOM_FILE),'acdom', 1, acdom)
 
-call readnc_boussole_acdom(TRIM(INPUT_APHY_FILE), 'aphy', 1, aphy)
+!call readnc_boussole_acdom(TRIM(INPUT_APHY_FILE), 'aphy', 1, aphy)
 
-call readnc_boussole_acdom(TRIM(INPUT_ANAP_FILE), 'anap', 1, anap)
+!call readnc_boussole_acdom(TRIM(INPUT_ANAP_FILE), 'anap', 1, anap)
 
 first = .TRUE.
 do time_2hr=1,12
 
-    call readnc_boussole(trim(INPUT_OASIM_FILE),'Ed_0m', time_2hr, Ed)
+!   call readnc_boussole(trim(INPUT_OASIM_FILE),'Ed_0m', time_2hr, Ed)
 
-    call readnc_boussole(trim(INPUT_OASIM_FILE),'Es_0m', time_2hr, Es)
+!   call readnc_boussole(trim(INPUT_OASIM_FILE),'Es_0m', time_2hr, Es)
 
     zenith_angle = -90.+ 180./24.* (2.0*real(time_2hr,8) - 1.0)
 
@@ -102,10 +102,10 @@ do time_2hr=1,12
 
     call getrmud(zenith_angle,rmud)
 
-    call edeu(first,aw,bw,ac,bc,Ed,Es,H,P,aphy,anap,acdom,rmud,OUTPUT_FILE,nc,time_2hr)
+!    call edeu(first,aw,bw,ac,bc,Ed,Es,H,P,aphy,anap,acdom,rmud,OUTPUT_FILE,nc,time_2hr)
 
 enddo
 
-call CLOSE_AVE_edeu(OUTPUT_FILE,nc)
+!call CLOSE_AVE_edeu(OUTPUT_FILE,nc)
 
 end program

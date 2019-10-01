@@ -96,7 +96,7 @@ contains
 
 
     !> Getter for the data file given the time index
-    character(len=27) function get_file_by_index(self, idx)
+    character(len=100) function get_file_by_index(self, idx)
 
         class(bc), intent(in) :: self
         integer, intent(in) :: idx

@@ -10,7 +10,6 @@ BFM_DIR   = ../../../bfm
 OGSTM_BLD = ../../../OGSTM_BUILD
 BUILDDIR  = build
 OPTRTDIR  = optrpt
-MACHINE   = galileo.intel
 COMPILERS = x86_64.LINUX.intel
 
 # Environment
@@ -62,18 +61,18 @@ dirs:
 .PHONY: apps
 apps: compute.xx compute2.xx
 
-compute.xx: compute.F90
-	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm_lib -L./
-compute2.xx: compute.F90
-	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm -L./
+compute.xx: libogstm_lib.a compute.F90
+	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -L./
+compute2.xx: libogstm.a compute.F90
+	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -L./
 
 # Libraries
 #
 .PHONY:libs
 libs: libogstm_lib.a libogstm.a
 
-libogstm_lib.a: 
-	@ln -s $(OGSTM_BLD)/libogstm_lib.a .
+libogstm_lib.a: $(OGSTM_BLD)/libogstm_lib.a
+	@ln -s $< $@
 libogstm.a: dirs modules objects
 	ar qc $@ $(MODULES) $(OBJECTS)
 	ranlib $@
@@ -222,10 +221,18 @@ $(OBJECTS): $(SOURCES)
 
 # Clean
 #
-.PHONY: remove_libs
-remove_libs:
+.PHONY: clean
+clean: 
+	@rm -rf *.o *.optrpt $(BUILDDIR) $(OPTRTDIR)
+
+.PHONY: clean_libs
+clean_libs:
 	@rm -f *.a
 
-.PHONY: clean
-clean: remove_libs
-	@rm -rf *.o *.optrpt $(BUILDDIR) $(OPTRTDIR)
+.PHONY: clean_apps
+clean_apps: 
+	@rm -rf *.xx
+
+.PHONY: cleanall
+cleanall: clean clean_libs clean_apps
+

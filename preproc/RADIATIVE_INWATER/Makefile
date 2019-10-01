@@ -5,12 +5,20 @@
 
 # Configuration
 #
-OGSTM_SRC = /galileo/home/userexternal/plazzari/CODE/ogstm/src
-OGSTM_CMP = /galileo/home/userexternal/plazzari/CODE/ogstm/compilers
-OGSTM_BLD = /galileo/home/userexternal/plazzari/CODE/OGSTM_BUILD
+OGSTM_DIR = ../../../ogstm
+BFM_DIR   = ../../../bfm
+OGSTM_BLD = ../../../OGSTM_BUILD
 BUILDDIR  = build
 OPTRTDIR  = optrpt
+MACHINE   = galileo.intel
 COMPILERS = x86_64.LINUX.intel
+
+# Environment
+#
+OGSTM_SRC = $(OGSTM_DIR)/src
+OGSTM_CMP = $(OGSTM_DIR)/compilers
+BFM_INC   = ${BFM_DIR}/include
+BFM_LIB   = ${BFM_DIR}/lib
 
 # Sources and Objects
 #
@@ -39,7 +47,13 @@ include $(OGSTM_CMP)/$(COMPILERS).inc
 #
 # One rule to compile them all, one rule to find them,
 # One rule to bring them all and in the compiler link them.
-default: libs apps
+default: dirs libs apps
+
+# Dirs
+#
+.PHONY: dirs
+dirs:
+	@mkdir -p $(BUILDDIR) $(OPTRTDIR)
 
 # Applications
 #
@@ -52,12 +66,6 @@ compute.xx: compute.F90
 	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm_lib -L./
 compute2.xx: compute.F90
 	$(FC) $(FFLAGS) -o $@ $< $(LDFLAGS) -logstm -L./
-
-# Dirs
-#
-.PHONY: dirs
-dirs:
-	@mkdir -p $(BUILDDIR) $(OPTRTDIR)
 
 # Libraries
 #
@@ -220,4 +228,4 @@ remove_libs:
 
 .PHONY: clean
 clean: remove_libs
-	@rm -f $(BUILDDIR)/* $(OPTRTDIR)/*
+	@rm -rf *.o *.optrpt $(BUILDDIR) $(OPTRTDIR)

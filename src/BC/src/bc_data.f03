@@ -17,7 +17,7 @@ module bc_data_mod
         ! file list related members
         integer :: m_n_files
         logical :: m_const ! true when a single file is provided, only for periodic files
-        character(len=27), allocatable, dimension(:) :: m_files
+        character(len=100), allocatable, dimension(:) :: m_files
         character(len=17), allocatable, dimension(:) :: m_time_strings
         ! time list related members
         integer :: m_n_times
@@ -80,6 +80,7 @@ contains
         character(len=22), intent(in) :: filenames_list
         integer, parameter :: file_unit = 100
         integer :: i ! counter
+        integer :: pos
 
         bc_data_default%m_const = .false. ! always false for default constructor
 
@@ -95,9 +96,9 @@ contains
 
         ! get file names and infer times
         read(file_unit, *) bc_data_default%m_files
-
         do i = 1, bc_data_default%m_n_files
-            bc_data_default%m_time_strings(i) = bc_data_default%m_files(i)(8:24)
+            pos = INDEX( trim(bc_data_default%m_files(i)), "TIN_")
+            bc_data_default%m_time_strings(i) = bc_data_default%m_files(i)(pos+4:pos+20)
             bc_data_default%m_times(i) = datestring2sec(bc_data_default%m_time_strings(i))
         enddo
 
@@ -207,7 +208,7 @@ contains
     ! This is supposed to match the given time to the right file, also with yearly data
 
     !> Getter for the data file given the time index
-    character(len=27) function get_file_by_index(self, idx)
+    character(len=100) function get_file_by_index(self, idx)
 
         class(bc_data), intent(in) :: self
         integer, intent(in) :: idx

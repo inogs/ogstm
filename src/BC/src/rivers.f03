@@ -170,7 +170,7 @@ contains
 
         do i = 1, self%m_n_vars
             self%m_var_names(i) = vars(i)
-            self%m_var_names_data(i) = self%m_name//'_'//trim(self%m_var_names(i))
+            self%m_var_names_data(i) = "riv"//'_'//trim(self%m_var_names(i))
             self%m_var_names_idx(i) = var_names_idx(i)
         enddo
 

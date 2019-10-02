@@ -6,8 +6,8 @@ USE TIME_MANAGER
 
 IMPLICIT NONE
 
-logical            :: first
-CHARACTER(len=128) :: INPUT_OASIM_FILE, INPUT_ACDOM_FILE, INPUT_APHY_FILE, INPUT_ANAP_FILE, INPUT_PFT_FILE
+integer            :: uni
+CHARACTER(len=128) :: INPUT_OASIM_FILE, INPUT_IOP_FILE
 CHARACTER(len=128) :: OUTPUT_FILE
 CHARACTER(len=32)  :: time_string
 character(LEN=17)  ::  datestring
@@ -22,48 +22,69 @@ double precision :: dT
 double precision :: solz(1,1), rmud(1,1)
 double precision :: Ed_OASIM(nlt),Es_OASIM(nlt)
 double precision :: sec
+double precision, allocatable :: depthz(:)
 double precision, allocatable :: Edz(:,:),Esz(:,:),Euz(:,:),PARz(:,:)
 double precision, allocatable :: CHLz(:,:),CDOMz(:),NAPz(:)
 double precision :: Eu_0m(nlt)
 
 OUTPUT_FILE='pippo.nc'
 
-datestring='20000101-12:00:00'
+ifst = .TRUE. ! to initialize local vector
 
 dT =1800.0D0
 
 jpi  = 1
 jpj  = 1
 
-call getarg(1, datestring)
+uni = 20
 
-write (*,*) "datesring= ", datestring
+call getarg(1, INPUT_IOP_FILE)
+
+write (*,*) " INPUT_IOP_FILE= ", INPUT_IOP_FILE
+
+open(uni, file= INPUT_IOP_FILE, status="old",action="read")
+
+read(uni,*) datestring
+
+write(*,*) 'datestring ', datestring
 
 allocate(glamt(jpj,jpi),gphit(jpj,jpi))
 
-gphit(1,1) = 35.0D0
+read(uni,*) gphit(jpj,jpi)
 
-call getarg(2, INPUT_ACDOM_FILE)
+write(*,*) 'latitude ', gphit(jpj,jpi)
 
-write (*,*) " LATITUDE= ", INPUT_ACDOM_FILE
+read(uni,*) jpk
 
-call getarg(3, INPUT_APHY_FILE)
+write(*,*) 'Number of vertical levels ', jpk
 
-write (*,*) " INPUT_APHY_FILE= ", INPUT_APHY_FILE
+allocate(e3t(jpk,1,1))
+allocate(depthz(jpk))
+allocate(CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk))
 
-call getarg(4, INPUT_ANAP_FILE)
+do i =1,jpk
+       read(uni,*) depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4), CDOMz(i), NAPz(i)
+       write(*,*)  depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4), CDOMz(i), NAPz(i)
+enddo
 
-write (*,*) " INPUT_ANAP_FILE= ", INPUT_ANAP_FILE
+if ( depthz(1) > 0.0D0) then
 
-call getarg(5, INPUT_PFT_FILE)
+     e3t(1,1,1) = depthz(1) ! First data at zero depth (OASIM Ed0-)
 
-write (*,*) " INPUT_PFT_FILE= ", INPUT_PFT_FILE
+     do i=2,jpk
+        e3t(i,1,1) = depthz(i) - depthz(i-1) 
+     enddo    
+else
 
-!call getarg(6, OUTPUT_FILE)
+     STOP ' BGC Argo data at 0 depth! '
+
+endif
+
+close (uni)
+
+call getarg(2, OUTPUT_FILE)
 
 write (*,*) " OUTPUT_FILE= ", OUTPUT_FILE
-
-jpk = 7
 
 call OPEN_AVE_edeseu(TRIM(OUTPUT_FILE), jpk,  'Edz', 'Esz', 'Euz', nc)
 
@@ -75,48 +96,28 @@ enddo
 
 ! H thikcness of layers !!!
 
-allocate(e3t(jpk,1,1))
 allocate(Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),PARz(jpk,nchl+1))
-allocate(CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk))
-
-e3t(1,1,1) = 4.0
-e3t(2,1,1) = 5.0
-e3t(3,1,1) = 10.0
-e3t(4,1,1) = 20.0
-e3t(5,1,1) = 10.0
-e3t(6,1,1) = 20.0
-e3t(7,1,1) = 10.0
-
-
-!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"diatoms", P(:,1))
-!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"chlorophytes", P(:,2))
-!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"cyanobacteria", P(:,3))
-!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"coccolitophores", P(:,4))
-!call readnc_boussole_PFT(TRIM(INPUT_PFT_FILE),"dinoflagellates", P(:,5))
-
-CHLz(:,:) = 1.
-CDOMz(:) = 1.
-NAPz(:) = 1.
-
-
-!call readnc_boussole_acdom(TRIM(INPUT_ACDOM_FILE),'acdom', 1, acdom)
-
-!call readnc_boussole_acdom(TRIM(INPUT_APHY_FILE), 'aphy', 1, aphy)
-
-!call readnc_boussole_acdom(TRIM(INPUT_ANAP_FILE), 'anap', 1, anap)
-
-!call readnc_boussole(trim(INPUT_OASIM_FILE),'Ed_0m', time_2hr, Ed)
-
-!call readnc_boussole(trim(INPUT_OASIM_FILE),'Es_0m', time_2hr, Es)
 
 
 call read_date_string(datestring, year, month, day, sec)
 
 call tau2julianday(datestringToTAU(datestring), dT, day_of_year)
 
+
+ihr  =  int(sec/3600.d0) !from 0 to 23
+
+
+write(*,*) "year", year
+write(*,*) "day_of_year", day_of_year
+write(*,*) "ihr", ihr
+
 call sfcsolz(year, day_of_year, ihr, solz)
 
+write(*,*) 'solz', solz
+
 call getrmud(solz,rmud)
+
+write(*,*) 'rmud', rmud
 
 MODE = 0
 

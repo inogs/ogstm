@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<vars_for_All_Statistics description="point profiles, subbasin statistic profiles, volume integrals">
+
+<native>
+</native>
+
+<aggregate>
+
+</aggregate>
+</vars_for_All_Statistics>
+
+
+
+<var_for_Some_Statistics>
+</var_for_Some_Statistics>
+
+
+<toArchive>
+</toArchive>
+
+
+<var2D>
+<vars_for_All>
+<native>
+<var name="Ed_250" ></var>
+<var name="Ed_325" ></var>
+<var name="Ed_350" ></var>
+<var name="Ed_375" ></var>
+<var name="Ed_400" ></var>
+<var name="Ed_425" ></var>
+<var name="Ed_450" ></var>
+<var name="Ed_475" ></var>
+<var name="Ed_500" ></var>
+<var name="Ed_525" ></var>
+<var name="Ed_550" ></var>
+<var name="Ed_575" ></var>
+<var name="Ed_600" ></var>
+<var name="Ed_625" ></var>
+<var name="Ed_650" ></var>
+<var name="Ed_675" ></var>
+<var name="Ed_700" ></var>
+<var name="Ed_725" ></var>
+<var name="Ed_775" ></var>
+<var name="Ed_850" ></var>
+<var name="Ed_950" ></var>
+<var name="Ed_1050" ></var>
+<var name="Ed_1150" ></var>
+<var name="Ed_1250" ></var>
+<var name="Ed_1350" ></var>
+<var name="Ed_1450" ></var>
+<var name="Ed_1550" ></var>
+<var name="Ed_1650" ></var>
+<var name="Ed_1750" ></var>
+<var name="Ed_1900" ></var>
+<var name="Ed_2200" ></var>
+<var name="Ed_2900" ></var>
+<var name="Ed_3700" ></var>
+</native>
+</vars_for_All>
+</var2D>
+
+</root>

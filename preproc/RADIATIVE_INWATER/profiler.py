@@ -4,11 +4,9 @@ from commons.time_interval import TimeInterval
 from commons.Timelist import TimeList
 from basins.region import Rectangle
 
+INPUTDIR = '/gpfs/scratch/userexternal/eterzic0/RADIATIVE_INWATER/INDATA/'
 
-INPUTDIR = '/galileo/home/userexternal/eterzic0/OASIM_POSTPROC/ARGO_MATCHUP/INDATA/'
-# output directory, where aveScan.py will be run.
-
-BASEDIR='/galileo/home/userexternal/eterzic0/OASIM_POSTPROC/ARGO_MATCHUP/PROFILATORE/'
+BASEDIR='/gpfs/scratch/userexternal/eterzic0/RADIATIVE_INWATER/PROFILATORE/'
 
 DATESTART = '20120101'
 DATE__END = '20171231'
@@ -16,11 +14,11 @@ DATE__END = '20171231'
 #export MASKFILE=$PWD/meshmask.nc
 
 T_INT = TimeInterval(DATESTART,DATE__END, '%Y%m%d')
-TL = TimeList.fromfilenames(T_INT, INPUTDIR,"ave*.nc",filtervar="Ed_380")
+TL = TimeList.fromfilenames(T_INT, INPUTDIR,"ave*.nc",filtervar="Ed_400")
 
 ALL_PROFILES = optbio_float_2019.FloatSelector(None,T_INT, Rectangle(-6,36,30,46))
 
-vardescriptorfile='/galileo/home/userexternal/eterzic0/OASIM_POSTPROC/ARGO_MATCHUP/CODES/VarDescriptorB.xml'
+vardescriptorfile='/galileo/home/userexternal/eterzic0/ogstm/preproc/RADIATIVE_INWATER/VarDescriptorB.xml'
 
 #This previous part will be imported in matchups setup.
 

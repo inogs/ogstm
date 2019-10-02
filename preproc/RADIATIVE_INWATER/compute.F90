@@ -6,7 +6,7 @@ USE TIME_MANAGER
 
 IMPLICIT NONE
 
-integer            :: uni
+integer            :: uni1,uni2
 CHARACTER(len=128) :: INPUT_OASIM_FILE, INPUT_IOP_FILE
 CHARACTER(len=128) :: OUTPUT_FILE
 CHARACTER(len=32)  :: time_string
@@ -36,25 +36,37 @@ dT =1800.0D0
 jpi  = 1
 jpj  = 1
 
-uni = 20
+uni1 = 20
+uni2 = 21
 
-call getarg(1, INPUT_IOP_FILE)
+call getarg(1, INPUT_OASIM_FILE)
+open(uni1, file= INPUT_OASIM_FILE, status="old",action="read")
+
+do i=1,nlt
+       read(uni1,*) Ed_OASIM(i), Es_OASIM(i)
+       write(*,*)  Ed_OASIM(i), Es_OASIM(i)
+enddo
+
+close (uni1)
+
+
+call getarg(2, INPUT_IOP_FILE)
 
 write (*,*) " INPUT_IOP_FILE= ", INPUT_IOP_FILE
 
-open(uni, file= INPUT_IOP_FILE, status="old",action="read")
+open(uni2, file= INPUT_IOP_FILE, status="old",action="read")
 
-read(uni,*) datestring
+read(uni2,*) datestring
 
 write(*,*) 'datestring ', datestring
 
 allocate(glamt(jpj,jpi),gphit(jpj,jpi))
 
-read(uni,*) gphit(jpj,jpi)
+read(uni2,*) gphit(jpj,jpi)
 
 write(*,*) 'latitude ', gphit(jpj,jpi)
 
-read(uni,*) jpk
+read(uni2,*) jpk
 
 write(*,*) 'Number of vertical levels ', jpk
 
@@ -63,7 +75,7 @@ allocate(depthz(jpk))
 allocate(CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk))
 
 do i =1,jpk
-       read(uni,*) depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4), CDOMz(i), NAPz(i)
+       read(uni2,*) depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4), CDOMz(i), NAPz(i)
        write(*,*)  depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4), CDOMz(i), NAPz(i)
 enddo
 
@@ -80,9 +92,9 @@ else
 
 endif
 
-close (uni)
+close (uni2)
 
-call getarg(2, OUTPUT_FILE)
+call getarg(3, OUTPUT_FILE)
 
 write (*,*) " OUTPUT_FILE= ", OUTPUT_FILE
 

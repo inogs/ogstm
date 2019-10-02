@@ -47,6 +47,7 @@ MODULES := build/stringop.o build/calendar.o build/bc_data.o build/parameter.o b
 # Compilers
 #
 include $(OGSTM_CMP)/$(COMPILERS).inc
+FFLAGS +=  -no-wrap-margin
 
 # Default
 #
@@ -67,9 +68,10 @@ dirs:
 .PHONY: apps
 apps: compute.xx compute2.xx
 
-compute.xx: compute.F90 libogstm_lib.a
-	$(FC) $(FFLAGS) -I $(OGSTM_INC) -o $@ $^ $(LDFLAGS)
-compute2.xx: compute.F90 libogstm.a
+#compute.xx: compute.F90 IO_BIO_ARGO.f90 sfcsolz10_14.F  libogstm_lib.a
+compute.xx: compute.F90 IO_BIO_ARGO.f90 sfcsolz.F  libogstm_lib.a
+	$(FC) $(FFLAGS) -I $(OGSTM_INC) -o $@ $^ $(LDFLAGS) 
+compute2.xx: compute.F90 IO_BIO_ARGO.f90 sfcsolz10_14.F libogstm.a
 	$(FC) $(FFLAGS) -I $(INCDIR) -o $@ $^ $(LDFLAGS)
 
 # Libraries

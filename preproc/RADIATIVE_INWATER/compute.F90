@@ -94,7 +94,6 @@ do i=1,nlt
    write(*,*) lam(i), aw(i), bw(i)
 enddo
 
-! H thikcness of layers !!!
 
 allocate(Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),PARz(jpk,nchl+1))
 
@@ -113,6 +112,8 @@ write(*,*) "ihr", ihr
 
 call sfcsolz(year, day_of_year, ihr, solz)
 
+!call sfcsolz10_14(year, day_of_year, ihr, solz)
+
 write(*,*) 'solz', solz
 
 call getrmud(solz,rmud)
@@ -123,7 +124,7 @@ MODE = 0
 
 V_POSITION = "AVERAGE"
 
-bottom = 1
+bottom = jpk
 
 Ed_0m(:,1,1) = 1.0d0
 Es_0m(:,1,1) = 1.0D0

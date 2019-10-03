@@ -56,6 +56,39 @@
 <var name="Ed_2200" ></var>
 <var name="Ed_2900" ></var>
 <var name="Ed_3700" ></var>
+<var name="Es_250" ></var>
+<var name="Es_325" ></var>
+<var name="Es_350" ></var>
+<var name="Es_375" ></var>
+<var name="Es_400" ></var>
+<var name="Es_425" ></var>
+<var name="Es_450" ></var>
+<var name="Es_475" ></var>
+<var name="Es_500" ></var>
+<var name="Es_525" ></var>
+<var name="Es_550" ></var>
+<var name="Es_575" ></var>
+<var name="Es_600" ></var>
+<var name="Es_625" ></var>
+<var name="Es_650" ></var>
+<var name="Es_675" ></var>
+<var name="Es_700" ></var>
+<var name="Es_725" ></var>
+<var name="Es_775" ></var>
+<var name="Es_850" ></var>
+<var name="Es_950" ></var>
+<var name="Es_1050" ></var>
+<var name="Es_1150" ></var>
+<var name="Es_1250" ></var>
+<var name="Es_1350" ></var>
+<var name="Es_1450" ></var>
+<var name="Es_1550" ></var>
+<var name="Es_1650" ></var>
+<var name="Es_1750" ></var>
+<var name="Es_1900" ></var>
+<var name="Es_2200" ></var>
+<var name="Es_2900" ></var>
+<var name="Es_3700" ></var>
 </native>
 </vars_for_All>
 </var2D>

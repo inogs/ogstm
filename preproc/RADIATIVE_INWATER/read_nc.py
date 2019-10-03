@@ -14,6 +14,7 @@ wl =np.array( [250., 325., 350., 375., 400.,   425.,  450.,  475.,  500.,  525.,
 wl_int = wl.astype(np.int64)
 wl_str = [np.str(wl_int[i]) for i in range(len(wl_int))] 
 str_Ed = ['Ed_' + np.str(wl_str[i]) for i in range(len(wl_str))]
+str_Es = ['Es_' + np.str(wl_str[i]) for i in range(len(wl_str))]
 
 maskfile    = '/galileo/home/userexternal/eterzic0/OASIM_POSTPROC/ARGO_MATCHUP/CODES/meshmask.nc'
 ncIN=NC.netcdf_file(maskfile,"r")

@@ -8,6 +8,7 @@ import numpy as np
 import os
 from profiler import *
 import scipy.io.netcdf as NC
+import netCDF4 as NC4
 
 def PFT_calc(CHL):
     PFT_1 = 0.25*CHL
@@ -27,6 +28,9 @@ def CDOM_calc(CHL):
 wl =np.array( [250., 325., 350., 375., 400.,   425.,  450.,  475.,  500.,  525.,  550.,  575.,  600.,  625.,  650.,  675., 700.,
                725., 775., 850., 950., 1050., 1150., 1250., 1350., 1450., 1550., 1650., 1750., 1900., 2200., 2900., 3700.])
 wl_int = wl.astype(np.int64)
+
+#Indices for float wavelengths (380, 412, 490) will be 3, 4 and 7 respectively
+
 wl_str = [np.str(wl_int[i]) for i in range(len(wl_int))] 
 str_Ed = ['Ed_' + np.str(wl_str[i]) for i in range(len(wl_str))]
 str_Es = ['Es_' + np.str(wl_str[i]) for i in range(len(wl_str))]
@@ -78,8 +82,59 @@ NAP  = NAP_calc(CHLz)
 CDOM = CDOM_calc(CHLz)
 
 file_cols = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4, CDOM, NAP)).T
-np.savetxt('IOP.txt', file_cols, header = init_rows, delimiter='\t')
+np.savetxt('IOP.txt', file_cols, header = init_rows, delimiter='\t', comments='')
 
-#command='./compute.xx ' + 'OASIM.txt ' + 'IOP.txt ' + pippo.nc 
-#os.system(command)
+if len(PresCHL) < 15:
+    badstr = '_BAD'
+    floatname = p.ID() + '_BAD.nc'
+else:
+    floatname = p.ID() + '.nc'
+
+command='./compute.xx ' + 'OASIM.txt ' + 'IOP.txt ' + str(floatname) 
+os.system(command)
+
+# Move them to a new directory
+
+#movefiles = 'mv *.nc NCOUT/'
+#os.system(movefiles)
+
+ncin=NC4.Dataset(floatname,"r")
+
+Ed380 =  np.array(ncin.variables['Edz'][3,1:] + ncin.variables['Esz'][3,1:])  
+Ed412 =  np.array(ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:]) 
+Ed490 =  np.array(ncin.variables['Edz'][7,1:] + ncin.variables['Esz'][7,1:]) 
+
+Ed380_model = Ed380 * 4  # = 10**(-6) / (10**(-4) * 25) 
+Ed412_model = Ed412 * 4  #  W/m2 to muW/cm2
+Ed490_model = Ed490 * 4  
+
+#Interpolate Ed380 on CHL (OASIM model) depth quotes
+
+Ed380_float = np.interp(PresCHL, Pres380, Ed_380)
+Ed412_float = np.interp(PresCHL, Pres412, Ed_412)
+Ed490_float = np.interp(PresCHL, Pres490, Ed_490)
+
+# Save irradiance profiles of floats and the ones of models at the corresponding wavelengths
+
+#Save Es
+outfile = 'MATCHUP/' + floatname 
+ncOUT   = NC4.Dataset(outfile,"w");
+            
+ncOUT.createDimension('depth',     len(PresCHL));
+ncOUT.createDimension('wavelength',3);
+
+ncvar = ncOUT.createVariable('Ed_float', 'f', ('depth', 'wavelength')); ncvar[:] = [Ed380_float, Ed412_float, Ed490_float]
+ncvar = ncOUT.createVariable('Ed_model', 'f', ('depth', 'wavelength')); ncvar[:] = [Ed380_model, Ed412_model, Ed490_model]
+
+setattr(ncOUT.variables,  'missing_value',-1.0 );     
+setattr(ncOUT.variables,  'long_name',  'Downward irradiance ' );     
+setattr(ncOUT.variables,  'unit',  '[uW/cm2/nm]' );     
+    
+ncOUT.close()
+    
+# Copy the model output to a separate directory
+
+movefiles = 'cp ' + str(floatname) + ' NCOUT/'
+os.system(movefiles)
+
 

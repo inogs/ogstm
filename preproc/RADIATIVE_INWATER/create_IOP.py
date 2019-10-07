@@ -15,6 +15,6 @@ def NAP_calc(CHL, fnap):
     NAP = fnap*CHL
     return NAP
 
-def CDOM_calc(CHL,fdom):
+def CDOM_calc(CHL,fcdom):
     CDOM = fcdom*CHL
     return CDOM

@@ -1,5 +1,8 @@
 from commons.time_interval import TimeInterval
+import numpy as np
 import os
+import scipy.io.netcdf as NC
+
 command = 'source ../../compilers/machine_modules/galileo.intel'
 os.system(command)
 

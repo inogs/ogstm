@@ -22,4 +22,4 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
         
     ncmodel.close()
 
-    return ncmodel
+    return 0

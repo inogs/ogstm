@@ -18,3 +18,18 @@ def NAP_calc(CHL, fnap):
 def CDOM_calc(CHL,fcdom):
     CDOM = fcdom*CHL
     return CDOM
+
+#define a_cdom,a_nap
+    
+
+
+# PFT, tutti 0.25*CHL        ;     Di Cicco   
+# fcdom  = 10, 20, 5, 0
+# fnap = 0
+
+# PFT, CDOM = f(CHL)
+
+# ogstm/src/opt_mem :   
+
+
+# Scatter - TOT, SEAS

@@ -2,17 +2,17 @@ import matplotlib.pyplot as plt
 from matchup.statistics import matchup
 from scipy import stats
 
-x = Ed380_float
-y = Ed380_model
+#x = Ed380_float
+#y = Ed380_model
 
-M380 = matchup(x,y)
+#M380 = matchup(x,y)
 
 def plot_matchup(L):
 
     fig,ax=plt.subplots()
     ax.scatter(L.Ref, L.Model, marker='o', s=6**2, c='k')
 
-    ax.set_ylabel('OASIM [$\mu W \, cm^{-2} \, nm^{-1}$]')
+    ax.set_ylabel('BIOPTIMOD [$\mu W \, cm^{-2} \, nm^{-1}$]')
     ax.set_xlabel('BGC-Argo float [$\mu W \, cm^{-2} \, nm^{-1}$]')
 
     

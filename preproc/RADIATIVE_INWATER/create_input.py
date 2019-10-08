@@ -22,7 +22,7 @@ variable='P_l'
 varname=var_conversions.FLOAT_OPT_VARS_2019[variable]
 
 Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)
-p = Profilelist[0]
+p = Profilelist[15]
 profile_ID = p.ID()
 
 
@@ -56,7 +56,7 @@ init_rows = str(timestr) + '\n' + str(Lat) + '\n' + str(nLevels)
 PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25)
 
 NAP  = NAP_calc( CHLz,  0.)
-CDOM = CDOM_calc(CHLz, 10.)
+CDOM = CDOM_calc(CHLz, 20.)#10
 
 file_cols = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4, CDOM, NAP)).T
 np.savetxt(profile_ID + '_IOP.txt', file_cols, header = init_rows, delimiter='\t', comments='')

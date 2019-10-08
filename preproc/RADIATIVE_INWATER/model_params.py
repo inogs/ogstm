@@ -1,10 +1,6 @@
 from commons.time_interval import TimeInterval
 import numpy as np
-import os
 import scipy.io.netcdf as NC
-
-command = 'source ../../compilers/machine_modules/galileo.intel'
-os.system(command)
 
 wl =np.array( [250., 325., 350., 375., 400.,   425.,  450.,  475.,  500.,  525.,  550.,  575.,  600.,  625.,  650.,  675., 700.,
                725., 775., 850., 950., 1050., 1150., 1250., 1350., 1450., 1550., 1650., 1750., 1900., 2200., 2900., 3700.])

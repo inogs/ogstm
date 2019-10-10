@@ -11,8 +11,8 @@ import numpy as np
 import os
 from profiler import *
 import scipy.io.netcdf as NC
+import time
 from write_matchup import *
-from __builtin__ import False
 
 try:
     from mpi4py import MPI
@@ -39,8 +39,12 @@ Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)
 
 for p in Profilelist[rank::nranks]:
     profile_ID = p.ID()
-    
     print(profile_ID)
+    
+    bool= findVars(p.available_params)
+    if bool == False:
+        print('Variables missing for further calculations')
+        continue
     ######################## phase 1. write OASIM.txt file #######################################
     
     List_Ed = [M.getMatchups([p], nav_lev, modelvar).subset(Layer(0,1.5)) for modelvar in str_Ed]
@@ -56,12 +60,7 @@ for p in Profilelist[rank::nranks]:
         continue
     
     np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
-    
-    Varlist= ['IRR_380', 'IRR_ 412', 'IRR_490']
-    bool= findVars(Varlist)
-    if bool == False:
-        print('Variables missing for further calculations')
-        continue
+
     ###############################################################################################
     ####################### phase 2. Read BGC-ARGO profiles #######################################
     PresCHL, CHLz,    Qc = p.read('CHL')
@@ -75,7 +74,9 @@ for p in Profilelist[rank::nranks]:
     nLevels = len(PresCHL)
     init_rows = str(timestr) + '\n' + str(Lat) + '\n' + str(nLevels)
     
-    
+    if PresCHL[0] == 0.:
+        print('First depth equals 0')
+        continue
     ################################################################################################
     ####################### phase 3. Calculate and save IOPs  ######################################
     PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25)
@@ -97,10 +98,11 @@ for p in Profilelist[rank::nranks]:
     
     ################################################################################################  
     ##########################   phase 4 : Run Fortran code      ###################################
-    command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_IOP.txt ' + str(floatname)
-    print command 
+    command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_IOP.txt ' + str(floatname) + ' >> log'
+    print rank, command 
     os.system(command)
     
+    #time.sleep(5)
     
     ################################################################################################
     #########    phase 5: Prepare irradiance output .nc files for ARGO-model matchup    ############
@@ -128,5 +130,7 @@ for p in Profilelist[rank::nranks]:
     
     
     # Move the .txt files you don't need any more
-    txtfiles = 'mv *.txt TXT_FILES/' 
-    os.system(txtfiles)
+    #txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt TXT_FILES/' 
+    #txtfiles2 = 'mv ' + profile_ID + '_IOP.txt TXT_FILES/' 
+    #os.system(txtfiles1)
+    #os.system(txtfiles2)

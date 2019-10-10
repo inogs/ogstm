@@ -1,4 +1,5 @@
 from basins import V2 as OGS
+from checkvar import *
 from create_IOP import *
 from commons.layer import Layer
 from instruments import optbio_float_2019
@@ -11,7 +12,18 @@ import os
 from profiler import *
 import scipy.io.netcdf as NC
 from write_matchup import *
+from __builtin__ import False
 
+try:
+    from mpi4py import MPI
+    comm  = MPI.COMM_WORLD
+    rank  = comm.Get_rank()
+    nranks =comm.size
+    isParallel = True
+except:
+    rank   = 0
+    nranks = 1
+    isParallel = False
 
 #######  Read model data that corresponds to the position and time of BGC-Argo floats ########
 
@@ -25,9 +37,10 @@ Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)
 #p = Profilelist[1000]
 #profile_ID = p.ID()
 
-for i in range(len(Profilelist[1000:1003])):
-    p = Profilelist[1000:1003][i]
+for p in Profilelist[rank::nranks]:
     profile_ID = p.ID()
+    
+    print(profile_ID)
     ######################## phase 1. write OASIM.txt file #######################################
     
     List_Ed = [M.getMatchups([p], nav_lev, modelvar).subset(Layer(0,1.5)) for modelvar in str_Ed]
@@ -44,7 +57,11 @@ for i in range(len(Profilelist[1000:1003])):
     
     np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
     
-    
+    Varlist= ['IRR_380', 'IRR_ 412', 'IRR_490']
+    bool= findVars(Varlist)
+    if bool == False:
+        print('Variables missing for further calculations')
+        continue
     ###############################################################################################
     ####################### phase 2. Read BGC-ARGO profiles #######################################
     PresCHL, CHLz,    Qc = p.read('CHL')
@@ -63,22 +80,25 @@ for i in range(len(Profilelist[1000:1003])):
     ####################### phase 3. Calculate and save IOPs  ######################################
     PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25)
     
-    NAP  = NAP_calc(CHLz, 0.1)
-    CDOM = CDOM_calc(CHLz, 5.)#10
+    NAP  = NAP_calc(PresCHL, 0.1)
+    CDOM = CDOM_calc(PresCHL, 5.)#10
     
     file_cols = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4, CDOM, NAP)).T
     np.savetxt(profile_ID + '_IOP.txt', file_cols, header = init_rows, delimiter='\t', comments='')
     
     if PresCHL.max() < 15:
-        badstr = '_BAD'
-        floatname = profile_ID + '_BAD.nc'
-    else:
-        floatname = profile_ID + '.nc'
+        print('Depth range too small')
+        continue
+        #badstr = '_BAD'
+        #floatname = profile_ID + '_BAD.nc'
+    #else:
+    floatname = profile_ID + '.nc'
     
     
     ################################################################################################  
     ##########################   phase 4 : Run Fortran code      ###################################
-    command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_IOP.txt ' + str(floatname) 
+    command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_IOP.txt ' + str(floatname)
+    print command 
     os.system(command)
     
     

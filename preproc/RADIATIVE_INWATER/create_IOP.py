@@ -1,5 +1,5 @@
 #eterzic 07.10.2019
-
+import numpy as np
 # Create functions for chl-specific IOP spectra
 
 def PFT_calc(CHL, p1, p2, p3, p4):
@@ -11,12 +11,12 @@ def PFT_calc(CHL, p1, p2, p3, p4):
     PFT_4 = p4*CHL
     return PFT_1, PFT_2, PFT_3, PFT_4
 
-def NAP_calc(CHL, fnap):
-    NAP = fnap*CHL/CHL
+def NAP_calc(PresCHL, fnap):
+    NAP = fnap*np.ones(PresCHL.shape)
     return NAP
 
-def CDOM_calc(CHL,fcdom):
-    CDOM = fcdom*CHL/CHL
+def CDOM_calc(PresCHL,fcdom):
+    CDOM = fcdom*np.ones(PresCHL.shape)
     return CDOM
 
 

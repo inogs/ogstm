@@ -11,6 +11,7 @@ import numpy as np
 import os
 from profiler import *
 import scipy.io.netcdf as NC
+import subprocess
 import time
 from write_matchup import *
 
@@ -100,8 +101,9 @@ for p in Profilelist[rank::nranks]:
     ##########################   phase 4 : Run Fortran code      ###################################
     command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_IOP.txt ' + str(floatname) + ' >> log'
     print rank, command 
-    os.system(command)
-    
+    subprocess.call(command, shell=True)
+    #os.system(command)
+    #continue
     #time.sleep(5)
     
     ################################################################################################
@@ -130,7 +132,7 @@ for p in Profilelist[rank::nranks]:
     
     
     # Move the .txt files you don't need any more
-    #txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt TXT_FILES/' 
-    #txtfiles2 = 'mv ' + profile_ID + '_IOP.txt TXT_FILES/' 
-    #os.system(txtfiles1)
-    #os.system(txtfiles2)
+    txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt TXT_FILES/' 
+    txtfiles2 = 'mv ' + profile_ID + '_IOP.txt TXT_FILES/' 
+    os.system(txtfiles1)
+    os.system(txtfiles2)

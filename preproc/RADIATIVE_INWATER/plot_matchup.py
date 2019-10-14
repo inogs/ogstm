@@ -35,3 +35,4 @@ def plot_matchup(L):
     
     ax.text(0.05, 0.95, textstr, transform=ax.transAxes, fontsize=8, verticalalignment='top',bbox=dict(facecolor='white', edgecolor='black'))
     return fig, ax
+

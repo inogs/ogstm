@@ -1,4 +1,6 @@
-#prepare model and argo output for .nc files and matchup analysis
+'''
+Prepare model and BGC-Argo output for .nc files and match-up analysis
+'''
 import netCDF4 as NC4
 import numpy as np
  
@@ -7,20 +9,29 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
     modelfile = 'MATCHUP/' + ncfile
     ncmodel   = NC4.Dataset(modelfile,"w");
                 
-    ncmodel.createDimension('depth',     len(PresCHL));
-    ncmodel.createDimension('wavelength', 3);
+    ncdepth = ncmodel.createDimension('depth',     len(PresCHL));
+    ncwave  = ncmodel.createDimension('wavelength', 3);
+
+    setattr(ncmodel, 'time', timestr);
     
-    floatstack = np.vstack((Ed380_float, Ed412_float, Ed490_float)).T
-    modelstack = np.vstack((Ed380_model, Ed412_model, Ed490_model)).T
+    ncDepth = ncmodel.createVariable('depth', 'f', ('depth')); 
+    setattr(ncDepth, 'unit',  '[m]' );
+    ncDepth[:] = PresCHL
     
-    ncvar = ncmodel.createVariable('Ed_float', 'f', ('depth', 'wavelength')); ncvar[:] = floatstack
-    ncvar = ncmodel.createVariable('Ed_model', 'f', ('depth', 'wavelength')); ncvar[:] = modelstack
+    ncEdf = ncmodel.createVariable('Ed_float', 'f', ('depth', 'wavelength'));
+    setattr(ncEdf, 'missing_value',-1.0 );     
+    setattr(ncEdf, 'long_name',  'Downward irradiance ' );     
+    setattr(ncEdf, 'unit',  '[uW/cm2/nm]' );
+
+    ncEdf[:] = np.vstack((Ed380_float, Ed412_float, Ed490_float)).T
     
-    setattr(ncmodel.variables,  'missing_value',-1.0 );     
-    setattr(ncmodel.variables,  'long_name',  'Downward irradiance ' );     
-    setattr(ncmodel.variables,  'unit',  '[uW/cm2/nm]' );  
-    setattr(ncmodel.variables, 'time', timestr)   ;
-        
+    ncEdm = ncmodel.createVariable('Ed_model', 'f', ('depth', 'wavelength'));
+    setattr(ncEdm, 'missing_value',-1.0 );     
+    setattr(ncEdm, 'long_name',  'Downward irradiance ' );     
+    setattr(ncEdm, 'unit',  '[uW/cm2/nm]' );
+
+    ncEdm[:] = np.vstack((Ed380_model, Ed412_model, Ed490_model)).T
+    
     ncmodel.close()
 
     return ncmodel

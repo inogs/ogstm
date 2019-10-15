@@ -19,6 +19,12 @@ def CDOM_calc(PresCHL,fcdom):
     CDOM = fcdom*np.ones(PresCHL.shape)
     return CDOM
 
+def NAP_abs():
+    return aNAP
+
+def CDOM_abs():
+    return aCDOM
+
 
 
 

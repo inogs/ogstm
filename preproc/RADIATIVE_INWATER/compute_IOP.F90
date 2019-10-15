@@ -7,7 +7,7 @@ USE TIME_MANAGER
 IMPLICIT NONE
 
 integer            :: uni1,uni2, uni3, uni4
-CHARACTER(len=128) :: INPUT_OASIM_FILE, INPUT_IOP_FILE, INPUT_CDOM_FILE, INPUT_NAP_FILE
+CHARACTER(len=128) :: INPUT_OASIM_FILE, INPUT_PFT_FILE, INPUT_CDOM_FILE, INPUT_NAP_FILE
 CHARACTER(len=128) :: OUTPUT_FILE
 CHARACTER(len=32)  :: time_string
 character(LEN=17)  ::  datestring
@@ -50,11 +50,11 @@ enddo
 close (uni1)
 
 
-call getarg(2, INPUT_IOP_FILE)
+call getarg(2, INPUT_PFT_FILE)
 
-write (*,*) " INPUT_IOP_FILE= ", INPUT_IOP_FILE
+write (*,*) " INPUT_PFT_FILE= ", INPUT_PFT_FILE
 
-open(uni2, file= INPUT_IOP_FILE, status="old",action="read")
+open(uni2, file= INPUT_PFT_FILE, status="old",action="read")
 
 read(uni2,*) datestring
 
@@ -75,8 +75,8 @@ allocate(depthz(jpk))
 allocate(CHLz(jpk,nchl),CDOMz(jpk, nlt),NAPz(jpk, nlt))
 
 do i =1,jpk
-       read(uni2,*) depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4), CDOMz(i), NAPz(i)
-       write(*,*)  depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4), CDOMz(i), NAPz(i)
+       read(uni2,*) depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4)
+       write(*,*)  depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4)
 enddo
 
 if ( depthz(1) > 0.0D0) then
@@ -156,10 +156,10 @@ MODE = 0
 
 V_POSITION = "AVERAGE"
 
-bottom = jpk
+Ed_0m(:,1,1) = Ed_OASIM(:)
+Es_0m(:,1,1) = Es_OASIM(:)
 
-Ed_0m(:,1,1) = 1.0d0
-Es_0m(:,1,1) = 1.0D0
+bottom = jpk
 
 do i=1,33 ! PAR RANGE
      write(*,*) lam(i), Ed_0m(i,1,1),Es_0m(i,1,1)

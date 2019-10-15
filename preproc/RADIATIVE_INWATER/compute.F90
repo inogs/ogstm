@@ -136,10 +136,10 @@ MODE = 0
 
 V_POSITION = "AVERAGE"
 
-bottom = jpk
+Ed_0m(:,1,1) = Ed_OASIM(:)
+Es_0m(:,1,1) = Es_OASIM(:)
 
-Ed_0m(:,1,1) = 1.0d0
-Es_0m(:,1,1) = 1.0D0
+bottom = jpk
 
 do i=1,33 ! PAR RANGE
      write(*,*) lam(i), Ed_0m(i,1,1),Es_0m(i,1,1)

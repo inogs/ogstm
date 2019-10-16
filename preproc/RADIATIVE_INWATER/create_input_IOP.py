@@ -66,6 +66,10 @@ for p in Profilelist:#[rank::nranks]:
         print('No model data for this profile')
         continue
     
+    if (Ed[4:9].max() + Es[4:9].max()) < 30.:
+        print('Low irradiance values of OASIM!')
+        continue
+    
     np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
 
     '''
@@ -86,37 +90,44 @@ for p in Profilelist:#[rank::nranks]:
         print('First depth equals 0')
         continue
     
-    '''
-    phase 3. Calculate and save IOPs  
-    '''
-    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25)
-    
-    #NAP  = NAP_calc(PresCHL, 0.1)
-    #CDOM = CDOM_calc(PresCHL, 5.)#10
-    
-    file_cols = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
-    np.savetxt(profile_ID + '_PFT.txt', file_cols, header = init_rows, delimiter='\t', comments='')
+    if Ed_380[0] < 30. or Ed_412[0] < 30. or Ed_490[0] < 30:
+        print('BGC-Argo low irradiance values - cloud coverage')
+        continue
     
     if PresCHL.max() < 15:
         print('Depth range too small')
         continue
+
+    '''
+    phase 3. Calculate and save IOPs  
+    '''
+    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25) #0.25, 0.25, 0.25, 0.25)
+    
+    aNAP  = NAP_abs( CHLz, 0.0129, 0.00862)#0.0129, 0.00862)
+    aCDOM = CDOM_abs(CHLz,   0.015, 0.05)
+    
+    file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
+    np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')
+    
+    Pres = PresCHL.reshape(PresCHL.shape[0], 1)
+    
+    file_cols_CDOM = np.hstack((Pres, aCDOM))
+    np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
+    
+    file_cols_NAP = np.hstack((Pres, aNAP))
+    np.savetxt(profile_ID + '_NAP.txt', file_cols_NAP, delimiter='\t', comments='' )
+    
     floatname = profile_ID + '.nc'
-    
-    
     '''  
     phase 4 : Run Fortran code
     '''
-    command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt ' + str(floatname) + ' >> log'
+    command='./compute_IOP.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
     print rank, command 
     subprocess.call(command, shell=True)
-    #os.system(command)
-    #continue
-    #time.sleep(5)
     
     '''
     phase 5: Prepare irradiance output .nc files for ARGO-model matchup
-    '''
-    
+    '''    
     ncin=NC4.Dataset(floatname,"r")
     
     Ed380_model  =  np.array(ncin.variables['Edz'][3,1:] + ncin.variables['Esz'][3,1:])  * 4 # = 10**(-6) / (10**(-4) * 25) 
@@ -138,7 +149,11 @@ for p in Profilelist:#[rank::nranks]:
     
     
     ''' Move the .txt files you don't need any more '''
-    txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt TXT_FILES/' 
-    txtfiles2 = 'mv ' + profile_ID + '_IOP.txt TXT_FILES/' 
+    txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt' + ' TXT_FILES/' 
+    txtfiles2 = 'mv ' + profile_ID + '_PFT.txt'   + ' TXT_FILES/' 
+    txtfiles3 = 'mv ' + profile_ID + '_NAP.txt'   + ' TXT_FILES/' 
+    txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'  + ' TXT_FILES/'
     os.system(txtfiles1)
     os.system(txtfiles2)
+    os.system(txtfiles3)
+    os.system(txtfiles4)

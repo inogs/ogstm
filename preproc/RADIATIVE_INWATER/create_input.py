@@ -110,6 +110,9 @@ for p in Profilelist:#[rank::nranks]:
     np.savetxt(profile_ID + '_IOP.txt', file_cols, header = init_rows, delimiter='\t', comments='')
     
     floatname = profile_ID + '.nc'
+    
+    np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
+    
     '''  
     phase 4 : Run Fortran code
     '''
@@ -122,9 +125,9 @@ for p in Profilelist:#[rank::nranks]:
     '''  
     ncin=NC4.Dataset(floatname,"r")
     
-    Ed380_model  =  np.array(ncin.variables['Edz'][3,1:] + ncin.variables['Esz'][3,1:])  * 4 # = 10**(-6) / (10**(-4) * 25) 
-    Ed412_model  =  np.array(ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:])  * 4 #  W/m2 to muW/cm2
-    Ed490_model  =  np.array(ncin.variables['Edz'][7,1:] + ncin.variables['Esz'][7,1:])  * 4
+    Ed380_model  =  np.array( 0.8  * (ncin.variables['Edz'][3,1:] + ncin.variables['Esz'][3,1:])  + 0.2 *  (ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:]))  * 4 # = 10**(-6) / (10**(-4) * 25) 
+    Ed412_model  =  np.array( 0.52 * (ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:])  + 0.48 * (ncin.variables['Edz'][5,1:] + ncin.variables['Esz'][5,1:]))  * 4 #  W/m2 to muW/cm2
+    Ed490_model  =  np.array( 0.4  * (ncin.variables['Edz'][7,1:] + ncin.variables['Esz'][7,1:])  + 0.6 *  (ncin.variables['Edz'][8,1:] + ncin.variables['Esz'][8,1:]))  * 4
     
     ncin.close()
     '''Interpolate Ed380 on CHL (OASIM model) depth quotes'''

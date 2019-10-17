@@ -69,8 +69,6 @@ for p in Profilelist:#[rank::nranks]:
     if (Ed[4:9].max() + Es[4:9].max()) < 30.:
         print('Low irradiance values of OASIM!')
         continue
-    
-    np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
 
     '''
     phase 2. Read BGC-ARGO profiles
@@ -101,7 +99,7 @@ for p in Profilelist:#[rank::nranks]:
     '''
     phase 3. Calculate and save IOPs  
     '''
-    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25) #0.25, 0.25, 0.25, 0.25)
+    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.4, 0.30, 0.25, 0.05) #0.25, 0.25, 0.25, 0.25)
     
     aNAP  = NAP_abs( CHLz, 0.0129, 0.00862)#0.0129, 0.00862)
     aCDOM = CDOM_abs(CHLz,   0.015, 0.05)
@@ -118,6 +116,9 @@ for p in Profilelist:#[rank::nranks]:
     np.savetxt(profile_ID + '_NAP.txt', file_cols_NAP, delimiter='\t', comments='' )
     
     floatname = profile_ID + '.nc'
+    
+    np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
+    
     '''  
     phase 4 : Run Fortran code
     '''
@@ -130,9 +131,9 @@ for p in Profilelist:#[rank::nranks]:
     '''    
     ncin=NC4.Dataset(floatname,"r")
     
-    Ed380_model  =  np.array(ncin.variables['Edz'][3,1:] + ncin.variables['Esz'][3,1:])  * 4 # = 10**(-6) / (10**(-4) * 25) 
-    Ed412_model  =  np.array(ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:])  * 4 #  W/m2 to muW/cm2
-    Ed490_model  =  np.array(ncin.variables['Edz'][7,1:] + ncin.variables['Esz'][7,1:])  * 4
+    Ed380_model  =  np.array( 0.8  * (ncin.variables['Edz'][3,1:] + ncin.variables['Esz'][3,1:])  + 0.2 *  (ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:]))  * 4 # = 10**(-6) / (10**(-4) * 25) 
+    Ed412_model  =  np.array( 0.52 * (ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:])  + 0.48 * (ncin.variables['Edz'][5,1:] + ncin.variables['Esz'][5,1:]))  * 4 #  W/m2 to muW/cm2
+    Ed490_model  =  np.array( 0.4  * (ncin.variables['Edz'][7,1:] + ncin.variables['Esz'][7,1:])  + 0.6 *  (ncin.variables['Edz'][8,1:] + ncin.variables['Esz'][8,1:]))  * 4
     
     ncin.close()
     '''Interpolate Ed380 on CHL (OASIM model) depth quotes'''

@@ -99,7 +99,7 @@ for p in Profilelist:#[rank::nranks]:
     '''
     phase 3. Calculate and save IOPs  
     '''
-    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25) #0.25, 0.25, 0.25, 0.25)
+    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.30, 0.20, 0.40, 0.10) #0.25, 0.25, 0.25, 0.25)
     
     aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
     aCDOM = CDOM_abs(CHLz,   0.015, 0.05)

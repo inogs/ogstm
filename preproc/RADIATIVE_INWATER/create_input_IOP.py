@@ -99,9 +99,9 @@ for p in Profilelist:#[rank::nranks]:
     '''
     phase 3. Calculate and save IOPs  
     '''
-    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.4, 0.30, 0.25, 0.05) #0.25, 0.25, 0.25, 0.25)
+    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.25, 0.25, 0.25, 0.25) #0.25, 0.25, 0.25, 0.25)
     
-    aNAP  = NAP_abs( CHLz, 0.0129, 0.00862)#0.0129, 0.00862)
+    aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
     aCDOM = CDOM_abs(CHLz,   0.015, 0.05)
     
     file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T

@@ -48,7 +48,7 @@ def plot_matchup(scale, L, ax, color, index, titlestr, xpos, ypos, legendBool, b
     if legendBool == True:
         ax[index].legend(loc='upper center', bbox_to_anchor=(0.5, 0.95), ncol=2, fancybox=True, shadow=True)
     
-    ax[index].text(xpos, ypos, textstr, transform=ax[index].transAxes, fontsize=8, color = color, verticalalignment='top',bbox=dict(facecolor='white', edgecolor=color))
+    ax[index].text(xpos, ypos, textstr, transform=ax[index].transAxes, fontsize=8, color = color, verticalalignment='top',bbox=dict(facecolor='white', alpha = 0.5, edgecolor=color))
     ax[index].set_title(titlestr)
     return ax
 

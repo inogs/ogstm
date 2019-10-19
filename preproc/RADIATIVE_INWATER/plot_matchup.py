@@ -52,3 +52,22 @@ def plot_matchup(scale, L, ax, color, index, titlestr, xpos, ypos, legendBool, b
     ax[index].set_title(titlestr)
     return ax
 
+def save_stat(L):
+    
+    x = L.Ref
+    y = L.Model
+    
+    '''Mask values in case of any NaNs'''
+    mask = ~np.isnan(x) & ~np.isnan(y)
+    
+    count = L.number()
+    corr_coeff = L.correlation()
+    bias = L.bias()
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x[mask],y[mask]) 
+    sigma = L.RMSE()
+    
+    a = intercept
+    b = slope
+
+    return count, bias, sigma, r_value, b, a
+

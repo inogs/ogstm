@@ -43,6 +43,8 @@
       EOF_FILE_CHL  = 'DA_static_data/3D_VAR/EOF/CHL/eof.'  // MONTH // '.nc'
       EOF_FILE_N3N  = 'DA_static_data/3D_VAR/EOF/N3n/eof.'  // MONTH // '.nc'
       EOF_FILE_O2O  = 'DA_static_data/3D_VAR/EOF/O2o/eof.'  // MONTH // '.nc'
+      EOF_FILE_MULTI= 'DA_static_data/3D_VAR/EOF/CHLN3n/eof.'  // MONTH // '.nc'
+      STD_FILE_MULTI= 'DA_static_data/3D_VAR/STD/std.'  // MONTH // '.nc'
       NUTCOV_FILE   = 'DA_static_data/3D_VAR/CROSSCORRS/crosscorrs.' // MONTH // '.nc'
       NUTCHLCOV_FILE   = 'DA_static_data/3D_VAR/CROSSCORRS/crosscorrs.' // MONTH // '.nc'
 

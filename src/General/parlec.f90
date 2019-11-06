@@ -26,7 +26,7 @@
 
        USE myalloc
 #ifdef ExecDA
-       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, AssimilationLevels
+       USE DA_mem, ONLY : DA_Nprocs, satfile_suffix, satvarname, AssimilationLevels_sat,  AssimilationLevels_float
 #endif
        IMPLICIT NONE
 
@@ -45,7 +45,7 @@
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 #ifdef ExecDA
-      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, AssimilationLevels
+      NAMELIST/DA_setup/ DA_Nprocs, satfile_suffix, satvarname, AssimilationLevels_sat, AssimilationLevels_float
 #endif
 
 
@@ -271,7 +271,8 @@
       WRITE(numout,*) ' '
       WRITE(numout,*) ' DA_Nprocs      : 3D_var cores', DA_nprocs
       WRITE(numout,*) ' satfile suffix : ', satfile_suffix
-      WRITE(numout,*) ' Assimiliation Levels: ', AssimilationLevels
+      WRITE(numout,*) ' Assimiliation Levels_sat: ', AssimilationLevels_sat
+      WRITE(numout,*) ' Assimiliation Levels_float: ', AssimilationLevels_float
       ENDIF
 #endif
 

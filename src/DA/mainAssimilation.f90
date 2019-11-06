@@ -15,8 +15,9 @@
       CHARACTER(LEN=17), INTENT(IN) :: datestr, dateFrom
 
       character(LEN=1024) SATFILE, VARFILE
-      character(LEN=2) MONTH
+      character(LEN=2) MONTH,HOUR
       character (LEN=8) DAY
+      character (LEN=5) OBStype
       character MISFIT_OPT
       logical ISLOG
       integer :: ierr, color, ii
@@ -26,11 +27,18 @@
       DAparttime  = MPI_WTIME()
       MONTH=datestr(5:6)
       DAY  =datestr(1:8)
+      HOUR =datestr(10:11)
 
       ! DA_Params init
       DA_Date = datestr
       ShortDate = ConvertDate(datestr)
-      jpk_200 = AssimilationLevels
+      if(HOUR.eq.'12') then
+        jpk_200 = AssimilationLevels_sat
+        OBStype = '__Sat'
+      elseif(HOUR.eq.'13') then
+        jpk_200 = AssimilationLevels_float
+        OBStype = 'Float'
+      endif
       !NBioVar = 17
       DA_JulianDate = datestring2sec(DA_Date)
 
@@ -40,7 +48,8 @@
       ! SATDIR li vuole pronti all'uso, già tagliati e interpolati
       SATFILE   = 'SATELLITE/' // DAY // trim(satfile_suffix)
       VARFILE   = 'DA_static_data/VAR_SAT/var2D.' // MONTH // '.nc'
-      EOF_FILE_CHL  = 'DA_static_data/3D_VAR/EOF/CHL/eof.'  // MONTH // '.nc'
+      !EOF_FILE_CHL  = 'DA_static_data/3D_VAR/EOF/CHL/eof.'  // MONTH // '.nc'
+      EOF_FILE_CHL  = 'DA_static_data/3D_VAR/EOF/CHL' // OBStype // '/eof.'  // MONTH // '.nc'
       EOF_FILE_N3N  = 'DA_static_data/3D_VAR/EOF/N3n/eof.'  // MONTH // '.nc'
       EOF_FILE_O2O  = 'DA_static_data/3D_VAR/EOF/O2o/eof.'  // MONTH // '.nc'
       EOF_FILE_MULTI= 'DA_static_data/3D_VAR/EOF/CHLN3n/eof.'  // MONTH // '.nc'
@@ -48,7 +57,7 @@
       NUTCOV_FILE   = 'DA_static_data/3D_VAR/CROSSCORRS/crosscorrs.' // MONTH // '.nc'
       NUTCHLCOV_FILE   = 'DA_static_data/3D_VAR/CROSSCORRS/crosscorrs.' // MONTH // '.nc'
 
-      GRID_FILE = 'DA_static_data/3D_VAR/GRID/BFM_grid.nc'
+      GRID_FILE = 'DA_static_data/3D_VAR/GRID/BFM_grid' //OBStype// '.nc'
       ANIS_FILE = 'DA_static_data/3D_VAR/gradsal.nc'
       RCORR_FILE = 'DA_static_data/3D_VAR/chl_rad_corr.nc'
 

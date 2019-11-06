@@ -23,12 +23,21 @@
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      INTEGER jn, jDA, shift
+      INTEGER jn, jDA, shift, AssimilationLevels
       CHARACTER(LEN=45) filename
       CHARACTER(LEN=6)  varname
+      CHARACTER(LEN=2)  HOUR
+      CHARACTER(LEN=5)  OBStype
 
 
       shift = 0
+
+      HOUR = datestring(10:11)
+      if(HOUR.eq.'12') then
+        AssimilationLevels = AssimilationLevels_sat
+      elseif(HOUR.eq.'13') then
+        AssimilationLevels = AssimilationLevels_float
+      endif
 
       DO jn=1, jptra  ! global loop on tracers to read restart
 
@@ -39,7 +48,7 @@
          varname  = 'TRN'//ctrcnm(jn)
          filename = 'DA__FREQ_1/RST_after.'//datestring//'.'//trim(ctrcnm(jn))//'.nc'
          if (lwp) write(*,*) 'reading ', filename
-         CALL readnc_slice_floatDA(filename,varname, trn(:,:,:,jn), shift)
+         CALL readnc_slice_floatDA(filename,varname,AssimilationLevels,trn(:,:,:,jn), shift)
 
 
 
@@ -51,15 +60,15 @@
 
       END SUBROUTINE trcrstDA
 
-      SUBROUTINE readnc_slice_floatDA(fileNetCDF,varname, M, shift)
+      SUBROUTINE readnc_slice_floatDA(fileNetCDF,varname,AssimilationLevels, M, shift)
       USE myalloc
       USE netcdf
-      USE DA_mem, ONLY : AssimilationLevels
+      ! USE DA_mem, ONLY : AssimilationLevels_sat,AssimilationLevels_float
       implicit none
 
 
       character,intent(in) :: fileNetCDF*(*) ,varname*(*)
-      integer, intent(in)  :: shift
+      integer, intent(in)  :: shift, AssimilationLevels
       double precision,intent(inout) ::  M(jpk,jpj,jpi)
       
       real,allocatable,dimension(:,:,:) :: copy_in
@@ -67,6 +76,7 @@
       integer counter
       integer thecount(4), start(4)
 
+      
       allocate(copy_in(jpi,jpj,AssimilationLevels))
       counter = 0
       start    = (/nimpp+shift, njmpp,  1,  1/)

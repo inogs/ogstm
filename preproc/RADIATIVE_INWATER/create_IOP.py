@@ -18,7 +18,8 @@ def PFT_calc(CHL, p1, p2, p3, p4):
     return PFT_1, PFT_2, PFT_3, PFT_4
 
 def PFT_MED(CHL):
-    x = np.log10(CHL)
+    x     = np.where(CHL>0, np.log10(CHL), 0.)
+    #x = np.log10(CHL)
     MICRO = 0.0667*x**3 + 0.1939*x**2 + 0.2743*x + 0.2994
     NANO  =              -0.1740*x**2 - 0.0851*x + 0.4725
     PICO  = 1 - MICRO - NANO
@@ -29,10 +30,10 @@ def PFT_MED(CHL):
     PROK   = 0.0664*x**3 + 0.1410*x**2 - 0.2097*x + 0.0979
     HAPT   = 1. - MICRO - CRYPT - GREEN - PROK
     
-    PFT_1 = DIATOM
-    PFT_2 = HAPT + CRYPT
-    PFT_3 = PICO
-    PFT_4 = DINOPH
+    PFT_1 = DIATOM * CHL
+    PFT_2 = (HAPT + CRYPT) * CHL
+    PFT_3 = PICO * CHL
+    PFT_4 = DINOPH * CHL
     return PFT_1, PFT_2, PFT_3, PFT_4
     
     

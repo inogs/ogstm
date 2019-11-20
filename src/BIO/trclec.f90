@@ -28,8 +28,8 @@
 ! ===================
 
       namelist /NATTRC/       ctrcnm, ctrcun, ctrmax,ctr_hf
-      namelist /NATTRC_DIAG/   dianm,  diaun,         diahf
-      namelist /NATTRC_DIAG_2d/   dianm_2d,  diaun_2d,  diahf_2d
+      namelist /NATTRC_DIAG/   dianm,  diaun,         diahf, diaWR
+      namelist /NATTRC_DIAG_2d/   dianm_2d,  diaun_2d,  diahf_2d , diaWR_2d
 
       IF(lwp) THEN
           WRITE(numout,*) ' '

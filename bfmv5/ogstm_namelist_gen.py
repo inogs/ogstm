@@ -90,18 +90,17 @@ for il, line in enumerate(SECTION_NAMELIST):
             NAMELIST_NEW.append(line +"\n")
             NAMELIST_NEW.append(SECTION_NAMELIST[il+1]+"\n")
             NAMELIST_NEW.append("   ctrmax(%d)=%e \n" % (ind, XML_MODELVARS[varname][0]))
-            NAMELIST_NEW.append("   ctr_hf(%d)=%d \n" % (ind, XML_MODELVARS[varname][1]))
+            NAMELIST_NEW.append("   ctr_hf(%d)=%d\n" % (ind, XML_MODELVARS[varname][1]))
             NAMELIST_NEW.append("\n")
             
             if XML_MODELVARS[varname][1]:
                 MODEL_HF.append(varname)
-            else:                                
-                MODEL_LF.append(varname)
+            MODEL_LF.append(varname)
         else:
             print "Error: " + varname + " not defined !"
             sys.exit(1)
             
-NAMELIST_NEW.append("/ \n\n")
+NAMELIST_NEW.append("/\n\n")
 
 SECTION_NAMELIST=ORIG_NAMELIST[endnamelist1:endnamelist2]
 NAMELIST_NEW.append("&NATTRC_DIAG\n")
@@ -112,25 +111,22 @@ for il, line in enumerate(SECTION_NAMELIST):
         quote_2=line.find("\"",quote_1+1)
         varname=line[quote_1+1:quote_2]
         if XML_DIA__VARS.has_key(varname):
-            if XML_DIA__DUMP[varname]:
-                par_1 = line.find("(")
-                par_2 = line.find(")")
-                #ind   = int(line[par_1+1:par_2])
-                
-                #NAMELIST_NEW.append(line +"\n")
-                _,right_side=line.rsplit("=")
-                NAMELIST_NEW.append("   dianm(%d)=%s\n" %(ivar,right_side))
-                _,right_side = SECTION_NAMELIST[il+1].rsplit("=")
-                #NAMELIST_NEW.append(SECTION_NAMELIST[il+1]+"\n")
-                NAMELIST_NEW.append("   diaun(%d)=%s\n" %(ivar,right_side))
-                NAMELIST_NEW.append("   diahf(%d)=%d \n" % (ivar, XML_DIA__VARS[varname]))
-                NAMELIST_NEW.append("\n")
-                ivar=ivar+1
-            
-                if XML_DIA__VARS[varname]:
-                    DIA_HF.append(varname)
-                else:
-                    DIA_LF.append(varname)
+            par_1 = line.find("(")
+            par_2 = line.find(")")
+
+            _,right_side=line.rsplit("=")
+            NAMELIST_NEW.append("   dianm(%d)=%s\n" %(ivar,right_side))
+            _,right_side = SECTION_NAMELIST[il+1].rsplit("=")
+            NAMELIST_NEW.append("   diaun(%d)=%s\n" %(ivar,right_side))
+            NAMELIST_NEW.append("   diahf(%d)=%d\n" % (ivar, XML_DIA__VARS[varname]))
+            NAMELIST_NEW.append("   diaWR(%d)=%d\n" % (ivar, XML_DIA__DUMP[varname]))
+
+            NAMELIST_NEW.append("\n")
+            ivar=ivar+1
+
+            if XML_DIA__VARS[varname]:
+                if XML_DIA__DUMP[varname]: DIA_HF.append(varname)
+            if XML_DIA__DUMP[varname]: DIA_LF.append(varname)
         else:
             print "Error: " + varname + " not defined !"
             sys.exit(1)
@@ -145,29 +141,27 @@ for il, line in enumerate(SECTION_NAMELIST):
         quote_2=line.find("\"",quote_1+1)
         varname=line[quote_1+1:quote_2]
         if XML_DIA2dVARS.has_key(varname):
-            if XML_DIA2dDUMP[varname]:
-                par_1 = line.find("(")
-                par_2 = line.find(")")
-                #ind   = int(line[par_1+1:par_2])
-                _,right_side=line.rsplit("=")
-                NAMELIST_NEW.append("   dianm_2d(%d)=%s\n" %(ivar,right_side))
-                _,right_side = SECTION_NAMELIST[il+1].rsplit("=")
-                NAMELIST_NEW.append("   diaun_2d(%d)=%s\n" %(ivar,right_side))
-                #NAMELIST_NEW.append(line.replace("dianm","dianm_2d")+"\n" )
-                #NAMELIST_NEW.append(SECTION_NAMELIST[il+1].replace("diaun","diaun_2d") +"\n")
-                
-                NAMELIST_NEW.append("   diahf_2d(%d)=%d \n" % (ivar, XML_DIA2dVARS[varname]))
-                NAMELIST_NEW.append("\n")
-                ivar=ivar+1
-                
-                if XML_DIA2dVARS[varname]:
-                    DIA_HF.append(varname)
-                else:
-                    DIA_LF.append(varname)
+            par_1 = line.find("(")
+            par_2 = line.find(")")
+
+            _,right_side=line.rsplit("=")
+            NAMELIST_NEW.append("   dianm_2d(%d)=%s\n" %(ivar,right_side))
+            _,right_side = SECTION_NAMELIST[il+1].rsplit("=")
+            NAMELIST_NEW.append("   diaun_2d(%d)=%s\n" %(ivar,right_side))
+
+            NAMELIST_NEW.append("   diahf_2d(%d)=%d\n" % (ivar, XML_DIA2dVARS[varname]))
+            NAMELIST_NEW.append("   diaWR_2d(%d)=%d\n" % (ivar, XML_DIA2dDUMP[varname]))
+
+            NAMELIST_NEW.append("\n")
+            ivar=ivar+1
+
+            if XML_DIA2dVARS[varname]:
+                if XML_DIA2dDUMP[varname] : DIA_HF.append(varname)
+            if XML_DIA2dDUMP[varname] :DIA_LF.append(varname)
         else:
             print "Error: " + varname + " not defined !"
             sys.exit(1)
-NAMELIST_NEW.append("/ \n\n")
+NAMELIST_NEW.append("/\n\n")
 
 
 
@@ -177,11 +171,18 @@ F=open("namelist.passivetrc_new","w")
 F.writelines(NAMELIST_NEW)
 F.close()
 
+DUMP_DIA=[var for var in XML_DIA__DUMP.keys() if XML_DIA__DUMP[var] ]
+
+
+
 printout=True
 if printout:
-    print "HF variables : " , len(MODEL_HF), "Model", len(DIA_HF), "Diagnostics"
-    print "LF variables : " , len(MODEL_LF), "Model", len(DIA_LF), "Diagnostics"
-    
+    print "HF variables : " , len(MODEL_HF), "State", len(DIA_HF), "Diagnostics"
+    print "LF variables : " , len(MODEL_LF), "State", len(DIA_LF), "Diagnostics", len(DUMP_DIA), "Dumped"
+
     print "HF LIST:"
     for var in MODEL_HF: print var
     for var in DIA_HF : print var
+
+    print "\n\nDIA DUMPED:"
+    for var in DUMP_DIA : print "  ", var

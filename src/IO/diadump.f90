@@ -233,9 +233,10 @@
       if (lwp ) tottrnIO2d = Miss_val
 ! ******************  DIAGNOSTIC OUTPUT   2D *******************
       DO jn = 1, JPTRA_DIA_2D
+           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
            if (.not.diaWR_2d(jn)) CYCLE
            if (.not.is_time_to_save(jn,FREQ_GROUP,2)) CYCLE
-           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
+
        if (myrank == 0) then
 !   ! ******* myrank 0 sets indexes of tot matrix where to place its own part
 
@@ -352,9 +353,10 @@
        jn_high = 0
 ! ! ******************  3D DIAGNOSTIC OUTPUT   *******************
        DO jn =1 , jptra_dia
+           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
            if (.not.diaWR(jn)) CYCLE
            if (.not.is_time_to_save(jn,FREQ_GROUP,3)) CYCLE
-           if (FREQ_GROUP.eq.1) jn_high = jn_high+1
+
 
            if (myrank == 0) then                    ! IF LABEL 1
 

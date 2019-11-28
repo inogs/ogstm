@@ -166,7 +166,7 @@
            INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double_2d(bkpname,trim(dianm(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
+             CALL readnc_slice_double_2d(bkpname,trim(dianm_2d(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
                     if (.not.bkp1hasbeenread) then
                       call get_att_int( bkpname,'ave_counter', ave_counter_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)

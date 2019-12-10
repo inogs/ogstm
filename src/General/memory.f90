@@ -260,7 +260,7 @@
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
       INTEGER :: ctr_hf(jptra)
 
-      INTEGER freq_ave_phys
+      INTEGER freq_ave_phys, freq_flux_dump
 
 
 

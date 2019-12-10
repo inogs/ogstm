@@ -7,7 +7,7 @@
       USE DIA_mem
       USE netcdf
       use mpi
-      USE IO_mem, only: ave_counter_1
+      USE IO_mem, only: ave_counter_1, ave_counter_2
 
       IMPLICIT NONE
 
@@ -26,9 +26,13 @@
       double precision  Realcounter
 
       if (.not.existFileFluxes) RETURN
-      if (FREQ_GROUP.eq.2 )     RETURN
-
-      Realcounter   =    1./REAL(ave_counter_1  , 8)
+      IF  (freq_flux_dump.eq.1) THEN
+           if (FREQ_GROUP.eq.2 )     RETURN
+           Realcounter   =    1./REAL(ave_counter_1  , 8)
+      ELSE
+           if (FREQ_GROUP.eq.1 )     RETURN
+           Realcounter   =    1./REAL(ave_counter_2  , 8)
+      ENDIF
 
       flx_partTime = MPI_WTIME()
 

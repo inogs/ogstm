@@ -39,7 +39,7 @@
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, lhtp, latmosph, &
       ahtrb0,trcrat,ahtrc0,vsed,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
-      NAMELIST/General_IO/ nwritetrc, freq_ave_phys, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
+      NAMELIST/General_IO/ nwritetrc, freq_ave_phys, freq_flux_dump, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift
 
       NAMELIST/Domain_Characteristic/  jperio
@@ -203,6 +203,7 @@
 
       nwritetrc = 10
       read_W_from_file = .false.
+      freq_flux_dump = 1
       internal_sponging = .true.
       ingv_files_direct_reading = .true.
       if (ingv_files_direct_reading ) then
@@ -229,6 +230,11 @@
                else
                  WRITE(numout,*) 'Forcings phys will not be dumped'
                endif
+          endif
+          if (freq_flux_dump.eq.1) then
+              WRITE(numout,*) 'flux files will be dumped following 1.aveTimes file'
+          else
+              WRITE(numout,*) 'flux files will be dumped following 2.aveTimes file'
           endif
       endif
 

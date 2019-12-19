@@ -39,6 +39,7 @@
 
    nwritetrc = 10000,
    freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
+   freq_flux_dump       = 1 ! 1=group 1, 2 = group 2
    save_bkp_group2      = .true.
    deflate_ave          = 0
    deflate_level_ave    = 4

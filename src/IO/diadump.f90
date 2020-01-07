@@ -351,6 +351,7 @@
 
 
        jn_high = 0
+       if (lwp ) tottrnIO = Miss_val
 ! ! ******************  3D DIAGNOSTIC OUTPUT   *******************
        DO jn =1 , jptra_dia
            if (.not.is_time_to_save(jn,FREQ_GROUP,ndims=3)) CYCLE

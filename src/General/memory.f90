@@ -244,9 +244,11 @@
           CHARACTER(LEN=20) :: dianm(jptra_dia)
           CHARACTER(LEN=20) :: diaun(jptra_dia)
           INTEGER           :: diahf(jptra_dia)
+          INTEGER           :: diaWR(jptra_dia)
           CHARACTER(LEN=20) :: dianm_2d(jptra_dia_2d)
           CHARACTER(LEN=20) :: diaun_2d(jptra_dia_2d)
           INTEGER           :: diahf_2d(jptra_dia_2d)
+          INTEGER           :: diaWR_2d(jptra_dia_2d)
           CHARACTER(LEN=17) :: COMMON_DATESTRING
 !!    parameters for the control of passive tracers
 
@@ -258,7 +260,7 @@
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
       INTEGER :: ctr_hf(jptra)
 
-      INTEGER freq_ave_phys
+      INTEGER freq_ave_phys, freq_flux_dump
 
 
 

@@ -275,6 +275,7 @@
       if (read_W_from_file) then
           nomefile = 'FORCINGS/W'//datestring//'.nc'
           call readnc_slice_float(nomefile,'vovecrtz',buf,ingv_lon_shift)
+          wdta(:,:,:,2) = buf * tmask
       else
           CALL COMPUTE_W()               ! vertical velocity
       endif

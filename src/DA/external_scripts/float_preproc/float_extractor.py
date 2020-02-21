@@ -48,8 +48,8 @@ from commons.time_interval import TimeInterval
 from commons.Timelist import TimeList
 from instruments.matchup_manager import Matchup_Manager
 import basins.OGS as OGS
-from instruments import lovbio_float as bio_float
-from instruments.var_conversions import LOVFLOATVARS
+from instruments import superfloat as bio_float
+from instruments.var_conversions import FLOATVARS
 #from commons.mask import Mask
 from commons.utils import addsep
 from datetime import timedelta
@@ -75,9 +75,9 @@ TI_day  = timerequestors.Daily_req( meantime.year, meantime.month, meantime.day)
 TI_day.end_time = datetime(meantime.year, meantime.month, meantime.day,23,59)
 
 
-Profilelist=bio_float.FloatSelector(LOVFLOATVARS[varmod],TI_3, OGS.med)
+Profilelist=bio_float.FloatSelector(FLOATVARS[varmod],TI_3, OGS.med)
 print '...              len Profilelist  ' + np.str(len(Profilelist))
-TL = TimeList.fromfilenames(TI_day, INPUTDIR,"RSTbefore*00:00*.nc",filtervar=varmod,prefix="RSTbefore.")
+TL = TimeList.fromfilenames(TI_day, INPUTDIR,"RSTbefore*13:00*.nc",filtervar=varmod,prefix="RSTbefore.")
 print '...              len TL   ' + np.str(TL.nTimes)
 TL.inputFrequency = 'weekly'
 M = Matchup_Manager(Profilelist,TL,BASEDIR)

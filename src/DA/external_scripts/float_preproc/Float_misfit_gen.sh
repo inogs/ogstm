@@ -29,15 +29,16 @@ module purge
 module load profile/base
 #module load intel/pe-xe-2018--binary
 module load autoload
-#module load netcdf/4.6.1--intel--pe-xe-2018--binary
-module load python/2.7.12 #scipy/1.1.0--python--2.7.12
+module load netcdf/4.6.1--intel--pe-xe-2018--binary
+module load numpy/1.15.2--python--2.7.12 
+#module load python/2.7.12 #scipy/1.1.0--python--2.7.12
 module load intelmpi/2018--binary
 
-source /gpfs/work/OGS18_PRACE_P_0/COPERNICUS/py_env_2.7.12/bin/activate
+source /gpfs/work/OGS20_PRACE_P/COPERNICUS/py_env_2.7.12/bin/activate
 #source /gpfs/work/OGS18_PRACE_P_0/COPERNICUS/sequence.sh
-export PYTHONPATH=$PYTHONPATH:/gpfs/work/OGS18_PRACE_P_0/COPERNICUS/bit.sea
+export PYTHONPATH=$PYTHONPATH:/gpfs/work/OGS20_PRACE_P/COPERNICUS/bit.sea
 
-export OPA_HOME=/gpfs/scratch/userexternal/ateruzzi/DA_Float/RUN_FLOAT_chl_n/
+export OPA_HOME=/gpfs/scratch/userexternal/ateruzzi/MULTIVARIATE_24/TEST_04/
 
 
       DA_DIR=$OPA_HOME/wrkdir/MODEL/DA__FREQ_1/
@@ -46,14 +47,18 @@ export OPA_HOME=/gpfs/scratch/userexternal/ateruzzi/DA_Float/RUN_FLOAT_chl_n/
      BASEDIR=$DA_DIR/PROFILATORE_WEEKLY_LOV_OGSTM/
       OPADIR=$OPA_HOME/wrkdir/float_preproc/
     DEST_DIR=$OPA_HOME/wrkdir/MODEL/DA__FREQ_1/
+ OUTNC_CHECK=$OPA_HOME/wrkdir/float_preproc/OUTNC/
+OUTTXT_CHECK=$OPA_HOME/wrkdir/float_preproc/OUTTXT/
 
-export ONLINE_REPO=/gpfs/scratch/userexternal/ateruzzi/REPO_LOV/ONLINE/
+export ONLINE_REPO=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V5C/ONLINE_V5C
 export MASKFILE=$OPA_HOME/wrkdir/MODEL/meshmask.nc
+mkdir -p $OUTNC_CHECK
+mkdir -p $OUTTXT_CHECK
 mkdir -p $BASEDIR
 mkdir -p $DA_DIR/links
-mv $DA_DIR/RSTbefore*00000* $DA_DIR/links
+mv $DA_DIR/RSTbefore.*0000* $DA_DIR/links
 
-DADEP=600
+# DADEP=600
 
 for vv in N3n P_l; do
 
@@ -68,13 +73,15 @@ if [ $vv == P_l ]; then
     mkdir -p $CHLSUP_DIR
 
     echo --- var_aggregator.py -l RSTbefore.${DATE}*P1l.nc -i $DA_DIR -d VarDescriptor_P_lagg.xml -t $TMP_DIR  -c $CHLSUP_DIR -m $MASKFILE
-    python var_aggregator.py -l RSTbefore.${DATE}*00:00*P1l.nc -i $DA_DIR -d VarDescriptor_P_lagg.xml -t $TMP_DIR  -c $CHLSUP_DIR -m $MASKFILE
+    python var_aggregator.py -l RSTbefore.${DATE}*13:00*P1l.nc -i $DA_DIR -d VarDescriptor_P_lagg.xml -t $TMP_DIR  -c $CHLSUP_DIR -m $MASKFILE
     MODEL_AVEDIR=$TMP_DIR
+    DADEP=200
     if [ $? -ne 0 ] ; then exit 1 ; fi
 fi
 
 if [ $vv == N3n ] ; then
     MODEL_AVEDIR=$DA_DIR
+    DADEP=600
 fi
 
 echo model_avedir $MODEL_AVEDIR
@@ -89,7 +96,6 @@ if [ $? -ne 0 ] ; then exit 1 ; fi
 
 #echo --- mv $DA_DIR/links/* $DA_DIR
 echo ---  copy files cp ${DATE}.${vv}_arg_mis.dat $DEST_DIR
-cp ${DATE}.${vv}_arg_mis.dat $DEST_DIR
 if [ $? -ne 0 ] ; then exit 1 ; fi
 
 done
@@ -99,7 +105,14 @@ mv $DA_DIR/links/RSTbefore* $DA_DIR
 echo merge arg_mis and copy
 echo ---  python merge_arg_mis.py -t ${DATE}
 python merge_arg_mis.py -t ${DATE}
-cp ${DATE}.arg_mis.dat $DEST_DIR
+mv ${DATE}.arg_mis.dat $DEST_DIR
+
+
+for vv in N3n P_l; do
+
+mv ${DATE}.${vv}_arg_mis.dat $DEST_DIR
+
+done
 
 
 

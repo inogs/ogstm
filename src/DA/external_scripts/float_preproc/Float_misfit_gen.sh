@@ -26,23 +26,19 @@ done
 
 module purge
 module load profile/base
-#module load intel/pe-xe-2018--binary
 module load autoload
 module load netcdf/4.6.1--intel--pe-xe-2018--binary
 module load numpy/1.15.2--python--2.7.12 
-#module load python/2.7.12 #scipy/1.1.0--python--2.7.12
 module load intelmpi/2018--binary
 
 source /gpfs/work/OGS20_PRACE_P/COPERNICUS/py_env_2.7.12/bin/activate
-#source /gpfs/work/OGS18_PRACE_P_0/COPERNICUS/sequence.sh
 export PYTHONPATH=$PYTHONPATH:/gpfs/work/OGS20_PRACE_P/COPERNICUS/bit.sea
 
 export OPA_HOME=/gpfs/scratch/userexternal/ateruzzi/MULTIVARIATE_24/TEST_04/
 
      CODEDIR=$OPA_HOME/wrkdir/float_preproc/
       DA_DIR=$OPA_HOME/wrkdir/MODEL/DA__FREQ_1/
-     TMP_DIR=$OPA_HOME/wrkdir/POSTPROC/output/DA__FREQ_1/TMP
-     BASEDIR=$DA_DIR/PROFILATORE_WEEKLY_LOV_OGSTM/
+     BASEDIR=$DA_DIR/PROFILATORE
     DEST_DIR=$OPA_HOME/wrkdir/MODEL/DA__FREQ_1/
  OUTNC_CHECK=$OPA_HOME/wrkdir/float_preproc/OUTNC/
 OUTTXT_CHECK=$OPA_HOME/wrkdir/float_preproc/OUTTXT/
@@ -53,6 +49,9 @@ mkdir -p $OUTNC_CHECK
 mkdir -p $OUTTXT_CHECK
 mkdir -p $BASEDIR
 mkdir -p $DA_DIR/links
+
+
+
 mv $DA_DIR/RSTbefore.*0000* $DA_DIR/links
 
 
@@ -65,21 +64,19 @@ for vv in N3n P_l; do
 
 	if [ $vv == P_l ]; then
 
-	    python ${CODEDIR}/var_aggregator.py -l RSTbefore.${DATE}*13:00*P1l.nc -i $DA_DIR -d ${CODEDIR}/VarDescriptor_P_l.xml -t $TMP_DIR -m $MASKFILE
-	    MODEL_AVEDIR=$TMP_DIR
+	    python ${CODEDIR}/var_aggregator.py -l RSTbefore.${DATE}*13:00*P1l.nc -i $DA_DIR -d ${CODEDIR}/VarDescriptor_P_l.xml -t $DA_DIR -m $MASKFILE
 	    DADEP=200
 
 	fi
 
 	if [ $vv == N3n ] ; then
-	    MODEL_AVEDIR=$DA_DIR
 	    DADEP=600
 	fi
 
 	VAR_DESCRIPTOR=$OPA_HOME/wrkdir/float_preproc/VarDescriptor_${vv}.xml
-	python ${CODEDIR}/float_extractor.py -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR -d $VAR_DESCRIPTOR -v $vv
+	python ${CODEDIR}/float_extractor.py -t ${DATE}  -i $DA_DIR -b $BASEDIR -d $VAR_DESCRIPTOR -v $vv
 
-	python ${CODEDIR}/preproc.py   -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR -m $MASKFILE -v $vv -d $DADEP
+	python ${CODEDIR}/preproc.py   -t ${DATE}  -i $DA_DIR -b $BASEDIR -m $MASKFILE -v $vv -d $DADEP
 
 
 

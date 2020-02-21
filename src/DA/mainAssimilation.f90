@@ -91,7 +91,7 @@
 
             if (drv%argo_obs.eq.1) then
                write(*,*) '--- Preparing float misfit ---'
-               SysErr = system("../float_preproc/Float_misfit_gen.sh -d ../float_preproc -t "//DAY)
+               SysErr = system("../float_preproc/Float_misfit_gen.sh -t "//DAY)
                if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
             endif
           ENDIF

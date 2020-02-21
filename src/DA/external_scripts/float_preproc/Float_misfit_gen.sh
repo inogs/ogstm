@@ -43,9 +43,7 @@ export OPA_HOME=/gpfs/scratch/userexternal/ateruzzi/MULTIVARIATE_24/TEST_04/
 
       DA_DIR=$OPA_HOME/wrkdir/MODEL/DA__FREQ_1/
      TMP_DIR=$OPA_HOME/wrkdir/POSTPROC/output/DA__FREQ_1/TMP
-  CHLSUP_DIR=$OPA_HOME/wrkdir/POSTPROC/output/DA__FREQ_1/CHL_SUP
      BASEDIR=$DA_DIR/PROFILATORE_WEEKLY_LOV_OGSTM/
-      OPADIR=$OPA_HOME/wrkdir/float_preproc/
     DEST_DIR=$OPA_HOME/wrkdir/MODEL/DA__FREQ_1/
  OUTNC_CHECK=$OPA_HOME/wrkdir/float_preproc/OUTNC/
 OUTTXT_CHECK=$OPA_HOME/wrkdir/float_preproc/OUTTXT/
@@ -62,41 +60,29 @@ mv $DA_DIR/RSTbefore.*0000* $DA_DIR/links
 
 for vv in N3n P_l; do
 
-echo --- Variable $vv
-rm -rf $BASEDIR
-mkdir -p $BASEDIR
-cd $DIR
+	rm -rf $BASEDIR
+	mkdir -p $BASEDIR
+	cd $DIR
 
-if [ $vv == P_l ]; then
+	if [ $vv == P_l ]; then
 
-    mkdir -p $TMP_DIR
-    mkdir -p $CHLSUP_DIR
+	    python var_aggregator.py -l RSTbefore.${DATE}*13:00*P1l.nc -i $DA_DIR -d VarDescriptor_P_lagg.xml -t $TMP_DIR -m $MASKFILE
+	    MODEL_AVEDIR=$TMP_DIR
+	    DADEP=200
 
-    echo --- var_aggregator.py -l RSTbefore.${DATE}*P1l.nc -i $DA_DIR -d VarDescriptor_P_lagg.xml -t $TMP_DIR  -c $CHLSUP_DIR -m $MASKFILE
-    python var_aggregator.py -l RSTbefore.${DATE}*13:00*P1l.nc -i $DA_DIR -d VarDescriptor_P_lagg.xml -t $TMP_DIR  -c $CHLSUP_DIR -m $MASKFILE
-    MODEL_AVEDIR=$TMP_DIR
-    DADEP=200
-    if [ $? -ne 0 ] ; then exit 1 ; fi
-fi
+	fi
 
-if [ $vv == N3n ] ; then
-    MODEL_AVEDIR=$DA_DIR
-    DADEP=600
-fi
+	if [ $vv == N3n ] ; then
+	    MODEL_AVEDIR=$DA_DIR
+	    DADEP=600
+	fi
 
-echo model_avedir $MODEL_AVEDIR
+	VAR_DESCRIPTOR=$OPA_HOME/wrkdir/float_preproc/VarDescriptor_${vv}.xml
+	python float_extractor.py -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR -d $VAR_DESCRIPTOR -v $vv
 
-echo --- float_extractor.py -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR  -d $OPADIR -v $vv
-python float_extractor.py -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR  -d $OPADIR -v $vv
-if [ $? -ne 0 ] ; then exit 1 ; fi
+	python preproc.py              -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR -m $MASKFILE -v $vv -d $DADEP
 
-echo --- preproc.py -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR -m $MASKFILE -v $vv -d $DADEP
-python preproc.py              -t ${DATE}  -i $MODEL_AVEDIR -b $BASEDIR -m $MASKFILE -v $vv -d $DADEP
-if [ $? -ne 0 ] ; then exit 1 ; fi
 
-#echo --- mv $DA_DIR/links/* $DA_DIR
-echo ---  copy files cp ${DATE}.${vv}_arg_mis.dat $DEST_DIR
-if [ $? -ne 0 ] ; then exit 1 ; fi
 
 done
 

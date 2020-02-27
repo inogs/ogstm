@@ -6,16 +6,22 @@ import os
 
 def argument():
     parser = argparse.ArgumentParser(description = '''
-    read something
+    Merges chl and nitrate misfit files in an unique misfit file, input for 3d_var
     ''',
     formatter_class=argparse.RawTextHelpFormatter
     )
 
-    parser.add_argument(   '--inputdate', '-t',
+    parser.add_argument(   '--nit', '-n',
                             type = str,
                             required = True,
-                            default = '20150101',
-                            help = 'Input date')
+                            help = 'path of the input nitrate misfit file')
+    parser.add_argument(   '--chl', '-c',
+                            type = str,
+                            required = True,
+                            help = 'path of the input chlorophyll misfit file')
+    parser.add_argument(   '--outfile', '-o',
+                            type = str,
+                            help = 'path of the output misfit file')
 
     return parser.parse_args()
 
@@ -24,7 +30,7 @@ args = argument()
 
 idate0=args.inputdate
 
-arg_misN3n = idate0 + ".N3n_arg_mis.dat"
+arg_misN3n = args.nit
 exists = os.path.isfile(arg_misN3n)
 if exists:
     merge1 = arg_misN3n
@@ -35,7 +41,7 @@ else:
     N3nmis = [0]
     N3nmis0 = []
 
-arg_misP_l = idate0 + ".P_l_arg_mis.dat"
+arg_misP_l = args.chl
 exists = os.path.isfile(arg_misP_l)
 if exists:
     merge2 = arg_misP_l
@@ -52,11 +58,9 @@ allmis0 = N3nmis0 + P_lmis0
 allmis = [np.str(totobs)] + allmis0
 
 
-filename = idate0 + '.arg_mis.dat'
+print 'Merging 1 ' + merge1 + ' and 2 ' + merge2 + ' into ' + outfile
 
-print 'Merging 1 ' + merge1 + ' and 2 ' + merge2 + ' into ' + filename 
-
-ff = open(filename,'wb')
+ff = open(outfile,'wb')
 ff.writelines( "%s\n" % item for item in allmis )
 
 ff.close()

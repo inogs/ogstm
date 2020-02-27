@@ -1,40 +1,20 @@
-import qualitycheck
-import sys
-from instruments.matchup_manager import Matchup_Manager
-from commons.mask import Mask
-from instruments import superfloat as bio_float
-import basins.OGS as OGS
-from instruments.var_conversions import FLOATVARS
-from commons.utils import addsep
-import pylab as pl
-import datetime
-from commons.layer import Layer
-from commons.Timelist import TimeList
-from commons import timerequestors
-import os
-import numpy as np
-import scipy.io.netcdf as NC
 import argparse
-
-import check
-
 
 def argument():
     parser = argparse.ArgumentParser(description='''
-    read something
+    Writes misfit file and  check files in OUTDIR
     ''',
                                      formatter_class=argparse.RawTextHelpFormatter
                                      )
 
-    parser.add_argument('--inputdate', '-t',
+    parser.add_argument('--time', '-t',
                         type=str,
                         required=True,
-                        default='export_data_ScMYValidation_plan.pkl',
-                        help='Input date')
+                        help='Input time in yyyymmdd format')
     parser.add_argument('--inputdir', '-i',
                         type=str,
                         required=True,
-                        help='input dir validation tmp')
+                        help='input dir validation')
     parser.add_argument('--maskfile', '-m',
                         type=str,
                         required=True)
@@ -54,121 +34,91 @@ def argument():
                         default=None,
                         required=True,
                         help=''' Depth of assimilation''')
+    parser.add_argument('--misfit',
+                        type=str,
+                        default=None,
+                        required=True,
+                        help=''' output misfit file ''')
+    parser.add_argument('--outdir',
+                        type=str,
+                        default=None,
+                        required=True,
+                        help=''' output directory of check files''')
     return parser.parse_args()
 
 
 args = argument()
 
-# import makeplots
+from instruments.matchup_manager import Matchup_Manager
+from commons.mask import Mask
+from instruments import superfloat as bio_float
+import basins.OGS as OGS
+from instruments.var_conversions import FLOATVARS
+from commons.utils import addsep
+import datetime
+from commons.layer import Layer
+from commons.Timelist import TimeList
+from commons import timerequestors
+import os
+import numpy as np
+import scipy.io.netcdf as NC
+from instruments import check
 
-
-idate0 = args.inputdate
-BASEDIR = addsep(args.basedir)
+datestr   = args.time
+BASEDIR  = addsep(args.basedir)
 INPUTDIR = addsep(args.inputdir)
-varmod = args.variable
+OUTDIR   = addsep(args.outdir)
+varmod   = args.variable
+TheMask = Mask(args.maskfile)
+deplim  = np.int(args.deplim)
+
+nav_lev = TheMask.zlevels
+layer   = Layer(0, deplim)
 
 errbase = 0.24  # (Mignot et al., 2019)
+Check_Obj = check.check(OUTDIR,verboselevel=1)
 
-# DATE INTERVAL
-year = int(idate0[0:4])
-month = int(idate0[4:6])
-day = int(idate0[6:8])
-# idate1 data del float, cambio per DA ogni 3days
-idate1 = timerequestors.Interval_req(year, month, day, days=1)
-idate1.time_interval.end_time = datetime.datetime(year, month, day, 23, 59)
-print idate1.string
+year  = int(datestr[0:4])
+month = int(datestr[4:6])
+day   = int(datestr[6:8])
 
-# idate2 data del modello
-idate2 = timerequestors.Daily_req(year, month, day)
-idate2.time_interval.end_time = datetime.datetime(year, month, day, 23, 59)
-print idate2
+req = timerequestors.Daily_req(year, month, day)
+TI = req.time_interval
+TI.end_time = datetime.datetime(year, month, day, 23, 59)
 
-errorfloat = [0.0690, 0.0969, 0.0997, 0.0826, 0.0660,
-              0.0500, 0.0360, 0.0140, 0.0320, 0.0390, 0.0340, 0.0490]
+errorfloat = [0.0690, 0.0969, 0.0997, 0.0826, 0.0660, 0.0500, 0.0360, 0.0140, 0.0320, 0.0390, 0.0340, 0.0490]
 
+DICTflag = {'P_l': 0, 'N3n': 1}
 
-# Variable name
-VARLIST = [varmod]  # 'N3n','O2o']
-# read_adjusted = [True]  # ,False,False]
+Profilelist = bio_float.FloatSelector(FLOATVARS[varmod], TI, OGS.med)
+TL = TimeList.fromfilenames(TI, INPUTDIR,"RSTbefore.*13:00*.nc", filtervar=varmod, prefix="RSTbefore.")
+TL.inputFrequency = 'daily'
+M = Matchup_Manager(Profilelist, TL, BASEDIR)
 
-DICTflag = {'P_l': 0,
-            'N3n': 1}
+WMOlist = bio_float.get_wmo_list(Profilelist)
 
-
-# MASK of the domain
-TheMask = Mask(args.maskfile)
-nav_lev = TheMask.zlevels
-
-deplim = np.int(args.deplim)
-layer = Layer(0, deplim)  # layer of the Float profile????
-
-f = open(idate0+"."+VARLIST[0]+"_arg_mis.dat", "w")        # OUTPUT x il 3DVAR
-
-iniz = "       \n"
-f.writelines(iniz)
-
-# LIST of profiles for the selected variable in VARLIST
-# in the interval idate1.time_interval in the mediterranean area
-Profilelist_1 = bio_float.FloatSelector(
-    FLOATVARS[VARLIST[0]], idate1.time_interval, OGS.med)
-TL = TimeList.fromfilenames(idate2.time_interval, INPUTDIR,
-                            "RSTbefore.*13:00*.nc", filtervar=varmod, prefix="RSTbefore.")
-TL.inputFrequency = 'weekly'
-M = Matchup_Manager(Profilelist_1, TL, BASEDIR)
-
-
-# LIST of FLOATS (WMO) that are in Profilelist_1
-WMOlist = bio_float.get_wmo_list(Profilelist_1)
-nWMO = len(WMOlist)  # NUMBER OF float IN THE SELECTED PERIOD
-
-print "nWMO", nWMO
-totallines = 0
 LINES = []
+MISFIT_LINES=[]
 for wmo in WMOlist:
-    print wmo
-
-# SAVE in the "Goodlist" all the profiles for a given FLOAT ID
-    Goodlist = []
-    SubProfilelist_1 = []
-    SubProfilelist_1 = bio_float.filter_by_wmo(Profilelist_1, wmo)
+    Goodlist      = []# SAVE in the "Goodlist" all the profiles for a given FLOAT ID
     LISTexclusion = []
-    LISTdepthexc = []
-    for i in SubProfilelist_1:
-        # Profile.shape,Profile.size, np.mean(Profile)
-        Pres, Profile, Qc = i.read(FLOATVARS[VARLIST[0]])
-      #   dimnewpress = Pres[Pres < deplim].shape[0]
-        # if(Profile.size!=0) : Goodlist.append(i)
-        if((Pres < 200).sum() <= 5): 
-           continue
-        singlefloatmatchup = M.getMatchups([i], nav_lev, VARLIST[0])
-        levelsp = Pres[Pres < deplim]
-        s200p = singlefloatmatchup.subset(layer)  # values NOT interpolated
-        s200intmodelp = np.interp(levelsp, s200p.Depth, s200p.Model)  # MODEL (201 values)
-        s200intobsp = Profile[Pres < deplim]
-        if varmod == 'N3n':
-           line, depthexc = check.nitrate_check(s200intmodelp, s200intobsp, levelsp, i, './')
-           if line != '':
-              LINES.append(line)
-              reason = np.int(line.rsplit('\t')[-1].rsplit('\n')[0])
-              if (reason == 1) or (reason == 3) or (reason == -1):
-                 continue
-              elif (reason == 2):
-                 LISTexclusion.append(True)
-                 LISTdepthexc.append(depthexc)
-                 Goodlist.append(i)
-               #   plotmat[indexexc:, ip] = np.nan
-               #   plotmat_model[indexexc:, ip] = np.nan
-           else:
-              Goodlist.append(i)
+    LISTdepthexc  = []
+    float_track_list = bio_float.filter_by_wmo(Profilelist, wmo)
 
-        if varmod == 'P_l':
-           line = check.chlorophyll_check(s200intmodelp, s200intobsp, levelsp, i, './')
-           if line != '':
-              LINES.append(line)
-              continue
-           else:
-              Goodlist.append(i)
+    for i in float_track_list:
+        Pres, Profile, Qc = i.read(FLOATVARS[varmod])
+        if((Pres < 200).sum() <= 5): continue
 
+        sfm = M.getMatchups2([i],nav_lev, varmod, checkobj = Check_Obj,interpolation_on_Float=True )
+        CheckReport = sfm.CheckReports[0]
+        if CheckReport.linestr == '':
+            Goodlist.append(i)
+        else:
+            LINES.append(CheckReport.linestr)
+            if varmod == "N3n":
+                if CheckReport.reason ==2:
+                    LISTexclusion.append(True)
+                    LISTdepthexc.append(CheckReport.depthexc)
 
 #  AllProfiles matrix: 0 Model, 1 Ref, 2 Misfit,3 Lat,4 Lon,5 ID FLOAT
 #  NOTE: the number of profile per float is len(Goodlist)
@@ -177,37 +127,28 @@ for wmo in WMOlist:
         if np.any(LISTexclusion):
            mindepexc = np.min(LISTdepthexc)
            deplim = np.min([mindepexc,deplim])
-        dimnewpress = Pres[Pres < deplim].shape[0]
-        # AllProfiles = np.zeros((len(Goodlist),dimnewpress,6),np.float64)
-        OneProfile = np.zeros((1, dimnewpress, 6), np.float64)
+        ii = Pres < deplim
+        nLevels = ii.sum()
+        OneProfile = np.zeros((1, nLevels, 6), np.float64)
 
-        # PROFILES FOR FLOAT AND MODEL
-        AllProfiles = OneProfile
-        levels = Pres[Pres < deplim]
-        print ' levels shape ' + np.str(levels.shape[0])
+        AllProfiles = OneProfile # TEMPORARY MATRIX WITH ALL THE MATCHUP
+        levels = Pres[ii]
+        print ' levels shape ' , nLevels
         for ip, pp in enumerate(Goodlist):
-            print ip, pp.time
-            singlefloatmatchup = M.getMatchups([pp], nav_lev, VARLIST[0])
+            singlefloatmatchup = M.getMatchups([pp], nav_lev, varmod)
             s200 = singlefloatmatchup.subset(layer)  # values NOT interpolated
-            s200intmodel = np.interp(
-                levels, s200.Depth, s200.Model)  # MODEL (201 values)
+            s200intmodel = np.interp(levels, s200.Depth, s200.Model)
             s200intobs = Profile[Pres < deplim]
-            # s200intobs = qualitycheck.test(
-            #     s200intobs_noqc, wmo, pp.lat, pp.lon)
-            
 
-            # TEMPORARY MATRIX WITH ALL THE MATCHUP
             if (ip == 0):
-                ind = 0
                 count = 1
                 ix0, jy0 = TheMask.convert_lon_lat_to_indices(pp.lon, pp.lat)
-                AllProfiles[ind, :, 0] = s200intmodel  # ONLY MODEL
-                AllProfiles[ind, :, 1] = s200intobs  # ONLY ARGO
-                AllProfiles[ind, :, 2] = s200intobs - \
-                    s200intmodel  # ONLY MISFIT ARGO-MODELLO
-                AllProfiles[ind, :, 3] = pp.lat
-                AllProfiles[ind, :, 4] = pp.lon
-                AllProfiles[ind, :, 5] = wmo  # ID float
+                AllProfiles[0, :, 0] = s200intmodel  # ONLY MODEL
+                AllProfiles[0, :, 1] = s200intobs  # ONLY ARGO
+                AllProfiles[0, :, 2] = s200intobs - s200intmodel  # ONLY MISFIT ARGO-MODELLO
+                AllProfiles[0, :, 3] = pp.lat
+                AllProfiles[0, :, 4] = pp.lon
+                AllProfiles[0, :, 5] = wmo
             else:
                 ix1, jy1 = TheMask.convert_lon_lat_to_indices(pp.lon, pp.lat)
                 dx = abs(ix1-ix0)
@@ -217,58 +158,40 @@ for wmo in WMOlist:
                     AllProfiles[ind, :, 1] += s200intobs  # ONLY ARGO
                 else:
                     if (count > 1):
-                        AllProfiles[ind, :, 1] = AllProfiles[ind,
-                                                             :, 1]/count  # ONLY ARGO
-                        AllProfiles[ind, :, 2] = AllProfiles[ind,
-                                                             :, 1]-AllProfiles[ind, :, 0]
+                        AllProfiles[ind, :, 1] = AllProfiles[ind,:, 1]/count  # ONLY ARGO
+                        AllProfiles[ind, :, 2] = AllProfiles[ind,:, 1]-AllProfiles[ind, :, 0]
 
-                    AllProfiles = np.concatenate(
-                        (AllProfiles, OneProfile), axis=0)
-                    ix0, jy0 = TheMask.convert_lon_lat_to_indices(
-                        pp.lon, pp.lat)
+                    AllProfiles = np.concatenate((AllProfiles, OneProfile), axis=0)
+                    ix0, jy0 = TheMask.convert_lon_lat_to_indices(pp.lon, pp.lat)
                     count = 1
                     ind += 1
                     AllProfiles[ind, :, 0] = s200intmodel  # ONLY MODEL
                     AllProfiles[ind, :, 1] = s200intobs  # ONLY ARGO
-                    AllProfiles[ind, :, 2] = s200intobs - \
-                        s200intmodel  # ONLY MISFIT ARGO-MODELLO
+                    AllProfiles[ind, :, 2] = s200intobs - s200intmodel  # ONLY MISFIT ARGO-MODELLO
                     AllProfiles[ind, :, 3] = pp.lat
                     AllProfiles[ind, :, 4] = pp.lon
-                    AllProfiles[ind, :, 5] = wmo  # ID float
+                    AllProfiles[ind, :, 5] = wmo
 
         if (count > 1):
             AllProfiles[ind, :, 1] = AllProfiles[ind, :, 1]/count  # ONLY ARGO
-            AllProfiles[ind, :, 2] = AllProfiles[ind, :, 1] - \
-                AllProfiles[ind, :, 0]
+            AllProfiles[ind, :, 2] = AllProfiles[ind, :, 1] - AllProfiles[ind, :, 0]
 
-
-        if (AllProfiles.shape[0] > 0):
-            totlineswmo = 0
-            for iip in range(AllProfiles.shape[0]):
-                totlineswmo += AllProfiles[iip, :, :].shape[0]
-            # totallines+=(AllProfiles.shape[0]*deplim/5)
-            totallines += totlineswmo
-            print '   totallines ' + np.str(totallines)
-            for jp in np.arange(0, AllProfiles.shape[0]):
-                # for lev in range(0,deplim,5):
-                for ilev in range(AllProfiles[jp, :, :].shape[0]):
+        nProfiles, nLevels, _ = AllProfiles.shape
+        if (nProfiles > 0):
+            print '   totallines ', nLevels * nProfiles
+            for jp in np.arange(nProfiles):
+                for ilev in range(nLevels):
                     lev = levels[ilev]
-                    testo = "\t%i\t%i\t%10.5f\t%10.5f\t%10.5f" % (
-                        1, DICTflag[VARLIST[0]], AllProfiles[jp, ilev, 4], AllProfiles[jp, ilev, 3], lev)
-                    testo += "\t%10.5f\t%10.5f" % (0.2,
-                                                   AllProfiles[jp, ilev, 2])
+                    testo = "\t%i\t%i\t%10.5f\t%10.5f\t%10.5f" % (1, DICTflag[varmod], AllProfiles[jp, ilev, 4], AllProfiles[jp, ilev, 3], lev)
+                    testo += "\t%10.5f\t%10.5f" % (0.2, AllProfiles[jp, ilev, 2])
 # errore fisso che aumenta  verso il fondo
                     if varmod == 'N3n':
-                        if lev <= 450:
-                            errnut = errbase
-                        if lev > 450:
-                            errnut = errbase*(1+(1.5-1.)/(600-450)*(lev-450))
-                        testo += "\t%10.5f\t%i\n" % (errnut,
-                                                     AllProfiles[jp, ilev, 5])
+                        if lev <= 450: errnut = errbase
+                        if lev > 450:  errnut = errbase*(1+(1.5-1.)/(600-450)*(lev-450))
+                        testo += "\t%10.5f\t%i\n" % (errnut, AllProfiles[jp, ilev, 5])
                     if varmod == 'P_l':
-                        testo += "\t%10.5f\t%i\n" % (
-                            errorfloat[month-1], AllProfiles[jp, ilev, 5])
-                    f.writelines(testo)
+                        testo += "\t%10.5f\t%i\n" % (errorfloat[month-1], AllProfiles[jp, ilev, 5])
+                    MISFIT_LINES.append(testo)
         del AllProfiles
         del OneProfile
     else:
@@ -276,11 +199,13 @@ for wmo in WMOlist:
     del Goodlist
 
 
-f.seek(0)
-iniz = "%i" % (totallines)
-f.writelines(iniz)
+f=open(args.misfit,'w')
+topstr = "%i\n" % len(MISFIT_LINES)
+f.write(topstr)
+f.writelines(MISFIT_LINES)
 f.close()
 
-fid=open('./OUTTXT/' + idate0 + varmod + '_check.txt','wt')
+checkfile_txt = OUTDIR + time + varmod + '_check.txt'
+fid=open(checkfile_txt,'wt')
 fid.writelines(LINES)
 fid.close()

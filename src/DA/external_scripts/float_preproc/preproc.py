@@ -2,7 +2,7 @@ import argparse
 
 def argument():
     parser = argparse.ArgumentParser(description='''
-    Writes misfit file and  check files in OUTDIR
+    Writes misfit file and check files in OUTDIR
     ''',
                                      formatter_class=argparse.RawTextHelpFormatter
                                      )
@@ -97,31 +97,61 @@ M = Matchup_Manager(Profilelist, TL, BASEDIR)
 
 WMOlist = bio_float.get_wmo_list(Profilelist)
 
+def choose_profile(float_track_list):
+    '''
+    Chooses one profile from a daily list
+    Argument:
+    * float_track_list * a list of profile objects for a single day and single wmo
+                         It has more than one element when a float has more than one daily cycles.
+                         It happens for some high frequency floats that have 2,3,4 daily cycles.
+    Returns:
+    * p *  a Profile Object, the nearest to assimilation time (13:00)
+
+    '''
+    p = float_track_list[0]
+    nTimes = len(float_track_list)
+    if nTimes > 1 :
+        print "High frequency float: %d profiles on same day for wmo %s " %(nTimes, p._my_float.wmo)
+        TimeRef=datetime(p.time.year,p.time.month,p.time.day,13)
+        times= [pp.time for pp in float_track_list]
+        delta_t = [t-TimeRef for t in times]
+        deltadays = np.zeros((nTimes,) , np.float32)
+        for i,d in enumerate(delta_t):
+            deltadays[i] = d.days + d.seconds/(86400.)
+        chosen=np.abs(deltadays).argmin()
+        print "chosen: ", times[chosen]
+        p = float_track_list[chosen]
+        for pp in float_track_list:
+            if not pp==p:
+                print "Rejected : ", p.ID(), pp.time
+    return p
+
+
+
 LINES = []
 MISFIT_LINES=[]
 for wmo in WMOlist:
-    Goodlist      = []# SAVE in the "Goodlist" all the profiles for a given FLOAT ID
+    Goodlist      = [] # SAVE in the "Goodlist" all the profiles for a given FLOAT ID
     LISTexclusion = []
     LISTdepthexc  = []
     float_track_list = bio_float.filter_by_wmo(Profilelist, wmo)
+    p = choose_profile(float_track_list)
 
-    for i in float_track_list:
-        Pres, Profile, Qc = i.read(FLOATVARS[varmod])
-        if((Pres < 200).sum() <= 5): continue
+    Pres, Profile, Qc = p.read(FLOATVARS[varmod])
+    if((Pres < 200).sum() <= 5): continue
 
-        sfm = M.getMatchups2([i],nav_lev, varmod, checkobj = Check_Obj,interpolation_on_Float=True )
-        CheckReport = sfm.CheckReports[0]
-        if CheckReport.linestr == '':
-            Goodlist.append(i)
-        else:
-            LINES.append(CheckReport.linestr)
-            if varmod == "N3n":
-                if CheckReport.reason ==2:
-                    LISTexclusion.append(True)
-                    LISTdepthexc.append(CheckReport.depthexc)
+    singlefloatmatchup = M.getMatchups2([p],nav_lev, varmod, checkobj = Check_Obj,interpolation_on_Float=True )
+    CheckReport = singlefloatmatchup.CheckReports[0]
+    if CheckReport.linestr == '':
+        Goodlist.append(p)
+    else:
+        LINES.append(CheckReport.linestr)
+        if varmod == "N3n":
+            if CheckReport.reason ==2:
+                LISTexclusion.append(True)
+                LISTdepthexc.append(CheckReport.depthexc)
 
-#  AllProfiles matrix: 0 Model, 1 Ref, 2 Misfit,3 Lat,4 Lon,5 ID FLOAT
-#  NOTE: the number of profile per float is len(Goodlist)
+
     print "number of Goodlist Profiles:",  len(Goodlist)
     if (Goodlist != []):
         if np.any(LISTexclusion):
@@ -129,75 +159,27 @@ for wmo in WMOlist:
            deplim = np.min([mindepexc,deplim])
         ii = Pres < deplim
         nLevels = ii.sum()
-        OneProfile = np.zeros((1, nLevels, 6), np.float64)
-
-        AllProfiles = OneProfile # TEMPORARY MATRIX WITH ALL THE MATCHUP
         levels = Pres[ii]
-        print ' levels shape ' , nLevels
-        for ip, pp in enumerate(Goodlist):
-            singlefloatmatchup = M.getMatchups([pp], nav_lev, varmod)
-            s200 = singlefloatmatchup.subset(layer)  # values NOT interpolated
-            s200intmodel = np.interp(levels, s200.Depth, s200.Model)
-            s200intobs = Profile[Pres < deplim]
-
-            if (ip == 0):
-                count = 1
-                ix0, jy0 = TheMask.convert_lon_lat_to_indices(pp.lon, pp.lat)
-                AllProfiles[0, :, 0] = s200intmodel  # ONLY MODEL
-                AllProfiles[0, :, 1] = s200intobs  # ONLY ARGO
-                AllProfiles[0, :, 2] = s200intobs - s200intmodel  # ONLY MISFIT ARGO-MODELLO
-                AllProfiles[0, :, 3] = pp.lat
-                AllProfiles[0, :, 4] = pp.lon
-                AllProfiles[0, :, 5] = wmo
-            else:
-                ix1, jy1 = TheMask.convert_lon_lat_to_indices(pp.lon, pp.lat)
-                dx = abs(ix1-ix0)
-                dy = abs(jy1-jy0)
-                if (dx <= 1. and dy <= 1.):
-                    count += 1
-                    AllProfiles[ind, :, 1] += s200intobs  # ONLY ARGO
-                else:
-                    if (count > 1):
-                        AllProfiles[ind, :, 1] = AllProfiles[ind,:, 1]/count  # ONLY ARGO
-                        AllProfiles[ind, :, 2] = AllProfiles[ind,:, 1]-AllProfiles[ind, :, 0]
-
-                    AllProfiles = np.concatenate((AllProfiles, OneProfile), axis=0)
-                    ix0, jy0 = TheMask.convert_lon_lat_to_indices(pp.lon, pp.lat)
-                    count = 1
-                    ind += 1
-                    AllProfiles[ind, :, 0] = s200intmodel  # ONLY MODEL
-                    AllProfiles[ind, :, 1] = s200intobs  # ONLY ARGO
-                    AllProfiles[ind, :, 2] = s200intobs - s200intmodel  # ONLY MISFIT ARGO-MODELLO
-                    AllProfiles[ind, :, 3] = pp.lat
-                    AllProfiles[ind, :, 4] = pp.lon
-                    AllProfiles[ind, :, 5] = wmo
-
-        if (count > 1):
-            AllProfiles[ind, :, 1] = AllProfiles[ind, :, 1]/count  # ONLY ARGO
-            AllProfiles[ind, :, 2] = AllProfiles[ind, :, 1] - AllProfiles[ind, :, 0]
-
-        nProfiles, nLevels, _ = AllProfiles.shape
-        if (nProfiles > 0):
-            print '   totallines ', nLevels * nProfiles
-            for jp in np.arange(nProfiles):
-                for ilev in range(nLevels):
-                    lev = levels[ilev]
-                    testo = "\t%i\t%i\t%10.5f\t%10.5f\t%10.5f" % (1, DICTflag[varmod], AllProfiles[jp, ilev, 4], AllProfiles[jp, ilev, 3], lev)
-                    testo += "\t%10.5f\t%10.5f" % (0.2, AllProfiles[jp, ilev, 2])
+        sfm = singlefloatmatchup.subset(layer)
+        Profile = np.zeros(( nLevels, 6), np.float64)
+        Profile[:, 0] = sfm.Model # s200intmodel  # ONLY MODEL
+        Profile[:, 1] = sfm.Ref   # s200intobs  # ONLY ARGO
+        Profile[:, 2] = sfm.Ref - sfm.Model #s200intobs - s200intmodel  # ONLY MISFIT ARGO-MODELLO
+        Profile[:, 3] = p.lat
+        Profile[:, 4] = p.lon
+        Profile[:, 5] = wmo
+        for ilev in range(nLevels):
+            lev = levels[ilev]
+            testo = "\t%i\t%i\t%10.5f\t%10.5f\t%10.5f" % (1, DICTflag[varmod], Profile[ilev, 4], Profile[ ilev, 3], lev)
+            testo += "\t%10.5f\t%10.5f" % (0.2, Profile[ilev, 2])
 # errore fisso che aumenta  verso il fondo
-                    if varmod == 'N3n':
-                        if lev <= 450: errnut = errbase
-                        if lev > 450:  errnut = errbase*(1+(1.5-1.)/(600-450)*(lev-450))
-                        testo += "\t%10.5f\t%i\n" % (errnut, AllProfiles[jp, ilev, 5])
-                    if varmod == 'P_l':
-                        testo += "\t%10.5f\t%i\n" % (errorfloat[month-1], AllProfiles[jp, ilev, 5])
-                    MISFIT_LINES.append(testo)
-        del AllProfiles
-        del OneProfile
-    else:
-        print "Goodlist vuota"
-    del Goodlist
-
+            if varmod == 'N3n':
+                if lev <= 450: errnut = errbase
+                if lev > 450:  errnut = errbase*(1+(1.5-1.)/(600-450)*(lev-450))
+                testo += "\t%10.5f\t%i\n" % (errnut, Profile[ ilev, 5])
+            if varmod == 'P_l':
+                testo += "\t%10.5f\t%i\n" % (errorfloat[month-1], Profile[ilev, 5])
+            MISFIT_LINES.append(testo)
 
 f=open(args.misfit,'w')
 topstr = "%i\n" % len(MISFIT_LINES)

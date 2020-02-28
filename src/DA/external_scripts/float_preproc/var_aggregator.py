@@ -1,7 +1,8 @@
 import argparse
 
 def argument():
-    parser = argparse.ArgumentParser(description = '''Creates big ave files for archive and/or big files with aggregated var for 
+    parser = argparse.ArgumentParser(description = '''
+    Creates ave files with aggregated var for aveScan.py. 
     Avescan.py. Creates also chl sup.''')
     parser.add_argument(   '--inputdir', '-i',
                                 type = str,
@@ -95,13 +96,11 @@ SingleVar_filelist.sort()
 TheMask=Mask(args.maskfile)
 
 for N1pfile in SingleVar_filelist[rank::nranks]:
-    print N1pfile
     dailyAve  = os.path.basename(N1pfile)
     print "writing ", dailyAve
 
     if args.tmpdir:
-        print N1pfile
-        G.WriteAggregateAvefiles(TheMask, N1pfile, TMPOUTdir, RD)
+        G.WriteAggregateAvefiles(TheMask, N1pfile, AVEDIR, TMPOUTdir, TMPOUTdir, RD)
     
     if args.chlsupdir:    
         F = G.filename_manager(N1pfile)

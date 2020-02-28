@@ -10,12 +10,12 @@ echo ""
 echo "These variables exported by caller:"
 echo "ONLINE_REPO"
 echo "MASKFILE"
-echo "BINDIR"
+echo "OPA_SCRDIR"
 echo "DA_DIR"
 echo "DA__FREQ_1"
 echo "OPA_VENV_1"
 echo "OPA_BITSEA"
-echo "OPA_HOSTDIR"
+echo "OPA_BINDIR"
 echo "OPA_POSTPROCDIR"
 echo ""
 }
@@ -34,7 +34,7 @@ for I in 1; do
    shift 2
 done
 
-source ${BINDIR}/profile.inc
+source ${OPA_SCRDIR}/profile.inc
 opa_prex "module unload numpy"
 opa_prex "source $OPA_VENV_1/bin/activate"
 export PYTHONPATH=${PYTHONPATH}:$OPA_BITSEA
@@ -64,12 +64,12 @@ for vv in N3n P_l; do
 	fi
 
 
-	opa_prex_or_die "python ${OPA_HOSTDIR}/float_extractor.py -t ${DATE}  -i ${DA__FREQ_1} -b $BASEDIR -d $VAR_DESCRIPTOR -v $vv "
-	opa_prex_or_die "python ${OPA_HOSTDIR}/preproc.py  -t ${DATE}  -i ${DA__FREQ_1} -b $BASEDIR -m $MASKFILE -v $vv -d $DADEP --misfit $MISFIT_FILE -o ${DA_DIR} "
+	opa_prex_or_die "python ${OPA_BINDIR}/float_extractor.py -t ${DATE}  -i ${DA__FREQ_1} -b $BASEDIR -d $VAR_DESCRIPTOR -v $vv "
+	opa_prex_or_die "python ${OPA_BINDIR}/preproc.py  -t ${DATE}  -i ${DA__FREQ_1} -b $BASEDIR -m $MASKFILE -v $vv -d $DADEP --misfit $MISFIT_FILE -o ${DA_DIR} "
 
 done
 
-opa_prex_or_die "python ${OPA_HOSTDIR}/merge_arg_mis.py -n ${DA_DIR}/${DATE}.N3n_arg_mis.dat -c ${DA_DIR}/${DATE}.P_l_arg_mis.dat -o ${DA__FREQ_1}/${DATE}.arg_mis.dat "
+opa_prex_or_die "python ${OPA_BINDIR}/merge_arg_mis.py -n ${DA_DIR}/${DATE}.N3n_arg_mis.dat -c ${DA_DIR}/${DATE}.P_l_arg_mis.dat -o ${DA__FREQ_1}/${DATE}.arg_mis.dat "
 
 
 mv ${DA__FREQ_1}/links/RSTbefore* ${DA__FREQ_1}

@@ -92,8 +92,8 @@
 
             if (drv%argo_obs.eq.1) then
                write(*,*) '--- Preparing float misfit ---'
-               call getenv('OPA_HOSTDIR', HOSTDIR)
-               SysErr = system(trim(HOSTDIR)//"Float_misfit_gen.sh -t "//DAY)
+               call getenv('OPA_BINDIR', HOSTDIR)
+               SysErr = system(trim(HOSTDIR)//"/Float_misfit_gen.sh -t "//DAY)
                if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
             endif
           ENDIF

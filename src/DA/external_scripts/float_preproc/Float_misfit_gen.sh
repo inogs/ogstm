@@ -34,7 +34,7 @@ for I in 1; do
    shift 2
 done
 
-source ${OPA_SCRDIR}/profile.inc
+source ${OPA_SCRDIR}/opa_profile.inc
 opa_prex "module unload numpy"
 opa_prex "source $OPA_VENV_1/bin/activate"
 export PYTHONPATH=${PYTHONPATH}:$OPA_BITSEA

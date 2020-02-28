@@ -28,9 +28,9 @@ def argument():
 args = argument()
 
 
-idate0=args.inputdate
-
 arg_misN3n = args.nit
+arg_misP_l = args.chl
+
 exists = os.path.isfile(arg_misN3n)
 if exists:
     merge1 = arg_misN3n
@@ -41,7 +41,7 @@ else:
     N3nmis = [0]
     N3nmis0 = []
 
-arg_misP_l = args.chl
+
 exists = os.path.isfile(arg_misP_l)
 if exists:
     merge2 = arg_misP_l
@@ -58,9 +58,7 @@ allmis0 = N3nmis0 + P_lmis0
 allmis = [np.str(totobs)] + allmis0
 
 
-print 'Merging 1 ' + merge1 + ' and 2 ' + merge2 + ' into ' + outfile
-
-ff = open(outfile,'wb')
+ff = open(args.outfile,'wb')
 ff.writelines( "%s\n" % item for item in allmis )
 
 ff.close()

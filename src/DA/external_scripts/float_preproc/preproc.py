@@ -39,7 +39,7 @@ def argument():
                         default=None,
                         required=True,
                         help=''' output misfit file ''')
-    parser.add_argument('--outdir',
+    parser.add_argument('--outdir','-o ',
                         type=str,
                         default=None,
                         required=True,
@@ -142,10 +142,10 @@ for wmo in WMOlist:
 
     singlefloatmatchup = M.getMatchups2([p],nav_lev, varmod, checkobj = Check_Obj,interpolation_on_Float=True )
     CheckReport = singlefloatmatchup.CheckReports[0]
-    if CheckReport.linestr == '':
+    if CheckReport.line == '':
         Goodlist.append(p)
     else:
-        LINES.append(CheckReport.linestr)
+        LINES.append(CheckReport.line)
         if varmod == "N3n":
             if CheckReport.reason ==2:
                 LISTexclusion.append(True)
@@ -187,7 +187,7 @@ f.write(topstr)
 f.writelines(MISFIT_LINES)
 f.close()
 
-checkfile_txt = OUTDIR + time + varmod + '_check.txt'
+checkfile_txt = OUTDIR + datestr + varmod + '_check.txt'
 fid=open(checkfile_txt,'wt')
 fid.writelines(LINES)
 fid.close()

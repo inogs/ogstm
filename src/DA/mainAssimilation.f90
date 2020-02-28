@@ -15,6 +15,7 @@
       CHARACTER(LEN=17), INTENT(IN) :: datestr, dateFrom
 
       character(LEN=1024) SATFILE, VARFILE
+      character(LEN=1024) HOSTDIR
       character(LEN=2) MONTH,HOUR
       character (LEN=8) DAY
       character (LEN=5) OBStype
@@ -91,7 +92,8 @@
 
             if (drv%argo_obs.eq.1) then
                write(*,*) '--- Preparing float misfit ---'
-               SysErr = system("HOSTDIR/Float_misfit_gen.sh -t "//DAY)
+               call getenv('OPA_HOSTDIR', HOSTDIR)
+               SysErr = system(trim(HOSTDIR)//"Float_misfit_gen.sh -t "//DAY)
                if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
             endif
           ENDIF

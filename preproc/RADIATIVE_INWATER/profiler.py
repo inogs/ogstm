@@ -18,7 +18,7 @@ TL = TimeList.fromfilenames(T_INT, INPUTDIR,"ave*.nc",filtervar="Ed_400")
 
 ALL_PROFILES = optbio_float_2019.FloatSelector(None,T_INT, Rectangle(-6,36,30,46))
 
-vardescriptorfile='/galileo/home/userexternal/eterzic0/ogstm/preproc/RADIATIVE_INWATER/VarDescriptorB.xml'
+vardescriptorfile='/galileo/home/userexternal/eterzic0/CODE/ogstm/preproc/RADIATIVE_INWATER/VarDescriptorB.xml'
 
 #This previous part will be imported in matchups setup.
 

@@ -31,7 +31,7 @@ for ii in range(0,NPROCS):
 	dt_start += dt_step
 	rstep    -= 1 # We take one from the residual
 
-	pids.append( subprocess.Popen(['bash','-c','source $HOME/sequence_eterzic.sh && ipython create_input.py %s %s' % (int1,int2)]) )
+	pids.append( subprocess.Popen(['bash','-c','source $HOME/sequence_eterzic.sh && ipython create_input_IOP.py %s %s' % (int1,int2)]) )
 #	os.system( 'ipython create_input.py %s %s &' % (int1,int2) )
 
 '''

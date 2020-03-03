@@ -13,5 +13,5 @@ cd $SLURM_SUBMIT_DIR
 source /galileo/home/userexternal/eterzic0/sequence_eterzic.sh
 
 date
-ipython launcher_parall.py
+ipython launcher_parall_IOP.py
 date

@@ -1,23 +1,3 @@
-elena terzic @ 04.10.2019
-comment to read_nc.py
+source ../../compilers/machine_modules/galileo.intel 
 
-before running the code save a version of bit.sea/instruments/matchup_manager.py
-
-with a changed line 215
-instead of ref_varname = self.reference_var(p, model_varname)
-put ref_varname = 'IRR_380'
-link this script to that version of bit.sea through PYTHONPATH=...
-
-
-elena terzic @ 02.03.2020
-
-Necessary steps:
-
-0. Copy OASIM files from the archive:
-   /gss/gss_work/DRES_OGS_BiGe/plazzari/OASIM/GMT_ALL/
-1. use unzip.sh and unzip all *_0m.nc files from OASIM
-2. use create_ave.py to restructure the input for the profiler --> create create_ave.sh
-3. export PYTHONPATH=/galileo/home/userexternal/eterzic0/bit.sea
-   export MASKFILE=/galileo/home/userexternal/eterzic0/CODE/ogstm/preproc/RADIATIVE_INWATER/meshmask.nc
-4. run the profiler.py (change the path of Vardescriptor accordingly)
-5. 
+make -f Makefile_IOP compute_IOP.xx

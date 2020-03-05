@@ -1,4 +1,4 @@
-#! /bin/bash
+#! /bin/ksh
 
 usage() {
 echo "Generates misfit files for argo floats "

@@ -19,6 +19,10 @@ export      OPA_BITSEA=/gpfs/work/OGS20_PRACE_P/COPERNICUS/bit.sea
 export      OPA_BINDIR=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V6C/CODE/ogstm/src/DA/external_scripts/float_preproc
 export OPA_POSTPROCDIR=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V6C/bin
 
-
+# edit Float_misfit_gen.sh
+# rename opa_prex_ -->  my_prex
+# rename opa_profile --> profile
+# comment module unload numpy, is useful only for chain 
 ./Float_misfit_gen.sh -t 20190919
+
 

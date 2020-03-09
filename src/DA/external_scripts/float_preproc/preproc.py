@@ -157,7 +157,7 @@ for wmo in WMOlist:
         if np.any(LISTexclusion):
            mindepexc = np.min(LISTdepthexc)
            deplim = np.min([mindepexc,deplim])
-        ii = Pres < deplim
+        ii = Pres <= deplim
         nLevels = ii.sum()
         levels = Pres[ii]
         sfm = singlefloatmatchup.subset(layer)

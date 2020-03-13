@@ -55,7 +55,7 @@ for vv in N3n P_l; do
        MISFIT_FILE="${DA_DIR}/${DATE}.${vv}_arg_mis.dat"
 
 	if [ $vv == P_l ]; then
-	    opa_prex_or_die "python ${OPA_POSTPROCDIR}/var_aggregator.py -l RSTbefore.${DATE}*13:00*P1l.nc -i ${DA__FREQ_1} -d $VAR_DESCRIPTOR -t ${DA__FREQ_1} -m $MASKFILE "
+	    opa_prex_or_die "python ${OPA_POSTPROCDIR}/var_aggregator.py -l RSTbefore.${DATE}*13:00*P1l.nc -i ${DA__FREQ_1} -d $VAR_DESCRIPTOR -t ${DA__FREQ_1} -m $MASKFILE -s "
 	    DADEP=200
 	fi
 

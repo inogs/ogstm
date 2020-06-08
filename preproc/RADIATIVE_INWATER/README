@@ -1,3 +1,23 @@
-source ../../compilers/machine_modules/galileo.intel 
+Necessary steps:
 
-make -f Makefile_IOP compute_IOP.xx
+0. Copy OASIM files from the archive:
+   /gss/gss_work/DRES_OGS_BiGe/plazzari/OASIM/GMT_ALL/
+
+1. use unzip.sh and unzip all *_0m.nc files from OASIM
+
+2. use create_ave.py to restructure the input for the profiler --> create create_ave.sh
+
+3. comment to read_nc.py : before running the code save a version of bit.sea/instruments/matchup_manager.py
+
+    with a changed line 215
+    instead of ref_varname = self.reference_var(p, model_varname)
+    put ref_varname = 'IRR_380'
+    link this script to that version of bit.sea through PYTHONPATH=...
+    
+
+4. export PYTHONPATH=/galileo/home/userexternal/eterzic0/bit.sea
+   export MASKFILE=/galileo/home/userexternal/eterzic0/CODE/ogstm/preproc/RADIATIVE_INWATER/meshmask.nc
+
+5. run the profiler.py (change the path of VardescriptorB.xml accordingly)
+
+6. 

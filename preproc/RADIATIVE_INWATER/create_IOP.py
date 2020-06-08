@@ -30,14 +30,22 @@ def PFT_MED(CHL):
     PROK   = 0.0664*x**3 + 0.1410*x**2 - 0.2097*x + 0.0979
     HAPT   = 1. - MICRO - CRYPT - GREEN - PROK
     
+    #PFT_1 = DIATOM * CHL
+    #PFT_2 = (HAPT + CRYPT) * CHL
+    #PFT_3 = (GREEN + PROK) * CHL
+    #PFT_4 = DINOPH * CHL
     PFT_1 = DIATOM * CHL
-    PFT_2 = (HAPT + CRYPT) * CHL
-    PFT_3 = PICO * CHL
-    PFT_4 = DINOPH * CHL
-    return PFT_1, PFT_2, PFT_3, PFT_4
-    
-    
+    PFT_2 = HAPT   * CHL
+    PFT_3 = CRYPT  * CHL
+    PFT_4 = GREEN  * CHL
+    PFT_5 = PROK   * CHL
+    PFT_6 = DINOPH  * CHL
 
+    PSC_1 = MICRO  * CHL
+    PSC_2 = NANO   * CHL
+    PSC_3 = PICO   * CHL
+    return PFT_1, PFT_2, PFT_3, PFT_4, PFT_5, PFT_6, PSC_1, PSC_2, PSC_3
+    
 def NAP_calc(PresCHL, fnap):
     NAP = fnap*np.ones(PresCHL.shape)
     return NAP

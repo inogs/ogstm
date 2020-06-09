@@ -6,7 +6,7 @@ c_cdom   = 0.18
 
 s_cdom   = 0.017  #for the Adriatic s_cdom = 0.0192 ; Dutkiewicz: s_cdom = 0.021 
 
-lambda_0 = 443.0  #from Babin et al., 2003 ; Dutkiewicz: lambda_0 = 450.0
+lambda_0 = 450.0  #from Babin et al., 2003 ; Dutkiewicz: lambda_0 = 450.0
 
 lam = [  250.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 
          500.0, 525.0, 550.0, 575.0, 600.0, 625.0, 650.0, 675.0, 
@@ -28,7 +28,10 @@ lam_1nm = np.arange(250.0, 4000.0, 1.0)
 
 a_cdom = c_cdom * np.exp(-s_cdom*(lam_1nm -lambda_0))
 
-lam_bin = np.zeros(len(lam1))
+lam_bin       = np.zeros(len(lam1))
+a_cdom_ref    = np.zeros(len(lam_1nm))
+a_cdom_ref[:] = c_cdom
+print(c_cdom/12.)
 
 for nl in range(len(lam1)):
    acdom_bin[nl] = c_cdom * ( np.exp(-s_cdom*(lam2[nl] -lambda_0)) -np.exp(-s_cdom*(lam1[nl] -lambda_0)) )  / (-s_cdom *( lam2[nl] - lam1[nl] ) )   
@@ -37,9 +40,10 @@ for nl in range(len(lam1)):
 #acdom_int = np.interp(lam_bin, lam_1nm, a_cdom)
 
 plt.plot(lam_1nm, a_cdom/12., 'm') 
+plt.plot(lam_1nm, a_cdom_ref/12., 'r-') 
 plt.bar(lam_bin, acdom_bin/12., width=25, align='center', color='g')
 plt.xlim(350,700) 
-plt.ylim(0,0.2) 
+plt.ylim(0,0.11) 
 plt.xlabel(r'$\lambda$ [nm]') 
 plt.ylabel('$a_{CDOM} [m^{2}.mgC^{-1}]$') 
 #plt.show() 
@@ -47,5 +51,5 @@ fileout='acdom.png'
 plt.savefig(fileout)
 
 for i in range(len(lam)-1):
-    mystring = 'acdom(' + str (i+1) + ')= ' + str(acdom_bin[i]/12)  + 'D0'
+    mystring = 'acdom(' + str (i+1) + ')= ' + str(acdom_bin[i]/12.)  + 'D0'
     print(mystring)

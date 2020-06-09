@@ -43,10 +43,10 @@
 
       SELECT CASE (FREQ_GROUP)
         CASE (1) 
-       ave_counter=ave_counter_1 
+       ave_counter=ave_counter_3 
        DIR='AVE_FREQ_1/'
         CASE (2) 
-       ave_counter=ave_counter_2 
+       ave_counter=ave_counter_3 
        DIR='AVE_FREQ_2/'
       END SELECT
 

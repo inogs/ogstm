@@ -42,7 +42,9 @@ TI = TimeInterval(sys.argv[1], sys.argv[2],"%Y%m%d")
 variable='P_l'
 varname=var_conversions.FLOAT_OPT_VARS_2019[variable]
 
-Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)
+Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)   # len is no. of profiles
+
+Floatlist=optbio_float_2019.get_wmo_list(Profilelist)               # len is no. of floats
 
 for p in Profilelist:#[rank::nranks]:
     profile_ID = p.ID()

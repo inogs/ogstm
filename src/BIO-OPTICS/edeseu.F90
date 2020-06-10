@@ -1,4 +1,4 @@
-      subroutine edeseu(MODE,V_POSITION,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eutop,PARz)
+      subroutine edeseu(MODE,V_POSITION,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,POCz,rmud,Edz,Esz,Euz,Eutop,PARz)
       USE myalloc
       USE mpi
       USE OPT_mem
@@ -19,7 +19,7 @@
       integer, INTENT(IN)          :: bottom
       double precision, INTENT(IN) :: rmud
       double precision, INTENT(IN) :: dzRT(jpk)
-      double precision, INTENT(IN) :: CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk)
+      double precision, INTENT(IN) :: CHLz(jpk,nchl),CDOMz(jpk),POCz(jpk)
       double precision, INTENT(IN) :: Edtop(nlt),Estop(nlt)
       double precision, INTENT(OUT) :: Edz(jpk,nlt),Esz(jpk,nlt)
       double precision, INTENT(OUT) :: Euz(jpk,nlt)
@@ -29,7 +29,6 @@
       double precision :: Etop
       double precision :: Plte
       double precision :: actot(jpk,nlt),bctot(jpk,nlt),bbctot(jpk,nlt) 
-      double precision :: anap(nlt)
       double precision :: a(jpk,nlt), bt(jpk,nlt), bb(jpk,nlt) 
       double precision :: bbc(4)
       data bbc /0.002d0, 0.00071d0, 0.001955d0, 0.0029d0/
@@ -37,7 +36,6 @@
       data bbw /0.5d0/       !backscattering to forward scattering ratio
  
 !  Compute irradiance with depth
-       anap(:)  = 0.0d0
 
        do nl = 1,nlt
           do jk = 1,bottom
@@ -55,9 +53,9 @@
                bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n)*bc(n,nl)
           enddo
 
-          a(jk,nl)  = aw(nl) + CDOMz(jk) * acdom(nl) + NAPz(jk) * anap(nl) + actot(jk,nl)
-          bt(jk,nl) = bw(nl) + bctot(jk,nl)
-          bb(jk,nl) = bbw*bw(nl) + bbctot(jk,nl)
+          a(jk,nl)  = aw(nl) + CDOMz(jk) * acdom(nl) + POCz(jk) * apoc(nl) + actot(jk,nl)
+          bt(jk,nl) = bw(nl) + bctot(jk,nl) + POCz(jk) * bpoc(nl)
+          bb(jk,nl) = bbw*bw(nl) + bbctot(jk,nl) + POCz(jk) * bbpoc(nl)
           bb(jk,nl) = max(bb(jk,nl),0.0002d0)
 
          enddo

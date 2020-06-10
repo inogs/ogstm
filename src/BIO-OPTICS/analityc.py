@@ -17,18 +17,18 @@ chl = 1.0
 #bbio = 0.2738 * chl 
 
 #400
-aw   =  0.0047
-abio =  0.034 * chl
+#aw   =  0.0047
+#abio =  0.034 * chl
 
-bw   = 0.0069
-bbio = 0.2992 * chl 
+#bw   = 0.0069
+#bbio = 0.2992 * chl 
 
 #550
-#aw   =  0.3512
-#abio =  0.0104 * chl
+aw   =  0.3512
+abio =  0.0104 * chl
 
-#bw   = 0.0009
-#bbio = 0.2154 * chl 
+bw   = 0.0009
+bbio = 0.2154 * chl 
 
 
 a = aw + abio
@@ -73,11 +73,11 @@ Ed_ave=np.zeros(z.shape[0])
 Es_ave=np.zeros(z.shape[0])
 Eu_ave=np.zeros(z.shape[0])
 
-Ed[:]=Ed0*np.exp(-cd*rmud*z)
+Ed[:]=Ed0*np.exp(-cd*z)
 depth = z
 for ii in range(Nz-1):
     dz     = depth[ii+1] - depth[ii]
-    Ed_ave[ii] = ( Ed[ii+1] - Ed[ii] ) / (-cd*rmud*dz)
+    Ed_ave[ii] = ( Ed[ii+1] - Ed[ii] ) / (-cd*dz)
 
 Cs = (a+rs*bb)/vs
 Bu = ru*bb/vu
@@ -98,7 +98,11 @@ rp   = Bs/D
 kp   = -(Cu-D)
 cp   = Es0 -x * Ed0
 
-print kp
+rm   = Bu/D
+km   = -Cs+D 
+
+print "kp = " + str(kp)
+print "km = " + str(km)
 
 Es[:] = cp*np.exp(-kp*z[:])    + x * Ed[:]
 Eu[:] = cp*rp*np.exp(-kp*z[:]) + y * Ed[:]

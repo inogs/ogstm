@@ -1,16 +1,22 @@
-      SUBROUTINE trcave
+      SUBROUTINE trcave(datestring)
       USE myalloc
       USE IO_mem
       USE FN_mem
       USE OPT_mem
+      USE TIME_MANAGER
       use mpi
 
       implicit none
+      character(LEN=17), INTENT(IN) ::  datestring
 !     local
       integer jk,jj,ji,jn
       integer :: jn_high, jn_on_all
+      integer :: year, month, day, ihr
+      double precision :: sec
       double precision ::  Miss_val =1.e20
       double precision :: Realcounter, Realcounterp1
+      double precision :: RealcounterRT, Realcounterp1RT
+      
 
       ave_partTime = MPI_WTIME()
 
@@ -223,20 +229,28 @@
       endif ! lfbm
 !     *********************  DIAGNOSTICS RT **********
 
+      call read_date_string(datestring, year, month, day, sec)
+
+!     ihr = int(sec/3600.d0) ! from 0 to 23 
+
+      if (( sec .GE. 9.9D0*3600.0d0) .AND. ( sec .LT. 13.9D0*3600.0D0)) then
+             RealcounterRT   =    REAL(ave_counter_3  , 8)
+             Realcounterp1RT = 1.0d0/REAL(ave_counter_3+1, 8)
+             if (lwp) write(*,*) 'Computing average for Ed, Es ,Eu ...'
              DO ji=1, jpi
              DO jj=1, jpj
              DO jk=1, jpk
                 IF(tmask(jk,jj,ji) .NE. 0.) THEN
                 DO jn_high=1, nlt
                    Ed_DIA_IO(jk,jj,ji,jn_high )= &
-     &            (Ed_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Ed(jk,jj,ji,jn_high))*Realcounterp1
+     &             (Ed_DIA_IO(jk,jj,ji,jn_high)*RealcounterRT+Ed(jk,jj,ji,jn_high))*Realcounterp1RT  
 
                    Es_DIA_IO(jk,jj,ji,jn_high )= &
-     &            (Es_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Es(jk,jj,ji,jn_high))*Realcounterp1
+     &             (Es_DIA_IO(jk,jj,ji,jn_high)*RealcounterRT+Es(jk,jj,ji,jn_high))*Realcounterp1RT 
 
                    Eu_DIA_IO(jk,jj,ji,jn_high )= &
-     &            (Eu_DIA_IO(jk,jj,ji,jn_high)*Realcounter+Eu(jk,jj,ji,jn_high))*Realcounterp1
-                 END DO
+     &             (Eu_DIA_IO(jk,jj,ji,jn_high)*RealcounterRT+Eu(jk,jj,ji,jn_high))*Realcounterp1RT
+                END DO
                 ELSE
                    Ed_DIA_IO(jk,jj,ji,: )=Miss_val
                    Es_DIA_IO(jk,jj,ji,: )=Miss_val
@@ -245,6 +259,8 @@
              END DO
              END DO
              END DO
+             ave_counter_3 = ave_counter_3 + 1
+      endif
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

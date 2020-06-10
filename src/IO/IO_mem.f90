@@ -19,7 +19,7 @@
 
       INTEGER :: jpi_rec, jpj_rec
       INTEGER :: jpi_max, jpj_max
-      INTEGER :: ave_counter_1=0, ave_counter_2=0
+      INTEGER :: ave_counter_1=0, ave_counter_2=0, ave_counter_3=0
       LOGICAL :: existFilebkp = .false.
       double precision, allocatable :: buffglamt(:) 
       double precision, allocatable :: buffgphit(:)

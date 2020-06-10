@@ -27,7 +27,7 @@
       CHARACTER(LEN=20) :: V_POSITION     
       double precision :: solz(jpj,jpi), rmud(jpj,jpi)
       double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),PARz(jpk,nchl+1)
-      double precision :: CHLz(jpk,nchl),CDOMz(jpk),NAPz(jpk)
+      double precision :: CHLz(jpk,nchl),CDOMz(jpk),POCz(jpk)
       double precision :: Eu_0m(nlt)
       double precision :: sec
 
@@ -92,13 +92,8 @@
              bottom = mbathy(jj,ji)
              bottom = min(bottom,37) ! Stop at approx 500 mt
 
-             if ( gdept(bottom) > 30.0d0) then 
-!               MODE = 1 ! TEST
-                MODE = 0 ! exact solution no problem on sea floor reflectance
-             else
-!               MODE = 0 ! TEST
-                MODE = 1 ! approximate solution
-             endif
+             MODE = 0 ! exact solution
+!            MODE = 1 ! approximate solution
        
              if ((maxval(Ed_0m(:,jj,ji)) < 0.0001d0) .AND. (maxval(Es_0m(:,jj,ji))< 0.0001d0)) then
   
@@ -120,11 +115,11 @@
                  CHLz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3l)
                  CHLz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4l)
                 
-                 CDOMz(1:bottom)  = trn(1:bottom,jj,ji,ppR1l) 
+                 CDOMz(1:bottom)  = trn(1:bottom,jj,ji,ppR1l) + trn(1:bottom,jj,ji,ppR2l) + trn(1:bottom,jj,ji,ppR3l)
     
-                 NAPz(1:bottom)   = 0.0d0 ! trn(1:bottom,jj,ji,ppR6c) 
+                 POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     
-                 call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,NAPz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
+                 call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
     
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)

@@ -4,7 +4,7 @@ from commons.time_interval import TimeInterval
 from commons.Timelist import TimeList
 from basins.region import Rectangle
 
-INPUTDIR = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/INDATA/'
+INPUTDIR = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/AVEDATA/'
 BASEDIR='/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/PROFILATORE/'
 
 DATESTART = '20120101-00:00:00'

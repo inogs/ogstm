@@ -55,7 +55,7 @@ for iwl in range(len(wl)):   # Loop over OASIM wavelengths
     jpj=180 
     
     # Read year, month, date from the args.date object
-    date_object = datetime.strptime(args.date, "%Y%m%d")
+    date_object = datetime.datetime.strptime(args.date, "%Y%m%d")
     step = datetime.timedelta(minutes=15)
     d1 = date_object
 
@@ -65,12 +65,12 @@ for iwl in range(len(wl)):   # Loop over OASIM wavelengths
         HHMMSS = d1.strftime('%H:%M:%S')
 
         if itime > 38 and itime < 56:   # indices between 10 and 14:00 local time
-            print(i, HHMMSS) 
+            print(itime, HHMMSS) 
         else:
             continue
 
         # Save Ed
-        outfile = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/INDATA/ave.' + args.date  +  '-' + HHMMSS + '.Ed_' + str(wl_int[iwl]) + '.nc'
+        outfile = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/AVEDATA/ave.' + args.date  +  '-' + HHMMSS + '.Ed_' + str(wl_int[iwl]) + '.nc'
         ncOUT   = NC4.Dataset(outfile,"w");
 
         ncOUT.createDimension('lon',jpi);
@@ -85,7 +85,7 @@ for iwl in range(len(wl)):   # Loop over OASIM wavelengths
         ncOUT.close()
         
         # Save Es
-        outfile = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/INDATA/ave.' + args.date   +  '-' + HHMMSS + '.Es_' + str(wl_int[iwl]) + '.nc'
+        outfile = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/AVEDATA/ave.' + args.date   +  '-' + HHMMSS + '.Es_' + str(wl_int[iwl]) + '.nc'
         ncOUT   = NC4.Dataset(outfile,"w");
                 
         ncOUT.createDimension('lon',jpi);

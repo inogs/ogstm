@@ -37,12 +37,19 @@ if len(sys.argv) != 3:
 
 M = Matchup_Manager(ALL_PROFILES,TL,BASEDIR)
 
-TI = TimeInterval(sys.argv[1], sys.argv[2],"%Y%m%d")
+TI = TimeInterval(sys.argv[1], sys.argv[2],'%Y%m%d-%H:%M:%S')
 
 variable='P_l'
-varname=var_conversions.FLOAT_OPT_VARS_2019[variable]
 
-Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)
+Profilelist_aux=optbio_float_2019.FloatSelector(varname,TI , OGS.med)   # len is no. of profiles
+
+# Adjust time from UTC to local!
+for FLOAT in Profilelist_aux:
+    FLOAT.time += timedelta(hours=24./360.*FLOAT.lon)
+
+Profilelist_aux2     = [p for p in Profilelist_aux if TI.contains(p.time)]  # additional check
+            
+Profilelist          = [p for p in Profilelist_aux2 if (int(p.time.strftime('%H'))>10 and int(p.time.strftime('%H'))<14 )]
 
 for p in Profilelist:#[rank::nranks]:
     profile_ID = p.ID()

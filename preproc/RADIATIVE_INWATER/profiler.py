@@ -4,9 +4,8 @@ from commons.time_interval import TimeInterval
 from commons.Timelist import TimeList
 from basins.region import Rectangle
 
-INPUTDIR = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_15m/DATA/'#'/gpfs/scratch/userexternal/eterzic0/RADIATIVE_INWATER/INDATA/'
-
-BASEDIR='/gpfs/scratch/userexternal/eterzic0/OASIM_HF_15m/PROFILATORE/'#'/gpfs/scratch/userexternal/eterzic0/RADIATIVE_INWATER/PROFILATORE/'
+INPUTDIR = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/INDATA/'
+BASEDIR='/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/PROFILATORE/'
 
 DATESTART = '20120101-00:00:00'
 DATE__END = '20171231-00:00:00'
@@ -21,10 +20,9 @@ ALL_PROFILES = optbio_float_2019.FloatSelector(None,T_INT, Rectangle(-6,36,30,46
 from datetime import timedelta
 
 for FLOAT in ALL_PROFILES:
-	FLOAT.time += timedelta(hours=24./360.*FLOAT.lon)
+	FLOAT.time += timedelta(hours=24./360.*FLOAT.lon)  # Change from GMT to local time
 
-#vardescriptorfile='/galileo/home/userexternal/eterzic0/CODE/ogstm/preproc/RADIATIVE_INWATER/VarDescriptorB.xml'
-vardescriptorfile='/galileo/home/userexternal/eterzic0/OASIM_POSTPROC/ARGO_MATCHUP/CODES/VarDescriptorB.xml'
+vardescriptorfile='/galileo/home/userexternal/eterzic0/CODE/ogstm/preproc/RADIATIVE_INWATER/VarDescriptorB.xml'
 
 #This previous part will be imported in matchups setup.
 
@@ -35,7 +33,7 @@ if __name__ == '__main__':
     M = Matchup_Manager(ALL_PROFILES,TL,BASEDIR)
 
     profilerscript = BASEDIR + 'jobProfiler.sh'
-    aggregatedir="/gpfs/scratch/userexternal/eterzic0/OASIM_HF_15m/DATA/"
+    aggregatedir="/gpfs/scratch/userexternal/eterzic0/OASIM_HF__INWATER/INDATA/"
     M.writefiles_for_profiling(vardescriptorfile, profilerscript, aggregatedir=aggregatedir) # preparation of data for aveScan
 
     M.dumpModelProfiles(profilerscript) # sequential launch of aveScan

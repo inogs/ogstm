@@ -27,12 +27,12 @@ for nl in range(len(lam)-1):
    
 #acdom_int = np.interp(lam_bin, lam_1nm, a_cdom)
 
-plt.plot(lam_1nm, a_cdom, 'm') 
-plt.bar(lam_bin, acdom_bin, width=25, align='center', color='g')
+plt.plot(lam_1nm, a_cdom/12., 'm') 
+plt.bar(lam_bin, acdom_bin/12., width=25, align='center', color='g')
 plt.xlim(350,700) 
 plt.ylim(0,2) 
 plt.xlabel(r'$\lambda$ [nm]') 
-plt.ylabel('$a^{CDOM} [m^{-1}]$') 
+plt.ylabel('$a^{CDOM} [m^{2}.mgC^{-1}]$') 
 #plt.show() 
 
 for i in range(len(lam)-1):

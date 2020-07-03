@@ -37,17 +37,28 @@ if len(sys.argv) != 3:
 
 M = Matchup_Manager(ALL_PROFILES,TL,BASEDIR)
 
-TI = TimeInterval(sys.argv[1], sys.argv[2],"%Y%m%d")
+TI = TimeInterval(sys.argv[1], sys.argv[2],'%Y%m%d-%H:%M:%S')
 
 variable='P_l'
 varname=var_conversions.FLOAT_OPT_VARS_2019[variable]
 
-Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)
+Profilelist_aux=optbio_float_2019.FloatSelector(varname,TI , OGS.med)   # len is no. of profiles
+
+# Adjust time from UTC to local!
+for FLOAT in Profilelist_aux:
+    FLOAT.time += timedelta(hours=24./360.*FLOAT.lon)
+
+Profilelist_aux2     = [p for p in Profilelist_aux if TI.contains(p.time)]  # additional check
+            
+Profilelist          = [p for p in Profilelist_aux2 if (int(p.time.strftime('%H'))>10 and int(p.time.strftime('%H'))<14 )]
+
+Floatlist=optbio_float_2019.get_wmo_list(Profilelist)               # len is no. of floats
+
 
 for p in Profilelist:#[rank::nranks]:
     profile_ID = p.ID()
     print(profile_ID)
-    
+  
     bool= findVars(p.available_params)
     if bool == False:
         print('Variables missing for further calculations')
@@ -55,9 +66,13 @@ for p in Profilelist:#[rank::nranks]:
     ''' 
     phase 1. write OASIM.txt file 
     '''
+    #def func(Pres, E0, k):     
+    #return E0 * np.exp(-k*Pres)
+
+    func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
     
-    List_Ed = [M.getMatchups([p], nav_lev, modelvar).subset(Layer(0,1.5)) for modelvar in str_Ed]
-    List_Es = [M.getMatchups([p], nav_lev, modelvar).subset(Layer(0,1.5)) for modelvar in str_Es]
+    List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]
+    List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]
     
     Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0] for i in range(len(List_Ed))])
     Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0] for i in range(len(List_Ed))])
@@ -70,7 +85,7 @@ for p in Profilelist:#[rank::nranks]:
         print('Low irradiance values of OASIM!')
         continue
     
-    np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
+    #np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
 
     '''
     phase 2. Read BGC-ARGO profiles
@@ -94,7 +109,7 @@ for p in Profilelist:#[rank::nranks]:
         print('BGC-Argo low irradiance values - cloud coverage')
         continue
     
-    if PresCHL.max() < 15:
+    if PresCHL.max() < 15.:
         print('Depth range too small')
         continue
     

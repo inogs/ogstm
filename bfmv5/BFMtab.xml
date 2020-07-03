@@ -46,12 +46,14 @@
 <var name="R1l" maxvalue="0.3"  highfreq="false" dump="false" ></var>
 <var name="R1s" maxvalue="0.1"  highfreq="false" dump="false" ></var>
 <var name="R2c" maxvalue="500"  highfreq="false" dump="false" ></var>
+<var name="R2l" maxvalue="500"  highfreq="false" dump="false" ></var>
 <var name="R6c" maxvalue="200"  highfreq="false" dump="false" ></var>
 <var name="R6n" maxvalue="4"    highfreq="false" dump="false" ></var>
 <var name="R6p" maxvalue="0.5"  highfreq="false" dump="false" ></var>
 <var name="R6s" maxvalue="3"    highfreq="false" dump="false" ></var>
 <var name="R7c" maxvalue="3000"  highfreq="false" dump="false" ></var>
 <var name="R3c" maxvalue="100000" highfreq="false" comment="max inventato" dump="false" ></var>
+<var name="R3l" maxvalue="100000" highfreq="false" comment="max inventato" dump="false" ></var>
 <var name="O3c" maxvalue="200000" highfreq="false" dump="false" ></var>
 <var name="O3h" maxvalue="20000"  highfreq="false" dump="false" ></var>	
 <var name="O5c" maxvalue="200000" highfreq="false" dump="false" ></var>

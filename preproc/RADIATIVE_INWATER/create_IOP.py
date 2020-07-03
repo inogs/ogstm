@@ -2,10 +2,9 @@
 import numpy as np
 # Create functions for chl-specific IOP spectra
 
-lam = np.array([  250.0, 325.0, 350.0, 375.0, 400.0, 425.0, 450.0, 475.0, 
-         500.0, 525.0, 550.0, 575.0, 600.0, 625.0, 650.0, 675.0, 
-         700.0, 725.0, 775.0, 850.0, 950.0, 1050.0, 1150.0, 1250.0,
-        1350.0, 1450.0, 1550.0,  1650.0, 1750.0, 1900.0, 2200.0, 2900.0, 3700.0 , 4000.0]) 
+# Wavelengths of the Radiative Transfer Model
+lam = np.array([  250.0, 325.0, 350.0, 375.0, 400.0, 425.0,   450.0,  475.0, 500.0 , 525.0, 550.0, 575.0, 600.0, 625.0, 650.0, 675.0, 700.0, 725.0, 775.0, 
+                  850.0, 950.0, 1050.0, 1150.0, 1250.0, 1350.0, 1450.0, 1550.0,  1650.0, 1750.0, 1900.0, 2200.0, 2900.0, 3700.0 , 4000.0]) 
 lam = lam.reshape(lam.shape[0],1)
 
 def PFT_calc(CHL, p1, p2, p3, p4):
@@ -17,6 +16,7 @@ def PFT_calc(CHL, p1, p2, p3, p4):
     PFT_4 = p4*CHL
     return PFT_1, PFT_2, PFT_3, PFT_4
 
+# Di Cicco et al., 2017 - both for PFT and PSC
 def PFT_MED(CHL):
     x     = np.where(CHL>0, np.log10(CHL), 0.)
     #x = np.log10(CHL)
@@ -30,10 +30,6 @@ def PFT_MED(CHL):
     PROK   = 0.0664*x**3 + 0.1410*x**2 - 0.2097*x + 0.0979
     HAPT   = 1. - MICRO - CRYPT - GREEN - PROK
     
-    #PFT_1 = DIATOM * CHL
-    #PFT_2 = (HAPT + CRYPT) * CHL
-    #PFT_3 = (GREEN + PROK) * CHL
-    #PFT_4 = DINOPH * CHL
     PFT_1 = DIATOM * CHL
     PFT_2 = HAPT   * CHL
     PFT_3 = CRYPT  * CHL

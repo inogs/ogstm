@@ -37,12 +37,19 @@ if len(sys.argv) != 3:
 
 M = Matchup_Manager(ALL_PROFILES,TL,BASEDIR)
 
-TI = TimeInterval(sys.argv[1], sys.argv[2],"%Y%m%d")
+TI = TimeInterval(sys.argv[1], sys.argv[2],'%Y%m%d-%H:%M:%S')
 
 variable='P_l'
-varname=var_conversions.FLOAT_OPT_VARS_2019[variable]
 
-Profilelist=optbio_float_2019.FloatSelector(varname,TI , OGS.med)
+Profilelist_aux=optbio_float_2019.FloatSelector(varname,TI , OGS.med)   # len is no. of profiles
+
+# Adjust time from UTC to local!
+for FLOAT in Profilelist_aux:
+    FLOAT.time += timedelta(hours=24./360.*FLOAT.lon)
+
+Profilelist_aux2     = [p for p in Profilelist_aux if TI.contains(p.time)]  # additional check
+            
+Profilelist          = [p for p in Profilelist_aux2 if (int(p.time.strftime('%H'))>10 and int(p.time.strftime('%H'))<14 )]
 
 for p in Profilelist:#[rank::nranks]:
     profile_ID = p.ID()
@@ -99,7 +106,7 @@ for p in Profilelist:#[rank::nranks]:
     '''
     phase 3. Calculate and save IOPs  
     '''
-    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)#0.30, 0.20, 0.40, 0.10)
+    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)
     #PFT1, PFT2, PFT3, PFT4 = PFT_MED(CHLz)
     
     aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
@@ -114,7 +121,7 @@ for p in Profilelist:#[rank::nranks]:
     np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
     
     file_cols_NAP = np.hstack((Pres, aNAP))
-    np.savetxt(profile_ID + '_NAP.txt', file_cols_NAP, delimiter='\t', comments='' )
+    np.savetxt(profile_ID + '_NAP.txt',   file_cols_NAP, delimiter='\t', comments='' )
     
     floatname = profile_ID + '.nc'
     

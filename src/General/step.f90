@@ -4,7 +4,7 @@ MODULE module_step
       USE myalloc
       USE TIME_MANAGER
       USE BC_mem
-      USE IO_mem, only: ave_counter_1, ave_counter_2
+      USE IO_mem, only: ave_counter_1, ave_counter_2, ave_counter_3
       USE mpi
       USE mod_atmbc
       USE mod_cbc
@@ -177,6 +177,7 @@ MODULE module_step
          CALL trcdia(datemean, datefrom_2, datestring,2)
          TauAVEfrom_2    = TAU
          ave_counter_2   = 0   !  reset the counter
+         ave_counter_3   = 0   !  reset the counter for RT model
          IsStartBackup_2 = .false.
          if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
@@ -194,9 +195,9 @@ MODULE module_step
 
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp(DATEstring)    ! se commento questo non fa calcoli
-        call trcave
-        ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
-        ave_counter_2 = ave_counter_2 +1
+        call trcave(DATEstring)
+        ave_counter_1  = ave_counter_1 +1  ! incrementing our counters
+        ave_counter_2  = ave_counter_2 +1
 
 
        stpparttime = MPI_WTIME() - stpparttime

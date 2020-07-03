@@ -41,4 +41,3 @@ Wait for everyone
 for pid in pids:
     pid.wait()
  
-print('Ciao!')

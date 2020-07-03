@@ -106,7 +106,7 @@ for p in Profilelist:#[rank::nranks]:
     '''
     phase 3. Calculate and save IOPs  
     '''
-    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)#0.30, 0.20, 0.40, 0.10)
+    PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)
     #PFT1, PFT2, PFT3, PFT4 = PFT_MED(CHLz)
     
     aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
@@ -121,7 +121,7 @@ for p in Profilelist:#[rank::nranks]:
     np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
     
     file_cols_NAP = np.hstack((Pres, aNAP))
-    np.savetxt(profile_ID + '_NAP.txt', file_cols_NAP, delimiter='\t', comments='' )
+    np.savetxt(profile_ID + '_NAP.txt',   file_cols_NAP, delimiter='\t', comments='' )
     
     floatname = profile_ID + '.nc'
     

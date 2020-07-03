@@ -5,7 +5,7 @@ from commons.Timelist import TimeList
 from basins.region import Rectangle
 
 INPUTDIR = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/AVEDATA/'
-BASEDIR='/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/PROFILATORE/'
+BASEDIR  ='/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/PROFILATORE/'
 
 DATESTART = '20120101-00:00:00'
 DATE__END = '20171231-00:00:00'
@@ -13,7 +13,7 @@ DATE__END = '20171231-00:00:00'
 #export MASKFILE=$PWD/meshmask.nc
 
 T_INT = TimeInterval(DATESTART,DATE__END, '%Y%m%d-%H:%M:%S')
-TL    = TimeList.fromfilenames(T_INT, INPUTDIR,"ave*.nc",filtervar="Ed_380")
+TL    = TimeList.fromfilenames(T_INT, INPUTDIR,"ave*.nc",filtervar="Ed_400")
 
 ALL_PROFILES = optbio_float_2019.FloatSelector(None,T_INT, Rectangle(-6,36,30,46))
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     M = Matchup_Manager(ALL_PROFILES,TL,BASEDIR)
 
     profilerscript = BASEDIR + 'jobProfiler.sh'
-    aggregatedir="/gpfs/scratch/userexternal/eterzic0/OASIM_HF__INWATER/INDATA/"
+    aggregatedir="/gpfs/scratch/userexternal/eterzic0/OASIM_HF__INWATER/AVEDATA/"
     M.writefiles_for_profiling(vardescriptorfile, profilerscript, aggregatedir=aggregatedir) # preparation of data for aveScan
 
     M.dumpModelProfiles(profilerscript) # sequential launch of aveScan

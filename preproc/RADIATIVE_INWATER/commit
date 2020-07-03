@@ -1,0 +1,14 @@
+#! /bin/bash
+
+
+KEY=/home/elena/.ssh/home2galileo-key   #home computer
+
+LOGIN=eterzic0@login.galileo.cineca.it
+
+HERE=/home/elena/eclipse-workspace/ogstm/preproc/RADIATIVE_INWATER/
+
+
+rsync -v -t -e "ssh -i $KEY " $HERE/*.py $LOGIN:/galileo/home/userexternal/eterzic0/CODE/ogstm/preproc/RADIATIVE_INWATER/
+
+
+

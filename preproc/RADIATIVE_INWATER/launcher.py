@@ -12,6 +12,7 @@ import pprint, pickle
 from ancillary import *
 from configuration import *
 
+from commons.layer import Layer
 from instruments.matchup_manager import Matchup_Manager
 
 

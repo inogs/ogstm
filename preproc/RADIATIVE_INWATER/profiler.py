@@ -9,6 +9,7 @@ from configuration import *
 
 #export MASKFILE=$PWD/meshmask.nc
 
+ALL_PROFILES = optbio_float.FloatSelector(None, TI, Rectangle(-6,36,30,46))
 for FLOAT in ALL_PROFILES:
 	FLOAT.time += timedelta(hours=24./360.*FLOAT.lon)  # Change from GMT to local time
 

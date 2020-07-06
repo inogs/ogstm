@@ -82,7 +82,7 @@ ip_start_l, ip_end_l = worksplit(ip_start,ip_end)
 # Each processor (worker) loops from ip_start_l to ip_end_l (+1 for python reasons...)
 func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
-M = Matchup_Manager(ALL_PROFILES,TL,BASEDIR)
+M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
 for ip in range(ip_start_l,ip_end_l):
 

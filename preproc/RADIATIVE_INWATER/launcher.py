@@ -7,6 +7,7 @@
 from __future__ import print_function, division
 import sys, numpy as np
 from mpi4py import MPI
+import os
 import pprint, pickle
 import subprocess
 

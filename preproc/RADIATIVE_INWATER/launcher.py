@@ -137,7 +137,7 @@ for ip in range(ip_start_l,ip_end_l):
 	'''
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)
 	
-	NAP  = NAP_calc(PresCHL, 0.)
+	NAP  = NAP_calc( PresCHL, 0.)
 	CDOM = CDOM_calc(PresCHL, 0.)#10
 	
 	file_cols = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4, CDOM, NAP)).T

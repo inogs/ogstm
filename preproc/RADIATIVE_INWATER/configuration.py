@@ -16,7 +16,7 @@ INPUTDIR  = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/AVEDATA/'
 BASEDIR   = '/gpfs/scratch/userexternal/eterzic0/OASIM_HF_INWATER/PROFILATORE/'
 
 START_DATE = '20120101-00:00:00'
-END___DATE = '20180101-00:00:00'
+END___DATE = '20171231-00:00:00'
 
 TI    = TimeInterval(START_DATE, END___DATE, '%Y%m%d-%H:%M:%S')
 TL    = TimeList.fromfilenames(TI, INPUTDIR,"ave*.nc",filtervar="Ed_400")

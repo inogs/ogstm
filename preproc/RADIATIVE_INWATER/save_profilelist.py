@@ -1,5 +1,7 @@
 #!/bin/env python
 
+''' WARNING !!! Before you run this code make sure you load the env.sh !!! '''
+
 ''' Save profile and floatlists as .pkl files to facilitate the reading for each simulation '''
 
 from __future__ import print_function

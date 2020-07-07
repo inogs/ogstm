@@ -32,7 +32,7 @@ for p in Profilelist_aux:
 	p.time += timedelta(hours=24./360.* p.lon)   # Adjust time from UTC to local!
 	if not TI.contains(p.time): ctime +=1 ; continue
 	if not ( int(p.time.strftime('%H'))>10 and int(p.time.strftime('%H'))<14 ): ctint +=1; continue
-	if not findVars(p.available_params, allparams=[' CHLA', 'IRR_380', 'IRR_412', 'IRR_490']): cvars +=1; continue
+	if not findVars(p.available_params.split(' ')[1:], allvars=['CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'TEMP']): cvars +=1; continue
 	Profilelist.append(p)
 
 print('Counters: ', ctime, ctint, cvars)

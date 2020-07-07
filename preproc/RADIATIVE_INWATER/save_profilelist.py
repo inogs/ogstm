@@ -22,16 +22,25 @@ varname=var_conversions.SUPERFLOAT_VARS[variable]
 
 Profilelist_aux=optbio_float.FloatSelector(varname, TI ,OGS.med)   # len is no. of profiles
 
+print('Length of the initial profile list = ', len(Profilelist_aux))
+
 Profilelist = []
+
+ctime, ctint, cvars = 0, 0, 0
 
 for p in Profilelist_aux:
 	p.time += timedelta(hours=24./360.* p.lon)   # Adjust time from UTC to local!
-	if not TI.contains(p.time): continue
-	if not ( int(p.time.strftime('%H'))>10 and int(p.time.strftime('%H'))<14 ): continue
-	if not findVars(p.available_params): continue
+	if not TI.contains(p.time): ctime +=1 ; continue
+	if not ( int(p.time.strftime('%H'))>10 and int(p.time.strftime('%H'))<14 ): ctint +=1; continue
+	if not findVars(p.available_params, allparams=[' CHLA', 'IRR_380', 'IRR_412', 'IRR_490']): cvars +=1; continue
 	Profilelist.append(p)
 
+print('Counters: ', ctime, ctint, cvars)
+
+print('Length of the filtered profile list = ', len(Profilelist))
+
 Floatlist=optbio_float.get_wmo_list(Profilelist)               # len is no. of floats
+
 
 output = open('Profilelist.pkl', 'wb')
 

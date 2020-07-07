@@ -16,3 +16,6 @@ module load numpy/1.15.2--python--2.7.12
 
 export PYTHONPATH=/galileo/home/userexternal/eterzic0/BIT_SEA_mod/bit.sea/:$PYTHONPATH
 
+export ONLINE_REPO=/gpfs/scratch/userexternal/eterzic0/FLOAT_BIO/
+export STATIC_REPO=/gpfs/scratch/userexternal/eterzic0/Float_OPT_2019/
+

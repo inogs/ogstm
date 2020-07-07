@@ -7,17 +7,20 @@ from datetime import timedelta
 import pickle 
 
 from basins import V2 as OGS
-from instruments import optbio_float_2019 as optbio_float
+#from instruments import optbio_float_2019 as optbio_float
 from instruments import var_conversions
+from static import superfloat as optbio_float
 
 from ancillary import *
 from configuration import *
 
 
 variable='P_l'  # The variable of reference - in this case Chl, which is present in all profiles
-varname=var_conversions.FLOAT_OPT_VARS_2019[variable]
 
-Profilelist_aux=optbio_float.FloatSelector(varname,TI , OGS.med)   # len is no. of profiles
+#varname=var_conversions.FLOAT_OPT_VARS_2019[variable]
+varname=var_conversions.SUPERFLOAT_VARS[variable]
+
+Profilelist_aux=optbio_float.FloatSelector(varname, TI ,OGS.med)   # len is no. of profiles
 
 Profilelist = []
 

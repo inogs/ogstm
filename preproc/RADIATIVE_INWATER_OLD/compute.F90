@@ -124,6 +124,8 @@ write(*,*) "ihr", ihr
 
 call sfcsolz(year, day_of_year, ihr, solz)
 
+!call sfcsolz_seconds(year, day_of_year, sec, solz)
+
 !call sfcsolz10_14(year, day_of_year, ihr, solz)
 
 write(*,*) 'solz', solz

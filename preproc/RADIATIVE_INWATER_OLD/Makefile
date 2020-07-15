@@ -70,6 +70,7 @@ apps: compute.xx compute2.xx
 
 #compute.xx: compute.F90 IO_BIO_ARGO.f90 sfcsolz10_14.F  libogstm_lib.a
 compute.xx: compute.F90 IO_BIO_ARGO.f90 sfcsolz.F  libogstm_lib.a
+#compute.xx: compute.F90 IO_BIO_ARGO.f90 sfcsolz_seconds.F  libogstm_lib.a
 	$(FC) $(FFLAGS) -I $(OGSTM_INC) -o $@ $^ $(LDFLAGS) 
 compute2.xx: compute.F90 IO_BIO_ARGO.f90 sfcsolz10_14.F libogstm.a
 	$(FC) $(FFLAGS) -I $(INCDIR) -o $@ $^ $(LDFLAGS)

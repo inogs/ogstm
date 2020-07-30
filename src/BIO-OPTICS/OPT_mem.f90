@@ -35,7 +35,7 @@
 ! in-water model
       INTEGER                       :: it_check
       double precision              :: aw(33),bw(33)
-      double precision,allocatable  :: aw1(:,:), bw1(:,:)
+      !double precision,allocatable  :: aw1(:,:), bw1(:,:)
       double precision              :: ac(4,33),bc(4,33)
       double precision              :: acdom(33)
       double precision              :: apoc(33), bpoc(33), bbpoc(33) 

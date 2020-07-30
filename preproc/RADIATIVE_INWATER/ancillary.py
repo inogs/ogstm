@@ -107,7 +107,6 @@ def CDOM_abs(CHL, Scdom, a440):
 	return aCDOM
 
 
-
 def profile_shape(x, y):
 	
 	return x*y/np.max(y)

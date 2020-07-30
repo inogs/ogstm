@@ -5,10 +5,13 @@ import numpy as np
 from scipy import interpolate
 
 from configuration import *
+from save_waterIOP import aw_OASIM, aw_LIT, aw_MASON
 
-'''With this function you correct for the T-S contribution to
+'''
+With this function you correct for the T-S contribution to
 pure water absorption .
-For this we use Sullivan et al. 2006 (AO) '''
+For this we use Sullivan et al. 2006 (AO) 
+'''
 
 mydtype= np.dtype([
           ('wl'         ,      np.int),
@@ -27,21 +30,26 @@ phi_s_a     = INPUT['phi_s_a'] # Salinity parameter for absorption. c stands for
 
 # Now we interpolate Sullivan's phi_T values to our model wavelengths - imported from configuration.py
 
-a_phi_t = interpolate.interp1d(wl_phi, phi_t,   kind='linear', fill_value='extrapolate')(wl)
-a_phi_s = interpolate.interp1d(wl_phi, phi_s_a, kind='linear', fill_value='extrapolate')(wl)
-
-# Initialize an array of ones      
-init = np.ones(len(wl))
-
-# Final array
+a_phi_t = interpolate.interp1d(wavelengths, phi_t,   kind='linear', fill_value='extrapolate')(wl)
+a_phi_s = interpolate.interp1d(wavelengths, phi_s_a, kind='linear', fill_value='extrapolate')(wl)
 
 # We are going to test 2 different methods to estimate aw: Pope and Fry vs. Mason's.
 # Each has a different Tref, where measurements were taken
 
-# OASIM:  Tref = 22 °C +/- 1 °C
-# Mason:  Tref = 23 °C +/-  0.5°C
+Tref_OASIM = Tref_LIT = 22.     # OASIM:  Tref = 22 °C +/- 1 °C
+Tref_MASON = 23.                # Mason:  Tref = 23 °C +/-  0.5°C           
 
-Tref_OASIM = 22.    ; dT_OASIM = T - Tref_OASIM   ; dS = S
-Tref_MASON = 23.    ; dT_MASON = T - Tref_MASON   ; dS = S
+def aw_TS_corr(T, S, model='MASON'):
 
-a_TS_OASIM = a - init*[i*dT_OASIM for i in a_phi_t] + init*[j*dS for j in a_phi_s]
+    aw_TS = np.zeros((a_phi_t.shape[0], T.shape[0]))
+    
+    dT = Tref_MASON - T if model=='MASON' else Tref_OASIM - T
+    dS = S
+
+    aw = aw_MASON if model=='MASON' else aw_OASIM #if model=='OASIM'
+
+    for depth in range(len(T)):
+
+        aw_TS[:,depth] = aw - a_phi_t*dT[depth] + a_phi_s*dS[depth]
+
+    return aw_TS

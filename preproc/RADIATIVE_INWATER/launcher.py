@@ -93,6 +93,7 @@ for ip in range(ip_start_l,ip_end_l):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
+
 	p = Profilelist[ip]
 	profile_ID = p.ID()
 	
@@ -110,7 +111,6 @@ for ip in range(ip_start_l,ip_end_l):
 		print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
 		continue
  
-
 	'''
 	phase 2. Read BGC-ARGO profiles
 	'''

@@ -118,6 +118,8 @@
        integer :: NLEVp1,s,idVAR, counter
 
        integer :: thestart(2), thecount(2)
+       integer :: thestart1(1), thecount1(1)
+
 
         NLEVp1 = NLEV + 1
 
@@ -151,10 +153,11 @@
         s = nf90_put_var(nc, idVAR ,  M3p1, thestart, thecount) 
          call handle_err1(s,counter,fileNetCDF)
 
-        thecount = (/1, 1/)
+        thestart1 = (/1/)
+        thecount1 = (/1/)
 
         s = nf90_inq_varid (nc, trim(VAR4), idVAR) ; call handle_err1(s,fileNetCDF)
-        s = nf90_put_var(nc, idVAR ,  M4, thestart, thecount) 
+        s = nf90_put_var(nc, idVAR ,  M4, thestart1, thecount1) 
          call handle_err1(s,counter,fileNetCDF)
 
 

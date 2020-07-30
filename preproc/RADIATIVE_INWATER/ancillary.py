@@ -5,6 +5,17 @@ import numpy as np
 
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
 
+def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
+
+	file  = open(fname, 'w')
+	for idepth in range(aw.shape[0]):
+		for iwl in range(aw.shape[1]):
+			file.write('%5d%15.4f%10.4f\n'%(wl[iwl], aw[idepth, iwl], bw[idepth, iwl]))
+	file.close()
+
+	return 
+
+
 def findVars(Varlist, allvars=['CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'TEMP']):
 	if len(Varlist)==0: return False    
 	
@@ -108,5 +119,4 @@ def CDOM_abs(CHL, Scdom, a440):
 
 
 def profile_shape(x, y):
-	
 	return x*y/np.max(y)

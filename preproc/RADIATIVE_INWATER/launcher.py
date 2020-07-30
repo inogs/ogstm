@@ -12,6 +12,8 @@ import pprint, pickle
 import subprocess
 
 from ancillary import *
+from aw_TS_corr import aw_TS_corr
+from bw_TS_corr import bw_TS_corr
 from configuration import *
 
 from commons.layer import Layer
@@ -146,6 +148,12 @@ for ip in range(ip_start_l,ip_end_l):
 	phase 3. Calculate and save IOPs  
 	'''
 
+	# Pure water
+	awTS = aw_TS_corr(TEMP, SALI, model='MASON')  # Then we will change it to a variable
+	bwTS = bw_TS_corr(TEMP, SALI)
+
+	write_abw25(wl, awTS, bwTS)   # Save T-S-corrected water IOPs
+
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)
     
     aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
@@ -170,7 +178,7 @@ for ip in range(ip_start_l,ip_end_l):
 	'''  
 	phase 4 : Run Fortran code
 	'''
-    command='./compute_IOP.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
+    command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
 
 	print ('I am %d profile %d - %s ' %(whoAmI, ip,command ))
 	subprocess.call(command, shell=True)

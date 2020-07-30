@@ -91,13 +91,6 @@ def PFT_MED(CHL):
 	PSC_3 = PICO   * CHL
 	return PFT_1, PFT_2, PFT_3, PFT_4, PFT_5, PFT_6, PSC_1, PSC_2, PSC_3
 	
-def NAP_calc(PresCHL, fnap):
-	NAP = fnap*np.ones(PresCHL.shape)
-	return NAP
-
-def CDOM_calc(PresCHL,fcdom):
-	CDOM = fcdom*np.ones(PresCHL.shape)
-	return CDOM
 
 def NAP_abs(CHL, Snap, a443):
 	a_NAP = a443 * np.exp(-Snap * (lam - 443.))
@@ -115,4 +108,6 @@ def CDOM_abs(CHL, Scdom, a440):
 
 
 
-
+def profile_shape(x, y):
+	
+	return x*y/np.max(y)

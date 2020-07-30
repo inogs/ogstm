@@ -112,18 +112,25 @@ for ip in range(ip_start_l,ip_end_l):
 	'''
 	phase 2. Read BGC-ARGO profiles
 	'''
-	PresCHL, CHLz,    Qc = p.read('CHL')
-	Pres380, Ed_380,  Qc = p.read('IRR_380')
-	Pres412, Ed_412,  Qc = p.read('IRR_412')
-	Pres490, Ed_490,  Qc = p.read('IRR_490')
-	PresPAR, PAR,     Qc = p.read('PAR')
+	PresCHL,   CHLz,    Qc = p.read('CHLA')
+	Pres380,   Ed_380,  Qc = p.read('IRR_380')
+	Pres412,   Ed_412,  Qc = p.read('IRR_412')
+	Pres490,   Ed_490,  Qc = p.read('IRR_490')
+	PresPAR,   PAR,     Qc = p.read('PAR')
+	PresBBP,   BBP700,  Qc = p.read('BBP700')
+	PresCDOM,  CDOM,    Qc = p.read('CDOM')
+	PresT,     TEMP,    Qc = p.read('TEMP')
+	PresS,     SALI,    Qc = p.read('SALI')
+	PresN,     NIT,     Qc = p.read('NITRATE')
+	PresO,     DOXY,    Qc = p.read('DOXY')
+
 	Lon = p.lon
 	Lat = p.lat
 	timestr = p.time.strftime("%Y%m%d-%H:%M:%S")
 	nLevels = len(PresCHL)
 	init_rows = str(timestr) + '\n' + str(Lat) + '\n' + str(nLevels)
 	
-	if PresCHL[0] == 0.:
+	if PresCHL[0] == 0. or PresCDOM[0] == 0. or PresBBP[0] == 0.:
 		print('I am %d profile %d - First depth equals 0' %(whoAmI, ip))
 		continue
 	
@@ -131,29 +138,40 @@ for ip in range(ip_start_l,ip_end_l):
 		print('I am %d profile %d - BGC-Argo low irradiance values - cloud coverage'  %(whoAmI, ip))
 		continue
 	
-	if PresCHL.max() < 15.:
+	if PresCHL.max() < np.min([Pres380.max(), Pres412.max(), Pres490.max()]):
 		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
 		continue
 	
 	'''
 	phase 3. Calculate and save IOPs  
 	'''
-	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)
-	
-	NAP  = NAP_calc( PresCHL, 0.)
-	CDOM = CDOM_calc(PresCHL, 0.)#10
-	
-	file_cols = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4, CDOM, NAP)).T
-	np.savetxt(profile_ID + '_IOP.txt', file_cols, header = init_rows, delimiter='\t', comments='')
-	
-	floatname = profile_ID + '.nc'
-	
-	np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
+
+	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)
+    
+    aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
+    aCDOM = CDOM_abs(CHLz,   0.015, 0.05)
+    
+    file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
+    np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')
+    
+    Pres = PresCHL.reshape(PresCHL.shape[0], 1)
+    
+    file_cols_CDOM = np.hstack((Pres, aCDOM))
+    np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
+    
+    file_cols_NAP = np.hstack((Pres, aNAP))
+    np.savetxt(profile_ID + '_NAP.txt',   file_cols_NAP, delimiter='\t', comments='' )
+    
+    floatname = profile_ID + '.nc'
+    
+    np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
+    
 	
 	'''  
 	phase 4 : Run Fortran code
 	'''
-	command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_IOP.txt ' + str(floatname) + ' >> log'
+    command='./compute_IOP.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
+
 	print ('I am %d profile %d - %s ' %(whoAmI, ip,command ))
 	subprocess.call(command, shell=True)
 	
@@ -179,9 +197,13 @@ for ip in range(ip_start_l,ip_end_l):
 	movefiles = 'mv ' + str(floatname) + ' NCOUT/'
 	os.system(movefiles)
 	
-	
-	''' Move the .txt files you don't need any more '''
-	txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt TXT_FILES/' 
-	txtfiles2 = 'mv ' + profile_ID + '_IOP.txt TXT_FILES/' 
-	os.system(txtfiles1)
-	os.system(txtfiles2)
+    
+    ''' Move the .txt files you don't need any more '''
+    txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt' + ' TXT_FILES/' 
+    txtfiles2 = 'mv ' + profile_ID + '_PFT.txt'   + ' TXT_FILES/' 
+    txtfiles3 = 'mv ' + profile_ID + '_NAP.txt'   + ' TXT_FILES/' 
+    txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'  + ' TXT_FILES/'
+    os.system(txtfiles1)
+    os.system(txtfiles2)
+    os.system(txtfiles3)
+    os.system(txtfiles4)

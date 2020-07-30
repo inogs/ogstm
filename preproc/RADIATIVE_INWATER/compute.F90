@@ -7,7 +7,7 @@ USE TIME_MANAGER
 IMPLICIT NONE
 
 integer            :: uni1,uni2, uni3, uni4
-CHARACTER(len=128) :: INPUT_OASIM_FILE, INPUT_PFT_FILE, INPUT_CDOM_FILE, INPUT_NAP_FILE
+CHARACTER(len=128) :: INPUT_OASIM_FILE, INPUT_WATER_FILE, INPUT_PFT_FILE, INPUT_CDOM_FILE, INPUT_NAP_FILE
 CHARACTER(len=128) :: OUTPUT_FILE
 CHARACTER(len=32)  :: time_string
 character(LEN=17)  ::  datestring
@@ -39,18 +39,22 @@ jpj  = 1
 uni1 = 20
 uni2 = 21
 
+
 call getarg(1, INPUT_OASIM_FILE)
 open(uni1, file= INPUT_OASIM_FILE, status="old",action="read")
 
 do i=1,nlt
        read(uni1,*) Ed_OASIM(i), Es_OASIM(i)
-       write(*,*)  Ed_OASIM(i), Es_OASIM(i)
+       write(*,*)   Ed_OASIM(i), Es_OASIM(i)
 enddo
 
 close (uni1)
 
+call getarg(2, INPUT_WATER_FILE)
 
-call getarg(2, INPUT_PFT_FILE)
+write (*,*) " INPUT_WATER_FILE= ", INPUT_WATER_FILE
+
+call getarg(3, INPUT_PFT_FILE)
 
 write (*,*) " INPUT_PFT_FILE= ", INPUT_PFT_FILE
 
@@ -76,7 +80,7 @@ allocate(CHLz(jpk,nchl),CDOMz(jpk, nlt),NAPz(jpk, nlt))
 
 do i =1,jpk
        read(uni2,*) depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4)
-       write(*,*)  depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4)
+       write(*,*)   depthz(i),CHLz(i,1), CHLz(i,2), CHLz(i,3), CHLz(i,4)
 enddo
 
 if ( depthz(1) > 0.0D0) then
@@ -94,7 +98,7 @@ endif
 
 close (uni2)
 
-call getarg(3, INPUT_CDOM_FILE)
+call getarg(4, INPUT_CDOM_FILE)
 write (*,*) " INPUT_CDOM_FILE= ", INPUT_CDOM_FILE
 open(uni3, file= INPUT_CDOM_FILE, status="old",action="read")
 do i =1,jpk
@@ -104,7 +108,7 @@ enddo
 close (uni3)
 
 
-call getarg(4, INPUT_NAP_FILE)
+call getarg(5, INPUT_NAP_FILE)
 write (*,*) " INPUT_NAP_FILE= ", INPUT_NAP_FILE
 open(uni4, file= INPUT_NAP_FILE, status="old",action="read")
 do i =1,jpk
@@ -114,7 +118,7 @@ enddo
 close (uni4)
 
 
-call getarg(5, OUTPUT_FILE)
+call getarg(6, OUTPUT_FILE)
 
 write (*,*) " OUTPUT_FILE= ", OUTPUT_FILE
 
@@ -167,7 +171,7 @@ do i=1,33 ! PAR RANGE
      write(*,*) lam(i), Ed_0m(i,1,1),Es_0m(i,1,1)
 enddo
 
-call edeseu_IOP(MODE,V_POSITION,bottom,e3t(:,1,1),Ed_0m(:,1,1),Es_0m(:,1,1),CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eu_0m(:),PARz)
+call edeseu(MODE,V_POSITION,INPUT_WATER_FILE,bottom,e3t(:,1,1),Ed_0m(:,1,1),Es_0m(:,1,1),CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eu_0m(:),PARz)
 
 do i=1,33 ! PAR RANGE
      write(*,*) lam(i), Edz(1,i),Esz(1,i),Euz(1,i), Eu_0m(i)

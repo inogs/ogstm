@@ -1,4 +1,4 @@
-      subroutine edeseu_IOP(MODE,V_POSITION,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eutop,PARz)
+      subroutine edeseu(MODE,V_POSITION,INPUT_WATER_FILE,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eutop,PARz)
       USE myalloc
       USE mpi
       USE OPT_mem
@@ -15,7 +15,7 @@
  
       integer :: n, nl, jk 
       integer, INTENT(IN)           :: MODE
-      character(*), INTENT(IN)      :: V_POSITION
+      character(*), INTENT(IN)      :: V_POSITION, INPUT_WATER_FILE
       integer, INTENT(IN)           :: bottom
       double precision, INTENT(IN)  :: rmud
       double precision, INTENT(IN)  :: dzRT(jpk)
@@ -43,7 +43,7 @@
       allocate(bw1(bottom, nlt))
 
       !cfle = cdir//cabw
-      open(4,file='bcs/abw25.dat',status='old',form='formatted')
+      open(4,file=INPUT_WATER_FILE,status='old',form='formatted')
       !do i = 1,5
       ! read(4,'(a80)')title
       ! if(lwp)  write(6,'(a80)')title

@@ -30,6 +30,7 @@
       double precision :: Etop
       double precision :: Plte
       double precision :: actot(jpk,nlt),bctot(jpk,nlt),bbctot(jpk,nlt) 
+      double precision,allocatable  :: aw1(:,:), bw1(:,:)
       double precision :: anap(nlt)
       double precision :: a(jpk,nlt), bt(jpk,nlt), bb(jpk,nlt) 
       double precision :: bbc(4)

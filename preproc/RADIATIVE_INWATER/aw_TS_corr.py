@@ -36,8 +36,9 @@ a_phi_s = interpolate.interp1d(wavelengths, phi_s_a, kind='linear', fill_value='
 # We are going to test 2 different methods to estimate aw: Pope and Fry vs. Mason's.
 # Each has a different Tref, where measurements were taken
 
-Tref_OASIM = Tref_LIT = 22.     # OASIM:  Tref = 22 °C +/- 1 °C
-Tref_MASON = 23.                # Mason:  Tref = 23 °C +/-  0.5°C           
+Tref_OASIM = 22.     # OASIM:  Tref = 22 deg C+/- 1 
+Tref_LIT   = 22.     # Lite.:  Tref = 22 deg C+/- 1 
+Tref_MASON = 23.     # Mason:  Tref = 23 deg C +/-  0.5 deg C         
 
 def aw_TS_corr(T, S, model='MASON'):
 
@@ -46,7 +47,7 @@ def aw_TS_corr(T, S, model='MASON'):
     dT = Tref_MASON - T if model=='MASON' else Tref_OASIM - T
     dS = S
 
-    aw = aw_MASON if model=='MASON' else aw_OASIM #if model=='OASIM'
+    aw = aw_MASON if model=='MASON' else aw_OASIM 
 
     for depth in range(len(T)):
 

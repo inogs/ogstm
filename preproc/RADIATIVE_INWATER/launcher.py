@@ -155,30 +155,30 @@ for ip in range(ip_start_l,ip_end_l):
 	write_abw25(wl, awTS, bwTS)   # Save T-S-corrected water IOPs
 
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)
-    
-    aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
-    aCDOM = CDOM_abs(CHLz,   0.015, 0.05)
-    
-    file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
-    np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')
-    
-    Pres = PresCHL.reshape(PresCHL.shape[0], 1)
-    
-    file_cols_CDOM = np.hstack((Pres, aCDOM))
-    np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
-    
-    file_cols_NAP = np.hstack((Pres, aNAP))
-    np.savetxt(profile_ID + '_NAP.txt',   file_cols_NAP, delimiter='\t', comments='' )
-    
-    floatname = profile_ID + '.nc'
-    
-    np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
-    
+	
+	aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
+	aCDOM = CDOM_abs(CHLz,   0.015, 0.05)
+	
+	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
+	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')
+	
+	Pres = PresCHL.reshape(PresCHL.shape[0], 1)
+	
+	file_cols_CDOM = np.hstack((Pres, aCDOM))
+	np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
+	
+	file_cols_NAP = np.hstack((Pres, aNAP))
+	np.savetxt(profile_ID + '_NAP.txt',   file_cols_NAP, delimiter='\t', comments='' )
+	
+	floatname = profile_ID + '.nc'
+	
+	np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
+	
 	
 	'''  
 	phase 4 : Run Fortran code
 	'''
-    command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
+	command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
 
 	print ('I am %d profile %d - %s ' %(whoAmI, ip,command ))
 	subprocess.call(command, shell=True)
@@ -205,13 +205,13 @@ for ip in range(ip_start_l,ip_end_l):
 	movefiles = 'mv ' + str(floatname) + ' NCOUT/'
 	os.system(movefiles)
 	
-    
-    ''' Move the .txt files you don't need any more '''
-    txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt' + ' TXT_FILES/' 
-    txtfiles2 = 'mv ' + profile_ID + '_PFT.txt'   + ' TXT_FILES/' 
-    txtfiles3 = 'mv ' + profile_ID + '_NAP.txt'   + ' TXT_FILES/' 
-    txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'  + ' TXT_FILES/'
-    os.system(txtfiles1)
-    os.system(txtfiles2)
-    os.system(txtfiles3)
-    os.system(txtfiles4)
+	
+	''' Move the .txt files you don't need any more '''
+	txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt' + ' TXT_FILES/' 
+	txtfiles2 = 'mv ' + profile_ID + '_PFT.txt'   + ' TXT_FILES/' 
+	txtfiles3 = 'mv ' + profile_ID + '_NAP.txt'   + ' TXT_FILES/' 
+	txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'  + ' TXT_FILES/'
+	os.system(txtfiles1)
+	os.system(txtfiles2)
+	os.system(txtfiles3)
+	os.system(txtfiles4)

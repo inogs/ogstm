@@ -57,7 +57,7 @@ def worksplit(istart,iend):
 pkl_file = open('Profilelist.pkl', 'rb')
 
 Profilelist = pickle.load(pkl_file)
-Floatlist = pickle.load(pkl_file)
+Floatlist   = pickle.load(pkl_file)
 
 pkl_file.close()
 
@@ -152,7 +152,7 @@ for ip in range(ip_start_l,ip_end_l):
 	awTS = aw_TS_corr(TEMP, SALI, model='MASON')  # Then we will change it to a variable
 	bwTS = bw_TS_corr(TEMP, SALI)
 
-	write_abw25(wl, awTS, bwTS)   # Save T-S-corrected water IOPs
+	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)
 	
@@ -178,7 +178,7 @@ for ip in range(ip_start_l,ip_end_l):
 	'''  
 	phase 4 : Run Fortran code
 	'''
-	command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
+	command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_water_IOP.dat ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
 
 	print ('I am %d profile %d - %s ' %(whoAmI, ip,command ))
 	subprocess.call(command, shell=True)

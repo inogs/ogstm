@@ -134,7 +134,7 @@ for ip in range(ip_start_l,ip_end_l):
 	nLevels = len(PresCHL)
 	init_rows = str(timestr) + '\n' + str(Lat) +  '\n' + str(Lon) + '\n' + str(nLevels)
 	
-	if PresCHL[0] == 0. or PresCDOM[0] == 0. or PresBBP[0] == 0.:
+	if PresCHL[0] == 0. :#or PresCDOM[0] == 0. or PresBBP[0] == 0.:
 		print('I am %d profile %d - First depth equals 0' %(whoAmI, ip))
 		continue
 	

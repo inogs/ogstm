@@ -31,8 +31,8 @@
            rsza = acos(cosunz/rad) ! average angle in radians
            sza = rsza*rad ! conversion in degrees
 
-           solz(jj,ji) = min(sza,90.0d0)
-           solz(jj,ji) = max(solz(jj,ji),0.0d0)
+           solz(jj,ji) = sza !min(sza,90.0d0)
+           !solz(jj,ji) = max(solz(jj,ji),0.0d0)
 
        enddo
       enddo

@@ -47,7 +47,7 @@ MODULES := build/stringop.o build/calendar.o build/bc_data.o build/parameter.o b
 # Compilers
 #
 include $(OGSTM_CMP)/$(COMPILERS).inc
-FFLAGS +=  -no-wrap-margin
+FFLAGS +=  -no-wrap-margin -DIGNORE_lidata
 
 # Default
 #

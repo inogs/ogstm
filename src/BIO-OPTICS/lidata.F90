@@ -23,7 +23,8 @@
       data cdir /'bcs/'/
       data cacbc,cabw,cacbpoc /'acbc25b.dat','abw25_morel.dat','poc25b.dat'/
       integer    :: i, n, nl,lambda
- 
+#ifndef IGNORE_lidata
+
 !  Water data files
       cfle = cdir//cabw
       open(4,file=cfle,status='old',form='formatted')
@@ -81,5 +82,6 @@
       close(4)
 40    format(i5,3f10.2)
  
+#endif
       return
       end

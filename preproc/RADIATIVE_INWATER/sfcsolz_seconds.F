@@ -81,8 +81,8 @@ c     ylat1 = alat1h
       do ji = 1,jpi
         do jj = 1,jpj
 
-         xlon = 0.0d0         ! this gives us local time, but it shouldn't ...
-c         xlon = glamt(jj,ji) ! this should give us the local time, but it doesn't
+c        xlon = 0.0d0         ! this gives us GMT time
+         xlon = glamt(jj,ji) ! this gives us local time
          rlon = xlon/rad
          cosx = cos(rlon)
          sinx = sin(rlon)

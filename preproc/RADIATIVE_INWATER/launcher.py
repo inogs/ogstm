@@ -207,11 +207,13 @@ for ip in range(ip_start_l,ip_end_l):
 	
 	
 	''' Move the .txt files you don't need any more '''
-	txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt' + ' TXT_FILES/' 
-	txtfiles2 = 'mv ' + profile_ID + '_PFT.txt'   + ' TXT_FILES/' 
-	txtfiles3 = 'mv ' + profile_ID + '_NAP.txt'   + ' TXT_FILES/' 
-	txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'  + ' TXT_FILES/'
+	txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt'     + ' TXT_FILES/' 
+	txtfiles2 = 'mv ' + profile_ID + '_PFT.txt'       + ' TXT_FILES/' 
+	txtfiles3 = 'mv ' + profile_ID + '_NAP.txt'       + ' TXT_FILES/' 
+	txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'      + ' TXT_FILES/'
+	txtfiles5 = 'mv ' + profile_ID + '_water_IOP.dat' + ' TXT_FILES/'
 	os.system(txtfiles1)
 	os.system(txtfiles2)
 	os.system(txtfiles3)
 	os.system(txtfiles4)
+	os.system(txtfiles5)

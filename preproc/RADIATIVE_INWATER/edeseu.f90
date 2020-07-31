@@ -13,7 +13,7 @@
 !  Propagation is done in energy units, tests are done in quanta,
 !  final is quanta for phytoplankton growth.
  
-      integer :: n, nl, jk 
+      integer :: n, nl, jk, lambda 
       integer, INTENT(IN)           :: MODE
       character(*), INTENT(IN)      :: V_POSITION, INPUT_WATER_FILE
       integer, INTENT(IN)           :: bottom
@@ -25,7 +25,7 @@
       double precision, INTENT(OUT) :: Euz(jpk,nlt)
       double precision, INTENT(OUT) :: PARz(jpk,nchl+1)
       double precision, intent(OUT) :: Eutop(nlt)
-      double precision              :: lambda, saw, sbw
+      double precision              :: saw, sbw
 !     Local variables
       double precision :: Etop
       double precision :: Plte
@@ -51,7 +51,7 @@
       do jk = 1, bottom
         do nl = 1,nlt
           read(4,20)lambda,saw,sbw
-          write(*,*)jk, nl, lambda, saw, sbw
+          write(*,*)jk, bottom, nl, nlt, lambda, saw, sbw
           !if (lwp) write(6,20)lambda,saw,sbw
           lam(nl)     = lambda
           aw1(jk,nl)  = saw

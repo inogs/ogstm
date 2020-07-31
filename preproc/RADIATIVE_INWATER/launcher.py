@@ -153,6 +153,9 @@ for ip in range(320,321):
 
 	# Pure water
 	awTS = aw_TS_corr(TEMP, SALI, model='MASON')  # Then we will change it to a variable
+
+	print('awTS shape = ', awTS.shape)
+
 	bwTS = bw_TS_corr(TEMP, SALI)
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs

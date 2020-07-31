@@ -68,7 +68,11 @@ allocate(glamt(jpj,jpi),gphit(jpj,jpi))
 
 read(uni2,*) gphit(jpj,jpi)
 
+read(uni2,*) glamt(jpj,jpi)
+
 write(*,*) 'latitude ', gphit(jpj,jpi)
+
+write(*,*) 'longitude ', glamt(jpj, jpi)
 
 read(uni2,*) jpk
 

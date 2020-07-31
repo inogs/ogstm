@@ -33,7 +33,7 @@
            rsza = acos(cosunz/rad) ! average angle in radians
            sza = rsza*rad ! conversion in degrees
 
-           solz(jj,ji) = min(sza, 90.0d0)       ! to bring the solution into the 1st quadrant
+           solz(jj,ji) = min(sza, 90.0d0)       ! ??????????
            solz(jj,ji) = max(solz(jj,ji),0.0d0) ! night time 
 
            write(*,*) 'solz', solz(jj,ji), 'sunz', sunz, 'cosunz', cosunz, 'sza', sza, 'rsza', rsza
@@ -83,8 +83,8 @@ c     ylat1 = alat1h
       do ji = 1,jpi
         do jj = 1,jpj
 
-         xlon = 0.0d0
-C        xlon = glamt(jj,ji) ! commenting this line is equivalnet to  GMT_ALL
+c         xlon = 0.0d0
+         xlon = glamt(jj,ji) ! this is gives us the local time!!!
          rlon = xlon/rad
          cosx = cos(rlon)
          sinx = sin(rlon)

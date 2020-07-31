@@ -27,11 +27,11 @@
         do jj =1,jpj
 
            call sunmod(rad,iday,iyr,local_time,jj,ji,sunz,rs)
-           cosunz = cos(sunz/rad)*rad
-           rsza = acos(cosunz/rad) ! average angle in radians
+           cosunz = cos(sunz/rad)!*rad
+           rsza = acos(cosunz)!/rad) ! average angle in radians
            sza = rsza*rad ! conversion in degrees
 
-           write(*,*) 'sunz', sunz, 'cosunz', cosunz, 'sza', sza
+           write(*,*) 'sunz', sunz, 'cosunz', cosunz, 'sza', sza, 'rsza', rsza
 
            solz(jj,ji) = min(180.0d0 - sza, sza) ! to bring the solution into the 1st quadrant
            solz(jj,ji) = max(solz(jj,ji),0.0d0) ! night time 

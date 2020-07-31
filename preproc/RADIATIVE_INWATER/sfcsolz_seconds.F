@@ -27,14 +27,14 @@
         do jj =1,jpj
 
            call sunmod(rad,iday,iyr,local_time,jj,ji,sunz,rs)
-           cosunz = cos(sunz/rad)!*rad
-           rsza = acos(cosunz)!/rad) ! average angle in radians
+           cosunz = cos(sunz/rad)
+           rsza = acos(cosunz)! average angle in radians
            sza = rsza*rad ! conversion in degrees
 
-           solz(jj,ji) = min(sza, 90.0d0)       ! ??????????
-           solz(jj,ji) = max(solz(jj,ji),0.0d0) ! night time 
+           solz(jj,ji) = min(sza, 90.0d0)       ! 90 is night
+           solz(jj,ji) = max(solz(jj,ji),0.0d0) ! can't be lower than 0
 
-           write(*,*) 'iday', iday, 'iyr', iyr, 'local time', local_time, 'solz', solz(jj,ji), 'sunz', sunz, 'cosunz', cosunz, 'sza', sza, 'rsza', rsza
+           !write(*,*) 'iday', iday, 'iyr', iyr, 'local time', local_time, 'solz', solz(jj,ji), 'sunz', sunz, 'cosunz', cosunz, 'sza', sza, 'rsza', rsza
 
        enddo
       enddo

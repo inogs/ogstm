@@ -147,7 +147,7 @@ for ip in range(320,321):
 		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
 		continue
 
-	if PresCHL.shape[0] < np.max(PresT.shape[0], PresS.shape[0]):
+	if PresCHL.shape[0] < np.max([PresT.shape[0], PresS.shape[0]]):
 		print('I am %d profile %d - Cannot interpolate to CHL depth quotes' %(whoAmI, ip))
 		continue
 

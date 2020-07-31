@@ -146,17 +146,22 @@ for ip in range(320,321):
 	if PresCHL.max() < np.min([Pres380.max(), Pres412.max(), Pres490.max()]):
 		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
 		continue
+
+	if PresCHL.shape[0] < np.max(PresT.shape[0], PresS.shape[0]):
+		print('I am %d profile %d - Cannot interpolate to CHL depth quotes' %(whoAmI, ip))
+		continue
+
+	# Interpolate TEMP and SALI to CHL depth quotes
+	TEMP_int = np.interp(PresCHL, PresT, TEMP)
+	SALI_int = np.interp(PresCHL, PresS, SALI)
 	
 	'''
 	phase 3. Calculate and save IOPs  
 	'''
 
 	# Pure water
-	awTS = aw_TS_corr(TEMP, SALI, model='MASON')  # Then we will change it to a variable
-
-	print('awTS shape = ', awTS.shape)
-
-	bwTS = bw_TS_corr(TEMP, SALI)
+	awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # Then we will change it to a variable
+	bwTS = bw_TS_corr(TEMP_int, SALI_int)
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 

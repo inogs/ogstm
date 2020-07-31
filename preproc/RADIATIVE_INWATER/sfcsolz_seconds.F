@@ -34,7 +34,7 @@
            solz(jj,ji) = min(sza, 90.0d0)       ! ??????????
            solz(jj,ji) = max(solz(jj,ji),0.0d0) ! night time 
 
-           write(*,*) 'rad', rad, 'solz', solz(jj,ji), 'sunz', sunz, 'cosunz', cosunz, 'sza', sza, 'rsza', rsza
+           write(*,*) 'iday', iday, 'iyr', iyr, 'local time', local_time, 'solz', solz(jj,ji), 'sunz', sunz, 'cosunz', cosunz, 'sza', sza, 'rsza', rsza
 
        enddo
       enddo
@@ -81,7 +81,7 @@ c     ylat1 = alat1h
       do ji = 1,jpi
         do jj = 1,jpj
 
-c        xlon = 0.0d0         ! this gives us GMT time
+c        xlon = 0.0d0        ! this gives us GMT time
          xlon = glamt(jj,ji) ! this gives us local time
          rlon = xlon/rad
          cosx = cos(rlon)

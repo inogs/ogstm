@@ -22,6 +22,7 @@ double precision :: dT
 double precision :: solz(1,1), rmud(1,1)
 double precision :: Ed_OASIM(nlt),Es_OASIM(nlt)
 double precision :: sec
+double precision :: local_time
 double precision, allocatable :: depthz(:)
 double precision, allocatable :: Edz(:,:),Esz(:,:),Euz(:,:),PARz(:,:)
 double precision, allocatable :: CHLz(:,:),CDOMz(:,:),NAPz(:,:)
@@ -142,17 +143,17 @@ call read_date_string(datestring, year, month, day, sec)
 
 call tau2julianday(datestringToTAU(datestring), dT, day_of_year)
 
+!ihr  =  int(sec/3600.d0) !from 0 to 23
 
-ihr  =  int(sec/3600.d0) !from 0 to 23
-
+local_time = sec/3600.d0
 
 write(*,*) "year", year
 write(*,*) "day_of_year", day_of_year
-write(*,*) "ihr", ihr
+write(*,*) "local_time", local_time
 
 !call sfcsolz(year, day_of_year, ihr, solz)
 
-call sfcsolz_seconds(year, day_of_year, ihr, solz)
+call sfcsolz_seconds(year, day_of_year, local_time, solz)   
 
 !call sfcsolz10_14(year, day_of_year, ihr, solz)
 

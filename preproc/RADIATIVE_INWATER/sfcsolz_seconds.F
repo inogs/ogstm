@@ -31,8 +31,10 @@
            rsza = acos(cosunz/rad) ! average angle in radians
            sza = rsza*rad ! conversion in degrees
 
-           solz(jj,ji) = sza !min(sza,90.0d0)
-           !solz(jj,ji) = max(solz(jj,ji),0.0d0)
+           write(*,*) 'sunz', sunz, 'cosunz', cosunz, 'sza', sza
+
+           solz(jj,ji) = min(180.0d0 - sza, sza) ! to bring the solution into the 1st quadrant
+           solz(jj,ji) = max(solz(jj,ji),0.0d0) ! night time 
 
        enddo
       enddo

@@ -8,9 +8,9 @@ import numpy as np
 def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
 
 	file  = open(fname, 'w')
-	for idepth in range(aw.shape[0]):
-		for iwl in range(aw.shape[1]):
-			file.write('%5d%15.4f%10.4f\n'%(wl[iwl], aw[idepth, iwl], bw[idepth, iwl]))
+	for idepth in range(aw.shape[1]):
+		for iwl in range(aw.shape[0]):
+			file.write('%5d%15.4f%10.4f\n'%(wl[iwl], aw[iwl, idepth], bw[iwl, idepth]))
 	file.close()
 
 	return 

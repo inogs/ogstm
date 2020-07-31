@@ -89,13 +89,16 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-for ip in range(ip_start_l,ip_end_l):
+#for ip in range(ip_start_l,ip_end_l):
+for ip in range(320,321):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
 
 	p = Profilelist[ip]
 	profile_ID = p.ID()
+
+	print(profile_ID)
 	
 	List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]
 	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]
@@ -123,8 +126,8 @@ for ip in range(ip_start_l,ip_end_l):
 	PresCDOM,  CDOM,    Qc = p.read('CDOM')
 	PresT,     TEMP,    Qc = p.read('TEMP')
 	PresS,     SALI,    Qc = p.read('SALI')
-	PresN,     NIT,     Qc = p.read('NITRATE')
-	PresO,     DOXY,    Qc = p.read('DOXY')
+	#PresN,     NIT,     Qc = p.read('NITRATE')
+	#PresO,     DOXY,    Qc = p.read('DOXY')
 
 	Lon = p.lon
 	Lat = p.lat

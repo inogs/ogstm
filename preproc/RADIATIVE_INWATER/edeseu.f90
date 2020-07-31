@@ -51,6 +51,7 @@
       do jk = 1, bottom
         do nl = 1,nlt
           read(4,20)lambda,saw,sbw
+          write(*,*)jk, nl, lambda, saw, sbw
           !if (lwp) write(6,20)lambda,saw,sbw
           lam(nl)     = lambda
           aw1(jk,nl)  = saw

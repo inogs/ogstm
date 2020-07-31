@@ -165,10 +165,10 @@ for ip in range(ip_start_l,ip_end_l):
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
-	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0.40, 0.30, 0.25, 0.05)
+	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)#0.40, 0.30, 0.25, 0.05)
 	
-	aNAP  = NAP_abs( CHLz,   0.0129, 0.00862)
-	aCDOM = CDOM_abs(CHLz,   0.015, 0.05)
+	aNAP  = NAP_abs( CHLz,   0., 0.)#0.0129, 0.00862)
+	aCDOM = CDOM_abs(CHLz,   0., 0.)#0.015, 0.05)
 	
 	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
 	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')

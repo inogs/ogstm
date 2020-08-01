@@ -54,3 +54,18 @@ def aw_TS_corr(T, S, model='MASON'):
         aw_TS[:,depth] = aw - a_phi_t*dT[depth] + a_phi_s*dS[depth]
 
     return aw_TS
+
+def aw_NO_corr(T, S, model='MASON'):
+
+    aw_NO = np.zeros((a_phi_t.shape[0], T.shape[0]))
+    
+    dT = Tref_MASON - T if model=='MASON' else Tref_OASIM - T
+    dS = S
+
+    aw = aw_MASON if model=='MASON' else aw_OASIM 
+
+    for depth in range(len(T)):
+
+        aw_NO[:,depth] = aw  #- a_phi_t*dT[depth] + a_phi_s*dS[depth]
+
+    return aw_NO

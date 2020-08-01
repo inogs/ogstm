@@ -7,6 +7,7 @@ from __future__ import print_function, division
 import numpy as np
 
 from configuration import *
+from save_waterIOP import bw
 
 Na  = 6.0221417930e23 # Avogadro's constant
 Kbz = 1.3806503e-23   # Boltzmann constant
@@ -221,3 +222,16 @@ def bw_TS_corr(T, S):
         bw_TS[:,depth] = bsw(wl, T[depth] , S[depth], delta=0.039)
 
     return bw_TS
+
+
+def bw_NO_corr(T, S):
+
+    bw_NO = np.zeros((wl.shape[0], T.shape[0]))
+
+    for depth in range(len(T)):
+
+        bw_NO[:,depth] = bw #bsw(wl, T[depth] , S[depth], delta=0.039)
+
+    return bw_NO
+
+

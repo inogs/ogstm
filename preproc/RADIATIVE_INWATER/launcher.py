@@ -12,8 +12,8 @@ import pprint, pickle
 import subprocess
 
 from ancillary import *
-from aw_TS_corr import aw_TS_corr
-from bw_TS_corr import bw_TS_corr
+from aw_TS_corr import aw_TS_corr, aw_NO_corr
+from bw_TS_corr import bw_TS_corr, bw_NO_corr
 from configuration import *
 
 from commons.layer import Layer
@@ -89,8 +89,8 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-for ip in range(ip_start_l,ip_end_l):
-#for ip in range(320,321):
+#for ip in range(ip_start_l,ip_end_l):
+for ip in range(320,321):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -160,20 +160,23 @@ for ip in range(ip_start_l,ip_end_l):
 	'''
 
 	# Pure water
-	awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # Then we will change it to a variable
-	bwTS = bw_TS_corr(TEMP_int, SALI_int)
+	#awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # Then we will change it to a variable
+	#bwTS = bw_TS_corr(TEMP_int, SALI_int)
+
+	awTS = aw_NO_corr(TEMP_int, SALI_int, model='LIT')
+	bwTS = bw_NO_corr(TEMP_int, SALI_int)
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)
 	
-	aNAP  = aNAP_Case1( CHLz,   0.0178)
+	aNAP  = aNAP_Case1( CHLz,   0.) #0.0178
 	aCDOM = aCDOM_Case1(CHLz,   0.)
 	
 	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
 	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')
 	
-	Pres = PresCHL.reshape(PresCHL.shape[0], 1)
+	Pres = PresCHL#.reshape(PresCHL.shape[0], 1)
 	
 	file_cols_CDOM = np.hstack((Pres, aCDOM))
 	np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )

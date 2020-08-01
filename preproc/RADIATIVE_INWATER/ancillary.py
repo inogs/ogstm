@@ -3,6 +3,8 @@
 import netCDF4 as NC4
 import numpy as np
 
+from configuration import wl
+
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
 
 def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
@@ -62,11 +64,6 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
 
 # Create functions for chl-specific IOP spectra
 
-# Wavelengths of the Radiative Transfer Model
-lam = np.array([  250.0, 325.0, 350.0, 375.0, 400.0, 425.0,   450.0,  475.0, 500.0 , 525.0, 550.0, 575.0, 600.0, 625.0, 650.0, 675.0, 700.0, 725.0, 775.0, 
-				  850.0, 950.0, 1050.0, 1150.0, 1250.0, 1350.0, 1450.0, 1550.0,  1650.0, 1750.0, 1900.0, 2200.0, 2900.0, 3700.0 , 4000.0]) 
-lam = lam.reshape(lam.shape[0],1)
-
 def PFT_calc(CHL, p1, p2, p3, p4):
 	#p1, p2, p3 and p4 are relative contributions (0-1)
 	# of various PFT to total absorption
@@ -104,19 +101,25 @@ def PFT_MED(CHL):
 
 	
 def aNAP_Case1(CHL, Snap):
-	a440  = 0.0136*np.power(CHL,0.615)
-	a_NAP = a440 * np.exp(-Snap * (lam - 440.))
-	#a_NAP = a_NAP.reshape((1, a_NAP.shape[0]))
-	#CHL   = CHL.reshape(CHL.shape[0], 1)
-	aNAP  = a_NAP * CHL / np.max(CHL)
+
+	aNAP = np.zeros((CHL.shape[0], wl.shape[0]))
+	a440  = 0.0136*np.power(CHL, 0.615)
+
+	for iwl in range(len(wl)):
+		a_NAP = a440 * np.exp(-Snap * (wl[iwl] - 440.))
+		aNAP[:,iwl] = a_NAP * CHL / np.max(CHL)
+
 	return aNAP
 
 def aCDOM_Case1(CHL, Scdom):
+
+	aCDOM = np.zeros((CHL.shape[0], wl.shape[0]))
 	a443   = 0.0316*np.power(CHL,0.63)
-	a_cdom = a443 * np.exp(-Scdom*(lam-443.))
-	#a_cdom = a_cdom.reshape((1, a_cdom.shape[0]))
-	#CHL = CHL.reshape(CHL.shape[0], 1)
-	aCDOM = a_cdom * CHL / np.max(CHL)
+
+	for iwl in range(len(wl)):
+		a_cdom = a443 * np.exp(-Scdom*(wl[iwl]-443.))
+		aCDOM[:,iwl]  = a_cdom * CHL / np.max(CHL)   # tHIS IS GOING TO BE MODIFIED
+
 	return aCDOM
 
 

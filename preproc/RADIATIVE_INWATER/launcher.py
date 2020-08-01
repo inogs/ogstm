@@ -129,6 +129,9 @@ for ip in range(ip_start_l,ip_end_l):
 	#PresN,     NIT,     Qc = p.read('NITRATE')
 	#PresO,     DOXY,    Qc = p.read('DOXY')
 
+
+	CHLz[CHLz < 0.] = 0.
+
 	Lon = p.lon
 	Lat = p.lat
 	timestr = p.time.strftime("%Y%m%d-%H:%M:%S")
@@ -176,7 +179,7 @@ for ip in range(ip_start_l,ip_end_l):
 	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
 	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')
 	
-	Pres = PresCHL#.reshape(PresCHL.shape[0], 1)
+	Pres = PresCHL.reshape(PresCHL.shape[0], 1)
 	
 	file_cols_CDOM = np.hstack((Pres, aCDOM))
 	np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )

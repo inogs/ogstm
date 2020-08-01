@@ -90,6 +90,7 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
 for ip in range(ip_start_l,ip_end_l):
+for ip in range(320,321):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -164,10 +165,10 @@ for ip in range(ip_start_l,ip_end_l):
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
-	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)#0.40, 0.30, 0.25, 0.05)
+	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)
 	
-	aNAP  = NAP_abs( CHLz,   0., 0.)#0.0129, 0.00862)
-	aCDOM = CDOM_abs(CHLz,   0., 0.)#0.015, 0.05)
+	aNAP  = aNAP_Case1( CHLz,   0.0178)
+	aCDOM = aCDOM_Case1(CHLz,   0.)
 	
 	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
 	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')

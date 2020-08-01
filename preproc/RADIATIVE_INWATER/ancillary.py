@@ -101,19 +101,21 @@ def PFT_MED(CHL):
 	PSC_2 = NANO   * CHL
 	PSC_3 = PICO   * CHL
 	return PFT_1, PFT_2, PFT_3, PFT_4, PFT_5, PFT_6, PSC_1, PSC_2, PSC_3
-	
 
-def NAP_abs(CHL, Snap, a443):
-	a_NAP = a443 * np.exp(-Snap * (lam - 443.))
-	a_NAP = a_NAP.reshape((1, a_NAP.shape[0]))
-	CHL = CHL.reshape(CHL.shape[0], 1)
-	aNAP = a_NAP * CHL / np.max(CHL)
+	
+def aNAP_Case1(CHL, Snap):
+	a440  = 0.0136*np.power(CHL,0.615)
+	a_NAP = a440 * np.exp(-Snap * (lam - 440.))
+	#a_NAP = a_NAP.reshape((1, a_NAP.shape[0]))
+	#CHL   = CHL.reshape(CHL.shape[0], 1)
+	aNAP  = a_NAP * CHL / np.max(CHL)
 	return aNAP
 
-def CDOM_abs(CHL, Scdom, a440):
-	a_cdom = a440 * np.exp(-Scdom*(lam-440.))
-	a_cdom = a_cdom.reshape((1, a_cdom.shape[0]))
-	CHL = CHL.reshape(CHL.shape[0], 1)
+def aCDOM_Case1(CHL, Scdom):
+	a443   = 0.0316*np.power(CHL,0.63)
+	a_cdom = a443 * np.exp(-Scdom*(lam-443.))
+	#a_cdom = a_cdom.reshape((1, a_cdom.shape[0]))
+	#CHL = CHL.reshape(CHL.shape[0], 1)
 	aCDOM = a_cdom * CHL / np.max(CHL)
 	return aCDOM
 

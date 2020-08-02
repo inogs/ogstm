@@ -163,17 +163,19 @@ for ip in range(ip_start_l,ip_end_l):
 	'''
 
 	# Pure water
-	#awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # Then we will change it to a variable
-	#bwTS = bw_TS_corr(TEMP_int, SALI_int)
 
-	awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')
-	bwTS = bw_NO_corr(TEMP_int, SALI_int)
+	# With T-S correction
+	awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # MASON or LIT
+	bwTS = bw_TS_corr(TEMP_int, SALI_int)                 # Then we will change it to a variable
+
+	#awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')  # Without T-S correction
+	#bwTS = bw_NO_corr(TEMP_int, SALI_int)
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)
 	
-	aNAP  = aNAP_Case1( CHLz,   0.) #0.0178
+	aNAP  = aNAP_Case1( CHLz,   0.0178) #
 	aCDOM = aCDOM_Case1(CHLz,   0.)
 	
 	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T

@@ -17,6 +17,20 @@ def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
 
 	return 
 
+def running_mean(a,WSZ):
+		'''
+		Smoothes a 1-D numpy array.
+		
+		WSZ: smoothing window size needs, which must be odd number,
+		as in the original MATLAB implementation.
+		'''
+		import numpy as np
+		out0  = np.convolve(a,np.ones(WSZ,dtype=int),'valid')/WSZ    
+		r     = np.arange(1,WSZ-1,2)
+		start = np.cumsum(a[:WSZ-1])[::2]/r
+		stop  = (np.cumsum(a[:-WSZ:-1])[::2]/r)[::-1]
+		return np.concatenate((  start , out0, stop  ))
+
 
 def findVars(Varlist, allvars=['CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'TEMP']):
 	if len(Varlist)==0: return False    
@@ -122,6 +136,27 @@ def aCDOM_Case1(CHL, Scdom):
 
 	return aCDOM
 
+def CDOM_QC(CDOM):
+	CDOM_MF = ndimage.median_filter(CDOM, size=5)
+	CDOM_QC = running_mean(CDOM_QC, 7)
+	return CDOM_QC
+
+def BBP700_QC(PresBBP, BBP700):
+	BBP700_MF = ndimage.median_filter(BBP700, size=11)
+	BBP700_RM = running_mean(BBP700_MF, 15)
+
+	offset_range =(PresBBP >= 400.)
+	BBP700_QC = BBP700_RM - BBP700_RM[offset_range].mean()
+
+	BBP700_QC[BBP700_QC < 0.] = 0.
+
+	return BBP700_QC
+
+def CHL_QC(CHL):
+	CHL_MF = ndimage.median_filter(CHL, size=5)
+	CHL_QC = running_mean(CHL_MF, 7)
+	CHL_QC[CHL_QC < 0.] = 0.
+	return CHL_QC
 
 def profile_shape(x, y):
 	return x*y/np.max(y)

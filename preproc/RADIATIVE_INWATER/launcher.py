@@ -166,7 +166,7 @@ for ip in range(ip_start_l,ip_end_l):
 	#awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # Then we will change it to a variable
 	#bwTS = bw_TS_corr(TEMP_int, SALI_int)
 
-	awTS = aw_NO_corr(TEMP_int, SALI_int, model='LIT')
+	awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')
 	bwTS = bw_NO_corr(TEMP_int, SALI_int)
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs

@@ -2,6 +2,7 @@
 
 import netCDF4 as NC4
 import numpy as np
+from scipy import ndimage
 
 from configuration import wl
 

@@ -176,7 +176,9 @@ for ip in range(ip_start_l,ip_end_l):
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)
 	
 	aNAP  = aNAP_Case1( CHLz,   0.0129) # 0.0178 max, 0.0104 min and 0.0129 mean
-	aCDOM = aCDOM_Case1(CHLz,   0.017)     # 0.02   max, 0.015  min and 0.017  mean 
+	#aCDOM = aCDOM_Case1(CHLz,   0.017)     # 0.02   max, 0.015  min and 0.017  mean 
+
+	aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 	
 	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
 	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')

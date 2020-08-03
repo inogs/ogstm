@@ -76,6 +76,34 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
 
 	return ncmodel
 
+# BGC-Argo profile QC procedures
+
+def CDOM_QC(CDOM):
+	CDOM_MF = ndimage.median_filter(CDOM, size=5)
+	CDOM_QC = running_mean(CDOM_QC, 7)
+	return CDOM_QC
+
+def BBP700_QC(PresBBP, BBP700):
+	BBP700_MF = ndimage.median_filter(BBP700, size=11)
+	BBP700_RM = running_mean(BBP700_MF, 15)
+
+	offset_range =(PresBBP >= 400.)
+	BBP700_QC = BBP700_RM - BBP700_RM[offset_range].mean()
+
+	BBP700_QC[BBP700_QC < 0.] = 0.
+
+	return BBP700_QC
+
+def CHL_QC(CHL):
+	CHL_MF = ndimage.median_filter(CHL, size=5)
+	CHL_QC = running_mean(CHL_MF, 7)
+	CHL_QC[CHL_QC < 0.] = 0.
+	return CHL_QC
+
+def profile_shape(x, y):
+	return x*y/np.max(y)
+
+
 # Create functions for chl-specific IOP spectra
 
 def PFT_calc(CHL, p1, p2, p3, p4):
@@ -136,27 +164,16 @@ def aCDOM_Case1(CHL, Scdom):
 
 	return aCDOM
 
-def CDOM_QC(CDOM):
-	CDOM_MF = ndimage.median_filter(CDOM, size=5)
-	CDOM_QC = running_mean(CDOM_QC, 7)
-	return CDOM_QC
 
-def BBP700_QC(PresBBP, BBP700):
-	BBP700_MF = ndimage.median_filter(BBP700, size=11)
-	BBP700_RM = running_mean(BBP700_MF, 15)
+def aCDOM_Case1_CDOM(CHL, CDOM, Scdom):
 
-	offset_range =(PresBBP >= 400.)
-	BBP700_QC = BBP700_RM - BBP700_RM[offset_range].mean()
+	aCDOM = np.zeros((CHL.shape[0], wl.shape[0]))
+	a443   = 0.0316*np.power(CHL,0.63)
 
-	BBP700_QC[BBP700_QC < 0.] = 0.
+	CDOM_qc = CDOM_QC(CDOM)
 
-	return BBP700_QC
+	for iwl in range(len(wl)):
+		a_cdom = a443 * np.exp(-Scdom*(wl[iwl]-443.))
+		aCDOM[:,iwl]  = a_cdom * CDOM_qc / np.max(CDOM)   # tHIS IS GOING TO BE MODIFIED
 
-def CHL_QC(CHL):
-	CHL_MF = ndimage.median_filter(CHL, size=5)
-	CHL_QC = running_mean(CHL_MF, 7)
-	CHL_QC[CHL_QC < 0.] = 0.
-	return CHL_QC
-
-def profile_shape(x, y):
-	return x*y/np.max(y)
+	return aCDOM

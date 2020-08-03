@@ -81,7 +81,7 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
 
 def CDOM_QC(CDOM):
 	CDOM_MF = ndimage.median_filter(CDOM, size=5)
-	CDOM_QC = running_mean(CDOM_QC, 7)
+	CDOM_QC = running_mean(CDOM_MF, 7)
 	return CDOM_QC
 
 def BBP700_QC(PresBBP, BBP700):

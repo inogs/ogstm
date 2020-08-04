@@ -197,7 +197,7 @@ for ip in range(ip_start_l,ip_end_l):
 	bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
 
-	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MASON')
+	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'MLD', aw380, bw380, 'MASON') # MLD or EUPH ; MASON or LIT
 
 	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 

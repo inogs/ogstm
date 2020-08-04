@@ -188,13 +188,12 @@ for ip in range(ip_start_l,ip_end_l):
 	CDOM_int = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth!
 	# You need this because at the moment you're saving all IOPs on CHLz depth quotas for the model run.
 
-
 	#aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 
-	aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='MASON')    # No TS Corr
+	aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='LIT')    # No TS Corr
 	bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
 
-	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MOREL')
+	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'LIT')
 
 	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 

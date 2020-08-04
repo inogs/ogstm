@@ -177,7 +177,7 @@ for ip in range(ip_start_l,ip_end_l):
 
 	# 2. Non-algal particles - NAP
 	
-	aNAP  = aNAP_Case1( CHLz,   0.0129) # 0.0178 max, 0.0104 min and 0.0129 mean
+	aNAP  = aNAP_Case1( CHLz,   0.0129)      # 0.0178 max, 0.0104 min and 0.0129 mean
 
 	# 3. CDOM
 
@@ -187,8 +187,16 @@ for ip in range(ip_start_l,ip_end_l):
 
 	CDOM_int = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth!
 	# You need this because at the moment you're saving all IOPs on CHLz depth quotas for the model run.
-	aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 
+
+	#aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
+
+	aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='MASON')    # No TS Corr
+	bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
+
+	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MOREL')
+
+	aCDOM = aCDOM_Kbio(CDOM_qc, 0.017, Kbio_380)
 
 	# 4. Phytoplankton functional types - PFT
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)

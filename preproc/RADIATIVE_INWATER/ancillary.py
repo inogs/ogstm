@@ -5,6 +5,7 @@ import numpy as np
 from scipy import ndimage
 from scipy.optimize import curve_fit
 
+from aw_TS_corr import *
 from bw_TS_corr import rhou_sw
 from configuration import wl
 
@@ -79,6 +80,12 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
 
 	return ncmodel
 
+# Calculate Kw based on aw and bw data from our models
+
+def calc_Kw380(aw380, bw380):
+	Kw_380 = aw380 + 0.5 * bw380
+	return Kw_380
+
 # Calculating euphotic and MLD depth ranges for Kd calculation
 
 def euphotic(Pres, Ed):
@@ -104,7 +111,7 @@ def MLD_calc(PresT, T, S, Ed, PresEd):
 
 	return zMLD, Pres_MLD, Ed_MLD
 
-def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type):
+def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type, aw380, bw380, Kw_type):
 
 	success = True
 
@@ -121,12 +128,12 @@ def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type):
 		popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
 		Kd_380 = popt[0]
 
-	Kw_380 = 0.01510 # According to Morel and Maritorena (2001)
+	Kw_380 = np.ones((PresT.shape[0]))*0.01510 if Kw_type == 'MOREL' else calc_Kw380(aw, bw)  # According to Morel and Maritorena (2001)
 
 	Kbio_380 = Kd_380 - Kw_380
 
-	return Kbio_380
-
+	return Kbio_380   # needs to be a returned array
+ 
 # BGC-Argo profile QC procedures
 
 def CDOM_QC(CDOM):
@@ -150,9 +157,6 @@ def CHL_QC(CHL):
 	CHL_QC = running_mean(CHL_MF, 7)
 	CHL_QC[CHL_QC < 0.] = 0.
 	return CHL_QC
-
-def calc_Kbio380():
-	Kw_380 = 0.01510
 
 def profile_shape(x, y):
 	return x*y/np.max(y)
@@ -230,15 +234,15 @@ def aCDOM_Case1_CDOM(CHL, CDOM_qc, Scdom):
 
 	return aCDOM
 
-#def aCDOM_Xing(CDOM_qc, Scdom, region):
-#	aCDOM = np.zeros((CHL.shape[0], wl.shape[0]))
-#	
-#	a412 = 0.046 * (CDOM_QC - 2.377) if region == 'NW' else  0.047 * (CDOM_QC - 2.309)
-#
-#	for iwl in range(len(wl)):
-#		a_cdom = a412 * np.exp(-Scdom*(wl[iwl]-412.))
-#		aCDOM[:,iwl]  = a_cdom * CDOM_qc / np.max(CDOM_qc) 
-#
-#	return aCDOM
+def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
+
+	aCDOM = np.zeros((CDOM_int.shape[0], wl.shape[0]))     
+	a380   = Kbio_380*np.ones((CDOM_int.shape[0]))
+
+	for iwl in range(len(wl)):
+		a_cdom = a380 * np.exp(-Scdom*(wl[iwl]-380.))
+		aCDOM[:,iwl]  = a_cdom * CDOM_qc / np.max(CDOM_qc) 
+
+	return aCDOM
 
 

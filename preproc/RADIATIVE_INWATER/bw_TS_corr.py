@@ -7,7 +7,7 @@ from __future__ import print_function, division
 import numpy as np
 
 from configuration import *
-from save_waterIOP import bw
+from save_waterIOP import bw, bw_argo, wl_argo, idx_380 #bw
 
 Na  = 6.0221417930e23 # Avogadro's constant
 Kbz = 1.3806503e-23   # Boltzmann constant
@@ -233,5 +233,27 @@ def bw_NO_corr(T, S):
         bw_NO[:,depth] = bw #bsw(wl, T[depth] , S[depth], delta=0.039)
 
     return bw_NO
+
+
+def bw_380_TS_corr(T, S):
+
+    bw_380_TS = np.zeros((1, T.shape[0]))
+
+    for depth in range(len(T)):
+
+        bw_380_TS[0,depth] = bsw(wl_argo[idx_380], T[depth] , S[depth], delta=0.039)
+
+    return bw_380_TS
+
+
+def bw_380_NO_corr(T, S):
+
+    bw_380_NO = np.zeros((1, T.shape[0]))
+
+    for depth in range(len(T)):
+
+        bw_380_NO[0,depth] = bw_argo[idx_380] #bsw(wl, T[depth] , S[depth], delta=0.039)
+
+    return bw_380_NO
 
 

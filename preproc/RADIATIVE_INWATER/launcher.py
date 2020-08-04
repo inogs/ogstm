@@ -196,7 +196,7 @@ for ip in range(ip_start_l,ip_end_l):
 
 	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MOREL')
 
-	aCDOM = aCDOM_Kbio(CDOM_qc, 0.017, Kbio380)
+	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 
 	# 4. Phytoplankton functional types - PFT
 	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)

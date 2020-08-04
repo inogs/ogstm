@@ -128,7 +128,7 @@ def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type, aw380, bw380, Kw_typ
 		popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
 		Kd_380 = popt[0]
 
-	Kw_380 = np.ones((PresT.shape[0]))*0.01510 if Kw_type == 'MOREL' else calc_Kw380(aw, bw)  # According to Morel and Maritorena (2001)
+	Kw_380 = np.ones((PresT.shape[0]))*0.01510 if Kw_type == 'MOREL' else calc_Kw380(aw380, bw380)  # According to Morel and Maritorena (2001)
 
 	Kbio_380 = Kd_380 - Kw_380
 

@@ -193,11 +193,11 @@ for ip in range(ip_start_l,ip_end_l):
 	#aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='LIT')    # No TS Corr
 	#bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
 
-	aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model='LIT')    # No TS Corr
+	aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model='MASON')    # With TS Corr
 	bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
 
-	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'LIT')
+	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MASON')
 
 	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 

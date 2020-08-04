@@ -3,7 +3,9 @@
 import netCDF4 as NC4
 import numpy as np
 from scipy import ndimage
+from scipy.optimize import curve_fit
 
+from bw_TS_corr import rhou_sw
 from configuration import wl
 
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
@@ -77,6 +79,54 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
 
 	return ncmodel
 
+# Calculating euphotic and MLD depth ranges for Kd calculation
+
+def euphotic(Pres, Ed):
+	EUPH               = [x for x in range(len(Pres)) if Ed[x]/Ed[0] > 0.37]
+	ind                = EUPH[-1]
+	zeu                = Pres[ind]
+	Pres_Euph          = Pres[EUPH]
+	Ed_Euph            = Ed[EUPH]
+	return zeu, Pres_Euph, Ed_Euph 
+
+def MLD_calc(PresT, T, S, Ed, PresEd):
+
+	density  = rhou_sw(T, S)           # Potential density
+
+	ind      = np.argmin(np.abs(PresT - 10.))  # Find the index where depth is closest to 10 m.
+	rho_ind  = np.argmin(np.abs(density[ind] - density) - 0.03)  # Find the index where the potential density is closest to 0.03
+
+	indEd    = np.argmin(np.abs(PresEd - PresT[rho_ind])) # Compute where the MLD is on PresEd
+
+	zMLD     = PresEd[indEd]           # MLD depth
+	Pres_MLD = PresEd[0:indEd]         # MLD depth range
+	Ed_MLD   = Ed[  0:indEd]           # Ed at the MLD depth range
+
+	return zMLD, Pres_MLD, Ed_MLD
+
+def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type):
+
+	success = True
+
+	# Euphotic or MLD depth range (DR) calculation
+	zmax, PresDR, Ed_DR = euphotic(Pres380, Ed_380) if depth_type == 'EUPH' else MLD_calc(PresT, T, S, Ed_380, Pres380)
+
+	if len(PresDR) < 5 or PresDR[1] - PresDR[0] > 9. or PresDR[4] > 15.:
+		success = False
+		Kd_380  = np.nan
+
+	func = lambda z, Kd: np.exp(-Kd*z)
+
+	if success:
+		popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
+		Kd_380 = popt[0]
+
+	Kw_380 = 0.01510 # According to Morel and Maritorena (2001)
+
+	Kbio_380 = Kd_380 - Kw_380
+
+	return Kbio_380
+
 # BGC-Argo profile QC procedures
 
 def CDOM_QC(CDOM):
@@ -100,6 +150,9 @@ def CHL_QC(CHL):
 	CHL_QC = running_mean(CHL_MF, 7)
 	CHL_QC[CHL_QC < 0.] = 0.
 	return CHL_QC
+
+def calc_Kbio380():
+	Kw_380 = 0.01510
 
 def profile_shape(x, y):
 	return x*y/np.max(y)
@@ -161,20 +214,31 @@ def aCDOM_Case1(CHL, Scdom):
 
 	for iwl in range(len(wl)):
 		a_cdom = a443 * np.exp(-Scdom*(wl[iwl]-443.))
-		aCDOM[:,iwl]  = a_cdom * CHL / np.max(CHL)   # tHIS IS GOING TO BE MODIFIED
+		aCDOM[:,iwl]  = a_cdom * CHL / np.max(CHL)   
 
 	return aCDOM
 
 
-def aCDOM_Case1_CDOM(CHL, CDOM, Scdom):
+def aCDOM_Case1_CDOM(CHL, CDOM_qc, Scdom):
 
 	aCDOM = np.zeros((CHL.shape[0], wl.shape[0]))
 	a443   = 0.0316*np.power(CHL,0.63)
 
-	CDOM_qc = CDOM_QC(CDOM)
-
 	for iwl in range(len(wl)):
 		a_cdom = a443 * np.exp(-Scdom*(wl[iwl]-443.))
-		aCDOM[:,iwl]  = a_cdom * CDOM_qc / np.max(CDOM)   # tHIS IS GOING TO BE MODIFIED
+		aCDOM[:,iwl]  = a_cdom * CDOM_qc / np.max(CDOM_qc) 
 
 	return aCDOM
+
+#def aCDOM_Xing(CDOM_qc, Scdom, region):
+#	aCDOM = np.zeros((CHL.shape[0], wl.shape[0]))
+#	
+#	a412 = 0.046 * (CDOM_QC - 2.377) if region == 'NW' else  0.047 * (CDOM_QC - 2.309)
+#
+#	for iwl in range(len(wl)):
+#		a_cdom = a412 * np.exp(-Scdom*(wl[iwl]-412.))
+#		aCDOM[:,iwl]  = a_cdom * CDOM_qc / np.max(CDOM_qc) 
+#
+#	return aCDOM
+
+

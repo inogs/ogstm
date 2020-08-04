@@ -162,25 +162,36 @@ for ip in range(ip_start_l,ip_end_l):
 	phase 3. Calculate and save IOPs  
 	'''
 
-	# Pure water
+	# 1. Pure water
 
 	# With T-S correction
 	awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # MASON or LIT
 	bwTS = bw_TS_corr(TEMP_int, SALI_int)                 # Then we will change it to a variable
 
-	#awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')  # Without T-S correction
+	# Without T-S correction	
+	#awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')  
 	#bwTS = bw_NO_corr(TEMP_int, SALI_int)
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
-	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)
+
+	# 2. Non-algal particles - NAP
 	
 	aNAP  = aNAP_Case1( CHLz,   0.0129) # 0.0178 max, 0.0104 min and 0.0129 mean
+
+	# 3. CDOM
+
 	#aCDOM = aCDOM_Case1(CHLz,   0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 
-	CDOM_qc = CDOM_QC(CDOM) # 
-	CDOM_int = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth
+	CDOM_qc = CDOM_QC(CDOM) # quality-controlled CDOM profile
+
+	CDOM_int = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth!
+	# You need this because at the moment you're saving all IOPs on CHLz depth quotas for the model run.
 	aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
+
+
+	# 4. Phytoplankton functional types - PFT
+	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)
 	
 	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
 	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')

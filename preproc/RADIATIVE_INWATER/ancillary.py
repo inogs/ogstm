@@ -237,7 +237,7 @@ def aCDOM_Case1_CDOM(CHL, CDOM_qc, Scdom):
 def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
 
 	aCDOM = np.zeros((CDOM_int.shape[0], wl.shape[0]))     
-	a380   = Kbio_380*np.ones((CDOM_int.shape[0]))
+	a380   = Kbio_380#*np.ones((CDOM_int.shape[0]))
 
 	for iwl in range(len(wl)):
 		a_cdom = a380 * np.exp(-Scdom*(wl[iwl]-380.))

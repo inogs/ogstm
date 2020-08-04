@@ -12,8 +12,8 @@ import pprint, pickle
 import subprocess
 
 from ancillary import *
-from aw_TS_corr import aw_TS_corr, aw_NO_corr
-from bw_TS_corr import bw_TS_corr, bw_NO_corr
+from aw_TS_corr import aw_TS_corr, aw_NO_corr, aw_380_TS_corr, aw_380_NO_corr
+from bw_TS_corr import bw_TS_corr, bw_NO_corr, bw_380_TS_corr, bw_380_NO_corr
 from configuration import *
 
 from commons.layer import Layer

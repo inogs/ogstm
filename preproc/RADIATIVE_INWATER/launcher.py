@@ -196,16 +196,27 @@ for ip in range(ip_start_l,ip_end_l):
 	aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model='MASON')    # With TS Corr
 	bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
-
-	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'MLD', aw380, bw380, 'MASON') # MLD or EUPH ; MASON or LIT
+	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MASON') # MLD or EUPH ; MASON or LIT
 
 	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 
 	# 4. Phytoplankton functional types - PFT
-	PFT1, PFT2, PFT3, PFT4 = PFT_calc(CHLz, 0., 0., 0., 0.)  #0.40, 0.30, 0.25, 0.05)
+	aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
+
+	# 5. Particulate scattering and backscattering 
+
+	BBP700_qc  = BBP700_QC(BBP700)
+	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) # Interpolate bbp700 to CHL depth!
+
+
+	bp, bbp  = bp_Case1(CHLz, 0.015)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
+	#bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, 0.015)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
+	#bp,bbp   = bbp_frombbp700(BBP700_int, slope, 0)  # slope between 0 and 4. Boss says 1, Organelli uses 2
+
+	write_acbc25(wl, aPFT_TOT, bp, bbp, fname=profile_ID + '_PFT.txt')   # Save PFT_abs, bp and bbp
 	
-	file_cols_PFT = np.vstack((PresCHL, PFT1, PFT2, PFT3, PFT4)).T
-	np.savetxt(profile_ID + '_PFT.txt', file_cols_PFT, header = init_rows, delimiter='\t', comments='')
+	file_col_DEPTH = PresCHL.T
+	np.savetxt(profile_ID + '_DEPTH.txt', file_col_DEPTH, header = init_rows, delimiter='\t', comments='')
 	
 	Pres = PresCHL.reshape(PresCHL.shape[0], 1)
 	
@@ -223,7 +234,7 @@ for ip in range(ip_start_l,ip_end_l):
 	'''  
 	phase 4 : Run Fortran code
 	'''
-	command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_water_IOP.dat ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
+	command='./compute.xx ' + profile_ID + '_OASIM.txt ' + profile_ID + '_water_IOP.dat ' + profile_ID + '_DEPTH.txt ' + profile_ID + '_PFT.txt '  + profile_ID + '_CDOM.txt '  + profile_ID + '_NAP.txt ' + str(floatname) + ' >> log'
 
 	print ('I am %d profile %d - %s ' %(whoAmI, ip,command ))
 	subprocess.call(command, shell=True)
@@ -257,8 +268,12 @@ for ip in range(ip_start_l,ip_end_l):
 	txtfiles3 = 'mv ' + profile_ID + '_NAP.txt'       + ' TXT_FILES/' 
 	txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'      + ' TXT_FILES/'
 	txtfiles5 = 'mv ' + profile_ID + '_water_IOP.dat' + ' TXT_FILES/'
+	txtfiles6 = 'mv ' + profile_ID + '_DEPTH.txt'     + ' TXT_FILES/'
+
 	os.system(txtfiles1)
 	os.system(txtfiles2)
 	os.system(txtfiles3)
 	os.system(txtfiles4)
 	os.system(txtfiles5)
+	os.system(txtfiles6)
+

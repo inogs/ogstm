@@ -1,4 +1,4 @@
-      subroutine edeseu(MODE,V_POSITION,INPUT_WATER_FILE,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eutop,PARz)
+      subroutine edeseu(MODE,V_POSITION,INPUT_WATER_FILE,INPUT_PFT_FILE,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,NAPz,rmud,Edz,Esz,Euz,Eutop,PARz)
       USE myalloc
       USE mpi
       USE OPT_mem
@@ -15,7 +15,7 @@
  
       integer :: n, nl, jk, lambda 
       integer, INTENT(IN)           :: MODE
-      character(*), INTENT(IN)      :: V_POSITION, INPUT_WATER_FILE
+      character(*), INTENT(IN)      :: V_POSITION, INPUT_WATER_FILE, INPUT_PFT_FILE
       integer, INTENT(IN)           :: bottom
       double precision, INTENT(IN)  :: rmud
       double precision, INTENT(IN)  :: dzRT(jpk)
@@ -25,12 +25,12 @@
       double precision, INTENT(OUT) :: Euz(jpk,nlt)
       double precision, INTENT(OUT) :: PARz(jpk,nchl+1)
       double precision, intent(OUT) :: Eutop(nlt)
-      double precision              :: saw, sbw
+      double precision              :: saw, sbw, sac, sbc, sbbc
 !     Local variables
       double precision :: Etop
       double precision :: Plte
       double precision :: actot(jpk,nlt),bctot(jpk,nlt),bbctot(jpk,nlt) 
-      double precision,allocatable  :: aw1(:,:), bw1(:,:)
+      double precision,allocatable  :: aw1(:,:), bw1(:,:), ac1(:,:), bctot1(:,:), bbctot1(:,:)
       double precision :: anap(nlt)
       double precision :: a(jpk,nlt), bt(jpk,nlt), bb(jpk,nlt) 
       double precision :: bbc(4)
@@ -60,6 +60,25 @@
       enddo
       close(4)
 20    format(i5,f15.4,f10.4)
+
+
+      ! Reading PFT file
+      open(4,file=INPUT_PFT_FILE,status='old',form='formatted')
+      do jk = 1, bottom
+        do nl = 1,nlt
+          read(4,30)lambda,sac,sbc,sbbc
+          !write(*,*)jk, bottom, nl, nlt, lambda, saw, sbw
+          !if (lwp) write(6,20)lambda,saw,sbw
+          !lam(nl)     = lambda
+          actot(jk,nl)  = sac
+          bctot(jk,nl)  = sbc
+          bbctot(jk,nl) = sbbc
+      enddo
+      enddo
+      close(4)
+30    format(i5,f15.4,f15.4,f15.4)
+
+
  
 !  Compute irradiance with depth
        anap(:)  = 0.0d0
@@ -70,15 +89,15 @@
           Edz(jk,nl)    = 0.0d0
           Esz(jk,nl)    = 0.0d0
           Euz(jk,nl)    = 0.0d0
-          actot(jk,nl)  = 0.0d0
-          bctot(jk,nl)  = 0.0d0
-          bbctot(jk,nl) = 0.0d0
+          !actot(jk,nl)  = 0.0d0
+          !bctot(jk,nl)  = 0.0d0
+          !bbctot(jk,nl) = 0.0d0
 
-          do n = 1,nchl
-               actot(jk,nl)  = actot(jk,nl)  + CHLz(jk,n)*ac(n,nl)
-               bctot(jk,nl)  = bctot(jk,nl)  + CHLz(jk,n)*bc(n,nl)
-               bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n)*bc(n,nl)
-          enddo
+          !do n = 1,nchl
+          !     actot(jk,nl)  = actot(jk,nl)  + CHLz(jk,n)*ac(n,nl)
+          !     bctot(jk,nl)  = bctot(jk,nl)  + CHLz(jk,n)*bc(n,nl)
+          !     bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n)*bc(n,nl)
+          !enddo
 
           a(jk,nl)  = aw1(jk, nl) + CDOMz(jk, nl) + NAPz(jk,nl) + actot(jk,nl)
           bt(jk,nl) = bw1(jk, nl) + bctot(jk,nl)

@@ -5,9 +5,11 @@ import numpy as np
 from scipy import ndimage
 from scipy.optimize import curve_fit
 
+from aPHY_read import aPFT1, aPFT2, aPFT3, aPFT4, aPFT5, aPFT6
 from aw_TS_corr import *
 from bw_TS_corr import rhou_sw
 from configuration import wl
+
 
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
 
@@ -17,6 +19,17 @@ def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
 	for idepth in range(aw.shape[1]):
 		for iwl in range(aw.shape[0]):
 			file.write('%5d%15.4f%10.4f\n'%(wl[iwl], aw[iwl, idepth], bw[iwl, idepth]))
+	file.close()
+
+	return 
+
+
+def write_acbc25(wl, aPFT_TOT, bp_TOT, bbp_TOT, fname='bcs/acbc25.dat'):
+
+	file  = open(fname, 'w')
+	for idepth in range(aPFT_TOT.shape[1]):
+		for iwl in range(aPFT_TOT.shape[0]):
+			file.write('%5d%15.4f%15.4f%15.4f\n'%(wl[iwl], aPFT_TOT[iwl, idepth], bp_TOT[iwl, idepth], bbp_TOT[iwl, idepth]))
 	file.close()
 
 	return 
@@ -187,19 +200,26 @@ def PFT_MED(CHL):
 	PROK   = 0.0664*x**3 + 0.1410*x**2 - 0.2097*x + 0.0979
 	HAPT   = 1. - MICRO - CRYPT - GREEN - PROK
 	
-	PFT_1 = DIATOM * CHL
-	PFT_2 = HAPT   * CHL
-	PFT_3 = CRYPT  * CHL
-	PFT_4 = GREEN  * CHL
-	PFT_5 = PROK   * CHL
+	PFT_1 = DIATOM  * CHL
+	PFT_2 = HAPT    * CHL
+	PFT_3 = CRYPT   * CHL
+	PFT_4 = GREEN   * CHL
+	PFT_5 = PROK    * CHL
 	PFT_6 = DINOPH  * CHL
 
-	PSC_1 = MICRO  * CHL
-	PSC_2 = NANO   * CHL
-	PSC_3 = PICO   * CHL
-	return PFT_1, PFT_2, PFT_3, PFT_4, PFT_5, PFT_6, PSC_1, PSC_2, PSC_3
+	PSC_1 = MICRO   * CHL
+	PSC_2 = NANO    * CHL
+	PSC_3 = PICO    * CHL
 
-	
+	aPFT_TOT = np.zeros((CHL.shape[0], wl.shape[0]))
+
+	for idepth in range(CHL.shape[0]):
+
+		aPFT_TOT[idepth, :] = aPFT1*PFT_1[idepth] + aPFT2*PFT_2[idepth] + aPFT3*PFT_3[idepth] + aPFT4*PFT_4[idepth] + aPFT5*PFT_5[idepth] + aPFT6*PFT_6[idepth]
+
+	return aPFT_TOT #PFT_1, PFT_2, PFT_3, PFT_4, PFT_5, PFT_6, PSC_1, PSC_2, PSC_3
+
+
 def aNAP_Case1(CHL, Snap):
 
 	aNAP = np.zeros((CHL.shape[0], wl.shape[0]))
@@ -244,5 +264,37 @@ def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
 		aCDOM[:,iwl]  = a_cdom * CDOM_int / np.max(CDOM_int) 
 
 	return aCDOM
+
+def bp_Case1(CHL, ratio):
+	bp = np.zeros((CHL.shape[0], wl.shape[0]))
+
+	for idepth in range(CHL.shape[0]):
+		nu = 0.5 * (np.log10(CHL[idepth]) - 0.3) if CHL[idepth] > 0.02 or CHL[idepth] < 2. else 0.
+		bp[idepth,:] = 0.416*np.power(CHL[idepth], 0.766)*np.power((wl/550.), nu)  * CHL / np.max(CHL)  
+
+	bbp = bp * ratio
+
+	return bp, bbp
+
+def bp_Case1_bbp(CHL, bbp700_int, ratio):
+	bp = np.zeros((CHL.shape[0], wl.shape[0]))
+
+	for idepth in range(CHL.shape[0]):
+		nu = 0.5 * (np.log10(CHL[idepth]) - 0.3) if CHL[idepth] > 0.02 or CHL[idepth] < 2. else 0.
+		bp[idepth,:] = 0.416*np.power(CHL[idepth], 0.766)*np.power((wl/550.), nu)  * bbp700_int/ np.max(bbp700_int)  
+
+	bbp = bp * ratio
+
+	return bp, bbp
+
+def bbp_frombbp700(bbp700_int, slope, ratio):
+	bbp = np.zeros((bbp700_int.shape[0], wl.shape[0]))
+
+	for wl in range(wl.shape[0]):
+		bbp[:, iwl] = bbp700_int * np.power((wl[iwl]/700.), -slope) * bbp700_int/ np.max(bbp700_int)  
+
+	bp = bbp / ratio
+
+	return bp, bbp
 
 

@@ -1,10 +1,10 @@
 import os,sys
-from instrument import Profile
+from instruments.instrument import Profile
 import scipy.io.netcdf as NC
 import numpy as np
 import matchup.matchup
 import matplotlib.pyplot as pl
-import all_instruments
+from instruments import all_instruments
 import postproc
 import static
 

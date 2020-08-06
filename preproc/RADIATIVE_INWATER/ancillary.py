@@ -29,7 +29,7 @@ def write_acbc25(wl, aPFT_TOT, bp_TOT, bbp_TOT, fname='bcs/acbc25.dat'):
 	file  = open(fname, 'w')
 	for idepth in range(aPFT_TOT.shape[0]):
 		for iwl in range(aPFT_TOT.shape[1]):
-			file.write('%5d%15.4f%15.4f%15.4f\n'%(wl[iwl], aPFT_TOT[idepth, iwl], bp_TOT[idepth, iwl], bbp_TOT[idepth, iwl]))
+			file.write('%5d%15.8f%15.8f%15.8f\n'%(wl[iwl], aPFT_TOT[idepth, iwl], bp_TOT[idepth, iwl], bbp_TOT[idepth, iwl]))
 	file.close()
 
 	return 
@@ -263,6 +263,8 @@ def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
 def bp_Case1(CHL, ratio):
 	bp = np.zeros((CHL.shape[0], wl.shape[0]))
 	#x     = np.where(CHL>0.02, np.log10(CHL), np.log10(0.02))
+
+	CHL[CHL < 0.] = 0.
 
 	for idepth in range(CHL.shape[0]):
 		# Assigning the nu function for CHL < 0.02 to calculate it as if CHL were 0.02 mg m-3

@@ -262,9 +262,14 @@ def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
 
 def bp_Case1(CHL, ratio):
 	bp = np.zeros((CHL.shape[0], wl.shape[0]))
+	#x     = np.where(CHL>0.02, np.log10(CHL), np.log10(0.02))
 
 	for idepth in range(CHL.shape[0]):
-		nu = 0.5 * (np.log10(CHL[idepth]) - 0.3) if CHL[idepth] > 0.02 or CHL[idepth] < 2. else 0.
+		# Assigning the nu function for CHL < 0.02 to calculate it as if CHL were 0.02 mg m-3
+		# In Morel et al., 2002 there is only the range between 0.02 and 2 mg m-3 and for above 2 mg m-3
+		nu = 0.5 * (np.log10(CHL[idepth]) - 0.3) if CHL[idepth] > 0.02 else (np.log10(0.02) - 0.3)
+		if CHL[idepth] > 2. : nu = 0.
+		#nu = 0.5 * (np.log10(CHL[idepth]) - 0.3) if CHL[idepth] > 0.02 and CHL[idepth] < 2. else 0.
 		bp[idepth,:] = 0.416*np.power(CHL[idepth], 0.766)*np.power((wl/550.), nu)  * CHL[idepth] / np.max(CHL)  
 
 	bbp = bp * ratio

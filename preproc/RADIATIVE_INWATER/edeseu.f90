@@ -76,7 +76,7 @@
       enddo
       enddo
       close(4)
-30    format(i5,f15.4,f15.4,f15.4)
+30    format(i5,f15.8,f15.8,f15.8)
 
 
  

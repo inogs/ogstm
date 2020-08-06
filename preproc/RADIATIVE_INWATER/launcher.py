@@ -17,7 +17,8 @@ from bw_TS_corr import bw_TS_corr, bw_NO_corr, bw_380_TS_corr, bw_380_NO_corr
 from configuration import *
 
 from commons.layer import Layer
-from instruments.matchup_manager import Matchup_Manager
+#from instruments.matchup_manager import Matchup_Manager
+from matchup_manager_MOD import Matchup_Manager
 
 
 ## MPI Ancillary functions ##

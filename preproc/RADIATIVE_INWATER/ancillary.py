@@ -270,7 +270,7 @@ def bp_Case1(CHL, ratio):
 
 	for idepth in range(CHL.shape[0]):
 		nu = 0.5 * (np.log10(CHL[idepth]) - 0.3) if CHL[idepth] > 0.02 or CHL[idepth] < 2. else 0.
-		bp[idepth,:] = 0.416*np.power(CHL[idepth], 0.766)*np.power((wl/550.), nu)  * CHL / np.max(CHL)  
+		bp[idepth,:] = 0.416*np.power(CHL[idepth], 0.766)*np.power((wl/550.), nu)  * CHL[idepth] / np.max(CHL)  
 
 	bbp = bp * ratio
 
@@ -281,7 +281,7 @@ def bp_Case1_bbp(CHL, bbp700_int, ratio):
 
 	for idepth in range(CHL.shape[0]):
 		nu = 0.5 * (np.log10(CHL[idepth]) - 0.3) if CHL[idepth] > 0.02 or CHL[idepth] < 2. else 0.
-		bp[idepth,:] = 0.416*np.power(CHL[idepth], 0.766)*np.power((wl/550.), nu)  * bbp700_int/ np.max(bbp700_int)  
+		bp[idepth,:] = 0.416*np.power(CHL[idepth], 0.766)*np.power((wl/550.), nu)  * bbp700_int[idepth] / np.max(bbp700_int)  
 
 	bbp = bp * ratio
 

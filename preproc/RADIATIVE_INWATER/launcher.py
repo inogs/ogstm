@@ -201,15 +201,17 @@ for ip in range(ip_start_l,ip_end_l):
 	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 
 	# 4. Phytoplankton functional types - PFT
-	aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
+	aPFT_TOT = np.zeros(CHLz.shape[0], wl.shape[0])
+	#aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
 
 	# 5. Particulate scattering and backscattering 
 
 	BBP700_qc  = BBP700_QC(PresBBP, BBP700)
 	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) # Interpolate bbp700 to CHL depth!
 
-
-	bp, bbp  = bp_Case1(CHLz, 0.015)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
+	bp  = np.zeros(CHLz.shape[0], wl.shape[0])
+	bbp = np.zeros(CHLz.shape[0], wl.shape[0])
+	#bp, bbp  = bp_Case1(CHLz, 0.015)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
 	#bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, 0.015)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
 	#bp,bbp   = bbp_frombbp700(BBP700_int, slope, 0)  # slope between 0 and 4. Boss says 1, Organelli uses 2
 

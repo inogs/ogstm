@@ -27,9 +27,9 @@ def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
 def write_acbc25(wl, aPFT_TOT, bp_TOT, bbp_TOT, fname='bcs/acbc25.dat'):
 
 	file  = open(fname, 'w')
-	for idepth in range(aPFT_TOT.shape[1]):
-		for iwl in range(aPFT_TOT.shape[0]):
-			file.write('%5d%15.4f%15.4f%15.4f\n'%(wl[iwl], aPFT_TOT[iwl, idepth], bp_TOT[iwl, idepth], bbp_TOT[iwl, idepth]))
+	for idepth in range(aPFT_TOT.shape[0]):
+		for iwl in range(aPFT_TOT.shape[1]):
+			file.write('%5d%15.4f%15.4f%15.4f\n'%(wl[iwl], aPFT_TOT[idepth, iwl], bp_TOT[idepth, iwl], bbp_TOT[idepth, iwl]))
 	file.close()
 
 	return 

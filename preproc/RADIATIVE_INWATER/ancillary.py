@@ -168,6 +168,7 @@ def BBP700_QC(PresBBP, BBP700):
 def CHL_QC(CHL):
 	CHL_MF = ndimage.median_filter(CHL, size=5)
 	CHL_QC = running_mean(CHL_MF, 7)
+	#CHL_QC[CHL_QC < 0.005] = 0.005
 	CHL_QC[CHL_QC < 0.] = 0.
 	return CHL_QC
 
@@ -177,35 +178,29 @@ def profile_shape(x, y):
 
 # Create functions for chl-specific IOP spectra
 
-def PFT_calc(CHL, p1, p2, p3, p4):
-	#p1, p2, p3 and p4 are relative contributions (0-1)
-	# of various PFT to total absorption
-	PFT_1 = p1*CHL     # 
-	PFT_2 = p2*CHL
-	PFT_3 = p3*CHL
-	PFT_4 = p4*CHL
-	return PFT_1, PFT_2, PFT_3, PFT_4
-
 # Di Cicco et al., 2017 - both for PFT and PSC
 def PFT_MED(CHL):
-	x     = np.where(CHL>0, np.log10(CHL), 0.)
+# This algorithm works only if CHL is in range between 0.02 and 5.52 mg/m3
+# And it was validated only for the first 50 meters
+	x     = np.where(CHL>0.02, np.log10(CHL), np.log10(0.02))
+	x[CHL>5.52] = np.log10(5.52)
 	#x = np.log10(CHL)
-	MICRO = 0.0667*x**3 + 0.1939*x**2 + 0.2743*x + 0.2994
-	NANO  =              -0.1740*x**2 - 0.0851*x + 0.4725
-	PICO  = 1 - MICRO - NANO
+	MICRO  = 0.0667*x**3 + 0.1939*x**2 + 0.2743*x + 0.2994
+	NANO   =              -0.1740*x**2 - 0.0851*x + 0.4725
+	PICO   = 1 - MICRO - NANO
 	DIATOM = 0.0482*x**3 + 0.1877*x**2 + 0.2946*x + 0.2533
 	DINOPH = MICRO - DIATOM
 	CRYPT  = 0.0171*x**3 + 0.0667*x**2 + 0.1153*x + 0.0952
 	GREEN  = (np.exp(-1.5780*x + 2.1841) + 22.6833 *x) ** (-1.)
 	PROK   = 0.0664*x**3 + 0.1410*x**2 - 0.2097*x + 0.0979
 	HAPT   = 1. - MICRO - CRYPT - GREEN - PROK
-	
+
 	PFT_1 = DIATOM  * CHL
-	PFT_2 = HAPT    * CHL
+	PFT_2 = DINOPH  * CHL
 	PFT_3 = CRYPT   * CHL
 	PFT_4 = GREEN   * CHL
 	PFT_5 = PROK    * CHL
-	PFT_6 = DINOPH  * CHL
+	PFT_6 = HAPT    * CHL
 
 	PSC_1 = MICRO   * CHL
 	PSC_2 = NANO    * CHL

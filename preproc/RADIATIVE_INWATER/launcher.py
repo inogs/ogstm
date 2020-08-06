@@ -202,8 +202,9 @@ for ip in range(ip_start_l,ip_end_l):
 	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 
 	# 4. Phytoplankton functional types - PFT
-	aPFT_TOT = np.zeros((CHLz.shape[0], wl.shape[0]))
-	#aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
+
+	#aPFT_TOT = np.zeros((CHLz.shape[0], wl.shape[0]))
+	aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
 
 	# 5. Particulate scattering and backscattering 
 

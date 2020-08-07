@@ -9,6 +9,7 @@ from aPHY_read import aPFT1, aPFT2, aPFT3, aPFT4, aPFT5, aPFT6
 from aw_TS_corr import *
 from bw_TS_corr import rhou_sw
 from configuration import wl
+from Q_read import Qo_morel, SQn_morel
 
 
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
@@ -301,3 +302,18 @@ def bbp_frombbp700(bbp700_int, slope, ratio):
 	return bp, bbp
 
 
+# Compute Q
+
+def Q_aas(solz):
+	Q = 5.33 * np.exp(-0.45 * np.cos(np.deg2rad(solz)))
+	return Q
+
+
+def Q_morel(solz, CHL, wl):
+
+	Qo  = Qo_morel( wl, CHL[0])[0]
+	Sqn = SQn_morel(wl, CHL[0])[0]
+
+	Q = Qo + Sqn * (1 - np.cos(np.deg2rad(solz)))
+
+	return Q

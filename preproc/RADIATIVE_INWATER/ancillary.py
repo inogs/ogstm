@@ -115,9 +115,9 @@ def save_reflectance(ncfile, wl_RRS, Rrs, timestr):
 	ncWL[:] = wl_RRS
 	
 	ncRrs = ncmodel.createVariable('Rrs', 'f', ('depth', 'wavelength'));
-	setattr(ncEdf, 'missing_value',-1.0 );     
-	setattr(ncEdf, 'long_name',  'Remote sensing reflectance ' );     
-	setattr(ncEdf, 'unit',  '[1/sr]' );
+	setattr(ncRrs, 'missing_value',-1.0 );     
+	setattr(ncRrs, 'long_name',  'Remote sensing reflectance ' );     
+	setattr(ncRrs, 'unit',  '[1/sr]' );
 
 	ncRrs[:] = Rrs
 	

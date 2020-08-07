@@ -12,7 +12,13 @@ from configuration import wl
 from Q_read import Qo_morel, SQn_morel
 
 
+
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
+
+def wl_int(xa,xb,ya,yb,xINTs):
+    yINT = ya*(xb-xINT)/(xb-xa) + yb*(xa-xINT)/(xa-xb)
+    return yINT
+
 
 def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
 
@@ -89,6 +95,31 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
 	setattr(ncEdm, 'unit',  '[uW/cm2/nm]' );
 
 	ncEdm[:] = np.vstack((Ed380_model, Ed412_model, Ed490_model)).T
+	
+	ncmodel.close()
+
+	return ncmodel
+
+def save_reflectance(ncfile, wl_RRS, Rrs, timestr):
+
+	modelfile = 'RRS/' + ncfile
+	ncmodel   = NC4.Dataset(modelfile,"w");
+				
+	ncdepth = ncmodel.createDimension('depth',     1);
+	ncwave  = ncmodel.createDimension('wavelength', len(wl_RRS));
+
+	setattr(ncmodel, 'time', timestr);
+	
+	ncWL = ncmodel.createVariable('wavelength', 'f', ('wavelength')); 
+	setattr(ncWL, 'unit',  '[nm]' );
+	ncWL[:] = wl_RRS
+	
+	ncRrs = ncmodel.createVariable('Rrs', 'f', ('depth', 'wavelength'));
+	setattr(ncEdf, 'missing_value',-1.0 );     
+	setattr(ncEdf, 'long_name',  'Remote sensing reflectance ' );     
+	setattr(ncEdf, 'unit',  '[1/sr]' );
+
+	ncRrs[:] = Rrs
 	
 	ncmodel.close()
 

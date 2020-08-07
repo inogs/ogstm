@@ -90,8 +90,8 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-for ip in range(ip_start_l,ip_end_l):
-#for ip in range(320,321):
+#for ip in range(ip_start_l,ip_end_l):
+for ip in range(320,321):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -248,12 +248,16 @@ for ip in range(ip_start_l,ip_end_l):
 	phase 5: Prepare irradiance output .nc files for ARGO-model matchup
 	'''  
 	ncin=NC4.Dataset(floatname,"r")
+
+	Ed380_model  = wl_int(375., 400., (ncin.variables['Edz'][3, 1:] + ncin.variables['Esz'][3, 1:]), (ncin.variables['Edz'][4, 1:] + ncin.variables['Esz'][4, 1:]), 380.) * 4 
+	Ed412_model  = wl_int(400., 425., (ncin.variables['Edz'][4, 1:] + ncin.variables['Esz'][4, 1:]), (ncin.variables['Edz'][5, 1:] + ncin.variables['Esz'][5, 1:]), 412.) * 4 # = 10**(-6) / (10**(-4) * 25) 
+	Ed443_model  = wl_int(425., 450., (ncin.variables['Edz'][5, 1:] + ncin.variables['Esz'][5, 1:]), (ncin.variables['Edz'][6, 1:] + ncin.variables['Esz'][6, 1:]), 443.) * 4
+	Ed490_model  = wl_int(475., 500., (ncin.variables['Edz'][7, 1:] + ncin.variables['Esz'][7, 1:]), (ncin.variables['Edz'][8, 1:] + ncin.variables['Esz'][8, 1:]), 490.) * 4 # W/m2 to muW/cm2
+	Ed510_model  = wl_int(500., 525., (ncin.variables['Edz'][8, 1:] + ncin.variables['Esz'][8, 1:]), (ncin.variables['Edz'][9, 1:] + ncin.variables['Esz'][9, 1:]), 510.) * 4 # W/m2 to muW/cm2
+	Ed555_model  = wl_int(550., 575., (ncin.variables['Edz'][10,1:] + ncin.variables['Esz'][10,1:]), (ncin.variables['Edz'][11,1:] + ncin.variables['Esz'][11,1:]), 555.) * 4 # W/m2 to muW/cm2
+	Ed670_model  = wl_int(650., 675., (ncin.variables['Edz'][14,1:] + ncin.variables['Esz'][14,1:]), (ncin.variables['Edz'][15,1:] + ncin.variables['Esz'][15,1:]), 670.) * 4 # W/m2 to muW/cm2
 	
-	Ed380_model  =  np.array( 0.8  * (ncin.variables['Edz'][3,1:] + ncin.variables['Esz'][3,1:])  + 0.2 *  (ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:]))  * 4 # = 10**(-6) / (10**(-4) * 25) 
-	Ed412_model  =  np.array( 0.52 * (ncin.variables['Edz'][4,1:] + ncin.variables['Esz'][4,1:])  + 0.48 * (ncin.variables['Edz'][5,1:] + ncin.variables['Esz'][5,1:]))  * 4 #  W/m2 to muW/cm2
-	Ed490_model  =  np.array( 0.4  * (ncin.variables['Edz'][7,1:] + ncin.variables['Esz'][7,1:])  + 0.6 *  (ncin.variables['Edz'][8,1:] + ncin.variables['Esz'][8,1:]))  * 4
-	
-	ncin.close()
+
 	'''Interpolate Ed380 on CHL (OASIM model) depth quotes'''
 	
 	Ed380_float = np.interp(PresCHL, Pres380, Ed_380)
@@ -266,6 +270,58 @@ for ip in range(ip_start_l,ip_end_l):
 	movefiles = 'mv ' + str(floatname) + ' NCOUT/'
 	os.system(movefiles)
 	
+
+	'''
+	phase 6. Prepare Ed and Eu values from the model in order to obtain R and then Rrs
+	         Satellite wavelenghts for Rrs : 412, 443, 490, 510, 555, 670 - Ed and Eu
+	'''
+
+	solz = float(ncin.variables['solz'][0])  # Solar zenih angle in degrees
+
+	Eu412_model  = wl_int(400., 425., ncin.variables['Euz'][4, 1:], ncin.variables['Euz'][5, 1:], 412.) * 4 # = 10**(-6) / (10**(-4) * 25) 
+	Eu443_model  = wl_int(425., 450., ncin.variables['Euz'][5, 1:], ncin.variables['Euz'][6, 1:], 443.) * 4
+	Eu490_model  = wl_int(475., 500., ncin.variables['Euz'][7, 1:], ncin.variables['Euz'][8, 1:], 490.) * 4 # W/m2 to muW/cm2
+	Eu510_model  = wl_int(500., 525., ncin.variables['Euz'][8, 1:], ncin.variables['Euz'][9, 1:], 510.) * 4 # W/m2 to muW/cm2
+	Eu555_model  = wl_int(550., 575., ncin.variables['Euz'][10,1:], ncin.variables['Euz'][11,1:], 555.) * 4 # W/m2 to muW/cm2
+	Eu670_model  = wl_int(650., 675., ncin.variables['Euz'][14,1:], ncin.variables['Euz'][15,1:], 670.) * 4 # W/m2 to muW/cm2
+	
+
+	# Compute reflectances
+
+	R412 = Eu412_model / Ed412_model
+	R443 = Eu443_model / Ed443_model
+	R490 = Eu490_model / Ed490_model
+	R510 = Eu510_model / Ed510_model
+	R555 = Eu555_model / Ed555_model
+	R670 = Eu670_model / Ed670_model
+
+
+	# Compute Q functions
+
+	Q412 = Q_morel(solz, CHLz, 412.)
+	Q443 = Q_morel(solz, CHLz, 443.)
+	Q490 = Q_morel(solz, CHLz, 490.)
+	Q510 = Q_morel(solz, CHLz, 510.)
+	Q555 = Q_morel(solz, CHLz, 555.)
+	Q670 = Q_morel(solz, CHLz, 670.)
+
+	Q = [Q412, Q443, Q490, Q510, Q555, Q670]
+
+	print('I am %d profile %d - Q values' %(whoAmI, ip) , Q)
+
+	# Remote sensing reflectances
+
+	Rrs412 = Q412 * R412[0]
+	Rrs443 = Q443 * R443[0]
+	Rrs490 = Q490 * R490[0]
+	Rrs510 = Q510 * R510[0]
+	Rrs555 = Q555 * R555[0]
+	Rrs670 = Q670 * R670[0]
+
+	wl_RRS = [412., 443., 490., 510., 555., 670.]
+	Rrs    = [Rrs412, Rrs443, Rrs490, Rrs510, Rrs555, Rrs670]
+
+	ncRrs = save_reflectance(floatname, wl_RRS, Rrs, timestr)
 	
 	''' Move the .txt files you don't need any more '''
 	txtfiles1 = 'mv ' + profile_ID + '_OASIM.txt'     + ' TXT_FILES/' 
@@ -274,6 +330,8 @@ for ip in range(ip_start_l,ip_end_l):
 	txtfiles4 = 'mv ' + profile_ID + '_CDOM.txt'      + ' TXT_FILES/'
 	txtfiles5 = 'mv ' + profile_ID + '_water_IOP.dat' + ' TXT_FILES/'
 	txtfiles6 = 'mv ' + profile_ID + '_DEPTH.txt'     + ' TXT_FILES/'
+	
+	#ncin.close()
 
 	os.system(txtfiles1)
 	os.system(txtfiles2)

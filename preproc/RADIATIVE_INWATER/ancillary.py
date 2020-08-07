@@ -15,7 +15,7 @@ from Q_read import Qo_morel, SQn_morel
 
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
 
-def wl_int(xa,xb,ya,yb,xINTs):
+def wl_int(xa, xb, ya, yb, xINT):
     yINT = ya*(xb-xINT)/(xb-xa) + yb*(xa-xINT)/(xa-xb)
     return yINT
 

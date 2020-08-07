@@ -90,8 +90,8 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-#for ip in range(ip_start_l,ip_end_l):
-for ip in range(320,321):
+for ip in range(ip_start_l,ip_end_l):
+#for ip in range(320,321):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -331,7 +331,7 @@ for ip in range(320,321):
 	txtfiles5 = 'mv ' + profile_ID + '_water_IOP.dat' + ' TXT_FILES/'
 	txtfiles6 = 'mv ' + profile_ID + '_DEPTH.txt'     + ' TXT_FILES/'
 	
-	#ncin.close()
+	ncin.close()
 
 	os.system(txtfiles1)
 	os.system(txtfiles2)

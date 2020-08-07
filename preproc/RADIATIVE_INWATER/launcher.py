@@ -249,13 +249,13 @@ for ip in range(ip_start_l,ip_end_l):
 	'''  
 	ncin=NC4.Dataset(floatname,"r")
 
-	Ed380_model  = wl_int(375., 400., (ncin.variables['Edz'][3, 1:] + ncin.variables['Esz'][3, 1:]), (ncin.variables['Edz'][4, 1:] + ncin.variables['Esz'][4, 1:]), 380.) * 4 
-	Ed412_model  = wl_int(400., 425., (ncin.variables['Edz'][4, 1:] + ncin.variables['Esz'][4, 1:]), (ncin.variables['Edz'][5, 1:] + ncin.variables['Esz'][5, 1:]), 412.) * 4 # = 10**(-6) / (10**(-4) * 25) 
-	Ed443_model  = wl_int(425., 450., (ncin.variables['Edz'][5, 1:] + ncin.variables['Esz'][5, 1:]), (ncin.variables['Edz'][6, 1:] + ncin.variables['Esz'][6, 1:]), 443.) * 4
-	Ed490_model  = wl_int(475., 500., (ncin.variables['Edz'][7, 1:] + ncin.variables['Esz'][7, 1:]), (ncin.variables['Edz'][8, 1:] + ncin.variables['Esz'][8, 1:]), 490.) * 4 # W/m2 to muW/cm2
-	Ed510_model  = wl_int(500., 525., (ncin.variables['Edz'][8, 1:] + ncin.variables['Esz'][8, 1:]), (ncin.variables['Edz'][9, 1:] + ncin.variables['Esz'][9, 1:]), 510.) * 4 # W/m2 to muW/cm2
-	Ed555_model  = wl_int(550., 575., (ncin.variables['Edz'][10,1:] + ncin.variables['Esz'][10,1:]), (ncin.variables['Edz'][11,1:] + ncin.variables['Esz'][11,1:]), 555.) * 4 # W/m2 to muW/cm2
-	Ed670_model  = wl_int(650., 675., (ncin.variables['Edz'][14,1:] + ncin.variables['Esz'][14,1:]), (ncin.variables['Edz'][15,1:] + ncin.variables['Esz'][15,1:]), 670.) * 4 # W/m2 to muW/cm2
+	Ed380_model  = INT_wl(375., 400., (ncin.variables['Edz'][3, 1:] + ncin.variables['Esz'][3, 1:]), (ncin.variables['Edz'][4, 1:] + ncin.variables['Esz'][4, 1:]), 380.) * 4 
+	Ed412_model  = INT_wl(400., 425., (ncin.variables['Edz'][4, 1:] + ncin.variables['Esz'][4, 1:]), (ncin.variables['Edz'][5, 1:] + ncin.variables['Esz'][5, 1:]), 412.) * 4 # = 10**(-6) / (10**(-4) * 25) 
+	Ed443_model  = INT_wl(425., 450., (ncin.variables['Edz'][5, 1:] + ncin.variables['Esz'][5, 1:]), (ncin.variables['Edz'][6, 1:] + ncin.variables['Esz'][6, 1:]), 443.) * 4
+	Ed490_model  = INT_wl(475., 500., (ncin.variables['Edz'][7, 1:] + ncin.variables['Esz'][7, 1:]), (ncin.variables['Edz'][8, 1:] + ncin.variables['Esz'][8, 1:]), 490.) * 4 # W/m2 to muW/cm2
+	Ed510_model  = INT_wl(500., 525., (ncin.variables['Edz'][8, 1:] + ncin.variables['Esz'][8, 1:]), (ncin.variables['Edz'][9, 1:] + ncin.variables['Esz'][9, 1:]), 510.) * 4 # W/m2 to muW/cm2
+	Ed555_model  = INT_wl(550., 575., (ncin.variables['Edz'][10,1:] + ncin.variables['Esz'][10,1:]), (ncin.variables['Edz'][11,1:] + ncin.variables['Esz'][11,1:]), 555.) * 4 # W/m2 to muW/cm2
+	Ed670_model  = INT_wl(650., 675., (ncin.variables['Edz'][14,1:] + ncin.variables['Esz'][14,1:]), (ncin.variables['Edz'][15,1:] + ncin.variables['Esz'][15,1:]), 670.) * 4 # W/m2 to muW/cm2
 	
 
 	'''Interpolate Ed380 on CHL (OASIM model) depth quotes'''
@@ -278,12 +278,12 @@ for ip in range(ip_start_l,ip_end_l):
 
 	solz = float(ncin.variables['solz'][0])  # Solar zenih angle in degrees
 
-	Eu412_model  = wl_int(400., 425., ncin.variables['Euz'][4, 1:], ncin.variables['Euz'][5, 1:], 412.) * 4 # = 10**(-6) / (10**(-4) * 25) 
-	Eu443_model  = wl_int(425., 450., ncin.variables['Euz'][5, 1:], ncin.variables['Euz'][6, 1:], 443.) * 4
-	Eu490_model  = wl_int(475., 500., ncin.variables['Euz'][7, 1:], ncin.variables['Euz'][8, 1:], 490.) * 4 # W/m2 to muW/cm2
-	Eu510_model  = wl_int(500., 525., ncin.variables['Euz'][8, 1:], ncin.variables['Euz'][9, 1:], 510.) * 4 # W/m2 to muW/cm2
-	Eu555_model  = wl_int(550., 575., ncin.variables['Euz'][10,1:], ncin.variables['Euz'][11,1:], 555.) * 4 # W/m2 to muW/cm2
-	Eu670_model  = wl_int(650., 675., ncin.variables['Euz'][14,1:], ncin.variables['Euz'][15,1:], 670.) * 4 # W/m2 to muW/cm2
+	Eu412_model  = INT_wl(400., 425., ncin.variables['Euz'][4, 1:], ncin.variables['Euz'][5, 1:], 412.) * 4 # = 10**(-6) / (10**(-4) * 25) 
+	Eu443_model  = INT_wl(425., 450., ncin.variables['Euz'][5, 1:], ncin.variables['Euz'][6, 1:], 443.) * 4
+	Eu490_model  = INT_wl(475., 500., ncin.variables['Euz'][7, 1:], ncin.variables['Euz'][8, 1:], 490.) * 4 # W/m2 to muW/cm2
+	Eu510_model  = INT_wl(500., 525., ncin.variables['Euz'][8, 1:], ncin.variables['Euz'][9, 1:], 510.) * 4 # W/m2 to muW/cm2
+	Eu555_model  = INT_wl(550., 575., ncin.variables['Euz'][10,1:], ncin.variables['Euz'][11,1:], 555.) * 4 # W/m2 to muW/cm2
+	Eu670_model  = INT_wl(650., 675., ncin.variables['Euz'][14,1:], ncin.variables['Euz'][15,1:], 670.) * 4 # W/m2 to muW/cm2
 	
 
 	# Compute reflectances

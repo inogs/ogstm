@@ -215,7 +215,7 @@ for ip in range(ip_start_l,ip_end_l):
 	#bbp = np.zeros((CHLz.shape[0], wl.shape[0]))
 	#bp, bbp  = bp_Case1(CHLz, 0.002)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
 	#bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, 0.002)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
-	bp,bbp   = bbp_frombbp700(BBP700_int, 0., 0.015)  # slope between 0 and 4. Boss says 1, Organelli uses 2
+	bp,bbp   = bbp_frombbp700(BBP700_int, 4., 0.002)  # slope between 0 and 4. Boss says 1, Organelli uses 2
 													  # max bbp is with 0 and 0.015  ; min bbp is with 4 and 0.002
 
 	write_acbc25(wl, aPFT_TOT, bp, bbp, fname=profile_ID + '_PFT.txt')   # Save PFT_abs, bp and bbp

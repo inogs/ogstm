@@ -182,7 +182,7 @@ def profile_shape(x, y):
 def PFT_MED(CHL):
 # This algorithm works only if CHL is in range between 0.02 and 5.52 mg/m3
 # And it was validated only for the first 50 meters
-	x     = np.where(CHL>0.02, np.log10(CHL), np.log10(0.02))
+	x      = np.where(CHL>0.02, np.log10(CHL), np.log10(0.02))
 	x[CHL>5.52] = np.log10(5.52)
 	#x = np.log10(CHL)
 	MICRO  = 0.0667*x**3 + 0.1939*x**2 + 0.2743*x + 0.2994
@@ -195,17 +195,17 @@ def PFT_MED(CHL):
 	PROK   = 0.0664*x**3 + 0.1410*x**2 - 0.2097*x + 0.0979
 	HAPT   = 1. - MICRO - CRYPT - GREEN - PROK
 
-	PFT_1 = DIATOM  * CHL
-	PFT_2 = DINOPH  * CHL
-	PFT_3 = CRYPT   * CHL
-	PFT_4 = GREEN   * CHL
-	PFT_5 = PROK    * CHL
-	PFT_6 = HAPT    * CHL
-
-	PSC_1 = MICRO   * CHL
-	PSC_2 = NANO    * CHL
-	PSC_3 = PICO    * CHL
-
+	PFT_1  = DIATOM  * CHL
+	PFT_2  = DINOPH  * CHL
+	PFT_3  = CRYPT   * CHL
+	PFT_4  = GREEN   * CHL
+	PFT_5  = PROK    * CHL
+	PFT_6  = HAPT    * CHL
+ 
+	PSC_1  = MICRO   * CHL
+	PSC_2  = NANO    * CHL
+	PSC_3  = PICO    * CHL
+ 
 	aPFT_TOT = np.zeros((CHL.shape[0], wl.shape[0]))
 
 	for idepth in range(CHL.shape[0]):

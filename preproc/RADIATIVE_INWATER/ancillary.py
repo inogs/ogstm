@@ -156,10 +156,10 @@ def CDOM_QC(CDOM):
 
 def BBP700_QC(PresBBP, BBP700):
 	BBP700_MF = ndimage.median_filter(BBP700, size=11)
-	BBP700_RM = running_mean(BBP700_MF, 15)
+	BBP700_QC = running_mean(BBP700_MF, 15)
 
-	offset_range =(PresBBP >= 400.)
-	BBP700_QC = BBP700_RM - BBP700_RM[offset_range].mean()
+	#offset_range =(PresBBP >= 400.)
+	#BBP700_QC = BBP700_RM - BBP700_RM[offset_range].mean()   # Check if shifts are needed
 
 	BBP700_QC[BBP700_QC < 0.] = 0.
 

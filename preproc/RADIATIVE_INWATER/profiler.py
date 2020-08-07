@@ -4,6 +4,8 @@ from __future__ import print_function
 from datetime import timedelta
 
 from instruments.matchup_manager import Matchup_Manager
+#from instruments import optbio_float_2019 as optbio_float
+from static import superfloat as optbio_float
 
 from configuration import *
 

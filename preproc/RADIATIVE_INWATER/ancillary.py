@@ -293,7 +293,7 @@ def bp_Case1_bbp(CHL, bbp700_int, ratio):
 def bbp_frombbp700(bbp700_int, slope, ratio):
 	bbp = np.zeros((bbp700_int.shape[0], wl.shape[0]))
 
-	for wl in range(wl.shape[0]):
+	for iwl in range(wl.shape[0]):
 		bbp[:, iwl] = bbp700_int * np.power((wl[iwl]/700.), -slope) * bbp700_int/ np.max(bbp700_int)  
 
 	bp = bbp / ratio

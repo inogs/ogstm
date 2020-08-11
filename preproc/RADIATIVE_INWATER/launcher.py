@@ -192,7 +192,7 @@ for ip in range(ip_start_l,ip_end_l):
 	#################################################################################################################### 
 
 	# 3.1. Case 1 type
-	aCDOM = aCDOM_Case1(np.zeros(CHLz.shape),   0.017)     # If you want to run a simulation without CDOM
+	aCDOM = np.zeros((CHLz.shape[0], wl.shape[0]))            # If you want to run a simulation without CDOM
 	#aCDOM = aCDOM_Case1(CHLz,   0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 
 	CDOM_qc = CDOM_QC(CDOM) # quality-controlled CDOM profile

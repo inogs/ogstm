@@ -190,17 +190,13 @@ def BBP700_QC(PresBBP, BBP700):
 	BBP700_MF = ndimage.median_filter(BBP700, size=11)
 	BBP700_QC = running_mean(BBP700_MF, 15)
 
-	#offset_range =(PresBBP >= 400.)
-	#BBP700_QC = BBP700_RM - BBP700_RM[offset_range].mean()   # Check if shifts are needed
-
 	BBP700_QC[BBP700_QC < 0.] = 0.
 
 	return BBP700_QC
 
-def CHL_QC(CHL):
+def CHL_QC(CHL):  # For now we are not using it
 	CHL_MF = ndimage.median_filter(CHL, size=5)
 	CHL_QC = running_mean(CHL_MF, 7)
-	#CHL_QC[CHL_QC < 0.005] = 0.005
 	CHL_QC[CHL_QC < 0.] = 0.
 	return CHL_QC
 
@@ -258,7 +254,6 @@ def aNAP_Babin(X, a443, Snap):
 		aNAP[:,iwl] = a_NAP * X / np.max(X)
 
 	return aNAP
-
 
 
 def aNAP_Case1(CHL, Snap):

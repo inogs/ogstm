@@ -20,11 +20,30 @@ from commons.layer import Layer
 #from instruments.matchup_manager import Matchup_Manager
 from matchup_manager_MOD import Matchup_Manager
 
-
+CONFIGFILE = open('configuration.txt', 'r')
 ## Define all the variables you'll read from a .csv file to run the whole set of simulations
 
-TS_corr  = True
-aw_model = 'MASON' 
+fCHL          = float(CONFIGFILE.readline())
+fCDOM         = float(CONFIGFILE.readline())
+fBBP          = float(CONFIGFILE.readline())
+TS_corr       = bool(CONFIGFILE.readline())
+aw_spec       = CONFIGFILE.readline().strip('\n')
+a_NAP_model   = CONFIGFILE.readline().strip('\n')
+a_NAP_443     = float(CONFIGFILE.readline())
+S_NAP         = float(CONFIGFILE.readline())
+a_CDOM_model  = CONFIGFILE.readline().strip('\n')
+S_CDOM        = float(CONFIGFILE.readline())
+CDOM_TS_corr  = bool(CONFIGFILE.readline())
+aw_380_spec   = CONFIGFILE.readline().strip('\n')
+depth_type    = CONFIGFILE.readline().strip('\n')
+Kw_type       = CONFIGFILE.readline().strip('\n')
+a_PFT_use     = bool(CONFIGFILE.readline())
+bp_bbp_model  = CONFIGFILE.readline().strip('\n')
+bb_ratio      = float(CONFIGFILE.readline())
+bbp_slope     = float(CONFIGFILE.readline())
+   
+CONFIGFILE.close()
+
 
 ## MPI Ancillary functions ##
 comm     = MPI.COMM_WORLD  # Communications macro
@@ -161,15 +180,18 @@ for ip in range(ip_start_l,ip_end_l):
 
 	CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
 
-	CDOM_qc    = CDOM_QC(CDOM) 
-	BBP700_qc  = BBP700_QC(PresBBP, BBP700)
+	# Assign the CHL factor in case you want to run the sensitivity analysis
+	CHLz *= fCHL
+
+	CDOM_qc    = fCDOM * CDOM_QC(CDOM) 
+	BBP700_qc  = fBBP  * BBP700_QC(PresBBP, BBP700)
 
 	# Interpolate to CHL depth quotes - You need this because at the moment 
 	# you're saving all IOPs on CHLz depth quotas for the model run.
 	TEMP_int   = np.interp(PresCHL, PresT, TEMP)
 	SALI_int   = np.interp(PresCHL, PresS, SALI)
-	CDOM_int   = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth!
-	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) # Interpolate bbp700 to CHL depth!
+	CDOM_int   = np.interp(PresCHL, PresCDOM, CDOM_qc) 
+	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) 
 
 	
 	'''
@@ -182,77 +204,79 @@ for ip in range(ip_start_l,ip_end_l):
 
 
 	if not TS_corr:
-		awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')  
+		awTS = aw_NO_corr(TEMP_int, SALI_int, model=aw_spec)  
 		bwTS = bw_NO_corr(TEMP_int, SALI_int)
 	else:
-		awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # MASON or LIT
-		bwTS = bw_TS_corr(TEMP_int, SALI_int)                 # Then we will change it to a variable
+		awTS = aw_TS_corr(TEMP_int, SALI_int, model=aw_spec)  
+		bwTS = bw_TS_corr(TEMP_int, SALI_int)                 
 
 
-	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
+	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   
 
 
 	####################################################################################################################
 	##################################          2. Non-algal particles - NAP         ################################### 
 	####################################################################################################################  
 	
-	
-	aNAP  = aNAP_Case1( CHLz,   0.0129)      # 0.0178 max, 0.0104 min and 0.0129 mean
+	a_NAP = np.zeros((CHLz.shape[0], wl.shape[0]))
+
+	if a_NAP_model == 'Case1':
+		a_NAP  = aNAP_Case1( CHLz,   S_NAP)      
+	if a_NAP_model == 'Babin_CHL':
+		a_NAP = aNAP_Babin(CHLz, a_NAP_443, S_NAP) 
+	if a_NAP_model == 'Babin_BBP':
+		a_NAP = aNAP_Babin(BBP700_int, a_NAP_443, S_NAP) 
 
 
 	#################################################################################################################### 
 	##################################    3. Colored dissolved org. matter - CDOM     ################################## 
 	#################################################################################################################### 
 
-	# 3.1. Case 1 type
 
-	aCDOM = np.zeros((CHLz.shape[0], wl.shape[0]))            # If you want to run a simulation without CDOM
-	#aCDOM = aCDOM_Case1(CHLz,   0.017)     # 0.02   max, 0.015  min and 0.017  mean 
+	a_CDOM = np.zeros((CHLz.shape[0], wl.shape[0]))            # If you want to run a simulation without CDOM
 
 
+	if a_CDOM_model == 'Case1_CHL':
+		a_CDOM = aCDOM_Case1(CHLz,   S_CDOM)     
+	if a_CDOM_model == 'Case1_CDOM':
+		a_CDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, S_CDOM)
+	if a_CDOM_model == 'Kbio_380':
 
-	# 3.2. Case 1 type with CDOM shape
+		if not CDOM_TS_corr:
+			aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model=aw_380_spec)      # No TS Corr
+			bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
+		else:
+			aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model=aw_380_spec)    # With TS Corr
+			bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
-	#aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
+		Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, depth_type, aw380, bw380, Kw_type) # MLD or EUPH ; MASON or LIT
 
-	# 3.3. Estimating aCDOM(380) from Kd380
-
-	#aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='LIT')      # No TS Corr
-	#bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
-
-	#aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model='MASON')    # With TS Corr
-	#bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
-
-	#Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MASON') # MLD or EUPH ; MASON or LIT
-
-	#aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
+		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
 
 	#################################################################################################################### 
 	##################################    4. Phytoplankton functional types - PFT     ################################## 
 	#################################################################################################################### 
 
 
-	aPFT_TOT = np.zeros((CHLz.shape[0], wl.shape[0]))   # If you want to run a simulation without PFTs
-	#aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
+	a_PFT_TOT = np.zeros((CHLz.shape[0], wl.shape[0]))   # If you want to run a simulation without PFTs
+
+	if a_PFT_use == True:
+		a_PFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
 
 
 	#################################################################################################################### 
 	###############################    5. Particulate scattering and backscattering   ################################## 
 	#################################################################################################################### 
 
-
-
 	bp  = np.zeros((CHLz.shape[0], wl.shape[0]))    # If you want to run a simulation without bp
 	bbp = np.zeros((CHLz.shape[0], wl.shape[0]))
 
-	# 5.1. Case 1 - Chl shape
-	#bp, bbp  = bp_Case1(CHLz, 0.002)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
-
-	# 5.2 Case 1 - bbp shape
-	#bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, 0.002)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
-
-	# 5.3 bp, bbp from bbp700
-	#bp,bbp   = bbp_frombbp700(BBP700_int, 4., 0.002)  # slope between 0 and 4. Boss says 1, Organelli uses 2
+	if bp_bbp_model == 'Case1_CHL':
+		bp, bbp  = bp_Case1(CHLz, bb_ratio)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
+	if bp_bbp_model == 'Case1_BBP':
+		bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, bb_ratio)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
+	if bp_bbp_model == 'from_BBP700'
+		bp,bbp   = bbp_frombbp700(BBP700_int, bbp_slope, bb_ratio)  # slope between 0 and 4. Boss says 1, Organelli uses 2
 													  # max bbp is with 0 and 0.015  ; min bbp is with 4 and 0.002
 
 
@@ -261,17 +285,17 @@ for ip in range(ip_start_l,ip_end_l):
 	#################################################################################################################### 													  
 
 
-	write_acbc25(wl, aPFT_TOT, bp, bbp, fname=profile_ID + '_PFT.txt')   # Save PFT_abs, bp and bbp
+	write_acbc25(wl, a_PFT_TOT, bp, bbp, fname=profile_ID + '_PFT.txt')   # Save PFT_abs, bp and bbp
 	
 	file_col_DEPTH = PresCHL.T
 	np.savetxt(profile_ID + '_DEPTH.txt', file_col_DEPTH, header = init_rows, delimiter='\t', comments='')
 	
 	Pres = PresCHL.reshape(PresCHL.shape[0], 1)
 	
-	file_cols_CDOM = np.hstack((Pres, aCDOM))
+	file_cols_CDOM = np.hstack((Pres, a_CDOM))
 	np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
 	
-	file_cols_NAP = np.hstack((Pres, aNAP))
+	file_cols_NAP = np.hstack((Pres, a_NAP))
 	np.savetxt(profile_ID + '_NAP.txt',   file_cols_NAP, delimiter='\t', comments='' )
 	
 	floatname = profile_ID + '.nc'

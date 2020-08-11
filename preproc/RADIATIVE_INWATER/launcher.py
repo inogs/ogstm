@@ -21,6 +21,11 @@ from commons.layer import Layer
 from matchup_manager_MOD import Matchup_Manager
 
 
+## Define all the variables you'll read from a .csv file to run the whole set of simulations
+
+TS_corr  = True
+aw_model = 'MASON' 
+
 ## MPI Ancillary functions ##
 comm     = MPI.COMM_WORLD  # Communications macro
 whoAmI   = comm.Get_rank() # Who are you? who? who?
@@ -154,8 +159,6 @@ for ip in range(ip_start_l,ip_end_l):
 	''' QC procedures for BGC-Argo profiles '''
 
 
-
-
 	CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
 
 	CDOM_qc    = CDOM_QC(CDOM) 
@@ -178,13 +181,13 @@ for ip in range(ip_start_l,ip_end_l):
 	####################################################################################################################    
 
 
-	# With T-S correction
-	awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # MASON or LIT
-	bwTS = bw_TS_corr(TEMP_int, SALI_int)                 # Then we will change it to a variable
+	if not TS_corr:
+		awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')  
+		bwTS = bw_NO_corr(TEMP_int, SALI_int)
+	else:
+		awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # MASON or LIT
+		bwTS = bw_TS_corr(TEMP_int, SALI_int)                 # Then we will change it to a variable
 
-	# Without T-S correction	
-	#awTS = aw_NO_corr(TEMP_int, SALI_int, model='MASON')  
-	#bwTS = bw_NO_corr(TEMP_int, SALI_int)
 
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
@@ -194,7 +197,7 @@ for ip in range(ip_start_l,ip_end_l):
 	####################################################################################################################  
 	
 	
-	aNAP  = aNAP_Case1( CHLz,   0.0178)      # 0.0178 max, 0.0104 min and 0.0129 mean
+	aNAP  = aNAP_Case1( CHLz,   0.0129)      # 0.0178 max, 0.0104 min and 0.0129 mean
 
 
 	#################################################################################################################### 

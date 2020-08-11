@@ -127,10 +127,6 @@ for ip in range(ip_start_l,ip_end_l):
 	PresCDOM,  CDOM,    Qc = p.read('CDOM')
 	PresT,     TEMP,    Qc = p.read('TEMP')
 	PresS,     SALI,    Qc = p.read('SALI')
-	#PresN,     NIT,     Qc = p.read('NITRATE')
-	#PresO,     DOXY,    Qc = p.read('DOXY')
-
-	CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
 
 	Lon       = p.lon
 	Lat       = p.lat
@@ -154,9 +150,23 @@ for ip in range(ip_start_l,ip_end_l):
 		print('I am %d profile %d - Cannot interpolate to CHL depth quotes' %(whoAmI, ip))
 		continue
 
-	# Interpolate TEMP and SALI to CHL depth quotes
-	TEMP_int = np.interp(PresCHL, PresT, TEMP)
-	SALI_int = np.interp(PresCHL, PresS, SALI)
+
+	''' QC procedures for BGC-Argo profiles '''
+
+
+
+
+	CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
+
+	CDOM_qc    = CDOM_QC(CDOM) 
+	BBP700_qc  = BBP700_QC(PresBBP, BBP700)
+
+	# Interpolate to CHL depth quotes - You need this because at the moment 
+	# you're saving all IOPs on CHLz depth quotas for the model run.
+	TEMP_int   = np.interp(PresCHL, PresT, TEMP)
+	SALI_int   = np.interp(PresCHL, PresS, SALI)
+	CDOM_int   = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth!
+	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) # Interpolate bbp700 to CHL depth!
 
 	
 	'''
@@ -184,7 +194,7 @@ for ip in range(ip_start_l,ip_end_l):
 	####################################################################################################################  
 	
 	
-	aNAP  = aNAP_Case1( CHLz,   0.0104)      # 0.0178 max, 0.0104 min and 0.0129 mean
+	aNAP  = aNAP_Case1( CHLz,   0.0178)      # 0.0178 max, 0.0104 min and 0.0129 mean
 
 
 	#################################################################################################################### 
@@ -192,19 +202,19 @@ for ip in range(ip_start_l,ip_end_l):
 	#################################################################################################################### 
 
 	# 3.1. Case 1 type
+
 	aCDOM = np.zeros((CHLz.shape[0], wl.shape[0]))            # If you want to run a simulation without CDOM
 	#aCDOM = aCDOM_Case1(CHLz,   0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 
-	CDOM_qc = CDOM_QC(CDOM) # quality-controlled CDOM profile
-	CDOM_int = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth!
-	# You need this because at the moment you're saving all IOPs on CHLz depth quotas for the model run.
+
 
 	# 3.2. Case 1 type with CDOM shape
+
 	#aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 
 	# 3.3. Estimating aCDOM(380) from Kd380
 
-	#aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='LIT')    # No TS Corr
+	#aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='LIT')      # No TS Corr
 	#bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
 
 	#aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model='MASON')    # With TS Corr
@@ -228,8 +238,6 @@ for ip in range(ip_start_l,ip_end_l):
 	#################################################################################################################### 
 
 
-	BBP700_qc  = BBP700_QC(PresBBP, BBP700)
-	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) # Interpolate bbp700 to CHL depth!
 
 	bp  = np.zeros((CHLz.shape[0], wl.shape[0]))    # If you want to run a simulation without bp
 	bbp = np.zeros((CHLz.shape[0], wl.shape[0]))

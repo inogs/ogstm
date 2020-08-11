@@ -90,8 +90,8 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-for ip in range(ip_start_l,ip_end_l):
-#for ip in range(320,321):
+#for ip in range(ip_start_l,ip_end_l):
+for ip in range(320,321):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -130,13 +130,12 @@ for ip in range(ip_start_l,ip_end_l):
 	#PresN,     NIT,     Qc = p.read('NITRATE')
 	#PresO,     DOXY,    Qc = p.read('DOXY')
 
-
 	CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
 
-	Lon = p.lon
-	Lat = p.lat
-	timestr = p.time.strftime("%Y%m%d-%H:%M:%S")
-	nLevels = len(PresCHL)
+	Lon       = p.lon
+	Lat       = p.lat
+	timestr   = p.time.strftime("%Y%m%d-%H:%M:%S")
+	nLevels   = len(PresCHL)
 	init_rows = str(timestr) + '\n' + str(Lat) +  '\n' + str(Lon) + '\n' + str(nLevels)
 	
 	if PresCHL[0] == 0. :#or PresCDOM[0] == 0. or PresBBP[0] == 0.:
@@ -158,12 +157,16 @@ for ip in range(ip_start_l,ip_end_l):
 	# Interpolate TEMP and SALI to CHL depth quotes
 	TEMP_int = np.interp(PresCHL, PresT, TEMP)
 	SALI_int = np.interp(PresCHL, PresS, SALI)
+
 	
 	'''
 	phase 3. Calculate and save IOPs  
 	'''
 
-	# 1. Pure water
+	####################################################################################################################
+	########################################        1 . Pure water         #############################################
+	####################################################################################################################    
+
 
 	# With T-S correction
 	awTS = aw_TS_corr(TEMP_int, SALI_int, model='MASON')  # MASON or LIT
@@ -176,47 +179,76 @@ for ip in range(ip_start_l,ip_end_l):
 	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   # Save T-S-corrected water IOPs
 
 
-	# 2. Non-algal particles - NAP
+	####################################################################################################################
+	##################################          2. Non-algal particles - NAP         ################################### 
+	####################################################################################################################  
+	
 	
 	aNAP  = aNAP_Case1( CHLz,   0.0129)      # 0.0178 max, 0.0104 min and 0.0129 mean
 
-	# 3. CDOM
 
+	#################################################################################################################### 
+	##################################    3. Colored dissolved org. matter - CDOM     ################################## 
+	#################################################################################################################### 
+
+	# 3.1. Case 1 type
+	aCDOM = aCDOM_Case1(np.zeros(CHLz.shape),   0.017)     # If you want to run a simulation without CDOM
 	#aCDOM = aCDOM_Case1(CHLz,   0.017)     # 0.02   max, 0.015  min and 0.017  mean 
 
 	CDOM_qc = CDOM_QC(CDOM) # quality-controlled CDOM profile
-
 	CDOM_int = np.interp(PresCHL, PresCDOM, CDOM_qc) # Interpolate CDOM to CHL depth!
 	# You need this because at the moment you're saving all IOPs on CHLz depth quotas for the model run.
 
+	# 3.2. Case 1 type with CDOM shape
 	#aCDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, 0.017)     # 0.02   max, 0.015  min and 0.017  mean 
+
+	# 3.3. Estimating aCDOM(380) from Kd380
 
 	#aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model='LIT')    # No TS Corr
 	#bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
 
-	aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model='MASON')    # With TS Corr
-	bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
+	#aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model='MASON')    # With TS Corr
+	#bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
-	Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MASON') # MLD or EUPH ; MASON or LIT
+	#Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, 'EUPH', aw380, bw380, 'MASON') # MLD or EUPH ; MASON or LIT
 
-	aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
+	#aCDOM = aCDOM_Kbio(CDOM_int, 0.017, Kbio380)
 
-	# 4. Phytoplankton functional types - PFT
+	#################################################################################################################### 
+	##################################    4. Phytoplankton functional types - PFT     ################################## 
+	#################################################################################################################### 
 
-	#aPFT_TOT = np.zeros((CHLz.shape[0], wl.shape[0]))
-	aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
 
-	# 5. Particulate scattering and backscattering 
+	aPFT_TOT = np.zeros((CHLz.shape[0], wl.shape[0]))   # If you want to run a simulation without PFTs
+	#aPFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
+
+
+	#################################################################################################################### 
+	###############################    5. Particulate scattering and backscattering   ################################## 
+	#################################################################################################################### 
+
 
 	BBP700_qc  = BBP700_QC(PresBBP, BBP700)
 	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) # Interpolate bbp700 to CHL depth!
 
-	#bp  = np.zeros((CHLz.shape[0], wl.shape[0]))
-	#bbp = np.zeros((CHLz.shape[0], wl.shape[0]))
+	bp  = np.zeros((CHLz.shape[0], wl.shape[0]))    # If you want to run a simulation without bp
+	bbp = np.zeros((CHLz.shape[0], wl.shape[0]))
+
+	# 5.1. Case 1 - Chl shape
 	#bp, bbp  = bp_Case1(CHLz, 0.002)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
+
+	# 5.2 Case 1 - bbp shape
 	#bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, 0.002)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
-	bp,bbp   = bbp_frombbp700(BBP700_int, 4., 0.002)  # slope between 0 and 4. Boss says 1, Organelli uses 2
+
+	# 5.3 bp, bbp from bbp700
+	#bp,bbp   = bbp_frombbp700(BBP700_int, 4., 0.002)  # slope between 0 and 4. Boss says 1, Organelli uses 2
 													  # max bbp is with 0 and 0.015  ; min bbp is with 4 and 0.002
+
+
+	#################################################################################################################### 
+	########################################            SAVE FILES         ############################################# 
+	#################################################################################################################### 													  
+
 
 	write_acbc25(wl, aPFT_TOT, bp, bbp, fname=profile_ID + '_PFT.txt')   # Save PFT_abs, bp and bbp
 	

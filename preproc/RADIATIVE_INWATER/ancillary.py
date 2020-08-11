@@ -247,6 +247,20 @@ def PFT_MED(CHL):
 	return aPFT_TOT #PFT_1, PFT_2, PFT_3, PFT_4, PFT_5, PFT_6, PSC_1, PSC_2, PSC_3
 
 
+def aNAP_Babin(X, a443, Snap):
+
+	# X is CHL or BBP700
+
+	aNAP = np.zeros((X.shape[0], wl.shape[0]))
+
+	for iwl in range(len(wl)):
+		a_NAP = a443 * np.exp(-Snap * (wl[iwl] - 443.))
+		aNAP[:,iwl] = a_NAP * X / np.max(X)
+
+	return aNAP
+
+
+
 def aNAP_Case1(CHL, Snap):
 
 	aNAP = np.zeros((CHL.shape[0], wl.shape[0]))
@@ -338,6 +352,7 @@ def bbp_frombbp700(bbp700_int, slope, ratio):
 def Q_aas(solz):
 	Q = 5.33 * np.exp(-0.45 * np.cos(np.deg2rad(solz)))
 	return Q
+
 
 
 def Q_morel(solz, CHL, wl):

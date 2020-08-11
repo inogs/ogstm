@@ -41,6 +41,7 @@ a_PFT_use     = bool(CONFIGFILE.readline())
 bp_bbp_model  = CONFIGFILE.readline().strip('\n')
 bb_ratio      = float(CONFIGFILE.readline())
 bbp_slope     = float(CONFIGFILE.readline())
+Q_depth       = CONFIGFILE.readline().strip('\n')
    
 CONFIGFILE.close()
 
@@ -365,12 +366,12 @@ for ip in range(ip_start_l,ip_end_l):
 
 	# Compute Q functions
 
-	Q412 = Q_morel(solz, CHLz, 412.)
-	Q443 = Q_morel(solz, CHLz, 443.)
-	Q490 = Q_morel(solz, CHLz, 490.)
-	Q510 = Q_morel(solz, CHLz, 510.)
-	Q555 = Q_morel(solz, CHLz, 555.)
-	Q670 = Q_morel(solz, CHLz, 670.)
+	Q412 = Q_morel(solz, PresCHL, CHLz, 412., Q_depth)
+	Q443 = Q_morel(solz, PresCHL, CHLz, 443., Q_depth)
+	Q490 = Q_morel(solz, PresCHL, CHLz, 490., Q_depth)
+	Q510 = Q_morel(solz, PresCHL, CHLz, 510., Q_depth)
+	Q555 = Q_morel(solz, PresCHL, CHLz, 555., Q_depth)
+	Q670 = Q_morel(solz, PresCHL, CHLz, 670., Q_depth)
 
 	Q = [Q412, Q443, Q490, Q510, Q555, Q670]
 

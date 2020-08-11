@@ -350,11 +350,19 @@ def Q_aas(solz):
 
 
 
-def Q_morel(solz, CHL, wl):
+def Q_morel(solz, PresCHL, CHL, wl, depth_type):
 
-	Qo  = Qo_morel( wl, CHL[0])[0]
-	Sqn = SQn_morel(wl, CHL[0])[0]
+	if depth_type == 'SURF':
+		Qo  = Qo_morel( wl, CHL[0])[0]
+		Sqn = SQn_morel(wl, CHL[0])[0]
+	if depth_type == '10m':
+		Qo  = Qo_morel( wl, np.mean(CHL[PresCHL<10.]))[0]
+		Sqn = SQn_morel(wl, np.mean(CHL[PresCHL<10.]))[0]
 
 	Q = Qo + Sqn * (1 - np.cos(np.deg2rad(solz)))
 
 	return Q
+
+
+
+

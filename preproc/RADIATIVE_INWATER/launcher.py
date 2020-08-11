@@ -275,7 +275,7 @@ for ip in range(ip_start_l,ip_end_l):
 		bp, bbp  = bp_Case1(CHLz, bb_ratio)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
 	if bp_bbp_model == 'Case1_BBP':
 		bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, bb_ratio)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
-	if bp_bbp_model == 'from_BBP700'
+	if bp_bbp_model == 'from_BBP700':
 		bp,bbp   = bbp_frombbp700(BBP700_int, bbp_slope, bb_ratio)  # slope between 0 and 4. Boss says 1, Organelli uses 2
 													  # max bbp is with 0 and 0.015  ; min bbp is with 4 and 0.002
 

@@ -38,9 +38,9 @@ for p in Profilelist_aux:
 	if not ( int(p.time.strftime('%H'))>10 and int(p.time.strftime('%H'))<14 ): ctint +=1; continue
 	#if not findVars(p.available_params.split(' ')[1:], allvars=['TEMP', 'SALI', 'CHLA']): cvars +=1; continue
 	#if not findVars(p.available_params.split(' ')[1:], allvars=['TEMP', 'SALI', 'CHLA', 'IRR_380', 'IRR_412', 'IRR_490']): cvars +=1; continue
-	#if not findVars(p.available_params.split(' ')[1:], allvars=['TEMP', 'SALI', 'CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'BBP700', 'CDOM' ]): cvars +=1; continue
+	if not findVars(p.available_params.split(' ')[1:], allvars=['TEMP', 'SALI', 'CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'BBP700', 'CDOM' ]): cvars +=1; continue
 
-	if not findVars(p.available_params.split(' ')[1:], allvars=['TEMP', 'SALI', 'CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'PAR', 'BBP700', 'CDOM']): cvars +=1; continue
+	#if not findVars(p.available_params.split(' ')[1:], allvars=['TEMP', 'SALI', 'CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'PAR', 'BBP700', 'CDOM']): cvars +=1; continue
 	Profilelist.append(p)
 
 print('Counters: ', ctime, ctint, cvars)

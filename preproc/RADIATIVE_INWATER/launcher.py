@@ -147,7 +147,7 @@ for ip in range(ip_start_l,ip_end_l):
 	Pres380,   Ed_380,  Qc = p.read('IRR_380')
 	Pres412,   Ed_412,  Qc = p.read('IRR_412')
 	Pres490,   Ed_490,  Qc = p.read('IRR_490')
-	PresPAR,   PAR,     Qc = p.read('PAR')
+	#PresPAR,   PAR,     Qc = p.read('PAR')
 	PresBBP,   BBP700,  Qc = p.read('BBP700')
 	PresCDOM,  CDOM,    Qc = p.read('CDOM')
 	PresT,     TEMP,    Qc = p.read('TEMP')

@@ -69,35 +69,50 @@ def findVars(Varlist, allvars=['CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'TEMP'])
 Prepare model and BGC-Argo output for .nc files and match-up analysis
 '''
 
-def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_model, Ed412_model, Ed490_model, timestr):
+def save_matchup(ncfile, Pres380, Pres412, Pres490, Ed380_float, Ed412_float, Ed490_float, Ed380_model, Ed412_model, Ed490_model, timestr):
 
 	if not os.path.isdir('MATCHUP') : os.mkdir('MATCHUP')
 
 	modelfile = 'MATCHUP/' + ncfile
 	ncmodel   = NC4.Dataset(modelfile,"w");
 				
-	ncdepth = ncmodel.createDimension('depth',     len(PresCHL));
-	ncwave  = ncmodel.createDimension('wavelength', 3);
+	ncdepth380 = ncmodel.createDimension('depth380',     len(Pres380));
+	ncdepth412 = ncmodel.createDimension('depth412',     len(Pres412));
+	ncdepth490 = ncmodel.createDimension('depth490',     len(Pres490));
+
+	ncwave  = ncmodel.createDimension('type', 2);
 
 	setattr(ncmodel, 'time', timestr);
 	
-	ncDepth = ncmodel.createVariable('depth', 'f', ('depth')); 
-	setattr(ncDepth, 'unit',  '[m]' );
-	ncDepth[:] = PresCHL
-	
-	ncEdf = ncmodel.createVariable('Ed_float', 'f', ('depth', 'wavelength'));
-	setattr(ncEdf, 'missing_value',-1.0 );     
-	setattr(ncEdf, 'long_name',  'Downward irradiance ' );     
-	setattr(ncEdf, 'unit',  '[uW/cm2/nm]' );
+	ncDepth380 = ncmodel.createVariable('depth380', 'f', ('depth380')); 
+	setattr(ncDepth380, 'unit',  '[m]' );
+	ncDepth380[:] = Pres380
 
-	ncEdf[:] = np.vstack((Ed380_float, Ed412_float, Ed490_float)).T
-	
-	ncEdm = ncmodel.createVariable('Ed_model', 'f', ('depth', 'wavelength'));
-	setattr(ncEdm, 'missing_value',-1.0 );     
-	setattr(ncEdm, 'long_name',  'Downward irradiance ' );     
-	setattr(ncEdm, 'unit',  '[uW/cm2/nm]' );
+	ncDepth412 = ncmodel.createVariable('depth412', 'f', ('depth412')); 
+	setattr(ncDepth412, 'unit',  '[m]' );
+	ncDepth412[:] = Pres412
 
-	ncEdm[:] = np.vstack((Ed380_model, Ed412_model, Ed490_model)).T
+	ncDepth490 = ncmodel.createVariable('depth490', 'f', ('depth490')); 
+	setattr(ncDepth490, 'unit',  '[m]' );
+	ncDepth490[:] = Pres490
+	
+	ncEd380 = ncmodel.createVariable('Ed_380', 'f', ('depth', 'type'));
+	setattr(ncEd380, 'missing_value',-1.0 );     
+	setattr(ncEd380, 'long_name',  'Downward irradiance at 380 nm ' );     
+	setattr(ncEd380, 'unit',  '[uW/cm2/nm]' );
+	ncEd380[:] = np.vstack((Ed380_float, Ed380_model)).T
+
+	ncEd412 = ncmodel.createVariable('Ed_412', 'f', ('depth', 'type'));
+	setattr(ncEd412, 'missing_value',-1.0 );     
+	setattr(ncEd412, 'long_name',  'Downward irradiance at 412 nm ' );     
+	setattr(ncEd412, 'unit',  '[uW/cm2/nm]' );
+	ncEd412[:] = np.vstack((Ed412_float, Ed412_model)).T
+
+	ncEd490 = ncmodel.createVariable('Ed_490', 'f', ('depth', 'type'));
+	setattr(ncEd490, 'missing_value',-1.0 );     
+	setattr(ncEd490, 'long_name',  'Downward irradiance at 490 nm ' );     
+	setattr(ncEd490, 'unit',  '[uW/cm2/nm]' );
+	ncEd490[:] = np.vstack((Ed490_float, Ed490_model)).T
 	
 	ncmodel.close()
 
@@ -181,18 +196,16 @@ def euphotic(Pres, Ed):
 	Ed_Euph            = Ed[EUPH]
 	return zeu, Pres_Euph, Ed_Euph 
 
-def MLD_calc(PresT, T, S, Ed, PresEd):
+def MLD_calc(Pres, T, S, Ed):
 
 	density  = rhou_sw(T, S)           # Potential density
 
-	ind      = np.argmin(np.abs(PresT - 10.))  # Find the index where depth is closest to 10 m.
-	rho_ind  = np.argmin(np.abs(density[ind] - density) - 0.03)  # Find the index where the potential density is closest to 0.03
+	ind      = np.argmin(np.abs(Pres - 10.))  # Find the index where depth is closest to 10 m.
+	MLD_ind  = np.argmin(np.abs(density[ind] - density) - 0.03)  # Find the index where the potential density is closest to 0.03
 
-	indEd    = np.argmin(np.abs(PresEd - PresT[rho_ind])) # Compute where the MLD is on PresEd
-
-	zMLD     = PresEd[indEd]           # MLD depth
-	Pres_MLD = PresEd[0:indEd]         # MLD depth range
-	Ed_MLD   = Ed[  0:indEd]           # Ed at the MLD depth range
+	zMLD     = Pres[MLD_ind]           # MLD depth
+	Pres_MLD = Pres[0:MLD_ind]         # MLD depth range
+	Ed_MLD   = Ed[  0:MLD_ind]           # Ed at the MLD depth range
 
 	return zMLD, Pres_MLD, Ed_MLD
 
@@ -215,12 +228,12 @@ def calc_Kd(Pres, Ed):
 
 	return Kd  
 
-def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type, aw380, bw380, Kw_type):
+def calc_Kbio_380(Ed_380, Pres, T, S, depth_type, aw380, bw380, Kw_type):
 
 	success = True
 
 	# Euphotic or MLD depth range (DR) calculation
-	zmax, PresDR, Ed_DR = euphotic(Pres380, Ed_380) if depth_type == 'EUPH' else MLD_calc(PresT, T, S, Ed_380, Pres380)
+	zmax, PresDR, Ed_DR = euphotic(Pres, Ed_380) if depth_type == 'EUPH' else MLD_calc(Pres, T, S, Ed_380)
 
 	if len(PresDR) < 5 or PresDR[1] - PresDR[0] > 9. or PresDR[4] > 15.:
 		success = False
@@ -232,7 +245,7 @@ def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type, aw380, bw380, Kw_typ
 		popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
 		Kd_380 = popt[0]
 
-	Kw_380 = np.ones((PresT.shape[0]))*0.01510 if Kw_type == 'MOREL' else calc_Kw380(aw380, bw380)  # According to Morel and Maritorena (2001)
+	Kw_380 = np.ones((Pres.shape[0]))*0.01510 if Kw_type == 'MOREL' else calc_Kw380(aw380, bw380)  # According to Morel and Maritorena (2001)
 
 	Kbio_380 = Kd_380 - Kw_380
 

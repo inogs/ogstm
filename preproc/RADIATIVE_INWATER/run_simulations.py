@@ -30,6 +30,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	os.system('cp Profilelist.pkl %s/CODE'%SIM_FOLDER)
 	os.system('cp runit2.sh %s/CODE'%SIM_FOLDER)
 	os.system('cp -pr bcs %s/CODE'%SIM_FOLDER)
+	os.system('cp -pr Q_calc %s/CODE'%SIM_FOLDER)
 	os.system('cp env.sh %s/CODE'%SIM_FOLDER)
 	os.system('cp Sullivan_T_chart.txt %s/CODE'%SIM_FOLDER)
 

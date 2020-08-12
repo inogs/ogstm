@@ -115,10 +115,11 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-for ip in range(ip_start_l,ip_end_l):
+#for ip in range(ip_start_l,ip_end_l):
 
 #for ip in range(320,321):
 #for ip in range(1427, 1428):
+for ip in range(1398, 1399):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -249,8 +250,11 @@ for ip in range(ip_start_l,ip_end_l):
 			aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model=aw_380_spec)    # With TS Corr
 			bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
-		Kbio380 = calc_Kbio_380(Ed380_int, Pres, TEMP_int, SALI_int, depth_type, aw380, bw380, Kw_type) # MLD or EUPH ; MASON or LIT
+		Kbio380, success = calc_Kbio_380(Ed380_int, Pres, TEMP_int, SALI_int, depth_type, aw380, bw380, Kw_type) # MLD or EUPH ; MASON or LIT
 
+		if not success:
+			print('I am %d profile %d - BGC-Argo RADIOMETRY QC questionable!!'  %(whoAmI, ip))
+			continue
 		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
 
 	#################################################################################################################### 

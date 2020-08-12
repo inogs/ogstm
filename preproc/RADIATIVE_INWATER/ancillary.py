@@ -249,7 +249,7 @@ def calc_Kbio_380(Ed_380, Pres, T, S, depth_type, aw380, bw380, Kw_type):
 
 	Kbio_380 = Kd_380 - Kw_380
 
-	return Kbio_380   # needs to be a returned array
+	return Kbio_380, success   # needs to be a returned array
  
 # BGC-Argo profile QC procedures
 

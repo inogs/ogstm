@@ -116,7 +116,9 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
 for ip in range(ip_start_l,ip_end_l):
+
 #for ip in range(320,321):
+#for ip in range(1427, 1428):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -156,28 +158,22 @@ for ip in range(ip_start_l,ip_end_l):
 	Lon       = p.lon
 	Lat       = p.lat
 	timestr   = p.time.strftime("%Y%m%d-%H:%M:%S")
-	nLevels   = len(PresCHL)
-	init_rows = str(timestr) + '\n' + str(Lat) +  '\n' + str(Lon) + '\n' + str(nLevels)
-	
-	if PresCHL[0] == 0. :#or PresCDOM[0] == 0. or PresBBP[0] == 0.:
-		print('I am %d profile %d - First depth equals 0' %(whoAmI, ip))
+
+
+	if  np.min([PresCHL[-1], PresBBP[-1], PresCDOM[-1], PresT[-1], PresS[-1]]) < 250. :
+		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
 		continue
 	
 	if Ed_380[0] < 30. or Ed_412[0] < 30. or Ed_490[0] < 30.:
 		print('I am %d profile %d - BGC-Argo low irradiance values - cloud coverage'  %(whoAmI, ip))
 		continue
-	
-	if PresCHL.max() < np.min([Pres380.max(), Pres412.max(), Pres490.max()]):
-		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
-		continue
-
-	if PresCHL.shape[0] < np.max([PresT.shape[0], PresS.shape[0]]):
-		print('I am %d profile %d - Cannot interpolate to CHL depth quotes' %(whoAmI, ip))
-		continue
-
 
 	''' QC procedures for BGC-Argo profiles '''
 
+	# Create a range vector on which we will interpolate float data for simulations
+	Pres = np.arange(0.5, 251.5, 1.)	
+	nLevels   = len(Pres)
+	init_rows = str(timestr) + '\n' + str(Lat) +  '\n' + str(Lon) + '\n' + str(nLevels)
 
 	CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
 
@@ -187,12 +183,15 @@ for ip in range(ip_start_l,ip_end_l):
 	CDOM_qc    = fCDOM * CDOM_QC(CDOM) 
 	BBP700_qc  = fBBP  * BBP700_QC(PresBBP, BBP700)
 
-	# Interpolate to CHL depth quotes - You need this because at the moment 
-	# you're saving all IOPs on CHLz depth quotas for the model run.
-	TEMP_int   = np.interp(PresCHL, PresT, TEMP)
-	SALI_int   = np.interp(PresCHL, PresS, SALI)
-	CDOM_int   = np.interp(PresCHL, PresCDOM, CDOM_qc) 
-	BBP700_int = np.interp(PresCHL, PresBBP, BBP700_qc) 
+	# Interpolate to MODEL depth quotes for the simulation runs.
+	CHL_int    = np.interp(Pres, PresCHL, CHLz)
+	TEMP_int   = np.interp(Pres, PresT, TEMP)
+	SALI_int   = np.interp(Pres, PresS, SALI)
+	CDOM_int   = np.interp(Pres, PresCDOM, CDOM_qc) 
+	BBP700_int = np.interp(Pres, PresBBP, BBP700_qc)
+	Ed380_int  = np.interp(Pres, Pres380, Ed_380)
+	Ed412_int  = np.interp(Pres, Pres412, Ed_412)
+	Ed490_int  = np.interp(Pres, Pres490, Ed_490)
 
 	
 	'''
@@ -219,12 +218,12 @@ for ip in range(ip_start_l,ip_end_l):
 	##################################          2. Non-algal particles - NAP         ################################### 
 	####################################################################################################################  
 	
-	a_NAP = np.zeros((CHLz.shape[0], wl.shape[0]))
+	a_NAP = np.zeros((CHL_int.shape[0], wl.shape[0]))
 
 	if a_NAP_model == 'Case1':
-		a_NAP  = aNAP_Case1( CHLz,   S_NAP)      
+		a_NAP  = aNAP_Case1( CHL_int,   S_NAP)      
 	if a_NAP_model == 'Babin_CHL':
-		a_NAP = aNAP_Babin(CHLz, a_NAP_443, S_NAP) 
+		a_NAP = aNAP_Babin(CHL_int, a_NAP_443, S_NAP) 
 	if a_NAP_model == 'Babin_BBP':
 		a_NAP = aNAP_Babin(BBP700_int, a_NAP_443, S_NAP) 
 
@@ -234,13 +233,13 @@ for ip in range(ip_start_l,ip_end_l):
 	#################################################################################################################### 
 
 
-	a_CDOM = np.zeros((CHLz.shape[0], wl.shape[0]))            # If you want to run a simulation without CDOM
+	a_CDOM = np.zeros((CHL_int.shape[0], wl.shape[0]))            # If you want to run a simulation without CDOM
 
 
 	if a_CDOM_model == 'Case1_CHL':
-		a_CDOM = aCDOM_Case1(CHLz,   S_CDOM)     
+		a_CDOM = aCDOM_Case1(CHL_int,   S_CDOM)     
 	if a_CDOM_model == 'Case1_CDOM':
-		a_CDOM = aCDOM_Case1_CDOM(CHLz,  CDOM_int, S_CDOM)
+		a_CDOM = aCDOM_Case1_CDOM(CHL_int,  CDOM_int, S_CDOM)
 	if a_CDOM_model == 'Kbio_380':
 
 		if not CDOM_TS_corr:
@@ -250,7 +249,7 @@ for ip in range(ip_start_l,ip_end_l):
 			aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model=aw_380_spec)    # With TS Corr
 			bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
-		Kbio380 = calc_Kbio_380(Ed_380, Pres380, PresCHL, TEMP_int, SALI_int, depth_type, aw380, bw380, Kw_type) # MLD or EUPH ; MASON or LIT
+		Kbio380 = calc_Kbio_380(Ed380_int, Pres, TEMP_int, SALI_int, depth_type, aw380, bw380, Kw_type) # MLD or EUPH ; MASON or LIT
 
 		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
 
@@ -259,23 +258,23 @@ for ip in range(ip_start_l,ip_end_l):
 	#################################################################################################################### 
 
 
-	a_PFT_TOT = np.zeros((CHLz.shape[0], wl.shape[0]))   # If you want to run a simulation without PFTs
+	a_PFT_TOT = np.zeros((CHL_int.shape[0], wl.shape[0]))   # If you want to run a simulation without PFTs
 
 	if a_PFT_use == True:
-		a_PFT_TOT = PFT_MED(CHLz)   # That gives us the total aPHY absorption
+		a_PFT_TOT = PFT_MED(CHL_int)   # That gives us the total aPHY absorption
 
 
 	#################################################################################################################### 
 	###############################    5. Particulate scattering and backscattering   ################################## 
 	#################################################################################################################### 
 
-	bp  = np.zeros((CHLz.shape[0], wl.shape[0]))    # If you want to run a simulation without bp
-	bbp = np.zeros((CHLz.shape[0], wl.shape[0]))
+	bp  = np.zeros((CHL_int.shape[0], wl.shape[0]))    # If you want to run a simulation without bp
+	bbp = np.zeros((CHL_int.shape[0], wl.shape[0]))
 
 	if bp_bbp_model == 'Case1_CHL':
-		bp, bbp  = bp_Case1(CHLz, bb_ratio)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
+		bp, bbp  = bp_Case1(CHL_int, bb_ratio)  # backscattering ratio 0.2 to 1.5%  == 0.002 to 0.015
 	if bp_bbp_model == 'Case1_BBP':
-		bp, bbp  = bp_Case1_bbp(CHLz, BBP700_int, bb_ratio)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
+		bp, bbp  = bp_Case1_bbp(CHL_int, BBP700_int, bb_ratio)   # backscattering ratio  0.2 to 1.5%  == 0.002 to 0.015
 	if bp_bbp_model == 'from_BBP700':
 		bp,bbp   = bbp_frombbp700(BBP700_int, bbp_slope, bb_ratio)  # slope between 0 and 4. Boss says 1, Organelli uses 2
 													  # max bbp is with 0 and 0.015  ; min bbp is with 4 and 0.002
@@ -288,15 +287,15 @@ for ip in range(ip_start_l,ip_end_l):
 
 	write_acbc25(wl, a_PFT_TOT, bp, bbp, fname=profile_ID + '_PFT.txt')   # Save PFT_abs, bp and bbp
 	
-	file_col_DEPTH = PresCHL.T
+	file_col_DEPTH = Pres.T
 	np.savetxt(profile_ID + '_DEPTH.txt', file_col_DEPTH, header = init_rows, delimiter='\t', comments='')
 	
-	Pres = PresCHL.reshape(PresCHL.shape[0], 1)
+	Pres_OUT = Pres.reshape(Pres.shape[0], 1)
 	
-	file_cols_CDOM = np.hstack((Pres, a_CDOM))
+	file_cols_CDOM = np.hstack((Pres_OUT, a_CDOM))
 	np.savetxt(profile_ID + '_CDOM.txt', file_cols_CDOM, delimiter='\t', comments='' )
 	
-	file_cols_NAP = np.hstack((Pres, a_NAP))
+	file_cols_NAP = np.hstack((Pres_OUT, a_NAP))
 	np.savetxt(profile_ID + '_NAP.txt',   file_cols_NAP, delimiter='\t', comments='' )
 	
 	floatname = profile_ID + '.nc'
@@ -326,13 +325,13 @@ for ip in range(ip_start_l,ip_end_l):
 	Ed670_model  = INT_wl(650., 675., (ncin.variables['Edz'][14,1:] + ncin.variables['Esz'][14,1:]), (ncin.variables['Edz'][15,1:] + ncin.variables['Esz'][15,1:]), 670.) * 4 # W/m2 to muW/cm2
 	
 
-	'''Interpolate Ed380 on CHL (OASIM model) depth quotes'''
+	''' Find the index of the minimum depth range between float and model '''
 	
-	Ed380_float = np.interp(PresCHL, Pres380, Ed_380)
-	Ed412_float = np.interp(PresCHL, Pres412, Ed_412)
-	Ed490_float = np.interp(PresCHL, Pres490, Ed_490)
+	in380 = np.argmin(np.abs(Pres-Pres380[-1]))
+	in412 = np.argmin(np.abs(Pres-Pres412[-1]))
+	in490 = np.argmin(np.abs(Pres-Pres490[-1]))
 	
-	ncout = save_matchup(floatname, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_model, Ed412_model, Ed490_model, timestr)
+	ncout = save_matchup(floatname, Pres[:in380], Pres[:in412], Pres[:in490], Ed380_int[:in380], Ed412_int[:in412], Ed490_int[:in490], Ed380_model[:in380], Ed412_model[:in412], Ed490_model[:in490], timestr)
 	
 	'''Move the in-water radiative transfer model output to a separate directory'''
 	movefiles = 'mv ' + str(floatname) + ' NCOUT/'
@@ -343,22 +342,20 @@ for ip in range(ip_start_l,ip_end_l):
 	phase 6. Calculate Kd from Ed_model and Ed_float at 380, 412 and 490 nm
 	'''
 
-	Kd380_model = calc_Kd(PresCHL, Ed380_model)
-	Kd412_model = calc_Kd(PresCHL, Ed412_model)
-	Kd490_model = calc_Kd(PresCHL, Ed490_model)
+	Kd380_model = calc_Kd(Pres, Ed380_model)
+	Kd412_model = calc_Kd(Pres, Ed412_model)
+	Kd490_model = calc_Kd(Pres, Ed490_model)
 
-	Kd380_float = calc_Kd(Pres380, Ed_380)
-	Kd412_float = calc_Kd(Pres412, Ed_412)
-	Kd490_float = calc_Kd(Pres490, Ed_490)
+	Kd380_float = calc_Kd(Pres, Ed380_int)
+	Kd412_float = calc_Kd(Pres, Ed412_int)
+	Kd490_float = calc_Kd(Pres, Ed490_int)
 
 	# Save
 	wl_Kd       = [380., 412., 490.]
 	Kd_model    = [Kd380_model, Kd412_model, Kd490_model]
 	Kd_float    = [Kd380_float, Kd412_float, Kd490_float]
 
-
 	save_Kd(floatname, Kd_model, Kd_float, wl_Kd, timestr)
-
 
 	'''
 	phase 7. Prepare Ed and Eu values from the model in order to obtain R and then Rrs
@@ -387,12 +384,12 @@ for ip in range(ip_start_l,ip_end_l):
 
 	# Compute Q functions
 
-	Q412 = Q_morel(solz, PresCHL, CHLz, 412., Q_depth)
-	Q443 = Q_morel(solz, PresCHL, CHLz, 443., Q_depth)
-	Q490 = Q_morel(solz, PresCHL, CHLz, 490., Q_depth)
-	Q510 = Q_morel(solz, PresCHL, CHLz, 510., Q_depth)
-	Q555 = Q_morel(solz, PresCHL, CHLz, 555., Q_depth)
-	Q670 = Q_morel(solz, PresCHL, CHLz, 670., Q_depth)
+	Q412 = Q_morel(solz, Pres, CHL_int, 412., Q_depth)
+	Q443 = Q_morel(solz, Pres, CHL_int, 443., Q_depth)
+	Q490 = Q_morel(solz, Pres, CHL_int, 490., Q_depth)
+	Q510 = Q_morel(solz, Pres, CHL_int, 510., Q_depth)
+	Q555 = Q_morel(solz, Pres, CHL_int, 555., Q_depth)
+	Q670 = Q_morel(solz, Pres, CHL_int, 670., Q_depth)
 
 	Q = [Q412, Q443, Q490, Q510, Q555, Q670]
 

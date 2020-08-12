@@ -59,6 +59,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	CONFIG_FILE.close()
 
+	os.system('cd %s/CODE && sbatch --job-name %s runit2.sh' %(SIM_FOLDER, line[0]))
+
 	print('OK')
 
 	break

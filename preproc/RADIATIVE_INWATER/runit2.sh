@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --job-name=1D-RTM
+##SBATCH --job-name=1D-RTM
 #SBATCH -N1
 #SBATCH --ntasks-per-node=36
 #SBATCH --time=0:30:00 

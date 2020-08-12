@@ -7,7 +7,7 @@ import os, sys
 
 SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/'
 
-CSV_FILE = open('Simulations.csv', 'r')     #sys.argv[1] 
+CSV_FILE = open(sys.argv[1], 'r')     # 'Simulations.csv'
 
 READER   = csv.reader(CSV_FILE)
 
@@ -19,6 +19,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	if os.path.isdir(SIM_FOLDER):      # Skip the directory if there is already a simulation inside
 		continue
+
+	print('Setting up simulation %s ... '%line[0], end = '')
 
 	os.mkdir(SIM_FOLDER)               # create the simulation folder
 	os.mkdir(SIM_FOLDER + '/CODE')     # create the CODE folder within the simulation folder
@@ -32,7 +34,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	os.system('cp Sullivan_T_chart.txt %s/CODE'%SIM_FOLDER)
 
 
-	CONFIG_FILE = open(SIM_FOLDER + '/CODE/configuration.txt')
+	CONFIG_FILE = open(SIM_FOLDER + '/CODE/configuration.txt', 'w')
 
 	CONFIG_FILE.write('%f\n'%float(line[1]))   # fCHL
 	CONFIG_FILE.write('%f\n'%float(line[2]))   # fCDOM
@@ -55,5 +57,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	CONFIG_FILE.write('%s\n'%(line[19]))       # Q_depth
 
 	CONFIG_FILE.close()
+
+	print('OK')
 
 	break

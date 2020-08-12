@@ -256,6 +256,8 @@ def calc_Kbio_380(Ed_380, Pres, T, S, depth_type, aw380, bw380, Kw_type):
 def CDOM_QC(CDOM):
 	CDOM_MF = ndimage.median_filter(CDOM, size=5)
 	CDOM_QC = running_mean(CDOM_MF, 7)
+	CDOM_QC[CDOM_QC < 0.] = 0.
+	
 	return CDOM_QC
 
 def BBP700_QC(PresBBP, BBP700):

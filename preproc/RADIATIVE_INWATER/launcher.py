@@ -340,7 +340,28 @@ for ip in range(ip_start_l,ip_end_l):
 	
 
 	'''
-	phase 6. Prepare Ed and Eu values from the model in order to obtain R and then Rrs
+	phase 6. Calculate Kd from Ed_model and Ed_float at 380, 412 and 490 nm
+	'''
+
+	Kd380_model = calc_Kd(PresCHL, Ed380_model)
+	Kd412_model = calc_Kd(PresCHL, Ed412_model)
+	Kd490_model = calc_Kd(PresCHL, Ed490_model)
+
+	Kd380_float = calc_Kd(Pres380, Ed_380)
+	Kd412_float = calc_Kd(Pres412, Ed_412)
+	Kd490_float = calc_Kd(Pres490, Ed_490)
+
+	# Save
+	wl_Kd       = [380., 412., 490.]
+	Kd_model    = [Kd380_model, Kd412_model, Kd490_model]
+	Kd_float    = [Kd380_float, Kd412_float, Kd490_float]
+
+
+	save_Kd(ncfile, Kd_model, Kd_float, wl_Kd, timestr)
+
+
+	'''
+	phase 7. Prepare Ed and Eu values from the model in order to obtain R and then Rrs
 	         Satellite wavelenghts for Rrs : 412, 443, 490, 510, 555, 670 - Ed and Eu
 	'''
 

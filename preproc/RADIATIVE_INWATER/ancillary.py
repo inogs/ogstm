@@ -100,6 +100,39 @@ def save_matchup(ncfile, PresCHL, Ed380_float, Ed412_float, Ed490_float, Ed380_m
 
 	return ncmodel
 
+
+def save_Kd(ncfile, Kd_model, Kd_float, wl_Kd, timestr):
+
+	modelfile = 'KD/' + ncfile
+	ncmodel   = NC4.Dataset(modelfile,"w");
+				
+	ncdepth = ncmodel.createDimension('depth',     1);
+	ncwave  = ncmodel.createDimension('wavelength', len(wl_Kd));
+
+	setattr(ncmodel, 'time', timestr);
+	
+	ncWL = ncmodel.createVariable('wavelength', 'f', ('wavelength')); 
+	setattr(ncWL, 'unit',  '[nm]' );
+	ncWL[:] = wl_Kd
+	
+	ncKdM = ncmodel.createVariable('Kd_model', 'f', ('depth', 'wavelength'));
+	setattr(ncKdM, 'missing_value',-1.0 );     
+	setattr(ncKdM, 'long_name',  'Diffuse attenuation coefficient for downward planar irradiance' );     
+	setattr(ncKdM, 'unit',  '[1/m]' );
+
+	ncKdM[:] = Kd_model
+
+	ncKdF = ncmodel.createVariable('Kd_float', 'f', ('depth', 'wavelength'));
+	setattr(ncKdF, 'missing_value',-1.0 );     
+	setattr(ncKdF, 'long_name',  'Diffuse attenuation coefficient for downward planar irradiance' );     
+	setattr(ncKdF, 'unit',  '[1/m]' );
+
+	ncKdF[:] = Kd_float
+	
+	ncmodel.close()
+
+	return ncmodel
+
 def save_reflectance(ncfile, wl_RRS, Rrs, timestr):
 
 	modelfile = 'RRS/' + ncfile
@@ -155,6 +188,25 @@ def MLD_calc(PresT, T, S, Ed, PresEd):
 	Ed_MLD   = Ed[  0:indEd]           # Ed at the MLD depth range
 
 	return zMLD, Pres_MLD, Ed_MLD
+
+def calc_Kd(Pres, Ed):
+
+	success = True
+
+	# Optical depth  range (DR) calculation
+	zmax, PresDR, Ed_DR = euphotic(Pres, Ed) 
+
+	if len(PresDR) < 5 or PresDR[1] - PresDR[0] > 9. or PresDR[4] > 15.:
+		success = False
+		Kd      = np.nan
+
+	func = lambda z, Kd: np.exp(-Kd*z)
+
+	if success:
+		popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
+		Kd         = popt[0]
+
+	return Kd  
 
 def calc_Kbio_380(Ed_380, Pres380, PresT, T, S, depth_type, aw380, bw380, Kw_type):
 

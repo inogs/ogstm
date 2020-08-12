@@ -115,11 +115,11 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-#for ip in range(ip_start_l,ip_end_l):
+for ip in range(ip_start_l,ip_end_l):
 
 #for ip in range(320,321):
 #for ip in range(1427, 1428):
-for ip in range(1398, 1399):
+#for ip in range(1398, 1399):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here

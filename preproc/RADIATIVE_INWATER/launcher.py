@@ -357,7 +357,7 @@ for ip in range(ip_start_l,ip_end_l):
 	Kd_float    = [Kd380_float, Kd412_float, Kd490_float]
 
 
-	save_Kd(ncfile, Kd_model, Kd_float, wl_Kd, timestr)
+	save_Kd(floatname, Kd_model, Kd_float, wl_Kd, timestr)
 
 
 	'''

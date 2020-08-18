@@ -42,7 +42,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
     for filename in glob.glob(SIM_FOLDER + '/MATCHUP/*.nc'):
 
         aux1 = filename.strip('.nc')
-        aux2 = aux1.strip(path)
+        aux2 = aux1.strip(SIM_FOLDER  + '/MATCHUP/')
         wmo, date, lon, lat  = aux2.split('_')
         ncin = NC4.Dataset(filename, 'r')
         depth = ncin.variables['depth'][:]

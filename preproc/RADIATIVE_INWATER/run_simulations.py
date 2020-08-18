@@ -5,11 +5,11 @@ import csv
 import numpy as np
 import os, sys
 
-SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/'
+SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterzic0/1D_RTM/'
 
-CSV_FILE = open(sys.argv[1], 'r')     # 'Simulations.csv'
+CSV_FILE        = open(sys.argv[2], 'r')     # 'Simulations.csv'
 
-READER   = csv.reader(CSV_FILE)
+READER          = csv.reader(CSV_FILE)
 
 for iline, line in enumerate(READER):  # each line is one simulation
 	if iline == 0:

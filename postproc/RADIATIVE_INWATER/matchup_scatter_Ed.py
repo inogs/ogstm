@@ -32,9 +32,14 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
     print('Plotting scatter Ed of simulation %s ... '%line[0], end = '')
 
-    os.mkdir(SIM_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder
-    os.mkdir(SIM_FOLDER + '/PLOTS/SCATTER/')       # create the SCATTER folder within the PLOTS folder
-    os.mkdir(SIM_FOLDER + '/PLOTS/SCATTER/Ed')     # create the Ed folder within the SCATTER folder
+    if not os.path.isdir(SIM_FOLDER + '/PLOTS'):   
+        os.mkdir(SIM_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder
+
+    if not os.path.isdir(SIM_FOLDER + '/PLOTS/SCATTER'):   
+        os.mkdir(SIM_FOLDER + '/PLOTS/SCATTER')       # create the SCATTER folder within the PLOTS folder
+
+    if not os.path.isdir(SIM_FOLDER + '/PLOTS/SCATTER/Ed'):   
+        os.mkdir(SIM_FOLDER + '/PLOTS/SCATTER/Ed')     # create the Ed folder within the SCATTER folder
 
     Ed_float = []
     Ed_model = []

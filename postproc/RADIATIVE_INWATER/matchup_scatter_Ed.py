@@ -11,15 +11,11 @@ import netCDF4 as NC4
 from ancillary import *
 
 
-
 SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterzic0/1D_RTM/'
 
 CSV_FILE        = open(sys.argv[2], 'r')     # 'Simulations.csv'
 
 READER          = csv.reader(CSV_FILE)
-
-DEPTH_MAX       = 150.
-
 
 for iline, line in enumerate(READER):  # each line is one simulation
     if iline == 0:
@@ -32,46 +28,45 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
     print('Plotting scatter Ed of simulation %s ... '%line[0], end = '')
 
-    if not os.path.isdir(SIM_FOLDER + '/PLOTS'):   
-        os.mkdir(SIM_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder
+    if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS'):   
+        os.mkdir(SIM_MAIN_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder
 
-    if not os.path.isdir(SIM_FOLDER + '/PLOTS/SCATTER'):   
-        os.mkdir(SIM_FOLDER + '/PLOTS/SCATTER')       # create the SCATTER folder within the PLOTS folder
+    if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER'):   
+        os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER')       # create the SCATTER folder within the PLOTS folder
 
-    if not os.path.isdir(SIM_FOLDER + '/PLOTS/SCATTER/Ed'):   
-        os.mkdir(SIM_FOLDER + '/PLOTS/SCATTER/Ed')     # create the Ed folder within the SCATTER folder
+    if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed'):   
+        os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed')     # create the Ed folder within the SCATTER folder
 
-    Ed_float = []
-    Ed_model = []
 
-    for filename in glob.glob(SIM_FOLDER + '/MATCHUP/*.nc'):
+    for ifile, filename in enumerate(glob.glob(SIM_FOLDER + '/MATCHUP/*.nc')):
 
-        aux1 = filename.strip('.nc')
-        aux2 = aux1.strip(SIM_FOLDER  + '/MATCHUP/')
+
+        aux1     = filename.strip('.nc')
+        aux2     = aux1.strip(SIM_FOLDER  + '/MATCHUP/')
         wmo, date, lon, lat  = aux2.split('_')
-        ncin = NC4.Dataset(filename, 'r')
-        depth = ncin.variables['depth'][:]
-  
-        if depth[0] > 10:
-            print('First depth is deeper than 10 m')
-            continue
-        
-        idx = np.where(depth<DEPTH_MAX)
+        ncin     = NC4.Dataset(filename, 'r')
 
-        ed_float = ncin.variables['Ed_float'][idx[0],:]
-        ed_model = ncin.variables['Ed_model'][idx[0],:]
-        jpk      = ed_float.shape[0]
+        depth380 = ncin.variables['depth380'][:]
+        depth412 = ncin.variables['depth412'][:]
+        depth490 = ncin.variables['depth490'][:]
 
-        for jk in range(jpk):
-            Ed_float.append(ed_float[jk,:])
-            Ed_model.append(ed_model[jk,:])
+        if ifile == 0:
 
-    Ed_FLOAT = np.ma.array(Ed_float, mask=(~np.isfinite(Ed_float) | (Ed_float == -999)))
-    Ed_MODEL = np.ma.array(Ed_model, mask=(~np.isfinite(Ed_model) | (Ed_model == -999)))
+            ed_380   = ncin.variables['Ed_380'][:,:]
+            ed_412   = ncin.variables['Ed_412'][:,:]
+            ed_490   = ncin.variables['Ed_490'][:,:]
 
-    L380 = matchup(Ed_MODEL[:,0], Ed_FLOAT[:,0])
-    L412 = matchup(Ed_MODEL[:,1], Ed_FLOAT[:,1])
-    L490 = matchup(Ed_MODEL[:,2], Ed_FLOAT[:,2])
+        else:
+
+            ed_380 = np.concatenate((ed_380, ncin.variables['Ed_380'][:,:]))
+            ed_412 = np.concatenate((ed_412, ncin.variables['Ed_412'][:,:]))
+            ed_490 = np.concatenate((ed_490, ncin.variables['Ed_490'][:,:]))
+
+        ncin.close()
+
+    L380 = matchup(ed_380[:,1], ed_380[:,0])
+    L412 = matchup(ed_412[:,1], ed_412[:,0])
+    L490 = matchup(ed_490[:,1], ed_490[:,0])
 
     fig,ax = plt.subplots(1,3, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
     fig.set_size_inches(15,5)
@@ -80,7 +75,12 @@ for iline, line in enumerate(READER):  # each line is one simulation
     ax2 = plot_matchup_scatter_Ed('lin', L412, ax, 'darkcyan', 1, '$Ed _{\lambda=412}$', 0.60, 0.40, False, None)
     ax3 = plot_matchup_scatter_Ed('lin', L490, ax, 'navy'    , 2, '$Ed _{\lambda=490}$', 0.60, 0.40, False, None)
 
-    OUTDIR = SIM_FOLDER + '/PLOTS/SCATTER/Ed/' 
+    OUTDIR = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed/' 
 
-    fig.savefig(OUTDIR     + line[0]  + '_plot_' + line[-1].replace(" ", "_") +  '.png', dpi=300)
+    OUTNAME = line[-1].replace(" ", "_").replace(",", "")
+
+    fig.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '.png', dpi=300)
     print('Saving figure ' + line[0]  + ' plot ' + line[-1])
+
+
+CSV_FILE.close()

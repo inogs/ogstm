@@ -213,7 +213,6 @@ for ip in range(ip_start_l,ip_end_l):
 		bwTS = bw_TS_corr(TEMP_int, SALI_int)                 
 
 
-	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   
 
 
 	####################################################################################################################
@@ -289,6 +288,7 @@ for ip in range(ip_start_l,ip_end_l):
 	########################################            SAVE FILES         ############################################# 
 	#################################################################################################################### 													  
 
+	write_abw25(wl, awTS, bwTS, fname=profile_ID + '_water_IOP.dat')   
 
 	write_acbc25(wl, a_PFT_TOT, bp, bbp, fname=profile_ID + '_PFT.txt')   # Save PFT_abs, bp and bbp
 	

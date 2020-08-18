@@ -24,17 +24,17 @@ def plot_matchup_scatter_Ed(scale, L, ax, color, index, titlestr, xpos, ypos, le
     if index == 0:
         ax[index].set_ylabel('BIOPTIMOD [$\mu W \, cm^{-2} \, nm^{-1}$]', fontsize=12)
 
-    count = L.number()
+    count      = L.number()
     corr_coeff = L.correlation()
-    bias = L.bias()
+    bias       = L.bias()
     slope, intercept, r_value, p_value, std_err = stats.linregress(x[mask],y[mask]) 
-    sigma = L.RMSE()
+    sigma      = L.RMSE()
     
-    a = intercept
-    b = slope
+    a          = intercept
+    b          = slope
     
-    x_max = x.max() *  1.1
-    x_reg = np.arange(0., x_max)
+    x_max      = x.max() *  1.1
+    x_reg      = np.arange(0., x_max)
     
     ax[index].plot(x_reg,a+b*x_reg,color)
     ax[index].plot(x_reg,x_reg,'k--')
@@ -56,7 +56,7 @@ def plot_matchup_scatter_Ed(scale, L, ax, color, index, titlestr, xpos, ypos, le
         ax[index].set_xlim([0., 100.])
         ax[index].set_ylim([0., 100.])
         
-    return ax
+    return ax[index]
 
 def save_stat(L):
     

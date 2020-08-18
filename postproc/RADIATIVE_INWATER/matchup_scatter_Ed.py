@@ -17,6 +17,11 @@ CSV_FILE        = open(sys.argv[2], 'r')     # 'Simulations.csv'
 
 READER          = csv.reader(CSV_FILE)
 
+fig, ax = plt.subplots(1,3, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
+
+fig.set_size_inches(15,5)
+
+
 for iline, line in enumerate(READER):  # each line is one simulation
     if iline == 0:
         continue    # we are skipping the header
@@ -68,9 +73,6 @@ for iline, line in enumerate(READER):  # each line is one simulation
     L412 = matchup(ed_412[:,1], ed_412[:,0])
     L490 = matchup(ed_490[:,1], ed_490[:,0])
 
-    fig,ax = plt.subplots(1,3, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
-    fig.set_size_inches(15,5)
-
     ax1 = plot_matchup_scatter_Ed('lin', L380, ax, 'indigo'  , 0, '$Ed _{\lambda=380}$', 0.60, 0.40, False, None)
     ax2 = plot_matchup_scatter_Ed('lin', L412, ax, 'darkcyan', 1, '$Ed _{\lambda=412}$', 0.60, 0.40, False, None)
     ax3 = plot_matchup_scatter_Ed('lin', L490, ax, 'navy'    , 2, '$Ed _{\lambda=490}$', 0.60, 0.40, False, None)
@@ -82,5 +84,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
     fig.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '.png', dpi=300)
     print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 
+    ax1.clear()
+    ax2.clear()
+    ax3.clear()
 
 CSV_FILE.close()

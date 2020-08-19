@@ -136,10 +136,10 @@ for ip in range(ip_start_l,ip_end_l):
 	print(profile_ID)
 	
 	List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]  # /25 from W m-2 to W m-2 nm -1
-	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]  # /25
+	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]  
 	
-	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0] for i in range(len(List_Ed))])  # Direct  irradiance component
-	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0] for i in range(len(List_Ed))])  # Diffuse irradiance component
+	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
+	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
 	
 	if np.all(Ed == 0.) and np.all(Es == 0.):
 		print('I am %d profile %d - No model data for this profile' %(whoAmI, ip))
@@ -155,9 +155,9 @@ for ip in range(ip_start_l,ip_end_l):
 	phase 2. Read BGC-ARGO profiles
 	'''
 	PresCHL,   CHLz,    Qc = p.read('CHLA')
-	Pres380,   Ed_380,  Qc = p.read('IRR_380')   # / 100    from mu W cm-2 nm-1 to W m-2 nm -1
-	Pres412,   Ed_412,  Qc = p.read('IRR_412')   # / 100
-	Pres490,   Ed_490,  Qc = p.read('IRR_490')   # / 100
+	Pres380,   Ed_380,  Qc = p.read('IRR_380')   ; Ed_380 /= 100. # / 100    from mu W cm-2 nm-1 to W m-2 nm -1
+	Pres412,   Ed_412,  Qc = p.read('IRR_412')   ; Ed_412 /= 100. # / 100
+	Pres490,   Ed_490,  Qc = p.read('IRR_490')   ; Ed_490 /= 100. # / 100
 	#PresPAR,   PAR,     Qc = p.read('PAR')
 	PresBBP,   BBP700,  Qc = p.read('BBP700')
 	PresCDOM,  CDOM,    Qc = p.read('CDOM')
@@ -174,10 +174,10 @@ for ip in range(ip_start_l,ip_end_l):
 		c_DEPTH += 1
 		continue
 	
-	if Ed_380[0] < 30. or Ed_412[0] < 30. or Ed_490[0] < 30.:
+	if Ed_380[0] < 0.3 or Ed_412[0] < 0.3 or Ed_490[0] < 0.3:
 		print('I am %d profile %d - BGC-Argo low irradiance values - cloud coverage'  %(whoAmI, ip))
 		c_CLOUD += 1
-		continue
+	#	continue
 
 	if np.any(np.diff(Ed_380[0:5]) > 0.) or np.any(np.diff(Ed_412[0:5]) > 0.) or np.any(np.diff(Ed_490[0:5]) > 0.):
 		print('I am %d profile %d - Increasing RADIOMETRIC values with increasing depth - questionable QC!'  %(whoAmI, ip))
@@ -385,12 +385,12 @@ for ip in range(ip_start_l,ip_end_l):
 
 	solz = float(ncin.variables['solz'][0])  # Solar zenih angle in degrees
 
-	Eu412_model  = INT_wl(400., 425., ncin.variables['Euz'][4, 1:], ncin.variables['Euz'][5, 1:], 412.) * 4 # = 10**(-6) / (10**(-4) * 25) 
-	Eu443_model  = INT_wl(425., 450., ncin.variables['Euz'][5, 1:], ncin.variables['Euz'][6, 1:], 443.) * 4
-	Eu490_model  = INT_wl(475., 500., ncin.variables['Euz'][7, 1:], ncin.variables['Euz'][8, 1:], 490.) * 4 # W/m2 to muW/cm2
-	Eu510_model  = INT_wl(500., 525., ncin.variables['Euz'][8, 1:], ncin.variables['Euz'][9, 1:], 510.) * 4 # W/m2 to muW/cm2
-	Eu555_model  = INT_wl(550., 575., ncin.variables['Euz'][10,1:], ncin.variables['Euz'][11,1:], 555.) * 4 # W/m2 to muW/cm2
-	Eu670_model  = INT_wl(650., 675., ncin.variables['Euz'][14,1:], ncin.variables['Euz'][15,1:], 670.) * 4 # W/m2 to muW/cm2
+	Eu412_model  = INT_wl(400., 425., ncin.variables['Euz'][4, 1:], ncin.variables['Euz'][5, 1:], 412.) 
+	Eu443_model  = INT_wl(425., 450., ncin.variables['Euz'][5, 1:], ncin.variables['Euz'][6, 1:], 443.) 
+	Eu490_model  = INT_wl(475., 500., ncin.variables['Euz'][7, 1:], ncin.variables['Euz'][8, 1:], 490.) 
+	Eu510_model  = INT_wl(500., 525., ncin.variables['Euz'][8, 1:], ncin.variables['Euz'][9, 1:], 510.) 
+	Eu555_model  = INT_wl(550., 575., ncin.variables['Euz'][10,1:], ncin.variables['Euz'][11,1:], 555.) 
+	Eu670_model  = INT_wl(650., 675., ncin.variables['Euz'][14,1:], ncin.variables['Euz'][15,1:], 670.) 
 	
 
 	# Compute reflectances

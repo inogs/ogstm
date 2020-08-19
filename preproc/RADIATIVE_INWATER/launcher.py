@@ -17,8 +17,8 @@ from bw_TS_corr import bw_TS_corr, bw_NO_corr, bw_380_TS_corr, bw_380_NO_corr
 from configuration import *
 
 from commons.layer import Layer
-#from instruments.matchup_manager import Matchup_Manager
-from matchup_manager_MOD import Matchup_Manager
+from instruments.matchup_manager import Matchup_Manager
+#from matchup_manager_MOD import Matchup_Manager
 
 CONFIGFILE = open('configuration.txt', 'r')
 ## Define all the variables you'll read from a .csv file to run the whole set of simulations
@@ -126,7 +126,7 @@ c_BADQC  = 0
 
 for ip in range(ip_start_l,ip_end_l):
 
-for ip in range(1300, 1301):
+#for ip in range(1300, 1301):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -135,8 +135,8 @@ for ip in range(1300, 1301):
 
 	print(profile_ID)
 	
-	List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]
-	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]
+	List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]  # /25 from W m-2 to W m-2 nm -1
+	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]  # /25
 	
 	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0] for i in range(len(List_Ed))])  # Direct  irradiance component
 	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0] for i in range(len(List_Ed))])  # Diffuse irradiance component
@@ -146,18 +146,18 @@ for ip in range(1300, 1301):
 		c_NODATA += 1
 		continue
 	
-	if (Ed[4:9].max() + Es[4:9].max()) < 30.:
-		print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
-		c_LOWED += 1
+	#if (Ed[4:9].max() + Es[4:9].max()) < 30.:  # it's not 30 but say 30/25 or whatever divided by 25
+	#	print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
+	#	c_LOWED += 1
 		#continue
  
 	'''
 	phase 2. Read BGC-ARGO profiles
 	'''
 	PresCHL,   CHLz,    Qc = p.read('CHLA')
-	Pres380,   Ed_380,  Qc = p.read('IRR_380')
-	Pres412,   Ed_412,  Qc = p.read('IRR_412')
-	Pres490,   Ed_490,  Qc = p.read('IRR_490')
+	Pres380,   Ed_380,  Qc = p.read('IRR_380')   # / 100    from mu W cm-2 nm-1 to W m-2 nm -1
+	Pres412,   Ed_412,  Qc = p.read('IRR_412')   # / 100
+	Pres490,   Ed_490,  Qc = p.read('IRR_490')   # / 100
 	#PresPAR,   PAR,     Qc = p.read('PAR')
 	PresBBP,   BBP700,  Qc = p.read('BBP700')
 	PresCDOM,  CDOM,    Qc = p.read('CDOM')

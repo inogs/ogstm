@@ -146,9 +146,9 @@ for ip in range(ip_start_l,ip_end_l):
 		c_NODATA += 1
 		continue
 	
-	#if (Ed[4:9].max() + Es[4:9].max()) < 30.:  # it's not 30 but say 30/25 or whatever divided by 25
-	#	print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
-	#	c_LOWED += 1
+	if (Ed[4:9].max() + Es[4:9].max()) < 30./25. :  # it's not 30 but say 30/25 or whatever divided by 25
+		print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
+		c_LOWED += 1
 		#continue
  
 	'''

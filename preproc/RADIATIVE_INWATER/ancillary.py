@@ -252,7 +252,7 @@ def calc_Kbio_380(Ed_380, Pres, T, S, depth_type, aw380, bw380, Kw_type):
 
 	Kbio_380 = Kd_380 - Kw_380
 
-	if Kbio_380 < 0:
+	if np.any(Kbio_380 < 0):
 		success = False
 
 	return Kbio_380, success   # needs to be a returned array

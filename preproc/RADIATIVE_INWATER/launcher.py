@@ -173,7 +173,7 @@ for ip in range(ip_start_l,ip_end_l):
 	''' QC procedures for BGC-Argo profiles '''
 
 	# Create a range vector on which we will interpolate float data for simulations
-	Pres = np.arange(0.5, 251.5, 1.)	
+	Pres = np.arange(0.5, 251.5, 1.)	# You can always change the depth range to 150 m or less
 	nLevels   = len(Pres)
 	init_rows = str(timestr) + '\n' + str(Lat) +  '\n' + str(Lon) + '\n' + str(nLevels)
 

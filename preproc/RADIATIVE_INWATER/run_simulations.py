@@ -47,8 +47,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	CONFIG_FILE.write('%s\n'%(line[4]))        # TS_corr
 	CONFIG_FILE.write('%s\n'%(line[5]))        # aw_spec
 	CONFIG_FILE.write('%s\n'%(line[6]))        # a_NAP_model
-	CONFIG_FILE.write('%f\n'%float(line[7]))   # a_NAP_443
-	CONFIG_FILE.write('%f\n'%float(line[8]))   # S_NAP
+	CONFIG_FILE.write('%f\n'%float(line[7]))   # S_NAP
+	CONFIG_FILE.write('%f\n'%float(line[8]))   # a_NAP_443
 	CONFIG_FILE.write('%s\n'%(line[9]))        # a_CDOM_model
 	CONFIG_FILE.write('%f\n'%float(line[10]))  # S_CDOM
 	CONFIG_FILE.write('%s\n'%(line[11]))       # CDOM_TS_corr

@@ -29,8 +29,8 @@ fBBP          = float(CONFIGFILE.readline())
 TS_corr       = str2bool(CONFIGFILE.readline().strip('\n')) #bool(CONFIGFILE.readline())
 aw_spec       = CONFIGFILE.readline().strip('\n')
 a_NAP_model   = CONFIGFILE.readline().strip('\n')
-a_NAP_443     = float(CONFIGFILE.readline())
 S_NAP         = float(CONFIGFILE.readline())
+a_NAP_443     = float(CONFIGFILE.readline())
 a_CDOM_model  = CONFIGFILE.readline().strip('\n')
 S_CDOM        = float(CONFIGFILE.readline())
 CDOM_TS_corr  = str2bool(CONFIGFILE.readline().strip('\n')) #bool(CONFIGFILE.readline())
@@ -115,16 +115,21 @@ func = lambda Pres, E0, k : E0 * np.exp(-k*Pres)
 
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
-for ip in range(ip_start_l,ip_end_l):
-#for ip in range(144, 145):
+c_USEFUL = 0
 
-#for ip in range(320,321):
-#for ip in range(1427, 1428):
-#for ip in range(1398, 1399):
+c_NODATA = 0
+c_LOWED  = 0
+c_DEPTH  = 0
+c_CLOUD  = 0
+c_BADED  = 0
+c_BADQC  = 0
+
+for ip in range(ip_start_l,ip_end_l):
+
+#for ip in range(1300, 1301):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
-
 	p = Profilelist[ip]
 	profile_ID = p.ID()
 
@@ -138,10 +143,12 @@ for ip in range(ip_start_l,ip_end_l):
 	
 	if Ed.all() == 0. and Es.all() == 0.:
 		print('I am %d profile %d - No model data for this profile' %(whoAmI, ip))
+		c_NODATA += 1
 		continue
 	
 	if (Ed[4:9].max() + Es[4:9].max()) < 30.:
 		print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
+		c_LOWED += 1
 		continue
  
 	'''
@@ -164,10 +171,17 @@ for ip in range(ip_start_l,ip_end_l):
 
 	if  np.min([PresCHL[-1], PresBBP[-1], PresCDOM[-1], PresT[-1], PresS[-1]]) < 250. :
 		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
+		c_DEPTH += 1
 		continue
 	
 	if Ed_380[0] < 30. or Ed_412[0] < 30. or Ed_490[0] < 30.:
 		print('I am %d profile %d - BGC-Argo low irradiance values - cloud coverage'  %(whoAmI, ip))
+		c_CLOUD += 1
+		continue
+
+	if np.any(np.diff(Ed_380[0:5]) > 0.) or np.any(np.diff(Ed_412[0:5]) > 0.) or np.any(np.diff(Ed_490[0:5]) > 0.):
+		print('I am %d profile %d - Increasing RADIOMETRIC values with increasing depth - questionable QC!'  %(whoAmI, ip))
+		c_BADED += 1
 		continue
 
 	''' QC procedures for BGC-Argo profiles '''
@@ -254,6 +268,7 @@ for ip in range(ip_start_l,ip_end_l):
 
 		if not success:
 			print('I am %d profile %d - BGC-Argo RADIOMETRY QC questionable!!'  %(whoAmI, ip))
+			c_BADQC += 1
 			continue
 		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
 
@@ -307,7 +322,8 @@ for ip in range(ip_start_l,ip_end_l):
 	
 	np.savetxt(profile_ID + '_OASIM.txt', np.c_[Ed, Es])
 	
-	
+	c_USEFUL += 1
+
 	'''  
 	phase 4 : Run Fortran code
 	'''
@@ -430,4 +446,27 @@ for ip in range(ip_start_l,ip_end_l):
 	os.system(txtfiles4)
 	os.system(txtfiles5)
 	os.system(txtfiles6)
+
+
+cg_USEFUL = MPI.COMM_WORLD.allreduce(c_USEFUL, op=MPI.SUM)
+
+cg_NODATA = MPI.COMM_WORLD.allreduce(c_NODATA, op=MPI.SUM)
+cg_LOWED  = MPI.COMM_WORLD.allreduce(c_LOWED , op=MPI.SUM)
+cg_DEPTH  = MPI.COMM_WORLD.allreduce(c_DEPTH , op=MPI.SUM)
+cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
+cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
+cg_BADQC  = MPI.COMM_WORLD.allreduce(c_BADQC , op=MPI.SUM)
+
+print('cc: ', whoAmI, c_USEFUL, c_NODATA, c_LOWED, c_DEPTH, c_CLOUD, c_BADED, c_BADQC)
+
+if whoAmI == 0: 
+	print('Number of useful profiles : '                      , cg_USEFUL)
+	print('Number of profiles without model data : '          , cg_NODATA)
+	print('Number of profiles with low model Ed : '           , cg_LOWED)
+	print('Number of profiles with low depth range : '        , cg_DEPTH)
+	print('Number of profiles with low float Ed: '            , cg_CLOUD)
+	print('Number of profiles with increasing Ed values: '    , cg_BADED)
+	print('Number of profiles with questionable Ed values: '  , cg_BADQC)
+
+
 

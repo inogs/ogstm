@@ -83,6 +83,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
     fig.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '.png', dpi=300)
     print('Saving figure ' + line[0]  + ' plot ' + line[-1])
+    sys.stdout.flush()
 
     ax1.clear()
     ax2.clear()

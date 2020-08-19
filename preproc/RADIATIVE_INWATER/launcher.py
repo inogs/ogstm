@@ -126,7 +126,7 @@ c_BADQC  = 0
 
 for ip in range(ip_start_l,ip_end_l):
 
-#for ip in range(1300, 1301):
+for ip in range(1300, 1301):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
 	# Your serial code goes here
@@ -138,10 +138,10 @@ for ip in range(ip_start_l,ip_end_l):
 	List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]
 	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]
 	
-	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0] for i in range(len(List_Ed))])
-	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0] for i in range(len(List_Ed))])
+	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0] for i in range(len(List_Ed))])  # Direct  irradiance component
+	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0] for i in range(len(List_Ed))])  # Diffuse irradiance component
 	
-	if Ed.all() == 0. and Es.all() == 0.:
+	if np.all(Ed == 0.) and np.all(Es == 0.):
 		print('I am %d profile %d - No model data for this profile' %(whoAmI, ip))
 		c_NODATA += 1
 		continue
@@ -149,7 +149,7 @@ for ip in range(ip_start_l,ip_end_l):
 	if (Ed[4:9].max() + Es[4:9].max()) < 30.:
 		print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
 		c_LOWED += 1
-		continue
+		#continue
  
 	'''
 	phase 2. Read BGC-ARGO profiles
@@ -182,7 +182,7 @@ for ip in range(ip_start_l,ip_end_l):
 	if np.any(np.diff(Ed_380[0:5]) > 0.) or np.any(np.diff(Ed_412[0:5]) > 0.) or np.any(np.diff(Ed_490[0:5]) > 0.):
 		print('I am %d profile %d - Increasing RADIOMETRIC values with increasing depth - questionable QC!'  %(whoAmI, ip))
 		c_BADED += 1
-		continue
+		#continue
 
 	''' QC procedures for BGC-Argo profiles '''
 

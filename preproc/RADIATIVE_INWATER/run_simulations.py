@@ -24,6 +24,10 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	os.mkdir(SIM_FOLDER)               # create the simulation folder
 	os.mkdir(SIM_FOLDER + '/CODE')     # create the CODE folder within the simulation folder
+	os.mkdir(SIM_FOLDER + '/CODE/TXT_FILES')     
+	os.mkdir(SIM_FOLDER + '/CODE/NCOUT')   
+
+
 
 	os.system('cp *.py %s/CODE'%SIM_FOLDER)
 	os.system('cp compute.xx %s/CODE'%SIM_FOLDER)

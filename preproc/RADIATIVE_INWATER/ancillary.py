@@ -16,6 +16,9 @@ from Q_read import Qo_morel, SQn_morel
 
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
 
+def str2bool(v):
+  return True if v.lower() in ("yes", "true", "t", "1") else False
+
 def INT_wl(xa, xb, ya, yb, xINT):
     yINT = ya*(xb-xINT)/(xb-xa) + yb*(xa-xINT)/(xa-xb)
     return yINT

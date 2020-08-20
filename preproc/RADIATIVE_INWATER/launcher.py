@@ -123,6 +123,8 @@ c_DEPTH  = 0
 #c_CLOUD  = 0
 #c_BADED  = 0
 c_BADQC  = 0
+c_BADKDM = 0
+c_BADKDF = 0
 
 for ip in range(ip_start_l,ip_end_l):
 
@@ -366,13 +368,23 @@ for ip in range(ip_start_l,ip_end_l):
 	phase 6. Calculate Kd from Ed_model and Ed_float at 380, 412 and 490 nm
 	'''
 
-	Kd380_model = calc_Kd(Pres, Ed380_model)
-	Kd412_model = calc_Kd(Pres, Ed412_model)
-	Kd490_model = calc_Kd(Pres, Ed490_model)
+	Kd380_model, success380M = calc_Kd(Pres, Ed380_model)
+	Kd412_model, success412M = calc_Kd(Pres, Ed412_model)
+	Kd490_model, success490M = calc_Kd(Pres, Ed490_model)
 
-	Kd380_float = calc_Kd(Pres, Ed380_int)
-	Kd412_float = calc_Kd(Pres, Ed412_int)
-	Kd490_float = calc_Kd(Pres, Ed490_int)
+	Kd380_float, success380F = calc_Kd(Pres, Ed380_int)
+	Kd412_float, success412F = calc_Kd(Pres, Ed412_int)
+	Kd490_float, success490F = calc_Kd(Pres, Ed490_int)
+
+	if not success380M or not success412M or not success490M:
+		print('I am %d profile %d - Problems computing Kd in MODEL!'  %(whoAmI, ip))
+		c_BADKDM += 1
+		#continue
+
+	if not success380F or not success412F or not success490F:
+		print('I am %d profile %d - Problems computing Kd in FLOAT!'  %(whoAmI, ip))
+		c_BADKDF += 1
+		#continue
 
 	# Save
 	wl_Kd       = [380., 412., 490.]
@@ -459,6 +471,9 @@ cg_DEPTH  = MPI.COMM_WORLD.allreduce(c_DEPTH , op=MPI.SUM)
 #cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
 #cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
 cg_BADQC  = MPI.COMM_WORLD.allreduce(c_BADQC , op=MPI.SUM)
+cg_BADKDM  = MPI.COMM_WORLD.allreduce(c_BADKDM , op=MPI.SUM)
+cg_BADKDF  = MPI.COMM_WORLD.allreduce(c_BADKDF , op=MPI.SUM)
+
 
 if whoAmI == 0: 
 	print('Number of useful profiles : '                      , cg_USEFUL)
@@ -468,6 +483,9 @@ if whoAmI == 0:
 	#print('Number of profiles with low float Ed: '            , cg_CLOUD)
 	#print('Number of profiles with increasing Ed values: '    , cg_BADED)
 	print('Number of profiles with questionable Ed values: '  , cg_BADQC)
+	print('Number of profiles with bad Kd MODEL : '           , cg_BADKDM)
+	print('Number of profiles with bad Kd FLOAT : '           , cg_BADKDF)
+
 
 
 

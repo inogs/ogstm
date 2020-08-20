@@ -229,7 +229,7 @@ def calc_Kd(Pres, Ed):
 		popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
 		Kd         = popt[0]
 
-	return Kd  
+	return Kd, success  
 
 def calc_Kbio_380(Ed_380, Pres, T, S, depth_type, aw380, bw380, Kw_type):
 

@@ -117,11 +117,11 @@ M = Matchup_Manager(Profilelist,TL,BASEDIR)
 
 c_USEFUL = 0
 
-c_NODATA = 0
-c_LOWED  = 0
+#c_NODATA = 0
+#c_LOWED  = 0
 c_DEPTH  = 0
-c_CLOUD  = 0
-c_BADED  = 0
+#c_CLOUD  = 0
+#c_BADED  = 0
 c_BADQC  = 0
 
 for ip in range(ip_start_l,ip_end_l):
@@ -137,22 +137,22 @@ for ip in range(ip_start_l,ip_end_l):
 	# Here we don't need the _fitted version of the getMatchups because we are interested only in
 	# reading the model ouput's value, which is already at the surface.
 	# This is also why we don't need any subset layer!
-	
+
 	List_Ed = [M.getMatchups([p], nav_lev, modelvar, refvar='IRR_380') for modelvar in str_Ed]  # /25 from W m-2 to W m-2 nm -1
 	List_Es = [M.getMatchups([p], nav_lev, modelvar, refvar='IRR_380') for modelvar in str_Es]  
 	
 	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
 	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
 	
-	if np.all(Ed == 0.) and np.all(Es == 0.):
-		print('I am %d profile %d - No model data for this profile' %(whoAmI, ip))
-		c_NODATA += 1
-		continue
+	#if np.all(Ed == 0.) and np.all(Es == 0.):
+	#	print('I am %d profile %d - No model data for this profile' %(whoAmI, ip))
+	#	c_NODATA += 1
+	#	continue
 	
-	if (Ed[4:9].max() + Es[4:9].max()) < 30./25. :  # it's not 30 but say 30/25 or whatever divided by 25
-		print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
-		c_LOWED += 1
-		#continue
+	#if (Ed[4:9].max() + Es[4:9].max()) < 30./25. :  # it's not 30 but say 30/25 or whatever divided by 25
+	#	print('I am %d profile %d - Low irradiance values of OASIM!' %(whoAmI, ip))
+	#	c_LOWED += 1
+	#	#continue
  
 	'''
 	phase 2. Read BGC-ARGO profiles
@@ -172,25 +172,25 @@ for ip in range(ip_start_l,ip_end_l):
 	timestr   = p.time.strftime("%Y%m%d-%H:%M:%S")
 
 
-	if  np.min([PresCHL[-1], PresBBP[-1], PresCDOM[-1], PresT[-1], PresS[-1]]) < 250. :
+	if  np.min([PresCHL[-1], PresBBP[-1], PresCDOM[-1], PresT[-1], PresS[-1]]) < 150. :
 		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
 		c_DEPTH += 1
 		continue
 	
-	if Ed_380[0] < 0.3 or Ed_412[0] < 0.3 or Ed_490[0] < 0.3:
-		print('I am %d profile %d - BGC-Argo low irradiance values - cloud coverage'  %(whoAmI, ip))
-		c_CLOUD += 1
+	#if Ed_380[0] < 0.3 or Ed_412[0] < 0.3 or Ed_490[0] < 0.3:
+	#	print('I am %d profile %d - BGC-Argo low irradiance values - cloud coverage'  %(whoAmI, ip))
+	#	c_CLOUD += 1
 	#	continue
 
-	if np.any(np.diff(Ed_380[0:5]) > 0.) or np.any(np.diff(Ed_412[0:5]) > 0.) or np.any(np.diff(Ed_490[0:5]) > 0.):
-		print('I am %d profile %d - Increasing RADIOMETRIC values with increasing depth - questionable QC!'  %(whoAmI, ip))
-		c_BADED += 1
-		#continue
+	#if np.any(np.diff(Ed_380[0:5]) > 0.) or np.any(np.diff(Ed_412[0:5]) > 0.) or np.any(np.diff(Ed_490[0:5]) > 0.):
+	#	print('I am %d profile %d - Increasing RADIOMETRIC values with increasing depth - questionable QC!'  %(whoAmI, ip))
+	#	c_BADED += 1
+	#	#continue
 
 	''' QC procedures for BGC-Argo profiles '''
 
 	# Create a range vector on which we will interpolate float data for simulations
-	Pres = np.arange(0.5, 251.5, 1.)	# You can always change the depth range to 150 m or less
+	Pres = np.arange(0.5, 151.5, 1.)	# You can always change the depth range to 150 m or less - DONE! :-)
 	nLevels   = len(Pres)
 	init_rows = str(timestr) + '\n' + str(Lat) +  '\n' + str(Lon) + '\n' + str(nLevels)
 
@@ -264,7 +264,7 @@ for ip in range(ip_start_l,ip_end_l):
 			aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model=aw_380_spec)      # No TS Corr
 			bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
 		else:
-			aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model=aw_380_spec)    # With TS Corr
+			aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model=aw_380_spec)      # With TS Corr
 			bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
 
 		Kbio380, success = calc_Kbio_380(Ed380_int, Pres, TEMP_int, SALI_int, depth_type, aw380, bw380, Kw_type) # MLD or EUPH ; MASON or LIT
@@ -453,20 +453,20 @@ for ip in range(ip_start_l,ip_end_l):
 
 cg_USEFUL = MPI.COMM_WORLD.allreduce(c_USEFUL, op=MPI.SUM)
 
-cg_NODATA = MPI.COMM_WORLD.allreduce(c_NODATA, op=MPI.SUM)
-cg_LOWED  = MPI.COMM_WORLD.allreduce(c_LOWED , op=MPI.SUM)
+#cg_NODATA = MPI.COMM_WORLD.allreduce(c_NODATA, op=MPI.SUM)
+#cg_LOWED  = MPI.COMM_WORLD.allreduce(c_LOWED , op=MPI.SUM)
 cg_DEPTH  = MPI.COMM_WORLD.allreduce(c_DEPTH , op=MPI.SUM)
-cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
-cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
+#cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
+#cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
 cg_BADQC  = MPI.COMM_WORLD.allreduce(c_BADQC , op=MPI.SUM)
 
 if whoAmI == 0: 
 	print('Number of useful profiles : '                      , cg_USEFUL)
-	print('Number of profiles without model data : '          , cg_NODATA)
-	print('Number of profiles with low model Ed : '           , cg_LOWED)
+	#print('Number of profiles without model data : '          , cg_NODATA)
+	#print('Number of profiles with low model Ed : '           , cg_LOWED)
 	print('Number of profiles with low depth range : '        , cg_DEPTH)
-	print('Number of profiles with low float Ed: '            , cg_CLOUD)
-	print('Number of profiles with increasing Ed values: '    , cg_BADED)
+	#print('Number of profiles with low float Ed: '            , cg_CLOUD)
+	#print('Number of profiles with increasing Ed values: '    , cg_BADED)
 	print('Number of profiles with questionable Ed values: '  , cg_BADQC)
 
 

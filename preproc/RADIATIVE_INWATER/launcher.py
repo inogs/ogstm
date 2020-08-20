@@ -126,15 +126,14 @@ c_BADQC  = 0
 
 for ip in range(ip_start_l,ip_end_l):
 
-#for ip in range(1300, 1301):
-
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
+	
 	# Your serial code goes here
 	p = Profilelist[ip]
 	profile_ID = p.ID()
 
 	print(profile_ID)
-	
+
 	List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]  # /25 from W m-2 to W m-2 nm -1
 	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]  
 	
@@ -456,8 +455,6 @@ cg_DEPTH  = MPI.COMM_WORLD.allreduce(c_DEPTH , op=MPI.SUM)
 cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
 cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
 cg_BADQC  = MPI.COMM_WORLD.allreduce(c_BADQC , op=MPI.SUM)
-
-print('cc: ', whoAmI, c_USEFUL, c_NODATA, c_LOWED, c_DEPTH, c_CLOUD, c_BADED, c_BADQC)
 
 if whoAmI == 0: 
 	print('Number of useful profiles : '                      , cg_USEFUL)

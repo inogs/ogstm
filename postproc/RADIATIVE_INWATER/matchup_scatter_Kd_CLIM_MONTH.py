@@ -71,31 +71,31 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 
-        CLIM_MONTH_req = timerequestors.Clim_month(month)
+		CLIM_MONTH_req = timerequestors.Clim_month(month)
 
-        ilist, wlist   =  TL.select(CLIM_MONTH_req)
+		ilist, wlist   =  TL.select(CLIM_MONTH_req)
 
-        sum_weight     = 0.
-        Kd_model       = np.array([0., 0., 0.])
-        Kd_float       = np.array([0., 0., 0.])
-        std_Kd_model   = np.array([0., 0., 0.])
-        std_Kd_float   = np.array([0., 0., 0.])
+		sum_weight     = 0.
+		Kd_model       = np.array([0., 0., 0.])
+		Kd_float       = np.array([0., 0., 0.])
+		std_Kd_model   = np.array([0., 0., 0.])
+		std_Kd_float   = np.array([0., 0., 0.])
 
-        for ii, w in zip(ilist,wlist):
+		for ii, w in zip(ilist,wlist):
 
 			sum_weight += w
 			ncin = NC4.Dataset(TL.filelist[ii], 'r')
 
-            Kd_model_aux  = ncin.variables['Kd_model'][0,:]
-            Kd_float_aux  = ncin.variables['Kd_float'][0,:]
+			Kd_model_aux  = ncin.variables['Kd_model'][0,:]
+			Kd_float_aux  = ncin.variables['Kd_float'][0,:]
 
-        	ncin.close()
+			ncin.close()
 
-        	meanval_old   = Kd_model.copy()          # value of the contribution to the mean of the previous instant - for the STD
+			meanval_old   = Kd_model.copy()          # value of the contribution to the mean of the previous instant - for the STD
 			Kd_model     += w/sum_weight*(Kd_model_aux-meanval_old)                # NewMean = (New-OldMean) * weight/total_weight
 			std_Kd_model += w*(Kd_model_aux-meanval_old)*(Kd_model_aux-Kd_model)   # NewStd = weight*(New-OldMean)*(New-NewMean) 
 
-        	meanval_old   = Kd_float.copy()
+			meanval_old   = Kd_float.copy()
 			Kd_float     += w/sum_weight*(Kd_float_aux-meanval_old)
 			std_Kd_float += w*(Kd_float_aux-meanval_old)*(Kd_float_aux-Kd_float)
 
@@ -122,13 +122,13 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	ax[1].legend(loc='lower center', ncol=2, fontsize=12)
 
 
-    OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH/' 
-    OUTNAME = line[-1].replace(" ", "_").replace(",", "")
-    fig.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '.png', dpi=300)
-    print('Saving figure ' + line[0]  + ' plot ' + line[-1])
-    sys.stdout.flush()
+	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH/' 
+	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
+	fig.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '.png', dpi=300)
+	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
+	sys.stdout.flush()
 
-    for a in ax:     
-    	a.clear()
+	for a in ax:     
+		a.clear()
 
 CSV_FILE.close()

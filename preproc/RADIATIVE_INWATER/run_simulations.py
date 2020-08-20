@@ -5,7 +5,7 @@ import csv
 import numpy as np
 import os, sys
 
-SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterzic0/1D_RTM/'
+SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
 
 CSV_FILE        = open(sys.argv[2], 'r')     # 'Simulations.csv'
 
@@ -26,7 +26,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	os.mkdir(SIM_FOLDER + '/CODE')     # create the CODE folder within the simulation folder
 	os.mkdir(SIM_FOLDER + '/CODE/TXT_FILES')     
 	os.mkdir(SIM_FOLDER + '/CODE/NCOUT')   
-
+	os.mkdir(SIM_FOLDER + '/CODE/MATCHUP')   
+	os.mkdir(SIM_FOLDER + '/CODE/RRS')   
+	os.mkdir(SIM_FOLDER + '/CODE/KD')   
 
 
 	os.system('cp *.py %s/CODE'%SIM_FOLDER)

@@ -74,7 +74,7 @@ Prepare model and BGC-Argo output for .nc files and match-up analysis
 
 def save_matchup(ncfile, Pres380, Pres412, Pres490, Ed380_float, Ed412_float, Ed490_float, Ed380_model, Ed412_model, Ed490_model, timestr):
 
-	if not os.path.isdir('MATCHUP') : os.mkdir('MATCHUP')
+	#if not os.path.isdir('MATCHUP') : os.mkdir('MATCHUP')
 
 	modelfile = 'MATCHUP/' + ncfile
 	ncmodel   = NC4.Dataset(modelfile,"w");
@@ -124,7 +124,7 @@ def save_matchup(ncfile, Pres380, Pres412, Pres490, Ed380_float, Ed412_float, Ed
 
 def save_Kd(ncfile, Kd_model, Kd_float, wl_Kd, timestr):
 
-	if not os.path.isdir('KD') : os.mkdir('KD')
+	#if not os.path.isdir('KD') : os.mkdir('KD')
 
 	modelfile = 'KD/' + ncfile
 	ncmodel   = NC4.Dataset(modelfile,"w");
@@ -158,7 +158,7 @@ def save_Kd(ncfile, Kd_model, Kd_float, wl_Kd, timestr):
 
 def save_reflectance(ncfile, wl_RRS, Rrs, timestr):
 
-	if not os.path.isdir('RRS') : os.mkdir('RRS')
+	#if not os.path.isdir('RRS') : os.mkdir('RRS')
 
 	modelfile = 'RRS/' + ncfile
 	ncmodel   = NC4.Dataset(modelfile,"w");

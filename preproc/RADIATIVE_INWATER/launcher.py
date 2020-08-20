@@ -127,15 +127,19 @@ c_BADQC  = 0
 for ip in range(ip_start_l,ip_end_l):
 
 	#print("I am %d (%d) running %d (from %d to %d)" % (whoAmI,nWorkers,ip,ip_start_l,ip_end_l))
-	
+
 	# Your serial code goes here
 	p = Profilelist[ip]
 	profile_ID = p.ID()
 
 	print(profile_ID)
 
-	List_Ed = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Ed]  # /25 from W m-2 to W m-2 nm -1
-	List_Es = [M.getMatchups_fitted([p], nav_lev, modelvar, func, refvar='IRR_380').subset(Layer(0,0.1)) for modelvar in str_Es]  
+	# Here we don't need the _fitted version of the getMatchups because we are interested only in
+	# reading the model ouput's value, which is already at the surface.
+	# This is also why we don't need any subset layer!
+	
+	List_Ed = [M.getMatchups([p], nav_lev, modelvar, refvar='IRR_380') for modelvar in str_Ed]  # /25 from W m-2 to W m-2 nm -1
+	List_Es = [M.getMatchups([p], nav_lev, modelvar, refvar='IRR_380') for modelvar in str_Es]  
 	
 	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
 	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1

@@ -127,8 +127,8 @@ class Matchup_Manager():
 
         M = ncIN.variables[var].data.copy()
 
-        print('WMO = ', wmo)
-        print('Cruise Index = ', ncIN.CruiseIndex)
+        #print('WMO = ', wmo)
+        #print('Cruise Index = ', ncIN.CruiseIndex)
         try:
             iProfile = ncIN.CruiseIndex.rsplit(", ").index(wmo)
         except:
@@ -274,9 +274,9 @@ class Matchup_Manager():
 
             Modelfile = self.profilingDir + "PROFILES/" + Model_time.strftime("ave.%Y%m%d-%H:%M:%S.profiles.nc")
 
-            print('Modelfile = ', Modelfile)
-            print('Model_time = ', Model_time)
-            print('p_ID = ', p.ID())
+            #print('Modelfile = ', Modelfile)
+            #print('Model_time = ', Model_time)
+            #print('p_ID = ', p.ID())
 
             ModelProfile = self.readModelProfile(Modelfile, model_varname, p.ID())
             seaPoints = ~np.isnan(ModelProfile)
@@ -294,15 +294,15 @@ class Matchup_Manager():
 
             if interpolation_on_Float:
                 MODEL_ON_SPACE_OBS=np.interp(Pres,nav_lev[seaPoints],ModelProfile[seaPoints]).astype(np.float32)
-                print('seaPoints               : ',seaPoints)
-                print('nav_lev[seaPoints]      : ', nav_lev[seaPoints])
-                print('ModelProfile[seaPoints] : ', ModelProfile[seaPoints])
+                #print('seaPoints               : ',seaPoints)
+                #print('nav_lev[seaPoints]      : ', nav_lev[seaPoints])
+                #print('ModelProfile[seaPoints] : ', ModelProfile[seaPoints])
 
 
                 Matchup = matchup.matchup.ProfileMatchup(MODEL_ON_SPACE_OBS, Profile, Pres, Qc, p)
 
-                print('MODEL_ON_SPACE_OBS      : ', MODEL_ON_SPACE_OBS)
-                print('Profile                 : ', Profile)
+                #print('MODEL_ON_SPACE_OBS      : ', MODEL_ON_SPACE_OBS)
+                #print('Profile                 : ', Profile)
 
 
             else:

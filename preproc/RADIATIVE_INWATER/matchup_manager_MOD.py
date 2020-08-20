@@ -302,7 +302,7 @@ class Matchup_Manager():
                 Matchup = matchup.matchup.ProfileMatchup(MODEL_ON_SPACE_OBS, Profile, Pres, Qc, p)
 
                 print('MODEL_ON_SPACE_OBS      : ', MODEL_ON_SPACE_OBS)
-                print('Profile[seaPoints]      : ', Profile[seaPoints])
+                print('Profile                 : ', Profile)
 
 
             else:

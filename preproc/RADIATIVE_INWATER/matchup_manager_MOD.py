@@ -294,8 +294,17 @@ class Matchup_Manager():
 
             if interpolation_on_Float:
                 MODEL_ON_SPACE_OBS=np.interp(Pres,nav_lev[seaPoints],ModelProfile[seaPoints]).astype(np.float32)
+                print('seaPoints               : ',seaPoints)
+                print('nav_lev[seaPoints]      : ', nav_lev[seaPoints])
+                print('ModelProfile[seaPoints] : ', ModelProfile[seaPoints])
+
 
                 Matchup = matchup.matchup.ProfileMatchup(MODEL_ON_SPACE_OBS, Profile, Pres, Qc, p)
+
+                print('MODEL_ON_SPACE_OBS      : ', MODEL_ON_SPACE_OBS)
+                print('Profile[seaPoints]      : ', Profile[seaPoints])
+
+
             else:
                 OBS_ON_SPACE_MODEL=np.interp(nav_lev[seaPoints], Pres, Profile)
                 QC_ON_SPACE_MODEL = np.interp(nav_lev[seaPoints], Pres, Qc)

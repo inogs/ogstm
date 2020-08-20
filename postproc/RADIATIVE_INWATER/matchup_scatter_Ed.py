@@ -73,9 +73,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
     L412 = matchup(ed_412[:,1], ed_412[:,0])
     L490 = matchup(ed_490[:,1], ed_490[:,0])
 
-    ax1 = plot_matchup_scatter_Ed('lin', L380, ax, 'indigo'  , 0, '$Ed _{\lambda=380}$', 0.60, 0.40, False, None)
-    ax2 = plot_matchup_scatter_Ed('lin', L412, ax, 'darkcyan', 1, '$Ed _{\lambda=412}$', 0.60, 0.40, False, None)
-    ax3 = plot_matchup_scatter_Ed('lin', L490, ax, 'navy'    , 2, '$Ed _{\lambda=490}$', 0.60, 0.40, False, None)
+    ax1 = plot_matchup_scatter('lin', L380, ax, 'indigo'  , 0, 'Ed', '$Ed _{\lambda=380}$', 0.60, 0.40, False, None)
+    ax2 = plot_matchup_scatter('lin', L412, ax, 'darkcyan', 1, 'Ed', '$Ed _{\lambda=412}$', 0.60, 0.40, False, None)
+    ax3 = plot_matchup_scatter('lin', L490, ax, 'navy'    , 2, 'Ed', '$Ed _{\lambda=490}$', 0.60, 0.40, False, None)
 
     OUTDIR = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed/' 
 

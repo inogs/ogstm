@@ -31,7 +31,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
     if not os.path.isdir(SIM_FOLDER + '/KD'):      # If the MATCHUP folder does not exist, skip it
         continue
 
-    print('Plotting scatter Ed of simulation %s ... '%line[0], end = '')
+    print('Plotting scatter Kd of simulation %s ... '%line[0], end = '')
 
     if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS'):   
         os.mkdir(SIM_MAIN_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder
@@ -68,9 +68,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
     L412 = matchup(Kd_model[:,1], Kd_float[:,1])
     L490 = matchup(Kd_model[:,2], Kd_float[:,2])
 
-    ax1 = plot_matchup_scatter_Ed('lin', L380, ax, 'indigo'  , 0, '$Kd _{\lambda=380}$', 0.60, 0.40, False, None)
-    ax2 = plot_matchup_scatter_Ed('lin', L412, ax, 'darkcyan', 1, '$Kd _{\lambda=412}$', 0.60, 0.40, False, None)
-    ax3 = plot_matchup_scatter_Ed('lin', L490, ax, 'navy'    , 2, '$Kd _{\lambda=490}$', 0.60, 0.40, False, None)
+    ax1 = plot_matchup_scatter('lin', L380, ax, 'indigo'  , 0, 'Kd', '$Kd _{\lambda=380}$', 0.60, 0.40, False, None)
+    ax2 = plot_matchup_scatter('lin', L412, ax, 'darkcyan', 1, 'Kd', '$Kd _{\lambda=412}$', 0.60, 0.40, False, None)
+    ax3 = plot_matchup_scatter('lin', L490, ax, 'navy'    , 2, 'Kd', '$Kd _{\lambda=490}$', 0.60, 0.40, False, None)
 
     OUTDIR = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd/' 
 

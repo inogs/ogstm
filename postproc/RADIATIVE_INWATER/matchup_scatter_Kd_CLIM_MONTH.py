@@ -17,7 +17,7 @@ from ancillary import *
 
 SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
 
-CSV_FILE        = open(sys.argv[2], 'r')     # 'Simulations.csv'
+CSV_FILE        = open(sys.argv[2], 'r')     #  open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
 
 READER          = csv.reader(CSV_FILE)
 

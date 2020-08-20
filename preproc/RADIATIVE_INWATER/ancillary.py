@@ -102,19 +102,19 @@ def save_matchup(ncfile, Pres380, Pres412, Pres490, Ed380_float, Ed412_float, Ed
 	ncEd380 = ncmodel.createVariable('Ed_380', 'f', ('depth380', 'type'));
 	setattr(ncEd380, 'missing_value',-1.0 );     
 	setattr(ncEd380, 'long_name',  'Downward irradiance at 380 nm ' );     
-	setattr(ncEd380, 'unit',  '[uW/cm2/nm]' );
+	setattr(ncEd380, 'unit',  '[W/m2/nm]' );
 	ncEd380[:] = np.vstack((Ed380_float, Ed380_model)).T
 
 	ncEd412 = ncmodel.createVariable('Ed_412', 'f', ('depth412', 'type'));
 	setattr(ncEd412, 'missing_value',-1.0 );     
 	setattr(ncEd412, 'long_name',  'Downward irradiance at 412 nm ' );     
-	setattr(ncEd412, 'unit',  '[uW/cm2/nm]' );
+	setattr(ncEd412, 'unit',  '[W/m2/nm]' );
 	ncEd412[:] = np.vstack((Ed412_float, Ed412_model)).T
 
 	ncEd490 = ncmodel.createVariable('Ed_490', 'f', ('depth490', 'type'));
 	setattr(ncEd490, 'missing_value',-1.0 );     
 	setattr(ncEd490, 'long_name',  'Downward irradiance at 490 nm ' );     
-	setattr(ncEd490, 'unit',  '[uW/cm2/nm]' );
+	setattr(ncEd490, 'unit',  '[W/m2/nm]' );
 	ncEd490[:] = np.vstack((Ed490_float, Ed490_model)).T
 	
 	ncmodel.close()

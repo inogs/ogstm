@@ -62,12 +62,11 @@ for iline, line in enumerate(READER):  # each line is one simulation
             Kd_model = np.concatenate((Kd_model, ncin.variables['Kd_model'][:,:]))
             Kd_float = np.concatenate((Kd_float, ncin.variables['Kd_float'][:,:]))
 
-
         ncin.close()
 
-    L380 = matchup(Kd_model[0,0], Kd_float[0,0])
-    L412 = matchup(Kd_model[0,1], Kd_float[0,1])
-    L490 = matchup(Kd_model[0,2], Kd_float[0,2])
+    L380 = matchup(Kd_model[:,0], Kd_float[:,0])
+    L412 = matchup(Kd_model[:,1], Kd_float[:,1])
+    L490 = matchup(Kd_model[:,2], Kd_float[:,2])
 
     ax1 = plot_matchup_scatter_Ed('lin', L380, ax, 'indigo'  , 0, '$Kd _{\lambda=380}$', 0.60, 0.40, False, None)
     ax2 = plot_matchup_scatter_Ed('lin', L412, ax, 'darkcyan', 1, '$Kd _{\lambda=412}$', 0.60, 0.40, False, None)

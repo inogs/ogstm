@@ -11,9 +11,6 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	elif scale == 'log':
 		x = np.log(L.Ref)
 		y = np.log(L.Model)
-		
-	'''Mask values in case of any NaNs'''
-	#mask = ~np.isnan(x) & ~np.isnan(y)
 	
 	if legendBool == True:
 		ax[index].scatter(x, y, marker='o', s=0.05, c=color, label=basin)
@@ -36,19 +33,16 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	count      = L.number()
 	corr_coeff = L.correlation()
 	bias       = L.bias()
-	slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)#stats.linregress(x[mask],y[mask]) 
+	slope, intercept, r_value, p_value, std_err = stats.linregress(x,y)
 	sigma      = L.RMSE()
 	
 	a          = intercept
 	b          = slope
 	
-	x_max      = max(x.max(), y.max())*1.1          #x[mask].max() *  1.1
-	x_reg      = np.arange(0., x_max)
+	x_max      = max(x.max(), y.max())*1.1          
+	x_reg      = np.linspace(0., x_max, 50)
 
-
-	print(index, x_max)
-
-	ax[index].plot(x_reg,a+b*x_reg,color)
+	ax[index].plot(x_reg, a + b*x_reg, color)
 	ax[index].plot(x_reg,x_reg,'k--')
 	
 	if scale == 'log':

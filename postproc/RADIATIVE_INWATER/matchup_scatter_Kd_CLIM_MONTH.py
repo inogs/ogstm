@@ -2,6 +2,8 @@
 
 from __future__ import print_function, division
 import datetime
+import matplotlib 
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
 import csv, glob, os, sys
@@ -23,6 +25,7 @@ READER          = csv.reader(CSV_FILE)
 
 nMonths = 12
 MONTHS  = np.arange(1, nMonths + 1)
+months_str  = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 
 VARLIST = ['380', '412', '490']
 
@@ -125,15 +128,15 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	for ivar, var in enumerate(VARLIST):
 	   
 		# Plot mean and standard deviation
-		ax[ivar].scatter( MONTHS-0.15, Kd_model_M[ivar,:], s=15,                    color='darkblue', label='MODEL') 
-		ax[ivar].scatter( MONTHS+0.15, Kd_float_M[ivar,:], s=15,                    color='purple'  , label='FLOAT')   
-		ax[ivar].errorbar(MONTHS-0.15, Kd_model_M[ivar,:], yerr=Kd_model_S[ivar,:], color='darkblue', fmt='o')
-		ax[ivar].errorbar(MONTHS+0.15, Kd_float_M[ivar,:], yerr=Kd_float_S[ivar,:], color='purple'  , fmt='o')
+		ax[ivar].scatter( MONTHS-0.15, Kd_model_M[:,ivar], s=15,                    color='darkblue', label='MODEL') 
+		ax[ivar].scatter( MONTHS+0.15, Kd_float_M[:,ivar], s=15,                    color='purple'  , label='FLOAT')   
+		ax[ivar].errorbar(MONTHS-0.15, Kd_model_M[:,ivar], yerr=Kd_model_S[:,ivar], color='darkblue', fmt='o')
+		ax[ivar].errorbar(MONTHS+0.15, Kd_float_M[:,ivar], yerr=Kd_float_S[:,ivar], color='purple'  , fmt='o')
 		varname = 'Kd_MEAN_'
 
 		ax[ivar].set_xticks(MONTHS)
 		ax[ivar].set_xticklabels(months_str)
-		ax[ivar].set_ylabel('Kd ' + var + unitlist[ivar] )
+		ax[ivar].set_ylabel('Kd ' + var + ' [$m^{-1}$]' )
 
 		ax[ivar].tick_params(axis='both', which='major', labelsize=10)
 		

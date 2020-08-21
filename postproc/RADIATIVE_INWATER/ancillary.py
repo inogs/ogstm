@@ -63,8 +63,8 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	ax[index].set_title(titlestr, fontsize=24)
 	ax[index].tick_params(axis='both', which='major', labelsize=14)
 	ax[index].set_aspect('equal', adjustable='box')
-    ax[index].set_xlim([0., max(x.max(), y.max())*1.1])
-    ax[index].set_ylim([0., max(x.max(), y.max())*1.1])
+	ax[index].set_xlim([0., max(x.max(), y.max())*1.1])
+	ax[index].set_ylim([0., max(x.max(), y.max())*1.1])
 		
 	return ax[index]
 

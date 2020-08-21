@@ -90,13 +90,16 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 		for ii, w in zip(ilist,wlist):
 
-			sum_weight += w
 			ncin = NC4.Dataset(TL.filelist[ii], 'r')
 
 			Kd_model_aux  = ncin.variables['Kd_model'][0,:]
 			Kd_float_aux  = ncin.variables['Kd_float'][0,:]
 
 			ncin.close()
+
+			if np.any(np.isnan(Kd_model_aux)) or np.any(np.isnan(Kd_float_aux)) : continue
+
+			sum_weight   += w
 
 			meanval_old   = Kd_model.copy()          # value of the contribution to the mean of the previous instant - for the STD
 			Kd_model     += w/sum_weight*(Kd_model_aux-meanval_old)                # NewMean = (New-OldMean) * weight/total_weight
@@ -115,7 +118,6 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			Kd_float_M  = Kd_float
 			Kd_model_S  = std_Kd_model
 			Kd_float_S  = std_Kd_float
-
 			
 		else:
 
@@ -128,10 +130,11 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	for ivar, var in enumerate(VARLIST):
 	   
 		# Plot mean and standard deviation
-		ax[ivar].scatter( MONTHS-0.15, Kd_model_M[:,ivar], s=15,                    color='darkblue', label='MODEL') 
-		ax[ivar].scatter( MONTHS+0.15, Kd_float_M[:,ivar], s=15,                    color='purple'  , label='FLOAT')   
-		ax[ivar].errorbar(MONTHS-0.15, Kd_model_M[:,ivar], yerr=Kd_model_S[:,ivar], color='darkblue', fmt='o')
+		ax[ivar].scatter( MONTHS-0.15, Kd_model_M[:,ivar], s=15,                    color='dodgerblue', label='MODEL')  # or darkblue
+		ax[ivar].scatter( MONTHS+0.15, Kd_float_M[:,ivar], s=15,                    color='purple'  , label='FLOAT')    # or palevioletred
+		ax[ivar].errorbar(MONTHS-0.15, Kd_model_M[:,ivar], yerr=Kd_model_S[:,ivar], color='dodgerblue', fmt='o')
 		ax[ivar].errorbar(MONTHS+0.15, Kd_float_M[:,ivar], yerr=Kd_float_S[:,ivar], color='purple'  , fmt='o')
+
 		varname = 'Kd_MEAN_'
 
 		ax[ivar].set_xticks(MONTHS)

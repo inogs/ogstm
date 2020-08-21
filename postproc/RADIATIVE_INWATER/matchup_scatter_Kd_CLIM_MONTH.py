@@ -15,9 +15,9 @@ import netCDF4 as NC4
 from ancillary import *
 
 
-SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
+SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
 
-CSV_FILE        = open(sys.argv[2], 'r')     #  open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
+CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
 
 READER          = csv.reader(CSV_FILE)
 
@@ -105,14 +105,30 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 		std_Kd_model = np.sqrt(std_Kd_model/sum_weight)
 		std_Kd_float = np.sqrt(std_Kd_float/sum_weight)
+
+		if iMonth == 0:
+
+			Kd_model_M  = Kd_model
+			Kd_float_M  = Kd_float
+			Kd_model_S  = std_Kd_model
+			Kd_float_S  = std_Kd_float
+
+			
+		else:
+
+			Kd_model_M  = np.vstack((Kd_model_M , Kd_model))
+			Kd_float_M  = np.vstack((Kd_float_M , Kd_float))
+			Kd_model_S  = np.vstack((Kd_model_S , std_Kd_model))
+			Kd_float_S  = np.vstack((Kd_float_S , std_Kd_float))
+
 	
 	for ivar, var in enumerate(VARLIST):
 	   
 		# Plot mean and standard deviation
-		ax[ivar].scatter( MONTHS-0.15, Kd_model[ivar], s=15,                    color='darkblue', label='MODEL') 
-		ax[ivar].scatter( MONTHS+0.15, Kd_float[ivar], s=15,                    color='purple'  , label='FLOAT')   
-		ax[ivar].errorbar(MONTHS-0.15, Kd_model[ivar], yerr=std_Kd_model[ivar], color='darkblue', fmt='o')
-		ax[ivar].errorbar(MONTHS+0.15, Kd_float[ivar], yerr=std_Kd_float[ivar], color='purple'  , fmt='o')
+		ax[ivar].scatter( MONTHS-0.15, Kd_model_M[ivar,:], s=15,                    color='darkblue', label='MODEL') 
+		ax[ivar].scatter( MONTHS+0.15, Kd_float_M[ivar,:], s=15,                    color='purple'  , label='FLOAT')   
+		ax[ivar].errorbar(MONTHS-0.15, Kd_model_M[ivar,:], yerr=Kd_model_S[ivar,:], color='darkblue', fmt='o')
+		ax[ivar].errorbar(MONTHS+0.15, Kd_float_M[ivar,:], yerr=Kd_float_S[ivar,:], color='purple'  , fmt='o')
 		varname = 'Kd_MEAN_'
 
 		ax[ivar].set_xticks(MONTHS)
@@ -134,5 +150,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	for a in ax:     
 		a.clear()
+
+	break
 
 CSV_FILE.close()

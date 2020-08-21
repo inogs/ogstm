@@ -336,14 +336,14 @@ def aNAP_Babin(X, a443, Snap):
 	return aNAP
 
 
-def aNAP_Case1(CHL, Snap):
+def aNAP_Case1(CHL, X, Snap):
 
 	aNAP = np.zeros((CHL.shape[0], wl.shape[0]))
 	a440  = 0.0136*np.power(CHL, 0.615)
 
 	for iwl in range(len(wl)):
 		a_NAP = a440 * np.exp(-Snap * (wl[iwl] - 440.))
-		aNAP[:,iwl] = a_NAP * CHL / np.max(CHL)
+		aNAP[:,iwl] = a_NAP * X / np.max(X)
 
 	return aNAP
 
@@ -361,7 +361,7 @@ def aCDOM_Case1(CHL, Scdom):
 
 def aCDOM_Case1_CDOM(CHL, CDOM_qc, Scdom):
 
-	aCDOM = np.zeros((CHL.shape[0], wl.shape[0]))
+	aCDOM  = np.zeros((CHL.shape[0], wl.shape[0]))
 	a443   = 0.0316*np.power(CHL,0.63)
 
 	for iwl in range(len(wl)):
@@ -372,7 +372,7 @@ def aCDOM_Case1_CDOM(CHL, CDOM_qc, Scdom):
 
 def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
 
-	aCDOM = np.zeros((CDOM_int.shape[0], wl.shape[0]))      # CDOM interpolated to PresCHL
+	aCDOM  = np.zeros((CDOM_int.shape[0], wl.shape[0]))      # CDOM interpolated to PresCHL
 	a380   = Kbio_380#*np.ones((CDOM_int.shape[0]))
 
 	for iwl in range(len(wl)):
@@ -380,6 +380,20 @@ def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
 		aCDOM[:,iwl]  = a_cdom * CDOM_int / np.max(CDOM_int) 
 
 	return aCDOM
+
+def aDG_CORR(aDG, aw):  # detritus (NAP) and gelbstoff (CDOM) correction of the spectra
+
+	aDG_CORR = np.zeros((aDG.shape[0], wl.shape[0]))  
+
+	T = np.zeros((aDG.shape[0],))
+	S = np.zeros((aDG.shape[0],))
+
+	aw_LIT = aw_NO_corr(T, S, model='LIT')
+
+	for iwl in range(len(wl)):
+		aDG_CORR[:,iwl] = aDG[:,iwl] + aw_LIT[iwl,:] - aw[iwl,:]
+
+	return aDG_CORR
 
 def bp_Case1(CHL, ratio):
 	bp = np.zeros((CHL.shape[0], wl.shape[0]))

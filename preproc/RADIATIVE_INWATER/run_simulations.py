@@ -51,17 +51,19 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	CONFIG_FILE.write('%s\n'%(line[6]))        # a_NAP_model
 	CONFIG_FILE.write('%f\n'%float(line[7]))   # S_NAP
 	CONFIG_FILE.write('%f\n'%float(line[8]))   # a_NAP_443
-	CONFIG_FILE.write('%s\n'%(line[9]))        # a_CDOM_model
-	CONFIG_FILE.write('%f\n'%float(line[10]))  # S_CDOM
-	CONFIG_FILE.write('%s\n'%(line[11]))       # CDOM_TS_corr
-	CONFIG_FILE.write('%s\n'%(line[12]))       # aw_380_spec
-	CONFIG_FILE.write('%s\n'%(line[13]))       # depth_type
-	CONFIG_FILE.write('%s\n'%(line[14]))       # Kw_type
-	CONFIG_FILE.write('%s\n'%(line[15]))       # a_PFT_use
-	CONFIG_FILE.write('%s\n'%(line[16]))       # bp_bbp_model
-	CONFIG_FILE.write('%f\n'%float(line[17]))  # bb_ratio
-	CONFIG_FILE.write('%f\n'%float(line[18]))  # bbp_slope
-	CONFIG_FILE.write('%s\n'%(line[19]))       # Q_depth
+	CONFIG_FILE.write('%s\n'%(line[9]))        # a_NAP_CORR
+	CONFIG_FILE.write('%s\n'%(line[10]))        # a_CDOM_model
+	CONFIG_FILE.write('%f\n'%float(line[11]))  # S_CDOM
+	CONFIG_FILE.write('%s\n'%(line[12]))       # CDOM_TS_corr
+	CONFIG_FILE.write('%s\n'%(line[13]))       # aw_380_spec
+	CONFIG_FILE.write('%s\n'%(line[14]))       # depth_type
+	CONFIG_FILE.write('%s\n'%(line[15]))       # Kw_type
+	CONFIG_FILE.write('%s\n'%(line[16]))       # a_CDOM_CORR
+	CONFIG_FILE.write('%s\n'%(line[17]))       # a_PFT_use
+	CONFIG_FILE.write('%s\n'%(line[18]))       # bp_bbp_model
+	CONFIG_FILE.write('%f\n'%float(line[19]))  # bb_ratio
+	CONFIG_FILE.write('%f\n'%float(line[20]))  # bbp_slope
+	CONFIG_FILE.write('%s\n'%(line[21]))       # Q_depth
 
 	CONFIG_FILE.close()
 

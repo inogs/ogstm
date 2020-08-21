@@ -31,12 +31,14 @@ aw_spec       = CONFIGFILE.readline().strip('\n')
 a_NAP_model   = CONFIGFILE.readline().strip('\n')
 S_NAP         = float(CONFIGFILE.readline())
 a_NAP_443     = float(CONFIGFILE.readline())
+a_NAP_CORR    = str2bool(CONFIGFILE.readline().strip('\n')) 
 a_CDOM_model  = CONFIGFILE.readline().strip('\n')
 S_CDOM        = float(CONFIGFILE.readline())
 CDOM_TS_corr  = str2bool(CONFIGFILE.readline().strip('\n')) #bool(CONFIGFILE.readline())
 aw_380_spec   = CONFIGFILE.readline().strip('\n')
 depth_type    = CONFIGFILE.readline().strip('\n')
 Kw_type       = CONFIGFILE.readline().strip('\n')
+a_CDOM_CORR    = str2bool(CONFIGFILE.readline().strip('\n')) 
 a_PFT_use     = str2bool(CONFIGFILE.readline().strip('\n')) #bool(CONFIGFILE.readline())
 bp_bbp_model  = CONFIGFILE.readline().strip('\n')
 bb_ratio      = float(CONFIGFILE.readline())
@@ -240,12 +242,17 @@ for ip in range(ip_start_l,ip_end_l):
 	
 	a_NAP = np.zeros((CHL_int.shape[0], wl.shape[0]))
 
-	if a_NAP_model == 'Case1':
-		a_NAP  = aNAP_Case1( CHL_int,   S_NAP)      
+	if a_NAP_model == 'Case1_CHL':
+		a_NAP  = aNAP_Case1( CHL_int, CHL_int,  S_NAP)      
+	if a_NAP_model == 'Case1_BBP':
+		a_NAP  = aNAP_Case1( CHL_int, BBP700_int,  S_NAP)    
 	if a_NAP_model == 'Babin_CHL':
 		a_NAP = aNAP_Babin(CHL_int, a_NAP_443, S_NAP) 
 	if a_NAP_model == 'Babin_BBP':
 		a_NAP = aNAP_Babin(BBP700_int, a_NAP_443, S_NAP) 
+
+	if a_NAP_CORR == True:
+		a_NAP = aDG_CORR(a_NAP, awTS)
 
 
 	#################################################################################################################### 
@@ -276,6 +283,9 @@ for ip in range(ip_start_l,ip_end_l):
 			c_BADQC += 1
 			continue
 		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
+
+	if a_CDOM_CORR == True:
+		a_CDOM = aDG_CORR(a_CDOM, awTS)
 
 	#################################################################################################################### 
 	##################################    4. Phytoplankton functional types - PFT     ################################## 

@@ -42,10 +42,11 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	a          = intercept
 	b          = slope
 	
-	x_max      = x.max() *  1.1          #x[mask].max() *  1.1
+	x_max      = max(x.max(), y.max())*1.1          #x[mask].max() *  1.1
 	x_reg      = np.arange(0., x_max)
 
-	print(x_max)
+
+	print(index)
 	
 	ax[index].plot(x_reg,a+b*x_reg,color)
 	ax[index].plot(x_reg,x_reg,'k--')
@@ -63,8 +64,8 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	ax[index].set_title(titlestr, fontsize=24)
 	ax[index].tick_params(axis='both', which='major', labelsize=14)
 	ax[index].set_aspect('equal', adjustable='box')
-	ax[index].set_xlim([0., max(x.max(), y.max())*1.1])
-	ax[index].set_ylim([0., max(x.max(), y.max())*1.1])
+	ax[index].set_xlim([0., x_max])
+	ax[index].set_ylim([0., x_max])
 		
 	return ax[index]
 

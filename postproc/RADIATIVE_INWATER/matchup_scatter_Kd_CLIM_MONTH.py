@@ -69,6 +69,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	TL                 = TimeList(datelist)
 	TL.filelist        = filelist
+	print(TL.inputFrequency)
 
 	for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 

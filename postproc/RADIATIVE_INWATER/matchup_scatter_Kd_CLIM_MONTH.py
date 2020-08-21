@@ -67,8 +67,11 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	datelist, filelist = (list(t) for t in zip(*sorted(zip(datelist, filelist))))
 
+
 	TL                 = TimeList(datelist, forceFrequency='daily')
 	TL.filelist        = filelist
+	TL.timeinterval    = TimeInterval.fromdatetimes(datelist[0], datelist[-1])
+
 
 	for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 

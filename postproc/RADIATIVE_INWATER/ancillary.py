@@ -46,8 +46,8 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	x_reg      = np.arange(0., x_max)
 
 
-	print(index)
-	
+	print(index, x_max)
+
 	ax[index].plot(x_reg,a+b*x_reg,color)
 	ax[index].plot(x_reg,x_reg,'k--')
 	

@@ -51,8 +51,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER'):   
 		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER')        # create the SCATTER folder within the PLOTS folder
 
-	if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH'):   
-		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH')     # create the Kd folder within the SCATTER folder
+	if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH_WE'):   
+		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH_WE')     # create the Kd folder within the SCATTER folder
 
 
 	datelist = []
@@ -181,7 +181,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	ax[1].legend(loc='upper center', ncol=2, fontsize=12)
 
-	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH/' 
+	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH_WE/' 
 	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
 	fig.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_WE.png', dpi=300)
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])

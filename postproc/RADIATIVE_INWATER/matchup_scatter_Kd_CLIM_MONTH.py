@@ -145,7 +145,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 		
 		ax[ivar].set_title('Kd ' + var, fontsize=16)
 
-	ax[1].legend(loc='lower center', ncol=2, fontsize=12)
+	ax[1].legend(loc='upper center', ncol=2, fontsize=12)
 
 
 	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH/' 

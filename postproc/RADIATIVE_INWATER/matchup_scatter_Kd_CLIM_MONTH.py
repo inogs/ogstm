@@ -23,6 +23,11 @@ CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../pre
 
 READER          = csv.reader(CSV_FILE)
 
+SAT_DIR         = '/gpfs/scratch/userexternal/eterzic0/KD490_OUT/1KM/DAILY/CLIM_MONTH/'
+
+Kd_sat_M        = np.load(SAT_DIR + 'Kd_MEAN_MED.npy')
+Kd_sat_S        = np.load(SAT_DIR + 'Kd_MEAN_STD.npy')
+
 nMonths = 12
 MONTHS  = np.arange(1, nMonths + 1)
 months_str  = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
@@ -129,13 +134,23 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	
 	for ivar, var in enumerate(VARLIST):
 	   
+	   	if ivar < 2:
 		# Plot mean and standard deviation
-		ax[ivar].scatter( MONTHS-0.15, Kd_model_M[:,ivar], s=15,                    color='dodgerblue', label='MODEL')  # or darkblue
-		ax[ivar].scatter( MONTHS+0.15, Kd_float_M[:,ivar], s=15,                    color='purple'  , label='FLOAT')    # or palevioletred
-		ax[ivar].errorbar(MONTHS-0.15, Kd_model_M[:,ivar], yerr=Kd_model_S[:,ivar], color='dodgerblue', fmt='o')
-		ax[ivar].errorbar(MONTHS+0.15, Kd_float_M[:,ivar], yerr=Kd_float_S[:,ivar], color='purple'  , fmt='o')
+			ax[ivar].scatter( MONTHS-0.15, Kd_model_M[:,ivar], s=15,                    color='dodgerblue', label='MODEL')  # or darkblue
+			ax[ivar].scatter( MONTHS+0.15, Kd_float_M[:,ivar], s=15,                    color='purple'    , label='FLOAT')    # or palevioletred
+			
+			ax[ivar].errorbar(MONTHS-0.15, Kd_model_M[:,ivar], yerr=Kd_model_S[:,ivar], color='dodgerblue', fmt='o')
+			ax[ivar].errorbar(MONTHS+0.15, Kd_float_M[:,ivar], yerr=Kd_float_S[:,ivar], color='purple'    , fmt='o')
 
-		varname = 'Kd_MEAN_'
+		else:
+			ax[ivar].scatter( MONTHS-0.20, Kd_model_M[:,ivar], s=15,                    color='dodgerblue', label='MODEL') # or darkblue
+			ax[ivar].scatter( MONTHS     , Kd_sat_M[:],        s=15,                    color='limegreen' , label='SAT')    # or palevioletred
+			ax[ivar].scatter( MONTHS+0.20, Kd_float_M[:,ivar], s=15,                    color='purple'    , label='FLOAT')    # or palevioletred
+			
+			ax[ivar].errorbar(MONTHS-0.20, Kd_model_M[:,ivar], yerr=Kd_model_S[:,ivar], color='dodgerblue', fmt='o')
+			ax[ivar].errorbar(MONTHS,      Kd_sat_M[:],        yerr=Kd_sat_S[:],        color='limegreen' , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.20, Kd_float_M[:,ivar], yerr=Kd_float_S[:,ivar], color='purple'    , fmt='o')
+
 
 		ax[ivar].set_xticks(MONTHS)
 		ax[ivar].set_xticklabels(months_str)

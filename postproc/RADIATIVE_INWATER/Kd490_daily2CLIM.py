@@ -43,8 +43,14 @@ for i in range(lon_dim):
 		
 ncin.close()
 
-Kd_MEAN_MED = np.zeros((nMonths,))
-Kd_STD_MED  = np.zeros((nMonths,))
+Kd_MEAN_MED   = np.zeros((nMonths,))
+Kd_STD_MED    = np.zeros((nMonths,))
+
+Kd_MEAN_MED_W = np.zeros((nMonths,))
+Kd_STD_MED_W  = np.zeros((nMonths,))
+
+Kd_MEAN_MED_E = np.zeros((nMonths,))
+Kd_STD_MED_E  = np.zeros((nMonths,))
 
 for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 
@@ -54,8 +60,8 @@ for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
    
 	sum_weight        = 0.
    
-	Kd_MEAN           = 0. #np.zeros((lat_dim, lon_dim))
-	Kd_STD            = 0. #np.zeros((lat_dim, lon_dim))
+	Kd_MEAN, Kd_MEAN_W, Kd_MEAN_E   = 0. , 0., 0.    
+	Kd_STD , Kd_STD_W , Kd_STD_E    = 0. , 0., 0.    
  
 	for ii, w in zip(ilist,wlist):
 
@@ -69,17 +75,39 @@ for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 
 		sum_weight  += w
 
-		meanval_old  = Kd490_read                                #.copy()
+		meanval_old  = Kd490_read                                
 		Kd_MEAN     += w/sum_weight*(Kd490_read-meanval_old)
 		Kd_STD      += w*(Kd490_read-meanval_old)*(Kd490_read-Kd_MEAN)
 
-	Kd_STD = np.sqrt(Kd_STD/sum_weight)
+		meanval_old  = Kd490_read_W                                
+		Kd_MEAN_W   += w/sum_weight*(Kd490_read_W-meanval_old)
+		Kd_STD_W    += w*(Kd490_read_W-meanval_old)*(Kd490_read_W-Kd_MEAN_W)
 
-	Kd_MEAN_MED[iMonth] = Kd_MEAN
-	Kd_STD_MED[iMonth]  = Kd_STD
+		meanval_old  = Kd490_read_E                                
+		Kd_MEAN_E   += w/sum_weight*(Kd490_read_E-meanval_old)
+		Kd_STD_E    += w*(Kd490_read_E-meanval_old)*(Kd490_read_E-Kd_MEAN_E)
 
-np.save(OUTPUTDIR + 'Kd_MEAN_MED.npy', Kd_MEAN_MED)
-np.save(OUTPUTDIR + 'Kd_MEAN_STD.npy', Kd_MEAN_STD)
+	Kd_STD   = np.sqrt(Kd_STD/sum_weight)
+	Kd_STD_W = np.sqrt(Kd_STD_W/sum_weight)
+	Kd_STD_E = np.sqrt(Kd_STD_E/sum_weight)
+
+	Kd_MEAN_MED[iMonth]   = Kd_MEAN
+	Kd_STD_MED[iMonth]    = Kd_STD
+
+	Kd_MEAN_MED_W[iMonth] = Kd_MEAN_W
+	Kd_STD_MED_W[iMonth]  = Kd_STD_W
+
+	Kd_MEAN_MED_E[iMonth] = Kd_MEAN_E
+	Kd_STD_MED_E[iMonth]  = Kd_STD_E
+
+np.save(OUTPUTDIR + 'Kd_MEAN_MED.npy',     Kd_MEAN_MED)
+np.save(OUTPUTDIR + 'Kd_MEAN_STD.npy',     Kd_MEAN_STD)
+
+np.save(OUTPUTDIR + 'Kd_MEAN_MED_W.npy', Kd_MEAN_MED_W)
+np.save(OUTPUTDIR + 'Kd_MEAN_STD_W.npy', Kd_MEAN_STD_W)
+
+np.save(OUTPUTDIR + 'Kd_MEAN_MED_E.npy', Kd_MEAN_MED_E)
+np.save(OUTPUTDIR + 'Kd_MEAN_STD_E.npy', Kd_MEAN_STD_E)
 
 
 

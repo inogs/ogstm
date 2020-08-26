@@ -122,11 +122,11 @@ for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 	Kd_STD_MED_E[iMonth]  = Kd_STD_E
 
 np.save(OUTPUTDIR + 'Kd_MEAN_MED.npy',     Kd_MEAN_MED)
-np.save(OUTPUTDIR + 'Kd_MEAN_STD.npy',     Kd_MEAN_STD)
+np.save(OUTPUTDIR + 'Kd_STD_MED.npy',      Kd_STD_MED)
 
 np.save(OUTPUTDIR + 'Kd_MEAN_MED_W.npy', Kd_MEAN_MED_W)
-np.save(OUTPUTDIR + 'Kd_MEAN_STD_W.npy', Kd_MEAN_STD_W)
+np.save(OUTPUTDIR + 'Kd_STD_MED_W.npy',  Kd_STD_MED_W)
 
 np.save(OUTPUTDIR + 'Kd_MEAN_MED_E.npy', Kd_MEAN_MED_E)
-np.save(OUTPUTDIR + 'Kd_MEAN_STD_E.npy', Kd_MEAN_STD_E)
+np.save(OUTPUTDIR + 'Kd_STD_MED_E.npy',  Kd_STD_MED_E)
 

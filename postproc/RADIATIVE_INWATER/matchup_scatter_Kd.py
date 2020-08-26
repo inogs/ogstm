@@ -13,9 +13,9 @@ import netCDF4 as NC4
 from ancillary import *
 
 
-SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterzic0/1D_RTM/'
+SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER ='/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
 
-CSV_FILE        = open(sys.argv[2], 'r')     # 'Simulations.csv'
+CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
 
 READER          = csv.reader(CSV_FILE)
 
@@ -28,6 +28,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
     if iline == 0:
         continue    # we are skipping the header
 
+    line[0] = 'TEST_33'
     SIM_FOLDER = SIM_MAIN_FOLDER + line[0]  # first column of a line
 
     if not os.path.isdir(SIM_FOLDER + '/KD'):      # If the MATCHUP folder does not exist, skip it

@@ -54,6 +54,10 @@ if not os.path.exists(MASKDIR + 'masked_SUB.npy') :
 			
 	ncin.close()
 
+	np.save(MASKDIR + 'masked_E.npy',  masked_E)
+	np.save(MASKDIR + 'masked_W.npy',  masked_W)
+	np.save(MASKDIR + 'masked_SUB.npy',  masked_SUB)
+
 else:
 	masked_W   = np.load(MASKDIR + 'masked_E.npy'  )
 	masked_E   = np.load(MASKDIR + 'masked_W.npy'  )
@@ -125,17 +129,4 @@ np.save(OUTPUTDIR + 'Kd_MEAN_STD_W.npy', Kd_MEAN_STD_W)
 
 np.save(OUTPUTDIR + 'Kd_MEAN_MED_E.npy', Kd_MEAN_MED_E)
 np.save(OUTPUTDIR + 'Kd_MEAN_STD_E.npy', Kd_MEAN_STD_E)
-
-np.save(MASKDIR + 'masked_E.npy',  masked_E)
-np.save(MASKDIR + 'masked_W.npy',  masked_W)
-np.save(MASKDIR + 'masked_SUB.npy',  masked_SUB)
-
-
-
-
-
-
-
-
-
 

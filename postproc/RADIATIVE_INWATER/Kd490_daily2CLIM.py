@@ -2,6 +2,7 @@
 
 from __future__ import print_function, division
 import numpy as np
+import os.path
 
 from basins import V2 as OGS
 from commons import timerequestors
@@ -12,6 +13,8 @@ import netCDF4 as NC4
 INPUTDIR   =  '/gpfs/scratch/userexternal/eterzic0/KD490_24_DAILY/DAILY/CHECKED/'
  
 OUTPUTDIR  =  '/gpfs/scratch/userexternal/eterzic0/KD490_OUT/1KM/DAILY/CLIM_MONTH/'
+
+MASKDIR    =  '/gpfs/scratch/userexternal/eterzic0/KD490_OUT/1KM/'
  
 TI         = TimeInterval('20120101','20171231', '%Y%m%d')
  
@@ -19,29 +22,43 @@ TL         = TimeList.fromfilenames(TI, INPUTDIR,"*.nc", prefix='', dateformat="
  
 nMonths    = 12
 MONTHS     = np.arange(1, nMonths + 1)
+
+nSub       = len(OGS.med.basin_list)
  
-ncin       = NC4.Dataset(TL.filelist[0], 'r')
- 
-lon_dim    = ncin.dimensions['lon'].size
-lat_dim    = ncin.dimensions['lat'].size
- 
-lon        = ncin.variables['lon'][:]
-lat        = ncin.variables['lat'][:]
+if not os.path.exists(MASKDIR + 'masked_SUB.npy') : 
 
-lon1, lat1 = np.meshgrid(lon, lat)
+	ncin       = NC4.Dataset(TL.filelist[0], 'r')
+	 
+	lon_dim    = ncin.dimensions['lon'].size
+	lat_dim    = ncin.dimensions['lat'].size
+	 
+	lon        = ncin.variables['lon'][:]
+	lat        = ncin.variables['lat'][:]
 
-masked_W   = np.zeros((lat_dim, lon_dim), dtype=bool)
-masked_E   = np.zeros((lat_dim, lon_dim), dtype=bool)
+	lon1, lat1 = np.meshgrid(lon, lat)
+
+	masked_W   = np.zeros((lat_dim, lon_dim),        dtype=bool)
+	masked_E   = np.zeros((lat_dim, lon_dim),        dtype=bool)
+	masked_SUB = np.zeros((lat_dim, lon_dim, nSub),  dtype=bool)
 
 
-for i in range(lon_dim):
-	for j in range(lat_dim):
-		if OGS.wes.is_inside(lon1[j,i], lat1[j,i]):
-			masked_W[j,i] = True
-		if OGS.eas.is_inside(lon1[j,i], lat1[j,i]):
-			masked_E[j,i] = True
-		
-ncin.close()
+	for i in range(lon_dim):
+		for j in range(lat_dim):
+			if OGS.wes.is_inside(lon1[j,i], lat1[j,i]):
+				masked_W[j,i] = True
+			if OGS.eas.is_inside(lon1[j,i], lat1[j,i]):
+				masked_E[j,i] = True
+			for isub, sub in enumerate(OGS.med):
+				if sub.is_inside(lon1[j,i], lat1[j,i]):
+					masked_SUB[j,i,isub] = True
+			
+	ncin.close()
+
+else:
+	masked_W   = np.load(MASKDIR + 'masked_E.npy'  )
+	masked_E   = np.load(MASKDIR + 'masked_W.npy'  )
+	masked_SUB = np.load(MASKDIR + 'masked_SUB.npy')
+
 
 Kd_MEAN_MED   = np.zeros((nMonths,))
 Kd_STD_MED    = np.zeros((nMonths,))
@@ -108,6 +125,12 @@ np.save(OUTPUTDIR + 'Kd_MEAN_STD_W.npy', Kd_MEAN_STD_W)
 
 np.save(OUTPUTDIR + 'Kd_MEAN_MED_E.npy', Kd_MEAN_MED_E)
 np.save(OUTPUTDIR + 'Kd_MEAN_STD_E.npy', Kd_MEAN_STD_E)
+
+np.save(MASKDIR + 'masked_E.npy',  masked_E)
+np.save(MASKDIR + 'masked_W.npy',  masked_W)
+np.save(MASKDIR + 'masked_SUB.npy',  masked_SUB)
+
+
 
 
 

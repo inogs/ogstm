@@ -28,7 +28,6 @@ for iline, line in enumerate(READER):  # each line is one simulation
     if iline == 0:
         continue    # we are skipping the header
 
-    line[0] = 'TEST_33'
     SIM_FOLDER = SIM_MAIN_FOLDER + line[0]  # first column of a line
 
     if not os.path.isdir(SIM_FOLDER + '/KD'):      # If the MATCHUP folder does not exist, skip it
@@ -47,7 +46,6 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 
     for ifile, filename in enumerate(glob.glob(SIM_FOLDER + '/KD/*.nc')):
-
 
         aux1     = filename.strip('.nc')
         aux2     = aux1.strip(SIM_FOLDER  + '/KD/')

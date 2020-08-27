@@ -144,11 +144,11 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 		else:
 			ax[ivar].scatter( MONTHS-0.20, Kd_model_M[:,ivar], s=15,                    color='dodgerblue', label='MODEL') # or darkblue
-			ax[ivar].scatter( MONTHS     , Kd_sat_M[:],        s=15,                    color='limegreen' , label='SAT')    # or palevioletred
+			ax[ivar].scatter( MONTHS     , Kd_sat_M[:],        s=15,                    color='peru' , label='SAT')    # or palevioletred
 			ax[ivar].scatter( MONTHS+0.20, Kd_float_M[:,ivar], s=15,                    color='purple'    , label='FLOAT')    # or palevioletred
 			
 			ax[ivar].errorbar(MONTHS-0.20, Kd_model_M[:,ivar], yerr=Kd_model_S[:,ivar], color='dodgerblue', fmt='o')
-			ax[ivar].errorbar(MONTHS,      Kd_sat_M[:],        yerr=Kd_sat_S[:],        color='limegreen' , fmt='o')
+			ax[ivar].errorbar(MONTHS,      Kd_sat_M[:],        yerr=Kd_sat_S[:],        color='peru' , fmt='o') # or sandybrown, before limegreen
 			ax[ivar].errorbar(MONTHS+0.20, Kd_float_M[:,ivar], yerr=Kd_float_S[:,ivar], color='purple'    , fmt='o')
 
 
@@ -160,7 +160,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 		
 		ax[ivar].set_title('Kd ' + var, fontsize=16)
 
-	ax[1].legend(loc='upper center', ncol=2, fontsize=12)
+	ax[2].legend(loc='upper center', ncol=2, fontsize=12)
 
 
 	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH/' 

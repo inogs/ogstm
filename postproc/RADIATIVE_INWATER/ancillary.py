@@ -82,3 +82,78 @@ def save_stat(L):
 
 	return count, bias, sigma, r_value, b, a
 
+
+def plot_pcolor(ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list_abbrev, months_str):
+
+    x_ticks_pos = np.arange(len(basin_list_abbrev)) + 0.5
+    y_ticks_pos = np.arange(len(months_str)) + 0.5
+
+    # Plot the model values
+    cmap = plt.get_cmap('BuPu', 8) 
+    c0 = ax[0,0].pcolormesh(MODEL_mean.T, cmap=cmap)
+    cmap.set_bad('lightgrey',1.)
+    ax[0,0].set_title(r'$Kd _{\lambda='+ strname +'}$ M (MEAN) $[m^{-1}]$ ')
+    ax[0,0].set_xticks(x_ticks_pos)
+    ax[0,0].set_yticks(y_ticks_pos)
+    ax[0,0].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
+    ax[0,0].set_yticklabels(tuple(months_str), rotation=0, fontsize=8, va='center')
+    ax[0,0].text(0.0, 1.03, string.ascii_lowercase[0]+ ')', transform=ax[0,0].transAxes, 
+                size=14, weight='bold')
+    cbar = fig.colorbar(c0, ax=ax[0,0])
+    cbar.locator   = matplotlib.ticker.LinearLocator(numticks=9)
+    cbar.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
+    cbar.update_ticks()
+
+    
+    # Plot float values
+    cmap = plt.get_cmap('BuPu', 8)   
+    c1 = ax[0,1].pcolormesh(FLOAT_mean.T, cmap=cmap)
+    cmap.set_bad('lightgrey',1.)
+    ax[0,1].set_title(r'$Kd _{\lambda='+ strname +'}$ O (MEAN) $[m^{-1}]$')
+    ax[0,1].set_xticks(x_ticks_pos)
+    ax[0,1].set_yticks(y_ticks_pos)
+    ax[0,1].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
+    ax[0,1].set_yticklabels(tuple(months_str), rotation=0, fontsize=8, va='center')
+    ax[0,1].text(0.0, 1.03, string.ascii_lowercase[1] + ')', transform=ax[0,1].transAxes, 
+                size=14, weight='bold')
+    cbar = fig.colorbar(c1, ax=ax[0,1])
+    cbar.locator = matplotlib.ticker.LinearLocator(numticks=9)
+    cbar.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
+    cbar.update_ticks()
+
+    
+    # Plot bias, 
+    cmap = plt.get_cmap('bwr',8)
+    cmap.set_bad('lightgrey',1.)
+    c2 = ax[1,0].pcolormesh(BIAS.T/FLOAT_mean.T , cmap=cmap)
+    ax[1,0].set_title(r'$Kd _{\lambda='+  strname +'}$ BIAS (normalized) $[-]$')
+    ax[1,0].set_xticks(x_ticks_pos)
+    ax[1,0].set_yticks(y_ticks_pos)
+    ax[1,0].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
+    ax[1,0].set_yticklabels(tuple(months_str), rotation=0, fontsize=8, va='center')
+    ax[1,0].text(0.0, 1.05, string.ascii_lowercase[2] + ')', transform=ax[1,0].transAxes, 
+                size=14, weight='bold')
+    cbar = fig.colorbar(c2, ax=ax[1,0])
+    cbar.locator = matplotlib.ticker.LinearLocator(numticks=9)
+    cbar.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
+    cbar.update_ticks()
+
+
+    # Plot RMSE   
+    cmap = plt.get_cmap('BuPu',8)
+    cmap.set_bad('lightgrey',1.)
+    c3 = ax[1,1].pcolormesh(RMSE.T/FLOAT_mean.T , cmap=cmap)
+    ax[1,1].set_title(r'$Kd _{\lambda='+  strname +'}$ RMSD (normalized) $[-]$')
+    ax[1,1].set_xticks(x_ticks_pos)
+    ax[1,1].set_yticks(y_ticks_pos)
+    ax[1,1].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
+    ax[1,1].set_yticklabels(tuple(months_str), rotation=0, fontsize=8, va='center')
+    ax[1,1].text(0.0, 1.05, string.ascii_lowercase[3]+ ')', transform=ax[1,1].transAxes, 
+                size=14, weight='bold')
+    cbar = fig.colorbar(c3, ax=ax[1,1])
+    cbar.locator = matplotlib.ticker.LinearLocator(numticks=9)
+    cbar.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
+    cbar.update_ticks()
+    
+	return
+

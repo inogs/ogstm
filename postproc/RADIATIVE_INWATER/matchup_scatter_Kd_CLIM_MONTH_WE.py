@@ -185,21 +185,21 @@ for iline, line in enumerate(READER):  # each line is one simulation
 		else:
 			ax[ivar].scatter( MONTHS-0.30, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
 			ax[ivar].scatter( MONTHS-0.20, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
-			ax[ivar].scatter( MONTHS-0.10, Kd_sat_M_W[:],        s=15,    color='darkgreen',     label='SAT W') 
+			ax[ivar].scatter( MONTHS-0.10, Kd_sat_M_W[:],        s=15,    color='saddlebrown',     label='SAT W') 
 
 			ax[ivar].scatter( MONTHS+0.10, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
 			ax[ivar].scatter( MONTHS+0.20, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
-			ax[ivar].scatter( MONTHS+0.30, Kd_sat_M_E[:],        s=15,    color='limegreen',     label='SAT E') 
+			ax[ivar].scatter( MONTHS+0.30, Kd_sat_M_E[:],        s=15,    color='peru',     label='SAT E') 
 
 
 			ax[ivar].errorbar(MONTHS-0.30, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
 			ax[ivar].errorbar(MONTHS-0.20, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
-			ax[ivar].errorbar(MONTHS-0.10, Kd_sat_M_W[:],        yerr=Kd_sat_S_W[:]       ,  color='darkgreen'    , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.10, Kd_sat_M_W[:],        yerr=Kd_sat_S_W[:]       ,  color='saddlebrown'    , fmt='o')
 
 
 			ax[ivar].errorbar(MONTHS+0.10, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
 			ax[ivar].errorbar(MONTHS+0.20, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.30, Kd_sat_M_E[:],        yerr=Kd_sat_S_E[:],         color='limegreen'     , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.30, Kd_sat_M_E[:],        yerr=Kd_sat_S_E[:],         color='peru'     , fmt='o')# or sandybrown limegreen before
 
 		ax[ivar].set_xticks(MONTHS)
 		ax[ivar].set_xticklabels(months_str)
@@ -207,7 +207,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 		ax[ivar].tick_params(axis='both', which='major', labelsize=10)
 		ax[ivar].set_title('Kd ' + var, fontsize=16)
 
-	ax[1].legend(loc='upper center', ncol=2, fontsize=12)
+	ax[2].legend(loc='upper center', ncol=2, fontsize=12)
 
 	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH_WE/' 
 	OUTNAME = line[-1].replace(" ", "_").replace(",", "")

@@ -28,8 +28,8 @@ SAT_DIR         = '/gpfs/scratch/userexternal/eterzic0/KD490_OUT/1KM/DAILY/CLIM_
 
 Kd_sat_M_W      = np.load(SAT_DIR + 'Kd_MEAN_MED_W.npy')
 Kd_sat_M_E      = np.load(SAT_DIR + 'Kd_MEAN_MED_E.npy')
-Kd_sat_S_W      = np.load(SAT_DIR + 'Kd_MEAN_STD_W.npy')
-Kd_sat_S_E      = np.load(SAT_DIR + 'Kd_MEAN_STD_E.npy')
+Kd_sat_S_W      = np.load(SAT_DIR + 'Kd_STD_MED_W.npy')
+Kd_sat_S_E      = np.load(SAT_DIR + 'Kd_STD_MED_E.npy')
 
 nMonths = 12
 MONTHS  = np.arange(1, nMonths + 1)

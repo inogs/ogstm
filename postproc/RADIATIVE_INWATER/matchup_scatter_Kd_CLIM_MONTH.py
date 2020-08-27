@@ -26,7 +26,7 @@ READER          = csv.reader(CSV_FILE)
 SAT_DIR         = '/gpfs/scratch/userexternal/eterzic0/KD490_OUT/1KM/DAILY/CLIM_MONTH/'
 
 Kd_sat_M        = np.load(SAT_DIR + 'Kd_MEAN_MED.npy')
-Kd_sat_S        = np.load(SAT_DIR + 'Kd_MEAN_STD.npy')
+Kd_sat_S        = np.load(SAT_DIR + 'Kd_STD_MED.npy')
 
 nMonths = 12
 MONTHS  = np.arange(1, nMonths + 1)

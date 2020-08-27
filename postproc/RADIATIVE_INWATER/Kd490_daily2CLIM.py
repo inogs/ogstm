@@ -59,8 +59,8 @@ if not os.path.exists(MASKDIR + 'masked_SUB.npy') :
 	np.save(MASKDIR + 'masked_SUB.npy',  masked_SUB)
 
 else:
-	masked_W   = np.load(MASKDIR + 'masked_E.npy'  )
-	masked_E   = np.load(MASKDIR + 'masked_W.npy'  )
+	masked_W   = np.load(MASKDIR + 'masked_W.npy'  )
+	masked_E   = np.load(MASKDIR + 'masked_E.npy'  )
 	masked_SUB = np.load(MASKDIR + 'masked_SUB.npy')
 
 

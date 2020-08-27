@@ -96,15 +96,15 @@ for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 
 		sum_weight  += w
 
-		meanval_old  = Kd490_read                                
+		meanval_old  = Kd_MEAN                                
 		Kd_MEAN     += w/sum_weight*(Kd490_read-meanval_old)
 		Kd_STD      += w*(Kd490_read-meanval_old)*(Kd490_read-Kd_MEAN)
 
-		meanval_old  = Kd490_read_W                                
+		meanval_old  = Kd_MEAN_W                                
 		Kd_MEAN_W   += w/sum_weight*(Kd490_read_W-meanval_old)
 		Kd_STD_W    += w*(Kd490_read_W-meanval_old)*(Kd490_read_W-Kd_MEAN_W)
 
-		meanval_old  = Kd490_read_E                                
+		meanval_old  = Kd_MEAN_E                                
 		Kd_MEAN_E   += w/sum_weight*(Kd490_read_E-meanval_old)
 		Kd_STD_E    += w*(Kd490_read_E-meanval_old)*(Kd490_read_E-Kd_MEAN_E)
 

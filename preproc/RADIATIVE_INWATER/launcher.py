@@ -24,8 +24,8 @@ CONFIGFILE = open('configuration.txt', 'r')
 ## Define all the variables you'll read from a .csv file to run the whole set of simulations
 
 fCHL          = float(CONFIGFILE.readline())
-fCDOM         = float(CONFIGFILE.readline())
-fBBP          = float(CONFIGFILE.readline())
+fEd           = float(CONFIGFILE.readline())  # fCDOM before
+fEs           = float(CONFIGFILE.readline())  # fBBP before
 TS_corr       = str2bool(CONFIGFILE.readline().strip('\n')) #bool(CONFIGFILE.readline())
 aw_spec       = CONFIGFILE.readline().strip('\n')
 a_NAP_model   = CONFIGFILE.readline().strip('\n')
@@ -38,7 +38,7 @@ CDOM_TS_corr  = str2bool(CONFIGFILE.readline().strip('\n')) #bool(CONFIGFILE.rea
 aw_380_spec   = CONFIGFILE.readline().strip('\n')
 depth_type    = CONFIGFILE.readline().strip('\n')
 Kw_type       = CONFIGFILE.readline().strip('\n')
-a_CDOM_CORR    = str2bool(CONFIGFILE.readline().strip('\n')) 
+a_CDOM_CORR   = str2bool(CONFIGFILE.readline().strip('\n')) 
 a_PFT_use     = str2bool(CONFIGFILE.readline().strip('\n')) #bool(CONFIGFILE.readline())
 bp_bbp_model  = CONFIGFILE.readline().strip('\n')
 bb_ratio      = float(CONFIGFILE.readline())
@@ -145,8 +145,9 @@ for ip in range(ip_start_l,ip_end_l):
 	List_Ed = [M.getMatchups([p], nav_lev, modelvar, refvar='IRR_380') for modelvar in str_Ed]  # /25 from W m-2 to W m-2 nm -1
 	List_Es = [M.getMatchups([p], nav_lev, modelvar, refvar='IRR_380') for modelvar in str_Es]  
 	
-	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
-	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0]/25. for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
+	# fEd and fEs are multiplication factors for the boundary condition sensitivity analysis
+	Ed = np.asarray([0. if len(List_Ed[i].Model)==0 else List_Ed[i].Model[0]/25.*fEd for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
+	Es = np.asarray([0. if len(List_Es[i].Model)==0 else List_Es[i].Model[0]/25.*fEs for i in range(len(List_Ed))])  # /25 from W m-2 to W m-2 nm -1
 	
 	#if np.all(Ed == 0.) and np.all(Es == 0.):
 	#	print('I am %d profile %d - No model data for this profile' %(whoAmI, ip))
@@ -203,8 +204,8 @@ for ip in range(ip_start_l,ip_end_l):
 	# Assign the CHL factor in case you want to run the sensitivity analysis
 	CHLz *= fCHL
 
-	CDOM_qc    = fCDOM * CDOM_QC(CDOM) 
-	BBP700_qc  = fBBP  * BBP700_QC(PresBBP, BBP700)
+	CDOM_qc    = CDOM_QC(CDOM)    # before it was multiplied by fCDOM and fBBP for sensitivity analysis purpouses
+	BBP700_qc  = BBP700_QC(PresBBP, BBP700)
 
 	# Interpolate to MODEL depth quotes for the simulation runs.
 	CHL_int    = np.interp(Pres, PresCHL, CHLz)

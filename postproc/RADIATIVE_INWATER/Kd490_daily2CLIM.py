@@ -88,9 +88,13 @@ for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 
 		ncin          = NC4.Dataset(TL.filelist[ii], 'r')
 
-		Kd490_read    = np.nanmean(ncin.variables['KD490'][0, :, :])
-		Kd490_read_W  = np.nanmean(ncin.variables['KD490'][0,:,:][masked_W])
-		Kd490_read_E  = np.nanmean(ncin.variables['KD490'][0,:,:][masked_E])
+		Kd490_read    = np.nanmean(ncin.variables['KD490'][0, :, :].filled(fill_value=np.nan))
+		Kd490_read_W  = np.nanmean(ncin.variables['KD490'][0,:,:][masked_W].filled(fill_value=np.nan))
+		Kd490_read_E  = np.nanmean(ncin.variables['KD490'][0,:,:][masked_E].filled(fill_value=np.nan))
+
+		if np.isnan(Kd490_read)   : Kd490_read = 0.
+		if np.isnan(Kd490_read_W) : Kd490_read_W = 0.
+		if np.isnan(Kd490_read_E) : Kd490_read_E = 0.
 
 		ncin.close()
 

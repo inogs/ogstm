@@ -90,9 +90,13 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	x_ticks_pos = np.arange(len(basin_list_abbrev)) + 0.5
 	y_ticks_pos = np.arange(len(months_str)) + 0.5
 
+	vmax_AB = np.round(max(MODEL_mean.max(), FLOAT_mean.max()), decimals=1)
+	vmax_C  = np.round(max(abs(BIAS.min()), abs(BIAS.max())), decimals=1)
+	vmax_D  = np.round(RMSE.max(), decimals=1)
+
 	# Plot the model values
 	cmap = plt.get_cmap('BuPu', 8) 
-	c0 = ax[0,0].pcolormesh(MODEL_mean.T, cmap=cmap)
+	c0 = ax[0,0].pcolormesh(MODEL_mean.T, cmap=cmap, vmin=0., vmax=vmax_AB)
 	cmap.set_bad('lightgrey',1.)
 	ax[0,0].set_title(r'$Kd _{\lambda='+ strname +'}$ M (MEAN) $[m^{-1}]$ ')
 	ax[0,0].set_xticks(x_ticks_pos)
@@ -109,7 +113,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	
 	# Plot float values
 	cmap = plt.get_cmap('BuPu', 8)   
-	c1 = ax[0,1].pcolormesh(FLOAT_mean.T, cmap=cmap)
+	c1 = ax[0,1].pcolormesh(FLOAT_mean.T, cmap=cmap, vmin=0., vmax=vmax_AB)
 	cmap.set_bad('lightgrey',1.)
 	ax[0,1].set_title(r'$Kd _{\lambda='+ strname +'}$ O (MEAN) $[m^{-1}]$')
 	ax[0,1].set_xticks(x_ticks_pos)
@@ -127,7 +131,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	# Plot bias, 
 	cmap = plt.get_cmap('bwr',8)
 	cmap.set_bad('lightgrey',1.)
-	c2 = ax[1,0].pcolormesh(BIAS.T/FLOAT_mean.T , cmap=cmap)
+	c2 = ax[1,0].pcolormesh(BIAS.T/FLOAT_mean.T , cmap=cmap, vmin=-vmax_C, vmax=vmax_C)
 	ax[1,0].set_title(r'$Kd _{\lambda='+  strname +'}$ BIAS (normalized) $[-]$')
 	ax[1,0].set_xticks(x_ticks_pos)
 	ax[1,0].set_yticks(y_ticks_pos)
@@ -144,7 +148,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	# Plot RMSE   
 	cmap = plt.get_cmap('BuPu',8)
 	cmap.set_bad('lightgrey',1.)
-	c3 = ax[1,1].pcolormesh(RMSE.T/FLOAT_mean.T , cmap=cmap)
+	c3 = ax[1,1].pcolormesh(RMSE.T/FLOAT_mean.T , cmap=cmap, vmin=0., vmax=vmax_D)
 	ax[1,1].set_title(r'$Kd _{\lambda='+  strname +'}$ RMSD (normalized) $[-]$')
 	ax[1,1].set_xticks(x_ticks_pos)
 	ax[1,1].set_yticks(y_ticks_pos)

@@ -17,11 +17,15 @@ import netCDF4 as NC4
 from ancillary import *
 
 
-SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
+SIM_MAIN_FOLDER   = sys.argv[1]                # SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
 
-CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
+CSV_FILE          = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
 
-READER          = csv.reader(CSV_FILE)
+READER            = csv.reader(CSV_FILE)
+
+SAT_DIR           = '/gpfs/scratch/userexternal/eterzic0/KD490_24_DAILY/DAILY/CHECKED/'
+
+random_SAT_string = '_d-OC_CNR-L3-KD490-MedOC4AD4_SAM_1KM-MED-REP-v02.nc'
 
 nMonths     = 12
 MONTHS      = np.arange(1, nMonths + 1)
@@ -34,19 +38,13 @@ VARLIST = ['380', '412', '490']
 basin_list_abbrev = ['ALB', 'SWM1', 'SWM2', 'NWM', 'TYR1', 'TYR2', 'ADR1', 'ADR2', 'AEG', 'ION1', 'ION2', 'ION3', 'LEV1', 'LEV2', 'LEV3', 'LEV4' ]
 
 fig1,ax1 = plt.subplots(2,2)
-fig2,ax2 = plt.subplots(2,2)
-fig3,ax3 = plt.subplots(2,2)
-
 fig1.set_size_inches(11.69, 8.27)
-fig2.set_size_inches(11.69, 8.27)
-fig3.set_size_inches(11.69, 8.27)
-
 
 for iline, line in enumerate(READER):  # each line is one simulation
 	if iline == 0:
 		continue    # we are skipping the header
 
-	#ine[0] = 'TEST_35'
+	#line[0] = 'TEST_35'
 
 	SIM_FOLDER = SIM_MAIN_FOLDER + line[0]  # first column of a line
 
@@ -87,10 +85,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	lon                = [float(filename.strip('.nc').strip(SIM_FOLDER + '/KD/').split('_')[2])  for filename in filelist]
 	lat                = [float(filename.strip('.nc').strip(SIM_FOLDER + '/KD/').split('_')[3])  for filename in filelist]
 
-	Kd_380_SUB = np.zeros((nSub, nMonths, nStat))
-	Kd_412_SUB = np.zeros((nSub, nMonths, nStat))
+	
 	Kd_490_SUB = np.zeros((nSub, nMonths, nStat))
-
 
 	for isub, sub in enumerate(OGS.med):         # Loop over subbasins
 
@@ -100,46 +96,49 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 			ilist, wlist   =  TL.select(CLIM_MONTH_req)
 
-			Kd_model = np.nan*np.ones((1,3))
-			Kd_float = np.nan*np.ones((1,3))
+			Kd_model = np.nan*np.ones((1,))
+			Kd_sat   = np.nan*np.ones((1,))
 
 			for ii, w in zip(ilist,wlist):
 
 				if not sub.is_inside(lon[ii], lat[ii]): 				
-					Kd_model = np.concatenate((Kd_model, np.array([[np.nan, np.nan, np.nan]])))
-					Kd_float = np.concatenate((Kd_float, np.array([[np.nan, np.nan, np.nan]])))
+					Kd_model = np.concatenate((Kd_model, np.array([np.nan])))
+					Kd_sat   = np.concatenate((Kd_sat,   np.array([np.nan])))
 					continue
 
-				ncin = NC4.Dataset(TL.filelist[ii], 'r')
+				ncin     = NC4.Dataset(TL.filelist[ii], 'r')
 
-				Kd_model = np.concatenate((Kd_model, ncin.variables['Kd_model'][:,:]))
-				Kd_float = np.concatenate((Kd_float, ncin.variables['Kd_float'][:,:]))
-
+				Kd_model = np.concatenate((Kd_model, ncin.variables['Kd_model'][:,2]))
+		
 				ncin.close()
 
-			L380 = matchup(Kd_model[1:,0], Kd_float[1:,0]) # use 1: to elliminate the first element when initializing Kd_model
-			L412 = matchup(Kd_model[1:,1], Kd_float[1:,1])
-			L490 = matchup(Kd_model[1:,2], Kd_float[1:,2])
+				filelist_SAT = SAT_DIR + TL.Timelist[ii].strftime("%Y%m%d") + random_SAT_string
 
-			Kd_380_SUB[isub, iMonth, :] = [L380.Model.mean(), L380.Ref.mean(), L380.bias(), L380.RMSE() ]
-			Kd_412_SUB[isub, iMonth, :] = [L412.Model.mean(), L412.Ref.mean(), L412.bias(), L412.RMSE() ]
+				ncSAT        = NC4.Dataset(filelist_SAT, 'r')
+
+				lonSAT       = ncSAT.variables['lon'][:]
+				latSAT       = ncSAT.variables['lat'][:]
+
+				ilon         = np.argmin(np.abs(lonSAT - lon[ii]))
+				ilat         = np.argmin(np.abs(latSAT - lat[ii]))
+
+				Kd_sat       = np.concatenate((Kd_sat, [ncSAT.variables['KD490'][0,ilat,ilon].filled(fill_value=np.nan)]))
+
+				ncSAT.close()
+
+			L490 = matchup(Kd_model[1:], Kd_sat[1:])
+
 			Kd_490_SUB[isub, iMonth, :] = [L490.Model.mean(), L490.Ref.mean(), L490.bias(), L490.RMSE() ]
 
-	plot_pcolor(fig1, ax1, Kd_380_SUB[:,:,0], Kd_380_SUB[:,:,1], Kd_380_SUB[:,:,2], Kd_380_SUB[:,:,3], '380', basin_list_abbrev, months_str)
-	plot_pcolor(fig2, ax2, Kd_412_SUB[:,:,0], Kd_412_SUB[:,:,1], Kd_412_SUB[:,:,2], Kd_412_SUB[:,:,3], '412', basin_list_abbrev, months_str)
-	plot_pcolor(fig3, ax3, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], '490', basin_list_abbrev, months_str)
+	plot_pcolor(fig1, ax1, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], '490', basin_list_abbrev, months_str)
 
 	fig1.tight_layout()
-	fig2.tight_layout()
-	fig3.tight_layout()
 
 	OUTDIR = SIM_MAIN_FOLDER + '/PLOTS/PCOLOR/Kd_CLIM/' 
 
 	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
 
-	fig1.savefig(OUTDIR     + line[0]  + '_plot_380_' + OUTNAME +  '.png', dpi=300)
-	fig2.savefig(OUTDIR     + line[0]  + '_plot_412_' + OUTNAME +  '.png', dpi=300)
-	fig3.savefig(OUTDIR     + line[0]  + '_plot_490_' + OUTNAME +  '.png', dpi=300)
+	fig1.savefig(OUTDIR     + line[0]  + '_plot_490_SAT_' + OUTNAME +  '.png', dpi=300)
 
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()
@@ -147,9 +146,6 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	for i in range(2):
 		for j in range(2):
 			ax1[i,j].clear()
-			ax2[i,j].clear()
-			ax3[i,j].clear()
-
 
 CSV_FILE.close()
 

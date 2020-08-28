@@ -84,7 +84,7 @@ def save_stat(L):
 	return count, bias, sigma, r_value, b, a
 
 
-def plot_pcolor(ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list_abbrev, months_str):
+def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list_abbrev, months_str):
 
 	x_ticks_pos = np.arange(len(basin_list_abbrev)) + 0.5
 	y_ticks_pos = np.arange(len(months_str)) + 0.5

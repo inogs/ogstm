@@ -92,7 +92,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 
 	vmax_AB = max(MODEL_mean.max(), FLOAT_mean.max())
 	vmax_C  = max(abs(BIAS.min()), abs(BIAS.max()))
-	vmax_D  = RMSE.max(), decimals=1
+	vmax_D  = RMSE.max()
 
 	# Plot the model values
 	cmap = plt.get_cmap('BuPu', 8) 

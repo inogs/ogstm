@@ -90,9 +90,9 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	x_ticks_pos = np.arange(len(basin_list_abbrev)) + 0.5
 	y_ticks_pos = np.arange(len(months_str)) + 0.5
 
-	vmax_AB = np.round(max(MODEL_mean.max(), FLOAT_mean.max()), decimals=1)
-	vmax_C  = np.round(max(abs(BIAS.min()), abs(BIAS.max())), decimals=1)
-	vmax_D  = np.round(RMSE.max(), decimals=1)
+	vmax_AB = max(MODEL_mean.max(), FLOAT_mean.max())
+	vmax_C  = max(abs(BIAS.min()), abs(BIAS.max()))
+	vmax_D  = RMSE.max(), decimals=1
 
 	# Plot the model values
 	cmap = plt.get_cmap('BuPu', 8) 

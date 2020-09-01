@@ -285,6 +285,25 @@ for ip in range(ip_start_l,ip_end_l):
 			continue
 		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
 
+	if a_CDOM_model == 'Kbio_380_CORR':
+
+		if not CDOM_TS_corr:
+			aw380 = aw_380_NO_corr(TEMP_int, SALI_int, model=aw_380_spec)      # No TS Corr
+			bw380 = bw_380_NO_corr(TEMP_int, SALI_int)
+		else:
+			aw380 = aw_380_TS_corr(TEMP_int, SALI_int, model=aw_380_spec)      # With TS Corr
+			bw380 = bw_380_TS_corr(TEMP_int, SALI_int)
+
+		Kbio380, success = calc_Kbio_380(Ed380_int, Pres, TEMP_int, SALI_int, depth_type, aw380, bw380, Kw_type) # MLD or EUPH ; MASON or LIT
+
+		if not success:
+			print('I am %d profile %d - BGC-Argo RADIOMETRY QC questionable!!'  %(whoAmI, ip))
+			c_BADQC += 1
+			continue
+		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380) - aNAP_Babin(CDOM_int, a_NAP_443, S_NAP) 
+		if np.any(a_CDOM < 0.):
+			print('I am %d profile %d - NEGATIVE VALUES of aCDOM!!!!' %(whoAmI, ip))
+
 	if a_CDOM_CORR == True:
 		a_CDOM = aDG_CORR(a_CDOM, awTS)
 

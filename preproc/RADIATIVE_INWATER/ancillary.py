@@ -392,7 +392,7 @@ def aDG_CORR(aDG, aw):  # detritus (NAP) and gelbstoff (CDOM) correction of the 
 
 	for iwl in range(len(wl)):
 		aDG_CORR[:,iwl] = aDG[:,iwl] + aw_LIT[iwl,:] - aw[iwl,:]
-
+		
 	return aDG_CORR
 
 def bp_Case1(CHL, ratio):

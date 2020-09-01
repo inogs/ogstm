@@ -122,6 +122,7 @@ c_USEFUL = 0
 #c_NODATA = 0
 #c_LOWED  = 0
 c_DEPTH  = 0
+c_Ed     = 0
 #c_CLOUD  = 0
 #c_BADED  = 0
 c_BADQC  = 0
@@ -180,6 +181,11 @@ for ip in range(ip_start_l,ip_end_l):
 	if  np.min([PresCHL[-1], PresBBP[-1], PresCDOM[-1], PresT[-1], PresS[-1]]) < 150. :
 		print('I am %d profile %d - Depth range too small' %(whoAmI, ip))
 		c_DEPTH += 1
+		continue
+
+	if np.max([Pres380[5], Pres412[5], Pres490[5]]) > 10. :
+		print('I am %d profile %d - Too few Ed acquisitions in the first 10 m!' %(whoAmI, ip))
+		c_Ed += 1
 		continue
 	
 	#if Ed_380[0] < 0.3 or Ed_412[0] < 0.3 or Ed_490[0] < 0.3:
@@ -500,6 +506,8 @@ cg_USEFUL = MPI.COMM_WORLD.allreduce(c_USEFUL, op=MPI.SUM)
 #cg_NODATA = MPI.COMM_WORLD.allreduce(c_NODATA, op=MPI.SUM)
 #cg_LOWED  = MPI.COMM_WORLD.allreduce(c_LOWED , op=MPI.SUM)
 cg_DEPTH  = MPI.COMM_WORLD.allreduce(c_DEPTH , op=MPI.SUM)
+cg_Ed  = MPI.COMM_WORLD.allreduce(c_Ed , op=MPI.SUM)
+
 #cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
 #cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
 cg_BADQC  = MPI.COMM_WORLD.allreduce(c_BADQC , op=MPI.SUM)
@@ -512,6 +520,8 @@ if whoAmI == 0:
 	#print('Number of profiles without model data : '          , cg_NODATA)
 	#print('Number of profiles with low model Ed : '           , cg_LOWED)
 	print('Number of profiles with low depth range : '        , cg_DEPTH)
+	print('Number of profiles with low no of Ed points in first 10 m : '        , cg_Ed)
+
 	#print('Number of profiles with low float Ed: '            , cg_CLOUD)
 	#print('Number of profiles with increasing Ed values: '    , cg_BADED)
 	print('Number of profiles with questionable Ed values: '  , cg_BADQC)

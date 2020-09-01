@@ -253,7 +253,7 @@ for ip in range(ip_start_l,ip_end_l):
 		a_NAP = aNAP_Babin(BBP700_int, a_NAP_443, S_NAP) 
 
 	if a_NAP_CORR == True:
-		a_NAP = aDG_CORR(a_NAP, awTS)
+		a_NAP = aDG_CORR(a_NAP)
 
 
 	#################################################################################################################### 
@@ -300,12 +300,14 @@ for ip in range(ip_start_l,ip_end_l):
 			print('I am %d profile %d - BGC-Argo RADIOMETRY QC questionable!!'  %(whoAmI, ip))
 			c_BADQC += 1
 			continue
-		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380) - aNAP_Babin(CDOM_int, a_NAP_443, S_NAP) 
-		if np.any(a_CDOM < 0.):
+
+		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
+		a_CDOM[:,:8] -= aNAP_Babin(CDOM_int, a_NAP_443, S_NAP)[:,:8]  # until 500 nm
+		if np.any(a_CDOM < 0.): 
 			print('I am %d profile %d - NEGATIVE VALUES of aCDOM!!!!' %(whoAmI, ip))
 
 	if a_CDOM_CORR == True:
-		a_CDOM = aDG_CORR(a_CDOM, awTS)
+		a_CDOM = aDG_CORR(a_CDOM)
 
 	#################################################################################################################### 
 	##################################    4. Phytoplankton functional types - PFT     ################################## 

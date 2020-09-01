@@ -381,18 +381,22 @@ def aCDOM_Kbio(CDOM_int, Scdom, Kbio_380):
 
 	return aCDOM
 
-def aDG_CORR(aDG, aw):  # detritus (NAP) and gelbstoff (CDOM) correction of the spectra
+def aDG_CORR(aDG):  # detritus (NAP) and gelbstoff (CDOM) correction of the spectra
 
 	aDG_CORR = np.zeros((aDG.shape[0], wl.shape[0]))  
 
 	T = np.zeros((aDG.shape[0],))
 	S = np.zeros((aDG.shape[0],))
 
-	aw_LIT = aw_NO_corr(T, S, model='LIT')
+	aw_LIT   = aw_NO_corr(T, S, model='LIT')    # no T-S correction because we have no idea
+	aw_MASON = aw_NO_corr(T, S, model='MASON')  # about the T-S data of the original spectras
 
 	for iwl in range(len(wl)):
-		aDG_CORR[:,iwl] = aDG[:,iwl] + aw_LIT[iwl,:] - aw[iwl,:]
-		
+		if wl[iwl] > 500.:   # correct only until the blue part of the spectrum!!!
+			aDG_CORR[:,iwl] = aDG[:,iwl]
+		else:
+			aDG_CORR[:,iwl] = aDG[:,iwl] + aw_LIT[iwl,:] - aw_MASON[iwl,:]
+
 	return aDG_CORR
 
 def bp_Case1(CHL, ratio):

@@ -122,10 +122,10 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	ax[0,1].set_yticklabels(tuple(months_str), rotation=0, fontsize=8, va='center')
 	ax[0,1].text(0.0, 1.03, string.ascii_lowercase[1] + ')', transform=ax[0,1].transAxes, 
 				size=14, weight='bold')
-	cbar = fig.colorbar(c1, ax=ax[0,1])
-	cbar.locator = matplotlib.ticker.LinearLocator(numticks=9)
-	cbar.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
-	cbar.update_ticks()
+	cbar1 = fig.colorbar(c1, ax=ax[0,1])
+	cbar1.locator = matplotlib.ticker.LinearLocator(numticks=9)
+	cbar1.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
+	cbar1.update_ticks()
 
 	
 	# Plot bias, 
@@ -139,10 +139,10 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	ax[1,0].set_yticklabels(tuple(months_str), rotation=0, fontsize=8, va='center')
 	ax[1,0].text(0.0, 1.05, string.ascii_lowercase[2] + ')', transform=ax[1,0].transAxes, 
 				size=14, weight='bold')
-	cbar = fig.colorbar(c2, ax=ax[1,0])
-	cbar.locator = matplotlib.ticker.LinearLocator(numticks=9)
-	cbar.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
-	cbar.update_ticks()
+	cbar2 = fig.colorbar(c2, ax=ax[1,0])
+	cbar2.locator = matplotlib.ticker.LinearLocator(numticks=9)
+	cbar2.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
+	cbar2.update_ticks()
 
 
 	# Plot RMSE   
@@ -156,10 +156,10 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	ax[1,1].set_yticklabels(tuple(months_str), rotation=0, fontsize=8, va='center')
 	ax[1,1].text(0.0, 1.05, string.ascii_lowercase[3]+ ')', transform=ax[1,1].transAxes, 
 				size=14, weight='bold')
-	cbar = fig.colorbar(c3, ax=ax[1,1])
-	cbar.locator = matplotlib.ticker.LinearLocator(numticks=9)
-	cbar.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
-	cbar.update_ticks()
+	cbar3 = fig.colorbar(c3, ax=ax[1,1])
+	cbar3.locator = matplotlib.ticker.LinearLocator(numticks=9)
+	cbar3.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
+	cbar3.update_ticks()
 	
-	return
+	return cbar1, cbar2, cbar3
 

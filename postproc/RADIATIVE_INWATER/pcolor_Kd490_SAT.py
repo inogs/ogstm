@@ -130,7 +130,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 			Kd_490_SUB[isub, iMonth, :] = [L490.Model.mean(), L490.Ref.mean(), L490.bias(), L490.RMSE() ]
 
-	plot_pcolor(fig1, ax1, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], '490', basin_list_abbrev, months_str)
+	cbar1, cbar2, cbar3 = plot_pcolor(fig1, ax1, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], '490', basin_list_abbrev, months_str)
 
 	fig1.tight_layout()
 
@@ -143,14 +143,11 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()
 
-	ax1[0,0].clear()
-	ax1[0,1].clear()
-	ax1[1,0].clear()
-	ax1[1,1].clear()
+	for i in range(2):
+		for j in range(2):
+			ax1[i,j].clear()
 
-	#for i in range(2):
-		#for j in range(2):
-			#ax1[i,j].clear()
+	cbar1.remove() ; cbar2.remove() ; cbar3.remove()
 
 CSV_FILE.close()
 

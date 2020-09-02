@@ -125,9 +125,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			Kd_412_SUB[isub, iMonth, :] = [L412.Model.mean(), L412.Ref.mean(), L412.bias(), L412.RMSE() ]
 			Kd_490_SUB[isub, iMonth, :] = [L490.Model.mean(), L490.Ref.mean(), L490.bias(), L490.RMSE() ]
 
-	plot_pcolor(fig1, ax1, Kd_380_SUB[:,:,0], Kd_380_SUB[:,:,1], Kd_380_SUB[:,:,2], Kd_380_SUB[:,:,3], '380', basin_list_abbrev, months_str)
-	plot_pcolor(fig2, ax2, Kd_412_SUB[:,:,0], Kd_412_SUB[:,:,1], Kd_412_SUB[:,:,2], Kd_412_SUB[:,:,3], '412', basin_list_abbrev, months_str)
-	plot_pcolor(fig3, ax3, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], '490', basin_list_abbrev, months_str)
+	cbar1, cbar2, cbar3 = plot_pcolor(fig1, ax1, Kd_380_SUB[:,:,0], Kd_380_SUB[:,:,1], Kd_380_SUB[:,:,2], Kd_380_SUB[:,:,3], '380', basin_list_abbrev, months_str)
+	cbar4, cbar5, cbar6 = plot_pcolor(fig2, ax2, Kd_412_SUB[:,:,0], Kd_412_SUB[:,:,1], Kd_412_SUB[:,:,2], Kd_412_SUB[:,:,3], '412', basin_list_abbrev, months_str)
+	cbar7, cbar8, cbar9 = plot_pcolor(fig3, ax3, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], '490', basin_list_abbrev, months_str)
 
 	fig1.tight_layout()
 	fig2.tight_layout()
@@ -144,17 +144,15 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()
 
-	ax1[0,0].clear()   ;  ax2[0,0].clear()  ; ax3[0,0].clear()      
-	ax1[0,1].clear()   ;  ax2[0,1].clear()  ; ax3[0,1].clear()      
-	ax1[1,0].clear()   ;  ax2[1,0].clear()  ; ax3[1,0].clear()      
-	ax1[1,1].clear()   ;  ax2[1,1].clear()  ; ax3[1,1].clear()     
-	 
-	#for i in range(2):
-	#	for j in range(2):
-	#		ax1[i,j].clear()
-	#		ax2[i,j].clear()
-	#		ax3[i,j].clear()
+	for i in range(2):
+		for j in range(2):
+			ax1[i,j].clear()
+			ax2[i,j].clear()
+			ax3[i,j].clear()
 
+	cbar1.remove() ; cbar2.remove() ; cbar3.remove()
+	cbar4.remove() ; cbar5.remove() ; cbar6.remove()
+	cbar7.remove() ; cbar8.remove() ; cbar9.remove()
 
 CSV_FILE.close()
 

@@ -123,6 +123,7 @@ c_USEFUL = 0
 #c_LOWED  = 0
 c_DEPTH  = 0
 c_Ed     = 0
+c_surfEd = 0
 #c_CLOUD  = 0
 #c_BADED  = 0
 c_BADQC  = 0
@@ -187,7 +188,12 @@ for ip in range(ip_start_l,ip_end_l):
 		print('I am %d profile %d - Too few Ed acquisitions in the first 10 m!' %(whoAmI, ip))
 		c_Ed += 1
 		continue
-	
+
+	if np.min([Pres380[0], Pres412[0], Pres490[0]]) > 1.0 :
+		print('I am %d profile %d - Surface measurement below 1m!' %(whoAmI, ip))
+		c_surfEd += 1
+		continue
+
 	#if Ed_380[0] < 0.3 or Ed_412[0] < 0.3 or Ed_490[0] < 0.3:
 	#	print('I am %d profile %d - BGC-Argo low irradiance values - cloud coverage'  %(whoAmI, ip))
 	#	c_CLOUD += 1
@@ -311,6 +317,7 @@ for ip in range(ip_start_l,ip_end_l):
 		a_CDOM[:,:8] -= aNAP_Babin(CDOM_int, a_NAP_443, S_NAP)[:,:8]  # until 500 nm
 		if np.any(a_CDOM < 0.): 
 			print('I am %d profile %d - NEGATIVE VALUES of aCDOM!!!!' %(whoAmI, ip))
+			continue
 
 	if a_CDOM_CORR == True:
 		a_CDOM = aDG_CORR(a_CDOM)
@@ -507,6 +514,7 @@ cg_USEFUL = MPI.COMM_WORLD.allreduce(c_USEFUL, op=MPI.SUM)
 #cg_LOWED  = MPI.COMM_WORLD.allreduce(c_LOWED , op=MPI.SUM)
 cg_DEPTH  = MPI.COMM_WORLD.allreduce(c_DEPTH , op=MPI.SUM)
 cg_Ed  = MPI.COMM_WORLD.allreduce(c_Ed , op=MPI.SUM)
+cg_surfEd = MPI.COMM_WORLD.allreduce(c_surfEd, op=MPI.SUM)
 
 #cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
 #cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
@@ -521,13 +529,11 @@ if whoAmI == 0:
 	#print('Number of profiles with low model Ed : '           , cg_LOWED)
 	print('Number of profiles with low depth range : '        , cg_DEPTH)
 	print('Number of profiles with low no of Ed points in first 10 m : '        , cg_Ed)
+	print('Number of profiles with first Ed measurement below 1m : '        , cg_surfEd)
 
 	#print('Number of profiles with low float Ed: '            , cg_CLOUD)
 	#print('Number of profiles with increasing Ed values: '    , cg_BADED)
 	print('Number of profiles with questionable Ed values: '  , cg_BADQC)
 	print('Number of profiles with bad Kd MODEL : '           , cg_BADKDM)
 	print('Number of profiles with bad Kd FLOAT : '           , cg_BADKDF)
-
-
-
 

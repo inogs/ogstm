@@ -143,9 +143,14 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()
 
-	for i in range(2):
-		for j in range(2):
-			ax1[i,j].clear()
+	ax1[0,0].clear()
+	ax1[0,1].clear()
+	ax1[1,0].clear()
+	ax1[1,1].clear()
+
+	#for i in range(2):
+		#for j in range(2):
+			#ax1[i,j].clear()
 
 CSV_FILE.close()
 

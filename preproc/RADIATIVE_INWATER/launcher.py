@@ -213,7 +213,7 @@ for ip in range(ip_start_l,ip_end_l):
 	nLevels   = len(Pres)
 	init_rows = str(timestr) + '\n' + str(Lat) +  '\n' + str(Lon) + '\n' + str(nLevels)
 
-	CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
+	#CHLz[CHLz < 0.] = 0.  # Check that the CHL profile is placed to zero if negative!!
 
 	# Assign the CHL factor in case you want to run the sensitivity analysis
 	CHLz *= fCHL
@@ -228,14 +228,14 @@ for ip in range(ip_start_l,ip_end_l):
 
 
 	# Interpolate to MODEL depth quotes for the simulation runs.
-	CHL_int    = np.interp(Pres, PresCHL, CHLz_qc)
-	TEMP_int   = np.interp(Pres, PresT, TEMP)
-	SALI_int   = np.interp(Pres, PresS, SALI)
-	CDOM_int   = np.interp(Pres, PresCDOM, CDOM_qc) 
+	CHL_int    = np.interp(Pres, PresCHL,    CHL_qc)
+	TEMP_int   = np.interp(Pres, PresT,        TEMP)
+	SALI_int   = np.interp(Pres, PresS,        SALI)
+	CDOM_int   = np.interp(Pres, PresCDOM,  CDOM_qc) 
 	BBP700_int = np.interp(Pres, PresBBP, BBP700_qc)
-	Ed380_int  = np.interp(Pres, Pres380, Ed_380_qc)
-	Ed412_int  = np.interp(Pres, Pres412, Ed_412_qc)
-	Ed490_int  = np.interp(Pres, Pres490, Ed_490_qc)
+	Ed380_int  = np.interp(Pres, Pres380,  Ed380_qc)
+	Ed412_int  = np.interp(Pres, Pres412,  Ed412_qc)
+	Ed490_int  = np.interp(Pres, Pres490,  Ed490_qc)
 
 
 	if Ed_check(Pres, Ed380_int, 0.3) or Ed_check(Pres, Ed412_int, 0.3) or Ed_check(Pres, Ed490_int, 0.3) :         

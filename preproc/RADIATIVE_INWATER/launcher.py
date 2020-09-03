@@ -124,6 +124,7 @@ c_USEFUL = 0
 c_DEPTH  = 0
 c_Ed     = 0
 c_surfEd = 0
+c_Kd     = 0
 #c_CLOUD  = 0
 #c_BADED  = 0
 c_BADQC  = 0
@@ -204,6 +205,7 @@ for ip in range(ip_start_l,ip_end_l):
 	#	c_BADED += 1
 	#	#continue
 
+
 	''' QC procedures for BGC-Argo profiles '''
 
 	# Create a range vector on which we will interpolate float data for simulations
@@ -218,16 +220,28 @@ for ip in range(ip_start_l,ip_end_l):
 
 	CDOM_qc    = CDOM_QC(CDOM)    # before it was multiplied by fCDOM and fBBP for sensitivity analysis purpouses
 	BBP700_qc  = BBP700_QC(PresBBP, BBP700)
+	CHL_qc     = CHL_QC(CHLz)
+
+	Ed380_qc   = Ed_QC(Ed_380)
+	Ed412_qc   = Ed_QC(Ed_412)
+	Ed490_qc   = Ed_QC(Ed_490)
+
 
 	# Interpolate to MODEL depth quotes for the simulation runs.
-	CHL_int    = np.interp(Pres, PresCHL, CHLz)
+	CHL_int    = np.interp(Pres, PresCHL, CHLz_qc)
 	TEMP_int   = np.interp(Pres, PresT, TEMP)
 	SALI_int   = np.interp(Pres, PresS, SALI)
 	CDOM_int   = np.interp(Pres, PresCDOM, CDOM_qc) 
 	BBP700_int = np.interp(Pres, PresBBP, BBP700_qc)
-	Ed380_int  = np.interp(Pres, Pres380, Ed_380)
-	Ed412_int  = np.interp(Pres, Pres412, Ed_412)
-	Ed490_int  = np.interp(Pres, Pres490, Ed_490)
+	Ed380_int  = np.interp(Pres, Pres380, Ed_380_qc)
+	Ed412_int  = np.interp(Pres, Pres412, Ed_412_qc)
+	Ed490_int  = np.interp(Pres, Pres490, Ed_490_qc)
+
+
+	if Ed_check(Pres, Ed380_int, 0.3) or Ed_check(Pres, Ed412_int, 0.3) or Ed_check(Pres, Ed490_int, 0.3) :         
+		print('I am %d profile %d - Big Ed mismatch at the first optical depth!' %(whoAmI, ip))
+		c_Kd += 1
+		continue
 
 	
 	'''
@@ -313,11 +327,12 @@ for ip in range(ip_start_l,ip_end_l):
 			c_BADQC += 1
 			continue
 
-		a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
-		a_CDOM[:,:8] -= aNAP_Babin(CDOM_int, a_NAP_443, S_NAP)[:,:8]  # until 500 nm
-		if np.any(a_CDOM < 0.): 
-			print('I am %d profile %d - NEGATIVE VALUES of aCDOM!!!!' %(whoAmI, ip))
-			continue
+		#a_CDOM = aCDOM_Kbio(CDOM_int, S_CDOM, Kbio380)
+		#if np.min(Kbio380) > 0.03:  # Threshold value for Kbio380 
+		#	a_CDOM[:,:8] -= aNAP_Babin(CDOM_int, a_NAP_443, S_NAP)[:,:8]  # until 500 nm
+		#if np.any(a_CDOM < 0.): 
+		#	print('I am %d profile %d - NEGATIVE VALUES of aCDOM!!!!' %(whoAmI, ip))
+		#	continue
 
 	if a_CDOM_CORR == True:
 		a_CDOM = aDG_CORR(a_CDOM)
@@ -515,6 +530,7 @@ cg_USEFUL = MPI.COMM_WORLD.allreduce(c_USEFUL, op=MPI.SUM)
 cg_DEPTH  = MPI.COMM_WORLD.allreduce(c_DEPTH , op=MPI.SUM)
 cg_Ed  = MPI.COMM_WORLD.allreduce(c_Ed , op=MPI.SUM)
 cg_surfEd = MPI.COMM_WORLD.allreduce(c_surfEd, op=MPI.SUM)
+cg_Kd =  MPI.COMM_WORLD.allreduce(c_Kd, op=MPI.SUM)
 
 #cg_CLOUD  = MPI.COMM_WORLD.allreduce(c_CLOUD , op=MPI.SUM)
 #cg_BADED  = MPI.COMM_WORLD.allreduce(c_BADED , op=MPI.SUM)
@@ -527,9 +543,11 @@ if whoAmI == 0:
 	print('Number of useful profiles : '                      , cg_USEFUL)
 	#print('Number of profiles without model data : '          , cg_NODATA)
 	#print('Number of profiles with low model Ed : '           , cg_LOWED)
-	print('Number of profiles with low depth range : '        , cg_DEPTH)
+	print('Number of profiles with low depth range : '                       , cg_DEPTH)
 	print('Number of profiles with low no of Ed points in first 10 m : '        , cg_Ed)
 	print('Number of profiles with first Ed measurement below 1m : '        , cg_surfEd)
+	print('Number of profiles with Ed mismatch over 30 perc over 1st OD : '     , cg_Kd)
+
 
 	#print('Number of profiles with low float Ed: '            , cg_CLOUD)
 	#print('Number of profiles with increasing Ed values: '    , cg_BADED)

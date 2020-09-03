@@ -208,9 +208,27 @@ def MLD_calc(Pres, T, S, Ed):
 
 	zMLD     = Pres[MLD_ind]           # MLD depth
 	Pres_MLD = Pres[0:MLD_ind]         # MLD depth range
-	Ed_MLD   = Ed[  0:MLD_ind]           # Ed at the MLD depth range
+	Ed_MLD   = Ed[  0:MLD_ind]         # Ed at the MLD depth range
 
 	return zMLD, Pres_MLD, Ed_MLD
+
+def Ed_check(Pres, Ed, treshold=0.3):
+
+	zmax, PresDR, Ed_DR = euphotic(Pres, Ed)
+
+	if len(PresDR) < 5 or PresDR[1] - PresDR[0] > 9. or PresDR[4] > 15.:
+		return True
+
+	func = lambda z, Kd: np.exp(-Kd*z)
+
+	popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
+	Kd         = popt[0]
+
+	Ed_SYN = Ed[0] * func(PresDR-Pres[0], Kd)
+
+	DIFFmax = np.max(np.abs(Ed_SYN - Ed_DR)/Ed_DR)
+
+	return DIFFmax > treshold
 
 def calc_Kd(Pres, Ed):
 
@@ -227,6 +245,7 @@ def calc_Kd(Pres, Ed):
 
 	if success:
 		popt, pcov = curve_fit(func, PresDR-PresDR[0], Ed_DR/Ed_DR[0], p0=0.1)
+
 		Kd         = popt[0]
 
 	return Kd, success  
@@ -279,6 +298,12 @@ def CHL_QC(CHL):  # For now we are not using it
 	CHL_QC = running_mean(CHL_MF, 7)
 	CHL_QC[CHL_QC < 0.] = 0.
 	return CHL_QC
+
+def Ed_QC(Ed):  # For now we are not using it
+	Ed_MF = ndimage.median_filter(Ed, size=5)
+	Ed_QC = running_mean(Ed_MF, 7)
+	Ed_QC[Ed_QC < 0.] = 0.
+	return Ed_QC
 
 def profile_shape(x, y):
 	return x*y/np.max(y)

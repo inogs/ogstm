@@ -59,10 +59,10 @@ for iline, line in enumerate(READER):  # each line is one simulation
 		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder
 
 	if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/PCOLOR'):   
-		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/PCOLOR')        # create the SCATTER folder within the PLOTS folder
+		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/PCOLOR')        # create the PCOLOR folder within the PLOTS folder
 
 	if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/PCOLOR/Kd_CLIM'):   
-		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/PCOLOR/Kd_CLIM')     # create the Kd folder within the SCATTER folder
+		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/PCOLOR/Kd_CLIM')     # create the Kd folder within the PCOLOR folder
 
 	datelist = []
 	filelist = []

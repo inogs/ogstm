@@ -18,10 +18,14 @@ for SIM in os.listdir(SIM_MAIN_FOLDER):
 
 	os.system('sbatch plot_Ed.sh %s %s' %(FOLDER, CSV_FILE))
 	os.system('sbatch plot_Kd.sh %s %s' %(FOLDER, CSV_FILE))
+	os.system('sbatch plot_Rrs.sh %s %s' %(FOLDER, CSV_FILE))
 	os.system('sbatch plot_Kd_CLIM.sh %s %s' %(FOLDER, CSV_FILE))
 	os.system('sbatch plot_Kd_CLIM_WE.sh %s %s' %(FOLDER, CSV_FILE))
+	os.system('sbatch plot_Rrs_CLIM_WE.sh %s %s' %(FOLDER, CSV_FILE))
 	os.system('sbatch plot_pcolor_Kd.sh %s %s' %(FOLDER, CSV_FILE))
+	os.system('sbatch plot_pcolor_Rrs.sh %s %s' %(FOLDER, CSV_FILE))
 	os.system('sbatch plot_pcolor_Kd490_SAT.sh %s %s' %(FOLDER, CSV_FILE))
+
 
 	print('OK')
 

@@ -489,16 +489,16 @@ for ip in range(ip_start_l,ip_end_l):
 
 	Q = [Q412, Q443, Q490, Q510, Q555, Q670]
 
-	print('I am %d profile %d - Q values' %(whoAmI, ip) , Q)
+	print('I am %d profile %d - Q values [sr]' %(whoAmI, ip) , Q)
 
 	# Remote sensing reflectances
 
-	Rrs412 = Q412 * R412[0]
-	Rrs443 = Q443 * R443[0]
-	Rrs490 = Q490 * R490[0]
-	Rrs510 = Q510 * R510[0]
-	Rrs555 = Q555 * R555[0]
-	Rrs670 = Q670 * R670[0]
+	Rrs412 = R412[0] / Q412
+	Rrs443 = R443[0] / Q443
+	Rrs490 = R490[0] / Q490
+	Rrs510 = R510[0] / Q510
+	Rrs555 = R555[0] / Q555
+	Rrs670 = R670[0] / Q670
 
 	wl_RRS = [412., 443., 490., 510., 555., 670.]
 	Rrs    = [Rrs412, Rrs443, Rrs490, Rrs510, Rrs555, Rrs670]

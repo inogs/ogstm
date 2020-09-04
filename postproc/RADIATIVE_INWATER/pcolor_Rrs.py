@@ -129,7 +129,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 				RRS_SUB[ivar, isub, iMonth, :] = [L.Model.mean(), L.Ref.mean(), L.bias(), L.RMSE() ]
 
-		cbar1, cbar2, cbar3 = plot_pcolor(fig1, ax1, RRS_SUB[ivar, :,:,0], RRS_SUB[ivar,:,:,1], RRS_SUB[ivar,:,:,2], RRS_SUB[ivar,:,:,3], var[2:], basin_list_abbrev, months_str)
+		cbar1, cbar2, cbar3, cbar4 = plot_pcolor(fig1, ax1, RRS_SUB[ivar, :,:,0], RRS_SUB[ivar,:,:,1], RRS_SUB[ivar,:,:,2], RRS_SUB[ivar,:,:,3], 'Rrs', var[2:], basin_list_abbrev, months_str)
 
 		fig1.tight_layout()
 
@@ -146,7 +146,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			for j in range(2):
 				ax1[i,j].clear()
 
-		cbar1.remove() ; cbar2.remove() ; cbar3.remove()
+		cbar1.remove() ; cbar2.remove() ; cbar3.remove() ; cbar4.remove()
 
 CSV_FILE.close()
 

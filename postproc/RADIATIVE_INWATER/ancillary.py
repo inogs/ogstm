@@ -85,7 +85,7 @@ def save_stat(L):
 	return count, bias, sigma, r_value, b, a
 
 
-def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list_abbrev, months_str):
+def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, titlestr, strname, basin_list_abbrev, months_str):
 
 	x_ticks_pos = np.arange(len(basin_list_abbrev)) + 0.5
 	y_ticks_pos = np.arange(len(months_str)) + 0.5
@@ -98,7 +98,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	cmap = plt.get_cmap('BuPu', 8) 
 	c0 = ax[0,0].pcolormesh(MODEL_mean.T, cmap=cmap, vmin=0., vmax=vmax_AB)
 	cmap.set_bad('lightgrey',1.)
-	ax[0,0].set_title(r'$Kd _{\lambda='+ strname +'}$ M (MEAN) $[m^{-1}]$ ')
+	ax[0,0].set_title(r'$' + titlestr + '_{\lambda=' + strname +'}$ M (MEAN) $[m^{-1}]$ ')
 	ax[0,0].set_xticks(x_ticks_pos)
 	ax[0,0].set_yticks(y_ticks_pos)
 	ax[0,0].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
@@ -115,7 +115,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	cmap = plt.get_cmap('BuPu', 8)   
 	c1 = ax[0,1].pcolormesh(FLOAT_mean.T, cmap=cmap, vmin=0., vmax=vmax_AB)
 	cmap.set_bad('lightgrey',1.)
-	ax[0,1].set_title(r'$Kd _{\lambda='+ strname +'}$ O (MEAN) $[m^{-1}]$')
+	ax[0,1].set_title(r'$' + titlestr + '_{\lambda='+ strname +'}$ O (MEAN) $[m^{-1}]$')
 	ax[0,1].set_xticks(x_ticks_pos)
 	ax[0,1].set_yticks(y_ticks_pos)
 	ax[0,1].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
@@ -132,7 +132,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	cmap = plt.get_cmap('bwr',8)
 	cmap.set_bad('lightgrey',1.)
 	c2 = ax[1,0].pcolormesh(BIAS.T/FLOAT_mean.T , cmap=cmap, vmin=-vmax_C, vmax=vmax_C)
-	ax[1,0].set_title(r'$Kd _{\lambda='+  strname +'}$ BIAS (normalized) $[-]$')
+	ax[1,0].set_title(r'$' + titlestr + '_{\lambda='+  strname +'}$ BIAS (normalized) $[-]$')
 	ax[1,0].set_xticks(x_ticks_pos)
 	ax[1,0].set_yticks(y_ticks_pos)
 	ax[1,0].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
@@ -149,7 +149,7 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	cmap = plt.get_cmap('BuPu',8)
 	cmap.set_bad('lightgrey',1.)
 	c3 = ax[1,1].pcolormesh(RMSE.T/FLOAT_mean.T , cmap=cmap, vmin=0., vmax=vmax_D)
-	ax[1,1].set_title(r'$Kd _{\lambda='+  strname +'}$ RMSD (normalized) $[-]$')
+	ax[1,1].set_title(r'$' + titlestr + '_{\lambda='+  strname +'}$ RMSD (normalized) $[-]$')
 	ax[1,1].set_xticks(x_ticks_pos)
 	ax[1,1].set_yticks(y_ticks_pos)
 	ax[1,1].set_xticklabels(tuple(basin_list_abbrev), rotation=45, fontsize=8, ha='center')
@@ -161,5 +161,5 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, strname, basin_list
 	cbar3.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
 	cbar3.update_ticks()
 	
-	return cbar1, cbar2, cbar3
+	return cbar, cbar1, cbar2, cbar3
 

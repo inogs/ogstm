@@ -51,7 +51,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	if not os.path.isdir(SIM_FOLDER + '/KD'):      # If the KD folder does not exist, skip it
 		continue
 
-	print('Plotting scatter Kd of simulation %s ... '%line[0], end = '')
+	print('Plotting pcolor of Kd490 with SAT values of simulation %s ... '%line[0], end = '')
 
 	if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS'):   
 		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder

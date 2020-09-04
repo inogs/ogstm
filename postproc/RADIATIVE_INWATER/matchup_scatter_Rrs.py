@@ -19,6 +19,8 @@ CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../pre
 
 READER          = csv.reader(CSV_FILE)
 
+SAT_DIR         = '/gpfs/scratch/userexternal/eterzic0/RRS_SAT/ORIG/'
+
 fig, ax = plt.subplots(2,3, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
 fig.set_size_inches(15,10)
 

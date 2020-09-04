@@ -39,7 +39,7 @@ fig1.set_size_inches(9,12)
 fig2, ax2 = plt.subplots (nrows=3, ncols=1, gridspec_kw = {'wspace':0.25, 'hspace':0.25})
 fig2.set_size_inches(9,12)
 
-for ivar, var in enumerate(varlist):
+for ivar, var in enumerate(VARLIST):
 
 	if ivar == 0:
 		Rrs_sat_M_W      = np.load(SAT_DIR + var + '_MEAN_MED_W.npy')
@@ -61,7 +61,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	if not os.path.isdir(SIM_FOLDER + '/RRS'):      # If the KD folder does not exist, skip it
 		continue
 
-	print('Plotting scatter Rrs of simulation %s ... '%line[0], end = '')
+	print('Plotting scatter of Rrs - monthly WE of simulation %s ... '%line[0], end = '')
 
 	if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS'):   
 		os.mkdir(SIM_MAIN_FOLDER + '/PLOTS')                # create the PLOTS folder within the simulation folder
@@ -161,14 +161,14 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 		if ivar < 3:
 			ax1[ivar].scatter( MONTHS-0.20, Rrs_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
-			ax1[ivar].scatter( MONTHS-0.10, Rrs_sat_M_W[:,ivar], s=15,    color='dodgerblue',      label='SAT W') 
+			ax1[ivar].scatter( MONTHS-0.10, Rrs_sat_M_W[  :,ivar], s=15,    color='dodgerblue',      label='SAT W') 
 			ax1[ivar].scatter( MONTHS+0.10, Rrs_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
-			ax1[ivar].scatter( MONTHS+0.20, Rrs_sat_M_E[:,ivar], s=15,    color='palevioletred',   label='SAT E') 
+			ax1[ivar].scatter( MONTHS+0.20, Rrs_sat_M_E[  :,ivar], s=15,    color='palevioletred',   label='SAT E') 
 			
 			ax1[ivar].errorbar(MONTHS-0.20, Rrs_model_M_W[:,ivar], yerr=Rrs_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
-			ax1[ivar].errorbar(MONTHS-0.10, Rrs_sat_M_W[:,ivar],   yerr=Rrs_sat_S_W[:,ivar],    color='dodgerblue'    , fmt='o')
+			ax1[ivar].errorbar(MONTHS-0.10, Rrs_sat_M_W[  :,ivar], yerr=Rrs_sat_S_W[:,ivar],    color='dodgerblue'    , fmt='o')
 			ax1[ivar].errorbar(MONTHS+0.10, Rrs_model_M_E[:,ivar], yerr=Rrs_model_S_E[:,ivar],  color='purple'        , fmt='o')
-			ax1[ivar].errorbar(MONTHS+0.20, Rrs_sat_M_E[:,ivar],   yerr=Rrs_sat_S_E[:,ivar],    color='palevioletred' , fmt='o')
+			ax1[ivar].errorbar(MONTHS+0.20, Rrs_sat_M_E[  :,ivar], yerr=Rrs_sat_S_E[:,ivar],    color='palevioletred' , fmt='o')
 
 			ax1[ivar].set_xticks(MONTHS)
 			ax1[ivar].set_xticklabels(months_str)

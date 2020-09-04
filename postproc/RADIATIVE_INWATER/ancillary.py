@@ -161,5 +161,4 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, titlestr, strname, 
 	cbar3.formatter = matplotlib.ticker.FormatStrFormatter("%.2f")
 	cbar3.update_ticks()
 	
-	return cbar, cbar1, cbar2, cbar3
-
+	return 

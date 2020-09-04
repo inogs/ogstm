@@ -36,9 +36,6 @@ nWl         = len(VARLIST)
 
 basin_list_abbrev = ['ALB', 'SWM1', 'SWM2', 'NWM', 'TYR1', 'TYR2', 'ADR1', 'ADR2', 'AEG', 'ION1', 'ION2', 'ION3', 'LEV1', 'LEV2', 'LEV3', 'LEV4' ]
 
-fig1,ax1 = plt.subplots(2,2)
-fig1.set_size_inches(11.69, 8.27)
-
 for iline, line in enumerate(READER):  # each line is one simulation
 	if iline == 0:
 		continue    # we are skipping the header
@@ -129,7 +126,10 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 				RRS_SUB[ivar, isub, iMonth, :] = [L.Model.mean(), L.Ref.mean(), L.bias(), L.RMSE() ]
 
-		cbar1, cbar2, cbar3, cbar4 = plot_pcolor(fig1, ax1, RRS_SUB[ivar, :,:,0], RRS_SUB[ivar,:,:,1], RRS_SUB[ivar,:,:,2], RRS_SUB[ivar,:,:,3], 'Rrs', var[2:], basin_list_abbrev, months_str)
+		fig1,ax1 = plt.subplots(2,2)
+		fig1.set_size_inches(11.69, 8.27)
+
+		plot_pcolor(fig1, ax1, RRS_SUB[ivar, :,:,0], RRS_SUB[ivar,:,:,1], RRS_SUB[ivar,:,:,2], RRS_SUB[ivar,:,:,3], 'Rrs', var[3:], basin_list_abbrev, months_str)
 
 		fig1.tight_layout()
 
@@ -142,11 +142,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 		print('Saving figure ' + line[0]  + ' plot ' + var + line[-1])
 		sys.stdout.flush()
 
-		for i in range(2):
-			for j in range(2):
-				ax1[i,j].clear()
-
-		cbar1.remove() ; cbar2.remove() ; cbar3.remove() ; cbar4.remove()
+		fig1.close()
 
 CSV_FILE.close()
 

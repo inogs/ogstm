@@ -37,14 +37,9 @@ VARLIST = ['380', '412', '490']
 
 basin_list_abbrev = ['ALB', 'SWM1', 'SWM2', 'NWM', 'TYR1', 'TYR2', 'ADR1', 'ADR2', 'AEG', 'ION1', 'ION2', 'ION3', 'LEV1', 'LEV2', 'LEV3', 'LEV4' ]
 
-fig1,ax1 = plt.subplots(2,2)
-fig1.set_size_inches(11.69, 8.27)
-
 for iline, line in enumerate(READER):  # each line is one simulation
 	if iline == 0:
 		continue    # we are skipping the header
-
-	#line[0] = 'TEST_35'
 
 	SIM_FOLDER = SIM_MAIN_FOLDER + line[0]  # first column of a line
 
@@ -130,7 +125,10 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 			Kd_490_SUB[isub, iMonth, :] = [L490.Model.mean(), L490.Ref.mean(), L490.bias(), L490.RMSE() ]
 
-	cbar1, cbar2, cbar3, cbar4 = plot_pcolor(fig1, ax1, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], 'Kd', '490', basin_list_abbrev, months_str)
+	fig1,ax1 = plt.subplots(2,2)
+	fig1.set_size_inches(11.69, 8.27)
+
+	plot_pcolor(fig1, ax1, Kd_490_SUB[:,:,0], Kd_490_SUB[:,:,1], Kd_490_SUB[:,:,2], Kd_490_SUB[:,:,3], 'Kd', '490', basin_list_abbrev, months_str)
 
 	fig1.tight_layout()
 
@@ -143,11 +141,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()
 
-	for i in range(2):
-		for j in range(2):
-			ax1[i,j].clear()
-
-	cbar1.remove() ; cbar2.remove() ; cbar3.remove() ; cbar4.remove()
+	fig1.close()
 
 CSV_FILE.close()
 

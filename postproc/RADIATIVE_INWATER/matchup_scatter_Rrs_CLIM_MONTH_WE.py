@@ -43,13 +43,13 @@ for ivar, var in enumerate(VARLIST):
 
 	if ivar == 0:
 		Rrs_sat_M_W      = np.load(SAT_DIR + var + '_MEAN_MED_W.npy')
-		Rrs_sat_M_E      = np.load(SAT_DIR + var + '_STD_MED_W.npy' )
-		Rrs_sat_S_W      = np.load(SAT_DIR + var + '_MEAN_MED_E.npy')
+		Rrs_sat_M_E      = np.load(SAT_DIR + var + '_MEAN_MED_E.npy')
+		Rrs_sat_S_W      = np.load(SAT_DIR + var + '_STD_MED_W.npy')
 		Rrs_sat_S_E      = np.load(SAT_DIR + var + '_STD_MED_E.npy' )
 	else:
 		Rrs_sat_M_W      = np.vstack((Rrs_sat_M_W, np.load(SAT_DIR + var + '_MEAN_MED_W.npy')))
-		Rrs_sat_M_E      = np.vstack((Rrs_sat_M_E, np.load(SAT_DIR + var + '_STD_MED_W.npy' )))
-		Rrs_sat_S_W      = np.vstack((Rrs_sat_S_W, np.load(SAT_DIR + var + '_MEAN_MED_E.npy')))
+		Rrs_sat_M_E      = np.vstack((Rrs_sat_M_E, np.load(SAT_DIR + var + '_MEAN_MED_E.npy')))
+		Rrs_sat_S_W      = np.vstack((Rrs_sat_S_W, np.load(SAT_DIR + var + '_STD_MED_W.npy' )))
 		Rrs_sat_S_E      = np.vstack((Rrs_sat_S_E, np.load(SAT_DIR + var + '_STD_MED_E.npy' )))
 
 for iline, line in enumerate(READER):  # each line is one simulation

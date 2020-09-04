@@ -145,9 +145,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()
 
-	fig1.close()
-	fig2.close()
-	fig3.close()
+	plt.close(fig1)
+	plt.close(fig2)
+	plt.close(fig3)
 
 CSV_FILE.close()
 

@@ -47,10 +47,10 @@ for ivar, var in enumerate(VARLIST):
 		Rrs_sat_S_W      = np.load(SAT_DIR + var + '_MEAN_MED_E.npy')
 		Rrs_sat_S_E      = np.load(SAT_DIR + var + '_STD_MED_E.npy' )
 	else:
-		Rrs_sat_M_W      = np.vstack(Rrs_sat_M_W, np.load(SAT_DIR + var + '_MEAN_MED_W.npy'))
-		Rrs_sat_M_E      = np.vstack(Rrs_sat_M_E, np.load(SAT_DIR + var + '_STD_MED_W.npy' ))
-		Rrs_sat_S_W      = np.vstack(Rrs_sat_S_W, np.load(SAT_DIR + var + '_MEAN_MED_E.npy'))
-		Rrs_sat_S_E      = np.vstack(Rrs_sat_S_E, np.load(SAT_DIR + var + '_STD_MED_E.npy' ))
+		Rrs_sat_M_W      = np.vstack((Rrs_sat_M_W, np.load(SAT_DIR + var + '_MEAN_MED_W.npy')))
+		Rrs_sat_M_E      = np.vstack((Rrs_sat_M_E, np.load(SAT_DIR + var + '_STD_MED_W.npy' )))
+		Rrs_sat_S_W      = np.vstack((Rrs_sat_S_W, np.load(SAT_DIR + var + '_MEAN_MED_E.npy')))
+		Rrs_sat_S_E      = np.vstack((Rrs_sat_S_E, np.load(SAT_DIR + var + '_STD_MED_E.npy' )))
 
 for iline, line in enumerate(READER):  # each line is one simulation
 	if iline == 0:
@@ -200,7 +200,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
 	fig1.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_01_WE.png', dpi=300)
 	fig2.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_02_WE.png', dpi=300)
-	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
+	print('Saving figure '  + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()
 
 	for a in ax1:     

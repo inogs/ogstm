@@ -13,9 +13,9 @@ import netCDF4 as NC4
 from ancillary import *
 
 
-SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER ='/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
+SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER ='/gpfs/scratch/userexternal/eterzic0/1D_RTM/MAIN/'
 
-CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
+CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations_main.csv', 'r')
 
 READER          = csv.reader(CSV_FILE)
 
@@ -73,8 +73,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			lonSAT       = ncSAT.variables['lon'][:]
 			latSAT       = ncSAT.variables['lat'][:]
 
-			ilon         = np.argmin(np.abs(lonSAT - lon))
-			ilat         = np.argmin(np.abs(latSAT - lat))
+			ilon         = np.argmin(np.abs(lonSAT - float(lon)))
+			ilat         = np.argmin(np.abs(latSAT - float(lat)))
 
 			Rrs_sat_aux[0, ivar] = ncSAT.variables[var][0,ilat,ilon].filled(fill_value=np.nan) #np.concatenate((Rrs_sat_aux, [ncSAT.variables[var][0,ilat,ilon].filled(fill_value=np.nan)]))
 

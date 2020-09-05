@@ -103,7 +103,7 @@
 !!      e3t_0, e3w_0()     : vertical scale factors at t- and w-points (m)
 !!
       !dir$ attributes align:64 :: e3t
-      double precision, allocatable :: gdept(:), gdepw(:)
+      double precision, allocatable :: gdept(:,:,:), gdepw(:)
       double precision, allocatable,dimension(:,:,:), save :: e3t, e3t_back, e3u, e3v, e3w
       double precision, allocatable,dimension(:,:,:), save :: e3t_0, e3u_0, e3v_0, e3w_0
       double precision, allocatable :: spongeT(:,:) , spongeVel(:,:,:)
@@ -508,8 +508,8 @@ subroutine alloc_tot()
       ff       = huge(ff(1,1))
 
 
-      allocate(gdept(jpk)) 
-        gdept = huge(gdept(1))
+      allocate(gdept(jpk,jpj,jpi))
+        gdept = huge(gdept(1,1,1))
       allocate(gdepw(jpk)) 
         gdepw = huge(gdepw(1))
       allocate(e3t_0(jpk,jpj,jpi))

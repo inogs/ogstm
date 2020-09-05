@@ -90,8 +90,8 @@
           zahr =   150.
 !!!
 !!   ... computation coefficients
-      za00 = tanh( (-gdept(1  )-zkah) / zahr )
-      za01 = tanh( (-gdept(jpk)-zkah) / zahr )
+      za00 = tanh( (-gdept(1,1,1 )-zkah) / zahr )
+      za01 = tanh( (-gdept(jpk,1,1)-zkah) / zahr )
       zahf = ( zahts-zahtf ) / ( za00 - za01 )
       zahs = zahts - zahf * za00
 !!
@@ -124,7 +124,7 @@
 !!
 !! ... set ahtu = ahtv at T-level, and ahtw at w-level
       DO jk = 1, jpk
-        ahtu(jk) = zahs + zahf * tanh( (-gdept(jk)-zkah) / zahr )
+        ahtu(jk) = zahs + zahf * tanh( (-gdept(jk,1,1)-zkah) / zahr )
         ahtv(jk) = ahtu(jk)
         ahtw(jk) = zahs + zahf * tanh( (-gdepw(jk)-zkah) / zahr )
       END DO
@@ -135,7 +135,7 @@
       IF(lwp)WRITE(numout,*)
       IF(lwp)WRITE(numout,9200)
       DO jk = 1, jpk
-        IF(lwp)WRITE(numout,9210) jk, ahtu(jk), gdept(jk)
+        IF(lwp)WRITE(numout,9210) jk, ahtu(jk), gdept(jk,1,1)
       END DO
  9200 FORMAT(' level    aht          depth t-level ' )
  9210 FORMAT(i6,2f12.4)

@@ -162,3 +162,45 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, titlestr, strname, 
 	cbar3.update_ticks()
 	
 	return 
+
+
+def plot_barplot(ax, NAME, RMSE, BIAS, CORR, wl_ls, rot, slope=None):
+
+	X      = np.arange(len(NAME))
+	
+	ax[0].bar(X - 0.25, RMSE[:,0], color='indigo',   width=0.25)
+	ax[0].bar(X + 0.00, RMSE[:,1], color='darkcyan', width=0.25)
+	ax[0].bar(X + 0.25, RMSE[:,2], color='navy',     width=0.25)
+	ax[0].set_xticks(X)
+	ax[0].set_xticklabels(NAME, rotation=rot, ha='right')
+	ax[0].set_ylabel('RMSE')
+
+	ax[1].bar(X - 0.25, BIAS[:,0], color='indigo',   width=0.25)
+	ax[1].bar(X + 0.00, BIAS[:,1], color='darkcyan', width=0.25)
+	ax[1].bar(X + 0.25, BIAS[:,2], color='navy',     width=0.25)
+	ax[1].set_xticks(X)
+	ax[1].set_xticklabels(NAME, rotation=rot, ha='right')
+	ax[1].set_ylabel('BIAS')
+
+	ax[2].bar(X - 0.25, CORR[:,0], color='indigo',   label=wl_ls[0], width=0.25)
+	ax[2].bar(X + 0.00, CORR[:,1], color='darkcyan', label=wl_ls[1], width=0.25)
+	ax[2].bar(X + 0.25, CORR[:,2], color='navy',     label=wl_ls[2], width=0.25)
+	ax[2].set_xticks(X)
+	ax[2].set_xticklabels(NAME, rotation=rot, ha='right')
+	ax[2].set_ylabel('Correlation')
+
+
+	if slope is not None:
+		ax[3].bar(X - 0.25, CORR[:,0], color='indigo',   label=wl_ls[0], width=0.25)
+		ax[3].bar(X + 0.00, CORR[:,1], color='darkcyan', label=wl_ls[1], width=0.25)
+		ax[3].bar(X + 0.25, CORR[:,2], color='navy',     label=wl_ls[2], width=0.25)
+		ax[3].set_xticks(X)
+		ax[3].set_xticklabels(NAME, rotation=rot, ha='right')
+		ax[3].set_ylabel('Slope')
+		ax[3].legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+	else:
+		ax[2].legend(loc='center left', bbox_to_anchor=(1, 0.5))
+
+
+	return 

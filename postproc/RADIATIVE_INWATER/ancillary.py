@@ -4,6 +4,9 @@ import numpy as np
 from scipy import stats
 import string
 
+from matchup.statistics import *
+
+
 def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos, legendBool, basin):
 	
 	if scale == 'lin':
@@ -65,22 +68,30 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 		
 	return ax[index]
 
-def save_stat(L):
+
+def save_stat(Model, Data, filename):
+
+	L = matchup(Model, Data)
 	
 	x = L.Ref
 	y = L.Model
 	
 	'''Mask values in case of any NaNs'''
-	mask = ~np.isnan(x) & ~np.isnan(y)
+	mask       = ~np.isnan(x) & ~np.isnan(y)
 	
-	count = L.number()
+	count      = L.number()
 	corr_coeff = L.correlation()
-	bias = L.bias()
+	bias       = L.bias()
 	slope, intercept, r_value, p_value, std_err = stats.linregress(x[mask],y[mask]) 
-	sigma = L.RMSE()
+	sigma      = L.RMSE()
 	
 	a = intercept
 	b = slope
+
+	if filename is not None:
+		file = open(filename, 'w')
+		file.write('%f\n%f\n%f\n%f\n%f\n%f\n' %(count, bias, sigma, r_value, b, a) )
+		file.close()
 
 	return count, bias, sigma, r_value, b, a
 

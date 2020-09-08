@@ -58,6 +58,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	SIM_FOLDER = SIM_MAIN_FOLDER + line[0]  # first column of a line
 
+	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Rrs_CLIM_MONTH_WE/' 
+	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
+
 	if not os.path.isdir(SIM_FOLDER + '/RRS'):      # If the KD folder does not exist, skip it
 		continue
 
@@ -155,49 +158,53 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			Rrs_model_M_E  = np.vstack((Rrs_model_M_E , Rrs_model_E))
 			Rrs_model_S_E  = np.vstack((Rrs_model_S_E , std_Rrs_model_E))
 
+
 	for ivar, var in enumerate(VARLIST):
-	   
+
+		save_stat(Rrs_model_M_E[:,ivar], Rrs_sat_M_E[ivar,:], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_E.txt' )
+		save_stat(Rrs_model_M_W[:,ivar], Rrs_sat_M_W[ivar,:], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_W.txt' )
+
 		# Plot mean and standard deviation
 
 		if ivar < 3:
-			ax1[ivar].scatter( MONTHS-0.20, Rrs_model_M_W[:,ivar], s=15,    color='darkblue',        label='MODEL W') 
-			ax1[ivar].scatter( MONTHS-0.10, Rrs_sat_M_W[  ivar,:], s=15,    color='dodgerblue',      label='SAT W') 
-			ax1[ivar].scatter( MONTHS+0.10, Rrs_model_M_E[:,ivar], s=15,    color='purple'  ,        label='MODEL E') 
-			ax1[ivar].scatter( MONTHS+0.20, Rrs_sat_M_E[  ivar,:], s=15,    color='palevioletred',   label='SAT E') 
+			ax1[ivar].scatter( MONTHS-0.30, Rrs_model_M_W[:,ivar], s=15,    color='darkblue',        label='MODEL W') 
+			ax1[ivar].scatter( MONTHS-0.15, Rrs_sat_M_W[  ivar,:], s=15,    color='dodgerblue',      label='SAT W') 
+			ax1[ivar].scatter( MONTHS+0.15, Rrs_model_M_E[:,ivar], s=15,    color='purple'  ,        label='MODEL E') 
+			ax1[ivar].scatter( MONTHS+0.30, Rrs_sat_M_E[  ivar,:], s=15,    color='palevioletred',   label='SAT E') 
 			
-			ax1[ivar].errorbar(MONTHS-0.20, Rrs_model_M_W[:,ivar], yerr=Rrs_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
-			ax1[ivar].errorbar(MONTHS-0.10, Rrs_sat_M_W[  ivar,:], yerr=Rrs_sat_S_W[  ivar,:],  color='dodgerblue'    , fmt='o')
-			ax1[ivar].errorbar(MONTHS+0.10, Rrs_model_M_E[:,ivar], yerr=Rrs_model_S_E[:,ivar],  color='purple'        , fmt='o')
-			ax1[ivar].errorbar(MONTHS+0.20, Rrs_sat_M_E[  ivar,:], yerr=Rrs_sat_S_E[  ivar,:],  color='palevioletred' , fmt='o')
+			ax1[ivar].errorbar(MONTHS-0.30, Rrs_model_M_W[:,ivar], yerr=Rrs_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
+			ax1[ivar].errorbar(MONTHS-0.15, Rrs_sat_M_W[  ivar,:], yerr=Rrs_sat_S_W[  ivar,:],  color='dodgerblue'    , fmt='o')
+			ax1[ivar].errorbar(MONTHS+0.15, Rrs_model_M_E[:,ivar], yerr=Rrs_model_S_E[:,ivar],  color='purple'        , fmt='o')
+			ax1[ivar].errorbar(MONTHS+0.30, Rrs_sat_M_E[  ivar,:], yerr=Rrs_sat_S_E[  ivar,:],  color='palevioletred' , fmt='o')
 
 			ax1[ivar].set_xticks(MONTHS)
 			ax1[ivar].set_xticklabels(months_str)
 			ax1[ivar].set_ylabel(var + ' [$sr^{-1}$]' )
 			ax1[ivar].tick_params(axis='both', which='major', labelsize=10)
 			ax1[ivar].set_title(var, fontsize=16)
+			ax1[ivar].set_ylim(bottom=0)
 
 		else:
-			ax2[ivar-3].scatter( MONTHS-0.20, Rrs_model_M_W[:,ivar], s=15,  color='darkblue',      label='MODEL W') 
-			ax2[ivar-3].scatter( MONTHS-0.10, Rrs_sat_M_W[  ivar,:], s=15,  color='dodgerblue',    label='SAT W') 
-			ax2[ivar-3].scatter( MONTHS+0.10, Rrs_model_M_E[:,ivar], s=15,  color='purple'  ,      label='MODEL E') 
-			ax2[ivar-3].scatter( MONTHS+0.20, Rrs_sat_M_E[  ivar,:], s=15,  color='palevioletred', label='SAT E') 
+			ax2[ivar-3].scatter( MONTHS-0.30, Rrs_model_M_W[:,ivar], s=15,  color='darkblue',      label='MODEL W') 
+			ax2[ivar-3].scatter( MONTHS-0.15, Rrs_sat_M_W[  ivar,:], s=15,  color='dodgerblue',    label='SAT W') 
+			ax2[ivar-3].scatter( MONTHS+0.15, Rrs_model_M_E[:,ivar], s=15,  color='purple'  ,      label='MODEL E') 
+			ax2[ivar-3].scatter( MONTHS+0.30, Rrs_sat_M_E[  ivar,:], s=15,  color='palevioletred', label='SAT E') 
 
-			ax2[ivar-3].errorbar(MONTHS-0.20, Rrs_model_M_W[:,ivar], yerr=Rrs_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
-			ax2[ivar-3].errorbar(MONTHS-0.10, Rrs_sat_M_W[  ivar,:], yerr=Rrs_sat_S_W[  ivar,:],  color='dodgerblue'    , fmt='o')
-			ax2[ivar-3].errorbar(MONTHS+0.10, Rrs_model_M_E[:,ivar], yerr=Rrs_model_S_E[:,ivar],  color='purple'        , fmt='o')
-			ax2[ivar-3].errorbar(MONTHS+0.20, Rrs_sat_M_E[  ivar,:], yerr=Rrs_sat_S_E[  ivar,:],  color='palevioletred' , fmt='o')
+			ax2[ivar-3].errorbar(MONTHS-0.30, Rrs_model_M_W[:,ivar], yerr=Rrs_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
+			ax2[ivar-3].errorbar(MONTHS-0.15, Rrs_sat_M_W[  ivar,:], yerr=Rrs_sat_S_W[  ivar,:],  color='dodgerblue'    , fmt='o')
+			ax2[ivar-3].errorbar(MONTHS+0.15, Rrs_model_M_E[:,ivar], yerr=Rrs_model_S_E[:,ivar],  color='purple'        , fmt='o')
+			ax2[ivar-3].errorbar(MONTHS+0.30, Rrs_sat_M_E[  ivar,:], yerr=Rrs_sat_S_E[  ivar,:],  color='palevioletred' , fmt='o')
 
 			ax2[ivar-3].set_xticks(MONTHS)
 			ax2[ivar-3].set_xticklabels(months_str)
 			ax2[ivar-3].set_ylabel(var + ' [$sr^{-1}$]' )
 			ax2[ivar-3].tick_params(axis='both', which='major', labelsize=10)
 			ax2[ivar-3].set_title(var, fontsize=16)
+			ax2[ivar-3].set_ylim(bottom=0)
 
 	ax1[2].legend(loc='upper center', ncol=2, fontsize=12)
 	ax2[2].legend(loc='upper center', ncol=2, fontsize=12)
 
-	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Rrs_CLIM_MONTH_WE/' 
-	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
 	fig1.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_01_WE.png', dpi=300)
 	fig2.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_02_WE.png', dpi=300)
 	print('Saving figure '  + line[0]  + ' plot ' + line[-1])

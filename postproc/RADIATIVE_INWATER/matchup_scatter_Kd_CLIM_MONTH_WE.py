@@ -47,6 +47,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	SIM_FOLDER = SIM_MAIN_FOLDER + line[0]  # first column of a line
 
+	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH_WE/' 
+	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
+
 	if not os.path.isdir(SIM_FOLDER + '/KD'):      # If the KD folder does not exist, skip it
 		continue
 
@@ -168,49 +171,55 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			Kd_float_S_E  = np.vstack((Kd_float_S_E , std_Kd_float_E))
 
 	for ivar, var in enumerate(VARLIST):
-	   
+
+		save_stat(Kd_model_M_E[:,ivar], Kd_float_M_E[:,ivar], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_E.txt' )
+		save_stat(Kd_model_M_W[:,ivar], Kd_float_M_W[:,ivar], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_W.txt' )
+
+		save_stat(Kd_model_M_E[:,2], Kd_sat_M_E[:, 2], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_SAT_E.txt' )
+		save_stat(Kd_model_M_W[:,2], Kd_sat_M_W[:, 2], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_SAT_W.txt' )
+
 		# Plot mean and standard deviation
 
 		if ivar < 2:
-			ax[ivar].scatter( MONTHS-0.20, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
-			ax[ivar].scatter( MONTHS-0.10, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
-			ax[ivar].scatter( MONTHS+0.10, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
-			ax[ivar].scatter( MONTHS+0.20, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
+			ax[ivar].scatter( MONTHS-0.30, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
+			ax[ivar].scatter( MONTHS-0.15, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
+			ax[ivar].scatter( MONTHS+0.15, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
+			ax[ivar].scatter( MONTHS+0.30, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
 			
-			ax[ivar].errorbar(MONTHS-0.20, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
-			ax[ivar].errorbar(MONTHS-0.10, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.10, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.20, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.30, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.15, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.15, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.30, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
 
 		else:
-			ax[ivar].scatter( MONTHS-0.30, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
-			ax[ivar].scatter( MONTHS-0.20, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
-			ax[ivar].scatter( MONTHS-0.10, Kd_sat_M_W[:],        s=15,    color='saddlebrown',     label='SAT W') 
+			ax[ivar].scatter( MONTHS-0.45, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
+			ax[ivar].scatter( MONTHS-0.30, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
+			ax[ivar].scatter( MONTHS-0.15, Kd_sat_M_W[:],        s=15,    color='saddlebrown',     label='SAT W') 
 
-			ax[ivar].scatter( MONTHS+0.10, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
-			ax[ivar].scatter( MONTHS+0.20, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
-			ax[ivar].scatter( MONTHS+0.30, Kd_sat_M_E[:],        s=15,    color='peru',     label='SAT E') 
-
-
-			ax[ivar].errorbar(MONTHS-0.30, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
-			ax[ivar].errorbar(MONTHS-0.20, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
-			ax[ivar].errorbar(MONTHS-0.10, Kd_sat_M_W[:],        yerr=Kd_sat_S_W[:]       ,  color='saddlebrown'    , fmt='o')
+			ax[ivar].scatter( MONTHS+0.15, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
+			ax[ivar].scatter( MONTHS+0.30, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
+			ax[ivar].scatter( MONTHS+0.45, Kd_sat_M_E[:],        s=15,    color='peru',     label='SAT E') 
 
 
-			ax[ivar].errorbar(MONTHS+0.10, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.20, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.30, Kd_sat_M_E[:],        yerr=Kd_sat_S_E[:],         color='peru'     , fmt='o')# or sandybrown limegreen before
+			ax[ivar].errorbar(MONTHS-0.45, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.30, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.15, Kd_sat_M_W[:],        yerr=Kd_sat_S_W[:]       ,  color='saddlebrown'    , fmt='o')
+
+
+			ax[ivar].errorbar(MONTHS+0.15, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.30, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.45, Kd_sat_M_E[:],        yerr=Kd_sat_S_E[:],         color='peru'     , fmt='o')# or sandybrown limegreen before
 
 		ax[ivar].set_xticks(MONTHS)
 		ax[ivar].set_xticklabels(months_str)
+		ax[ivar].set_ylim(bottom=0)
 		ax[ivar].set_ylabel('Kd ' + var + ' [$m^{-1}$]' )
 		ax[ivar].tick_params(axis='both', which='major', labelsize=10)
 		ax[ivar].set_title('Kd ' + var, fontsize=16)
 
 	ax[2].legend(loc='upper center', ncol=2, fontsize=12)
 
-	OUTDIR  = SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Kd_CLIM_MONTH_WE/' 
-	OUTNAME = line[-1].replace(" ", "_").replace(",", "")
+
 	fig.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_WE.png', dpi=300)
 	print('Saving figure ' + line[0]  + ' plot ' + line[-1])
 	sys.stdout.flush()

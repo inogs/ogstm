@@ -26,41 +26,59 @@ CORR_aCDOM = np.array([[0.88, 0.90, 0.93],[0.91, 0.91, 0.93],[0.93, 0.93, 0.93],
 
 # Wrap up with adding PFT and BBP contributions to close the discussion
 
-NAME_remaining = [['aCDOM'],['aPFT'],['bp']] 
-RMSE_remaining = np.array([[0.06, 0.09, 0.12],[0.05, 0.08, 0.10],[0.05, 0.08, 0.09]])
-BIAS_remaining = np.array([[0.02, 0.01, 0.05],[0.01, 0.0,  0.02],[0.01, -0.01, 0.02]])
-CORR_remaining = np.array([[0.93, 0.93, 0.93],[0.94, 0.95, 0.95],[0.94, 0.95, 0.95]])
+NAME_REM = ['aCDOM','aPFT','bp']  #remaining
+RMSE_REM = np.array([[0.06, 0.09, 0.12],[0.05, 0.08, 0.10],[0.05, 0.08, 0.09]])
+BIAS_REM = np.array([[0.02, 0.01, 0.05],[0.01, 0.0,  0.02],[0.01, -0.01, 0.02]])
+CORR_REM = np.array([[0.93, 0.93, 0.93],[0.94, 0.95, 0.95],[0.94, 0.95, 0.95]])
 
 # Relative contributions of each group of IOPs is demonstrated with Kd scatter plot skill.
 
-NAME_relative  = ['REF', 'aNAP', 'aCDOM', 'aPFT', 'bp']
-RMSE_relative  = np.array([[0.03, 0.02, 0.01],[0.02, 0.01, 0.01],[0.03, 0.02, 0.01],[0.02, 0.02, 0.02],[0.03, 0.02, 0.01]])
-BIAS_relative  = np.array([[0.02, 0.01, 0.],[0., 0., 0.],[-0.03, -0.02, 0.],[0.01, 0.,-0.01],[0.02, 0.01, 0.]])
-CORR_relative  = np.array([[0.84, 0.89, 0.90],[0.85, 0.90, 0.90],[0.75, 0.85, 0.89],[0.83, 0.83, 0.80],[0.84, 0.89, 0.91]])
-SLOPE_relative = np.array([[1.15, 1.08, 0.88],[1.14, 1.08,0.87],[0.53, 0.70, 0.73],[0.90, 0.56, 0.24],[1.15, 1.06, 0.83]])
+NAME_final = ['aw', 'aNAP', 'aCDOM', 'aPFT', 'bp']
+RMSE_final = np.array([[0.43, 0.46, 0.23], [0.15, 0.19, 0.17], [0.06, 0.09, 0.12], [0.05, 0.08, 0.10], [0.05, 0.08, 0.09]])
+BIAS_final = np.array([[0.40, 0.41, 0.17], [0.12, 0.14, 0.11], [0.02, 0.01, 0.05], [0.01, 0.0,  0.02], [0.01, -0.01, 0.02]])
+CORR_final = np.array([[0.45, 0.63, 0.89], [0.85, 0.85, 0.91], [0.93, 0.93, 0.93], [0.94, 0.95, 0.95], [0.94, 0.95, 0.95]])
+
+
+#RMSE_relative  = np.array([[0.05, 0.08, 0.09], [0.09, 0.09, 0.10],[0.11, 0.12, 0.11],[0.06, 0.09, 0.11],[0.05, 0.08, 0.10]])
+#BIAS_relative  = np.array([[0.01, -0.01, 0.02],[0.04, 0.03, 0.04],[0.08, 0.06, 0.05],[0.02, 0.01, 0.04],[0.01, 0.00, 0.02]])
+#CORR_relative  = np.array([[0.94, 0.95, 0.95], [0.91, 0.93, 0.95],[0.89, 0.91, 0.94],[0.93, 0.94, 0.94],[0.94, 0.95, 0.95]])
+
+#RMSE_REL = np.zeros((4,3))  
+#BIAS_REL = np.zeros((4,3))
+#CORR_REL = np.zeros((4,3))
+#
+#for i in range(4):
+#	 RMSE_REL[i,:]  = (RMSE_relative[i+1,:] - RMSE_relative[0,:]) / RMSE_relative[0,:] 
+#	 BIAS_REL[i,:]  = (BIAS_relative[i+1,:] - BIAS_relative[0,:]) / BIAS_relative[0,:]
+#	 CORR_REL[i,:]  = (CORR_relative[i+1,:] - CORR_relative[0,:]) / CORR_relative[0,:]
+
 
 # Now plot it
-fig1, ax1 = plt.subplots(1,3)#, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
+fig1, ax1 = plt.subplots(1,3)
 fig1.set_size_inches(18, 6)
 
-fig2, ax2 = plt.subplots(1,3)#, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
+fig2, ax2 = plt.subplots(1,3)
 fig2.set_size_inches(18, 6)
 
-fig3, ax3 = plt.subplots(1,3)#, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
+fig3, ax3 = plt.subplots(1,3)
 fig3.set_size_inches(18, 6)
 
-fig4, ax4 = plt.subplots(1,3)#, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
+fig4, ax4 = plt.subplots(1,3)
 fig4.set_size_inches(18, 6)
 
-fig5, ax5 = plt.subplots(1,4)#, gridspec_kw = {'wspace':0.25, 'hspace':0.5})
-fig5.set_size_inches(24, 6)
+fig5, ax5 = plt.subplots(1,3)
+fig5.set_size_inches(18, 6)
+#fig5.set_size_inches(24, 6)
 
-
+    
 plot_barplot(ax1,  NAME_aw,    RMSE_aw,    BIAS_aw,    CORR_aw,    wl_ls, 30, None)
 plot_barplot(ax2,  NAME_aNAP,  RMSE_aNAP,  BIAS_aNAP,  CORR_aNAP,  wl_ls, 30, None)
 plot_barplot(ax3,  NAME_aCDOM, RMSE_aCDOM, BIAS_aCDOM, CORR_aCDOM, wl_ls, 30, None)
-plot_barplot(ax4,  NAME_remaining, RMSE_remaining, BIAS_remaining, CORR_remaining, wl_ls, 30, None)
-plot_barplot(ax5,  NAME_relative, RMSE_relative, BIAS_relative, CORR_relative, wl_ls, 30, 'slope')
+plot_barplot(ax4,  NAME_REM,   RMSE_REM,   BIAS_REM,   CORR_REM,   wl_ls, 30, None)
+plot_barplot(ax5,  NAME_final, RMSE_final, BIAS_final, CORR_final, wl_ls, 30, None)
+
+#plot_barplot(ax5,  NAME_relative[1:], RMSE_REL, BIAS_REL, CORR_REL, wl_ls, 30, None)
+
 
 
 fig1.tight_layout()
@@ -74,6 +92,6 @@ fig1.savefig('aw.png', dpi=300)
 fig2.savefig('aNAP.png', dpi=300)
 fig3.savefig('aCDOM.png', dpi=300)
 fig4.savefig('aPHY.png', dpi=300)
-fig5.savefig('IOP_REL.png', dpi=300)
+fig5.savefig('IOP_FINAL.png', dpi=300)
 
 

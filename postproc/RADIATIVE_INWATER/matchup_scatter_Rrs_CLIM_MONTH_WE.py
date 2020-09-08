@@ -161,8 +161,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	for ivar, var in enumerate(VARLIST):
 
-		save_stat(Rrs_model_M_E[:,ivar], Rrs_sat_M_E[ivar,:], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_E.txt' )
-		save_stat(Rrs_model_M_W[:,ivar], Rrs_sat_M_W[ivar,:], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_W.txt' )
+		save_stat(Rrs_model_M_E[:,ivar], Rrs_sat_M_E[ivar,:], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' + var + '_E.txt' )
+		save_stat(Rrs_model_M_W[:,ivar], Rrs_sat_M_W[ivar,:], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' + var + '_W.txt' )
 
 		# Plot mean and standard deviation
 

@@ -172,11 +172,11 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	for ivar, var in enumerate(VARLIST):
 
-		save_stat(Kd_model_M_E[:,ivar], Kd_float_M_E[:,ivar], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_E.txt' )
-		save_stat(Kd_model_M_W[:,ivar], Kd_float_M_W[:,ivar], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_W.txt' )
+		save_stat(Kd_model_M_E[:,ivar], Kd_float_M_E[:,ivar], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' + var + '_E.txt' )
+		save_stat(Kd_model_M_W[:,ivar], Kd_float_M_W[:,ivar], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' + var + '_W.txt' )
 
-		save_stat(Kd_model_M_E[:,2], Kd_sat_M_E[:, 2], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_SAT_E.txt' )
-		save_stat(Kd_model_M_W[:,2], Kd_sat_M_W[:, 2], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' var + '_SAT_W.txt' )
+		save_stat(Kd_model_M_E[:,2], Kd_sat_M_E[:, 2], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' + var + '_SAT_E.txt' )
+		save_stat(Kd_model_M_W[:,2], Kd_sat_M_W[:, 2], OUTDIR + line[0]  + '_stat_' + OUTNAME + '_' + var + '_SAT_W.txt' )
 
 		# Plot mean and standard deviation
 

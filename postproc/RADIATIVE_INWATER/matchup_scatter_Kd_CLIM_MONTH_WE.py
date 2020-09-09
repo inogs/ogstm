@@ -18,7 +18,7 @@ import netCDF4 as NC4
 from ancillary import *
 
 
-SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/TESTS/'
+SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/IOP/'
 
 CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations.csv', 'r')
 
@@ -38,7 +38,7 @@ months_str  = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D']
 VARLIST = ['380', '412', '490']
 
 fig, ax = plt.subplots (nrows=3, ncols=1, gridspec_kw = {'wspace':0.25, 'hspace':0.25})
-fig.set_size_inches(9,12)
+fig.set_size_inches(12,12)
 
 
 for iline, line in enumerate(READER):  # each line is one simulation
@@ -181,34 +181,34 @@ for iline, line in enumerate(READER):  # each line is one simulation
 		# Plot mean and standard deviation
 
 		if ivar < 2:
-			ax[ivar].scatter( MONTHS-0.30, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
-			ax[ivar].scatter( MONTHS-0.15, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
-			ax[ivar].scatter( MONTHS+0.15, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
-			ax[ivar].scatter( MONTHS+0.30, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
+			ax[ivar].scatter( MONTHS-0.225, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
+			ax[ivar].scatter( MONTHS-0.075, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
+			ax[ivar].scatter( MONTHS+0.075, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
+			ax[ivar].scatter( MONTHS+0.225, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
 			
-			ax[ivar].errorbar(MONTHS-0.30, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
-			ax[ivar].errorbar(MONTHS-0.15, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.15, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.30, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.225, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.075, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.075, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.225, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
 
 		else:
-			ax[ivar].scatter( MONTHS-0.45, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
-			ax[ivar].scatter( MONTHS-0.30, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
-			ax[ivar].scatter( MONTHS-0.15, Kd_sat_M_W[:],        s=15,    color='saddlebrown',     label='SAT W') 
+			ax[ivar].scatter( MONTHS-0.375, Kd_model_M_W[:,ivar], s=15,    color='darkblue',      label='MODEL W') 
+			ax[ivar].scatter( MONTHS-0.225, Kd_float_M_W[:,ivar], s=15,    color='dodgerblue',    label='FLOAT W') 
+			ax[ivar].scatter( MONTHS-0.075, Kd_sat_M_W[:],        s=15,    color='saddlebrown',     label='SAT W') 
 
-			ax[ivar].scatter( MONTHS+0.15, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
-			ax[ivar].scatter( MONTHS+0.30, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
-			ax[ivar].scatter( MONTHS+0.45, Kd_sat_M_E[:],        s=15,    color='peru',     label='SAT E') 
-
-
-			ax[ivar].errorbar(MONTHS-0.45, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
-			ax[ivar].errorbar(MONTHS-0.30, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
-			ax[ivar].errorbar(MONTHS-0.15, Kd_sat_M_W[:],        yerr=Kd_sat_S_W[:]       ,  color='saddlebrown'    , fmt='o')
+			ax[ivar].scatter( MONTHS+0.075, Kd_model_M_E[:,ivar], s=15,    color='purple'  ,      label='MODEL E') 
+			ax[ivar].scatter( MONTHS+0.225, Kd_float_M_E[:,ivar], s=15,    color='palevioletred', label='FLOAT E') 
+			ax[ivar].scatter( MONTHS+0.375, Kd_sat_M_E[:],        s=15,    color='peru',     label='SAT E') 
 
 
-			ax[ivar].errorbar(MONTHS+0.15, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.30, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
-			ax[ivar].errorbar(MONTHS+0.45, Kd_sat_M_E[:],        yerr=Kd_sat_S_E[:],         color='peru'     , fmt='o')# or sandybrown limegreen before
+			ax[ivar].errorbar(MONTHS-0.375, Kd_model_M_W[:,ivar], yerr=Kd_model_S_W[:,ivar],  color='darkblue'      , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.225, Kd_float_M_W[:,ivar], yerr=Kd_float_S_W[:,ivar],  color='dodgerblue'    , fmt='o')
+			ax[ivar].errorbar(MONTHS-0.075, Kd_sat_M_W[:],        yerr=Kd_sat_S_W[:]       ,  color='saddlebrown'    , fmt='o')
+
+
+			ax[ivar].errorbar(MONTHS+0.075, Kd_model_M_E[:,ivar], yerr=Kd_model_S_E[:,ivar],  color='purple'        , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.225, Kd_float_M_E[:,ivar], yerr=Kd_float_S_E[:,ivar],  color='palevioletred' , fmt='o')
+			ax[ivar].errorbar(MONTHS+0.375, Kd_sat_M_E[:],        yerr=Kd_sat_S_E[:],         color='peru'     , fmt='o')# or sandybrown limegreen before
 
 		ax[ivar].set_xticks(MONTHS)
 		ax[ivar].set_xticklabels(months_str)
@@ -226,5 +226,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	for a in ax:     
 		a.clear()
+
+	break
 
 CSV_FILE.close()

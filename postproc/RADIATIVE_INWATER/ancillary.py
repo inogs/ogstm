@@ -82,6 +82,7 @@ def save_stat(Model, Data, filename):
 	count      = L.number()
 	corr_coeff = L.correlation()
 	bias       = L.bias()
+	maxdiff    = L.maxdiff()
 	slope, intercept, r_value, p_value, std_err = stats.linregress(x[mask],y[mask]) 
 	sigma      = L.RMSE()
 	
@@ -90,10 +91,10 @@ def save_stat(Model, Data, filename):
 
 	if filename is not None:
 		file = open(filename, 'w')
-		file.write('%f\n%f\n%f\n%f\n%f\n%f\n' %(count, bias, sigma, r_value, b, a) )
+		file.write('%f\n%f\n%f\n%f\n%f\n%f\n%f\n' %(count, bias, sigma, r_value, b, a, maxdiff) )
 		file.close()
 
-	return count, bias, sigma, r_value, b, a
+	return count, bias, sigma, r_value, b, a, maxdiff
 
 
 def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, titlestr, strname, basin_list_abbrev, months_str):

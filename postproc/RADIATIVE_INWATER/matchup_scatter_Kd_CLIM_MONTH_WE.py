@@ -227,6 +227,4 @@ for iline, line in enumerate(READER):  # each line is one simulation
 	for a in ax:     
 		a.clear()
 
-	break
-
 CSV_FILE.close()

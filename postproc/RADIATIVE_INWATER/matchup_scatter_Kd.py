@@ -65,6 +65,10 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
         ncin.close()
 
+    #idx380 = np.where(np.logical_and(Kd_model[:,0] < 0.15, Kd_float[:,0]<0.15))[0]
+    #idx412 = np.where(np.logical_and(Kd_model[:,1] < 0.15, Kd_float[:,1]<0.15))[0]
+    #idx490 = np.where(np.logical_and(Kd_model[:,2] < 0.15, Kd_float[:,2]<0.15))[0]
+
     L380 = matchup(Kd_model[:,0], Kd_float[:,0])
     L412 = matchup(Kd_model[:,1], Kd_float[:,1])
     L490 = matchup(Kd_model[:,2], Kd_float[:,2])

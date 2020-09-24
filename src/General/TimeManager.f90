@@ -659,6 +659,31 @@
 
       END SUBROUTINE getTimesteps
 
+      logical FUNCTION isOverTime(datestring)
+      use calendar
+ ! LOCAL
+          integer year1,  year2
+          integer month1, month2
+          integer day1,   day2
+          double precision sec1, sec2
+
+          double precision sec_diff, sec0, julian0
+          integer year0, month0, day0
+
+
+          call read_date_string(datestring, year1, month1, day1, sec1)
+          call read_date_string(DATE__END , year2, month2, day2, sec2)
+          double precision sec_diff
+          call time_diff(year1, month1, day1, sec1, year2, month2,day2,sec2, sec_diff)
+
+          isOverTime = sec_diff .gt.0
+
+
+      IMPLICIT NONE
+
+
+      END FUNCTION isOverTime
+
        INTEGER FUNCTION datestringToTAU(datestring)
        use calendar
        IMPLICIT NONE

@@ -84,7 +84,8 @@ MODULE module_step
       TauAVEfrom_2 = TimeStepStart 
        if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
 
-      DO TAU = TimeStepStart, TimeStep__End
+      datestring=DATESTART
+      DO WHILE (.not.ISOVERTIME(datestring))
 
          stpparttime = MPI_WTIME()  ! stop cronomether
          call tau2datestring(TAU, DATEstring)
@@ -243,7 +244,7 @@ MODULE module_step
 !+++++++++++++++++++++++++++++c
 !      End of time loop       c
 !+++++++++++++++++++++++++++++c
-
+      datestring = UPDATE_TIMESTRING(datestring, timestep_seconds)
       END DO  
 
       CONTAINS

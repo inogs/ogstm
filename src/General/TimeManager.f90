@@ -661,6 +661,8 @@
 
       logical FUNCTION isOverTime(datestring)
       use calendar
+      IMPLICIT NONE
+      CHARACTER(LEN=17), INTENT(IN) :: datestring
  ! LOCAL
           integer year1,  year2
           integer month1, month2
@@ -671,18 +673,35 @@
           integer year0, month0, day0
 
 
-          call read_date_string(datestring, year1, month1, day1, sec1)
-          call read_date_string(DATE__END , year2, month2, day2, sec2)
-          double precision sec_diff
+          call read_date_string(DATE__END, year1, month1, day1, sec1)
+          call read_date_string(datestring , year2, month2, day2, sec2)
           call time_diff(year1, month1, day1, sec1, year2, month2,day2,sec2, sec_diff)
 
-          isOverTime = sec_diff .gt.0
-
-
-      IMPLICIT NONE
-
+          isOverTime = sec_diff .gt.0.0
 
       END FUNCTION isOverTime
+
+      CHARACTER(LEN=17) FUNCTION UPDATE_TIMESTRING(datestring, sec)
+        use calendar
+        IMPLICIT NONE
+        character (len=17), intent(IN) :: datestring
+        double precision, intent(IN)   :: sec
+      ! local
+          integer year1,  year2
+          integer month1, month2
+          integer day1,   day2
+          double precision sec1, sec2
+          character(len=17) dateout
+
+
+        call read_date_string(datestring, year2, month2, day2, sec2)
+        call time_add(year2, month2, day2, sec2, sec, year1, month1, day1, sec1)
+        call write_date_string(dateout, year1, month1, day1, sec1)
+        TIME_INCREMENT = dateout
+
+      END FUNCTION TIME_INCREMENT
+
+
 
        INTEGER FUNCTION datestringToTAU(datestring)
        use calendar

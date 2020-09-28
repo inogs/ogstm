@@ -4,12 +4,11 @@ MODULE module_step
       USE myalloc
       USE TIME_MANAGER
       USE BC_mem
-      USE IO_mem, only: ave_counter_1, ave_counter_2
+      USE IO_mem, only: elapsed_time_1, elapsed_time_2
       USE mpi
       USE mod_atmbc
       USE mod_cbc
-      ! USE mod_gibbc
-      ! USE mod_tinbc
+
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
@@ -67,7 +66,7 @@ MODULE module_step
 
       character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
       character(LEN=17)  date_aveforDA
-      double precision sec
+      !double precision sec
       LOGICAL B, isFIRST
       INTEGER :: jk,jj,ji,jn
 !++++++++++++++++++++++++++++++c
@@ -77,23 +76,26 @@ MODULE module_step
 
       isFIRST=.true.
 
-      indic=1  ! 1 for indic to initialize output files (first call)
 
-      TauAVEfrom_1 = TimeStepStart 
+!TauAVEfrom_1 = TimeStepStart
+!TauAVEfrom_2 = TimeStepStart
+       datefrom_1 =  DATESTART
+       datefrom_2 =  DATESTART
        if (IsStartBackup_1) TauAVEfrom_1 = datestringToTAU(BKPdatefrom_1)
-      TauAVEfrom_2 = TimeStepStart 
        if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
 
       datestring=DATESTART
+      TAU = 0
       DO WHILE (.not.ISOVERTIME(datestring))
 
          stpparttime = MPI_WTIME()  ! stop cronomether
-         call tau2datestring(TAU, DATEstring)
-         sec=datestring2sec(DATEstring)
-
-         NOW_datestring = DATEstring ! update time manager module
-         NOW_sec        = sec
          COMMON_DATESTRING = DATEstring
+         !call tau2datestring(TAU, DATEstring)
+!sec=datestring2sec(DATEstring)
+!NOW_sec        = sec
+!NOW_datestring = DATEstring ! update time manager module
+
+
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates
@@ -101,12 +103,11 @@ MODULE module_step
 
          if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
          if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
-         !write(*,*) is_night(DATEstring)
 
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
-         
+#ifdef backup
             if (AVE_FREQ1%N .gt.0) then              !  void 1.aveTimes -> no backup
             if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
                call tau2datestring(TauAVEfrom_1, datefrom_1)
@@ -120,7 +121,7 @@ MODULE module_step
                if (save_bkp_group2) CALL trcdia(datestring, datefrom_2, datestring,2)
             endif
             endif
-
+#endif
          if (lwp) then
              B = writeTemporization("trcdia____", trcdiatottime)
              B = writeTemporization("trcwri____", trcwritottime)
@@ -132,20 +133,14 @@ MODULE module_step
 ! For offline simulation READ DATA or precalculalted dynamics fields
 ! ------------------------------------------------------------------
 
-
       CALL forcings_PHYS(DATEstring)
       CALL forcings_KEXT(datestring)
-      !CALL bc_gib       (DATEstring)     ! CALL dtatrc(istp,0)! Gibraltar strait BC
-      !CALL bc_tin       (DATEstring)     ! CALL dtatrc(istp,1)
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      !bc_tin_partTime = MPI_WTIME()
       call boundaries%update(datestring)
-      !bc_tin_partTime = MPI_WTIME()    - bc_tin_partTime
-      !bc_tin_TotTime  = bc_tin_TotTime + bc_tin_partTime
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -158,25 +153,30 @@ MODULE module_step
 
 
       if (IsAnAveDump(DATEstring,1)) then
-         call MIDDLEDATE(TauAVEfrom_1, TAU, datemean)
+         call MIDDLEDATE(datefrom_1, DATEstring, datemean)
 
-         call tau2datestring(TauAVEfrom_1, datefrom_1)
+!call tau2datestring(TauAVEfrom_1, datefrom_1)
          if (IsStartBackup_1) datefrom_1 = BKPdatefrom_1 ! overwrite
          CALL trcdia(datemean, datefrom_1, datestring,1)
-         TauAVEfrom_1    = TAU
-         ave_counter_1   = 0   !  reset the counter
+!TauAVEfrom_1    = TAU
+!ave_counter_1   = 0
+         datefrom_1      = DATEstring
+         elapsed_time_1  = 0.0  !  reset the time counter
          IsStartBackup_1 = .false.
+
         if (lwp)  B = writeTemporization("trcdia____", trcdiatottime)
       endif
 
       if (IsAnAveDump(DATEstring,2)) then
-         call MIDDLEDATE(TauAVEfrom_2, TAU, datemean)
+         call MIDDLEDATE(datefrom_2, DATEstring, datemean)
 
-         call tau2datestring(TauAVEfrom_2, datefrom_2)
+!call tau2datestring(TauAVEfrom_2, datefrom_2)
          if (IsStartBackup_2) datefrom_2 = BKPdatefrom_2 ! overwrite
          CALL trcdia(datemean, datefrom_2, datestring,2)
-         TauAVEfrom_2    = TAU
-         ave_counter_2   = 0   !  reset the counter
+!TauAVEfrom_2    = TAU
+!ave_counter_2   = 0
+         datefrom_2      = DATEstring
+         elapsed_time_2  = 0.0  !  reset the time counter
          IsStartBackup_2 = .false.
          if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
@@ -184,7 +184,7 @@ MODULE module_step
 
 #ifdef ExecDA
       if (IsaDataAssimilation(DATEstring)) then
-        call tau2datestring(TauAVEfrom_1, datefrom_1)
+!call tau2datestring(TauAVEfrom_1, datefrom_1)
         CALL mainAssimilation(DATEstring, datefrom_1)
          if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
       endif
@@ -195,8 +195,10 @@ MODULE module_step
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp    ! se commento questo non fa calcoli
         call trcave
-        ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
-        ave_counter_2 = ave_counter_2 +1
+        elapsed_time_1 = elapsed_time_1 + rdt
+        elapsed_time_2 = elapsed_time_2 + rdt
+!ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
+!ave_counter_2 = ave_counter_2 +1
 
 
        stpparttime = MPI_WTIME() - stpparttime
@@ -244,7 +246,8 @@ MODULE module_step
 !+++++++++++++++++++++++++++++c
 !      End of time loop       c
 !+++++++++++++++++++++++++++++c
-      datestring = UPDATE_TIMESTRING(datestring, timestep_seconds)
+      datestring = UPDATE_TIMESTRING(datestring, rdt)
+      TAU = TAU + 1
       END DO  
 
       CONTAINS

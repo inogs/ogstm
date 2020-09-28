@@ -697,9 +697,9 @@
         call read_date_string(datestring, year2, month2, day2, sec2)
         call time_add(year2, month2, day2, sec2, sec, year1, month1, day1, sec1)
         call write_date_string(dateout, year1, month1, day1, sec1)
-        TIME_INCREMENT = dateout
+        UPDATE_TIMESTRING = dateout
 
-      END FUNCTION TIME_INCREMENT
+      END FUNCTION UPDATE_TIMESTRING
 
 
 
@@ -728,7 +728,21 @@
        END FUNCTION datestringToTAU
 
 
-      SUBROUTINE MIDDLEDATE(Tau1, Tau2, datestring)
+      SUBROUTINE MIDDLEDATE(datestring1, datestring2, datestring)
+       USE calendar
+        IMPLICIT NONE
+        CHARACTER(LEN=17), INTENT(IN ) :: datestring1, datestring2
+        CHARACTER(LEN=17), INTENT(OUT) :: datestring
+        ! local
+        integer :: Tau1, Tau2
+        tau1 = datestringToTAU(datestring1)
+        tau2 = datestringToTAU(datestring2)
+
+        call MIDDLEDATE_ON_TAU(tau1, tau2, datestring)
+
+      END SUBROUTINE MIDDLEDATE
+
+      SUBROUTINE MIDDLEDATE_ON_TAU(Tau1, Tau2, datestring)
         USE calendar
         IMPLICIT NONE
         integer,           INTENT(IN ) :: Tau1, Tau2
@@ -744,7 +758,7 @@
       seconds = real(nint(seconds),8)
       call write_date_string(datestring, year, month, day, seconds)
 
-      END SUBROUTINE MIDDLEDATE
+      END SUBROUTINE MIDDLEDATE_ON_TAU
 
 !=======================================================================
 

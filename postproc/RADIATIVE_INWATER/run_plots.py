@@ -12,7 +12,7 @@ for SIM in os.listdir(SIM_MAIN_FOLDER):
 
 	if SIM in ['MAIN', 'BBP']: continue
 
-	FOLDER   = os.path.join(SIM_MAIN_FOLDER, SIM) #+ '/'
+	FOLDER   = os.path.join(SIM_MAIN_FOLDER, SIM) + '/'
 
 	CSV_FILE = glob.glob(FOLDER + '/*.csv')[0]
 

@@ -514,7 +514,7 @@
 
          I =1 
       
-         DO WHILE (STRUCT%Times(I).lt.sec)
+         DO WHILE (STRUCT%Times(I).le.sec)
            I = I + 1
       
          ENDDO

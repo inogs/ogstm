@@ -69,6 +69,7 @@
       INTEGER neos
       double precision rau0, ralpha, rbeta
       double precision  rdt     ! dynamics time step
+      integer imposed_deltaT(2)
 
 !!----------------------------------------------------------------------
 !!        horizontal curvilinear coordinate and scale factors

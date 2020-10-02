@@ -22,6 +22,7 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	else:
 		ax[index].scatter(x, y, marker='o', s=0.05, c=color)
 
+
 	if units == 'Ed':
 
 		ax[index].set_xlabel('BGC-Argo float [$W \, m^{-2} \, nm^{-1}$]', fontsize=12)
@@ -33,6 +34,12 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 		ax[index].set_xlabel('BGC-Argo float [$m^{-1}$]', fontsize=12)
 		if index == 0:
 			ax[index].set_ylabel('BIOPTIMOD [$m^{-1}$]', fontsize=12)
+
+	if units == 'Rrs':
+
+		ax[index].set_xlabel('BGC-Argo float [$sr^{-1}$]', fontsize=12)
+		if index == 0:
+			ax[index].set_ylabel('BIOPTIMOD [$sr^{-1}$]', fontsize=12)
 
 
 	count      = L.number()
@@ -60,7 +67,10 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	
 	if units == 'Kd':
 		textstr='$\mathrm{RMS}=%.3f$\n$\mathrm{Bias}=%.3f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
-	
+
+	if units == 'Rrs':
+		textstr='$\mathrm{RMS}=%.3f$\n$\mathrm{Bias}=%.3f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
+
 
 	if legendBool == True:
 		ax[index].legend(loc='upper center', bbox_to_anchor=(0.5, 0.95), ncol=2, fancybox=True, shadow=True)

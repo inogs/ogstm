@@ -14,6 +14,7 @@
 
 &natnum     
             rdt           =  1800,
+            variable_rdt  = .true.
             rsc           =    1.,
             rtrn          = 1.e-25,
             ndttrc        = 1.0,

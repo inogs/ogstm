@@ -37,7 +37,7 @@
 
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
-      namelist /natnum/ rdt,rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, lhtp, latmosph, &
+      namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, lhtp, latmosph, &
       ahtrb0,trcrat,ahtrc0,vsed,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
       NAMELIST/General_IO/ nwritetrc, freq_ave_phys, freq_flux_dump, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift
@@ -128,6 +128,7 @@
 
 ! 1.1 namelist natnum :
       rdt         = 3600.
+      variable_rdt=.TRUE.
       rsc         = 1.
       rtrn        = 1.e-15
       ncor        = 1
@@ -160,6 +161,7 @@
           WRITE(numout,*) 'natnum'
           WRITE(numout,*) ' '
           WRITE(numout,*) ' time step                      rdt                = ',rdt
+          WRITE(numout,*) ' variable time ste              rdt                = ',variable_rdt
           WRITE(numout,*) ' rsc tuning coefficient                            = ' , rsc
           WRITE(numout,*) ' rtrn truncation value                             = ' , rtrn
           WRITE(numout,*) ' ncor number of corrective phase                   = ', ncor

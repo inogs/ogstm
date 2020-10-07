@@ -140,14 +140,15 @@
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
 
-
-      DeltaT_name="DELTA_T/DeltaT_"//datestring//".txt"
-      open(3333,file=DeltaT_name, form="formatted")
-      read(3333,'(F9.3,I5)') calculated_deltaT,imposed_deltaT(2)
-      close(3333)
-      if (lwp) write(*,*) 'Delta T = ', imposed_deltaT(2), 'seconds'
-      jk = minval(imposed_deltaT)
-      rdt = real(jk , 8)
+      if (variable_rdt) then
+          DeltaT_name="DELTA_T/DeltaT_"//datestring//".txt"
+          open(3333,file=DeltaT_name, form="formatted")
+          read(3333,'(F9.3,I5)') calculated_deltaT,imposed_deltaT(2)
+          close(3333)
+          if (lwp) write(*,*) 'Delta T = ', imposed_deltaT(2), 'seconds'
+          jk = minval(imposed_deltaT)
+          rdt = real(jk , 8)
+      endif
       nomefile='FORCINGS/U19951206-12:00:00.nc'
 
 ! Starting I/O

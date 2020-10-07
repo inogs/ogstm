@@ -81,8 +81,8 @@ MODULE module_step
 !TauAVEfrom_2 = TimeStepStart
        datefrom_1 =  DATESTART
        datefrom_2 =  DATESTART
-       if (IsStartBackup_1) TauAVEfrom_1 = datestringToTAU(BKPdatefrom_1)
-       if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
+! if (IsStartBackup_1) TauAVEfrom_1 = datestringToTAU(BKPdatefrom_1)
+! if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
 
       datestring=DATESTART
       TAU = 0
@@ -107,21 +107,19 @@ MODULE module_step
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
-#ifdef backup
+
             if (AVE_FREQ1%N .gt.0) then              !  void 1.aveTimes -> no backup
             if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
-               call tau2datestring(TauAVEfrom_1, datefrom_1)
                CALL trcdia(datestring, datefrom_1, datestring,1)
             endif
             endif
 
             if (AVE_FREQ2%N .gt.0) then
             if (.not.IsAnAveDump(DATEstring,2)) then ! backup conditions group 2
-               call tau2datestring(TauAVEfrom_2, datefrom_2)
                if (save_bkp_group2) CALL trcdia(datestring, datefrom_2, datestring,2)
             endif
             endif
-#endif
+
          if (lwp) then
              B = writeTemporization("trcdia____", trcdiatottime)
              B = writeTemporization("trcwri____", trcwritottime)

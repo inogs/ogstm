@@ -20,7 +20,7 @@
       CHARACTER(LEN=60) bkpname
       CHARACTER(LEN=11) DIR
       logical IsBackup
-      integer ave_counter
+      double precision :: elapsed_time
 
 
       CHARACTER(LEN=56) dia_file_nc
@@ -49,10 +49,10 @@
 
       SELECT CASE (FREQ_GROUP)
         CASE (1) 
-       ave_counter=ave_counter_1 
+       elapsed_time=elapsed_time_1
        DIR='AVE_FREQ_1/'
         CASE (2) 
-       ave_counter=ave_counter_2 
+       elapsed_time=elapsed_time_1
        DIR='AVE_FREQ_2/'
       END SELECT
 
@@ -219,7 +219,7 @@
       if(myrank == 0) then ! IF LABEL 4,
          if (IsBackup) then
 
-            call PhysDump_bkp(forcing_file, datefrom, dateTo,ave_counter)
+            call PhysDump_bkp(forcing_file, datefrom, dateTo,elapsed_time)
           else
             call PhysDump(forcing_file, datefrom, dateTo)
          endif
@@ -329,7 +329,7 @@
 
               if (IsBackup) then
                  !write(*,*) "trcdia ave_counter --> ", bkpname, ave_counter
-                 CALL WRITE_AVE_2d_BKP(bkpname,var,datefrom, dateTo,tottrnIO2d, ave_counter)
+                 CALL WRITE_AVE_2d_BKP(bkpname,var,datefrom, dateTo,tottrnIO2d, elapsed_time)
       
               else
                  d2f2d = REAL(tottrnIO2d(:,:),4)
@@ -463,7 +463,7 @@
               dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var)//'.nc'
               
               if (IsBackup) then
-                 CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter,deflate_ave, deflate_level_ave)
+                 CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,elapsed_time,deflate_ave, deflate_level_ave)
               else
                  CALL WRITE_AVE(dia_file_nc,var,datefrom,dateTo, tottrnIO,deflate_ave, deflate_level_ave)
               endif

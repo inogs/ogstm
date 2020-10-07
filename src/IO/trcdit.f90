@@ -29,7 +29,7 @@
 
       INTEGER jk,jj,ji, jn, jn_high,i,j,k
       INTEGER ind, i_contribution, j_contribution
-      INTEGER ave_counter
+      double precision :: elapsed_time
 
       CHARACTER(LEN=56) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
       CHARACTER(LEN=20)  var
@@ -58,10 +58,10 @@
 
       SELECT CASE (FREQ_GROUP)
         CASE (1) 
-       ave_counter=ave_counter_1 
+       elapsed_time=elapsed_time_1
        DIR='AVE_FREQ_1/'
         CASE (2) 
-       ave_counter=ave_counter_2 
+       elapsed_time=elapsed_time_2
        DIR='AVE_FREQ_2/'
       END SELECT
       if (lwp) tottrnIO = Miss_val
@@ -194,9 +194,9 @@
 ! *********** START WRITING **************************
       if(myrank == 0) then ! IF LABEL 4
 
-
+       write(*,*) 'elapsed_time = ', elapsed_time
         if (IsBackup) then
-          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,ave_counter, deflate_ave, deflate_level_ave)
+          CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,elapsed_time, deflate_ave, deflate_level_ave)
 
         else
 

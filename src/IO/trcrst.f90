@@ -14,7 +14,7 @@
        USE calendar
        USE myalloc
        USE TIME_MANAGER
-       USE IO_MEM , ONLY : ave_counter_1, ave_counter_2, existFilebkp
+       USE IO_MEM , ONLY : elapsed_time_1, elapsed_time_2, existFilebkp
 
        IMPLICIT NONE
 
@@ -68,7 +68,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
              if (.not.bkp2hasbeenread) then
-               call get_att_int( bkpname,'ave_counter', ave_counter_2)
+               call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_2)
                call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                bkp2hasbeenread=.true.
              endif
@@ -88,7 +88,7 @@
              CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO_HIGH(:,:,:,jn_high) )
                 if (.not.bkp1hasbeenread) then
 
-                  call get_att_int( bkpname,'ave_counter', ave_counter_1)
+                  call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_1)
                   call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                   bkp1hasbeenread=.true.
                 endif
@@ -112,7 +112,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,dianm(jn), tra_DIA_IO(jn,:,:,:) )
              if (.not.bkp2hasbeenread) then
-                call get_att_int( bkpname,'ave_counter', ave_counter_2)
+                call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
@@ -128,7 +128,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_IO_HIGH(jn_high,:,:,:) )
                     if (.not.bkp1hasbeenread) then
-                      call get_att_int( bkpname,'ave_counter', ave_counter_1)
+                      call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
@@ -152,7 +152,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double_2d(bkpname,dianm_2d(jn), tra_DIA_2d_IO(jn,:,:) )
              if (.not.bkp2hasbeenread) then
-                call get_att_int( bkpname,'ave_counter', ave_counter_2)
+                call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
@@ -168,7 +168,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double_2d(bkpname,trim(dianm_2d(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
                     if (.not.bkp1hasbeenread) then
-                      call get_att_int( bkpname,'ave_counter', ave_counter_1)
+                      call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
@@ -214,7 +214,7 @@
           e3tIO     = 0.0
       endif
 
-      if (lwp) write(*,*) 'trcrst avecounter_1 = ', ave_counter_1, ' avecounter_2 = ', ave_counter_2
+      if (lwp) write(*,*) 'trcrst elapsed_time_1 = ', elapsed_time_1, ' elapsed_time_2 = ', elapsed_time_2
       IsStartBackup_1 = bkp1hasbeenread
       IsStartBackup_2 = bkp2hasbeenread
 

@@ -194,7 +194,6 @@
 ! *********** START WRITING **************************
       if(myrank == 0) then ! IF LABEL 4
 
-       write(*,*) 'elapsed_time = ', elapsed_time
         if (IsBackup) then
           CALL WRITE_AVE_BKP(bkpname,var,datefrom, dateTo,tottrnIO,elapsed_time, deflate_ave, deflate_level_ave)
 

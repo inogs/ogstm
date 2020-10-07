@@ -66,7 +66,6 @@ MODULE module_step
 
       character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
       character(LEN=17)  date_aveforDA
-      !double precision sec
       LOGICAL B, isFIRST
       INTEGER :: jk,jj,ji,jn
 !++++++++++++++++++++++++++++++c
@@ -76,26 +75,14 @@ MODULE module_step
 
       isFIRST=.true.
 
-
-!TauAVEfrom_1 = TimeStepStart
-!TauAVEfrom_2 = TimeStepStart
        datefrom_1 =  DATESTART
        datefrom_2 =  DATESTART
-! if (IsStartBackup_1) TauAVEfrom_1 = datestringToTAU(BKPdatefrom_1)
-! if (IsStartBackup_2) TauAVEfrom_2 = datestringToTAU(BKPdatefrom_2)
-
-      datestring=DATESTART
+       datestring =  DATESTART
       TAU = 0
       DO WHILE (.not.ISOVERTIME(datestring))
 
          stpparttime = MPI_WTIME()  ! stop cronomether
          COMMON_DATESTRING = DATEstring
-         !call tau2datestring(TAU, DATEstring)
-!sec=datestring2sec(DATEstring)
-!NOW_sec        = sec
-!NOW_datestring = DATEstring ! update time manager module
-
-
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates
@@ -152,12 +139,8 @@ MODULE module_step
 
       if (IsAnAveDump(DATEstring,1)) then
          call MIDDLEDATE(datefrom_1, DATEstring, datemean)
-
-!call tau2datestring(TauAVEfrom_1, datefrom_1)
-         if (IsStartBackup_1) datefrom_1 = BKPdatefrom_1 ! overwrite
          CALL trcdia(datemean, datefrom_1, datestring,1)
-!TauAVEfrom_1    = TAU
-!ave_counter_1   = 0
+
          datefrom_1      = DATEstring
          elapsed_time_1  = 0.0  !  reset the time counter
          IsStartBackup_1 = .false.
@@ -167,12 +150,7 @@ MODULE module_step
 
       if (IsAnAveDump(DATEstring,2)) then
          call MIDDLEDATE(datefrom_2, DATEstring, datemean)
-
-!call tau2datestring(TauAVEfrom_2, datefrom_2)
-         if (IsStartBackup_2) datefrom_2 = BKPdatefrom_2 ! overwrite
          CALL trcdia(datemean, datefrom_2, datestring,2)
-!TauAVEfrom_2    = TAU
-!ave_counter_2   = 0
          datefrom_2      = DATEstring
          elapsed_time_2  = 0.0  !  reset the time counter
          IsStartBackup_2 = .false.
@@ -182,7 +160,6 @@ MODULE module_step
 
 #ifdef ExecDA
       if (IsaDataAssimilation(DATEstring)) then
-!call tau2datestring(TauAVEfrom_1, datefrom_1)
         CALL mainAssimilation(DATEstring, datefrom_1)
          if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
       endif
@@ -195,8 +172,6 @@ MODULE module_step
         call trcave
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
-!ave_counter_1 = ave_counter_1 +1  ! incrementing our counters
-!ave_counter_2 = ave_counter_2 +1
 
 
        stpparttime = MPI_WTIME() - stpparttime

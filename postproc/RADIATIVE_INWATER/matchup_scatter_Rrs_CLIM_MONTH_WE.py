@@ -158,6 +158,12 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			Rrs_model_M_E  = np.vstack((Rrs_model_M_E , Rrs_model_E))
 			Rrs_model_S_E  = np.vstack((Rrs_model_S_E , std_Rrs_model_E))
 
+	maxval_model_W = np.max(Rrs_model_W[:,0] + Rrs_model_S_W[:,0])
+	maxval_sat_W   = np.max(Rrs_sat_W[:,0]   + Rrs_sat_S_W[:,0])
+	maxval_model_E = np.max(Rrs_model_E[:,0] + Rrs_model_S_E[:,0])
+	maxval_sat_E   = np.max(Rrs_sat_E[:,0]   + Rrs_sat_S_E[:,0])
+
+	maxval       = max(max(maxval_model_W, maxval_sat_W),max(maxval_model_E, maxval_sat_E))*1.1
 
 	for ivar, var in enumerate(VARLIST):
 
@@ -179,10 +185,10 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 			ax1[ivar].set_xticks(MONTHS)
 			ax1[ivar].set_xticklabels(months_str)
-			ax1[ivar].set_ylabel(var + ' [$sr^{-1}$]' )
+			ax1[ivar].set_ylabel(var.capitalize() + ' [$sr^{-1}$]' )
 			ax1[ivar].tick_params(axis='both', which='major', labelsize=10)
-			ax1[ivar].set_title(var, fontsize=16)
-			ax1[ivar].set_ylim(bottom=0)
+			ax1[ivar].set_title(var.capitalize(), fontsize=16)
+			ax1[ivar].set_ylim([0., maxval])
 
 		else:
 			ax2[ivar-3].scatter( MONTHS-0.225, Rrs_model_M_W[:,ivar], s=15,  color='darkblue',      label='MODEL W') 
@@ -200,7 +206,7 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			ax2[ivar-3].set_ylabel(var.capitalize() + ' [$sr^{-1}$]' )
 			ax2[ivar-3].tick_params(axis='both', which='major', labelsize=10)
 			ax2[ivar-3].set_title(var.capitalize(), fontsize=16)
-			ax2[ivar-3].set_ylim(bottom=0)
+			ax2[ivar-3].set_ylim([0., maxval])
 
 	ax1[2].legend(loc='upper center', ncol=2, fontsize=12)
 	ax2[2].legend(loc='upper center', ncol=2, fontsize=12)

@@ -321,6 +321,8 @@ MODULE module_step
 
       IF (lsnu) CALL snutel
 
+      call boundaries%apply_dirichlet()
+
       IF (lhtp) CALL hard_tissue_pump
 
       ! CALL checkValues

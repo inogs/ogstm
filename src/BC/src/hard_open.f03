@@ -4,7 +4,7 @@ module hard_open_mod
 
     use bc_mod
     use bc_aux_mod
-
+    use myalloc
     implicit none
 
     private
@@ -41,6 +41,7 @@ module hard_open_mod
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_dirichlet
         procedure :: apply_nudging
         procedure :: apply_phys
         procedure :: fix_diagnostic_vars ! overridden only by hard open class
@@ -518,6 +519,45 @@ contains
         endif
 
     end subroutine apply
+
+    subroutine apply_dirichlet(self)
+        use modul_param, only: jpk, jpj, jpi
+        use myalloc
+
+        implicit none
+
+        class(hard_open), intent(inout) :: self
+        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k
+
+        if (self%m_size > 0) then
+            ! First loop: provided variables on boundary points
+            do i = 1, self%m_n_vars
+
+                idx_tracer = self%m_var_names_idx(i)
+
+                do j = 1, self%m_size
+
+                    idx_i = self%m_hard_open_points(1, j)
+                    idx_j = self%m_hard_open_points(2, j)
+                    idx_k = self%m_hard_open_points(3, j)
+
+                    tra(idx_k, idx_j, idx_i, idx_tracer) = self%m_values(j, i)
+
+                enddo
+             ! 2nd loop: provided variables on neighbors
+                do j = 1, self%m_size
+
+                    idx_i = self%m_neighbors(1, i)
+                    idx_j = self%m_neighbors(2, j)
+                    idx_k = self%m_neighbors(3, j)
+
+                    tra(idx_k, idx_j, idx_i, idx_tracer) = self%m_values(j, i)
+
+                enddo
+
+            enddo
+           endif
+    end subroutine apply_dirichlet
 
 
 

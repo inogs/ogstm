@@ -158,10 +158,10 @@ for iline, line in enumerate(READER):  # each line is one simulation
 			Rrs_model_M_E  = np.vstack((Rrs_model_M_E , Rrs_model_E))
 			Rrs_model_S_E  = np.vstack((Rrs_model_S_E , std_Rrs_model_E))
 
-	maxval_model_W = np.max(Rrs_model_W[:,0] + Rrs_model_S_W[:,0])
-	maxval_sat_W   = np.max(Rrs_sat_W[:,0]   + Rrs_sat_S_W[:,0])
-	maxval_model_E = np.max(Rrs_model_E[:,0] + Rrs_model_S_E[:,0])
-	maxval_sat_E   = np.max(Rrs_sat_E[:,0]   + Rrs_sat_S_E[:,0])
+	maxval_model_W = np.max(Rrs_model_M_W[:,0] + Rrs_model_S_W[:,0])
+	maxval_sat_W   = np.max(Rrs_sat_M_W[:,0]   + Rrs_sat_S_W[:,0])
+	maxval_model_E = np.max(Rrs_model_M_E[:,0] + Rrs_model_S_E[:,0])
+	maxval_sat_E   = np.max(Rrs_sat_M_E[:,0]   + Rrs_sat_S_E[:,0])
 
 	maxval       = max(max(maxval_model_W, maxval_sat_W),max(maxval_model_E, maxval_sat_E))*1.1
 

@@ -197,9 +197,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 			ax2[ivar-3].set_xticks(MONTHS)
 			ax2[ivar-3].set_xticklabels(months_str)
-			ax2[ivar-3].set_ylabel(var + ' [$sr^{-1}$]' )
+			ax2[ivar-3].set_ylabel(var.capitalize() + ' [$sr^{-1}$]' )
 			ax2[ivar-3].tick_params(axis='both', which='major', labelsize=10)
-			ax2[ivar-3].set_title(var, fontsize=16)
+			ax2[ivar-3].set_title(var.capitalize(), fontsize=16)
 			ax2[ivar-3].set_ylim(bottom=0)
 
 	ax1[2].legend(loc='upper center', ncol=2, fontsize=12)

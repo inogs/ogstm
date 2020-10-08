@@ -26,6 +26,7 @@ module bc_set_mod
     contains
         procedure :: update
         procedure :: apply
+        procedure :: apply_dirichlet
         procedure :: apply_phys
         procedure :: fix_diagnostic_vars
         procedure :: bc_set_destructor
@@ -102,7 +103,27 @@ contains
 
     end subroutine apply
 
+    subroutine apply_dirichlet(self)
 
+        use modul_param, only: jpk, jpj, jpi
+        use myalloc
+        implicit none
+        integer i
+
+        class(bc_set), intent(inout) :: self
+        class(bc), pointer :: bc_ptr ! auxiliary pointer to guarantee polymorphism
+
+        do i = 1,self%m_n_bcs
+           bc_ptr => self%m_bcs(i)%content
+           SELECT TYPE(bc_ptr)
+               CLASS IS (hard_open)
+                  call self%m_bcs(i)%content%apply_dirichlet()
+           END SELECT
+        enddo
+
+
+
+    end subroutine apply_dirichlet
 
     subroutine apply_phys(self, lon, sponge_t, sponge_vel, internal_sponging)
 

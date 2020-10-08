@@ -21,6 +21,7 @@ module bc_mod
         procedure :: swap
         procedure :: actualize
         procedure :: apply
+        procedure :: apply_dirichlet
         procedure :: apply_nudging
         procedure :: apply_phys
         procedure :: fix_diagnostic_vars ! overridden only by hard open class
@@ -220,7 +221,20 @@ contains
 
     end subroutine apply
 
+    subroutine apply_dirichlet(self)
 
+        use modul_param, only: jpk, jpj, jpi
+        use myalloc
+
+        implicit none
+
+        ! TO DO: to be removed. Find a way to enable both testing and production code.
+
+        class(bc), intent(inout) :: self
+
+        write(*, *) 'WARN bc.f90: base class does not implement this method'
+
+    end subroutine apply_dirichlet
 
     !> Used to simplify the apply method if a nudging scheme has to be included in the fields correction.
     subroutine apply_nudging(self, e3t, n_tracers, rst_tracers, trb, tra)

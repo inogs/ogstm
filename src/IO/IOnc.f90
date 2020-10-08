@@ -816,7 +816,7 @@
        !****************************************************************************
        !****************************************************************************
 
-       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, VAR,datefrom, dateTo,M, ave_counter, deflate, deflate_level)
+       SUBROUTINE WRITE_AVE_BKP(fileNetCDF, VAR,datefrom, dateTo,M, elapsed_time, deflate, deflate_level)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
@@ -825,7 +825,7 @@
        character(LEN=20), intent(in):: VAR
        character(LEN=17),intent(in) :: datefrom, dateTo
        double precision,dimension(jpk, jpjglo, jpiglo),intent(in) :: M
-       integer,intent(in) :: ave_counter
+       double precision,intent(in) :: elapsed_time
        integer, intent(in) :: deflate, deflate_level
 
 
@@ -848,16 +848,16 @@
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
         s = nf90_put_att(nc, nf90_global, 'Date__End'     ,      dateTo)
-        s = nf90_put_att(nc, nf90_global, 'ave_counter'   , ave_counter)
+
 
         ! *********** DIMENSIONS ****************
         s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
         s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
         s= nf90_def_dim(nc,'depth'         , jpk   ,depid)
-        s= nf90_def_dim(nc,'time'  , 1,timid)
+        s= nf90_def_dim(nc,'time'          , 1     ,timid)
 
         ! ********** VARIABLES *****************
-        !s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+        s = nf90_def_var(nc,'elapsed_time', nf90_double,(/timid/),       idvartime)
         s = nf90_def_var(nc,'depth',        nf90_float, (/depid/),         idgdept)
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
@@ -883,7 +883,8 @@
 
         counter=0
 
-
+        s = nf90_put_var(nc,idvartime, elapsed_time)
+       call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
@@ -903,7 +904,7 @@
 
        END SUBROUTINE WRITE_AVE_BKP
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-      SUBROUTINE WRITE_AVE_2d_BKP(fileNetCDF,VAR, datefrom, dateTo,M, ave_counter)
+      SUBROUTINE WRITE_AVE_2d_BKP(fileNetCDF,VAR, datefrom, dateTo,M, elapsed_time)
        USE netcdf
        USE myalloc
        IMPLICIT NONE
@@ -911,7 +912,7 @@
        CHARACTER*(*),intent(in) :: fileNetCDF
        character(LEN=17),intent(in) :: datefrom, dateTo
        double precision,intent(in),dimension(jpjglo, jpiglo) :: M
-       integer,intent(in) :: ave_counter
+       double precision,intent(in) :: elapsed_time
 
        !local
        character(LEN=20) VAR
@@ -931,7 +932,6 @@
         s = nf90_put_att(nc, nf90_global, 'Convenctions'  ,    'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
         s = nf90_put_att(nc, nf90_global, 'Date__End'     ,      dateTo)
-        s = nf90_put_att(nc, nf90_global, 'ave_counter'   , ave_counter)
 
         ! *********** DIMENSIONS ****************
         s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
@@ -939,7 +939,7 @@
         s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
 
         ! ********** VARIABLES *****************
-        !s = nf90_def_var(nc,'time',         nf90_double,(/timid/),       idvartime)
+        s = nf90_def_var(nc,'elapsed_time', nf90_double,(/timid/),       idvartime)
         s = nf90_def_var(nc,'lat'   ,       nf90_float, (/yid/),            idphit)
         s = nf90_def_var(nc,'lon'   ,       nf90_float, (/xid/),            idlamt)
 
@@ -959,7 +959,8 @@
 
         counter=0
 
-
+        s = nf90_put_var(nc,idvartime, elapsed_time)
+       call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idlamt,   REAL(totglamt(jpjglo,:),4) )
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,   REAL(totgphit(:,jpiglo),4) )
@@ -1142,7 +1143,7 @@
 
        !****************************************************************************
        ! physical data were printed as grid3D.dat grid2D.dat files
-       SUBROUTINE physDump_bkp(fileNetCDF, datefrom, dateTo,ave_counter)
+       SUBROUTINE physDump_bkp(fileNetCDF, datefrom, dateTo,elapsed_time)
        USE myalloc
        USE netcdf
 
@@ -1151,10 +1152,10 @@
 
         character fileNetCDF*(*)
         character(LEN=17) datefrom, dateTo
-        integer ave_counter
+        double precision,intent(in) :: elapsed_time
         integer s, nc, counter
         integer timid, depid, yid, xid
-        integer  idgdept, idphit, idlamt
+        integer  idvartime,idgdept, idphit, idlamt
         integer idT, idS, idU, idV, idW, idEddy, ide3t, idR, idWs, idE
         double precision,allocatable,dimension(:,:,:) :: copy_in
         double precision,allocatable,dimension(:,:) :: copy_in_2d
@@ -1168,7 +1169,6 @@
         s = nf90_put_att(nc, nf90_global, 'Convenctions'   ,   'COARDS')
         s = nf90_put_att(nc, nf90_global, 'DateStart'     ,    datefrom)
         s = nf90_put_att(nc, nf90_global, 'Date__End'     ,      dateTo)
-        s = nf90_put_att(nc, nf90_global, 'ave_counter'   , ave_counter)
 
         ! *********** DIMENSIONS ****************
         s= nf90_def_dim(nc,'x'           , jpiglo,  xid)
@@ -1178,6 +1178,7 @@
 
         
         ! ********** VARIABLES *****************
+        s = nf90_def_var(nc,'elapsed_time',  nf90_double,(/timid/),           idvartime)
         s = nf90_def_var(nc,'deptht',        nf90_float, (/depid/),             idgdept)
         s = nf90_def_var(nc,'nav_lat',       nf90_float, (/yid/),                idphit)
         s = nf90_def_var(nc,'nav_lon',       nf90_float, (/xid/),                idlamt)
@@ -1249,6 +1250,8 @@
 
         counter=0
 
+        s = nf90_put_var(nc,idvartime, elapsed_time)
+       call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idlamt,  REAL(totglamt(jpjglo,:),4)  )
        call handle_err1(s,counter,fileNetCDF)
         s = nf90_put_var(nc, idphit,  REAL(totgphit(:,jpiglo),4)  )

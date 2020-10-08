@@ -22,6 +22,11 @@ SIM_MAIN_FOLDER = sys.argv[1]                # SIM_MAIN_FOLDER = '/gpfs/scratch/
 
 CSV_FILE        = open(sys.argv[2], 'r')     # CSV_FILE        = open('../../preproc/RADIATIVE_INWATER/Simulations_main.csv', 'r')
 
+#SIM_MAIN_FOLDER = '/gpfs/scratch/userexternal/eterzic0/1D_RTM/IOP/'
+
+#CSV_FILE = open(SIM_MAIN_FOLDER + 'Simulations_TESTS_IOP.csv', 'r')
+
+
 READER          = csv.reader(CSV_FILE)
 
 SAT_DIR         = '/gpfs/scratch/userexternal/eterzic0/RRS_OUT/1KM/DAILY/CLIM_MONTH/'
@@ -55,6 +60,12 @@ for ivar, var in enumerate(VARLIST):
 for iline, line in enumerate(READER):  # each line is one simulation
 	if iline == 0:
 		continue    # we are skipping the header
+
+	if iline == 1:
+		continue
+		
+	if iline > 2:
+		continue
 
 	SIM_FOLDER = SIM_MAIN_FOLDER + line[0]  # first column of a line
 
@@ -100,6 +111,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	for iMonth, month in enumerate(MONTHS):  # Loop over climatological months
 
+		#if iMonth != 7:
+			#continue
+
 		CLIM_MONTH_req = timerequestors.Clim_month(month)
 
 		ilist, wlist   =  TL.select(CLIM_MONTH_req)
@@ -118,9 +132,11 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 			Rrs_model_aux  = ncin.variables['Rrs'][0,:]
 
+			#print(TL.filelist[ii], Rrs_model_aux[2])
+
 			ncin.close()
 
-			if np.any(np.isnan(Rrs_model_aux))  : continue
+			if np.any(np.isnan(Rrs_model_aux)) or np.any(Rrs_model_aux < 0.)   : continue
 
 			if OGS.wes.is_inside(lon[ii], lat[ii]) : 
 
@@ -210,6 +226,9 @@ for iline, line in enumerate(READER):  # each line is one simulation
 
 	ax1[2].legend(loc='upper center', ncol=2, fontsize=12)
 	ax2[2].legend(loc='upper center', ncol=2, fontsize=12)
+	print('Saving figure '  + line[0]  + ' plot ' + line[-1])
+
+	#fig1.show()
 
 	fig1.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_01_WE.png', dpi=300)
 	fig2.savefig(OUTDIR     + line[0]  + '_plot_' + OUTNAME +  '_02_WE.png', dpi=300)

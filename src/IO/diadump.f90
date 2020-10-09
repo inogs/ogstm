@@ -52,7 +52,7 @@
        elapsed_time=elapsed_time_1
        DIR='AVE_FREQ_1/'
         CASE (2) 
-       elapsed_time=elapsed_time_1
+       elapsed_time=elapsed_time_2
        DIR='AVE_FREQ_2/'
       END SELECT
 

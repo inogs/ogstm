@@ -34,6 +34,11 @@ MODULE OGSTM
       USE CALENDAR
       USE time_manager
       USE mpi
+      USE NODE_NAME
+      USE NODES_MODULE
+      USE MATRIX_VARS
+      USE MPI_GATHER_INFO
+      USE dtype_procs_string_module
       use module_step
 #ifdef Mem_Monitor
       USE check_mem
@@ -138,7 +143,13 @@ SUBROUTINE ogstm_initialize()
 ! 1. Model general initialization
 ! ===============================
 
-      !call inimpp
+      call node_name_fill    ! give the name of each node
+
+      call nodes_module_find    !calculate the number of nodes used
+
+      call populate_matrix_vars   !define matrix of variables to dump
+
+      call init_mpi_gather_info   ! initialise all processors inidices
 
       call domrea        !   Domain
 

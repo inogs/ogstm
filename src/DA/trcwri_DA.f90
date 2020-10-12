@@ -1,42 +1,50 @@
-      SUBROUTINE trcwriDA(datestring)
+        SUBROUTINE trcwriDA(datestring)
+                
+        ! gcoidess develop 
+        !
 
-      USE netcdf
-      USE myalloc
-      USE IO_mem
-      USE calendar
-      USE TIME_MANAGER
-      use mpi
-      USE ogstm_mpi_module
-      USE DA_mem
+        USE netcdf
+        USE myalloc
+        USE IO_mem
+        USE calendar
+        USE TIME_MANAGER
+        use mpi
+        USE ogstm_mpi_module
+        USE DA_mem
 
+        USE MPI_GATHER_INFO
 
+        USE MATRIX_VARS
+        USE NODES_MODULE
+        USE DTYPE_PROCS_STRING_MODULE
 
-      IMPLICIT NONE
-      CHARACTER(LEN=17), INTENT(IN) :: datestring
+        
+        IMPLICIT NONE
+        CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 
 
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
-      double precision ::  Miss_val =1.e20
-      INTEGER jk,jj,ji,jn
-      INTEGER s, nc, counter
-      integer timid, depid, yid, xid, idvar
-      double precision julian
+        double precision ::  Miss_val =1.e20
+        INTEGER jk,jj,ji,jn
+        INTEGER s, nc, counter
+        integer timid, depid, yid, xid, idvar
+        double precision julian
 
 
-      CHARACTER(LEN=45) BeforeName
-      CHARACTER(LEN=43) BeforeNameShort
+        CHARACTER(LEN=45) BeforeName
+        CHARACTER(LEN=43) BeforeNameShort
 
-      CHARACTER(LEN=3) varname
+        CHARACTER(LEN=3) varname
 
-      INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
-      INTEGER irange, jrange
-      INTEGER totistart, totiend, relistart, reliend
-      INTEGER totjstart, totjend, reljstart, reljend
-      INTEGER ind1, i_contribution, j_contribution
-      INTEGER SysErr, system
+        INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
+        INTEGER irange, jrange
+        INTEGER totistart, totiend, relistart, reliend
+        INTEGER totjstart, totjend, reljstart, reljend
+        INTEGER ind1, i_contribution, j_contribution
+        INTEGER SysErr, system
 
 
 

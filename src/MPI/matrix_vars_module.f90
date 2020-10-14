@@ -52,6 +52,11 @@ MODULE MATRIX_VARS
         INTEGER :: matrix_diag_1_row, matrix_diag_2_row
         INTEGER :: matrix_col != nodes
 
+        INTEGER, allocatable, dimension(:) :: DA_table
+        type(processor_string), allocatable :: matrix_DA(:,:)
+        type(processor_string), allocatable :: PX_matrix(:)
+        INTEGER :: matrix_DA_row
+
         CONTAINS
 
 !------------------------------------------------------------
@@ -63,7 +68,6 @@ MODULE MATRIX_VARS
         ALLOCATE (matrix_diag_2d_2(matrix_diag_2d_2_row, matrix_col))
         ALLOCATE (matrix_diag_1(matrix_diag_1_row, matrix_col))
         ALLOCATE (matrix_diag_2(matrix_diag_2_row, matrix_col))
-
         END SUBROUTINE ALLOCATE_MATRIX_VARS
 !------------------------------------------------------------
 
@@ -129,7 +133,6 @@ MODULE MATRIX_VARS
                 matrix_diag_1_row = (jptra_dia_high/nodes) + 1
         END IF
 
-                
         !allocate matrix
 
         CALL ALLOCATE_MATRIX_VARS()
@@ -247,8 +250,77 @@ MODULE MATRIX_VARS
                 END DO
         END DO
 
+        CALL DA_VARS()
+
         END SUBROUTINE POPULATE_MATRIX_VARS
 !------------------------------------------------------------
+        SUBROUTINE DA_VARS()
+
+        !how many DA?
+        INTEGER :: num_DA_vars,tmp_var_num,i,j,DA_vars_parallel
+        !INTEGER, allocatable, dimension(:) :: DA_table
+        !type(processor_string), allocatable :: matrix_DA(:,:)
+        !type(processor_string), allocatable :: PX_matrix(:)
+        INTEGER :: counter_DA
+        INTEGER::PX_DA,trans_DA
+
+
+        num_DA_vars = size(varlistDA)       
+        allocate(DA_table(num_DA_vars))
+        
+        !create DA_table
+        !table of index transformtion from varlist_da and ctrcnm
+        tmp_var_num = 0
+        do i = 1, num_DA_vars
+                do j=1, 51      
+                        IF (varlistDA(i).eq.ctrcnm(j) then
+                                tmp_var_num=tmp_var_num + 1
+                                DA_table(tmp_var_num) = j
+                        end if
+                end do
+        end do
+        
+        !define hard coded how many variables of varlist_DA will be printed
+        !separately
+        !PX=p1l+p2l+p3l+p4l -> for chl 
+        PX_DA=4
+        allocate(PX_matrix(PX_DA))
+       
+        DA_vars_parallel=num_DA_vars-PX_DA
+ 
+        !define the DA_matrix for printing in parallel
+        IF (MOD(DA_vars_parallel,nodes)==0)THEN
+                matrix_DA_row = (DA_vars_parallel/nodes)
+        ELSE
+                matrix_DA_row = (DA_vars_parallel/nodes) + 1
+        END IF
+        
+        allocate(matrix_DA(matrix_DA_row,matrix_col))
+
+        DO i=1,matrix_DA_row
+                DO j=1,matrix_col
+                        matrix_DA_row(i,j)%var_name = novars
+                END DO
+        END DO
+        
+        counter_DA=0
+        DO i=1,matrix_DA_row
+                DO j=1,matrix_col
+                        IF (counter_DA==num_DA_vars)THEN
+                                EXIT
+                        ELSE IF(counter_DA < PX_DA +1) then
+                                trans_DA = DA_table(counter_DA+1)
+                                PX_matrix(j)%var_name = ctrcnm(trans_DA)
+                                counter_DA=counter_DA + 1
+                        ELSE
+                                trans_DA = PX_matrix(counter_DA+1)
+                                matrix_DA(i,j)%var_name = ctrcnm(trans_DA)
+                                counter_DA=counter_DA + 1                       
+                        END IF
+                END DO
+        END DO
+
+        END SUBROUTINE DA_VARS
 !--------------------------------------------------
         SUBROUTINE CLEAN_MATRIX_VARS()
 
@@ -258,6 +330,7 @@ MODULE MATRIX_VARS
         DEALLOCATE (matrix_diag_1)
         DEALLOCATE (matrix_diag_2d_1)
         DEALLOCATE (matrix_diag_2d_1)
+        DEALLOCATE (matrix_DA)
         END SUBROUTINE CLEAN_MATRIX_VARS
 
 

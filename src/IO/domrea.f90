@@ -18,11 +18,13 @@
 ! ======================
       USE calendar
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE BC_mem
       USE DIA_mem
       USE TIME_MANAGER
       USE mpi
+      USE MPI_GATHER_INFO
+      USE nodes_module
+      USE MATRIX_VARS
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
@@ -78,10 +80,12 @@
 
 ! 1. Horzontal grid-point position
 ! --------------------------------
-      if(lwp) then
-      call readnc_global_double_2d(maskfile,'glamt', totglamt)
-      call readnc_global_double_2d(maskfile,'gphit', totgphit)
-      endif 
+      DO wr_procs=1, nodes
+                if (myrank==writing_procs(wr_procs))then
+                        call readnc_global_double_2d(maskfile,'glamt',totglamt)
+                        call readnc_global_double_2d(maskfile,'gphit',totgphit)
+                end if
+      end do
 
       call readnc_slice_double_2d(maskfile,'glamt', glamt)
       call readnc_slice_double_2d(maskfile,'glamu', glamu)

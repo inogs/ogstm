@@ -249,9 +249,9 @@ MODULE MATRIX_VARS
                         END IF
                 END DO
         END DO
-
-        CALL DA_VARS()
-
+        #ifdef ExecDA
+                CALL DA_VARS()
+        #endif
         END SUBROUTINE POPULATE_MATRIX_VARS
 !------------------------------------------------------------
         SUBROUTINE DA_VARS()
@@ -272,7 +272,7 @@ MODULE MATRIX_VARS
         !table of index transformtion from varlist_da and ctrcnm
         tmp_var_num = 0
         do i = 1, num_DA_vars
-                do j=1, 51      
+                do j=1, jptra      
                         IF (varlistDA(i).eq.ctrcnm(j) then
                                 tmp_var_num=tmp_var_num + 1
                                 DA_table(tmp_var_num) = j

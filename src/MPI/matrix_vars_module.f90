@@ -55,7 +55,7 @@ MODULE MATRIX_VARS
         INTEGER, allocatable, dimension(:) :: DA_table
         type(processor_string), allocatable :: matrix_DA(:,:)
         type(processor_string), allocatable :: PX_matrix(:)
-        INTEGER :: matrix_DA_row
+        INTEGER :: matrix_DA_row,num_DA_vars,PX_DA
 
         CONTAINS
 
@@ -257,12 +257,12 @@ MODULE MATRIX_VARS
         SUBROUTINE DA_VARS()
 
         !how many DA?
-        INTEGER :: num_DA_vars,tmp_var_num,i,j,DA_vars_parallel
+        INTEGER :: tmp_var_num,i,j,DA_vars_parallel
         !INTEGER, allocatable, dimension(:) :: DA_table
         !type(processor_string), allocatable :: matrix_DA(:,:)
         !type(processor_string), allocatable :: PX_matrix(:)
         INTEGER :: counter_DA
-        INTEGER::PX_DA,trans_DA
+        INTEGER::trans_DA
 
 
         num_DA_vars = size(varlistDA)       

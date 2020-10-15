@@ -249,9 +249,9 @@ MODULE MATRIX_VARS
                         END IF
                 END DO
         END DO
-        #ifdef ExecDA
-                CALL DA_VARS()
-        #endif
+#ifdef ExecDA
+        CALL DA_VARS()
+#endif
         END SUBROUTINE POPULATE_MATRIX_VARS
 !------------------------------------------------------------
         SUBROUTINE DA_VARS()

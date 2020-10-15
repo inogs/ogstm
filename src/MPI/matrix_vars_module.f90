@@ -273,7 +273,7 @@ MODULE MATRIX_VARS
         tmp_var_num = 0
         do i = 1, num_DA_vars
                 do j=1, jptra      
-                        IF (varlistDA(i).eq.ctrcnm(j) then
+                        IF (varlistDA(i).eq.ctrcnm(j)) then
                                 tmp_var_num=tmp_var_num + 1
                                 DA_table(tmp_var_num) = j
                         end if
@@ -299,7 +299,7 @@ MODULE MATRIX_VARS
 
         DO i=1,matrix_DA_row
                 DO j=1,matrix_col
-                        matrix_DA_row(i,j)%var_name = novars
+                        matrix_DA(i,j)%var_name = novars
                 END DO
         END DO
         
@@ -313,7 +313,7 @@ MODULE MATRIX_VARS
                                 PX_matrix(j)%var_name = ctrcnm(trans_DA)
                                 counter_DA=counter_DA + 1
                         ELSE
-                                trans_DA = PX_matrix(counter_DA+1)
+                                trans_DA = DA_table(counter_DA+1)
                                 matrix_DA(i,j)%var_name = ctrcnm(trans_DA)
                                 counter_DA=counter_DA + 1                       
                         END IF

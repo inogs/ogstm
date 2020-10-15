@@ -58,7 +58,7 @@ SUBROUTINE trcwriDA(datestring)
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
-        INTEGER :: jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col,
+        INTEGER :: jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col
         CHARACTER(LEN=20)  var_to_store
 
         julian=datestring2sec(datestring)
@@ -211,7 +211,7 @@ SUBROUTINE CHL_subroutine()
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
-        INTEGER ::jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col,
+        INTEGER ::jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col
         CHARACTER(LEN=20)  var_to_store
 
         julian=datestring2sec(datestring)

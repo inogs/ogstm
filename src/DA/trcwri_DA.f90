@@ -58,7 +58,8 @@ SUBROUTINE trcwriDA(datestring)
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
-        INTEGER :: jv,n_dumping_cycles,writing_rank,var_to_store
+        INTEGER :: jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col,
+        CHARACTER(LEN=20)  var_to_store
 
         julian=datestring2sec(datestring)
 
@@ -140,8 +141,8 @@ SUBROUTINE trcwriDA(datestring)
                                                 do jj =totjstart,totjend
                                                         j_contribution = jpk*(jj-1-totjstart+ reljstart)
                                                         do jk =1, jpk
-                                                                ind = jk + j_contribution + i_contribution
-                                                                tottrn(jk,jj,ji)= bufftrn_TOT(ind+jpdispl_count(idrank+1))
+                                                                ind1 = jk + j_contribution + i_contribution
+                                                                tottrn(jk,jj,ji)= bufftrn_TOT(ind1+jpdispl_count(idrank+1))
                                                         enddo
                                                 enddo
                                         enddo
@@ -176,6 +177,22 @@ END SUBROUTINE trcwriDA
 !SOLO PROC CHE FA CHL
 SUBROUTINE CHL_subroutine()
 
+        USE netcdf
+        USE myalloc
+        USE IO_mem
+        USE calendar
+        USE TIME_MANAGER
+        use mpi
+        USE ogstm_mpi_module
+        USE DA_mem
+
+        USE MPI_GATHER_INFO
+
+        USE MATRIX_VARS
+        USE NODES_MODULE
+        USE DTYPE_PROCS_STRING_MODULE
+
+        
         if(MYRANK ==0) CHLtot = 0.0
 
         DA_CHL_LOOP: DO jv = 1, PX_DA
@@ -225,8 +242,8 @@ SUBROUTINE CHL_subroutine()
                                         do jj =totjstart,totjend
                                                 j_contribution = jpk*(jj-1-totjstart+ reljstart)
                                                 do jk =1, jpk
-                                                        ind = jk + j_contribution + i_contribution
-                                                        tottrn(jk,jj,ji)= bufftrn_TOT(ind+jpdispl_count(idrank+1))
+                                                        ind1 = jk + j_contribution + i_contribution
+                                                        tottrn(jk,jj,ji)= bufftrn_TOT(ind1+jpdispl_count(idrank+1))
                                                 enddo
                                         enddo
                                 enddo

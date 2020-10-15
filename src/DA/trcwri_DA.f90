@@ -191,8 +191,37 @@ SUBROUTINE CHL_subroutine()
         USE MATRIX_VARS
         USE NODES_MODULE
         USE DTYPE_PROCS_STRING_MODULE
-
         
+        IMPLICIT NONE
+        
+        double precision ::  Miss_val =1.e20
+        INTEGER jk,jj,ji,jn
+        INTEGER s, nc, counter
+        integer timid, depid, yid, xid, idvar
+        double precision julian
+
+        CHARACTER(LEN=45) BeforeName
+        CHARACTER(LEN=43) BeforeNameShort
+
+        CHARACTER(LEN=3) varname
+
+        INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd,status(MPI_STATUS_SIZE)
+        INTEGER irange, jrange
+        INTEGER totistart, totiend, relistart, reliend
+        INTEGER totjstart, totjend, reljstart, reljend
+        INTEGER ind1, i_contribution, j_contribution
+        INTEGER SysErr, system
+        INTEGER ::jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col,
+        CHARACTER(LEN=20)  var_to_store
+
+        julian=datestring2sec(datestring)
+        buf     = Miss_val
+        bufftrn = Miss_val
+        if (myrank==0) tottrn = Miss_val 
+
+         
+
+
         if(MYRANK ==0) CHLtot = 0.0
 
         DA_CHL_LOOP: DO jv = 1, PX_DA
@@ -217,7 +246,7 @@ SUBROUTINE CHL_subroutine()
 
                 if(MYRANK == 0) then
 
-                        var_to_store = matrix_DA(jv)
+                        var_to_store = PX_matrix(jv)%var_name
 
                         DO idrank = 0,mpi_glcomm_size-1
 

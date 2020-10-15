@@ -256,6 +256,8 @@ MODULE MATRIX_VARS
 !------------------------------------------------------------
         SUBROUTINE DA_VARS()
 
+        IMPLICIT NONE
+
         !how many DA?
         INTEGER :: tmp_var_num,i,j,DA_vars_parallel
         !INTEGER, allocatable, dimension(:) :: DA_table

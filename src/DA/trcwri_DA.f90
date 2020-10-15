@@ -58,7 +58,7 @@ SUBROUTINE trcwriDA(datestring)
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
-        INTEGER :: jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col
+        INTEGER :: jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da,ind_col
         CHARACTER(LEN=20)  var_to_store
 
         julian=datestring2sec(datestring)
@@ -175,7 +175,7 @@ SUBROUTINE trcwriDA(datestring)
 END SUBROUTINE trcwriDA
 !------------------------------------------------------------------------------------------------
 !SOLO PROC CHE FA CHL
-SUBROUTINE CHL_subroutine()
+SUBROUTINE CHL_subroutine(datestring)
 
         USE netcdf
         USE myalloc
@@ -193,7 +193,8 @@ SUBROUTINE CHL_subroutine()
         USE DTYPE_PROCS_STRING_MODULE
         
         IMPLICIT NONE
-        
+        CHARACTER(LEN=17), INTENT(IN) :: datestring
+
         double precision ::  Miss_val =1.e20
         INTEGER jk,jj,ji,jn
         INTEGER s, nc, counter
@@ -211,7 +212,7 @@ SUBROUTINE CHL_subroutine()
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
-        INTEGER ::jv,n_dumping_cycles,writing_rank,var_to_store,counter_var_DA,ivar,jn_da,ind_col
+        INTEGER ::jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da,ind_col
         CHARACTER(LEN=20)  var_to_store
 
         julian=datestring2sec(datestring)

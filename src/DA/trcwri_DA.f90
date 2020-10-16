@@ -167,7 +167,7 @@ SUBROUTINE trcwriDA(datestring)
                         END IF
                 END IF
         END DO DA_LOOP
-        CALL CHL_subroutine()
+        CALL CHL_subroutine(datestring)
        
         trcwriparttime = MPI_WTIME() - trcwriparttime
         trcwritottime = trcwritottime + trcwriparttime

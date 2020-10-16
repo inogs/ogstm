@@ -277,7 +277,11 @@ MODULE MATRIX_VARS
         do i = 1, num_DA_vars
                 do j=1, jptra      
                         IF (varlistDA(i).eq.ctrcnm(j)) then
+                                write(*,*)'var list is',varlistDA(i)
+                                write(*,*)'ctrcnm is', ctrcnm(j)
+                                write(*,*)'tmp_var_num is',tmp_var_num
                                 tmp_var_num=tmp_var_num + 1
+                                write(*,*)'tmp_var_num is',tmp_var_num
                                 DA_table(tmp_var_num) = j
                         end if
                 end do

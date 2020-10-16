@@ -51,6 +51,8 @@
       CHLSUP_FOR_DA = 'DA__FREQ_1/chl.' // datestr // '.nc'
       CALL trcwriDA(DATEstr)  ! Dumps Before Assimilation real*4
 
+      STOP
+
       if (myrank .lt. DA_Nprocs ) then
 
           allocate(DA_VarList(NBioVar))

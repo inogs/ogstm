@@ -52,7 +52,7 @@
           DO jk=1, jpk
                IF(tmask(jk,jj,ji) .NE. 0.) THEN
                   traIO_HIGH(jk,jj,ji,jn_high  )= &
-     &           (traIO_HIGH(jk,jj,ji,jn_high )*elapsed_time+trn(jk,jj,ji,jn_on_all))*inv_incremented_time
+     &           (traIO_HIGH(jk,jj,ji,jn_high )*elapsed_time+trn(jk,jj,ji,jn_on_all)*rdt)*inv_incremented_time
                ELSE
                   traIO_HIGH(jk,jj,ji,jn_high  )=Miss_val
                ENDIF

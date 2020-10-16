@@ -310,7 +310,7 @@ MODULE MATRIX_VARS
                 DO j=1,matrix_col
                         IF (counter_DA==num_DA_vars)THEN
                                 EXIT
-                        ELSE IF(counter_DA < PX_DA +1) then
+                        ELSE IF(counter_DA < PX_DA) then
                                 trans_DA = DA_table(counter_DA+1)
                                 PX_matrix(j)%var_name = ctrcnm(trans_DA)
                                 counter_DA=counter_DA + 1

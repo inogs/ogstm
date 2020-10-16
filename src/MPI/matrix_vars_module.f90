@@ -268,6 +268,7 @@ MODULE MATRIX_VARS
 
 
         num_DA_vars = size(varlistDA)       
+        write(*,*) 'DA vars are', num_DA_vars
         allocate(DA_table(num_DA_vars))
         
         !create DA_table
@@ -280,6 +281,10 @@ MODULE MATRIX_VARS
                                 DA_table(tmp_var_num) = j
                         end if
                 end do
+        end do
+
+        do i=1, num_DA_vars
+                write(*,*) 'Da table num', i, 'is', DA_table(i)
         end do
         
         !define hard coded how many variables of varlist_DA will be printed
@@ -311,7 +316,9 @@ MODULE MATRIX_VARS
                         IF (counter_DA==num_DA_vars)THEN
                                 EXIT
                         ELSE IF(counter_DA < PX_DA) then
+                                write(*,*) 'counter da is', counter_DA
                                 trans_DA = DA_table(counter_DA+1)
+                                write(*,*) 'trans da is', trans_DA
                                 PX_matrix(j)%var_name = ctrcnm(trans_DA)
                                 counter_DA=counter_DA + 1
                         ELSE

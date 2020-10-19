@@ -40,6 +40,7 @@ MODULE OGSTM
       USE MPI_GATHER_INFO
       USE dtype_procs_string_module
       use module_step
+      USE DA_VARS_module
 #ifdef Mem_Monitor
       USE check_mem
       USE iso_c_binding

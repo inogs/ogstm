@@ -266,7 +266,7 @@ MODULE MATRIX_VARS
 
         USE dtype_procs_string_module
         USE nodes_module
-
+        USE DA_MEM
 
         IMPLICIT NONE
 

@@ -276,7 +276,7 @@ MODULE MATRIX_VARS
         tmp_var_num = 0
         do i = 1, num_DA_vars
                 do j=1, jptra      
-                        IF (varlistDA(i).eq.ctrcnm(j)) then
+                        IF (varlistDA(i).eq.trim(ctrcnm(j))) then
                                 write(*,*)'var list is',varlistDA(i)
                                 write(*,*)'ctrcnm is', ctrcnm(j)
                                 write(*,*)'tmp_var_num is',tmp_var_num

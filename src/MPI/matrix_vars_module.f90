@@ -256,6 +256,18 @@ MODULE MATRIX_VARS
 !------------------------------------------------------------
         SUBROUTINE DA_VARS()
 
+        USE calendar
+        USE myalloc
+        USE IO_mem
+        USE FN_mem
+        USE TIME_MANAGER
+        use mpi
+        USE ogstm_mpi_module
+
+        USE dtype_procs_string_module
+        USE nodes_module
+
+
         IMPLICIT NONE
 
         !how many DA?
@@ -276,6 +288,7 @@ MODULE MATRIX_VARS
         tmp_var_num = 0
         do i = 1, num_DA_vars
                 do j=1, jptra      
+                        write(*,*)'valistda', varlistDA(i)
                         IF (varlistDA(i).eq.trim(ctrcnm(j))) then
                                 write(*,*)'var list is',varlistDA(i)
                                 write(*,*)'ctrcnm is', ctrcnm(j)

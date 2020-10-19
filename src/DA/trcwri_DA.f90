@@ -4,7 +4,7 @@ SUBROUTINE trcwriDA(datestring)
         !                       ROUTINE trcwriDA
         !
         !                     ******************
-        !  gcoidess develop
+        !  gcoidessa@inogs.it  developing
         !
         !  Purpose :
         !  ---------
@@ -30,7 +30,7 @@ SUBROUTINE trcwriDA(datestring)
         USE MATRIX_VARS
         USE NODES_MODULE
         USE DTYPE_PROCS_STRING_MODULE
-
+        USE DA_VARS_module
         
         IMPLICIT NONE
         CHARACTER(LEN=17), INTENT(IN) :: datestring
@@ -191,6 +191,7 @@ SUBROUTINE CHL_subroutine(datestring)
         USE MATRIX_VARS
         USE NODES_MODULE
         USE DTYPE_PROCS_STRING_MODULE
+        USE DA_VARS_module
         
         IMPLICIT NONE
         CHARACTER(LEN=17), INTENT(IN) :: datestring

@@ -5,14 +5,14 @@ MODULE MATRIX_VARS
         !                     ******************
         !
         !
-        !  gcoidess developing 
+        !  gcoidessa@inogs.it  developing 
         !  Purpose :
         !  ---------
         !  OBTAIN MATRIX OF VARIABLES TO DUMP
         !  ---------
         !  Subroutines: 
-        !       -ALLOCATE_MATRIX_VARS()
-        !       -POPULATE_MATRIX_VARS()       
+        !       -ALLOCATE_MATRIX_VARS(): allocate matrix to use
+        !       -POPULATE_MATRIX_VARS(): fill matrix to use with vars       
         !       -CLEAN_MATRIX_VARS()   
 
 
@@ -29,14 +29,6 @@ MODULE MATRIX_VARS
 
         IMPLICIT NONE
         
-        !INTEGER IERROR
-        !INTEGER :: nodes = 3 !declaration only to see if everything is correct
-        !INTEGER :: jptra = 10!"           "
-        !INTEGER :: matrix_row
-        !INTEGER :: matrix_col != nodes
-        !INTEGER :: i,j
-        !INTEGER :: couniter
-        !CHARACTER :: ctrcnm(10)
         CHARACTER(len=12) :: novars
 
         PUBLIC
@@ -51,11 +43,6 @@ MODULE MATRIX_VARS
         INTEGER :: matrix_diag_2d_1_row, matrix_diag_2d_2_row
         INTEGER :: matrix_diag_1_row, matrix_diag_2_row
         INTEGER :: matrix_col != nodes
-
-        INTEGER, allocatable, dimension(:) :: DA_table
-        type(processor_string), allocatable :: matrix_DA(:,:)
-        type(processor_string), allocatable :: PX_matrix(:)
-        INTEGER :: matrix_DA_row,num_DA_vars,PX_DA
 
         CONTAINS
 
@@ -177,7 +164,7 @@ MODULE MATRIX_VARS
                 END DO
         END DO
         
-!insert variable string inside matrix of procs
+        !insert variable string inside matrix of procs
         !control on how many variables are inserted by counter==jptra for matrix that are not fully covered
 
         !IF (FREQ_GROUP.eq.2) THEN
@@ -249,105 +236,9 @@ MODULE MATRIX_VARS
                         END IF
                 END DO
         END DO
-#ifdef ExecDA
-        CALL DA_VARS()
-#endif
+
         END SUBROUTINE POPULATE_MATRIX_VARS
 !------------------------------------------------------------
-        SUBROUTINE DA_VARS()
-
-        USE calendar
-        USE myalloc
-        USE IO_mem
-        USE FN_mem
-        USE TIME_MANAGER
-        use mpi
-        USE ogstm_mpi_module
-
-        USE dtype_procs_string_module
-        USE nodes_module
-        USE DA_MEM
-
-        IMPLICIT NONE
-
-        !how many DA?
-        INTEGER :: tmp_var_num,i,j,DA_vars_parallel
-        !INTEGER, allocatable, dimension(:) :: DA_table
-        !type(processor_string), allocatable :: matrix_DA(:,:)
-        !type(processor_string), allocatable :: PX_matrix(:)
-        INTEGER :: counter_DA
-        INTEGER::trans_DA
-
-
-        num_DA_vars = size(varlistDA)       
-        write(*,*) 'DA vars are', num_DA_vars
-        allocate(DA_table(num_DA_vars))
-        
-        !create DA_table
-        !table of index transformtion from varlist_da and ctrcnm
-        tmp_var_num = 0
-        do i = 1, num_DA_vars
-                do j=1, jptra      
-                        write(*,*)'valistda', varlistDA(i)
-                        IF (varlistDA(i).eq.trim(ctrcnm(j))) then
-                                write(*,*)'var list is',varlistDA(i)
-                                write(*,*)'ctrcnm is', ctrcnm(j)
-                                write(*,*)'tmp_var_num is',tmp_var_num
-                                tmp_var_num=tmp_var_num + 1
-                                write(*,*)'tmp_var_num is',tmp_var_num
-                                DA_table(tmp_var_num) = j
-                        end if
-                end do
-        end do
-
-        do i=1, num_DA_vars
-                write(*,*) 'Da table num', i, 'is', DA_table(i)
-        end do
-        
-        !define hard coded how many variables of varlist_DA will be printed
-        !separately
-        !PX=p1l+p2l+p3l+p4l -> for chl 
-        PX_DA=4
-        allocate(PX_matrix(PX_DA))
-       
-        DA_vars_parallel=num_DA_vars-PX_DA
- 
-        !define the DA_matrix for printing in parallel
-        IF (MOD(DA_vars_parallel,nodes)==0)THEN
-                matrix_DA_row = (DA_vars_parallel/nodes)
-        ELSE
-                matrix_DA_row = (DA_vars_parallel/nodes) + 1
-        END IF
-        
-        allocate(matrix_DA(matrix_DA_row,matrix_col))
-
-        DO i=1,matrix_DA_row
-                DO j=1,matrix_col
-                        matrix_DA(i,j)%var_name = novars
-                END DO
-        END DO
-        
-        counter_DA=0
-        DO i=1,matrix_DA_row
-                DO j=1,matrix_col
-                        IF (counter_DA==num_DA_vars)THEN
-                                EXIT
-                        ELSE IF(counter_DA < PX_DA) then
-                                write(*,*) 'counter da is', counter_DA
-                                trans_DA = DA_table(counter_DA+1)
-                                write(*,*) 'trans da is', trans_DA
-                                PX_matrix(j)%var_name = ctrcnm(trans_DA)
-                                counter_DA=counter_DA + 1
-                        ELSE
-                                trans_DA = DA_table(counter_DA+1)
-                                matrix_DA(i,j)%var_name = ctrcnm(trans_DA)
-                                counter_DA=counter_DA + 1                       
-                        END IF
-                END DO
-        END DO
-
-        END SUBROUTINE DA_VARS
-!--------------------------------------------------
         SUBROUTINE CLEAN_MATRIX_VARS()
 
         DEALLOCATE (matrix_state_1)
@@ -356,7 +247,7 @@ MODULE MATRIX_VARS
         DEALLOCATE (matrix_diag_1)
         DEALLOCATE (matrix_diag_2d_1)
         DEALLOCATE (matrix_diag_2d_1)
-        DEALLOCATE (matrix_DA)
+        
         END SUBROUTINE CLEAN_MATRIX_VARS
 
 

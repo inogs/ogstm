@@ -165,6 +165,8 @@ SUBROUTINE ogstm_initialize()
 
 #ifdef ExecDA
       call DA_Init
+
+      call DA_VARS
 #endif
 
       call init_phys

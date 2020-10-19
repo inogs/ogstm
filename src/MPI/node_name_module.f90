@@ -5,12 +5,12 @@ MODULE NODE_NAME
         !                     ******************
         !
         !
-        !  gcoidess developing 
+        !  gcoidessa@inogs.it  developing 
         !  Purpose :
         !  ---------
         !  OBTAIN name of node of each rank
         !  -------
-        !              
+        !  subroutines: - NODE_NAME_FILL(): found node name
         !
 
 

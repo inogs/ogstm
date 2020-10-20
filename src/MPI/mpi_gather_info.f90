@@ -105,6 +105,10 @@ MODULE MPI_GATHER_INFO
                         bufftrn_TOT = huge(bufftrn_TOT(1)) 
 
                         WRITING_RANK_WR = .TRUE.     
+                        
+                        allocate(tottrnDA(jpiglo, jpjglo, jpk))
+                        tottrnDA = huge(tottrnDA(1,1,1))
+
                 end if
         end do
 

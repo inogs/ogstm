@@ -83,7 +83,7 @@ SUBROUTINE trcwriDA(datestring)
 
                         writing_rank = writing_procs(ivar)
 
-                        IF (COUNTER_VAR_DA > num_DA_vars )then
+                        IF (COUNTER_VAR_DA + PX_DA > num_DA_vars )then
                                 EXIT
                         ELSE
                                 jn_da = DA_table(COUNTER_VAR_DA + PX_DA)

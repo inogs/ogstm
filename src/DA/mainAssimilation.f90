@@ -18,7 +18,6 @@
       logical ISLOG
       integer :: ierr, color, ii
       integer :: SysErr, system
-      INTEGER :: IERROR
 
 
       DAparttime  = MPI_WTIME()
@@ -51,10 +50,6 @@
 
       CHLSUP_FOR_DA = 'DA__FREQ_1/chl.' // datestr // '.nc'
       CALL trcwriDA(DATEstr)  ! Dumps Before Assimilation real*4
-
-       call MPI_Barrier(MPI_COMM_WORLD, IERROR)
-
-      STOP
 
       if (myrank .lt. DA_Nprocs ) then
 

@@ -1,5 +1,5 @@
       SUBROUTINE trcwri(datestring)
-
+        ! gcoidess developing
 
       USE myalloc
       USE IO_mem

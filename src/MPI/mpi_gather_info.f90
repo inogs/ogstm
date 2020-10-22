@@ -5,11 +5,15 @@ MODULE MPI_GATHER_INFO
         !                     ******************
         !
         !
-        !  gcoidess developing 
+        !  gcoidessa@inogs.it developing 
         !  Purpose :
         !  ---------
-        !     Initialise indices for IO, THROUGH initi_gather() subroutine
-        !     gatherv() subroutine
+        !     Initialise indices for IO,
+        !          subroutines: 
+        !               - ALLOCATE_MPI_GATHER_INFO()
+        !               - INIT_MPI_GATHER_INFO()
+        !               - CLEAN_MEMORY_MPI_GATHER_INFO()
+        !               - CLEAN_MEMORY_INIT_MPI_GATHERV_COUNTS_INFO()
 
 
 
@@ -71,27 +75,24 @@ MODULE MPI_GATHER_INFO
 !------------------------------------------------------------
         SUBROUTINE ALLOCATE_MPI_GATHER_INFO()
 
-        !DO wr_procs=1, nodes
-
-                !if (myrank==writing_procs(wr_procs))then
 
 
-                        ALLOCATE (jpi_rec_a(mpi_glcomm_size))
-                        ALLOCATE (jpj_rec_a(mpi_glcomm_size))
-                        ALLOCATE (istart_a(mpi_glcomm_size))
-                        ALLOCATE (jstart_a(mpi_glcomm_size))
-                        ALLOCATE (iPe_a(mpi_glcomm_size))
-                        ALLOCATE (jPe_a(mpi_glcomm_size))
-                        ALLOCATE (iPd_a(mpi_glcomm_size))
-                        ALLOCATE (jPd_a(mpi_glcomm_size))
-                        ALLOCATE (bufftrn_TOT(jpi_max* jpj_max* jpk* mpi_glcomm_size))
-                        ALLOCATE (buffDIA2d_TOT(jpi_max* jpj_max*mpi_glcomm_size))
-                        ALLOCATE (buffDIA_TOT(jpi_max* jpj_max* jpk*mpi_glcomm_size)) 
+        ALLOCATE (jpi_rec_a(mpi_glcomm_size))
+        ALLOCATE (jpj_rec_a(mpi_glcomm_size))
+        ALLOCATE (istart_a(mpi_glcomm_size))
+        ALLOCATE (jstart_a(mpi_glcomm_size))
+        ALLOCATE (iPe_a(mpi_glcomm_size))
+        ALLOCATE (jPe_a(mpi_glcomm_size))
+        ALLOCATE (iPd_a(mpi_glcomm_size))
+        ALLOCATE (jPd_a(mpi_glcomm_size))
+        ALLOCATE (bufftrn_TOT(jpi_max* jpj_max* jpk* mpi_glcomm_size))
+        ALLOCATE (buffDIA2d_TOT(jpi_max* jpj_max*mpi_glcomm_size))
+        ALLOCATE (buffDIA_TOT(jpi_max* jpj_max* jpk*mpi_glcomm_size)) 
 
-                        ALLOCATE (jprcv_count(mpi_glcomm_size))
-                        ALLOCATE (jpdispl_count(mpi_glcomm_size))
-                        ALLOCATE (jprcv_count_2d(mpi_glcomm_size))
-                        ALLOCATE (jpdispl_count_2d(mpi_glcomm_size))
+        ALLOCATE (jprcv_count(mpi_glcomm_size))
+        ALLOCATE (jpdispl_count(mpi_glcomm_size))
+        ALLOCATE (jprcv_count_2d(mpi_glcomm_size))
+        ALLOCATE (jpdispl_count_2d(mpi_glcomm_size))
 
 
         DO wr_procs=1, nodes
@@ -104,6 +105,10 @@ MODULE MPI_GATHER_INFO
                         bufftrn_TOT = huge(bufftrn_TOT(1)) 
 
                         WRITING_RANK_WR = .TRUE.     
+                        
+                        allocate(tottrnDA(jpiglo, jpjglo, jpk))
+                        tottrnDA = huge(tottrnDA(1,1,1))
+
                 end if
         end do
 
@@ -205,18 +210,18 @@ MODULE MPI_GATHER_INFO
                         jprcv_count(loop_ind) = jpi_rec_a(loop_ind) * jpj_rec_a(loop_ind) * jpk
                         jpdispl_count(loop_ind) = cont
                         cont = cont + jprcv_count(loop_ind)        
-                        write(*,*) 'do loop',loop_ind,jprcv_count(loop_ind),jpdispl_count(loop_ind),cont
+                        !write(*,*) 'do loop',loop_ind,jprcv_count(loop_ind),jpdispl_count(loop_ind),cont
                 end DO        
-                write(*,*) 'do loop finished'
+                !write(*,*) 'do loop finished'
 
                 cont_2d = 0
                 DO loop_ind_2d = 1, mpi_glcomm_size
                         jprcv_count_2d(loop_ind_2d) = jpi_rec_a(loop_ind_2d) * jpj_rec_a(loop_ind_2d) 
                         jpdispl_count_2d(loop_ind_2d) = cont_2d
                         cont_2d = cont_2d + jprcv_count_2d(loop_ind_2d)
-                        write(*,*) 'do loop',loop_ind_2d,jprcv_count_2d(loop_ind_2d),jpdispl_count_2d(loop_ind_2d),cont_2d
+                        !write(*,*) 'do loop',loop_ind_2d,jprcv_count_2d(loop_ind_2d),jpdispl_count_2d(loop_ind_2d),cont_2d
                 end DO
-                write(*,*) 'do loop2d finished'
+                !write(*,*) 'do loop2d finished'
         end if
         !END DO
 

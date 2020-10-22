@@ -72,7 +72,7 @@
         ALLOCATE (   Nfraction(jpiglo, jpjglo, jpk), Pfraction(jpiglo, jpjglo, jpk), Cfraction(jpiglo, jpjglo, jpk))
         ALLOCATE ( CHLfraction(jpiglo, jpjglo, jpk), Sfraction(jpiglo, jpjglo, jpk))
 
-        allocate(tottrnDA(jpiglo, jpjglo, jpk))      ;  tottrnDA = huge(tottrnDA(1,1,1))
+        !allocate(tottrnDA(jpiglo, jpjglo, jpk))      ;  tottrnDA = huge(tottrnDA(1,1,1))
 
       endif
       END SUBROUTINE DA_INIT

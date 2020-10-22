@@ -66,7 +66,6 @@ MODULE DA_VARS_module
 
 
         num_DA_vars = size(varlistDA)
-        write(*,*) 'DA vars are', num_DA_vars
         allocate(DA_table(num_DA_vars))
 
         !create DA_table
@@ -74,21 +73,13 @@ MODULE DA_VARS_module
         tmp_var_num = 0
         do i = 1, num_DA_vars
                 do j=1, jptra
-                        write(*,*)'valistda', varlistDA(i)
                         IF (varlistDA(i).eq.trim(ctrcnm(j))) then
-                                write(*,*)'var list is',varlistDA(i)
-                                write(*,*)'ctrcnm is', ctrcnm(j)
-                                write(*,*)'tmp_var_num is',tmp_var_num
                                 tmp_var_num=tmp_var_num + 1
-                                write(*,*)'tmp_var_num is',tmp_var_num
                                 DA_table(tmp_var_num) = j
                         end if
                 end do
         end do
 
-        do i=1, num_DA_vars
-                write(*,*) 'Da table num', i, 'is', DA_table(i)
-        end do
 
         !define hard coded how many variables of varlist_DA will be printed separately
         !PX=p1l+p2l+p3l+p4l -> for chl 
@@ -114,23 +105,6 @@ MODULE DA_VARS_module
         END DO
 
         counter_DA=0
-        !DO i=1,matrix_DA_row
-        !        DO j=1, matrix_col
-        !                IF (counter_DA==num_DA_vars)THEN
-        !                        EXIT
-        !                ELSE IF(counter_DA < PX_DA) then
-        !                        write(*,*) 'counter da is', counter_DA
-        !                        trans_DA = DA_table(counter_DA+1)
-        !                        write(*,*) 'trans da is', trans_DA
-        !                        PX_matrix(j)%var_name = ctrcnm(trans_DA)
-        !                        counter_DA=counter_DA + 1
-        !                ELSE
-        !                        trans_DA = DA_table(counter_DA+1)
-        !                        matrix_DA(i,j)%var_name = ctrcnm(trans_DA)
-        !                        counter_DA=counter_DA + 1
-        !               END IF
-        !        END DO
-        !END DO
 
         DO i=1, PX_DA
                 trans_DA = DA_table(counter_DA + 1)
@@ -150,15 +124,7 @@ MODULE DA_VARS_module
                 END DO
         END DO
 
-        do I=1,4
-                write(*,*)'PX_is',PX_matrix(i)%var_name
-        end do        
 
-        do i=1, matrix_DA_row
-                do j=1, matrix_col        
-                        write(*,*)'matrix_da_is', matrix_DA(i,j)%var_name
-                end do
-        end do
         
         END SUBROUTINE DA_VARS
 !----------------------------------------------------------------------------------------------------------------------

@@ -148,8 +148,8 @@ SUBROUTINE trcwriDA(datestring)
                                         enddo
                                 END DO
 
-                                BeforeName = 'DA__FREQ_1/RSTbefore.'//datestring//'.'//var_to_store//'.nc'
-                                BeforeNameShort = 'DA__FREQ_1/RSTbefore.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//var_to_store//'.nc'
+                                BeforeName = 'DA__FREQ_1/RSTbefore.'//datestring//'.'//trim(var_to_store)//'.nc'
+                                BeforeNameShort = 'DA__FREQ_1/RSTbefore.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//trim(var_to_store)//'.nc'
                                 do ji=1,jpiglo
                                         do jj=1,jpjglo
                                                 do jk=1,jpk
@@ -280,8 +280,8 @@ SUBROUTINE CHL_subroutine(datestring)
                                 enddo
                         END DO
 
-                        BeforeName = 'DA__FREQ_1/RSTbefore.'//datestring//'.'//var_to_store//'.nc'
-                        BeforeNameShort = 'DA__FREQ_1/RSTbefore.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//var_to_store//'.nc'
+                        BeforeName = 'DA__FREQ_1/RSTbefore.'//datestring//'.'//trim(var_to_store)//'.nc'
+                        BeforeNameShort = 'DA__FREQ_1/RSTbefore.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//trim(var_to_store)//'.nc'
                         do ji=1,jpiglo
                                 do jj=1,jpjglo
                                         do jk=1,jpk

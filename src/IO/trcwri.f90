@@ -122,12 +122,12 @@
                                         enddo
                                 END DO
 
-                                filename = 'RESTARTS/RST.'//datestring//'.'//var_to_store//'.nc'
+                                filename = 'RESTARTS/RST.'//datestring//'.'//trim(var_to_store)//'.nc'
 
                                 CALL write_restart(filename,var_to_store,julian, deflate_rst, deflate_level_rst)
 
                         END IF
                 END IF
         END DO RESTARTS_LOOP
-                        
+        if(lwp) write(*,*) 'TRCWRI FINITA'                
         END SUBROUTINE trcwri

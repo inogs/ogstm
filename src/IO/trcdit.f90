@@ -151,7 +151,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 
                 if(myrank == 0) then
                         gatherv_mean_time = gatherv_sum_time / (nodes*36)
-                        write(*,*) 'gatherv mean time, jv,freqgroup  ', gatherv_mean_time,' ', jv,' ', FREQ_GROUP
+                        !write(*,*) 'gatherv mean time, jv,freqgroup  ', gatherv_mean_time,' ', jv,' ', FREQ_GROUP
                 end if
                 ! *************** COLLECTING DATA *****************************
 
@@ -204,13 +204,11 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                                         CALL WRITE_AVE_BKP(bkpname,var_to_store,datefrom, dateTo,tottrnIO,elapsed_time, deflate_ave, deflate_level_ave)
                                 else
                                         CALL WRITE_AVE(output_file_nc,var_to_store,datefrom, dateTo, tottrnIO, deflate_ave, deflate_level_ave)
-                                        write(*,*)'Variable xx is written by rank', var_to_store, myrank
                                 endif
                         END IF
                         writing_rank_fin_time = MPI_Wtime()
                         writing_rank_delta_time = writing_rank_fin_time - writing_rank_init_time
                         writing_rank_sum_time = writing_rank_delta_time + writing_rank_sum_time
-                        write(*,*)'writingtime', writing_rank_sum_time,'   ',jv, '   ', myrank
                 END IF
         END DO DUMPING_LOOP
 

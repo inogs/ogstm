@@ -5,14 +5,14 @@ MODULE MATRIX_VARS
         !                     ******************
         !
         !
-        !  gcoidess developing 
+        !  gcoidessa@inogs.it  developing 
         !  Purpose :
         !  ---------
         !  OBTAIN MATRIX OF VARIABLES TO DUMP
         !  ---------
         !  Subroutines: 
-        !       -ALLOCATE_MATRIX_VARS()
-        !       -POPULATE_MATRIX_VARS()       
+        !       -ALLOCATE_MATRIX_VARS(): allocate matrix to use
+        !       -POPULATE_MATRIX_VARS(): fill matrix to use with vars       
         !       -CLEAN_MATRIX_VARS()   
 
 
@@ -29,14 +29,6 @@ MODULE MATRIX_VARS
 
         IMPLICIT NONE
         
-        !INTEGER IERROR
-        !INTEGER :: nodes = 3 !declaration only to see if everything is correct
-        !INTEGER :: jptra = 10!"           "
-        !INTEGER :: matrix_row
-        !INTEGER :: matrix_col != nodes
-        !INTEGER :: i,j
-        !INTEGER :: couniter
-        !CHARACTER :: ctrcnm(10)
         CHARACTER(len=12) :: novars
 
         PUBLIC
@@ -63,7 +55,6 @@ MODULE MATRIX_VARS
         ALLOCATE (matrix_diag_2d_2(matrix_diag_2d_2_row, matrix_col))
         ALLOCATE (matrix_diag_1(matrix_diag_1_row, matrix_col))
         ALLOCATE (matrix_diag_2(matrix_diag_2_row, matrix_col))
-
         END SUBROUTINE ALLOCATE_MATRIX_VARS
 !------------------------------------------------------------
 
@@ -129,7 +120,6 @@ MODULE MATRIX_VARS
                 matrix_diag_1_row = (jptra_dia_high/nodes) + 1
         END IF
 
-                
         !allocate matrix
 
         CALL ALLOCATE_MATRIX_VARS()
@@ -174,7 +164,7 @@ MODULE MATRIX_VARS
                 END DO
         END DO
         
-!insert variable string inside matrix of procs
+        !insert variable string inside matrix of procs
         !control on how many variables are inserted by counter==jptra for matrix that are not fully covered
 
         !IF (FREQ_GROUP.eq.2) THEN
@@ -249,7 +239,6 @@ MODULE MATRIX_VARS
 
         END SUBROUTINE POPULATE_MATRIX_VARS
 !------------------------------------------------------------
-!--------------------------------------------------
         SUBROUTINE CLEAN_MATRIX_VARS()
 
         DEALLOCATE (matrix_state_1)
@@ -258,6 +247,7 @@ MODULE MATRIX_VARS
         DEALLOCATE (matrix_diag_1)
         DEALLOCATE (matrix_diag_2d_1)
         DEALLOCATE (matrix_diag_2d_1)
+        
         END SUBROUTINE CLEAN_MATRIX_VARS
 
 

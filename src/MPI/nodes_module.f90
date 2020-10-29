@@ -5,7 +5,7 @@ MODULE NODES_MODULE
         !                     ******************
         !
         !
-        !  gcoidess developing 
+        !  gcoidessa@inogs.it developing 
         !  Purpose :
         !  ---------
         !  OBTAIN ARRAY OF NODES AND WRITING PROCESSOR
@@ -27,46 +27,24 @@ MODULE NODES_MODULE
 
         IMPLICIT NONE
         
-        !INTEGER IERROR
-        !INTEGER :: k
-        !INTEGER :: lengt
-        !INTEGER :: i, j, p
-        !CHARACTER*(MPI_MAX_PROCESSOR_NAME) buff_recv
-        !CHARACTER (len=MPI_MAX_PROCESSOR_NAME),dimension(mpi_glcomm_size) :: total_array ! 
-        !CHARACTER(len=:),allocatable :: total_array(:)        
 
 
         PUBLIC
 
         INTEGER :: nodes
-        !CHARACTER*(MPI_MAX_PROCESSOR_NAME) local_array 
         
         INTEGER, allocatable, dimension (:) :: writing_procs
-        !INTEGER :: lengt
         
         CONTAINS
-!-------------------------------------------------------------------
-        !SUBROUTINE NODES_MODULE_LEN()
-        !INTEGER :: lengt
-        !INTEGER :: IERROR
-        !CALL MPI_GET_PROCESSOR_NAME(local_array, lengt, IERROR)
-        !END SUBROUTINE NODES_MODULE_LEN
-!------------------------------------------------------------------------------------------------
-        !SUBROUTINE NODES_MODULE_DECLARATION()
-        !INTEGER :: IERROR
-        !CHARACTER (len = lengt), dimension(mpi_glcomm_size) :: total_array
-        !END SUBROUTINE NODES_MODULE_DECLARATION
+
 !--------------------------------------------------------------
         SUBROUTINE NODES_MODULE_FIND()
         
         INTEGER :: i, j, p, k
         INTEGER :: IERROR
-        !INTEGER :: lengt
         CHARACTER*(MPI_MAX_PROCESSOR_NAME) buff_recv
         
-        !CHARACTER(len=lengt),allocatable :: total_array(:)
 
-        !CALL NODES_MODULE_LEN()
         CHARACTER (len = lengt), dimension(mpi_glcomm_size) :: total_array
         
         write (*,*) 'allocation rank',myrank, lengt, local_array
@@ -81,13 +59,6 @@ MODULE NODES_MODULE
                 p=1
                 k=2
         
-        !check print
-                !DO i=0 , mpi_glcomm_size - 1
-                !        write(*,*) 'RANK', i , total_array(i+1)
-                !END DO
-                                                                           
-        !define how many strings (alias how many name nodes) are inside the total array
-                
                 DO i=2, mpi_glcomm_size
                         IF (i==1) THEN
                                ! write(*,*)
@@ -145,9 +116,6 @@ MODULE NODES_MODULE
         END IF
 
         ! broadcast number of nodes from rank 0 to all ranks
-        
-        !CALL MPI_Bcast(nodes,1,MPI_INT,0,MPI_COMM_WORLD, IERROR)
-
         ! all the ranks receive the array of writing procs
         
         IF (myrank >0) THEN

@@ -1,5 +1,4 @@
         SUBROUTINE trcwri(datestring)
-        ! gcoidess developing
 
         USE myalloc
         USE IO_mem
@@ -41,9 +40,6 @@
 
         filename = 'RST.20111231-15:30:00.N1p.nc'
         julian=datestring2sec(datestring)
-        if(lwp)then
-                     write(*,*)'trcwri ------------  myrank =', myrank ,' datestring = ', datestring
-        end if
 
         trcwriparttime = MPI_WTIME() ! cronometer-start
 
@@ -129,5 +125,4 @@
                         END IF
                 END IF
         END DO RESTARTS_LOOP
-        if(lwp) write(*,*) 'TRCWRI FINITA'                
         END SUBROUTINE trcwri

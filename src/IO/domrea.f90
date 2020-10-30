@@ -142,12 +142,19 @@
 
 ! 4. depth and vertical scale factors
 ! -----------------------------------
-
+#ifdef gdept1d
        CALL readmask_double_1d(maskfile,'gdept', gdept)
+#else
+      CALL readnc_slice_double(maskfile,'gdept', gdept)
+#endif
        CALL readmask_double_1d(maskfile,'gdepw', gdepw)
        jpk_eu = 0
        do kk=1,jpk
+#ifdef gdept1d
           if (gdept(kk).lt.Euphotic_lev)  jpk_eu=kk
+#else
+          if (gdept(kk,1,1).lt.Euphotic_lev)  jpk_eu=kk
+#endif
        enddo
        if (lwp) write(*,*) 'Euphotic level at k = ', jpk_eu
 

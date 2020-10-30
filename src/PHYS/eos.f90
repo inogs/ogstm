@@ -118,7 +118,11 @@
             zt = tn(jk,jj,ji)
             zs = sn(jk,jj,ji)
 !!   ... depth
+#ifdef gdept1d
             zh = gdept(jk)
+#else
+            zh = gdept(jk,jj,ji)
+#endif
 !!   ... square root salinity
             zsr= sqrt( abs( zs ) )
 !!   ... compute volumic mass pure water at atm pressure

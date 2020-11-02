@@ -72,7 +72,7 @@ SUBROUTINE mynode
 
 #ifdef ExecDA
       if(V3D_VAR_PARALLEL) then
-        call MPI_Comm_split(MPI_COMM_WORLD, nodes * 3d_procs_per_node, myrank, Var3DCommunicator, ierr)
+        call MPI_Comm_split(MPI_COMM_WORLD, nodes * TREd_procs_per_node, myrank, Var3DCommunicator, ierr)
         
         PETSC_COMM_WORLD = Var3DCommunicator
         call PetscInitialize(PETSC_NULL_CHARACTER,stat)

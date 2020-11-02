@@ -41,7 +41,7 @@ MODULE OGSTM
       USE dtype_procs_string_module
       use module_step
       USE DA_VARS_module
-      USE 3d_var_MP
+      USE TREd_var_MP
 #ifdef Mem_Monitor
       USE check_mem
       USE iso_c_binding

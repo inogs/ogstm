@@ -1,4 +1,4 @@
-MODULE 3d_var_MP 
+MODULE TREd_var_MP 
         !---------------------------------------------------------------------
         !
         !                       MODULE MATRIX_VARS
@@ -34,10 +34,10 @@ MODULE 3d_var_MP
 
         PUBLIC
         
-        LOGICAL :: 3D_VAR_PARALLEL
+        LOGICAL :: V3D_VAR_PARALLEL
         
 
-        3D_VAR_PARALLEL = .false.
+        V3D_VAR_PARALLEL = .false.
         CONTAINS
 
 !-------------------------------------------------------------
@@ -100,7 +100,7 @@ MODULE 3d_var_MP
 
                 IF(MYRANK == 3d_procs_per_node_array(i) then
                         
-                        3D_VAR_PARALLEL = .true.
+                        V3D_VAR_PARALLEL = .true.
                 END IF
 
         END DO
@@ -108,7 +108,7 @@ MODULE 3d_var_MP
                 
         END SUBROUTINE DEFINE_3D_PARALLEL_PROCS
 !--------------------------------------------------------------
-END MODULE 3d_var_MP
+END MODULE TREd_var_MP
                 
 
 

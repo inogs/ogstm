@@ -57,7 +57,7 @@ contains
 !!----------------------------------------------------------------------
 
 SUBROUTINE mynode
-      USE 3d_var_MP
+      USE TREd_var_MP
       USE NODES_MODULE
       INTEGER :: ierr
 #ifdef ExecDA
@@ -71,7 +71,7 @@ SUBROUTINE mynode
       call parlec ! in order to read DA_Nprocs
 
 #ifdef ExecDA
-      if(3D_VAR_PARALLEL) then
+      if(V3D_VAR_PARALLEL) then
         call MPI_Comm_split(MPI_COMM_WORLD, nodes * 3d_procs_per_node, myrank, Var3DCommunicator, ierr)
         
         PETSC_COMM_WORLD = Var3DCommunicator

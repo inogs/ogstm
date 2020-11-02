@@ -57,7 +57,8 @@ contains
 !!----------------------------------------------------------------------
 
 SUBROUTINE mynode
-
+      USE 3d_var_MP
+      USE NODES_MODULE
       INTEGER :: ierr
 #ifdef ExecDA
       PetscErrorCode :: stat
@@ -70,8 +71,8 @@ SUBROUTINE mynode
       call parlec ! in order to read DA_Nprocs
 
 #ifdef ExecDA
-      if(myrank .lt. DA_Nprocs) then
-        call MPI_Comm_split(MPI_COMM_WORLD, DA_Nprocs, myrank, Var3DCommunicator, ierr)
+      if(3D_VAR_PARALLEL) then
+        call MPI_Comm_split(MPI_COMM_WORLD, nodes * 3d_procs_per_node, myrank, Var3DCommunicator, ierr)
         
         PETSC_COMM_WORLD = Var3DCommunicator
         call PetscInitialize(PETSC_NULL_CHARACTER,stat)

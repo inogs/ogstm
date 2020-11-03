@@ -149,14 +149,6 @@ MODULE TREd_var_MP
                 call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED,myrank,Var3DCommunicator, ierror)
         endif
 #endif
-
-#else
-        mpi_glcomm_size = 1
-        myrank = 0
-#endif
-
-
-
                 
         END SUBROUTINE DEFINE_3D_PARALLEL_PROCS
 !--------------------------------------------------------------

@@ -81,10 +81,10 @@ SUBROUTINE mynode
 !      endif
 !#endif
 
-!#else
-!      mpi_glcomm_size = 1
-!      myrank = 0
-!#endif
+#else
+      mpi_glcomm_size = 1
+      myrank = 0
+#endif
 
 END SUBROUTINE
 

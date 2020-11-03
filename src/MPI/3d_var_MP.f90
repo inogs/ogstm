@@ -59,7 +59,7 @@ MODULE TREd_var_MP
         USE DEFINE_3D_PARALLEL_PROCS
         USE NODES_MODULE
 
-        ALLOCATE (TREd_procs_per_node_array(nodes * TREd_procs_per_node))
+        ALLOCATE (TREd_procs_per_node_array(DA_Nprocs))
 
         END SUBROUTINE ALLOCATE_3D_PARALLEL_PROCS
 !--------------------------------------------------------------
@@ -76,7 +76,9 @@ MODULE TREd_var_MP
         INTEGER :: i, j, counter_3d_procs, IERROR
 
         V3D_VAR_PARALLEL = .false.
+
         TREd_procs_per_node = 5
+        
 
         CALL ALLOCATE_3D_PARALLEL_PROCS()
 
@@ -86,11 +88,20 @@ MODULE TREd_var_MP
         IF(myrank == 0)then
                 counter_3d_procs = 1
                 do i=1, nodes
-                        TREd_procs_per_node_array(counter_3d_procs)= writing_procs(i)
-                        do j=1, TREd_procs_per_node -1 
+                        if(counter_3d_procs > DA_Nprocs) then
+                                exit
+                        else
+                                TREd_procs_per_node_array(counter_3d_procs)= writing_procs(i)
                                 counter_3d_procs = counter_3d_procs + 1
-                                TREd_procs_per_node_array(counter_3d_procs)=writing_procs(i) + j
-                        end do
+                                do j=1, TREd_procs_per_node -1
+                                        if(counter_3d_procs > DA_Nprocs) then
+                                                exit
+                                        else 
+                                                TREd_procs_per_node_array(counter_3d_procs)=writing_procs(i) + j
+                                                counter_3d_procs = counter_3d_procs + 1
+                                        end if
+                                end do
+                        end if
                 end do
                 
                 ! proc 0 send the array to all processors
@@ -99,7 +110,7 @@ MODULE TREd_var_MP
                 END DO
 
                 !test
-                DO i=1, nodes * TREd_procs_per_node
+                DO i=1, DA_Nprocs
 
                         write(*,*) '3d_var_proc is',TREd_procs_per_node_array (i)
 
@@ -129,13 +140,13 @@ MODULE TREd_var_MP
 
 #ifdef ExecDA
         if(V3D_VAR_PARALLEL) then
-                call MPI_Comm_split(MPI_COMM_WORLD, nodes * TREd_procs_per_node,myrank,Var3DCommunicator, ierr)
+                call MPI_Comm_split(MPI_COMM_WORLD, DA_Nprocs,myrank,Var3DCommunicator, ierror)
 
                 PETSC_COMM_WORLD = Var3DCommunicator
                 call PetscInitialize(PETSC_NULL_CHARACTER,stat)
                 CHKERRQ(stat)
         else
-                call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED,myrank,Var3DCommunicator, ierr)
+                call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED,myrank,Var3DCommunicator, ierror)
         endif
 #endif
 

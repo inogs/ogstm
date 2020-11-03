@@ -107,7 +107,7 @@ MODULE TREd_var_MP
                 
                 ! proc 0 send the array to all processors
                 DO i=1, mpi_glcomm_size - 1
-                        CALL MPI_Send(TREd_procs_per_node_array,nodes * TREd_procs_per_node,MPI_INT,i,5,MPI_COMM_WORLD,IERROR)
+                        CALL MPI_Send(TREd_procs_per_node_array,DA_Nprocs,MPI_INT,i,5,MPI_COMM_WORLD,IERROR)
                 END DO
 
                 !test
@@ -122,12 +122,12 @@ MODULE TREd_var_MP
         !all procs =! 0 receive the array
         IF(myrank > 0)then
 
-                CALL MPI_Recv(TREd_procs_per_node_array,nodes * TREd_procs_per_node,MPI_INT,0,5,MPI_COMM_WORLD,MPI_STATUS_IGNORE, IERROR)
+                CALL MPI_Recv(TREd_procs_per_node_array,DA_Nprocs,MPI_INT,0,5,MPI_COMM_WORLD,MPI_STATUS_IGNORE, IERROR)
                 
         END IF
 
         !all processors change the boolean if they are linked to 3d var scheme
-        DO i=1, nodes * TREd_procs_per_node
+        DO i=1, DA_Nprocs
 
                 IF(MYRANK == TREd_procs_per_node_array(i)) then
                         

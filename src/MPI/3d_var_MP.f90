@@ -54,14 +54,14 @@ MODULE TREd_var_MP
         CONTAINS
 
 !-------------------------------------------------------------
-        SUBROUTINE ALLOCATE_3D_PARALLEL_PROCS()
-        
-        USE DEFINE_3D_PARALLEL_PROCS
-        USE NODES_MODULE
-
-        ALLOCATE (TREd_procs_per_node_array(DA_Nprocs))
-
-        END SUBROUTINE ALLOCATE_3D_PARALLEL_PROCS
+!        SUBROUTINE ALLOCATE_3D_PARALLEL_PROCS()
+!        
+!        USE DEFINE_3D_PARALLEL_PROCS
+!        USE NODES_MODULE
+!
+!        ALLOCATE (TREd_procs_per_node_array(DA_Nprocs))
+!
+!        END SUBROUTINE ALLOCATE_3D_PARALLEL_PROCS
 !--------------------------------------------------------------
         SUBROUTINE DEFINE_3D_PARALLEL_PROCS()
         
@@ -79,8 +79,9 @@ MODULE TREd_var_MP
 
         TREd_procs_per_node = 5
         
+        ALLOCATE (TREd_procs_per_node_array(DA_Nprocs))
 
-        CALL ALLOCATE_3D_PARALLEL_PROCS()
+        !CALL ALLOCATE_3D_PARALLEL_PROCS()
 
   
         ! only in rank 0

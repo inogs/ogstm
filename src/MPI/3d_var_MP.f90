@@ -15,7 +15,21 @@ MODULE TREd_var_MP
         !       - DEFINE_3D_PARALLEL_PROCS()
         !              
         !
+        
+#ifdef ExecDA
+#include <petscversion.h>
+#if PETSC_VERSION_GE(3,8,0)
+#include "petsc/finclude/petscvec.h"
+#else
+#include <petsc/finclude/petscvecdef.h>
+#endif
+#endif
 
+#ifdef ExecDA
+        use DA_mem
+        use mpi_str, only: Var3DCommunicator
+        use petscvec, only: PETSC_COMM_WORLD, PETSC_NULL_CHARACTER
+#endif
 
         USE calendar
         USE myalloc
@@ -24,7 +38,6 @@ MODULE TREd_var_MP
         USE TIME_MANAGER
         use mpi
         USE ogstm_mpi_module
-        USE NODE_NAME
         
         USE NODES_MODULE
 
@@ -37,7 +50,7 @@ MODULE TREd_var_MP
         LOGICAL :: V3D_VAR_PARALLEL
         
 
-        V3D_VAR_PARALLEL = .false.
+        !V3D_VAR_PARALLEL = .false.
         CONTAINS
 
 !-------------------------------------------------------------
@@ -52,16 +65,22 @@ MODULE TREd_var_MP
 !--------------------------------------------------------------
         SUBROUTINE DEFINE_3D_PARALLEL_PROCS()
         
-        USE NODES_MODULE
+        USE NODES_MODULE        
         
+#ifdef ExecDA
+        PetscErrorCode :: stat
+#endif
+
         INTEGER :: TREd_procs_per_node
         INTEGER, allocatable, dimension (:) :: TREd_procs_per_node_array
         INTEGER :: i, j, counter_3d_procs, IERROR
 
+        V3D_VAR_PARALLEL = .false.
         TREd_procs_per_node = 5
 
         CALL ALLOCATE_3D_PARALLEL_PROCS()
-        
+
+  
         ! only in rank 0
         ! define which processors will be used for 3d var scheme
         IF(myrank == 0)then
@@ -104,6 +123,28 @@ MODULE TREd_var_MP
                 END IF
 
         END DO
+
+
+!PG parts from ogstm_mpi
+
+#ifdef ExecDA
+        if(V3D_VAR_PARALLEL) then
+                call MPI_Comm_split(MPI_COMM_WORLD, nodes * TREd_procs_per_node,myrank,Var3DCommunicator, ierr)
+
+                PETSC_COMM_WORLD = Var3DCommunicator
+                call PetscInitialize(PETSC_NULL_CHARACTER,stat)
+                CHKERRQ(stat)
+        else
+                call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED,myrank,Var3DCommunicator, ierr)
+        endif
+#endif
+
+#else
+        mpi_glcomm_size = 1
+        myrank = 0
+#endif
+
+
 
                 
         END SUBROUTINE DEFINE_3D_PARALLEL_PROCS

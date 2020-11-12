@@ -297,7 +297,7 @@ MODULE MATRIX_VARS
 
         jptra_dia_wri = 0
         DO i =1, jptra_dia
-                IF (diahf(i).eq.0 .and. diaWR(i) == 1) then
+                IF (diaWR(i) == 1) then
                         jptra_dia_wri = jptra_dia_wri + 1
                 END IF
         ENDDO
@@ -306,7 +306,7 @@ MODULE MATRIX_VARS
 
         jptra_dia_wri = 0
         DO i =1, jptra_dia
-                IF (diahf(i).eq.0 .and. diaWR(i) == 1) then
+                IF (diaWR(i) == 1) then
                         jptra_dia_wri = jptra_dia_wri + 1
                         lowfreq_table_dia_wri(jptra_dia_wri) = i
                 END IF
@@ -316,7 +316,7 @@ MODULE MATRIX_VARS
 
         jptra_dia_2d_wri = 0
         DO i =1, jptra_dia_2d
-                IF (diahf_2d(i).eq.0 .and. diaWR_2d(i) == 1) then
+                IF (diaWR_2d(i) == 1) then
                         jptra_dia_2d_wri = jptra_dia_2d_wri + 1
                 END IF
         ENDDO
@@ -325,7 +325,7 @@ MODULE MATRIX_VARS
 
         jptra_dia_2d_wri = 0
         DO i =1, jptra_dia_2d
-                IF (diahf_2d(i).eq.0 .and. diaWR_2d(i) == 1) then
+                IF (diaWR_2d(i) == 1) then
                         jptra_dia_2d_wri = jptra_dia_2d_wri + 1
                         lowfreq_table_dia_2d_wri(jptra_dia_2d_wri) = i
                 END IF

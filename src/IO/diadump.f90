@@ -261,9 +261,9 @@
                         writing_rank = writing_procs(ivar)
 
 
-                        IF (COUNTER_VAR_2d > JPTRA_dia_2d)then
+                        IF (COUNTER_VAR_2d > JPTRA_dia_2d_wri)then
                                 EXIT
-                        else if (COUNTER_VAR_HIGH_2d > JPTRA_dia2d_HIGH)then
+                        else if (COUNTER_VAR_HIGH_2d > JPTRA_dia_2d_HIGH_wri)then
                                 EXIT
                         ELSE
 
@@ -384,9 +384,9 @@
                         writing_rank = writing_procs(ivar)
 
 
-                        IF (COUNTER_VAR_diag > JPTRA_dia)then
+                        IF (COUNTER_VAR_diag > JPTRA_dia_wri)then
                                 EXIT
-                        else if (COUNTER_VAR_diag_HIGH > JPTRA_dia_HIGH)then
+                        else if (COUNTER_VAR_diag_HIGH > JPTRA_dia_HIGH_wri)then
                                 EXIT
                         ELSE
                                 if (FREQ_GROUP.eq.2) then

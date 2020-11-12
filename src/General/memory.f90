@@ -110,7 +110,7 @@
       double precision, allocatable :: gdept(:), gdepw(:)
 #else
       double precision, allocatable :: gdept(:,:,:), gdepw(:)
-#fi
+#endif
 
       double precision, allocatable,dimension(:,:,:), save :: e3t, e3t_back, e3u, e3v, e3w
       double precision, allocatable,dimension(:,:,:), save :: e3t_0, e3u_0, e3v_0, e3w_0

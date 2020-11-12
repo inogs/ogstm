@@ -38,7 +38,8 @@
       INTEGER :: nVars, counter_var_2d, counter_var_high_2d,counter_var_diag, counter_var_diag_high
       CHARACTER(LEN=20) ::  var_to_store_diag_2d, var_to_store_diag
       INTEGER :: n_dumping_cycles, jv, ivar, writing_rank, ind_col
-
+      INTEGER :: var_to_send_2D, var_high_to_send_2D
+      INTEGER :: var_to_send, var_high_to_send
      ! call mppsync()
 ! ----------------------------------------
       IsBackup =  (datemean.eq.dateTo)
@@ -237,6 +238,7 @@
       if (WRITING_RANK_WR) tottrnIO2d = Miss_val
 ! ******************  DIAGNOSTIC OUTPUT   2D *******************
 
+        
         IF (FREQ_GROUP==1)then
                 elapsed_time=elapsed_time_1
                 DIR='AVE_FREQ_1/'
@@ -260,20 +262,23 @@
 
                         writing_rank = writing_procs(ivar)
 
-
+                        
                         IF (COUNTER_VAR_2d > JPTRA_dia_2d_wri)then
                                 EXIT
                         else if (COUNTER_VAR_HIGH_2d > JPTRA_dia_2d_HIGH_wri)then
                                 EXIT
                         ELSE
 
+                                var_to_send_2D = lowfreq_table_dia_2d_wri(counter_var_2d)
+                                !if (FREQ_GROUP.eq.1) var_high_to_send_2D = highfreq_table_dia_2d_wri(counter_var_high_2d)                        
 
+        
                                 if (FREQ_GROUP.eq.2) then
                                         do ji =1 , jpi
                                                 i_contribution = jpj * (ji-1)
                                                 do jj =1 , jpj
                                                         ind = jj + i_contribution
-                                                        buffDIA2d (ind)= tra_DIA_2d_IO(counter_var_2d,jj,ji)
+                                                        buffDIA2d (ind)= tra_DIA_2d_IO(var_to_send_2D,jj,ji)
                                                 enddo
                                         enddo
                                 else
@@ -281,7 +286,7 @@
                                                 i_contribution = jpj * (ji-1)
                                                 do jj = 1 , jpj
                                                         ind = jj + i_contribution
-                                                        buffDIA2d (ind)= tra_DIA_2d_IO_high(counter_var_high_2d,jj,ji)
+                                                        buffDIA2d (ind)= tra_DIA_2d_IO_high(COUNTER_VAR_HIGH_2d,jj,ji)
                                                 enddo
                                         enddo
                                 endif
@@ -329,7 +334,8 @@
                                                 enddo
                                          enddo
                                 enddo
-
+                                !if (FREQ_GROUP.eq.2)write(*,*) 'CHECK ', var_to_store_diag_2d,var_to_send_2d
+                                !if (FREQ_GROUP.eq.1) write(*,*)'CHECK_h', var_to_store_diag_2d, COUNTER_VAR_HIGH_2d
                                 bkpname     = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc.bkp'
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc'
 
@@ -389,6 +395,10 @@
                         else if (COUNTER_VAR_diag_HIGH > JPTRA_dia_HIGH_wri)then
                                 EXIT
                         ELSE
+
+                                var_to_send = lowfreq_table_dia_wri(counter_var_diag)
+                                !if (FREQ_GROUP.eq.1) var_high_to_send = highfreq_table_dia_wri(counter_var_diag_high)
+
                                 if (FREQ_GROUP.eq.2) then
                                         do ji =1, jpi
                                                 i_contribution= jpk*jpj * (ji - 1 )
@@ -396,7 +406,7 @@
                                                         j_contribution=jpk*(jj-1)
                                                         do jk =1 , jpk
                                                                 ind = jk + j_contribution + i_contribution
-                                                                buffDIA(ind) = tra_DIA_IO(counter_var_diag, jk,jj,ji)
+                                                                buffDIA(ind) = tra_DIA_IO(var_to_send, jk,jj,ji)
                                                         enddo
                                                 enddo
                                         enddo
@@ -407,12 +417,12 @@
                                                         j_contribution=jpk*(jj-1)
                                                         do jk =1 , jpk
                                                                 ind = jk + j_contribution + i_contribution
-                                                                buffDIA(ind) = tra_DIA_IO_HIGH(counter_var_diag_high, jk,jj,ji)
+                                                                buffDIA(ind) = tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH, jk,jj,ji)
                                                         enddo
                                                 enddo
                                         enddo
                                 end if
-
+                                !if (FREQ_GROUP.eq.1)write(*,*)'CHECK_h_before', COUNTER_VAR_diag_HIGH
                                 counter_var_diag = counter_var_diag + 1
                                 if (FREQ_GROUP.eq.1) counter_var_diag_high = counter_var_diag_high + 1
 
@@ -460,7 +470,8 @@
                                                 enddo
                                         enddo
                                 enddo
-
+                                !if (FREQ_GROUP.eq.2)write(*,*) 'CHECK ', var_to_store_diag, var_to_send
+                                !if (FREQ_GROUP.eq.1)write(*,*) 'CHECK_h', var_to_store_diag, COUNTER_VAR_diag_HIGH
                                 bkpname     = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag)//'.nc.bkp'
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag)//'.nc'
               

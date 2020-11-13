@@ -33,7 +33,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
         INTEGER, INTENT(IN) :: FREQ_GROUP ! 1 = HIGH FREQ, 2 = LOW FREQ #cannot change value inside te value
         double precision ::  Miss_val =1.e20
 
-        INTEGER jk,jj,ji, jn, jn_high,i,j,k
+        INTEGER jk,jj,ji,i,j,k
         INTEGER ind, i_contribution, j_contribution
         double precision :: elapsed_time
 

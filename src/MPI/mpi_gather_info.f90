@@ -105,10 +105,10 @@ MODULE MPI_GATHER_INFO
                         bufftrn_TOT = huge(bufftrn_TOT(1)) 
 
                         WRITING_RANK_WR = .TRUE.     
-                        
+#ifdef ExecDA                        
                         allocate(tottrnDA(jpiglo, jpjglo, jpk))
                         tottrnDA = huge(tottrnDA(1,1,1))
-
+#endif
                 end if
         end do
 

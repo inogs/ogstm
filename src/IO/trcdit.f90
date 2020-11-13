@@ -149,10 +149,6 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                 CALL MPI_Reduce( gatherv_delta_time, gatherv_sum_time, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,IERROR)
 
 
-                if(myrank == 0) then
-                        gatherv_mean_time = gatherv_sum_time / (nodes*36)
-                        !write(*,*) 'gatherv mean time, jv,freqgroup  ', gatherv_mean_time,' ', jv,' ', FREQ_GROUP
-                end if
                 ! *************** COLLECTING DATA *****************************
 
                 IF (WRITING_RANK_WR)then
@@ -209,6 +205,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                         writing_rank_fin_time = MPI_Wtime()
                         writing_rank_delta_time = writing_rank_fin_time - writing_rank_init_time
                         writing_rank_sum_time = writing_rank_delta_time + writing_rank_sum_time
+                        !write(*,*)'writingtime', writing_rank_sum_time,'   ',jv, '   ', myrank
                 END IF
         END DO DUMPING_LOOP
 
@@ -225,9 +222,9 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 
         CALL MPI_Reduce( proctime_time_trcdit_info,max_time_trcdit_info, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,IERROR)
 
-        if(myrank == 0) then
-                write(*,*) 'TRCDIT TIME is', max_time_trcdit_info
-        end if
+        !if(myrank == 0) then
+        !        write(*,*) 'TRCDIT TIME is', max_time_trcdit_info
+        !end if
 
 
 END SUBROUTINE trcdit

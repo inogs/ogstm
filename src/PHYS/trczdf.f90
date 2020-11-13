@@ -246,7 +246,7 @@
 
          IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
 
-                  diaflx(7,jf,jn) = int_tra(jk)
+                  diaflx(7,jf,jn) = int_tra(jk)*rdt
 
          ENDIF
 

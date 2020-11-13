@@ -38,7 +38,6 @@
 
 
 
-!Realcounter   =    REAL(ave_counter_1  , 8)
       elapsed_time         =     elapsed_time_1
       inv_incremented_time = 1./(elapsed_time_1 + rdt)! ****************** HIGH FREQUENCY
       DO jn_high=1 ,jptra_high

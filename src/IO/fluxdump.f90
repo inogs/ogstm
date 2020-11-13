@@ -7,7 +7,7 @@
       USE DIA_mem
       USE netcdf
       use mpi
-      USE IO_mem, only: ave_counter_1, ave_counter_2
+      USE IO_mem, only: elapsed_time_1, elapsed_time_2
 
       IMPLICIT NONE
 
@@ -28,10 +28,10 @@
       if (.not.existFileFluxes) RETURN
       IF  (freq_flux_dump.eq.1) THEN
            if (FREQ_GROUP.eq.2 )     RETURN
-           Realcounter   =    1./REAL(ave_counter_1  , 8)
+           Realcounter   =    1./elapsed_time_1
       ELSE
            if (FREQ_GROUP.eq.1 )     RETURN
-           Realcounter   =    1./REAL(ave_counter_2  , 8)
+           Realcounter   =    1./elapsed_time_2
       ENDIF
 
       flx_partTime = MPI_WTIME()

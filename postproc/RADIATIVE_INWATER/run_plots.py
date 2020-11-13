@@ -10,7 +10,8 @@ SIM_MAIN_FOLDER = sys.argv[1]                # '/gpfs/scratch/userexternal/eterz
 
 for SIM in os.listdir(SIM_MAIN_FOLDER):
 
-	if SIM in ['MAIN', 'BBP']: continue
+	if SIM in ['MAIN_v1', 'BBP', 'FINAL', 'FINAL2', 'IOP']: continue 
+
 
 	FOLDER   = os.path.join(SIM_MAIN_FOLDER, SIM) + '/'
 

@@ -20,6 +20,10 @@ for SIM in os.listdir(SIM_MAIN_FOLDER):
 	print('Plotting simulations %s ... '%SIM, end = '')
 
 	os.system('sbatch plot_Ed.sh %s %s' %(FOLDER, CSV_FILE))
+	os.system('sbatch plot_Ed_025.sh %s %s' %(FOLDER, CSV_FILE))
+	os.system('sbatch plot_Ed_050.sh %s %s' %(FOLDER, CSV_FILE))
+	os.system('sbatch plot_Ed_075.sh %s %s' %(FOLDER, CSV_FILE))
+
 	os.system('sbatch plot_Kd.sh %s %s' %(FOLDER, CSV_FILE))
 	os.system('sbatch plot_Rrs.sh %s %s' %(FOLDER, CSV_FILE))
 	os.system('sbatch plot_Kd_CLIM.sh %s %s' %(FOLDER, CSV_FILE))

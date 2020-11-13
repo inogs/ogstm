@@ -50,8 +50,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 
         CHARACTER(LEN=20)  var_to_store
 
-        INTEGER :: ind_co
-Image              PC                Routine       l, num_var
+        INTEGER :: ind_col
         DOUBLE PRECISION :: start_time_trcdit_info,finish_time_trcdit_info, proctime_time_trcdit_info, max_time_trcdit_info
         DOUBLE PRECISION :: gatherv_fin_time,gatherv_init_time,gatherv_delta_time,gatherv_sum_time,gatherv_mean_time
         DOUBLE PRECISION :: writing_rank_fin_time, writing_rank_init_time,writing_rank_delta_time, writing_rank_sum_time

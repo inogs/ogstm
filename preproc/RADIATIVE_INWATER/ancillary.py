@@ -12,8 +12,6 @@ from bw_TS_corr import rhou_sw
 from configuration import wl
 from Q_read import Qo_morel, SQn_morel
 
-
-
 ''' Here you put all the functions, also for the IOPs , T-S corrections, etc. '''
 
 def str2bool(v):
@@ -22,7 +20,6 @@ def str2bool(v):
 def INT_wl(xa, xb, ya, yb, xINT):
     yINT = ya*(xb-xINT)/(xb-xa) + yb*(xa-xINT)/(xa-xb)
     return yINT
-
 
 def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
 
@@ -33,7 +30,6 @@ def write_abw25(wl, aw, bw, fname='bcs/abw25.dat'):
 	file.close()
 
 	return 
-
 
 def write_acbc25(wl, aPFT_TOT, bp_TOT, bbp_TOT, fname='bcs/acbc25.dat'):
 
@@ -68,9 +64,8 @@ def findVars(Varlist, allvars=['CHLA', 'IRR_380', 'IRR_412', 'IRR_490', 'TEMP'])
 			return False
 	return True
 
-'''
-Prepare model and BGC-Argo output for .nc files and match-up analysis
-'''
+
+# Prepare model and BGC-Argo output for .nc files and match-up analysis
 
 def save_matchup(ncfile, Pres380, Pres412, Pres490, Ed380_float, Ed412_float, Ed490_float, Ed380_model, Ed412_model, Ed490_model, timestr):
 
@@ -308,9 +303,7 @@ def Ed_QC(Ed):  # For now we are not using it
 def profile_shape(x, y):
 	return x*y/np.max(y)
 
-
-# Create functions for chl-specific IOP spectra
-
+# Create functions for tracer-specific IOP spectra
 # Di Cicco et al., 2017 - both for PFT and PSC
 def PFT_MED(CHL):
 # This algorithm works only if CHL is in range between 0.02 and 5.52 mg/m3
@@ -347,7 +340,6 @@ def PFT_MED(CHL):
 
 	return aPFT_TOT #PFT_1, PFT_2, PFT_3, PFT_4, PFT_5, PFT_6, PSC_1, PSC_2, PSC_3
 
-
 def aNAP_Babin(X, a443, Snap):
 
 	# X is CHL or BBP700
@@ -359,7 +351,6 @@ def aNAP_Babin(X, a443, Snap):
 		aNAP[:,iwl] = a_NAP * X / np.max(X)
 
 	return aNAP
-
 
 def aNAP_Case1(CHL, X, Snap):
 
@@ -382,7 +373,6 @@ def aCDOM_Case1(CHL, Scdom):
 		aCDOM[:,iwl]  = a_cdom * CHL / np.max(CHL)   
 
 	return aCDOM
-
 
 def aCDOM_Case1_CDOM(CHL, CDOM_qc, Scdom):
 
@@ -464,14 +454,10 @@ def bbp_frombbp700(bbp700_int, slope, ratio):
 
 	return bp, bbp
 
-
 # Compute Q
-
 def Q_aas(solz):
 	Q = 5.33 * np.exp(-0.45 * np.cos(np.deg2rad(solz)))
 	return Q
-
-
 
 def Q_morel(solz, PresCHL, CHL, wl, depth_type):
 
@@ -485,7 +471,3 @@ def Q_morel(solz, PresCHL, CHL, wl, depth_type):
 	Q = Qo + Sqn * (1 - np.cos(np.deg2rad(solz)))
 
 	return Q
-
-
-
-

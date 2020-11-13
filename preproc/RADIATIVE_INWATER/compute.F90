@@ -170,7 +170,7 @@ write(*,*) 'rmud', rmud
 
 MODE = 0
 
-V_POSITION = "AVERAGE"
+V_POSITION = "BOTTOM"  ! AVERAGE, MID or BOTTOM 
 
 Ed_0m(:,1,1) = Ed_OASIM(:)
 Es_0m(:,1,1) = Es_OASIM(:)

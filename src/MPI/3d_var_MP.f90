@@ -70,79 +70,126 @@ MODULE TREd_var_MP
 #ifdef ExecDA
         PetscErrorCode :: stat
 #endif
-
         INTEGER :: TREd_procs_per_node
         INTEGER, allocatable, dimension (:) :: TREd_procs_per_node_array
         INTEGER :: i, j, counter_3d_procs, IERROR
-
+        INTEGER :: k, max_procs_per_one_node
+        write(*,*) 'startinROUTINE'
         V3D_VAR_PARALLEL = .false.
 
         TREd_procs_per_node = 5
+        max_procs_per_one_node = 9
         
-        ALLOCATE (TREd_procs_per_node_array(DA_Nprocs))
-
+        if (nodes == 1) then
+                ALLOCATE (TREd_procs_per_node_array(max_procs_per_one_node))
+        else
+                if (nodes*TREd_procs_per_node < DA_Nprocs)then
+                        ALLOCATE(TREd_procs_per_node_array(nodes*TREd_procs_per_node))
+                else
+                        ALLOCATE (TREd_procs_per_node_array(DA_Nprocs))
+                end if
+        end if
         !CALL ALLOCATE_3D_PARALLEL_PROCS()
 
-  
-        ! only in rank 0
         ! define which processors will be used for 3d var scheme
-        IF(myrank == 0)then
-                counter_3d_procs = 1
-                do i=1, nodes
-                        if(counter_3d_procs > DA_Nprocs) then
-                                exit
-                        else
-                                TREd_procs_per_node_array(counter_3d_procs)= writing_procs(i)
-                                counter_3d_procs = counter_3d_procs + 1
-                                do j=1, TREd_procs_per_node -1
-                                        if(counter_3d_procs > DA_Nprocs) then
-                                                exit
-                                        else 
-                                                TREd_procs_per_node_array(counter_3d_procs)=writing_procs(i) + j
-                                                counter_3d_procs = counter_3d_procs + 1
-                                        end if
-                                end do
-                        end if
-                end do
-                
-                ! proc 0 send the array to all processors
-                DO i=1, mpi_glcomm_size - 1
-                        CALL MPI_Send(TREd_procs_per_node_array,DA_Nprocs,MPI_INT,i,5,MPI_COMM_WORLD,IERROR)
-                END DO
 
-                !test
-                DO i=1, DA_Nprocs
+        counter_3d_procs = 1
+        write(*,*) 'first_write 3dvarparallel', counter_3d_procs, myrank 
+                
+        if (nodes == 1)then
+                do k=1, max_procs_per_one_node
+                        TREd_procs_per_node_array(k) = k - 1
+                end do
+        else if (nodes*TREd_procs_per_node < DA_Nprocs) then
+                if(counter_3d_procs > nodes*TREd_procs_per_node) then
+                        exit
+                else
+                        TREd_procs_per_node_array(counter_3d_procs)=writing_procs(i)
+                        counter_3d_procs = counter_3d_procs + 1 
+                        do j=1, TREd_procs_per_node -1
+                                if(counter_3d_procs > nodes*TREd_procs_per_node) then
+                                        exit
+                                else
+                                        TREd_procs_per_node_array(counter_3d_procs)=writing_procs(i) + j
+                                        write(*,*) 'fourth_write3dvarparallel',counter_3d_procs,'',writing_procs(i)+j,TREd_procs_per_node_array(counter_3d_procs)
+                                        counter_3d_procs = counter_3d_procs + 1
+                                        write(*,*) 'third_write3dvarparallel',counter_3d_procs, myrank
+                                end if
+                        end do
+                end if
+        else
+                TREd_procs_per_node_array(counter_3d_procs)= writing_procs(i)
+                        write(*,*) 'second_write3dvarparallel',counter_3d_procs,'',writing_procs(i),TREd_procs_per_node_array(counter_3d_procs)
+                        counter_3d_procs = counter_3d_procs + 1
+                        write(*,*) 'third_write 3dvarparallel',counter_3d_procs,myrank
+                        do j=1, TREd_procs_per_node -1
+                                if(counter_3d_procs > DA_Nprocs) then
+                                        exit
+                                else
+                                        TREd_procs_per_node_array(counter_3d_procs)=writing_procs(i) + j
+                                        write(*,*) 'fourth_write3dvarparallel',counter_3d_procs,'',writing_procs(i)+j,TREd_procs_per_node_array(counter_3d_procs)
+                                        counter_3d_procs = counter_3d_procs + 1
+                                        write(*,*) 'third_write3dvarparallel',counter_3d_procs, myrank
+                                end if
+                        end do
+        end if
+
+!                write(*,*) "before send"
+!                ! proc 0 send the array to all processors
+!                DO i=1, mpi_glcomm_size - 1
+!                        CALL MPI_Send(TREd_procs_per_node_array,DA_Nprocs,MPI_INT,i,5,MPI_COMM_WORLD,IERROR)
+!                END DO
+!                write(*,*) 'after send'
+!                !test
+        if(myrank==0)then        
+                DO i=1, 9
 
                         write(*,*) '3d_var_proc is',TREd_procs_per_node_array (i)
 
                 END DO
+        end if
 
-        END IF
         
         !all procs =! 0 receive the array
-        IF(myrank > 0)then
-
-                CALL MPI_Recv(TREd_procs_per_node_array,DA_Nprocs,MPI_INT,0,5,MPI_COMM_WORLD,MPI_STATUS_IGNORE, IERROR)
-                
-        END IF
+!        IF(myrank > 0)then
+!
+!                CALL MPI_Recv(TREd_procs_per_node_array,DA_Nprocs,MPI_INT,0,5,MPI_COMM_WORLD,MPI_STATUS_IGNORE, IERROR)
+!                
+!        END IF
 
         !all processors change the boolean if they are linked to 3d var scheme
-        DO i=1, DA_Nprocs
-
-                IF(MYRANK == TREd_procs_per_node_array(i)) then
-                        
-                        V3D_VAR_PARALLEL = .true.
-                END IF
-
-        END DO
+        if (nodes ==1) then
+                do i=1,max_procs_per_one_node
+                        IF(MYRANK == TREd_procs_per_node_array(i)) then
+                                V3D_VAR_PARALLEL = .true.
+                        END IF
+                end do
+        else if (nodes*TREd_procs_per_node < DA_Nprocs) then
+                do i=1,nodes*TREd_procs_per_node
+                        IF(MYRANK == TREd_procs_per_node_array(i)) then
+                                V3D_VAR_PARALLEL = .true.
+                        END IF
+                end do
+        else
+                do i=1,DA_Nprocs
+                        IF(MYRANK == TREd_procs_per_node_array(i)) then
+                                V3D_VAR_PARALLEL = .true.
+                        END IF
+                end do
+        end if
 
 
 !PG parts from ogstm_mpi
 
 #ifdef ExecDA
         if(V3D_VAR_PARALLEL) then
-                call MPI_Comm_split(MPI_COMM_WORLD, DA_Nprocs,myrank,Var3DCommunicator, ierror)
-
+                if(nodes ==1) then
+                        call MPI_Comm_split(MPI_COMM_WORLD, max_procs_per_one_node,myrank,Var3DCommunicator, ierror)
+                else if (nodes*TREd_procs_per_node <DA_Nprocs) then
+                        call MPI_Comm_split(MPI_COMM_WORLD,nodes*TREd_procs_per_node,myrank,Var3DCommunicator, ierror)
+                else
+                        call MPI_Comm_split(MPI_COMM_WORLD,DA_nprocs,myrank,Var3DCommunicator,ierror)
+                end if
                 PETSC_COMM_WORLD = Var3DCommunicator
                 call PetscInitialize(PETSC_NULL_CHARACTER,stat)
                 CHKERRQ(stat)

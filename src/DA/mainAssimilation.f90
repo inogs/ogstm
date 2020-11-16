@@ -6,6 +6,7 @@
       use ogstm_mpi_module
       use mpi_str, only: Var3DCommunicator
       use calendar
+      USE TREd_var_MP
 
       IMPLICIT NONE
 

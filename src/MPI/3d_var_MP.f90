@@ -120,7 +120,7 @@ MODULE TREd_var_MP
                                         end do
                                 end if
                         end do
-                        DO i=1, counter_3d_procs
+                        DO i=1, counter_3d_procs - 1
                                 write(*,*) '3d_var_procis',TREd_procs_per_node_array(i)
                         END DO
                         do i=1,nodes*TREd_procs_per_node
@@ -146,7 +146,7 @@ MODULE TREd_var_MP
                                         end do
                                 end if
                         end do
-                        DO i=1, counter_3d_procs
+                        DO i=1, counter_3d_procs - 1
                                 write(*,*)'3d_var_procis',TREd_procs_per_node_array(i)
                         END DO
                         do i=1,DA_Nprocs

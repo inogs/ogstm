@@ -347,18 +347,11 @@
              jj = flx_ridxt(jf,3)
              ji = flx_ridxt(jf,4)
 
-             diaflx(5,jf, jn) = diaflx(5,jf, jn) - ztu(jk,jj,ji) ! in diffusion we invert face orientation
-             diaflx(6,jf, jn) = diaflx(6,jf, jn) - ztv(jk,jj,ji)
+             diaflx(5,jf, jn) = diaflx(5,jf, jn) - ztu(jk,jj,ji)*rdt ! in diffusion we invert face orientation
+             diaflx(6,jf, jn) = diaflx(6,jf, jn) - ztv(jk,jj,ji)*rdt
 
           ENDDO
 
-!     Save diffusive fluxes x,y
-!              IF ( (Fsize .GT. 0) .AND. ( jf .GT. 0 ) ) THEN
-!                 diaflx(jf,jn ,5) = diaflx(jf,jn ,5) + ztu(jk,jj,ji) 
-!                 diaflx(jf,jn ,6) = diaflx(jf,jn ,6) + ztv(jk,jj,ji) 
-!              END IF
-
-      !    END DO
  
       
 !! End of slab

@@ -22,7 +22,28 @@
        call handle_err1(stat, counter,FileNetCDF)
        END SUBROUTINE EXISTVAR
 
+! ! *****************************************************************************
+    SUBROUTINE readnc_scalar_double(fileNetCDF,varname, M)
+    USE netcdf
+    implicit none
 
+    character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+    double precision,intent(inout) ::  M
+    integer ncid, stat, VARid
+    integer counter
+
+    counter=0
+    stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+    call handle_err1(stat, counter,FileNetCDF)
+
+    stat = nf90_inq_varid (ncid, varname, VARid)
+    call handle_err2(stat, fileNetCDF,varname)
+    call handle_err1(stat, counter,FileNetCDF)
+    stat = nf90_get_var (ncid,VARid,M)
+    stat = nf90_close(ncid)
+    call handle_err1(stat, counter,FileNetCDF)
+
+    END SUBROUTINE readnc_scalar_double
 ! ! *****************************************************************************
 
       SUBROUTINE readnc_slice_double(fileNetCDF,varname, M)

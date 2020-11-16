@@ -68,7 +68,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
              if (.not.bkp2hasbeenread) then
-               call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_2)
+               call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
                call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                bkp2hasbeenread=.true.
              endif
@@ -87,8 +87,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO_HIGH(:,:,:,jn_high) )
                 if (.not.bkp1hasbeenread) then
-
-                  call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_1)
+                  call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
                   call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                   bkp1hasbeenread=.true.
                 endif
@@ -112,7 +111,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,dianm(jn), tra_DIA_IO(jn,:,:,:) )
              if (.not.bkp2hasbeenread) then
-                call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_2)
+                call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
@@ -128,7 +127,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_IO_HIGH(jn_high,:,:,:) )
                     if (.not.bkp1hasbeenread) then
-                      call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_1)
+                      call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
@@ -152,7 +151,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double_2d(bkpname,dianm_2d(jn), tra_DIA_2d_IO(jn,:,:) )
              if (.not.bkp2hasbeenread) then
-                call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_2)
+                call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
@@ -168,7 +167,7 @@
              if (lwp) write(*,*) 'reading ', bkpname
              CALL readnc_slice_double_2d(bkpname,trim(dianm_2d(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
                     if (.not.bkp1hasbeenread) then
-                      call readnc_double_1d(bkpname,'elapsed_time',1,elapsed_time_1)
+                      call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif

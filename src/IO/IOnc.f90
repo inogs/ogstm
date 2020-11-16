@@ -22,7 +22,28 @@
        call handle_err1(stat, counter,FileNetCDF)
        END SUBROUTINE EXISTVAR
 
+! ! *****************************************************************************
+    SUBROUTINE readnc_scalar_double(fileNetCDF,varname, M)
+    USE netcdf
+    implicit none
 
+    character,intent(in) :: fileNetCDF*(*) ,varname*(*)
+    double precision,intent(inout) ::  M
+    integer ncid, stat, VARid
+    integer counter
+
+    counter=0
+    stat = nf90_open(fileNetCDF, nf90_nowrite, ncid)
+    call handle_err1(stat, counter,FileNetCDF)
+
+    stat = nf90_inq_varid (ncid, varname, VARid)
+    call handle_err2(stat, fileNetCDF,varname)
+    call handle_err1(stat, counter,FileNetCDF)
+    stat = nf90_get_var (ncid,VARid,M)
+    stat = nf90_close(ncid)
+    call handle_err1(stat, counter,FileNetCDF)
+
+    END SUBROUTINE readnc_scalar_double
 ! ! *****************************************************************************
 
       SUBROUTINE readnc_slice_double(fileNetCDF,varname, M)
@@ -936,7 +957,7 @@
         ! *********** DIMENSIONS ****************
         s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
         s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
-        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
+        s= nf90_def_dim(nc,'time'          , 1     ,timid)
 
         ! ********** VARIABLES *****************
         s = nf90_def_var(nc,'elapsed_time', nf90_double,(/timid/),       idvartime)
@@ -1174,7 +1195,7 @@
         s= nf90_def_dim(nc,'x'           , jpiglo,  xid)
         s= nf90_def_dim(nc,'y'           , jpjglo,  yid)
         s= nf90_def_dim(nc,'deptht'      , jpk   ,depid)
-        s= nf90_def_dim(nc,'time_counter', NF90_UNLIMITED,timid)
+        s= nf90_def_dim(nc,'time_counter', 1     ,timid)
 
         
         ! ********** VARIABLES *****************

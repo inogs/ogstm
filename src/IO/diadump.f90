@@ -17,7 +17,7 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
       INTEGER, INTENT(IN) :: FREQ_GROUP
-      INTEGER jk,jj,ji, jn, jn_high
+      INTEGER jk,jj,ji
       INTEGER ind, i_contribution, j_contribution
       CHARACTER(10) newfile
       CHARACTER(LEN=42) forcing_file
@@ -488,9 +488,9 @@
 
         if (.not.IsBackup) then
                 if (FREQ_GROUP.eq.2) then
-                        tra_DIA_IO(jn,:,:,:) = 0.
+                        tra_DIA_IO(:,:,:,:) = 0.
                 else
-                        tra_DIA_IO_HIGH(jn_high,:,:,:) = 0.
+                        tra_DIA_IO_HIGH(:,:,:,:) = 0.
                 endif
         endif
 

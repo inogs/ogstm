@@ -19,7 +19,6 @@
 
       INTEGER :: jpi_rec, jpj_rec
       INTEGER :: jpi_max, jpj_max
-      INTEGER :: ave_counter_1=0, ave_counter_2=0
       double precision :: elapsed_time_1=0.0, elapsed_time_2 = 0.0
       LOGICAL :: existFilebkp = .false.
       double precision, allocatable :: buffglamt(:) 

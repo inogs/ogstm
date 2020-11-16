@@ -33,7 +33,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
         INTEGER, INTENT(IN) :: FREQ_GROUP ! 1 = HIGH FREQ, 2 = LOW FREQ #cannot change value inside te value
         double precision ::  Miss_val =1.e20
 
-        INTEGER jk,jj,ji, jn, jn_high,i,j,k
+        INTEGER jk,jj,ji,i,j,k
         INTEGER ind, i_contribution, j_contribution
         double precision :: elapsed_time
 
@@ -50,7 +50,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 
         CHARACTER(LEN=20)  var_to_store
 
-        INTEGER :: ind_col, num_var
+        INTEGER :: ind_col
         DOUBLE PRECISION :: start_time_trcdit_info,finish_time_trcdit_info, proctime_time_trcdit_info, max_time_trcdit_info
         DOUBLE PRECISION :: gatherv_fin_time,gatherv_init_time,gatherv_delta_time,gatherv_sum_time,gatherv_mean_time
         DOUBLE PRECISION :: writing_rank_fin_time, writing_rank_init_time,writing_rank_delta_time, writing_rank_sum_time
@@ -202,9 +202,9 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                                         CALL WRITE_AVE(output_file_nc,var_to_store,datefrom, dateTo, tottrnIO, deflate_ave, deflate_level_ave)
                                 endif
                         END IF
-                        writing_rank_fin_time = MPI_Wtime()
-                        writing_rank_delta_time = writing_rank_fin_time - writing_rank_init_time
-                        writing_rank_sum_time = writing_rank_delta_time + writing_rank_sum_time
+                        !writing_rank_fin_time = MPI_Wtime()
+                        !writing_rank_delta_time = writing_rank_fin_time - writing_rank_init_time
+                        !writing_rank_sum_time = writing_rank_delta_time + writing_rank_sum_time
                         !write(*,*)'writingtime', writing_rank_sum_time,'   ',jv, '   ', myrank
                 END IF
         END DO DUMPING_LOOP

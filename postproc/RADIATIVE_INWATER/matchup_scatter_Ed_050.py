@@ -41,8 +41,8 @@ for iline, line in enumerate(READER):  # each line is one simulation
     if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER'):   
         os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER')       # create the SCATTER folder within the PLOTS folder
 
-    if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed'):   
-        os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed')     # create the Ed folder within the SCATTER folder
+    if not os.path.isdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed_050'):   
+        os.mkdir(SIM_MAIN_FOLDER + '/PLOTS/SCATTER/Ed_050')     # create the Ed folder within the SCATTER folder
 
 
     for ifile, filename in enumerate(glob.glob(SIM_FOLDER + '/MATCHUP/*.nc')):

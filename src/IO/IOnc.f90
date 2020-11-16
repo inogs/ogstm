@@ -957,7 +957,7 @@
         ! *********** DIMENSIONS ****************
         s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
         s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
-        s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
+        s= nf90_def_dim(nc,'time'          , 1     ,timid)
 
         ! ********** VARIABLES *****************
         s = nf90_def_var(nc,'elapsed_time', nf90_double,(/timid/),       idvartime)
@@ -1195,7 +1195,7 @@
         s= nf90_def_dim(nc,'x'           , jpiglo,  xid)
         s= nf90_def_dim(nc,'y'           , jpjglo,  yid)
         s= nf90_def_dim(nc,'deptht'      , jpk   ,depid)
-        s= nf90_def_dim(nc,'time_counter', NF90_UNLIMITED,timid)
+        s= nf90_def_dim(nc,'time_counter', 1     ,timid)
 
         
         ! ********** VARIABLES *****************

@@ -57,29 +57,29 @@ contains
 !!----------------------------------------------------------------------
 
 SUBROUTINE mynode
-
       INTEGER :: ierr
-#ifdef ExecDA
-      PetscErrorCode :: stat
-#endif
+
+!#ifdef ExecDA
+!      PetscErrorCode :: stat
+!#endif
 
 #ifdef key_mpp_mpi
 
       CALL mpi_comm_rank(mpi_comm_world,myrank,ierr)
       CALL mpi_comm_size(mpi_comm_world,mpi_glcomm_size,ierr)
-      call parlec ! in order to read DA_Nprocs
+      !call parlec ! in order to read DA_Nprocs
 
-#ifdef ExecDA
-      if(myrank .lt. DA_Nprocs) then
-        call MPI_Comm_split(MPI_COMM_WORLD, DA_Nprocs, myrank, Var3DCommunicator, ierr)
+!#ifdef ExecDA
+!      if(V3D_VAR_PARALLEL) then
+!        call MPI_Comm_split(MPI_COMM_WORLD, nodes * TREd_procs_per_node, myrank, Var3DCommunicator, ierr)
         
-        PETSC_COMM_WORLD = Var3DCommunicator
-        call PetscInitialize(PETSC_NULL_CHARACTER,stat)
-        CHKERRQ(stat)
-      else
-        call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED, myrank, Var3DCommunicator, ierr)
-      endif
-#endif
+!        PETSC_COMM_WORLD = Var3DCommunicator
+!        call PetscInitialize(PETSC_NULL_CHARACTER,stat)
+!        CHKERRQ(stat)
+!      else
+!        call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED, myrank, Var3DCommunicator, ierr)
+!      endif
+!#endif
 
 #else
       mpi_glcomm_size = 1

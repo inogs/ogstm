@@ -61,6 +61,8 @@
 
 &DA_setup
     DA_Nprocs = 20,
+    TREd_procs_per_node = 5,
+    max_procs_per_one_node = 9,
     satfile_suffix = "_d-OC_CNR-L4-CHL-MedOC4_SAM_7KM-MED-REP-v02.nc",
     satvarname     = "CHL"
     AssimilationLevels = 36

@@ -225,7 +225,7 @@
       if(myrank == 0) then ! IF LABEL 4,
          if (IsBackup) then
 
-            call PhysDump_bkp(forcing_file, datefrom, dateTo,elapsed_time)
+            !call PhysDump_bkp(forcing_file, datefrom, dateTo,elapsed_time)
           else
             call PhysDump(forcing_file, datefrom, dateTo)
          endif
@@ -340,7 +340,7 @@
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc'
 
                                 if (IsBackup) then
-                                        CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_diag_2d,datefrom, dateTo,tottrnIO2d, elapsed_time)
+                                        !CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_diag_2d,datefrom, dateTo,tottrnIO2d, elapsed_time)
 
                                 else
                                         d2f2d = REAL(tottrnIO2d(:,:),4)

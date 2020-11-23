@@ -225,7 +225,7 @@
       if(myrank == 0) then ! IF LABEL 4,
          if (IsBackup) then
 
-            !call PhysDump_bkp(forcing_file, datefrom, dateTo,elapsed_time)
+            call PhysDump_bkp(forcing_file, datefrom, dateTo,elapsed_time)
           else
             call PhysDump(forcing_file, datefrom, dateTo)
          endif

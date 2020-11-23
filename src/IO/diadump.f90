@@ -340,7 +340,7 @@
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc'
 
                                 if (IsBackup) then
-                                        !CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_diag_2d,datefrom, dateTo,tottrnIO2d, elapsed_time)
+                                        CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_diag_2d,datefrom, dateTo,tottrnIO2d, elapsed_time)
 
                                 else
                                         d2f2d = REAL(tottrnIO2d(:,:),4)

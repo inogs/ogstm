@@ -59,10 +59,10 @@ MODULE TREd_var_MP
 #ifdef ExecDA
         PetscErrorCode :: stat
 #endif
-        INTEGER :: TREd_procs_per_node
+        
         INTEGER, allocatable, dimension (:) :: TREd_procs_per_node_array
         INTEGER :: i, j, counter_3d_procs, IERROR
-        INTEGER :: k, max_procs_per_one_node
+        INTEGER :: k
         INTEGER :: case_selection
         write(*,*) 'startinROUTINE'
         V3D_VAR_PARALLEL = .false.
@@ -73,8 +73,8 @@ MODULE TREd_var_MP
 ! + nodes but nodes*TREd_procs_per_node < DA_nprocs -> 5 procs per node
 ! + nodes with DA_n procs -> 5 procs per node + distribution        
 #ifdef ExecDA
-        TREd_procs_per_node = 5
-        max_procs_per_one_node = 9
+        !TREd_procs_per_node = 5
+        !max_procs_per_one_node = 9
         
         if(nodes == 1) then
                 case_selection = 1

@@ -1082,7 +1082,7 @@
         s = nf90_put_att(nc,idEddy, 'units'        ,'m/s')
         s = nf90_put_att(nc,idEddy, 'missing_value',1.e+20)
 
-        s = nf90_put_att(nc,ide3t , 'long_name'    ,'Vartical scale factor')
+        s = nf90_put_att(nc,ide3t , 'long_name'    ,'Vertical scale factor')
         s = nf90_put_att(nc,ide3t , 'units'        ,'m')
         s = nf90_put_att(nc,ide3t , 'missing_value',1.e+20)
 

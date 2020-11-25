@@ -8,6 +8,8 @@
       CHARACTER(LEN=35) CHLSUP_FOR_DA
       INTEGER DA_Nprocs
       INTEGER AssimilationLevels_sat, AssimilationLevels_float
+      INTEGER TREd_procs_per_node
+      INTEGER max_procs_per_one_node
       character(LEN=200) satfile_suffix
       character(LEN=40 ) satvarname
 

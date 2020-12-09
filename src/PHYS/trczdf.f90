@@ -170,7 +170,7 @@
 !!   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwy(jk,1) = trb(jk,jj,ji,jn) + z2dtt * tra(jk,jj,ji,jn)
+          zwy(jk,1) = trb(jk,jj,ji,jn)*e3t_back(jk,jj,ji)/e3t(jk,jj,ji) + z2dtt * tra(jk,jj,ji,jn)
         END DO
 
 !! Matrix inversion from the first level

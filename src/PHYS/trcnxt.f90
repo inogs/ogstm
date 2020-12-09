@@ -88,7 +88,7 @@
           DO jj = 1,jpj
         DO jk = 1,jpk
             
-            tra(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*e3t_back(jk,jj,ji)/e3t(jk,jj,ji)
+            !tra(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*e3t_back(jk,jj,ji)/e3t(jk,jj,ji)
             trb(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )
             trn(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*tmask(jk,jj,ji)
             tra(jk,jj,ji,jn  ) = 0.e0

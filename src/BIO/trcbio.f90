@@ -137,8 +137,11 @@
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
                           er(9)  = vatm(jj,ji) * surf_mask(jk)  ! wind speed (m/s)
                           er(10) = ogstm_PH(jk,jj,ji)         ! PH
+#ifdef gdept1d
                           er(11) = ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
-
+#else
+                          er(11) = ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji) 
+#endif
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
                          call BFM0D_reset()
@@ -179,7 +182,7 @@
       do jk=1, jpk
 
          correct_fact= 1.0D0
-
+#ifdef gdept1d
          if ( (gdept(jk) .GT. 1000.0D0 ) .AND.  (gdept(jk) .LT. 2000.0D0 )) then
              correct_fact= 0.25D0
          endif
@@ -189,8 +192,17 @@
          endif
              
          er(jk,11) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
+#else
+         if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
+             correct_fact= 0.25D0
+         endif
 
-!        write(*,*) "jk= ", jk, "gdept(jk) ", gdept(jk), " correct_fact", correct_fact, "er(jk,11)", er(jk,11)
+         if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
+             correct_fact= 0.0D0
+         endif
+
+         er(jk,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
+#endif
 
       enddo
 

@@ -92,7 +92,7 @@
 
       jptra_dia_high= 0
       do ji =1, jptra_dia
-          IF (diahf(ji).eq.1) jptra_dia_high = jptra_dia_high + 1
+          IF ((diahf(ji).eq.1).and.(diawr(ji).eq.1)) jptra_dia_high = jptra_dia_high + 1
       ENDDO
 
       if (lwp) write(*,*) 'High freq diagnostics number :', jptra_dia_HIGH
@@ -101,7 +101,7 @@
       jptra_dia_high = 0
 
       do ji =1, jptra_dia
-          IF (diahf(ji).eq.1) then
+          IF ((diahf(ji).eq.1).and.(diawr(ji).eq.1)) then
             jptra_dia_high = jptra_dia_high + 1
             highfreq_table_dia(jptra_dia_high) = ji
             if (lwp) WRITE(numout,*) dianm(ji), ' belongs also to high freq group'
@@ -111,7 +111,9 @@
       enddo
 
 
-
+       write(*,*) 'HIGHFREQ_TABLE_TRA_DIA'
+       write(*,*) highfreq_table_dia
+       
 
 !      ***********  namelist nattrc_diag_2d DIAGNOSTIC VARIABLES surface or bottom:
 
@@ -120,7 +122,7 @@
 
       jptra_dia2d_high= 0
       do ji =1, jptra_dia_2d
-          IF (diahf_2d(ji).eq.1) jptra_dia2d_high = jptra_dia2d_high + 1
+          IF ((diahf_2d(ji).eq.1).and.(diaWR_2d(ji).eq.1)) jptra_dia2d_high = jptra_dia2d_high + 1
       ENDDO
 
       if (lwp) write(*,*) 'High freq diagnostics number 2d:', jptra_dia2d_HIGH
@@ -129,7 +131,7 @@
       jptra_dia2d_high = 0
 
       do ji =1, jptra_dia_2d
-          IF (diahf_2d(ji).eq.1) then
+          IF ((diahf_2d(ji).eq.1).and.(diaWR_2d(ji).eq.1))  then
             jptra_dia2d_high = jptra_dia2d_high + 1
             highfreq_table_dia2d(jptra_dia2d_high) = ji
             if (lwp) WRITE(numout,*) dianm_2d(ji), ' belongs also to high freq group'

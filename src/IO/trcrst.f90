@@ -119,7 +119,7 @@
              tra_DIA_IO(jn,:,:,:) = 0.0
           endif
 
-          IF (diahf(jn).eq.1)  THEN
+          IF ((diahf(jn).eq.1).and.(diaWR(jn).eq.1))  THEN
            jn_high = jn_high + 1
            bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm(jn))//'.nc.bkp'
            INQUIRE(FILE=bkpname, EXIST=existFile)
@@ -159,7 +159,7 @@
              tra_DIA_2d_IO(jn,:,:) = 0.0
           endif
 
-          IF (diahf_2d(jn).eq.1)  THEN
+          IF ((diahf_2d(jn).eq.1).and.(diaWR_2d(jn).eq.1))  THEN
            jn_high = jn_high + 1
            bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm_2d(jn))//'.nc.bkp'
            INQUIRE(FILE=bkpname, EXIST=existFile)

@@ -234,6 +234,7 @@
 
 #ifndef gdept1d
                          do jk=1,bottom
+                             correct_fact= 1.0D0
                              if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
                                  correct_fact= 0.25D0
                              endif

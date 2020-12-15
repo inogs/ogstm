@@ -179,10 +179,12 @@
       er       = 1.0
       er(:,10) = 8.1
 
-      do jk=1, jpk
 
-         correct_fact= 1.0D0
 #ifdef gdept1d
+! er(:,11) is calculated outside the loop on ji,jj
+      do jk=1, jpk
+         correct_fact= 1.0D0
+
          if ( (gdept(jk) .GT. 1000.0D0 ) .AND.  (gdept(jk) .LT. 2000.0D0 )) then
              correct_fact= 0.25D0
          endif
@@ -190,21 +192,11 @@
          if (gdept(jk) .GE. 2000.0D0 ) then
              correct_fact= 0.0D0
          endif
-             
+
          er(jk,11) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
-#else
-         if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
-             correct_fact= 0.25D0
-         endif
-
-         if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
-             correct_fact= 0.0D0
-         endif
-
-         er(jk,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
+      enddo
 #endif
 
-      enddo
 
       DO ji=1,jpi
       DO jj=1,jpj
@@ -240,6 +232,19 @@
                           er(1       ,9)  = vatm(jj,ji)                ! wind speed (m/s)
                           er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
 
+#ifndef gdept1d
+                         do jk=1,bottom
+                             if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
+                                 correct_fact= 0.25D0
+                             endif
+
+                             if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
+                                 correct_fact= 0.0D0
+                             endif
+
+                             er(jk,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
+                         enddo
+#endif
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 
                          call BFM1D_reset()

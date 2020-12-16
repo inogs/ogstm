@@ -4,7 +4,7 @@ import numpy as np
 from scipy import stats
 import string
 
-from matchup.statistics import *
+#from matchup.statistics import *
 
 
 def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos, legendBool, basin):
@@ -63,13 +63,13 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 
 	if units == 'Ed':
 	
-		textstr='$\mathrm{RMS}=%.2f$\n$\mathrm{Bias}=%.2f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
+		textstr='$\mathrm{RMSE}=%.2f$\n$\mathrm{Bias}=%.2f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
 	
 	if units == 'Kd':
-		textstr='$\mathrm{RMS}=%.3f$\n$\mathrm{Bias}=%.3f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
+		textstr='$\mathrm{RMSE}=%.3f$\n$\mathrm{Bias}=%.3f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
 
 	if units == 'Rrs':
-		textstr='$\mathrm{RMS}=%.3f$\n$\mathrm{Bias}=%.3f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
+		textstr='$\mathrm{RMSE}=%.3f$\n$\mathrm{Bias}=%.3f$\n$\mathrm{r}=%.2f$\n$\mathrm{Slope}=%.2f$\n$\mathrm{Y-int}=%.2f$\n$\mathrm{N}=%.2i$'%(sigma, bias, corr_coeff,b,a,count)
 
 
 	if legendBool == True:
@@ -83,7 +83,6 @@ def plot_matchup_scatter(scale, L, ax, color, index, units, titlestr, xpos, ypos
 	ax[index].set_ylim([0., x_max])
 		
 	return ax[index]
-
 
 def save_stat(Model, Data, filename):
 
@@ -111,7 +110,6 @@ def save_stat(Model, Data, filename):
 		file.close()
 
 	return count, bias, sigma, r_value, b, a, maxdiff
-
 
 def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, titlestr, strname, basin_list_abbrev, months_str):
 
@@ -191,7 +189,6 @@ def plot_pcolor(fig, ax, MODEL_mean, FLOAT_mean, BIAS, RMSE, titlestr, strname, 
 	
 	return 
 
-
 def plot_barplot(ax, NAME, RMSE, BIAS, CORR, wl_ls, rot, slope=None):
 
 	X      = np.arange(len(NAME))
@@ -205,39 +202,56 @@ def plot_barplot(ax, NAME, RMSE, BIAS, CORR, wl_ls, rot, slope=None):
 	ax[0].set_ylim(bottom=0.)
 
 
-	ax[1].bar(X - 0.25, BIAS[:,0], color='indigo',   width=0.25)
-	ax[1].bar(X + 0.00, BIAS[:,1], color='darkcyan', width=0.25)
-	ax[1].bar(X + 0.25, BIAS[:,2], color='navy',     width=0.25)
+	ax[1].bar(X - 0.25, BIAS[:,0], color='indigo',  label=wl_ls[0], width=0.25)
+	ax[1].bar(X + 0.00, BIAS[:,1], color='darkcyan',label=wl_ls[1], width=0.25)
+	ax[1].bar(X + 0.25, BIAS[:,2], color='navy',    label=wl_ls[2], width=0.25)
 	ax[1].set_xticks(X)
 	ax[1].set_xticklabels(NAME, rotation=rot, ha='right')
-	ax[1].set_ylabel('BIAS [$W \, m^{-2} \, nm^{-1}$]')
-	ax[1].set_ylim(bottom=0.)
-
-
-	ilegend = 2
+	ax[1].set_ylabel('bias [$W \, m^{-2} \, nm^{-1}$]')
+	#ax[1].set_ylim(bottom=0.)
+	ax[1].set_ylim([0., 0.5])
 
 	ax[2].bar(X - 0.25, CORR[:,0], color='indigo',   label=wl_ls[0], width=0.25)
 	ax[2].bar(X + 0.00, CORR[:,1], color='darkcyan', label=wl_ls[1], width=0.25)
 	ax[2].bar(X + 0.25, CORR[:,2], color='navy',     label=wl_ls[2], width=0.25)
 	ax[2].set_xticks(X)
 	ax[2].set_xticklabels(NAME, rotation=rot, ha='right')
-	ax[2].set_ylabel('Correlation')
+	ax[2].set_ylabel('r')
 	ax[2].set_ylim([0., 1.])
 
+	ilegend=1
 
-	if slope is not None:
-		ilegend = 3
-		ax[3].bar(X - 0.25, CORR[:,0], color='indigo',   label=wl_ls[0], width=0.25)
-		ax[3].bar(X + 0.00, CORR[:,1], color='darkcyan', label=wl_ls[1], width=0.25)
-		ax[3].bar(X + 0.25, CORR[:,2], color='navy',     label=wl_ls[2], width=0.25)
-		ax[3].set_xticks(X)
-		ax[3].set_xticklabels(NAME, rotation=rot, ha='right')
-		ax[3].set_ylabel('Slope')
-
-	ax[ilegend].legend(loc='center left', bbox_to_anchor=(1, 0.5))
-
+	ax[ilegend].legend(loc='upper right', ncol=3)#, fancybox=True, shadow=True)
 
 	return 
+
+def plot_barplot2(ax, NAME, RMSE, BIAS, wl_ls, rot, slope=None):
+
+	X      = np.arange(len(NAME))
+	
+	ax[0].bar(X - 0.25, RMSE[:,0], color='indigo',   width=0.25)
+	ax[0].bar(X + 0.00, RMSE[:,1], color='darkcyan', width=0.25)
+	ax[0].bar(X + 0.25, RMSE[:,2], color='navy',     width=0.25)
+	ax[0].set_xticks(X)
+	ax[0].set_xticklabels(NAME, rotation=rot, ha='right')
+	ax[0].set_ylabel('RMSE [$W \, m^{-2} \, nm^{-1}$]')
+	ax[0].set_ylim(bottom=0.)
+
+
+	ax[1].bar(X - 0.25, BIAS[:,0], color='indigo',  label=wl_ls[0], width=0.25)
+	ax[1].bar(X + 0.00, BIAS[:,1], color='darkcyan',label=wl_ls[1], width=0.25)
+	ax[1].bar(X + 0.25, BIAS[:,2], color='navy',    label=wl_ls[2], width=0.25)
+	ax[1].set_xticks(X)
+	ax[1].set_xticklabels(NAME, rotation=rot, ha='right')
+	ax[1].set_ylabel('bias [$W \, m^{-2} \, nm^{-1}$]')
+	ax[1].set_ylim(bottom=0.)
+
+	ilegend=1
+
+	ax[ilegend].legend(loc='upper center', ncol=3, bbox_to_anchor=(0.5, 1.0), framealpha=0.75, fancybox=True, shadow=False)
+
+	return 
+
 
 def plot_lineplot(ax, NAME, RMSE, BIAS, CORR, wl_ls, rot, slope=None):
 

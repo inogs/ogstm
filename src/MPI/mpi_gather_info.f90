@@ -188,11 +188,11 @@ MODULE MPI_GATHER_INFO
         communication_finish_time_gather_info= MPI_Wtime()
         communication_proctime_time_gather_info= communication_finish_time_gather_info - communication_start_time_gather_info
         
-        CALL MPI_Reduce( communication_proctime_time_gather_info, communication_max_time_gather_info, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD, IERROR)
+        !CALL MPI_Reduce( communication_proctime_time_gather_info, communication_max_time_gather_info, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD, IERROR)
 
-        if(myrank == 0) then
-                write(*,*) 'Communication time gather info is', communication_max_time_gather_info
-        end if
+        !if(myrank == 0) then
+        !        write(*,*) 'Communication time gather info is', communication_max_time_gather_info
+        !end if
         
   
 !        END SUBROUTINE INIT_MPI_GATHER_INFO

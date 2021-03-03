@@ -120,9 +120,9 @@ MODULE TREd_var_MP
                                         end do
                                 end if
                         end do
-                        DO i=1, counter_3d_procs - 1
-                                write(*,*) '3d_var_procis',TREd_procs_per_node_array(i)
-                        END DO
+!                        DO i=1, counter_3d_procs - 1
+!                                write(*,*) '3d_var_procis',TREd_procs_per_node_array(i)
+!                        END DO
                         do i=1,nodes*TREd_procs_per_node
                                 IF(MYRANK == TREd_procs_per_node_array(i)) then
                                         V3D_VAR_PARALLEL = .true.
@@ -146,9 +146,9 @@ MODULE TREd_var_MP
                                         end do
                                 end if
                         end do
-                        DO i=1, counter_3d_procs - 1
-                                write(*,*)'3d_var_procis',TREd_procs_per_node_array(i)
-                        END DO
+!                        DO i=1, counter_3d_procs - 1
+!                                write(*,*)'3d_var_procis',TREd_procs_per_node_array(i)
+!                        END DO
                         do i=1,DA_Nprocs
                                 IF(MYRANK == TREd_procs_per_node_array(i)) then
                                         V3D_VAR_PARALLEL = .true.

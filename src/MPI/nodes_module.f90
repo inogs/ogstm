@@ -47,7 +47,7 @@ MODULE NODES_MODULE
 
         CHARACTER (len = lengt), dimension(mpi_glcomm_size) :: total_array
         
-        write (*,*) 'allocation rank',myrank, lengt, local_array
+!        write (*,*) 'allocation rank',myrank, lengt, local_array
 
         call mppsync()
 
@@ -76,7 +76,7 @@ MODULE NODES_MODULE
 
         !print number of nodes
 
-                write(*,*) 'Number of nodes is', nodes
+                if (lwp) write(*,*) 'Number of nodes is', nodes
 
         !rank 0 send to all ranks nodes
 
@@ -84,7 +84,7 @@ MODULE NODES_MODULE
                         CALL MPI_Send(nodes,1,MPI_INT,i,4,MPI_COMM_WORLD,IERROR)
                 END DO
 
-                write(*,*) 'nodes sent'
+                if (lwp) write(*,*) 'nodes sent'
 
 
         !determing how many processor are inside first node, each node, delta numberby counting inside total array
@@ -126,9 +126,9 @@ MODULE NODES_MODULE
 
                 CALL MPI_Recv(writing_procs,nodes,MPI_INT,0,3,MPI_COMM_WORLD,MPI_STATUS_IGNORE, IERROR)
 
-                DO k=1, nodes
-                        write (*,*) 'writing procs position is ', k, writing_procs(k)
-                END DO
+!                DO k=1, nodes
+!                        write (*,*) 'writing procs position is ', k, writing_procs(k)
+!                END DO
         END IF
 
 !check number of nodes

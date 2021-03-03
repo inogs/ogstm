@@ -110,9 +110,9 @@
           ENDIF
       enddo
 
-
-       write(*,*) 'HIGHFREQ_TABLE_TRA_DIA'
-       write(*,*) highfreq_table_dia
+       
+       if (lwp) write(*,*) 'HIGHFREQ_TABLE_TRA_DIA'
+       if (lwp) write(*,*) highfreq_table_dia
        
 
 !      ***********  namelist nattrc_diag_2d DIAGNOSTIC VARIABLES surface or bottom:

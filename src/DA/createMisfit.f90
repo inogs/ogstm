@@ -97,7 +97,7 @@
           if (OPTION.eq.'2') then 
              do i=1,jpiglo
              do j=1,jpjglo
-               if ((VAR2D(i,j).eq.fillValue) .or.(VAR2D(i,j).eq.0.)) then
+             if ((VAR2D(i,j).eq.fillValue).or. (VAR2D(i,j).eq.fillValue999) .or.(VAR2D(i,j).eq.0.)) then
                     MISFIT(i,j) = fillValue
                    cMISFIT(i,j) = fillValue
                endif

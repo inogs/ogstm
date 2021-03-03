@@ -64,7 +64,6 @@ MODULE TREd_var_MP
         INTEGER :: i, j, counter_3d_procs, IERROR
         INTEGER :: k
         INTEGER :: case_selection
-        write(*,*) 'startinROUTINE'
         V3D_VAR_PARALLEL = .false.
 
 !define how many procs per node to use for parallel 3d var

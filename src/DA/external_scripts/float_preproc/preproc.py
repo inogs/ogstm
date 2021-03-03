@@ -55,7 +55,7 @@ from instruments import superfloat as bio_float
 import basins.OGS as OGS
 from instruments.var_conversions import FLOATVARS
 from commons.utils import addsep
-import datetime
+from datetime import datetime
 from commons.layer import Layer
 from commons.Timelist import TimeList
 from commons import timerequestors
@@ -84,7 +84,7 @@ day   = int(datestr[6:8])
 
 req = timerequestors.Daily_req(year, month, day)
 TI = req.time_interval
-TI.end_time = datetime.datetime(year, month, day, 23, 59)
+TI.end_time = datetime(year, month, day, 23, 59)
 
 errorfloat = [0.0690, 0.0969, 0.0997, 0.0826, 0.0660, 0.0500, 0.0360, 0.0140, 0.0320, 0.0390, 0.0340, 0.0490]
 

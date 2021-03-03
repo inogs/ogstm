@@ -194,7 +194,6 @@
       var_nc(4) = 'N5s'
       var_nc(5) = 'O3c'
       var_nc(6) = 'O3h'
-      var_nc(7) = 'N6r'
 
       IF (NWATERPOINTS.GT.0) THEN
       do jn=1,jn_gib

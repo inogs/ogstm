@@ -2,7 +2,7 @@
 
 !> It maps a boundary which is forced to be closed even if in the OGCM is not.
 module closed_mod
-
+    use myalloc, only: lwp
     use bc_mod
     use bc_aux_mod
 
@@ -442,7 +442,7 @@ contains
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t ! spongeT
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel ! spongeVel
 
-        write(*, *) 'WARN: sponge_t and sponge_val are left untouched by hard_open class'
+        if (lwp) write(*, *) 'WARN: sponge_t and sponge_val are left untouched by hard_open class'
 
     end subroutine apply_phys
 

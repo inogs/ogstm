@@ -76,7 +76,9 @@ MODULE module_step
       isFIRST=.true.
 
        datefrom_1 =  DATESTART
+       if (IsStartBackup_1) datefrom_1 = BKPdatefrom_1
        datefrom_2 =  DATESTART
+       if (IsStartBackup_2) datefrom_2 = BKPdatefrom_2
        datestring =  DATESTART
       TAU = 0
       DO WHILE (.not.ISOVERTIME(datestring))

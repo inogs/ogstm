@@ -302,7 +302,7 @@
 
       call MPI_ALLREDUCE(Fsize, FsizeMax, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
-      write(*,*) 'myrank=', myrank, ' Fsize = ' , Fsize,' FsizeMax = ' , FsizeMax
+      ! LEVEL1 write(*,*) 'myrank=', myrank, ' Fsize = ' , Fsize,' FsizeMax = ' , FsizeMax
 
       if (Fsize.NE.0) then
          call alloc_DIA_local_flx

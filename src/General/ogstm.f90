@@ -256,10 +256,10 @@ SUBROUTINE ALLOC_ALL
       call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
       call myalloc_IO()  
-      write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 
+      ! LEVEL1 write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 
       mem_all_tot=mem_all_tot+mem_all
 
-      write(*,*)'My_Rank,',myrank,'Total Allocated Memory (MB):',mem_all_tot
+      ! LEVEL1 write(*,*)'My_Rank,',myrank,'Total Allocated Memory (MB):',mem_all_tot
 
 END SUBROUTINE ALLOC_ALL
 

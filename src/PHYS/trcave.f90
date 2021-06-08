@@ -170,7 +170,7 @@
       inv_incremented_time = 1./(elapsed_time_1 + rdt)
 
 
-     if (jptra_dia_high.gt.0) THEN
+      if (jptra_dia_high.gt.0) THEN
          DO ji=1, jpi
          DO jj=1, jpj
          DO jk=1, jpk
@@ -186,7 +186,7 @@
          END DO
          END DO
          END DO
-     endif
+      endif
 
 
 !     *********************  DIAGNOSTICS 2D **********

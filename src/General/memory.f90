@@ -233,7 +233,7 @@
       INTEGER, PARAMETER :: numout = 2   ! unit for output print
       LOGICAL lwp                        ! boolean term for stdout
       INTEGER, PARAMETER :: numnat =80   ! the number of the passive tracer NAMELIST
-
+      INTEGER, PARAMETER :: numphys=3   ! the number for physycs tracers NAMELIST_PHYS
 
 #if defined key_mpp
       INTEGER :: EAST_count_send, WEST_count_send, SOUTH_count_send, NORTH_COUNT_send
@@ -258,6 +258,14 @@
           INTEGER           :: diahf_2d(jptra_dia_2d)
           INTEGER           :: diaWR_2d(jptra_dia_2d)
           CHARACTER(LEN=17) :: COMMON_DATESTRING
+!physical tracers
+      INTEGER :: jptra_phys, jptra_phys_2d
+      INTEGER :: freq_ave_phys
+      CHARACTER(LEN=20), allocatable, dimension(:) :: physnm, physun, physnm_2d, physun_2d
+      INTEGER, allocatable, dimension(:) :: physWR,physWR_2d
+
+
+
 !!    parameters for the control of passive tracers
 
 
@@ -268,7 +276,7 @@
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
       INTEGER :: ctr_hf(jptra)
 
-      INTEGER freq_ave_phys, freq_flux_dump
+      INTEGER ave_freq_phys, freq_flux_dump
 
 
 
@@ -293,6 +301,10 @@
       double precision, allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_DIA_2d_IO(:,:,:)
       double precision, allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
+      double precision, allocatable ::  tra_PHYS_IO(:,:,:,:)
+      double precision, allocatable ::  tra_PHYS_IO_HIGH(:,:,:,:)
+      double precision, allocatable ::  tra_PHYS_2d_IO(:,:,:)
+      double precision, allocatable ::  tra_PHYS_2d_IO_HIGH(:,:,:)
       double precision, allocatable :: tottrn(:,:,:)
       double precision, allocatable :: tottrb(:,:,:)
 
@@ -690,13 +702,21 @@ subroutine alloc_tot()
        allocate(traIO_HIGH(   jpk,jpj,jpi,jptra_HIGH))     
        traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
        allocate(tra_DIA_IO_HIGH(jptra_dia_HIGH,jpk,jpj,jpi))
-      tra_DIA_IO_HIGH = huge(tra_DIA_IO_HIGH(1,1,1,1))
+       tra_DIA_IO_HIGH = huge(tra_DIA_IO_HIGH(1,1,1,1))
 
        allocate(tra_DIA_2d_IO(jptra_dia_2d, jpj,jpi))
        tra_DIA_2d_IO    = huge(tra_DIA_2d_IO(1,1,1))
        allocate(tra_DIA_2d_IO_HIGH(jptra_dia2d_HIGH,jpj,jpi))
-      tra_DIA_2d_IO_HIGH = huge(tra_DIA_2d_IO_HIGH(1,1,1))
-
+       tra_DIA_2d_IO_HIGH = huge(tra_DIA_2d_IO_HIGH(1,1,1))
+       
+       allocate(tra_PHYS_IO(jptra_phys,jpk,jpj,jpi))
+       tra_PHYS_IO    = huge(tra_PHYS_IO(1,1,1,1))
+       allocate(tra_PHYS_IO_HIGH(jptra_phys,jpk,jpj,jpi))
+       tra_PHYS_IO_HIGH = huge(tra_PHYS_IO_HIGH(1,1,1,1))
+       allocate(tra_PHYS_2d_IO(jptra_phys_2d, jpj,jpi))
+       tra_PHYS_2d_IO    = huge(tra_PHYS_2d_IO(1,1,1))
+       allocate(tra_PHYS_2d_IO_HIGH(jptra_phys_2d,jpj,jpi))
+       tra_PHYS_2d_IO_HIGH = huge(tra_PHYS_2d_IO_HIGH(1,1,1))
 
 
       if(lwp) then
@@ -910,12 +930,16 @@ subroutine alloc_tot()
             deallocate(buf)
             deallocate(buf2)
             deallocate(tra_DIA_IO)
+            deallocate(tra_PHYS_IO)
             deallocate(traIO_HIGH)
             deallocate(tra_DIA_IO_HIGH)
-            
+            deallocate(tra_PHYS_IO_HIGH)
             deallocate(tra_DIA_2d_IO)
             deallocate(tra_DIA_2d_IO_HIGH)
+            deallocate(tra_PHYS_2d_IO)
+            deallocate(tra_PHYS_2d_IO_HIGH)
             
+
             if(lwp) then
                 deallocate(tottrn)
                 deallocate(tottrb)

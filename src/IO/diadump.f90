@@ -28,6 +28,7 @@
 
 
       CHARACTER(LEN=56) dia_file_nc
+      CHARACTER(LEN=56) phys_file_nc
       CHARACTER(LEN=20)  var
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
@@ -36,7 +37,9 @@
       INTEGER totjstart, totjend, reljstart, reljend
       double precision ::  Miss_val =1.e20
       INTEGER :: nVars, counter_var_2d, counter_var_high_2d,counter_var_diag, counter_var_diag_high
+      INTEGER :: counter_var_phys_2d,counter_var_phys_high_2d,counter_var_phys, counter_var_phys_high
       CHARACTER(LEN=20) ::  var_to_store_diag_2d, var_to_store_diag
+      CHARACTER(LEN=20) ::  var_to_store_phys_2d, var_to_store_phys
       INTEGER :: n_dumping_cycles, jv, ivar, writing_rank, ind_col
       INTEGER :: var_to_send_2D, var_high_to_send_2D
       INTEGER :: var_to_send, var_high_to_send
@@ -46,13 +49,13 @@
       if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup, ' group ' ,FREQ_GROUP
 ! ----------------------------------------
       bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
+
       if (IsBackup) then
          forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc.bkp'
       else
          forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc'
       endif
 
-        write(*,*) 'old phys'
 
       SELECT CASE (FREQ_GROUP)
         CASE (1) 
@@ -78,11 +81,13 @@
 
 !      PHYSICS FIRST!!
       if ( freq_ave_phys.eq.FREQ_GROUP) then
-      ! *************** START COLLECTING DATA *****************************
+      ! *************** START COLLECTING DATA
+      ! *****************************
        if (myrank == 0) then                    ! IF LABEL 1
 
 
-! ******* myrank 0 sets indexes of tot matrix where to place its own part
+! ******* myrank 0 sets indexes of tot matrix where to place its own
+! part
 
           iPd    = nldi
           iPe    = nlei
@@ -101,38 +106,40 @@
           reljstart = 1 + jPd - 1      
           reljend   = reljstart + jrange - 1
 
-          totsnIO  (:, totjstart:totjend,totistart:totiend) = snIO    (:, reljstart:reljend,relistart:reliend)
-          tottnIO  (:, totjstart:totjend,totistart:totiend) = tnIO    (:, reljstart:reljend,relistart:reliend)
-          totvatmIO(totjstart:totjend,totistart:totiend) = vatmIO  (reljstart:reljend,relistart:reliend)
-          totempIO (totjstart:totjend,totistart:totiend) = empIO   (reljstart:reljend,relistart:reliend)
-          totqsrIO (totjstart:totjend,totistart:totiend) = qsrIO   (reljstart:reljend,relistart:reliend)
-          totunIO  (:, totjstart:totjend,totistart:totiend) = unIO    (:, reljstart:reljend,relistart:reliend)
-          totvnIO  (:, totjstart:totjend,totistart:totiend) = vnIO    (:, reljstart:reljend,relistart:reliend)
-          totwnIO  (:, totjstart:totjend,totistart:totiend) = wnIO    (:, reljstart:reljend,relistart:reliend)
-          totavtIO (:, totjstart:totjend,totistart:totiend) = avtIO   (:, reljstart:reljend,relistart:reliend)
-          tote3tIO (:, totjstart:totjend,totistart:totiend) = e3tIO   (:, reljstart:reljend,relistart:reliend)
+          totsnIO  (:, totjstart:totjend,totistart:totiend) = snIO(:, reljstart:reljend,relistart:reliend)
+          tottnIO  (:, totjstart:totjend,totistart:totiend) = tnIO(:, reljstart:reljend,relistart:reliend)
+          totvatmIO(totjstart:totjend,totistart:totiend) = vatmIO(reljstart:reljend,relistart:reliend)
+          totempIO (totjstart:totjend,totistart:totiend) = empIO(reljstart:reljend,relistart:reliend)
+          totqsrIO (totjstart:totjend,totistart:totiend) = qsrIO(reljstart:reljend,relistart:reliend)
+          totunIO  (:, totjstart:totjend,totistart:totiend) = unIO(:, reljstart:reljend,relistart:reliend)
+          totvnIO  (:, totjstart:totjend,totistart:totiend) = vnIO(:, reljstart:reljend,relistart:reliend)
+          totwnIO  (:, totjstart:totjend,totistart:totiend) = wnIO(:, reljstart:reljend,relistart:reliend)
+          totavtIO (:, totjstart:totjend,totistart:totiend) = avtIO(:, reljstart:reljend,relistart:reliend)
+          tote3tIO (:, totjstart:totjend,totistart:totiend) = e3tIO(:, reljstart:reljend,relistart:reliend)
 
            do idrank = 1,mpi_glcomm_size-1
- ! **************  myrank 0 is receiving from the others their buffer  ****
-               call MPI_RECV(jpi_rec    , 1,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info to know where idrank is working
-               call MPI_RECV(jpj_rec    , 1,                 mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
-               call MPI_RECV(istart     , 1,                 mpi_integer, idrank, 3,mpi_comm_world, status, ierr)
-               call MPI_RECV(jstart     , 1,                 mpi_integer, idrank, 4,mpi_comm_world, status, ierr)
-               call MPI_RECV(iPe        , 1,                 mpi_integer, idrank, 5,mpi_comm_world, status, ierr)
-               call MPI_RECV(jPe        , 1,                 mpi_integer, idrank, 6,mpi_comm_world, status, ierr)
-               call MPI_RECV(iPd        , 1,                 mpi_integer, idrank, 7,mpi_comm_world, status, ierr)
-               call MPI_RECV(jPd        , 1                 ,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffsn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 11,mpi_comm_world, status, ierr)
-       call MPI_RECV(bufftn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 12,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffvatm,jpi_rec*jpj_rec              ,mpi_real8,idrank, 13,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffemp ,jpi_rec*jpj_rec              ,mpi_real8,idrank, 14,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffqsr ,jpi_rec*jpj_rec              ,mpi_real8,idrank, 15,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffun  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 16,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffe3t ,jpi_rec*jpj_rec*jpk          ,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
- ! ******* myrank 0 sets indexes of tot matrix where to place buffers of idrank
+        ! **************  myrank 0 is receiving from the others their buffer
+          ! ****
+               call MPI_RECV(jpi_rec    , 1,mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info toknow where idrank is working
+               call MPI_RECV(jpj_rec    , 1,mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
+               call MPI_RECV(istart     , 1,mpi_integer, idrank, 3,mpi_comm_world, status, ierr)
+               call MPI_RECV(jstart     , 1,mpi_integer, idrank, 4,mpi_comm_world, status, ierr)
+               call MPI_RECV(iPe        , 1,mpi_integer, idrank, 5,mpi_comm_world, status, ierr)
+               call MPI_RECV(jPe        , 1,mpi_integer, idrank, 6,mpi_comm_world, status, ierr)
+               call MPI_RECV(iPd        , 1,mpi_integer, idrank, 7,mpi_comm_world, status, ierr)
+               call MPI_RECV(jPd        , 1,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffsn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 11,mpi_comm_world, status, ierr)
+       call MPI_RECV(bufftn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 12,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffvatm,jpi_rec*jpj_rec,mpi_real8,idrank, 13,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffemp ,jpi_rec*jpj_rec,mpi_real8,idrank, 14,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffqsr ,jpi_rec*jpj_rec,mpi_real8,idrank, 15,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffun  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 16,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
+       call MPI_RECV(buffe3t ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
+     ! ******* myrank 0 sets indexes of tot matrix where to place buffers of
+         ! idrank
                irange    = iPe - iPd + 1
                jrange    = jPe - jPd + 1
                totistart = istart + iPd - 1
@@ -144,9 +151,9 @@
                reljstart = 1 + jPd - 1
                reljend   = reljstart + jrange - 1
                do ji =totistart,totiend ! 3d vars
-                    i_contribution = jpk*jpj_rec*(ji-1 - totistart+ relistart )
+                    i_contribution = jpk*jpj_rec*(ji-1 - totistart+relistart )
                      do jj =totjstart,totjend
-                         j_contribution = jpk*(jj-totjstart+ reljstart-1)
+                         j_contribution = jpk*(jj-totjstart+reljstart-1)
                          do jk =1 , jpk
                             ind = jk + j_contribution + i_contribution
                             totsnIO (jk,jj,ji)= buffsn (ind)
@@ -196,24 +203,24 @@
                 buffqsr  (ind)= qsrIO (jj,ji)
                enddo
               enddo
-               call MPI_SEND(jpi  , 1,mpi_integer, 0, 1, mpi_comm_world,ierr)
-               call MPI_SEND(jpj  , 1,mpi_integer, 0, 2, mpi_comm_world,ierr)
-               call MPI_SEND(nimpp, 1,mpi_integer, 0, 3, mpi_comm_world,ierr)
-               call MPI_SEND(njmpp, 1,mpi_integer, 0, 4, mpi_comm_world,ierr)
-               call MPI_SEND(nlei , 1,mpi_integer, 0, 5, mpi_comm_world,ierr)
-               call MPI_SEND(nlej , 1,mpi_integer, 0, 6, mpi_comm_world,ierr)
-               call MPI_SEND(nldi , 1,mpi_integer, 0, 7, mpi_comm_world,ierr)
-               call MPI_SEND(nldj , 1,mpi_integer, 0, 8, mpi_comm_world,ierr)
-            call MPI_SEND(buffsn  , jpk*jpj*jpi  ,mpi_real8, 0, 11, mpi_comm_world,ierr)
-            call MPI_SEND(bufftn  , jpk*jpj*jpi  ,mpi_real8, 0, 12, mpi_comm_world,ierr)
-            call MPI_SEND(buffvatm, jpi*jpj      ,mpi_real8, 0, 13, mpi_comm_world,ierr)
-            call MPI_SEND(buffemp , jpi*jpj      ,mpi_real8, 0, 14, mpi_comm_world,ierr)
-            call MPI_SEND(buffqsr , jpi*jpj      ,mpi_real8, 0, 15, mpi_comm_world,ierr)
-            call MPI_SEND(buffun  , jpk*jpj*jpi  ,mpi_real8, 0, 16, mpi_comm_world,ierr)
-            call MPI_SEND(buffvn  , jpk*jpj*jpi  ,mpi_real8, 0, 17, mpi_comm_world,ierr)
-            call MPI_SEND(buffwn  , jpk*jpj*jpi  ,mpi_real8, 0, 18, mpi_comm_world,ierr)
-            call MPI_SEND(buffavt , jpk*jpj*jpi  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
-            call MPI_SEND(buffe3t , jpk*jpj*jpi  ,mpi_real8, 0, 19, mpi_comm_world,ierr)
+               call MPI_SEND(jpi  , 1,mpi_integer, 0, 1,mpi_comm_world,ierr)
+               call MPI_SEND(jpj  , 1,mpi_integer, 0, 2,mpi_comm_world,ierr)
+               call MPI_SEND(nimpp, 1,mpi_integer, 0, 3,mpi_comm_world,ierr)
+               call MPI_SEND(njmpp, 1,mpi_integer, 0, 4,mpi_comm_world,ierr)
+               call MPI_SEND(nlei , 1,mpi_integer, 0, 5,mpi_comm_world,ierr)
+               call MPI_SEND(nlej , 1,mpi_integer, 0, 6,mpi_comm_world,ierr)
+               call MPI_SEND(nldi , 1,mpi_integer, 0, 7,mpi_comm_world,ierr)
+               call MPI_SEND(nldj , 1,mpi_integer, 0, 8,mpi_comm_world,ierr)
+            call MPI_SEND(buffsn  , jpk*jpj*jpi  ,mpi_real8, 0, 11,mpi_comm_world,ierr)
+            call MPI_SEND(bufftn  , jpk*jpj*jpi  ,mpi_real8, 0, 12,mpi_comm_world,ierr)
+            call MPI_SEND(buffvatm, jpi*jpj      ,mpi_real8, 0, 13,mpi_comm_world,ierr)
+            call MPI_SEND(buffemp , jpi*jpj      ,mpi_real8, 0, 14,mpi_comm_world,ierr)
+            call MPI_SEND(buffqsr , jpi*jpj      ,mpi_real8, 0, 15,mpi_comm_world,ierr)
+            call MPI_SEND(buffun  , jpk*jpj*jpi  ,mpi_real8, 0, 16,mpi_comm_world,ierr)
+            call MPI_SEND(buffvn  , jpk*jpj*jpi  ,mpi_real8, 0, 17,mpi_comm_world,ierr)
+            call MPI_SEND(buffwn  , jpk*jpj*jpi  ,mpi_real8, 0, 18,mpi_comm_world,ierr)
+            call MPI_SEND(buffavt , jpk*jpj*jpi  ,mpi_real8, 0, 19,mpi_comm_world,ierr)
+            call MPI_SEND(buffe3t , jpk*jpj*jpi  ,mpi_real8, 0, 19,mpi_comm_world,ierr)
 
 
 
@@ -226,13 +233,15 @@
       if(myrank == 0) then ! IF LABEL 4,
          if (IsBackup) then
 
-            call PhysDump_bkp(forcing_file, datefrom, dateTo,elapsed_time)
+            call PhysDump_bkp(forcing_file, datefrom,dateTo,elapsed_time)
           else
             call PhysDump(forcing_file, datefrom, dateTo)
          endif
       endif
 
       endif !if ( freq_ave_phys.eq.FREQ_GROUP)
+
+
 
 
 
@@ -364,7 +373,7 @@
 
         if (WRITING_RANK_WR) tottrnIO = Miss_val
 ! ! ******************  3D DIAGNOSTIC OUTPUT   *******************
-
+        
         IF (FREQ_GROUP==1)then
                 elapsed_time=elapsed_time_1
                 DIR='AVE_FREQ_1/'
@@ -396,7 +405,6 @@
                         else if (COUNTER_VAR_diag_HIGH > JPTRA_dia_HIGH_wri)then
                                 EXIT
                         ELSE
-
                                 var_to_send = lowfreq_table_dia_wri(counter_var_diag)
                                 !if (FREQ_GROUP.eq.1) var_high_to_send = highfreq_table_dia_wri(counter_var_diag_high)
 
@@ -494,7 +502,317 @@
                         tra_DIA_IO_HIGH(:,:,:,:) = 0.
                 endif
         endif
+!-------------------------------------------------
+        ! ****************** PHYSC OUTPUT   2D *******************
+        
+        if (lwp) then
+          totsnIO   = Miss_val
+          tottnIO   = Miss_val
+          totunIO   = Miss_val
+          totvnIO   = Miss_val
+          totwnIO   = Miss_val
+          totavtIO  = Miss_val
+          tote3tIO  = Miss_val
+          totvatmIO = Miss_val
+          totempIO  = Miss_val
+          totqsrIO  = Miss_val
+        endif
 
+
+
+
+
+
+
+
+        if(freq_ave_phys.eq.FREQ_GROUP) then
+
+        tra_PHYS_2d_IO(1,:,:) = vatmIO
+        tra_PHYS_2d_IO(2,:,:) = empIO
+        tra_PHYS_2d_IO(3,:,:) = qsrIO
+
+        tra_PHYS_2d_IO_high(1,:,:) = vatmIO
+        tra_PHYS_2d_IO_high(2,:,:) = empIO
+        write(*,*) 'copy is',tra_PHYS_2d_IO_high(2,5,5)
+        tra_PHYS_2d_IO_high(3,:,:) = qsrIO
+        write(*,*) 'copy is',tra_PHYS_2d_IO_high(3,5,5)
+
+
+        IF (freq_ave_phys==1)then
+                elapsed_time=elapsed_time_1
+                DIR='AVE_FREQ_1/'
+                n_dumping_cycles=matrix_phys_2d_1_row
+        end if
+
+        if (freq_ave_phys==2)then
+                elapsed_time=elapsed_time_2
+                DIR='AVE_FREQ_2/'
+                n_dumping_cycles=matrix_phys_2d_2_row
+        END IF
+
+
+        COUNTER_VAR_phys_2d = 1
+        COUNTER_VAR_phys_HIGH_2d = 1
+
+
+        DUMPING_LOOP_2d_phys: DO jv = 1, n_dumping_cycles
+
+                DO ivar = 1 , nodes
+
+                        writing_rank = writing_procs(ivar)
+
+                        write(*,*)'phys 2d wri number' ,JPTRA_phys_2d_HIGH_wri
+                        IF (freq_ave_phys==2 .and. COUNTER_VAR_phys_2d > JPTRA_phys_2d_wri)then
+                                EXIT
+                        else if (freq_ave_phys==1 .and. COUNTER_VAR_phys_HIGH_2d > JPTRA_phys_2d_HIGH_wri)then
+                                EXIT
+                        ELSE
+                                if(freq_ave_phys==2) then
+                                        var_to_send_2D = lowfreq_table_phys_2d_wri(counter_var_phys_2d)
+                                else
+                                        var_to_send_2D = highfreq_table_phys_2d_wri(counter_var_phys_high_2d)
+                                        write(*,*) 'var to send 2d is', var_to_send_2D
+                                end if
+
+                                if (freq_ave_phys.eq.2) then
+                                        do ji =1 , jpi
+                                                i_contribution = jpj * (ji-1)
+                                                do jj =1 , jpj
+                                                        ind = jj +i_contribution
+                                                        buffPHYS2d (ind)=tra_PHYS_2d_IO(var_to_send_2D,jj,ji)
+                                                enddo
+                                        enddo
+                                else
+                                        do ji =1 , jpi
+                                                i_contribution = jpj * (ji-1)
+                                                do jj = 1 , jpj
+                                                        ind = jj +i_contribution
+                                                        buffPHYS2d (ind)=tra_PHYS_2d_IO_high(var_to_send_2D,jj,ji)
+                                                enddo
+                                        enddo
+                                        write(*,*) 'valeu in buffer is', tra_PHYS_2d_IO_high(var_to_send_2D,5,5)
+                                        write(*,*) 'valeu in buffer is,second print',tra_PHYS_2d_IO_high(3,5,5)
+                                endif
+                                counter_var_phys_2d = counter_var_phys_2d + 1
+                                if (freq_ave_phys.eq.1) counter_var_phys_high_2d = counter_var_phys_high_2d + 1
+
+                                CALL MPI_GATHERV(buffPHYS2d,sendcount_2d,MPI_DOUBLE_PRECISION,buffPHYS2d_TOT,jprcv_count_2d,jpdispl_count_2d,MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
+
+                        END IF
+                END DO
+
+        !---------------------------------------------------------------------------------------
+        !if writitng rank assembling and dumping
+
+                IF (WRITING_RANK_WR)then
+
+                        ind_col = (myrank / n_ranks_per_node) +1
+
+                        if (freq_ave_phys.eq.2) then
+                                var_to_store_phys_2d = matrix_phys_2d_2(jv,ind_col)%var_name
+                        else
+                                var_to_store_phys_2d = matrix_phys_2d_1(jv,ind_col)%var_name
+                        end if
+
+                        IF (var_to_store_phys_2d == "novars_input")then
+                                EXIT
+                        ELSE
+
+                                do idrank = 0,mpi_glcomm_size-1
+                                         irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
+                                         jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
+                                         totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
+                                         totiend   = totistart + irange - 1
+                                         totjstart = jstart_a(idrank+1) + jPd_a(idrank+1) - 1
+                                         totjend   = totjstart + jrange - 1
+                                         relistart = 1 + iPd_a(idrank+1) - 1
+                                         reliend   = relistart + irange - 1
+                                         reljstart = 1 + jPd_a(idrank+1) - 1
+                                         reljend   = reljstart + jrange - 1
+                                         do ji =totistart,totiend ! only 2d vars
+                                                i_contribution = jpj_rec_a(idrank+1)*(ji-totistart+relistart -1)
+                                                do jj =totjstart,totjend
+                                                        ind = jj-totjstart+ reljstart +i_contribution
+                                                        tottrnIO2d(jj,ji)=buffPHYS2d_TOT(ind+jpdispl_count_2d(idrank+1))
+                                                enddo
+                                         enddo
+                                enddo
+                                bkpname     =DIR//'ave.'//datemean//'.'//trim(var_to_store_phys_2d)//'.nc.bkp'
+                                phys_file_nc =DIR//'ave.'//datemean//'.'//trim(var_to_store_phys_2d)//'.nc'
+
+                                if (IsBackup) then
+                                        CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_phys_2d,datefrom, dateTo,tottrnIO2d, elapsed_time)
+
+                                else
+                                        d2f2d = REAL(tottrnIO2d(:,:),4)
+                                        CALL WRITE_AVE_2d(phys_file_nc,var_to_store_phys_2d,datefrom,dateTo, d2f2d)
+
+                                endif
+                        end if
+                END IF
+        END DO DUMPING_LOOP_2d_phys
+
+        if (.not.IsBackup) then
+                if (freq_ave_phys.eq.2) then
+                        tra_PHYS_2d_IO(:,:,:) = 0.
+                else
+                        tra_PHYS_2d_IO_HIGH(:,:,:) = 0.
+                endif
+        endif
+
+
+        if (WRITING_RANK_WR) tottrnIO = Miss_val
+!-------------------------------------------------------------------------
+
+
+       ! ! ******************  3D PHYS OUTPUT   *******************
+        
+        tra_PHYS_IO(1,:,:,:) = snIO
+        tra_PHYS_IO(2,:,:,:) = tnIO
+        tra_PHYS_IO(3,:,:,:) = wnIO
+        tra_PHYS_IO(4,:,:,:) = avtIO
+        tra_PHYS_IO(5,:,:,:) = e3tIO
+        tra_PHYS_IO(6,:,:,:) = unIO
+        tra_PHYS_IO(7,:,:,:) = vnIO
+
+        tra_PHYS_IO_high(1,:,:,:) = snIO
+        tra_PHYS_IO_high(2,:,:,:) = tnIO
+        tra_PHYS_IO_high(3,:,:,:) = wnIO
+        tra_PHYS_IO_high(4,:,:,:) = avtIO
+        tra_PHYS_IO_high(5,:,:,:) = e3tIO
+        tra_PHYS_IO_high(6,:,:,:) = unIO
+        tra_PHYS_IO_high(7,:,:,:) = vnIO
+
+        IF (freq_ave_phys==1)then
+                elapsed_time=elapsed_time_1
+                DIR='AVE_FREQ_1/'
+                !matrix_col=nodes
+                n_dumping_cycles=matrix_phys_1_row
+        end if
+
+        if (freq_ave_phys==2)then
+                elapsed_time=elapsed_time_2
+                DIR='AVE_FREQ_2/'
+                !matrix_col=nodes
+                n_dumping_cycles=matrix_phys_2_row
+        END IF
+
+
+        COUNTER_VAR_phys = 1
+        COUNTER_VAR_phys_HIGH = 1
+
+
+        DUMPING_LOOP_3d_phys: DO jv = 1, n_dumping_cycles
+
+                DO ivar = 1 , nodes
+
+                        writing_rank = writing_procs(ivar)
+
+                        IF (freq_ave_phys==2 .and. COUNTER_VAR_phys > JPTRA_phys_wri)then
+                                EXIT
+                        else if (freq_ave_phys==1 .and. COUNTER_VAR_phys_HIGH > JPTRA_phys_HIGH_wri)then
+                                EXIT
+                        ELSE
+                       
+                                if(freq_ave_phys==2) then
+                                        var_to_send = lowfreq_table_phys_wri(counter_var_phys)
+                                else
+                                        var_to_send = highfreq_table_phys_wri(counter_var_phys_high)
+                                end if
+
+                                if (freq_ave_phys.eq.2) then
+                                        do ji =1, jpi
+                                                i_contribution= jpk*jpj * (ji -1 )
+                                                do jj =1 , jpj
+                                                        j_contribution=jpk*(jj-1)
+                                                        do jk =1 , jpk
+                                                                ind = jk + j_contribution + i_contribution
+                                                                buffPHYS(ind) = tra_PHYS_IO(var_to_send, jk,jj,ji)
+                                                        enddo
+                                                enddo
+                                        enddo
+                                else
+                                        do ji =1, jpi
+                                                i_contribution= jpk*jpj * (ji -1 )
+                                                do jj =1 , jpj
+                                                        j_contribution=jpk*(jj-1)
+                                                        do jk =1 , jpk
+                                                                ind = jk + j_contribution + i_contribution
+                                                                buffPHYS(ind) = tra_PHYS_IO_HIGH(var_to_send, jk,jj,ji)
+                                                        enddo
+                                                enddo
+                                        enddo
+                                end if
+                                counter_var_phys = counter_var_phys + 1
+                                if (freq_ave_phys.eq.1) counter_var_phys_high =counter_var_phys_high + 1
+
+                                !GATHERV TO THE WRITING RANK
+
+                                CALL MPI_GATHERV(buffPHYS,sendcount,MPI_DOUBLE_PRECISION, buffPHYS_TOT,jprcv_count,jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
+                        END IF
+                END DO
+
+! *********** START WRITING **************************
+                IF (WRITING_RANK_WR)then
+
+                        ind_col = (myrank / n_ranks_per_node)+1
+
+                        if (freq_ave_phys.eq.2) then
+                                var_to_store_phys = matrix_phys_2(jv,ind_col)%var_name
+                        else
+                                var_to_store_phys = matrix_phys_1(jv,ind_col)%var_name
+                        end if
+
+                        IF (var_to_store_phys == "novars_input")then
+                                EXIT
+                        ELSE
+
+                                do idrank = 0,mpi_glcomm_size-1
+                                        irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
+                                        jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
+                                        totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
+                                        totiend   = totistart + irange - 1
+                                        totjstart = jstart_a(idrank+1) + jPd_a(idrank+1) - 1
+                                        totjend   = totjstart + jrange - 1
+                                        relistart = 1 + iPd_a(idrank+1) - 1
+                                        reliend   = relistart + irange - 1
+                                        reljstart = 1 + jPd_a(idrank+1) - 1
+                                        reljend   = reljstart + jrange - 1
+
+                                        do ji =totistart,totiend ! 3d vars
+                                                i_contribution = jpk*jpj_rec_a(idrank+1)*(ji-1 -totistart+relistart )
+                                                do jj =totjstart,totjend
+                                                        j_contribution = jpk*(jj-totjstart+ reljstart-1)
+                                                        do jk =1 , jpk
+                                                                ind = jk + j_contribution + i_contribution
+                                                                tottrnIO(jk,jj,ji)= buffPHYS_TOT (ind+jpdispl_count(idrank+1))
+                                                        enddo
+                                                enddo
+                                        enddo
+                                enddo
+                                bkpname     =DIR//'ave.'//datemean//'.'//trim(var_to_store_phys)//'.nc.bkp'
+                                phys_file_nc =DIR//'ave.'//datemean//'.'//trim(var_to_store_phys)//'.nc'
+
+                                if (IsBackup) then
+                                        CALL WRITE_AVE_BKP(bkpname,var_to_store_phys,datefrom,dateTo,tottrnIO,elapsed_time,deflate_ave, deflate_level_ave)
+                                else
+                                        CALL WRITE_AVE(phys_file_nc,var_to_store_phys,datefrom,dateTo, tottrnIO,deflate_ave,deflate_level_ave)
+                                endif
+
+
+                        END IF
+                END IF
+        END DO DUMPING_LOOP_3d_phys
+
+        if (.not.IsBackup) then
+                if (freq_ave_phys.eq.2) then
+                        tra_PHYS_IO(:,:,:,:) = 0.
+                else
+                        tra_PHYS_IO_HIGH(:,:,:,:) = 0.
+                endif
+        endif
+
+        end if
         if ((.not.IsBackup).and.( freq_ave_phys.eq.FREQ_GROUP) ) then
 
                 snIO     = 0.
@@ -508,6 +826,6 @@
                 avtIO    = 0.
                 e3tIO    = 0
         endif
-
+        
 
         end SUBROUTINE diadump

@@ -45,8 +45,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
       namelist /PHYS_2D/    physnm_2d, physun_2d, physWR_2d
 
 !-----------------------
-      OPEN(unit=numphys, file='namelist.phys', status= 'OLD')
-!'FORMATTED','SEQUENTIAL')
+      OPEN(unit=numphys, file='namelist.phys', status= 'OLD')!'FORMATTED','SEQUENTIAL')
 
       REWIND(numphys)
       READ(numphys,phys_num)
@@ -58,6 +57,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
       allocate(physnm_2d(jptra_phys))
       allocate(physun_2d(jptra_phys))
       allocate(physWR(jptra_phys))
+      allocate(physWR_2d(jptra_phys))
 
 !------------------------
 

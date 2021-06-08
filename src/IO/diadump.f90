@@ -52,6 +52,7 @@
          forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc'
       endif
 
+        write(*,*) 'old phys'
 
       SELECT CASE (FREQ_GROUP)
         CASE (1) 

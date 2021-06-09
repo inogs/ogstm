@@ -381,7 +381,7 @@ MODULE MATRIX_VARS
                                 EXIT
                         ELSE
                                 trans_phys_high = highfreq_table_phys_wri(counter_phys_high+1)
-                                write(*,*) '384', highfreq_table_phys_wri(counter_phys_high+1)
+                                !write(*,*) '384', highfreq_table_phys_wri(counter_phys_high+1)
                                 matrix_phys_1(i,j)%var_name=physnm(trans_phys_high)
                                 counter_phys_high=counter_phys_high + 1
                         END IF
@@ -441,11 +441,11 @@ MODULE MATRIX_VARS
         ALLOCATE (highfreq_table_dia_2d_wri(jptra_dia_2d_high_wri))
 
         jptra_phys_2d_high_wri = 0
-        write(*,*) '443', jptra_phys_2d, jptra_phys_2d_high_wri
+        !write(*,*) '443', jptra_phys_2d, jptra_phys_2d_high_wri
         DO i =1, jptra_phys_2d
                 IF (freq_ave_phys.eq.1 .and. physWR_2d(i) == 1) then
                         jptra_phys_2d_high_wri = jptra_phys_2d_high_wri + 1
-                        write(*,*) '447', jptra_phys_2d, jptra_phys_2d_high_wri
+                        !write(*,*) '447', jptra_phys_2d, jptra_phys_2d_high_wri
                 END IF
         ENDDO
 
@@ -463,11 +463,11 @@ MODULE MATRIX_VARS
         jptra_phys_2d_high_wri = 0
         DO i =1, jptra_phys_2d
                 IF (freq_ave_phys.eq.1 .and. physWR_2d(i) == 1) then
-                        write(*,*) '465', jptra_phys_2d, jptra_phys_2d_high_wri
+                        !write(*,*) '465', jptra_phys_2d, jptra_phys_2d_high_wri
                         jptra_phys_2d_high_wri = jptra_phys_2d_high_wri + 1
-                        write(*,*) '467', jptra_phys_2d, jptra_phys_2d_high_wri
+                        !write(*,*) '467', jptra_phys_2d, jptra_phys_2d_high_wri
                         highfreq_table_phys_2d_wri(jptra_phys_2d_high_wri) = i
-                        write(*,*) '469',i, jptra_phys_2d, jptra_phys_2d_high_wri,highfreq_table_phys_2d_wri(jptra_phys_2d_high_wri)
+                        !write(*,*) '469',i, jptra_phys_2d, jptra_phys_2d_high_wri,highfreq_table_phys_2d_wri(jptra_phys_2d_high_wri)
                 END IF
         ENDDO
 

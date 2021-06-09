@@ -48,202 +48,6 @@
       IsBackup =  (datemean.eq.dateTo)
       if (lwp) write(*,*) 'diadump IsBackup = ',IsBackup, ' group ' ,FREQ_GROUP
 ! ----------------------------------------
-      bkpname  = 'ave.20111231-15:30:00.N1p.nc.bkp'
-
-      if (IsBackup) then
-         forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc.bkp'
-      else
-         forcing_file   = 'AVE_PHYS/ave.'//datemean//'.phys.nc'
-      endif
-
-
-      SELECT CASE (FREQ_GROUP)
-        CASE (1) 
-       elapsed_time=elapsed_time_1
-       DIR='AVE_FREQ_1/'
-        CASE (2) 
-       elapsed_time=elapsed_time_2
-       DIR='AVE_FREQ_2/'
-      END SELECT
-
-      if (lwp) then
-          totsnIO   = Miss_val
-          tottnIO   = Miss_val
-          totunIO   = Miss_val
-          totvnIO   = Miss_val
-          totwnIO   = Miss_val
-          totavtIO  = Miss_val
-          tote3tIO  = Miss_val
-          totvatmIO = Miss_val
-          totempIO  = Miss_val
-          totqsrIO  = Miss_val
-      endif
-
-!      PHYSICS FIRST!!
-      if ( freq_ave_phys.eq.FREQ_GROUP) then
-      ! *************** START COLLECTING DATA
-      ! *****************************
-       if (myrank == 0) then                    ! IF LABEL 1
-
-
-! ******* myrank 0 sets indexes of tot matrix where to place its own
-! part
-
-          iPd    = nldi
-          iPe    = nlei
-          jPd    = nldj
-          jPe    = nlej
-          istart = nimpp
-          jstart = njmpp
-          irange    = iPe - iPd + 1
-          jrange    = jPe - jPd + 1
-          totistart = istart + iPd - 1 
-          totiend   = totistart + irange - 1
-          totjstart = jstart + jPd - 1 
-          totjend   = totjstart + jrange - 1
-          relistart = 1 + iPd - 1      
-          reliend   = relistart + irange - 1
-          reljstart = 1 + jPd - 1      
-          reljend   = reljstart + jrange - 1
-
-          totsnIO  (:, totjstart:totjend,totistart:totiend) = snIO(:, reljstart:reljend,relistart:reliend)
-          tottnIO  (:, totjstart:totjend,totistart:totiend) = tnIO(:, reljstart:reljend,relistart:reliend)
-          totvatmIO(totjstart:totjend,totistart:totiend) = vatmIO(reljstart:reljend,relistart:reliend)
-          totempIO (totjstart:totjend,totistart:totiend) = empIO(reljstart:reljend,relistart:reliend)
-          totqsrIO (totjstart:totjend,totistart:totiend) = qsrIO(reljstart:reljend,relistart:reliend)
-          totunIO  (:, totjstart:totjend,totistart:totiend) = unIO(:, reljstart:reljend,relistart:reliend)
-          totvnIO  (:, totjstart:totjend,totistart:totiend) = vnIO(:, reljstart:reljend,relistart:reliend)
-          totwnIO  (:, totjstart:totjend,totistart:totiend) = wnIO(:, reljstart:reljend,relistart:reliend)
-          totavtIO (:, totjstart:totjend,totistart:totiend) = avtIO(:, reljstart:reljend,relistart:reliend)
-          tote3tIO (:, totjstart:totjend,totistart:totiend) = e3tIO(:, reljstart:reljend,relistart:reliend)
-
-           do idrank = 1,mpi_glcomm_size-1
-        ! **************  myrank 0 is receiving from the others their buffer
-          ! ****
-               call MPI_RECV(jpi_rec    , 1,mpi_integer, idrank, 1,mpi_comm_world, status, ierr) !* first info toknow where idrank is working
-               call MPI_RECV(jpj_rec    , 1,mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
-               call MPI_RECV(istart     , 1,mpi_integer, idrank, 3,mpi_comm_world, status, ierr)
-               call MPI_RECV(jstart     , 1,mpi_integer, idrank, 4,mpi_comm_world, status, ierr)
-               call MPI_RECV(iPe        , 1,mpi_integer, idrank, 5,mpi_comm_world, status, ierr)
-               call MPI_RECV(jPe        , 1,mpi_integer, idrank, 6,mpi_comm_world, status, ierr)
-               call MPI_RECV(iPd        , 1,mpi_integer, idrank, 7,mpi_comm_world, status, ierr)
-               call MPI_RECV(jPd        , 1,mpi_integer, idrank, 8,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffsn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 11,mpi_comm_world, status, ierr)
-       call MPI_RECV(bufftn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 12,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffvatm,jpi_rec*jpj_rec,mpi_real8,idrank, 13,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffemp ,jpi_rec*jpj_rec,mpi_real8,idrank, 14,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffqsr ,jpi_rec*jpj_rec,mpi_real8,idrank, 15,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffun  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 16,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffvn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 17,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffwn  ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 18,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffavt ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
-       call MPI_RECV(buffe3t ,jpi_rec*jpj_rec*jpk,mpi_real8,idrank, 19,mpi_comm_world, status, ierr)
-     ! ******* myrank 0 sets indexes of tot matrix where to place buffers of
-         ! idrank
-               irange    = iPe - iPd + 1
-               jrange    = jPe - jPd + 1
-               totistart = istart + iPd - 1
-               totiend   = totistart + irange - 1
-               totjstart = jstart + jPd - 1
-               totjend   = totjstart + jrange - 1
-               relistart = 1 + iPd - 1
-               reliend   = relistart + irange - 1
-               reljstart = 1 + jPd - 1
-               reljend   = reljstart + jrange - 1
-               do ji =totistart,totiend ! 3d vars
-                    i_contribution = jpk*jpj_rec*(ji-1 - totistart+relistart )
-                     do jj =totjstart,totjend
-                         j_contribution = jpk*(jj-totjstart+reljstart-1)
-                         do jk =1 , jpk
-                            ind = jk + j_contribution + i_contribution
-                            totsnIO (jk,jj,ji)= buffsn (ind)
-                            tottnIO (jk,jj,ji)= bufftn (ind)
-                            totunIO (jk,jj,ji)= buffun (ind)
-                            totvnIO (jk,jj,ji)= buffvn (ind)
-                            totwnIO (jk,jj,ji)= buffwn (ind)
-                            totavtIO(jk,jj,ji)= buffavt(ind)
-                            tote3tIO(jk,jj,ji)= buffe3t(ind)
-                         enddo
-                      enddo
-                   enddo
-
-             do ji =totistart,totiend  ! and 2d vars
-                i_contribution = jpj_rec*(ji-1 -totistart+ relistart )
-                do jj =totjstart,totjend
-                   ind = (jj - totjstart+ reljstart) + i_contribution
-                   totvatmIO (jj,ji)= buffvatm(ind)
-                   totempIO  (jj,ji)= buffemp (ind)
-                   totqsrIO  (jj,ji)= buffqsr (ind)
-                enddo
-             enddo
-           enddo !idrank = 1, size-1
-       else  ! IF LABEL 1,  if(myrank == 0)
-            do ji =1 , jpi
-             i_contribution= jpk*jpj * (ji - 1 )
-             do jj =1 , jpj
-              j_contribution=jpk*(jj-1)
-              do jk =1 , jpk
-                    ind         =  jk + j_contribution + i_contribution
-                    buffsn (ind)= snIO (jk,jj,ji)
-                    bufftn (ind)= tnIO (jk,jj,ji)
-                    buffun (ind)= unIO (jk,jj,ji)
-                    buffvn (ind)= vnIO (jk,jj,ji)
-                    buffwn (ind)= wnIO (jk,jj,ji)
-                    buffavt(ind)= avtIO(jk,jj,ji)
-                    buffe3t(ind)= e3tIO(jk,jj,ji)
-               enddo
-              enddo
-             enddo
-             do ji =1 , jpi
-              i_contribution=jpj * (ji-1)
-              do jj =1 , jpj
-                ind           = jj + i_contribution
-                buffvatm (ind)= vatmIO(jj,ji)
-                buffemp  (ind)= empIO (jj,ji)
-                buffqsr  (ind)= qsrIO (jj,ji)
-               enddo
-              enddo
-               call MPI_SEND(jpi  , 1,mpi_integer, 0, 1,mpi_comm_world,ierr)
-               call MPI_SEND(jpj  , 1,mpi_integer, 0, 2,mpi_comm_world,ierr)
-               call MPI_SEND(nimpp, 1,mpi_integer, 0, 3,mpi_comm_world,ierr)
-               call MPI_SEND(njmpp, 1,mpi_integer, 0, 4,mpi_comm_world,ierr)
-               call MPI_SEND(nlei , 1,mpi_integer, 0, 5,mpi_comm_world,ierr)
-               call MPI_SEND(nlej , 1,mpi_integer, 0, 6,mpi_comm_world,ierr)
-               call MPI_SEND(nldi , 1,mpi_integer, 0, 7,mpi_comm_world,ierr)
-               call MPI_SEND(nldj , 1,mpi_integer, 0, 8,mpi_comm_world,ierr)
-            call MPI_SEND(buffsn  , jpk*jpj*jpi  ,mpi_real8, 0, 11,mpi_comm_world,ierr)
-            call MPI_SEND(bufftn  , jpk*jpj*jpi  ,mpi_real8, 0, 12,mpi_comm_world,ierr)
-            call MPI_SEND(buffvatm, jpi*jpj      ,mpi_real8, 0, 13,mpi_comm_world,ierr)
-            call MPI_SEND(buffemp , jpi*jpj      ,mpi_real8, 0, 14,mpi_comm_world,ierr)
-            call MPI_SEND(buffqsr , jpi*jpj      ,mpi_real8, 0, 15,mpi_comm_world,ierr)
-            call MPI_SEND(buffun  , jpk*jpj*jpi  ,mpi_real8, 0, 16,mpi_comm_world,ierr)
-            call MPI_SEND(buffvn  , jpk*jpj*jpi  ,mpi_real8, 0, 17,mpi_comm_world,ierr)
-            call MPI_SEND(buffwn  , jpk*jpj*jpi  ,mpi_real8, 0, 18,mpi_comm_world,ierr)
-            call MPI_SEND(buffavt , jpk*jpj*jpi  ,mpi_real8, 0, 19,mpi_comm_world,ierr)
-            call MPI_SEND(buffe3t , jpk*jpj*jpi  ,mpi_real8, 0, 19,mpi_comm_world,ierr)
-
-
-
-
-       endif ! IF LABEL 1, if(myrank == 0)
-!************* END COLLECTING DATA  *****************
-
-! *********** START WRITING **************************
-
-      if(myrank == 0) then ! IF LABEL 4,
-         if (IsBackup) then
-
-            call PhysDump_bkp(forcing_file, datefrom,dateTo,elapsed_time)
-          else
-            call PhysDump(forcing_file, datefrom, dateTo)
-         endif
-      endif
-
-      endif !if ( freq_ave_phys.eq.FREQ_GROUP)
-
-
-
-
 
       if (WRITING_RANK_WR) tottrnIO2d = Miss_val
 ! ******************  DIAGNOSTIC OUTPUT   2D *******************
@@ -505,27 +309,11 @@
 !-------------------------------------------------
         ! ****************** PHYSC OUTPUT   2D *******************
         
-        if (lwp) then
-          totsnIO   = Miss_val
-          tottnIO   = Miss_val
-          totunIO   = Miss_val
-          totvnIO   = Miss_val
-          totwnIO   = Miss_val
-          totavtIO  = Miss_val
-          tote3tIO  = Miss_val
-          totvatmIO = Miss_val
-          totempIO  = Miss_val
-          totqsrIO  = Miss_val
-        endif
 
 
 
 
-
-
-
-
-        if(freq_ave_phys.eq.FREQ_GROUP) then
+        if(freq_ave_phys.eq.FREQ_GROUP ) then
 
         tra_PHYS_2d_IO(1,:,:) = vatmIO
         tra_PHYS_2d_IO(2,:,:) = empIO
@@ -533,9 +321,9 @@
 
         tra_PHYS_2d_IO_high(1,:,:) = vatmIO
         tra_PHYS_2d_IO_high(2,:,:) = empIO
-        write(*,*) 'copy is',tra_PHYS_2d_IO_high(2,5,5)
+        !write(*,*) 'copy is',tra_PHYS_2d_IO_high(2,5,5)
         tra_PHYS_2d_IO_high(3,:,:) = qsrIO
-        write(*,*) 'copy is',tra_PHYS_2d_IO_high(3,5,5)
+        !write(*,*) 'copy is',tra_PHYS_2d_IO_high(3,5,5)
 
 
         IF (freq_ave_phys==1)then
@@ -561,7 +349,7 @@
 
                         writing_rank = writing_procs(ivar)
 
-                        write(*,*)'phys 2d wri number' ,JPTRA_phys_2d_HIGH_wri
+                        !write(*,*)'phys 2d wri number' ,JPTRA_phys_2d_HIGH_wri
                         IF (freq_ave_phys==2 .and. COUNTER_VAR_phys_2d > JPTRA_phys_2d_wri)then
                                 EXIT
                         else if (freq_ave_phys==1 .and. COUNTER_VAR_phys_HIGH_2d > JPTRA_phys_2d_HIGH_wri)then
@@ -571,7 +359,7 @@
                                         var_to_send_2D = lowfreq_table_phys_2d_wri(counter_var_phys_2d)
                                 else
                                         var_to_send_2D = highfreq_table_phys_2d_wri(counter_var_phys_high_2d)
-                                        write(*,*) 'var to send 2d is', var_to_send_2D
+                                        !write(*,*) 'var to send 2d is', var_to_send_2D
                                 end if
 
                                 if (freq_ave_phys.eq.2) then
@@ -590,8 +378,9 @@
                                                         buffPHYS2d (ind)=tra_PHYS_2d_IO_high(var_to_send_2D,jj,ji)
                                                 enddo
                                         enddo
-                                        write(*,*) 'valeu in buffer is', tra_PHYS_2d_IO_high(var_to_send_2D,5,5)
-                                        write(*,*) 'valeu in buffer is,second print',tra_PHYS_2d_IO_high(3,5,5)
+                                        !write(*,*) 'valeu in buffer is', tra_PHYS_2d_IO_high(var_to_send_2D,5,5)
+                                        !write(*,*) &
+                                     !'valeu in buffer is,second print',tra_PHYS_2d_IO_high(3,5,5)
                                 endif
                                 counter_var_phys_2d = counter_var_phys_2d + 1
                                 if (freq_ave_phys.eq.1) counter_var_phys_high_2d = counter_var_phys_high_2d + 1

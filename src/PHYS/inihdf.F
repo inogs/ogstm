@@ -90,6 +90,7 @@
           zahr =   150.
 !!!
 !!   ... computation coefficients
+
 #ifdef gdept1d
       za00 = tanh( (-gdept(1  )-zkah) / zahr )
       za01 = tanh( (-gdept(jpk)-zkah) / zahr )
@@ -134,6 +135,7 @@
 #else
         ahtu(jk) = zahs + zahf * tanh( (-gdept(jk,1,1)-zkah) / zahr )
 #endif
+
         ahtv(jk) = ahtu(jk)
         ahtw(jk) = zahs + zahf * tanh( (-gdepw(jk)-zkah) / zahr )
       END DO
@@ -149,6 +151,7 @@
 #else
         IF(lwp)WRITE(numout,9210) jk, ahtu(jk), gdept(jk,1,1)
 #endif
+
       END DO
  9200 FORMAT(' level    aht          depth t-level ' )
  9210 FORMAT(i6,2f12.4)

@@ -26,7 +26,7 @@
       CHARACTER(LEN=100) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread
-
+      CHARACTER(LEN=20) dirct
 
 ! 0. initialisations
        bkpname  = 'AVE_FREQ_1/ave.20111231-15:30:00.N1p.nc.bkp'
@@ -47,7 +47,8 @@
       DO jn=1, jptra  ! global loop on tracers to read restart
 
 
-         filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))//'.nc'
+         filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))// & 
+                '.nc'
          CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
 
 
@@ -119,7 +120,7 @@
              tra_DIA_IO(jn,:,:,:) = 0.0
           endif
 
-          IF (diahf(jn).eq.1)  THEN
+          IF ((diahf(jn).eq.1).and.(diaWR(jn).eq.1))  THEN
            jn_high = jn_high + 1
            bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm(jn))//'.nc.bkp'
            INQUIRE(FILE=bkpname, EXIST=existFile)
@@ -159,7 +160,7 @@
              tra_DIA_2d_IO(jn,:,:) = 0.0
           endif
 
-          IF (diahf_2d(jn).eq.1)  THEN
+          IF ((diahf_2d(jn).eq.1).and.(diaWR_2d(jn).eq.1))  THEN
            jn_high = jn_high + 1
            bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm_2d(jn))//'.nc.bkp'
            INQUIRE(FILE=bkpname, EXIST=existFile)
@@ -184,36 +185,115 @@
 
 
 
-
-      bkpname    = 'AVE_PHYS/ave.'//DateStart//'.phys.nc.bkp'
-      INQUIRE(FILE=bkpname, EXIST=existFilebkp)
-      if (existFilebkp) then
-          call readnc_slice_double(   bkpname,'vosaline',  snIO)
-          call readnc_slice_double(   bkpname,'votemper',  tnIO)
-
-          call readnc_slice_double(   bkpname,'vozocrtx',  unIO)
-          call readnc_slice_double(   bkpname,'vomecrty',  vnIO)
-          call readnc_slice_double(   bkpname,'vovecrtz',  wnIO)
-          call readnc_slice_double(   bkpname,'votkeavt', avtIO)
-          call readnc_slice_double(   bkpname,'e3t', e3tIO)
-
-          call readnc_slice_double_2d(bkpname,'soshfldo', qsrIO)
-          call readnc_slice_double_2d(bkpname,'sowindsp',vatmIO)
-          call readnc_slice_double_2d(bkpname,'sowaflcd', empIO)
+      if(freq_ave_phys .eq. 1) then
+        dirct=trim("AVE_FREQ_1")
       else
-          snIO      = 0.0
-          tnIO      = 0.0
-          vatmIO    = 0.0
-          empIO     = 0.0
-          qsrIO     = 0.0
-          unIO      = 0.0
-          vnIO      = 0.0
-          wnIO      = 0.0
-          avtIO     = 0.0
-          e3tIO     = 0.0
-      endif
+        dirct=trim("AVE_FREQ_2")
+      end if
+      
+      bkpname = dirct//'/ave.'//DateStart//'.'//'vosaline'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double(   bkpname,'vosaline',  snIO) 
+        else 
+          snIO = 0.0
+        end if
 
-      if (lwp) write(*,*) 'trcrst elapsed_time_1 = ', elapsed_time_1, ' elapsed_time_2 = ', elapsed_time_2
+       if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'votemper'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double(   bkpname,'votemper',  tnIO)      
+        else
+          tnIO = 0.0
+        end if
+     
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'vozocrtx'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double(   bkpname,'vozocrtx',  unIO)  
+        else
+          unIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'vomecrty'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double(   bkpname,'vomecrty',  vnIO)  
+        else
+          vnIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'vovecrtz'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double(   bkpname,'vovecrtz',  wnIO)  
+        else
+          wnIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'votkeavt'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double(   bkpname,'votkeavt',  avtIO)  
+        else
+          avtIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'e3t'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double(   bkpname,'e3t',  e3tIO)  
+        else
+          e3tIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'soshfldo'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double_2d(   bkpname,'soshfldo', qsrIO)  
+        else
+          qsrIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'sowindsp'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double_2d(   bkpname,'sowindsp',  vatmIO)  
+        else
+          vatmIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+      bkpname = dirct//'/ave.'//DateStart//'.'//'sowaflcd'//'.nc.bkp'
+        INQUIRE(FILE=bkpname, EXIST=existFilebkp)
+        if (existFilebkp) then
+          call readnc_slice_double_2d(   bkpname,'sowaflcd',  empIO)  
+        else
+          empIO = 0.0
+        end if
+
+         if(lwp)  write(*,*) 'reading ', bkpname
+
+
+      if (lwp) write(*,*) 'trcrst elapsed_time_1 = ', elapsed_time_1, &
+                ' elapsed_time_2 = ', elapsed_time_2
       IsStartBackup_1 = bkp1hasbeenread
       IsStartBackup_2 = bkp2hasbeenread
 

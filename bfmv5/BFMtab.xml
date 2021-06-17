@@ -65,6 +65,7 @@
 <var name="EIR"          highfreq="false" dump="false" ></var> 
 <var name="ESS"          highfreq="false" dump="false" ></var> 
 <var name="EPR"          highfreq="false" dump="false" ></var> 
+<var name="BAC_ACT_FACT" highfreq="false" dump="false" ></var> 
 <var name="Depth"        highfreq="false" dump="false" ></var> 
 <var name="Volume"       highfreq="false" dump="false" ></var> 
 <var name="DIC"          highfreq="true" dump="true" ></var> 

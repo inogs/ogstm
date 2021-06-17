@@ -65,15 +65,15 @@ MODULE DA_VARS_module
         INTEGER :: trans_DA
 
 
-        num_DA_vars = size(varlistDA)
+        num_DA_vars = size(DA_varlist)
         allocate(DA_table(num_DA_vars))
 
         !create DA_table
-        !table of index transformtion from varlist_da and ctrcnm
+        !table of index transformtion from DA_varlist and ctrcnm
         tmp_var_num = 0
         do i = 1, num_DA_vars
                 do j=1, jptra
-                        IF (varlistDA(i).eq.trim(ctrcnm(j))) then
+                        IF (DA_varlist(i).eq.trim(ctrcnm(j))) then
                                 tmp_var_num=tmp_var_num + 1
                                 DA_table(tmp_var_num) = j
                         end if
@@ -81,7 +81,7 @@ MODULE DA_VARS_module
         end do
 
 
-        !define hard coded how many variables of varlist_DA will be printed separately
+        !define hard coded how many variables of DA_varlist will be printed separately
         !PX=p1l+p2l+p3l+p4l -> for chl 
 
         PX_DA=4

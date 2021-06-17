@@ -40,7 +40,7 @@ MODULE OGSTM
       USE MPI_GATHER_INFO
       USE dtype_procs_string_module
       use module_step
-
+      use api_bfm 
       USE TREd_var_MP
 
 
@@ -185,7 +185,10 @@ SUBROUTINE ogstm_initialize()
 #else
 ! Initialization of Biogeochemical reactor with 1D approach
       call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
+      parallel_rank=myrank
+      call Init_bfm()
       call BFM0D_INIT_IO_CHANNELS()
+
 #endif
       call Initialize()
 
@@ -253,10 +256,10 @@ SUBROUTINE ALLOC_ALL
       call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
 
       call myalloc_IO()  
-      write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 
+      ! LEVEL1 write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 
       mem_all_tot=mem_all_tot+mem_all
 
-      write(*,*)'My_Rank,',myrank,'Total Allocated Memory (MB):',mem_all_tot
+      ! LEVEL1 write(*,*)'My_Rank,',myrank,'Total Allocated Memory (MB):',mem_all_tot
 
 END SUBROUTINE ALLOC_ALL
 

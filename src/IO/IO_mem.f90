@@ -39,6 +39,8 @@
       double precision, allocatable :: bufftrIO(:)
       double precision, allocatable :: buffDIA(:)
       double precision, allocatable :: buffDIA2d(:)
+      double precision, allocatable :: buffPHYS(:)
+      double precision, allocatable :: buffPHYS2d(:)
       real, allocatable :: d2f2d(:,:)
 !----------------------------------------------------------------------
       CONTAINS
@@ -87,7 +89,11 @@
         buffDIA   = huge(buffDIA(1))
        allocate(buffDIA2d (jpi_max* jpj_max     )) 
         buffDIA2d = huge(buffDIA2d(1))
-
+        
+       allocate(buffPHYS   (jpi_max* jpj_max* jpk))
+        buffPHYS   = huge(buffPHYS(1))
+       allocate(buffPHYS2d (jpi_max* jpj_max     ))
+        buffPHYS2d = huge(buffPHYS2d(1))
        if (lwp) then
        allocate(d2f2d     (jpjglo,jpiglo))         
         d2f2d     = huge(d2f2d(1,1))
@@ -121,7 +127,9 @@
           deallocate(bufftrIO)
           deallocate(buffDIA)
           deallocate(buffDIA2d)
-          
+          deallocate(buffPHYS)
+          deallocate(buffPHYS2d)
+ 
           if (lwp) then
               deallocate(d2f2d)
           endif

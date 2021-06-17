@@ -2,19 +2,25 @@
 
       use filenames
       use DA_mem
+! ---- modules from 3Dvar
       use DA_Params
+      use drv_str
+! -----------------------
       use ogstm_mpi_module
       use mpi_str, only: Var3DCommunicator
-      use calendar
+      use calendar, only: datestring2sec
       USE TREd_var_MP
+
 
       IMPLICIT NONE
 
       CHARACTER(LEN=17), INTENT(IN) :: datestr, dateFrom
 
       character(LEN=1024) SATFILE, VARFILE
-      character(LEN=2) MONTH
+      character(LEN=1024) HOSTDIR
+      character(LEN=2) MONTH,HOUR
       character (LEN=8) DAY
+      character (LEN=5) OBStype
       character MISFIT_OPT
       logical ISLOG
       integer :: ierr, color, ii
@@ -24,26 +30,42 @@
       DAparttime  = MPI_WTIME()
       MONTH=datestr(5:6)
       DAY  =datestr(1:8)
+      HOUR =datestr(10:11)
 
       ! DA_Params init
       DA_Date = datestr
-      ShortDate = datestr(1:11)//datestr(13:14)//datestr(16:17)
-      jpk_200 = AssimilationLevels
-      NBioVar = 17
-      DA_JulianDate = datestring2sec(datestr)
+      ShortDate = ConvertDate(datestr)
+      if(HOUR.eq.'12') then
+        jpk_200 = AssimilationLevels_sat
+        OBStype = '__Sat'
+      elseif(HOUR.eq.'13') then
+        jpk_200 = AssimilationLevels_float
+        OBStype = 'Float'
+      endif
+      !NBioVar = 17
+      DA_JulianDate = datestring2sec(DA_Date)
 
       MISFIT_OPT ='2'
       ISLOG = .false.
 
       ! SATDIR li vuole pronti all'uso, già tagliati e interpolati
       SATFILE   = 'SATELLITE/' // DAY // trim(satfile_suffix)
-      VARFILE   = 'DA_static_data/MISFIT/VAR2D/var2D.' // MONTH // '.nc'
-      EOF_FILE  = 'DA_static_data/3D_VAR/EOF/eof.'  // MONTH // '.nc'
-      GRID_FILE = 'DA_static_data/3D_VAR/GRID/BFM_grid.nc'
+      VARFILE   = 'DA_static_data/VAR_SAT/var2D.' // MONTH // '.nc'
+      !EOF_FILE_CHL  = 'DA_static_data/3D_VAR/EOF/CHL/eof.'  // MONTH // '.nc'
+      EOF_FILE_CHL  = 'DA_static_data/3D_VAR/EOF/CHL' // OBStype // '/eof.'  // MONTH // '.nc'
+      EOF_FILE_N3N  = 'DA_static_data/3D_VAR/EOF/N3n/eof.'  // MONTH // '.nc'
+      EOF_FILE_O2O  = 'DA_static_data/3D_VAR/EOF/O2o/eof.'  // MONTH // '.nc'
+      EOF_FILE_MULTI= 'DA_static_data/3D_VAR/EOF/CHLN3n/eof.'  // MONTH // '.nc'
+      STD_FILE_MULTI= 'DA_static_data/3D_VAR/STD/std.'  // MONTH // '.nc'
+      NUTCOV_FILE   = 'DA_static_data/3D_VAR/CROSSCORRS/crosscorrs.' // MONTH // '.nc'
+      NUTCHLCOV_FILE   = 'DA_static_data/3D_VAR/CROSSCORRS/crosscorrs.' // MONTH // '.nc'
+
+      GRID_FILE = 'DA_static_data/3D_VAR/GRID/BFM_grid' //OBStype// '.nc'
       ANIS_FILE = 'DA_static_data/3D_VAR/gradsal.nc'
+      RCORR_FILE = 'DA_static_data/3D_VAR/chl_rad_corr.nc'
 
       MISFIT_FILE='DA__FREQ_1/'// DAY // '.chl_mis.nc'
-      ARGO_FILE='DA__FREQ_1/'// DAY // '.P_l_arg_mis.dat'
+      ARGO_FILE='DA__FREQ_1/'// DAY // '.arg_mis.dat'
       CORR_FILE = 'DA__FREQ_1/'// DAY // '_corr.nc'
       EIV_FILE  = 'DA__FREQ_1/'// DAY // '_eiv.nc'
       OBS_FILE = 'obs_1.dat' ! 'obs_'//fgrd//'.dat'
@@ -54,32 +76,37 @@
 
       if (V3D_VAR_PARALLEL) then
 
-          allocate(DA_VarList(NBioVar))
-          do ii=1,NBioVar
-            DA_VarList(ii) = varlistDA(ii)
-          enddo
+!          allocate(DA_VarList(NBioVar))
+!          do ii=1,NBioVar
+!            DA_VarList(ii) = varlistDA(ii)
+!          enddo
 
-          if(myrank .eq. 0) then ! .and. sat .eq. 1) then
-            write(*,*) 'satfile=', trim(SATFILE)
-            write(*,*) 'varfile=', trim(VARFILE)
-            write(*,*) 'misfit=', trim(MISFIT_FILE)
-            call CREATEMISFIT(SATFILE,VARFILE,MISFIT_OPT, ISLOG, MISFIT_FILE) ! produces MISFIT.nc
-            write(*,*) 'eof = ',   trim(EOF_FILE)
-            write(*,*) 'grid = ',  trim(GRID_FILE)
-          endif
+          IF(myrank .eq. 0) then
+            call def_nml
+            call def_nml_multi
+            if (drv%sat_obs.eq.1) then
+               write(*,*) '--- Preparing satellite misfit ---'
+               call CREATEMISFIT(SATFILE,VARFILE,MISFIT_OPT, ISLOG, MISFIT_FILE) ! produces MISFIT.nc
+               write(*,*) 'eof = ',   trim(EOF_FILE_CHL)
+               write(*,*) 'grid = ',  trim(GRID_FILE)
+             endif
 
-          ! if(myrank .eq. 0) then
-          !   SysErr = system("../float_preproc/Float_misfit_gen.sh -d ../float_preproc -t "//DAY)
-          !   if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
-          ! endif
-  
+
+            if (drv%argo_obs.eq.1) then
+               write(*,*) '--- Preparing float misfit ---'
+               call getenv('OPA_BINDIR', HOSTDIR)
+               SysErr = system(trim(HOSTDIR)//"/Float_misfit_gen.sh -t "//DAY)
+               if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
+            endif
+          ENDIF
+
           call MPI_Barrier(Var3DCommunicator, ierr)
 
 
-          call BIOVAR
+          call OCEANVAR
 
           ! deallocation of DA_VarList array
-          call clean_da_params
+          !call clean_da_params
       endif
 
       call mppsync()

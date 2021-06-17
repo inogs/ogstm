@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<vars_for_All_Statistics description="point profiles, subbasin statistic profiles, volume integrals">
+
+<native>
+</native>
+
+<aggregate>
+
+<aggvar name="P_l" formula="P_l = P1l + P2l + P3l + P4l" > </aggvar>
+
+</aggregate>
+</vars_for_All_Statistics>
+
+
+
+<var_for_Some_Statistics>
+</var_for_Some_Statistics>
+
+
+<toArchive>
+</toArchive>
+
+
+<var2D>
+<vars_for_All>
+<native>
+</native>
+</vars_for_All>
+</var2D>
+
+</root>
+

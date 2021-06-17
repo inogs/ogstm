@@ -1,7 +1,7 @@
 !> Maps hard_open boundaries
 
 module hard_open_mod
-
+    use myalloc, only: lwp
     use bc_mod
     use bc_aux_mod
     use myalloc
@@ -605,7 +605,7 @@ contains
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
 
-        write(*, *) 'WARN: sponge_t and sponge_val are left untouched by hard_open class'
+        if (lwp) write(*, *) 'WARN: sponge_t and sponge_val are left untouched by hard_open class'
 
     end subroutine apply_phys
 

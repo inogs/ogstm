@@ -1,0 +1,11 @@
+#!/bin/bash
+
+cd /pico/scratch/userexternal/lmariott/FDA_all2015_newstd_3days/wrkdir/float_postproc
+
+/bin/rm fda_all2015_index.txt QCoutput.dat
+for data in `cat listdates1`
+do 
+  ./Float_misfit_gen.sh -t $data -d . fda_all2015_index.txt
+done
+cp fda_all2015_index.txt  $HOME
+

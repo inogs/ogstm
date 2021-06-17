@@ -61,14 +61,14 @@
       double precision,dimension(jptra) :: a,b
       double precision,dimension(4) :: c
       double precision,dimension(jptra_dia) :: d
-      double precision,dimension(10) :: er
+      double precision,dimension(11) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 #else
       double precision,dimension(jptra,jpk) :: b
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,10) :: er
+      double precision,dimension(jpk,11) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 #endif
 
@@ -76,6 +76,7 @@
       integer :: jk,jj,ji,jb,jn
       integer :: jtr,jtrmax,tra_idx
       integer :: bottom
+      double precision :: correct_fact
 
 
 !!!----------------------------------------------------------------------
@@ -136,7 +137,11 @@
                           er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
                           er(9)  = vatm(jj,ji) * surf_mask(jk)  ! wind speed (m/s)
                           er(10) = ogstm_PH(jk,jj,ji)         ! PH
-
+#ifdef gdept1d
+                          er(11) = ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
+#else
+                          er(11) = ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji) 
+#endif
                           call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
 
                          call BFM0D_reset()
@@ -175,6 +180,24 @@
       er(:,10) = 8.1
 
 
+#ifdef gdept1d
+! er(:,11) is calculated outside the loop on ji,jj
+      do jk=1, jpk
+         correct_fact= 1.0D0
+
+         if ( (gdept(jk) .GT. 1000.0D0 ) .AND.  (gdept(jk) .LT. 2000.0D0 )) then
+             correct_fact= 0.25D0
+         endif
+
+         if (gdept(jk) .GE. 2000.0D0 ) then
+             correct_fact= 0.0D0
+         endif
+
+         er(jk,11) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
+      enddo
+#endif
+
+
       DO ji=1,jpi
       DO jj=1,jpj
       if (bfmmask(1,jj,ji) == 0) CYCLE
@@ -209,6 +232,20 @@
                           er(1       ,9)  = vatm(jj,ji)                ! wind speed (m/s)
                           er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
 
+#ifndef gdept1d
+                         do jk=1,bottom
+                             correct_fact= 1.0D0
+                             if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
+                                 correct_fact= 0.25D0
+                             endif
+
+                             if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
+                                 correct_fact= 0.0D0
+                             endif
+
+                             er(jk,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
+                         enddo
+#endif
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 
                          call BFM1D_reset()

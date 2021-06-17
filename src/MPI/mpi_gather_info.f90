@@ -59,6 +59,8 @@ MODULE MPI_GATHER_INFO
         DOUBLE PRECISION, allocatable, dimension(:) :: bufftrn_TOT
         DOUBLE PRECISION, allocatable, dimension(:) :: buffDIA2d_TOT
         DOUBLE PRECISION, allocatable, dimension(:) :: buffDIA_TOT        
+        DOUBLE PRECISION, allocatable, dimension(:) :: buffPHYS2d_TOT
+        DOUBLE PRECISION, allocatable, dimension(:) :: buffPHYS_TOT
 
         INTEGER, allocatable, dimension (:) :: jprcv_count,jprcv_count_2d
         INTEGER, allocatable, dimension (:) :: jpdispl_count,jpdispl_count_2d
@@ -88,6 +90,8 @@ MODULE MPI_GATHER_INFO
         ALLOCATE (bufftrn_TOT(jpi_max* jpj_max* jpk* mpi_glcomm_size))
         ALLOCATE (buffDIA2d_TOT(jpi_max* jpj_max*mpi_glcomm_size))
         ALLOCATE (buffDIA_TOT(jpi_max* jpj_max* jpk*mpi_glcomm_size)) 
+        ALLOCATE (buffPHYS2d_TOT(jpi_max* jpj_max*mpi_glcomm_size))
+        ALLOCATE (buffPHYS_TOT(jpi_max* jpj_max* jpk*mpi_glcomm_size))
 
         ALLOCATE (jprcv_count(mpi_glcomm_size))
         ALLOCATE (jpdispl_count(mpi_glcomm_size))
@@ -249,6 +253,8 @@ END SUBROUTINE INIT_MPI_GATHER_INFO
                 deallocate(buffDIA2d_TOT)
                 deallocate(bufftrn_TOT)
                 deallocate(buffDIA_TOT)
+                deallocate(buffPHYS2d_TOT)
+                deallocate(buffPHYS_TOT)
         end if
         END SUBROUTINE CLEAN_MEMORY_MPI_GATHER_INFO
 

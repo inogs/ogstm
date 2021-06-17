@@ -1,18 +1,19 @@
       MODULE DA_MEM
       USE myalloc
+      USE DA_Params
 
       IMPLICIT NONE
       public
 
       CHARACTER(LEN=35) CHLSUP_FOR_DA
       INTEGER DA_Nprocs
+      INTEGER AssimilationLevels_sat, AssimilationLevels_float
       INTEGER TREd_procs_per_node
       INTEGER max_procs_per_one_node
-      INTEGER AssimilationLevels
       character(LEN=200) satfile_suffix
       character(LEN=40 ) satvarname
 
-      CHARACTER(LEN=3) ::varlistDA(17)
+!      CHARACTER(LEN=3) ::varlistDA(17)
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHL_SUP
       REAL(4), ALLOCATABLE, DIMENSION(:,:,:):: CHLtot
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHLsat,VAR2D
@@ -30,27 +31,28 @@
       CONTAINS
 
       SUBROUTINE DA_INIT
-      varlistDA( 1)='P1l'
-      varlistDA( 2)='P2l'
-      varlistDA( 3)='P3l'
-      varlistDA( 4)='P4l'
-
-      varlistDA( 5)='P1c'
-      varlistDA( 6)='P2c'
-      varlistDA( 7)='P3c'
-      varlistDA( 8)='P4c'
-
-      varlistDA( 9)='P1n'
-      varlistDA(10)='P2n'
-      varlistDA(11)='P3n'
-      varlistDA(12)='P4n'
-
-      varlistDA(13)='P1p'
-      varlistDA(14)='P2p'
-      varlistDA(15)='P3p'
-      varlistDA(16)='P4p'
-
-      varlistDA(17)='P1s'
+      CALL SET_DA_PARAMS
+!      varlistDA( 1)='P1l'
+!      varlistDA( 2)='P2l'
+!      varlistDA( 3)='P3l'
+!      varlistDA( 4)='P4l'
+!
+!      varlistDA( 5)='P1c'
+!      varlistDA( 6)='P2c'
+!      varlistDA( 7)='P3c'
+!      varlistDA( 8)='P4c'
+!
+!      varlistDA( 9)='P1n'
+!      varlistDA(10)='P2n'
+!      varlistDA(11)='P3n'
+!      varlistDA(12)='P4n'
+!
+!      varlistDA(13)='P1p'
+!      varlistDA(14)='P2p'
+!      varlistDA(15)='P3p'
+!      varlistDA(16)='P4p'
+!
+!      varlistDA(17)='P1s'
 
 
       if (myrank==0) then
@@ -173,8 +175,8 @@
           IsaDAvar = .false.
 
 
-          DO I=1,17
-          if (varlistDA(I).eq.string) THEN
+          DO I=1,NBioVar
+          if (DA_varlist(I).eq.string) THEN
             IsaDAvar = .true.
             CYCLE
           endif
@@ -193,7 +195,7 @@
 
 
           DO I=1,4
-          if (varlistDA(I).eq.string) THEN
+          if (DA_varlist(I).eq.string) THEN
             IsaCHLvar = .true.
             CYCLE
           endif
@@ -201,6 +203,14 @@
 
       END FUNCTION IsaCHLvar
 
+      FUNCTION ConvertDate(OgstmDate) RESULT(MyDate)
 
+        implicit none
+        CHARACTER(LEN=17), INTENT(IN)  :: OgstmDate
+        CHARACTER(LEN=15) :: MyDate
+
+        MyDate = OgstmDate(1:11)//OgstmDate(13:14)//OgstmDate(16:17)
+
+      END FUNCTION
 
       END MODULE

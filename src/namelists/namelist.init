@@ -26,7 +26,6 @@
             lbfm          = .true.,
             lzdf          = .true.,
             lsnu          = .true.,
-            lhtp          = .true.,
             vsed          = 3.0,
             vsedO5c       = 30.0,
             photop        = .false.

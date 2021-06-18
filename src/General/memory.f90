@@ -349,7 +349,7 @@
 
       INTEGER ncor
       double precision ndttrc
-      LOGICAL lhdf, ladv, lzdf, lsnu, lhtp, lsbc
+      LOGICAL lhdf, ladv, lzdf, lsnu, lsbc
       LOGICAL hdf_initialized, adv_initialized 
 
 

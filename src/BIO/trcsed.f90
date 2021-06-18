@@ -164,14 +164,12 @@
                  END DO
               END DO
 
-#ifndef BFMv2
 !                Calcite
               DO js =22,22
                  DO  jk = 2,jpkm1
                     zwork(jk,js,1) = - vsedO5c * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
-#endif
                bottom = mbathy(jj,ji) + 1
                zwork(bottom,:,1) = bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
 

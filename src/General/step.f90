@@ -302,8 +302,6 @@ MODULE module_step
 
       call boundaries%apply_dirichlet()
 
-      IF (lhtp) CALL hard_tissue_pump
-
       ! CALL checkValues
 
       CALL trcnxt ! tracers: fields at next time step

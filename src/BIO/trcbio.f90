@@ -56,21 +56,12 @@
 !!! local declarations
 !!! ==================
 
-#ifdef BFMv2
-      logical :: sur,bot
-      double precision,dimension(jptra) :: a,b
-      double precision,dimension(4) :: c
-      double precision,dimension(jptra_dia) :: d
-      double precision,dimension(11) :: er
-      double precision,dimension(jptra_dia_2d) :: d2
-#else
       double precision,dimension(jptra,jpk) :: b
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
       double precision,dimension(jpk,11) :: er
       double precision,dimension(jptra_dia_2d) :: d2
-#endif
 
 
       integer :: jk,jj,ji,jb,jn
@@ -103,76 +94,6 @@
       tra_DIA    = 0.
       tra_DIA_2d = 0. ! da sistemare
 
-#ifdef BFMv2
-      tra_DIA_2d = 0.
-
-
-
-      MAIN_LOOP: DO  jb = 1, NBFMPOINTS
-
-
-                 ji = BFMpoints(3, jb)
-                 jj = BFMpoints(2, jb)
-                 jk = BFMpoints(1, jb)
-
-
-                          sur = (jk .eq. 1)
-                          bot = .FALSE.
-                          DO jtr=1, jtrmax
-                             a(jtr) = trn(jk,jj,ji,jtr) ! current biogeochemical concentrations
-                          END DO
-! Environmental regulating factors (er)
-
-                          er(1)  = tn (jk,jj,ji)        ! Temperature (Celsius)
-                          er(2)  = sn (jk,jj,ji)        ! Salinity PSU
-                          er(3)  = rho(jk,jj,ji)        ! Density Kg/m3
-                          er(4)  = ice                  ! from 0 to 1 adimensional
-                          er(5)  = ogstm_co2(jj,ji)           ! CO2 Mixing Ratios (ppm)  390
-                          if (is_night(COMMON_DATEstring)) then
-                              er(6)  = 0.001       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                          else
-                              er(6)  = 2.0 * xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                          endif
-                          er(7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
-                          er(9)  = vatm(jj,ji) * surf_mask(jk)  ! wind speed (m/s)
-                          er(10) = ogstm_PH(jk,jj,ji)         ! PH
-#ifdef gdept1d
-                          er(11) = ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
-#else
-                          er(11) = ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji) 
-#endif
-                          call BFM0D_Input_EcologyDynamics(sur,bot,a,jtrmax,er)
-
-                         call BFM0D_reset()
-
-                         call EcologyDynamics()
-                          if (sur) then
-                             call BFM0D_Output_EcologyDynamics_surf(b, c, d ,d2)
-                           else
-                              call BFM0D_Output_EcologyDynamics(b, c, d)
-                           endif
-
-                          DO jtr=1, jtrmax
-                             tra(jk,jj,ji,jtr) =tra(jk,jj,ji,jtr) +b(jtr) ! trend
-                          END DO
-
-                          DO jtr=1,4
-                             ogstm_sediPI(jk,jj,ji,jtr) = c(jtr) ! BFM output of sedimentation speed (m/d)
-                          END DO
-
-                          DO jtr=1,jptra_dia -2 ! We skip the last two ppHT1 and ppHT2
-                             tra_DIA(jtr,jk,jj,ji) = d(jtr) ! diagnostic
-                          END DO
-
-                          if (sur) tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
-
-                          ogstm_PH(jk,jj,ji)=d(pppH) ! Follows solver guess, put 8.0 if pppH is not defined
-
-                          NPPF2(jk,jj,ji)=d(ppF04) ! Flagellate production
-
-                END DO MAIN_LOOP
-#else
 
 !    Initialization
       a        = 1.0
@@ -286,7 +207,6 @@
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-#endif
 
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime

@@ -26,7 +26,7 @@
       CHARACTER(LEN=100) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread
-      CHARACTER(LEN=20) dirct
+      CHARACTER(LEN=10) dirct
 
 ! 0. initialisations
        bkpname  = 'AVE_FREQ_1/ave.20111231-15:30:00.N1p.nc.bkp'
@@ -186,110 +186,112 @@
 
 
       if(freq_ave_phys .eq. 1) then
-        dirct=trim("AVE_FREQ_1")
+        dirct="AVE_FREQ_1"
       else
-        dirct=trim("AVE_FREQ_2")
+        dirct="AVE_FREQ_2"
       end if
       
       bkpname = dirct//'/ave.'//DateStart//'.'//'vosaline'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double(   bkpname,'vosaline',  snIO) 
         else 
           snIO = 0.0
         end if
 
-       if(lwp)  write(*,*) 'reading ', bkpname
+
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'votemper'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double(   bkpname,'votemper',  tnIO)      
         else
           tnIO = 0.0
         end if
      
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'vozocrtx'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double(   bkpname,'vozocrtx',  unIO)  
         else
           unIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'vomecrty'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double(   bkpname,'vomecrty',  vnIO)  
         else
           vnIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'vovecrtz'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double(   bkpname,'vovecrtz',  wnIO)  
         else
           wnIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'votkeavt'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double(   bkpname,'votkeavt',  avtIO)  
         else
           avtIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'e3t'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double(   bkpname,'e3t',  e3tIO)  
         else
           e3tIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'soshfldo'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double_2d(   bkpname,'soshfldo', qsrIO)  
         else
           qsrIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'sowindsp'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double_2d(   bkpname,'sowindsp',  vatmIO)  
         else
           vatmIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
 
       bkpname = dirct//'/ave.'//DateStart//'.'//'sowaflcd'//'.nc.bkp'
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
+          if(lwp)  write(*,*) 'reading ', bkpname
           call readnc_slice_double_2d(   bkpname,'sowaflcd',  empIO)  
         else
           empIO = 0.0
         end if
 
-         if(lwp)  write(*,*) 'reading ', bkpname
+
 
 
       if (lwp) write(*,*) 'trcrst elapsed_time_1 = ', elapsed_time_1, &

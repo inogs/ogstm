@@ -69,7 +69,8 @@ MODULE MPI_GATHER_INFO
         double precision, allocatable ::  tottrnIO(:,:,:)
 
 
-        INTEGER :: n_ranks_per_node 
+        CHARACTER(len=2) :: n_ranks_per_node_char
+        INTEGER :: n_ranks_per_node
         !WRITING_RANK = .FALSE.
 
         CONTAINS
@@ -166,7 +167,14 @@ MODULE MPI_GATHER_INFO
 
         WRITING_RANK_WR = .FALSE.
 
-        n_ranks_per_node = 36
+        call getenv('RANKS_PER_NODE', n_ranks_per_node_char)
+        if (n_ranks_per_node_char .eq. '') then
+                write(*,*) 'ERROR: RANKS_PER_NODE environment variable not defined'
+                write(*,*) 'EXAMPLE: export RANKS_PER_NODE=48'
+                stop
+        end if
+
+        read(n_ranks_per_node_char , *) n_ranks_per_node
 
         CALL ALLOCATE_MPI_GATHER_INFO()
         !gather(send+recv from each rank, stored in array of each indices)

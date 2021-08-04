@@ -25,7 +25,8 @@
       logical ISLOG
       integer :: ierr, color, ii
       integer :: SysErr, system
-
+      
+      logical existFile
 
       DAparttime  = MPI_WTIME()
       MONTH=datestr(5:6)
@@ -94,9 +95,21 @@
 
             if (drv%argo_obs.eq.1) then
                write(*,*) '--- Preparing float misfit ---'
-               call getenv('OPA_BINDIR', HOSTDIR)
-               SysErr = system(trim(HOSTDIR)//"/Float_misfit_gen.sh -t "//DAY)
-               if(SysErr /= 0) call MPI_Abort(MPI_COMM_WORLD, -1, SysErr)
+               write(*,*)'deleting end.txt and writing start.txt'
+               open(unit=456,file="end.txt")
+               close(456,status='delete')
+               open(unit=567,file='start.txt')
+               write(567,'(g0)') DAY
+               close(567)
+
+               do while(.TRUE.)
+                  INQUIRE(FILE='end.txt', EXIST=existFile)
+                  if (existFile) then
+                     exit
+                  end if
+                  call sleep(2)
+               end do
+
             endif
           ENDIF
 

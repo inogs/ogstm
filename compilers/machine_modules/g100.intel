@@ -3,8 +3,8 @@ module load autoload
 module load intel/oneapi-2021--binary
 module load intelmpi/oneapi-2021--binary
 module load mkl/oneapi-2021--binary
-module load cmake/3.18.4--gcc--8.3.1
-export OPA_HOME=/g100/home/usera07ogs/a07ogs00/OPA/V7C
+module load cmake/3.18.4--gcc--10.2.0
+export OPA_HOME=/g100_work/OGS_prod100/OPA/V7C-prod
 export OPA_HOSTNAME=g100
 export NETCDF_LIB=$OPA_HOME/HOST/$OPA_HOSTNAME/lib
 export NETCDF_INC=$OPA_HOME/HOST/$OPA_HOSTNAME/include
@@ -14,3 +14,4 @@ export PNETCDF_LIB=$OPA_HOME/HOST/$OPA_HOSTNAME/lib
 export PNETCDF_INC=$OPA_HOME/HOST/$OPA_HOSTNAME/include
 export PETSC_LIB=$OPA_HOME/HOST/$OPA_HOSTNAME/lib
 export PETSC_INC=$OPA_HOME/HOST/$OPA_HOSTNAME/include
+export LD_LIBRARY_PATH=/g100_work/OGS_prod100/OPA/V7C-prod/HOST/g100/lib:${LD_LIBRARY_PATH}

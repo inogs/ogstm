@@ -97,7 +97,7 @@ contains
         ! get file names and infer times
         read(file_unit, *) bc_data_default%m_files
         do i = 1, bc_data_default%m_n_files
-            pos = INDEX( trim(bc_data_default%m_files(i)), "TIN_")
+            pos = 4
             bc_data_default%m_time_strings(i) = bc_data_default%m_files(i)(pos+4:pos+20)
             bc_data_default%m_times(i) = datestring2sec(bc_data_default%m_time_strings(i))
         enddo

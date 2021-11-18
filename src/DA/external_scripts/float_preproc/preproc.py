@@ -150,6 +150,7 @@ for wmo in WMOlist:
             if CheckReport.reason ==2:
                 LISTexclusion.append(True)
                 LISTdepthexc.append(CheckReport.depthexc)
+                Goodlist.append(p)
 
 
     print "number of Goodlist Profiles:",  len(Goodlist)
@@ -160,7 +161,7 @@ for wmo in WMOlist:
         ii = Pres <= deplim
         nLevels = ii.sum()
         levels = Pres[ii]
-        sfm = singlefloatmatchup.subset(layer)
+        sfm = singlefloatmatchup.subset(Layer(0,deplim))
         Profile = np.zeros(( nLevels, 6), np.float64)
         Profile[:, 0] = sfm.Model # s200intmodel  # ONLY MODEL
         Profile[:, 1] = sfm.Ref   # s200intobs  # ONLY ARGO

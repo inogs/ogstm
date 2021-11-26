@@ -66,19 +66,19 @@ TI_day.end_time = datetime(meantime.year, meantime.month, meantime.day,23,59)
 
 
 Profilelist=bio_float.FloatSelector(FLOATVARS[varmod],TI_3, OGS.med)
-print '...              len Profilelist  ' + np.str(len(Profilelist))
+print('...              len Profilelist  ' + np.str(len(Profilelist)))
 TL = TimeList.fromfilenames(TI_day, INPUTDIR,"RSTbefore*13:00*.nc",filtervar=varmod,prefix="RSTbefore.")
-print '...              len TL   ' + np.str(TL.nTimes)
+print('...              len TL   ' + np.str(TL.nTimes))
 TL.inputFrequency = 'weekly'
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
-print '...              M=Matchup_Manager done'
+print('...              M=Matchup_Manager done')
 
 profilerscript = BASEDIR + 'jobProfiler.sh'
 M.writefiles_for_profiling(args.descriptor, profilerscript, aggregatedir=INPUTDIR) # preparation of data for aveScan
-print '...              writesfiles done'
+print('...              writesfiles done')
 
 M.dumpModelProfiles(profilerscript) # sequential launch of aveScan
-print '...              writesfiles done'
+print('...              writesfiles done')
 
 
 

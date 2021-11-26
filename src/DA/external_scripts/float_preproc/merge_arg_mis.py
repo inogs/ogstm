@@ -59,6 +59,6 @@ allmis = [np.str(totobs)] + allmis0
 
 
 ff = open(args.outfile,'wb')
-ff.writelines( "%s\n" % item for item in allmis )
+ff.writelines((item + "\n").encode() for item in allmis )
 
 ff.close()

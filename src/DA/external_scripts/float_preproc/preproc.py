@@ -111,7 +111,7 @@ def choose_profile(float_track_list):
     p = float_track_list[0]
     nTimes = len(float_track_list)
     if nTimes > 1 :
-        print "High frequency float: %d profiles on same day for wmo %s " %(nTimes, p._my_float.wmo)
+        print("High frequency float: %d profiles on same day for wmo %s " %(nTimes, p._my_float.wmo))
         TimeRef=datetime(p.time.year,p.time.month,p.time.day,13)
         times= [pp.time for pp in float_track_list]
         delta_t = [t-TimeRef for t in times]
@@ -119,11 +119,11 @@ def choose_profile(float_track_list):
         for i,d in enumerate(delta_t):
             deltadays[i] = d.days + d.seconds/(86400.)
         chosen=np.abs(deltadays).argmin()
-        print "chosen: ", times[chosen]
+        print("chosen: ", times[chosen])
         p = float_track_list[chosen]
         for pp in float_track_list:
             if not pp==p:
-                print "Rejected : ", p.ID(), pp.time
+                print("Rejected : ", p.ID(), pp.time)
     return p
 
 
@@ -153,7 +153,7 @@ for wmo in WMOlist:
                 Goodlist.append(p)
 
 
-    print "number of Goodlist Profiles:",  len(Goodlist)
+    print("number of Goodlist Profiles:",  len(Goodlist))
     if (Goodlist != []):
         if np.any(LISTexclusion):
            mindepexc = np.min(LISTdepthexc)

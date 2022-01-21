@@ -160,18 +160,20 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 
       jptra_dia_high= 0
       do ji =1, jptra_dia
-          IF (diahf(ji).eq.1) jptra_dia_high = jptra_dia_high + 1
+          IF (diahf(ji).eq.1 .AND. diaWR(ji).eq.1) jptra_dia_high = jptra_dia_high + 1
       ENDDO
 
       if (lwp) write(*,*) 'High freq diagnostics number :', jptra_dia_HIGH
-      allocate(highfreq_table_dia(jptra_dia_HIGH))
+      allocate(highfreq_table_dia_wri(jptra_dia_HIGH))
 
       jptra_dia_high = 0
 
       do ji =1, jptra_dia
-          IF (diahf(ji).eq.1) then
+          IF (diahf(ji).eq.1 .AND. diaWR(ji).eq.1) then
             jptra_dia_high = jptra_dia_high + 1
-            highfreq_table_dia(jptra_dia_high) = ji
+            highfreq_table_dia_wri(jptra_dia_high) = ji
+            if (diaWR(ji).eq.0) WRITE(*,*) dianm(ji),&
+               'belongs to high freq group but will NOT be DUMPED'
             if (lwp) WRITE(numout,*) dianm(ji),&
                ' belongs also to high freq group'
           ELSE
@@ -183,18 +185,18 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 !---------------- DIAGNOSTIC VARIABLE 2D
         jptra_dia2d_high= 0
       do ji =1, jptra_dia_2d
-          IF (diahf_2d(ji).eq.1) jptra_dia2d_high = jptra_dia2d_high + 1
+          IF (diahf_2d(ji).eq.1 .AND. diaWR_2d(ji).eq.1) jptra_dia2d_high = jptra_dia2d_high + 1
       ENDDO
 
       if (lwp) write(*,*) 'High freq diagnostics number 2d:', jptra_dia2d_HIGH
-      allocate(highfreq_table_dia2d(jptra_dia2d_HIGH))
+      allocate(highfreq_table_dia_2d_wri(jptra_dia2d_HIGH))
 
       jptra_dia2d_high = 0
 
       do ji =1, jptra_dia_2d
-          IF (diahf_2d(ji).eq.1) then
+          IF (diahf_2d(ji).eq.1 .AND. diaWR_2d(ji).eq.1) then
             jptra_dia2d_high = jptra_dia2d_high + 1
-            highfreq_table_dia2d(jptra_dia2d_high) = ji
+            highfreq_table_dia_2d_wri(jptra_dia2d_high) = ji
             if (lwp) WRITE(numout,*) dianm_2d(ji),&
                ' belongs also to high freq group'
           ELSE
@@ -211,4 +213,3 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
       ENDIF
 
       END SUBROUTINE trclec
-

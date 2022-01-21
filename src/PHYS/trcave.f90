@@ -176,7 +176,7 @@
          DO jk=1, jpk
          IF(tmask(jk,jj,ji) .NE. 0.) THEN
             DO jn_high=1, jptra_dia_high
-               jn_on_all = highfreq_table_dia(jn_high )
+               jn_on_all = highfreq_table_dia_wri(jn_high )
                tra_DIA_IO_HIGH(jn_high, jk,jj,ji )= &
      &         (tra_DIA_IO_HIGH(jn_high, jk,jj,ji )*elapsed_time+tra_DIA(jn_on_all,jk,jj,ji)*rdt)*inv_incremented_time
             END DO
@@ -197,7 +197,7 @@
              DO jj=1, jpj
                 IF(tmask(1,jj,ji) .NE. 0.) THEN
                 DO jn_high=1, jptra_dia2d_high
-                   jn_on_all = highfreq_table_dia2d(jn_high)
+                   jn_on_all = highfreq_table_dia_2d_wri(jn_high)
                    tra_DIA_2d_IO_HIGH(jn_high,jj,ji)= &
      &            (tra_DIA_2d_IO_HIGH(jn_high,jj,ji)*elapsed_time+tra_DIA_2d(jn_on_all,jj,ji)*rdt)*inv_incremented_time
                 END DO

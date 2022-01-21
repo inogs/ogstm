@@ -327,7 +327,9 @@
       double precision, allocatable ::  trb(:,:,:,:)
       double precision, allocatable ::  buf(:,:,:)
       double precision, allocatable ::  buf2(:,:)
-      INTEGER, allocatable, dimension(:) :: highfreq_table,highfreq_table_dia, highfreq_table_dia2d
+      INTEGER, allocatable, dimension(:) :: highfreq_table
+      INTEGER, allocatable :: highfreq_table_dia_wri(:)
+      INTEGER, allocatable :: highfreq_table_dia_2d_wri(:)
 
 !!----------------------------------------------------------------------
 !!
@@ -977,8 +979,8 @@ subroutine alloc_tot()
             ! trclec
 
             deallocate(highfreq_table)
-            deallocate(highfreq_table_dia)
-            deallocate(highfreq_table_dia2d)
+            deallocate(highfreq_table_dia_2d_wri)
+            deallocate(highfreq_table_dia_wri)
 
         end subroutine clean_memory
 

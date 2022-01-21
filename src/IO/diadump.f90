@@ -43,6 +43,7 @@
       INTEGER :: n_dumping_cycles, jv, ivar, writing_rank, ind_col
       INTEGER :: var_to_send_2D, var_high_to_send_2D
       INTEGER :: var_to_send, var_high_to_send
+      INTEGER :: COUNTER_HIGH, COUNTER_LOW
      ! call mppsync()
 ! ----------------------------------------
       IsBackup =  (datemean.eq.dateTo)
@@ -66,9 +67,8 @@
         END IF
 
 
-        COUNTER_VAR_2d = 1
-        COUNTER_VAR_HIGH_2d = 1
-
+        COUNTER_high = 1
+        COUNTER_low = 1
 
         DUMPING_LOOP_2d: DO jv = 1, n_dumping_cycles
 
@@ -77,35 +77,33 @@
                         writing_rank = writing_procs(ivar)
 
                         
-                        IF (COUNTER_VAR_2d > JPTRA_dia_2d_wri)then
+                        IF (COUNTER_LOW > JPTRA_dia_2d_wri)then
                                 EXIT
-                        else if (COUNTER_VAR_HIGH_2d > JPTRA_dia_2d_HIGH_wri)then
+                        else if (COUNTER_HIGH > JPTRA_dia2d_HIGH)then
                                 EXIT
                         ELSE
 
-                                var_to_send_2D = lowfreq_table_dia_2d_wri(counter_var_2d)
-                                !if (FREQ_GROUP.eq.1) var_high_to_send_2D = highfreq_table_dia_2d_wri(counter_var_high_2d)                        
-
-        
                                 if (FREQ_GROUP.eq.2) then
+                                        var_to_send = matrix_dia_2d_2_indexes(jv,ivar)
                                         do ji =1 , jpi
                                                 i_contribution = jpj * (ji-1)
                                                 do jj =1 , jpj
                                                         ind = jj + i_contribution
-                                                        buffDIA2d (ind)= tra_DIA_2d_IO(var_to_send_2D,jj,ji)
+                                                        buffDIA2d (ind)= tra_DIA_2d_IO(var_to_send,jj,ji)
                                                 enddo
                                         enddo
                                 else
+                                        var_to_send = matrix_dia_2d_1_counters(jv,ivar)
                                         do ji =1 , jpi
                                                 i_contribution = jpj * (ji-1)
                                                 do jj = 1 , jpj
                                                         ind = jj + i_contribution
-                                                        buffDIA2d (ind)= tra_DIA_2d_IO_high(COUNTER_VAR_HIGH_2d,jj,ji)
+                                                        buffDIA2d (ind)=tra_DIA_2d_IO_high(var_to_send,jj,ji)
                                                 enddo
                                         enddo
                                 endif
-                                counter_var_2d = counter_var_2d + 1
-                                if (FREQ_GROUP.eq.1) counter_var_high_2d = counter_var_high_2d + 1
+                                if (FREQ_GROUP.eq.2) counter_low = counter_low + 1
+                                if (FREQ_GROUP.eq.1) counter_high = counter_high + 1
 
                                 CALL MPI_GATHERV(buffDIA2d, sendcount_2d,MPI_DOUBLE_PRECISION, buffDIA2d_TOT,jprcv_count_2d,jpdispl_count_2d, MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
 
@@ -120,9 +118,9 @@
                         ind_col = (myrank / n_ranks_per_node) +1
 
                         if (FREQ_GROUP.eq.2) then
-                                var_to_store_diag_2d = matrix_diag_2d_2(jv,ind_col)%var_name
+                                var_to_store_diag_2d = matrix_diag_2d_2_strings(jv,ind_col)%var_name
                         else
-                                var_to_store_diag_2d = matrix_diag_2d_1(jv,ind_col)%var_name
+                                var_to_store_diag_2d = matrix_diag_2d_1_strings(jv,ind_col)%var_name
                         end if
 
                         IF (var_to_store_diag_2d == "novars_input")then
@@ -193,26 +191,21 @@
         END IF
 
 
-        COUNTER_VAR_diag = 1
-        COUNTER_VAR_diag_HIGH = 1
-
+        COUNTER_high = 1 
+        COUNTER_low = 1
 
         DUMPING_LOOP_3d: DO jv = 1, n_dumping_cycles
-
                 DO ivar = 1 , nodes
 
                         writing_rank = writing_procs(ivar)
-
-
-                        IF (COUNTER_VAR_diag > JPTRA_dia_wri)then
+                        IF (counter_low > JPTRA_dia_wri)then
                                 EXIT
-                        else if (COUNTER_VAR_diag_HIGH > JPTRA_dia_HIGH_wri)then
+                        else if (counter_high > JPTRA_dia_HIGH)then
                                 EXIT
                         ELSE
-                                var_to_send = lowfreq_table_dia_wri(counter_var_diag)
-                                !if (FREQ_GROUP.eq.1) var_high_to_send = highfreq_table_dia_wri(counter_var_diag_high)
 
                                 if (FREQ_GROUP.eq.2) then
+                                        var_to_send = matrix_dia_2_indexes(jv,ivar)
                                         do ji =1, jpi
                                                 i_contribution= jpk*jpj * (ji - 1 )
                                                 do jj =1 , jpj
@@ -224,20 +217,20 @@
                                                 enddo
                                         enddo
                                 else
+                                        var_to_send = matrix_dia_1_counters(jv,ivar)
                                         do ji =1, jpi
                                                 i_contribution= jpk*jpj * (ji - 1 )
                                                 do jj =1 , jpj
                                                         j_contribution=jpk*(jj-1)
                                                         do jk =1 , jpk
                                                                 ind = jk + j_contribution + i_contribution
-                                                                buffDIA(ind) = tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH, jk,jj,ji)
+                                                                buffDIA(ind)= tra_DIA_IO_HIGH(var_to_send, jk,jj,ji)
                                                         enddo
                                                 enddo
                                         enddo
                                 end if
-                                !if (FREQ_GROUP.eq.1)write(*,*)'CHECK_h_before', COUNTER_VAR_diag_HIGH
-                                counter_var_diag = counter_var_diag + 1
-                                if (FREQ_GROUP.eq.1) counter_var_diag_high = counter_var_diag_high + 1
+                                if (FREQ_GROUP.eq.2) counter_low = counter_low + 1
+                                if (FREQ_GROUP.eq.1) counter_high = counter_high + 1
 
                                 !GATHERV TO THE WRITING RANK
 
@@ -251,9 +244,9 @@
                         ind_col = (myrank / n_ranks_per_node)+1
 
                         if (FREQ_GROUP.eq.2) then
-                                var_to_store_diag = matrix_diag_2(jv,ind_col)%var_name
+                                var_to_store_diag = matrix_dia_2_strings(jv,ind_col)%var_name
                         else
-                                var_to_store_diag = matrix_diag_1(jv,ind_col)%var_name
+                                var_to_store_diag = matrix_dia_1_strings(jv,ind_col)%var_name
                         end if
 
                         IF (var_to_store_diag == "novars_input")then
@@ -306,6 +299,7 @@
                         tra_DIA_IO_HIGH(:,:,:,:) = 0.
                 endif
         endif
+
 !-------------------------------------------------
         ! ****************** PHYSC OUTPUT   2D *******************
         

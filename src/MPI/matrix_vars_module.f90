@@ -35,10 +35,10 @@ MODULE MATRIX_VARS
         
         type(processor_string), allocatable :: matrix_state_1(:,:)
         type(processor_string), allocatable :: matrix_state_2(:,:)
-        type(processor_string), allocatable :: matrix_diag_2d_1(:,:)
-        type(processor_string), allocatable :: matrix_diag_2d_2(:,:)
-        type(processor_string), allocatable :: matrix_diag_1(:,:)
-        type(processor_string), allocatable :: matrix_diag_2(:,:)
+        type(processor_string), allocatable :: matrix_diag_2d_1_strings(:,:)
+        type(processor_string), allocatable :: matrix_diag_2d_2_strings(:,:)
+        type(processor_string), allocatable :: matrix_dia_1_strings(:,:)
+        type(processor_string), allocatable :: matrix_dia_2_strings(:,:)
         type(processor_string), allocatable :: matrix_phys_2d_1(:,:)
         type(processor_string), allocatable :: matrix_phys_2d_2(:,:)
         type(processor_string), allocatable :: matrix_phys_1(:,:)
@@ -50,21 +50,25 @@ MODULE MATRIX_VARS
         INTEGER :: matrix_phys_1_row, matrix_phys_2_row
         INTEGER :: matrix_col != nodes
 
-        INTEGER :: jptra_dia_2d_wri, jptra_dia_2d_high_wri
-        INTEGER :: jptra_dia_wri, jptra_dia_high_wri
+        INTEGER :: jptra_dia_2d_wri
         INTEGER :: low_freq_jptra_dia, high_freq_jptra_dia ! counters
-
+        INTEGER :: jptra_dia_wri
         INTEGER :: jptra_phys_2d_high_wri, jptra_phys_2d_wri, jptra_phys_high_wri, jptra_phys_wri
         
-        INTEGER, allocatable :: highfreq_table_dia_wri(:)
-        INTEGER, allocatable :: highfreq_table_dia_2d_wri(:)
         INTEGER, allocatable :: lowfreq_table_dia_wri(:)
         INTEGER, allocatable :: lowfreq_table_dia_2d_wri(:)
         INTEGER, allocatable :: highfreq_table_phys_wri(:)
         INTEGER, allocatable :: highfreq_table_phys_2d_wri(:)
         INTEGER, allocatable :: lowfreq_table_phys_wri(:)
         INTEGER, allocatable :: lowfreq_table_phys_2d_wri(:)
+        
+        INTEGER, allocatable :: matrix_dia_1_indexes(:,:)
+        INTEGER, allocatable :: matrix_dia_2_indexes(:,:)
+        INTEGER, allocatable :: matrix_dia_1_counters(:,:)
 
+        INTEGER, allocatable :: matrix_dia_2d_1_indexes(:,:)
+        INTEGER, allocatable :: matrix_dia_2d_2_indexes(:,:)
+        INTEGER, allocatable :: matrix_dia_2d_1_counters(:,:)
         CONTAINS
 
 !------------------------------------------------------------
@@ -72,10 +76,16 @@ MODULE MATRIX_VARS
         
         ALLOCATE (matrix_state_1(matrix_state_1_row, matrix_col))
         ALLOCATE (matrix_state_2(matrix_state_2_row, matrix_col))
-        ALLOCATE (matrix_diag_2d_1(matrix_diag_2d_1_row, matrix_col))
-        ALLOCATE (matrix_diag_2d_2(matrix_diag_2d_2_row, matrix_col))
-        ALLOCATE (matrix_diag_1(matrix_diag_1_row, matrix_col))
-        ALLOCATE (matrix_diag_2(matrix_diag_2_row, matrix_col))
+        ALLOCATE (matrix_diag_2d_1_strings(matrix_diag_2d_1_row, matrix_col))
+        ALLOCATE (matrix_diag_2d_2_strings(matrix_diag_2d_2_row, matrix_col))
+        ALLOCATE (matrix_dia_1_strings(matrix_diag_1_row, matrix_col))
+        ALLOCATE (matrix_dia_2_strings(matrix_diag_2_row, matrix_col))
+        ALLOCATE (matrix_dia_1_indexes(matrix_diag_1_row, matrix_col))
+        ALLOCATE (matrix_dia_2_indexes(matrix_diag_2_row, matrix_col))
+        ALLOCATE (matrix_dia_1_counters(matrix_diag_1_row, matrix_col))
+        ALLOCATE (matrix_dia_2d_1_indexes(matrix_diag_2d_1_row, matrix_col))
+        ALLOCATE (matrix_dia_2d_2_indexes(matrix_diag_2d_2_row, matrix_col))
+        ALLOCATE (matrix_dia_2d_1_counters(matrix_diag_2d_1_row, matrix_col))
         ALLOCATE (matrix_phys_2d_1(matrix_phys_2d_1_row, matrix_col))
         ALLOCATE (matrix_phys_2d_2(matrix_phys_2d_2_row, matrix_col))
         ALLOCATE (matrix_phys_1(matrix_phys_1_row, matrix_col))
@@ -90,15 +100,6 @@ MODULE MATRIX_VARS
         INTEGER ::counter_phys2d,trans_phys2d_low,counter_phys2d_high,trans_phys2d_high,trans_phys_low,counter_phys,counter_phys_high,trans_phys_high
 
         counter = 0
-        counter_high = 0
-        counter_dia2d = 0
-        counter_dia2d_high = 0
-        counter_dia = 0
-        counter_dia_high = 0
-        counter_phys2d = 0
-        counter_phys2d_high = 0
-        counter_phys = 0
-        counter_phys_high = 0
 
         ! define how many rows will be in the procs matrix
         
@@ -133,10 +134,10 @@ MODULE MATRIX_VARS
 
         !ELSE
 
-        IF (MOD(jptra_dia_2d_high_wri,nodes)==0)THEN
-                matrix_diag_2d_1_row = (jptra_dia_2d_high_wri/nodes)
+        IF (MOD(jptra_dia2d_high,nodes)==0)THEN
+                matrix_diag_2d_1_row = (jptra_dia2d_high/nodes)
         ELSE
-                matrix_diag_2d_1_row = (jptra_dia_2d_high_wri/nodes) + 1
+                matrix_diag_2d_1_row = (jptra_dia2d_high/nodes) + 1
         END IF
 
         IF (MOD(jptra_dia_wri,nodes)==0)THEN
@@ -147,10 +148,10 @@ MODULE MATRIX_VARS
 
         !ELSE
 
-        IF (MOD(jptra_dia_high_wri,nodes)==0)THEN
-                matrix_diag_1_row = (jptra_dia_high_wri/nodes)
+        IF (MOD(jptra_dia_high,nodes)==0)THEN
+                matrix_diag_1_row = (jptra_dia_high/nodes)
         ELSE
-                matrix_diag_1_row = (jptra_dia_high_wri/nodes) + 1
+                matrix_diag_1_row = (jptra_dia_high/nodes) + 1
         END IF
 
         IF (MOD(jptra_phys_2d_wri,nodes)==0)THEN
@@ -204,27 +205,28 @@ MODULE MATRIX_VARS
         !END IF
         DO i=1,matrix_diag_2d_2_row
                 DO j=1,matrix_col
-                        matrix_diag_2d_2(i,j)%var_name = novars
+                        matrix_diag_2d_2_strings(i,j)%var_name = novars
                 END DO
         END DO
         !ELSE
         DO i=1,matrix_diag_2d_1_row
                 DO j=1,matrix_col
-                        matrix_diag_2d_1(i,j)%var_name = novars
+                        matrix_diag_2d_1_strings(i,j)%var_name = novars
                 END DO
         END DO
         
         DO i=1,matrix_diag_2_row
                 DO j=1,matrix_col
-                        matrix_diag_2(i,j)%var_name = novars
+                        matrix_dia_2_strings(i,j)%var_name = novars
                 END DO
         END DO
         !ELSE
         DO i=1,matrix_diag_1_row
                 DO j=1,matrix_col
-                        matrix_diag_1(i,j)%var_name = novars
+                        matrix_dia_1_strings(i,j)%var_name = novars
                 END DO
         END DO
+
 
         DO i=1,matrix_phys_2d_2_row
                 DO j=1,matrix_col
@@ -250,11 +252,31 @@ MODULE MATRIX_VARS
                 END DO
         END DO
 
+        DO i=1,matrix_diag_1_row
+                DO j=1,matrix_col
+                        matrix_dia_1_indexes(i,j)= -10000
+                END DO
+        END DO
+
+        DO i=1,matrix_diag_2_row
+                DO j=1,matrix_col
+                        matrix_dia_2_indexes(i,j)= -10000
+                END DO
+        END DO
+
+        DO i=1,matrix_diag_1_row
+                DO j=1,matrix_col
+                        matrix_dia_1_counters(i,j)= -10000
+                END DO
+        END DO
+
+
         !OK
         !insert variable string inside matrix of procs
         !control on how many variables are inserted by counter==jptra for matrix that are not fully covered
 
         !IF (FREQ_GROUP.eq.2) THEN
+        counter=0
         DO i=1,matrix_state_2_row
                 DO j=1,matrix_col
                         IF (counter==jptra)THEN
@@ -266,91 +288,192 @@ MODULE MATRIX_VARS
                 END DO
         END DO
         !ELSE
+        counter=0
         DO i=1,matrix_state_1_row
                 DO j=1,matrix_col
-                        IF (counter_high==jptra_high)THEN
+                        IF (counter==jptra_high)THEN
                                EXIT
                         ELSE    
-                                trans_high = highfreq_table(counter_high+1)                             
+                                trans_high = highfreq_table(counter+1)                             
                                 matrix_state_1(i,j)%var_name =ctrcnm(trans_high)
-                                counter_high=counter_high + 1
+                                counter=counter + 1
                         END IF
                 END DO
         END DO
         !END IF
         !diagnostic 2d low freq
+        counter=0
         DO i=1,matrix_diag_2d_2_row
                 DO j=1,matrix_col
-                        IF (counter_dia2d ==jptra_dia_2d_wri)THEN
+                        IF (counter ==jptra_dia_2d_wri)THEN
                                 EXIT
                         ELSE
-                                trans_dia2d_low = lowfreq_table_dia_2d_wri(counter_dia2d + 1)
-                                matrix_diag_2d_2(i,j)%var_name = dianm_2d(trans_dia2d_low)
-                                counter_dia2d=counter_dia2d + 1
+                                trans_dia2d_low = lowfreq_table_dia_2d_wri(counter + 1)
+                                matrix_diag_2d_2_strings(i,j)%var_name = dianm_2d(trans_dia2d_low)
+                                counter = counter + 1
                         END IF
                 END DO
         END DO
 
         !OK        !ELSE
-
+        counter=0
         DO i=1,matrix_diag_2d_1_row
                 DO j=1,matrix_col
-                        IF (counter_dia2d_high==jptra_dia_2d_high_wri)THEN
+                        IF (counter==jptra_dia2d_high)THEN
                                 EXIT
                         ELSE
-                                trans_dia2d_high = highfreq_table_dia_2d_wri(counter_dia2d_high+1)                     
-                                matrix_diag_2d_1(i,j)%var_name =dianm_2d(trans_dia2d_high)
-                                counter_dia2d_high=counter_dia2d_high + 1
+                                trans_dia2d_high = highfreq_table_dia_2d_wri(counter+1)                     
+                                matrix_diag_2d_1_strings(i,j)%var_name =dianm_2d(trans_dia2d_high)
+                                counter = counter + 1
                         END IF
                 END DO
         END DO
 
 !OK
+        counter=0
         DO i=1,matrix_diag_2_row
                 DO j=1,matrix_col
-                        IF (counter_dia==jptra_dia_wri)THEN
+                        IF (counter==jptra_dia_wri)THEN
                                 EXIT
                         ELSE
-                                trans_dia_low = lowfreq_table_dia_wri(counter_dia +1)
-                                matrix_diag_2(i,j)%var_name = dianm(trans_dia_low)
-                                counter_dia=counter_dia + 1
+                                trans_dia_low = lowfreq_table_dia_wri(counter +1)
+                                matrix_dia_2_strings(i,j)%var_name = dianm(trans_dia_low)
+                                counter=counter + 1
                         END IF
                 END DO
         END DO
 
+        counter=0
         DO i=1,matrix_diag_1_row
                 DO j=1,matrix_col
-                        IF (counter_dia_high==jptra_dia_high_wri)THEN
+                        IF (counter==jptra_dia_high)THEN
                                 EXIT
                         ELSE
-                                trans_dia_high = highfreq_table_dia_wri(counter_dia_high+1)
-                                matrix_diag_1(i,j)%var_name =dianm(trans_dia_high)
-                                counter_dia_high=counter_dia_high + 1
-                        END IF
-                END DO
-        END DO
-!--------------------------------------- PHYS
-        if(freq_ave_phys .eq. 2) then  
-        DO i=1,matrix_phys_2d_2_row
-                DO j=1,matrix_col
-                        IF (counter_phys2d ==jptra_phys_2d_wri)THEN
-                                EXIT
-                        ELSE
-                                trans_phys2d_low = lowfreq_table_phys_2d_wri(counter_phys2d + 1)
-                                matrix_phys_2d_2(i,j)%var_name = physnm_2d(trans_phys2d_low)
-                                counter_phys2d=counter_phys2d + 1
+                                trans_dia_high = highfreq_table_dia_wri(counter+1)
+                                matrix_dia_1_strings(i,j)%var_name =dianm(trans_dia_high)
+                                counter=counter + 1
                         END IF
                 END DO
         END DO
 
-        DO i=1,matrix_phys_2_row
+        counter=0
+        DO i=1,matrix_diag_1_row
                 DO j=1,matrix_col
-                        IF (counter_phys==jptra_phys_wri)THEN
+                        IF (counter==jptra_dia_high)THEN
                                 EXIT
                         ELSE
-                                trans_phys_low = lowfreq_table_phys_wri(counter_phys +1)
+                                matrix_dia_1_indexes(i,j) =highfreq_table_dia_wri(counter+1)
+                                counter=counter + 1
+                        END IF
+                END DO
+        END DO
+
+        counter=0
+        DO i=1,matrix_diag_2_row
+                DO j=1,matrix_col
+                        IF (counter==jptra_dia_wri)THEN
+                                EXIT
+                        ELSE
+                                matrix_dia_2_indexes(i,j)= lowfreq_table_dia_wri(counter +1)
+                                counter=counter + 1
+                        END IF
+                END DO
+        END DO
+
+        !IF(lwp) THEN
+        !        DO i=1,matrix_diag_2_row
+        !                write(*,*) (matrix_dia_2_indexes(i,j), j=1,matrix_col )
+        !        END DO
+        !ENDIF
+       
+        counter=0
+        DO i=1,matrix_diag_1_row
+                DO j=1,matrix_col
+                        IF (counter==jptra_dia_high)THEN
+                                EXIT
+                        ELSE
+                                matrix_dia_1_counters(i,j) = counter+1
+                                counter=counter + 1
+                        END IF
+                END DO
+        END DO
+
+!OK
+
+!-------------------2d
+        counter=0
+        DO i=1,matrix_diag_2d_1_row
+                DO j=1,matrix_col
+                        IF (counter==jptra_dia2d_high)THEN
+                                EXIT
+                        ELSE
+                                matrix_dia_2d_1_indexes(i,j) =highfreq_table_dia_2d_wri(counter+1)
+                                counter=counter + 1
+                        END IF
+                END DO
+        END DO
+
+        !IF(lwp) THEN
+        !        DO i=1,matrix_diag_2d_1_row
+        !                write(*,*) (matrix_dia_2d_1_indexes(i,j), j=1,matrix_col )
+        !        END DO
+        !ENDIF
+        
+        counter=0
+        DO i=1,matrix_diag_2d_2_row
+                DO j=1,matrix_col
+                        IF (counter==jptra_dia_2d_wri)THEN
+                                EXIT
+                        ELSE
+                                matrix_dia_2d_2_indexes(i,j)= lowfreq_table_dia_2d_wri(counter +1)
+                                counter=counter + 1
+                        END IF
+                END DO
+        END DO
+
+        !IF(lwp) THEN
+        !        DO i=1,matrix_diag_2d_2_row
+        !                write(*,*) (matrix_dia_2d_2_indexes(i,j), j=1,matrix_col )
+        !        END DO
+        !ENDIF
+
+        counter=0
+        DO i=1,matrix_diag_2d_1_row
+                DO j=1,matrix_col
+                        IF (counter==jptra_dia2d_high)THEN
+                                EXIT
+                        ELSE
+                                matrix_dia_2d_1_counters(i,j) = counter+1
+                                counter=counter + 1
+                        END IF
+                END DO
+        END DO
+
+
+!--------------------------------------- PHYS
+        if(freq_ave_phys .eq. 2) then  
+        counter=0
+        DO i=1,matrix_phys_2d_2_row
+                DO j=1,matrix_col
+                        IF (counter ==jptra_phys_2d_wri)THEN
+                                EXIT
+                        ELSE
+                                trans_phys2d_low = lowfreq_table_phys_2d_wri(counter + 1)
+                                matrix_phys_2d_2(i,j)%var_name = physnm_2d(trans_phys2d_low)
+                                counter=counter + 1
+                        END IF
+                END DO
+        END DO
+
+        counter=0
+        DO i=1,matrix_phys_2_row
+                DO j=1,matrix_col
+                        IF (counter==jptra_phys_wri)THEN
+                                EXIT
+                        ELSE
+                                trans_phys_low = lowfreq_table_phys_wri(counter +1)
                                 matrix_phys_2(i,j)%var_name = physnm(trans_phys_low)
-                                counter_phys=counter_phys + 1
+                                counter=counter + 1
                         END IF
                 END DO
         END DO
@@ -359,31 +482,29 @@ MODULE MATRIX_VARS
 
         !OK        !ELSE
 
+        counter=0
         DO i=1,matrix_phys_2d_1_row
                 DO j=1,matrix_col
-                        IF (counter_phys2d_high==jptra_phys_2d_high_wri)THEN
-                                !write(*,*) 'exit'
+                        IF (counter==jptra_phys_2d_high_wri)THEN
                                 EXIT
                         ELSE
-                                !write(*,*) '368',i ,j,highfreq_table_phys_2d_wri(counter_phys2d_high+1)
-                                trans_phys2d_high = highfreq_table_phys_2d_wri(counter_phys2d_high+1)
-                                !write(*,*) '368', trans_phys2d_high,highfreq_table_phys_2d_wri(counter_phys2d_high+1)
+                                trans_phys2d_high = highfreq_table_phys_2d_wri(counter+1)
                                 matrix_phys_2d_1(i,j)%var_name=physnm_2d(trans_phys2d_high)
-                                counter_phys2d_high=counter_phys2d_high + 1
+                                counter=counter + 1
                         END IF
                 END DO
         END DO
 
 !OK
+        counter=0
         DO i=1,matrix_phys_1_row
                 DO j=1,matrix_col
-                        IF (counter_phys_high==jptra_phys_high_wri)THEN
+                        IF (counter==jptra_phys_high_wri)THEN
                                 EXIT
                         ELSE
-                                trans_phys_high = highfreq_table_phys_wri(counter_phys_high+1)
-                                !write(*,*) '384', highfreq_table_phys_wri(counter_phys_high+1)
+                                trans_phys_high = highfreq_table_phys_wri(counter+1)
                                 matrix_phys_1(i,j)%var_name=physnm(trans_phys_high)
-                                counter_phys_high=counter_phys_high + 1
+                                counter=counter + 1
                         END IF
                 END DO
         END DO
@@ -396,15 +517,6 @@ MODULE MATRIX_VARS
 
         INTEGER :: i
         
-        !high freq dia 3d
-        jptra_dia_high_wri = 0
-        DO i =1, jptra_dia
-                IF (diahf(i).eq.1 .and. diaWR(i) == 1) then
-                        jptra_dia_high_wri = jptra_dia_high_wri + 1
-                END IF
-        ENDDO
-        ALLOCATE (highfreq_table_dia_wri(jptra_dia_high_wri))
-        !high freq phys 3d
         jptra_phys_high_wri = 0
         DO i=1,jptra_phys
                 if (freq_ave_phys.eq.1 .and. physWR(i) == 1) then
@@ -414,14 +526,6 @@ MODULE MATRIX_VARS
 
         ALLOCATE (highfreq_table_phys_wri(jptra_phys_high_wri))
 
-        jptra_dia_high_wri = 0
-        DO i =1, jptra_dia
-                IF (diahf(i).eq.1 .and. diaWR(i) == 1) then
-                        jptra_dia_high_wri = jptra_dia_high_wri + 1
-                        highfreq_table_dia_wri(jptra_dia_high_wri) = i
-                END IF
-        ENDDO
-
         jptra_phys_high_wri = 0
         DO i =1, jptra_phys
                 IF (freq_ave_phys.eq.1 .and. physWR(i) == 1) then
@@ -430,18 +534,7 @@ MODULE MATRIX_VARS
                 END IF
         ENDDO
 
-        !high freq dia 2d
-        jptra_dia_2d_high_wri = 0
-        DO i =1, jptra_dia_2d
-                IF (diahf_2d(i).eq.1 .and. diaWR_2d(i) == 1) then
-                        jptra_dia_2d_high_wri = jptra_dia_2d_high_wri + 1
-                END IF
-        ENDDO
-        
-        ALLOCATE (highfreq_table_dia_2d_wri(jptra_dia_2d_high_wri))
-
         jptra_phys_2d_high_wri = 0
-        !write(*,*) '443', jptra_phys_2d, jptra_phys_2d_high_wri
         DO i =1, jptra_phys_2d
                 IF (freq_ave_phys.eq.1 .and. physWR_2d(i) == 1) then
                         jptra_phys_2d_high_wri = jptra_phys_2d_high_wri + 1
@@ -452,22 +545,11 @@ MODULE MATRIX_VARS
 
         ALLOCATE (highfreq_table_phys_2d_wri(jptra_phys_2d_high_wri))
 
-        jptra_dia_2d_high_wri = 0
-        DO i =1, jptra_dia_2d
-                IF (diahf_2d(i).eq.1 .and. diaWR_2d(i) == 1) then
-                        jptra_dia_2d_high_wri = jptra_dia_2d_high_wri + 1
-                        highfreq_table_dia_2d_wri(jptra_dia_2d_high_wri) = i
-                END IF
-        ENDDO
-
         jptra_phys_2d_high_wri = 0
         DO i =1, jptra_phys_2d
                 IF (freq_ave_phys.eq.1 .and. physWR_2d(i) == 1) then
-                        !write(*,*) '465', jptra_phys_2d, jptra_phys_2d_high_wri
                         jptra_phys_2d_high_wri = jptra_phys_2d_high_wri + 1
-                        !write(*,*) '467', jptra_phys_2d, jptra_phys_2d_high_wri
                         highfreq_table_phys_2d_wri(jptra_phys_2d_high_wri) = i
-                        !write(*,*) '469',i, jptra_phys_2d, jptra_phys_2d_high_wri,highfreq_table_phys_2d_wri(jptra_phys_2d_high_wri)
                 END IF
         ENDDO
 
@@ -554,10 +636,10 @@ MODULE MATRIX_VARS
 
         DEALLOCATE (matrix_state_1)
         DEALLOCATE (matrix_state_2)
-        DEALLOCATE (matrix_diag_1)
-        DEALLOCATE (matrix_diag_1)
-        DEALLOCATE (matrix_diag_2d_1)
-        DEALLOCATE (matrix_diag_2d_1)
+        DEALLOCATE (matrix_dia_1_strings)
+        DEALLOCATE (matrix_dia_2_strings)
+        DEALLOCATE (matrix_diag_2d_1_strings)
+        DEALLOCATE (matrix_diag_2d_1_strings)
         
         END SUBROUTINE CLEAN_MATRIX_VARS
 

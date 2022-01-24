@@ -36,7 +36,7 @@
       INTEGER totistart, totiend, relistart, reliend
       INTEGER totjstart, totjend, reljstart, reljend
       double precision ::  Miss_val =1.e20
-      INTEGER :: nVars, counter_var_2d, counter_var_high_2d,counter_var_diag, counter_var_diag_high
+      INTEGER :: nVars 
       INTEGER :: counter_var_phys_2d,counter_var_phys_high_2d,counter_var_phys, counter_var_phys_high
       CHARACTER(LEN=20) ::  var_to_store_diag_2d, var_to_store_diag
       CHARACTER(LEN=20) ::  var_to_store_phys_2d, var_to_store_phys
@@ -67,47 +67,37 @@
         END IF
 
 
-        COUNTER_high = 1
-        COUNTER_low = 1
-
         DUMPING_LOOP_2d: DO jv = 1, n_dumping_cycles
 
                 DO ivar = 1 , nodes
 
                         writing_rank = writing_procs(ivar)
-
                         
-                        IF (COUNTER_LOW > JPTRA_dia_2d_wri)then
-                                EXIT
-                        else if (COUNTER_HIGH > JPTRA_dia2d_HIGH)then
-                                EXIT
-                        ELSE
-
-                                if (FREQ_GROUP.eq.2) then
-                                        var_to_send = matrix_dia_2d_2_indexes(jv,ivar)
-                                        do ji =1 , jpi
-                                                i_contribution = jpj * (ji-1)
-                                                do jj =1 , jpj
-                                                        ind = jj + i_contribution
-                                                        buffDIA2d (ind)= tra_DIA_2d_IO(var_to_send,jj,ji)
-                                                enddo
+                        if (FREQ_GROUP.eq.2) then
+                                var_to_send = matrix_dia_2d_2_indexes(jv,ivar)
+                                IF(VAR_TO_SEND == -10000) EXIT
+                                do ji =1 , jpi
+                                        i_contribution = jpj * (ji-1)
+                                        do jj =1 , jpj
+                                               ind = jj + i_contribution
+                                               buffDIA2d (ind)= tra_DIA_2d_IO(var_to_send,jj,ji)
                                         enddo
-                                else
-                                        var_to_send = matrix_dia_2d_1_counters(jv,ivar)
-                                        do ji =1 , jpi
-                                                i_contribution = jpj * (ji-1)
-                                                do jj = 1 , jpj
-                                                        ind = jj + i_contribution
-                                                        buffDIA2d (ind)=tra_DIA_2d_IO_high(var_to_send,jj,ji)
-                                                enddo
+                                enddo
+                        else
+                                var_to_send = matrix_dia_2d_1_counters(jv,ivar)
+                                IF(VAR_TO_SEND == -10000) EXIT
+                                do ji =1 , jpi
+                                        i_contribution = jpj * (ji-1)
+                                        do jj = 1 , jpj
+                                                ind = jj + i_contribution
+                                                buffDIA2d (ind)=tra_DIA_2d_IO_high(var_to_send,jj,ji)
                                         enddo
-                                endif
-                                if (FREQ_GROUP.eq.2) counter_low = counter_low + 1
-                                if (FREQ_GROUP.eq.1) counter_high = counter_high + 1
+                                enddo
+                        endif
 
-                                CALL MPI_GATHERV(buffDIA2d, sendcount_2d,MPI_DOUBLE_PRECISION, buffDIA2d_TOT,jprcv_count_2d,jpdispl_count_2d, MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
+                        CALL MPI_GATHERV(buffDIA2d, sendcount_2d,MPI_DOUBLE_PRECISION, buffDIA2d_TOT,jprcv_count_2d,jpdispl_count_2d, MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
 
-                        END IF
+
                 END DO
 
         !---------------------------------------------------------------------------------------
@@ -146,8 +136,7 @@
                                                 enddo
                                          enddo
                                 enddo
-                                !if (FREQ_GROUP.eq.2)write(*,*) 'CHECK ', var_to_store_diag_2d,var_to_send_2d
-                                !if (FREQ_GROUP.eq.1) write(*,*)'CHECK_h', var_to_store_diag_2d, COUNTER_VAR_HIGH_2d
+                                
                                 bkpname     = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc.bkp'
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc'
 
@@ -191,51 +180,42 @@
         END IF
 
 
-        COUNTER_high = 1 
-        COUNTER_low = 1
 
         DUMPING_LOOP_3d: DO jv = 1, n_dumping_cycles
                 DO ivar = 1 , nodes
 
                         writing_rank = writing_procs(ivar)
-                        IF (counter_low > JPTRA_dia_wri)then
-                                EXIT
-                        else if (counter_high > JPTRA_dia_HIGH)then
-                                EXIT
-                        ELSE
 
-                                if (FREQ_GROUP.eq.2) then
-                                        var_to_send = matrix_dia_2_indexes(jv,ivar)
-                                        do ji =1, jpi
-                                                i_contribution= jpk*jpj * (ji - 1 )
-                                                do jj =1 , jpj
-                                                        j_contribution=jpk*(jj-1)
-                                                        do jk =1 , jpk
-                                                                ind = jk + j_contribution + i_contribution
-                                                                buffDIA(ind) = tra_DIA_IO(var_to_send, jk,jj,ji)
-                                                        enddo
+                        if (FREQ_GROUP.eq.2) then
+                                var_to_send = matrix_dia_2_indexes(jv,ivar)
+                                IF(var_to_send == -10000) EXIT
+                                do ji =1, jpi
+                                        i_contribution= jpk*jpj * (ji - 1 )
+                                        do jj =1 , jpj
+                                                j_contribution=jpk*(jj-1)
+                                                do jk =1 , jpk
+                                                        ind = jk + j_contribution + i_contribution
+                                                        buffDIA(ind) = tra_DIA_IO(var_to_send, jk,jj,ji)
                                                 enddo
                                         enddo
-                                else
-                                        var_to_send = matrix_dia_1_counters(jv,ivar)
-                                        do ji =1, jpi
-                                                i_contribution= jpk*jpj * (ji - 1 )
-                                                do jj =1 , jpj
-                                                        j_contribution=jpk*(jj-1)
-                                                        do jk =1 , jpk
-                                                                ind = jk + j_contribution + i_contribution
-                                                                buffDIA(ind)= tra_DIA_IO_HIGH(var_to_send, jk,jj,ji)
-                                                        enddo
+                                enddo
+                        else
+                                var_to_send = matrix_dia_1_counters(jv,ivar)
+                                IF(var_to_send == -10000) EXIT
+                                do ji =1, jpi
+                                        i_contribution= jpk*jpj * (ji - 1 )
+                                        do jj =1 , jpj
+                                                j_contribution=jpk*(jj-1)
+                                                do jk =1 , jpk
+                                                        ind = jk + j_contribution + i_contribution
+                                                        buffDIA(ind)= tra_DIA_IO_HIGH(var_to_send, jk,jj,ji)
                                                 enddo
                                         enddo
-                                end if
-                                if (FREQ_GROUP.eq.2) counter_low = counter_low + 1
-                                if (FREQ_GROUP.eq.1) counter_high = counter_high + 1
+                                enddo
+                        end if
+                        !GATHERV TO THE WRITING RANK
 
-                                !GATHERV TO THE WRITING RANK
-
-                                CALL MPI_GATHERV(buffDIA, sendcount,MPI_DOUBLE_PRECISION, buffDIA_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
-                        END IF
+                        CALL MPI_GATHERV(buffDIA, sendcount,MPI_DOUBLE_PRECISION, buffDIA_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
                 END DO
 
 ! *********** START WRITING **************************
@@ -315,9 +295,7 @@
 
         tra_PHYS_2d_IO_high(1,:,:) = vatmIO
         tra_PHYS_2d_IO_high(2,:,:) = empIO
-        !write(*,*) 'copy is',tra_PHYS_2d_IO_high(2,5,5)
         tra_PHYS_2d_IO_high(3,:,:) = qsrIO
-        !write(*,*) 'copy is',tra_PHYS_2d_IO_high(3,5,5)
 
 
         IF (freq_ave_phys==1)then
@@ -372,9 +350,6 @@
                                                         buffPHYS2d (ind)=tra_PHYS_2d_IO_high(var_to_send_2D,jj,ji)
                                                 enddo
                                         enddo
-                                        !write(*,*) 'valeu in buffer is', tra_PHYS_2d_IO_high(var_to_send_2D,5,5)
-                                        !write(*,*) &
-                                     !'valeu in buffer is,second print',tra_PHYS_2d_IO_high(3,5,5)
                                 endif
                                 counter_var_phys_2d = counter_var_phys_2d + 1
                                 if (freq_ave_phys.eq.1) counter_var_phys_high_2d = counter_var_phys_high_2d + 1

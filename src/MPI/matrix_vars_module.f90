@@ -69,6 +69,10 @@ MODULE MATRIX_VARS
         INTEGER, allocatable :: matrix_dia_2d_1_indexes(:,:)
         INTEGER, allocatable :: matrix_dia_2d_2_indexes(:,:)
         INTEGER, allocatable :: matrix_dia_2d_1_counters(:,:)
+ 
+        INTEGER, allocatable :: matrix_state_1_counters(:,:)
+        INTEGER, allocatable :: matrix_state_2_counters(:,:)
+
         CONTAINS
 
 !------------------------------------------------------------
@@ -76,6 +80,8 @@ MODULE MATRIX_VARS
         
         ALLOCATE (matrix_state_1(matrix_state_1_row, matrix_col))
         ALLOCATE (matrix_state_2(matrix_state_2_row, matrix_col))
+        ALLOCATE (matrix_state_1_counters(matrix_state_1_row, matrix_col))
+        ALLOCATE (matrix_state_2_counters(matrix_state_2_row, matrix_col))
         ALLOCATE (matrix_diag_2d_1_strings(matrix_diag_2d_1_row, matrix_col))
         ALLOCATE (matrix_diag_2d_2_strings(matrix_diag_2d_2_row, matrix_col))
         ALLOCATE (matrix_dia_1_strings(matrix_diag_1_row, matrix_col))
@@ -252,6 +258,19 @@ MODULE MATRIX_VARS
                 END DO
         END DO
 
+        DO i=1,matrix_state_2_row
+                DO j=1,matrix_col
+                        matrix_state_2_counters(i,j) = -10000
+                END DO
+        END DO
+        !ELSE
+        DO i=1,matrix_state_1_row
+                DO j=1,matrix_col
+                        matrix_state_1_counters(i,j) = -10000
+                END DO
+        END DO
+
+
         DO i=1,matrix_diag_1_row
                 DO j=1,matrix_col
                         matrix_dia_1_indexes(i,j)= -10000
@@ -270,6 +289,24 @@ MODULE MATRIX_VARS
                 END DO
         END DO
 
+        DO i=1,matrix_diag_2d_2_row
+                DO j=1,matrix_col
+                        matrix_dia_2d_2_indexes(i,j) = -10000
+                END DO
+        END DO
+        !ELSE
+        DO i=1,matrix_diag_2d_1_row
+                DO j=1,matrix_col
+                        matrix_dia_2d_1_indexes(i,j) = -10000
+                END DO
+        END DO
+
+        DO i=1,matrix_diag_2d_1_row
+                DO j=1,matrix_col
+                        matrix_dia_2d_1_counters(i,j) = -10000
+                END DO
+        END DO
+
 
         !OK
         !insert variable string inside matrix of procs
@@ -283,6 +320,7 @@ MODULE MATRIX_VARS
                                 EXIT
                         ELSE
                                 matrix_state_2(i,j)%var_name = ctrcnm(counter+1)
+                                matrix_state_2_counters(i,j) = counter + 1 
                                 counter=counter + 1
                         END IF
                 END DO
@@ -296,6 +334,7 @@ MODULE MATRIX_VARS
                         ELSE    
                                 trans_high = highfreq_table(counter+1)                             
                                 matrix_state_1(i,j)%var_name =ctrcnm(trans_high)
+                                matrix_state_1_counters(i,j) = counter + 1
                                 counter=counter + 1
                         END IF
                 END DO
@@ -380,12 +419,6 @@ MODULE MATRIX_VARS
                 END DO
         END DO
 
-        !IF(lwp) THEN
-        !        DO i=1,matrix_diag_2_row
-        !                write(*,*) (matrix_dia_2_indexes(i,j), j=1,matrix_col )
-        !        END DO
-        !ENDIF
-       
         counter=0
         DO i=1,matrix_diag_1_row
                 DO j=1,matrix_col
@@ -538,7 +571,6 @@ MODULE MATRIX_VARS
         DO i =1, jptra_phys_2d
                 IF (freq_ave_phys.eq.1 .and. physWR_2d(i) == 1) then
                         jptra_phys_2d_high_wri = jptra_phys_2d_high_wri + 1
-                        !write(*,*) '447', jptra_phys_2d, jptra_phys_2d_high_wri
                 END IF
         ENDDO
 

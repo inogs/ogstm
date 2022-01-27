@@ -2,7 +2,7 @@
 # author : E.Pascolo, S.Bna, L.Calori
 
 # CMAKE setting
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.18)
 project (OGSTM)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
 enable_language(Fortran C)
@@ -39,7 +39,7 @@ if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source") #-qopenmp
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
-  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-132")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0 ")
   set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})

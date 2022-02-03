@@ -3,7 +3,7 @@ import sys
 
 def file2stringlist(filename):
     LIST=[]
-    filein=file(filename)
+    filein=open(filename)
     for line in filein:
         LIST.append(line[:-1])
     filein.close()
@@ -27,10 +27,10 @@ for node in NODES:
     var = str(node.getAttribute("name"))
     max = float(node.getAttribute("maxvalue"))
     high= node.getAttribute("highfreq")=='true'
-    if not XML_MODELVARS.has_key(var): # check about BFMtab formatting
+    if var not in XML_MODELVARS.keys(): # check about BFMtab formatting
         XML_MODELVARS[var] = [max,high]
     else:
-        print var + " is already defined."
+        print(var + " is already defined.")
         sys.exit(1)
 
 NODES=xmldoc.getElementsByTagName("Diagnostics")[0].getElementsByTagName("var")
@@ -38,15 +38,15 @@ for node in NODES:
     var = str(node.getAttribute("name"))
     high= node.getAttribute("highfreq")=='true'
     dump= node.getAttribute("dump")=='true'
-    if not XML_DIA__VARS.has_key(var):
+    if var not in XML_DIA__VARS.keys():
         XML_DIA__VARS[var] = high
     else:
-        print var + " is already defined."
+        print(var + " is already defined.")
         sys.exit(1)
-    if not XML_DIA__DUMP.has_key(var):
+    if var not in XML_DIA__DUMP.keys():
         XML_DIA__DUMP[var] = dump
     else:
-        print var + " is already defined."
+        print(var + " is already defined.")
         sys.exit(1)  
 
 NODES=xmldoc.getElementsByTagName("Diagnostics_2D")[0].getElementsByTagName("var")
@@ -54,15 +54,15 @@ for node in NODES:
     var = str(node.getAttribute("name"))
     high= node.getAttribute("highfreq")=='true'
     dump= node.getAttribute("dump")=='true'
-    if not XML_DIA2dVARS.has_key(var):
+    if var not in XML_DIA2dVARS.keys():
         XML_DIA2dVARS[var] = high
     else:
-        print var + " is already defined."
+        print(var + " is already defined.")
         sys.exit(1)
-    if not XML_DIA2dDUMP.has_key(var):
+    if var not in XML_DIA2dDUMP.keys():
         XML_DIA2dDUMP[var] = dump
     else:
-        print var + " is already defined."
+        print(var + " is already defined.")
         sys.exit(1) 
         
 
@@ -82,7 +82,7 @@ for il, line in enumerate(SECTION_NAMELIST):
         quote_1=line.find("\"")
         quote_2=line.find("\"",quote_1+1)
         varname=line[quote_1+1:quote_2]
-        if XML_MODELVARS.has_key(varname):
+        if varname in XML_MODELVARS.keys():
             par_1 = line.find("(")
             par_2 = line.find(")")
             ind   = int(line[par_1+1:par_2])
@@ -97,7 +97,7 @@ for il, line in enumerate(SECTION_NAMELIST):
                 MODEL_HF.append(varname)
             MODEL_LF.append(varname)
         else:
-            print "Error: " + varname + " not defined !"
+            print("Error: " + varname + " not defined !")
             sys.exit(1)
             
 NAMELIST_NEW.append("/\n\n")
@@ -110,7 +110,7 @@ for il, line in enumerate(SECTION_NAMELIST):
         quote_1=line.find("\"")
         quote_2=line.find("\"",quote_1+1)
         varname=line[quote_1+1:quote_2]
-        if XML_DIA__VARS.has_key(varname):
+        if varname in XML_DIA__VARS.keys():
             par_1 = line.find("(")
             par_2 = line.find(")")
 
@@ -128,7 +128,7 @@ for il, line in enumerate(SECTION_NAMELIST):
                 if XML_DIA__DUMP[varname]: DIA_HF.append(varname)
             if XML_DIA__DUMP[varname]: DIA_LF.append(varname)
         else:
-            print "Error: " + varname + " not defined !"
+            print("Error: " + varname + " not defined !")
             sys.exit(1)
 NAMELIST_NEW.append("/ \n\n")
 
@@ -140,7 +140,7 @@ for il, line in enumerate(SECTION_NAMELIST):
         quote_1=line.find("\"")
         quote_2=line.find("\"",quote_1+1)
         varname=line[quote_1+1:quote_2]
-        if XML_DIA2dVARS.has_key(varname):
+        if varname in XML_DIA2dVARS.keys():
             par_1 = line.find("(")
             par_2 = line.find(")")
 
@@ -159,7 +159,7 @@ for il, line in enumerate(SECTION_NAMELIST):
                 if XML_DIA2dDUMP[varname] : DIA_HF.append(varname)
             if XML_DIA2dDUMP[varname] :DIA_LF.append(varname)
         else:
-            print "Error: " + varname + " not defined !"
+            print("Error: " + varname + " not defined !")
             sys.exit(1)
 NAMELIST_NEW.append("/\n\n")
 
@@ -177,12 +177,12 @@ DUMP_DIA=[var for var in XML_DIA__DUMP.keys() if XML_DIA__DUMP[var] ]
 
 printout=True
 if printout:
-    print "HF variables : " , len(MODEL_HF), "State", len(DIA_HF), "Diagnostics"
-    print "LF variables : " , len(MODEL_LF), "State", len(DIA_LF), "Diagnostics", len(DUMP_DIA), "Dumped"
+    print("HF variables : " , len(MODEL_HF), "State", len(DIA_HF), "Diagnostics")
+    print("LF variables : " , len(MODEL_LF), "State", len(DIA_LF), "Diagnostics", len(DUMP_DIA), "Dumped")
 
-    print "HF LIST:"
-    for var in MODEL_HF: print var
-    for var in DIA_HF : print var
+    print("HF LIST:")
+    for var in MODEL_HF: print(var)
+    for var in DIA_HF : print(var)
 
-    print "\n\nDIA DUMPED:"
-    for var in DUMP_DIA : print "  ", var
+    print("\n\nDIA DUMPED:")
+    for var in DUMP_DIA : print("  ", var)

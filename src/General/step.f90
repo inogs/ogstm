@@ -181,7 +181,7 @@ MODULE module_step
 
 
 ! OGSTM TEMPORIZATION
-       IF (TAU.GT.TimeStepStart) THEN
+       IF (TAU.GT.0) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
            if (lwp) then
                write(*,*) "************* OGSTM TEMPORIZATION *********"

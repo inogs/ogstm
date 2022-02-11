@@ -74,7 +74,7 @@
                bkp2hasbeenread=.true.
              endif
           else
-             traIO(:,:,:,jn) = trn(:,:,:,jn)
+             traIO(:,:,:,jn) = 0.0
           endif
 
 
@@ -93,7 +93,7 @@
                   bkp1hasbeenread=.true.
                 endif
            else
-              traIO_HIGH(:,:,:,jn_high) = trn(:,:,:,jn)
+              traIO_HIGH(:,:,:,jn_high) = 0.0
            endif
          ENDIF
 

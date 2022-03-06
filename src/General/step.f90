@@ -170,7 +170,7 @@ MODULE module_step
 
 
 ! Call Passive tracer model between synchronization for small parallelisation
-        CALL trcstp    ! se commento questo non fa calcoli
+        CALL trcstp(DATEstring)    ! se commento questo non fa calcoli
         call trcave
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
@@ -245,7 +245,7 @@ MODULE module_step
       END SUBROUTINE step
 
 
-      SUBROUTINE trcstp
+      SUBROUTINE trcstp(datestring)
 !---------------------------------------------------------------------
 !
 !                       ROUTINE trcstp
@@ -267,6 +267,7 @@ MODULE module_step
 
        IMPLICIT NONE
       integer jn,jk,ji,jj
+      character(LEN=17), INTENT(IN) ::  datestring
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
       IF (ladv) CALL trcadv ! tracers: advection
@@ -294,7 +295,7 @@ MODULE module_step
 ! tracers: sink and source (must be  parallelized on vertical slab)
       IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
 
-      IF (lbfm) CALL trcsms
+      IF (lbfm) CALL trcsms(datestring)
 
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
 

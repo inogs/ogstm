@@ -1,4 +1,4 @@
-      SUBROUTINE trcsms
+      SUBROUTINE trcsms(datestring)
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE trcsms
@@ -24,6 +24,8 @@
        USE mpi
        IMPLICIT NONE
 
+       character(LEN=17), INTENT(IN) ::  datestring
+
 
 !! this ROUTINE is called only every ndttrc time step
 
@@ -33,6 +35,8 @@
 !! this first routines are parallelized on vertical slab
 
        CALL trcopt ! tracers: optical model
+
+       CALL trc3streams(datestring) ! 3-stream radiative model
        
        CALL trcbio ! tracers: biological model
 

@@ -4,6 +4,11 @@
 
  find_library( BFM_LIBRARIES NAMES bfm libbfm HINTS $ENV{BFM_LIBRARY} )
  message(STATUS "BFM library =  ${BFM_LIBRARIES}  ")
+ if (NOT "$ENV{BFM_LIBRARY}" STREQUAL "")
+	 set(EnvironmentVariableName "$ENV{BFM_LIBRARY}" CACHE INTERNAL "Copied from environment variable")
+endif()
+
+message("EnvironmentVariableName = ${EnvironmentVariableName}")
  if (BFM_LIBRARIES)
     find_path (BFM_INCLUDES NAMES BFM_var_list.h HINTS $ENV{BFM_INCLUDE} NO_DEFAULT_PATH)
     add_definitions(-Dkey_trc_bfm -Dkey_INCLUDE_BFM_PELCO2)

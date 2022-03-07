@@ -289,7 +289,7 @@
          enddo
       enddo
         
-      do nl =5,19   ! 400 to 700 nm 
+      do nl =5,17   ! 400 to 700 nm 
          do k =1,bottom
 
             PARz(k,nchl+1) = PARz(k,nchl+1) + WtoQ(nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu )   

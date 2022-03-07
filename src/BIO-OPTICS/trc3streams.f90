@@ -42,7 +42,7 @@
 !- MID
 !- AVERAGE
 
-      V_POSITION = "AVERAGE"
+      V_POSITION = "BOTTOM"
 
 ! Compute RT every hour
 
@@ -96,7 +96,9 @@
              bottom = min(bottom,37) ! Stop at approx 500 mt
 
              MODE = 2 ! exact solution
+!            MODE = 0 ! exact solution
 !            MODE = 1 ! approximate solution
+!            MODE = 2 ! library solution
 
              Ed_0m(:,jj,ji) =5.0D0
              Es_0m(:,jj,ji) =5.0D0
@@ -126,11 +128,14 @@
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     
                  IF ( (MODE .EQ. 0) .OR. (MODE .EQ. 1)) then
-                     call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
+                     call edeseu(MODE,V_POSITION,bottom,e3w(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
     
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)
                  Eu(1,jj,ji,:) = Eu_0m(:)
+                 write(*,*) "Ed", jl,jk,"=", Ed(1,jj,ji,:)
+                 write(*,*) "Es", jl,jk,"=", Es(1,jj,ji,:)
+                 write(*,*) "Eu", jl,jk,"=", Eu(1,jj,ji,:)
 
 
                  do jl=1, nlt
@@ -138,14 +143,21 @@
                         Ed(jk,jj,ji,jl) = Edz(jk-1,jl)
                         Es(jk,jj,ji,jl) = Esz(jk-1,jl)
                         Eu(jk,jj,ji,jl) = Euz(jk-1,jl)
+                        write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
+                        write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
+                        write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
                     enddo
                  enddo
+                 write(*,*) "++++++++++++++++++"
 
                  do jl=1, nchl+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
+                        write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
                     enddo
                  enddo
+                 write(*,*) "++++++++++++++++++"
+                 STOP
                  ENDIF
 
                  IF (MODE .EQ. 2) then
@@ -154,27 +166,38 @@
                          zgrid(jk+1) = zgrid(jk) + e3w(jk,jj,ji)
                          write(*,*) "zgrid", jk+1, "=", zgrid(jk+1)
                      enddo
-                     call edeseu2(MODE,V_POSITION,bottom,zgrid,Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),E,PARz)
+                    
+                     write(*,*) "Bottom", Bottom
+                     write(*,*) "rmud", rmud(jj,ji)
 
+                     E(:,:,:)  = 0.0001d0
+                     PARz(:,:) = 0.0001d0
 
-                 Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
-                 Es(1,jj,ji,:) = Es_0m(:,jj,ji)
-                 Eu(1,jj,ji,:) = Eu_0m(:)
-
-
+                     call edeseu2(MODE,V_POSITION,bottom,zgrid,Ed_0m(:,jj,ji),Es_0m(:,jj,ji), &
+                                  CHLz,CDOMz,POCz,rmud(jj,ji),E(:,1:bottom+1,:),PARz(1:bottom,:))
+                
                  do jl=1, nlt
-                    do jk =2, bottom
-                        Ed(jk,jj,ji,jl) = Edz(jk-1,jl)
-                        Es(jk,jj,ji,jl) = Esz(jk-1,jl)
-                        Eu(jk,jj,ji,jl) = Euz(jk-1,jl)
+                    do jk =1, bottom+1 ! Defined on w faces (cell's interfaces)
+                        Ed(jk,jj,ji,jl) = E(1,jk,jl)
+                        Es(jk,jj,ji,jl) = E(2,jk,jl)
+                        Eu(jk,jj,ji,jl) = E(3,jk,jl)
+                        write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
+                        write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
+                        write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
                     enddo
                  enddo
+                 write(*,*) "++++++++++++++++++"
 
                  do jl=1, nchl+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
+                        write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
                     enddo
-                 enddo
+                 enddo 
+                 write(*,*) "++++++++++++++++++"
+
+                 STOP
+
                  ENDIF
 
                  

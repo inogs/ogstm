@@ -25,8 +25,9 @@
       logical ISLOG
       integer :: ierr, color, ii
       integer :: SysErr, system
+      integer :: number_of_argo_obs
       
-      logical existFile
+      logical existFile, condition_to_3dvar
 
       DAparttime  = MPI_WTIME()
       MONTH=datestr(5:6)
@@ -110,20 +111,34 @@
                   call sleep(2)
                end do
 
+              call countline("DA__FREQ_1/"//DAY//".arg_mis.dat",number_of_argo_obs)
+              condition_to_3dvar = number_of_argo_obs.gt.1
+              if (.not.condition_to_3dvar) then
+                  write(*,*) 'No argo obs available: skipping OCEANVAR.'
+                  write(*,*) 'You can remove RSTbefore files by doing:'
+                  write(*,*) 'rm -f DA__FREQ_1/RSTbefore.'//datestr//'*'
+                  write(*,*) 'rm DA__FREQ_1/RSTbefore.'//datestr(1:11)//datestr(13:14)//datestr(16:17)//'*'
+              endif
             endif
+
+
           ENDIF
 
           call MPI_Barrier(Var3DCommunicator, ierr)
+          call MPI_Bcast(condition_to_3dvar,1,MPI_LOGICAL,0, Var3DCommunicator, ierr)
 
 
-          call OCEANVAR
+          if (condition_to_3dvar) call OCEANVAR
+
 
           ! deallocation of DA_VarList array
           !call clean_da_params
       endif
 
       call mppsync()
-      CALL trcrstDA(datestr)
+
+      if (condition_to_3dvar)  CALL trcrstDA(datestr)
+
 
       DAparttime  = MPI_WTIME() - DAparttime
       DAtottime   = DAtottime + DAparttime

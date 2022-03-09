@@ -125,6 +125,7 @@
       USE calendar
       USE myalloc
       USE TIME_MANAGER
+      USE ogstm_mpi_module
 
       IMPLICIT NONE
 
@@ -138,6 +139,12 @@
       double precision diff_e3t(jpk,jpj,jpi)
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
+
+      !TEST
+      CHARACTER(LEN=20)  var_to_store,DIR,date_from,date_To
+      CHARACTER(LEN=56) output_file_nc
+      double precision, dimension(jpk,jpjglo,jpiglo) :: buf_glo
+     
 
       if (variable_rdt) then
           DeltaT_name="DELTA_T/DeltaT_"//datestring//".txt"
@@ -154,15 +161,77 @@
 ! U  *********************************************************
       nomefile = 'FORCINGS/U'//datestring//'.nc'
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
-      call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
-      udta(:,:,:,2) = buf * umask
+      if(lwp) then
+              call readnc_slice_float_INITIAL(nomefile,'vozocrtx',buf_glo,ingv_lon_shift)
+              udta(:,:,:,2) = buf * umask
+              DIR='AVE_FREQ_1/'
+              var_to_store='vozocrtx'
+              output_file_nc=trim(DIR)//'ave.TEST.'//trim(var_to_store)//'.nc'
+              date_from='20220302-12:00:00'
+              date_To='20220302-13:00:00'
 
 
+              CALL WRITE_AVE(output_file_nc,var_to_store,date_from, date_To, buf_glo, deflate_ave, deflate_level_ave)
+      end if
+
+      call mppsync()
+
+      STOP
+     
+      !!! il proc 0 deve trasformare la matrice 3d in un array monodimensionale, secondo gli indici dei processori
+
+      if(lwp) then
+
+        DO idrank = 0,mpi_glcomm_size-1
+                ! ******* WRITING RANK sets indexes of tot matrix where to place buffers of idrank
+                irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
+                jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
+                totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
+                totiend   = totistart + irange - 1
+                totjstart = jstart_a(idrank+1) + jPd_a(idrank+1) - 1
+                totjend   = totjstart + jrange - 1
+                relistart = 1 + iPd_a(idrank+1) - 1
+                reliend   = relistart + irange - 1
+                reljstart = 1 + jPd_a(idrank+1) - 1
+                reljend   = reljstart + jrange - 1
+
+                ! **** ASSEMBLING *** WRITING RANK  puts in tot matrix buffer received by idrank
+                do ji =totistart,totiend
+                        i_contribution   = jpk*jpj_rec_a(idrank+1)*(ji-1-totistart+ relistart)
+                        do jj =totjstart,totjend
+                                j_contribution = jpk*(jj-1-totjstart+ reljstart)
+                                do jk =1, jpk
+                                        ind = jk + j_contribution + i_contribution
+                                        tottrnIO(jk,jj,ji)= bufftrn_TOT(ind+jpdispl_count(idrank+1))
+                                enddo
+                        enddo
+                enddo
+        END DO
+
+        call mpi_scatterv()
+
+     end if
+
+     !iogni processore rieve il buffer e si costruisce il suo pezzo di matrice
+
+     do ji =1 , jpi
+                                                i_contribution= jpk*jpj * (ji - 1 )
+                                                do jj =1 , jpj
+                                                        j_contribution=jpk*(jj-1)
+                                                        do jk =1 , jpk
+                                                                ind =  jk + j_contribution + i_contribution
+                                                                bufftrn   (ind)= traIO_HIGH(jk,jj,ji,counter_var_high)
+                                                        enddo
+                                                enddo
+                                        enddo
+
+    !pronti
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
-      vdta(:,:,:,2) = buf * vmask
-      
+      if (lwp) then
+              call readnc_slice_float_INITIAL(nomefile,'vomecrty',buf,ingv_lon_shift)
+              vdta(:,:,:,2) = buf * vmask
+      end if
 
 
 ! W *********************************************************
@@ -170,20 +239,25 @@
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
 
-      call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
-      avtdta(:,:,:,2) = buf*tmask
-
+      if (lwp) then
+              call readnc_slice_float_INITIAL(nomefile,'votkeavt',buf,ingv_lon_shift)
+              avtdta(:,:,:,2) = buf*tmask
+      end if
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
-      call readnc_slice_float(nomefile,'votemper',buf,ingv_lon_shift)
-      tdta(:,:,:,2) = buf*tmask
+      if (lwp) then 
+              call readnc_slice_float_INITIAL(nomefile,'votemper',buf,ingv_lon_shift)
+              tdta(:,:,:,2) = buf*tmask
 
-      call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
-      sdta(:,:,:,2) = buf*tmask
+              call readnc_slice_float_INITIAL(nomefile,'vosaline',buf,ingv_lon_shift)
+              sdta(:,:,:,2) = buf*tmask
+      end if
 
+      !CALL mpi_barrier(mpi_comm_world,ierror) 
 
-
+      if(lwp) STOP
+    
     if (IS_FREE_SURFACE) then
          call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
          ssh = buf2*tmask(1,:,:)

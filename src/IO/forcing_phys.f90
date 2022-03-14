@@ -127,6 +127,12 @@
       USE TIME_MANAGER
       USE ogstm_mpi_module
 
+      USE MPI_GATHER_INFO
+      USE MATRIX_VARS
+      USE NODES_MODULE
+      USE DTYPE_PROCS_STRING_MODULE
+
+
       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) :: datestring
@@ -145,6 +151,16 @@
       CHARACTER(LEN=56) output_file_nc
       double precision, dimension(jpk,jpjglo,jpiglo) :: buf_glo
      
+      INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
+      INTEGER irange, jrange
+      INTEGER totistart, totiend, relistart, reliend
+      INTEGER totjstart, totjend, reljstart, reljend
+
+      DOUBLE PRECISION, allocatable, dimension(:) :: buff_scatterv_tot
+      if(lwp) then
+              ALLOCATE (buff_scatterv_tot(jpi_max* jpj_max* jpk))
+              buff_scatterv_tot = huge(bufftrn_TOT(1)) 
+      end if  
 
       if (variable_rdt) then
           DeltaT_name="DELTA_T/DeltaT_"//datestring//".txt"
@@ -202,13 +218,17 @@
                                 j_contribution = jpk*(jj-1-totjstart+ reljstart)
                                 do jk =1, jpk
                                         ind = jk + j_contribution + i_contribution
-                                        tottrnIO(jk,jj,ji)= bufftrn_TOT(ind+jpdispl_count(idrank+1))
+                                         buff_scatterv_tot(ind+jpdispl_count(idrank+1))=buf_glo(jk,jj,ji)
                                 enddo
                         enddo
                 enddo
         END DO
 
         call mpi_scatterv()
+        
+        !adesso il proc 0 manda i pezzi del buff scatterv tot a tutti i procs
+
+        MPI_SCATTERV(SENDBUF, SENDCOUNTS, DISPLS, SENDTYPE, RECVBUF, RECVCOUNT, RECVTYPE, ROOT, COMM, IERROR)
 
      end if
 

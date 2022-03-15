@@ -137,7 +137,7 @@
 
       character(LEN=17), INTENT(IN) :: datestring
       LOGICAL :: B
-      integer  :: jk,jj,ji, jstart
+      !integer  :: jk,jj,ji, jstart
       ! LOCAL
       character(LEN=30) nomefile
       character(LEN=36) DeltaT_name
@@ -155,12 +155,30 @@
       INTEGER irange, jrange
       INTEGER totistart, totiend, relistart, reliend
       INTEGER totjstart, totjend, reljstart, reljend
+      INTEGER jk,jj,ji,i,j,k
+      INTEGER ind, i_contribution, j_contribution
 
       DOUBLE PRECISION, allocatable, dimension(:) :: buff_scatterv_tot
+      INTEGER, allocatable, dimension(:) :: sendcount_array
       if(lwp) then
               ALLOCATE (buff_scatterv_tot(jpi_max* jpj_max* jpk))
-              buff_scatterv_tot = huge(bufftrn_TOT(1)) 
+              ALLOCATE (sendcount_array(mpi_glcomm_size))
+              buff_scatterv_tot = huge(bufftrn_TOT(1))      
       end if  
+      
+      CALL MPI_Gather(sendcount, 1, MPI_INT,sendcount_array, 1, MPI_INT, 0,MPI_COMM_WORLD, IERR)
+
+      if (lwp) then
+        DO idrank = 0,mpi_glcomm_size-1
+                write(*,*) 'rank ', idrank+1, 'sendcount is ', sendcount_array(idrank+1)
+        END DO
+      end if
+
+
+      call mppsync()
+
+      STOP
+
 
       if (variable_rdt) then
           DeltaT_name="DELTA_T/DeltaT_"//datestring//".txt"
@@ -171,6 +189,7 @@
           jk = minval(imposed_deltaT)
           rdt = real(jk , 8)
       endif
+
       nomefile='FORCINGS/U19951206-12:00:00.nc'
 
 ! Starting I/O
@@ -224,27 +243,31 @@
                 enddo
         END DO
 
-        call mpi_scatterv()
+     end if
+
+     !sendcount_array
+     !mpi gather
+     !ttui devono mandare il loro sendcount a 0
+     !   call mpi_scatterv()
         
         !adesso il proc 0 manda i pezzi del buff scatterv tot a tutti i procs
+        !MPI_SCATTERV(buff_scatterv_tot, SENDCOUNTS, DISPLS, SENDTYPE, RECVBUF, RECVCOUNT, RECVTYPE, ROOT, COMM, IERROR)
 
-        MPI_SCATTERV(SENDBUF, SENDCOUNTS, DISPLS, SENDTYPE, RECVBUF, RECVCOUNT, RECVTYPE, ROOT, COMM, IERROR)
-
-     end if
+     
 
      !iogni processore rieve il buffer e si costruisce il suo pezzo di matrice
 
-     do ji =1 , jpi
-                                                i_contribution= jpk*jpj * (ji - 1 )
-                                                do jj =1 , jpj
-                                                        j_contribution=jpk*(jj-1)
-                                                        do jk =1 , jpk
-                                                                ind =  jk + j_contribution + i_contribution
-                                                                bufftrn   (ind)= traIO_HIGH(jk,jj,ji,counter_var_high)
-                                                        enddo
-                                                enddo
-                                        enddo
-
+    ! do ji =1 , jpi
+    !                                            i_contribution= jpk*jpj * (ji - 1 )
+    !                                            do jj =1 , jpj
+    !                                                    j_contribution=jpk*(jj-1)
+    !                                                    do jk =1 , jpk
+    !                                                            ind =  jk + j_contribution + i_contribution
+    !                                                            bufftrn   (ind)= traIO_HIGH(jk,jj,ji,counter_var_high)
+    !                                                    enddo
+    !                                            enddo
+    !                                    enddo
+!
     !pronti
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
@@ -274,9 +297,7 @@
               sdta(:,:,:,2) = buf*tmask
       end if
 
-      !CALL mpi_barrier(mpi_comm_world,ierror) 
 
-      if(lwp) STOP
     
     if (IS_FREE_SURFACE) then
          call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
@@ -330,6 +351,7 @@
              e3wdta(1,jj,ji,2) = e3w_0(1,jj,ji) + diff_e3t(1,jj,ji)
          ENDDO
          ENDDO
+
 
          DO ji = 1,jpi
          DO jj = 1,jpj
@@ -556,15 +578,6 @@
       SUBROUTINE COMPUTE_W ()
 !---------------------------------------------------------------------
 !
-!                       ROUTINE compute_w
-!                     ***************
-!
-!  Purpose :
-!  ---------
-!   Compute the now vertical velocity after the array swap.
-!
-!   Method :
-!   -------
 !   Using the incompressibility hypothesis, the vertical velocity
 !   is computed by integrating the horizontal divergence from the
 !   bottom to the surface.

@@ -149,7 +149,7 @@
       !TEST
       CHARACTER(LEN=20)  var_to_store,DIR,date_from,date_To
       CHARACTER(LEN=56) output_file_nc
-      double precision, dimension(jpk,jpjglo,jpiglo) :: buf_glo
+      double precision, dimension(jpk,jpjglo,jpiglo) :: buf_glo, test_buf_glo
      
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -158,15 +158,30 @@
       INTEGER jk,jj,ji,i,j,k
       INTEGER ind, i_contribution, j_contribution
 
-      DOUBLE PRECISION, allocatable, dimension(:) :: buff_scatterv_tot
-      INTEGER, allocatable, dimension(:) :: sendcount_array
-      if(lwp) then
-              ALLOCATE (buff_scatterv_tot(jpi_max* jpj_max* jpk))
-              ALLOCATE (sendcount_array(mpi_glcomm_size))
-              buff_scatterv_tot = huge(bufftrn_TOT(1))      
-      end if  
-      
+      DOUBLE PRECISION, allocatable, dimension(:) :: buff_scatterv_tot, test_buff_scatterv_tot
+      !INTEGER, allocatable, dimension(:) :: sendcount_array
+      integer, dimension(mpi_glcomm_size)::sendcount_array
+      double precision, allocatable :: buff_scatter(:), test_buff_scatter(:)
+      double precision, dimension(jpk,jpj,jpi) :: matrix_scatter_local
+
+      allocate(buff_scatter (jpi_max* jpj_max* jpk))
+      allocate(test_buff_scatter (jpi_max* jpj_max* jpk))
+
+
+      buff_scatter = huge(buff_scatter(1))
+      test_buff_scatter = huge(test_buff_scatter(1))
+     ! if(lwp) then
+              ALLOCATE (buff_scatterv_tot(jpiglo* jpjglo* jpk))
+              ALLOCATE (test_buff_scatterv_tot(jpiglo* jpjglo* jpk))
+              !ALLOCATE (sendcount_array(mpi_glcomm_size))
+              buff_scatterv_tot = huge(buff_scatterv_tot(1))      
+              test_buff_scatterv_tot = huge(test_buff_scatterv_tot(1))
+              if(lwp) write(*,*) 'allocation done'
+      !end if 
+
+      call mppsync()
       CALL MPI_Gather(sendcount, 1, MPI_INT,sendcount_array, 1, MPI_INT, 0,MPI_COMM_WORLD, IERR)
+      write(*,*) "gather done"
 
       if (lwp) then
         DO idrank = 0,mpi_glcomm_size-1
@@ -177,7 +192,7 @@
 
       call mppsync()
 
-      STOP
+      !STOP
 
 
       if (variable_rdt) then
@@ -210,8 +225,8 @@
       end if
 
       call mppsync()
-
-      STOP
+      if (lwp) write(*,*) 'write ave done'
+     ! STOP
      
       !!! il proc 0 deve trasformare la matrice 3d in un array monodimensionale, secondo gli indici dei processori
 
@@ -251,23 +266,110 @@
      !   call mpi_scatterv()
         
         !adesso il proc 0 manda i pezzi del buff scatterv tot a tutti i procs
-        !MPI_SCATTERV(buff_scatterv_tot, SENDCOUNTS, DISPLS, SENDTYPE, RECVBUF, RECVCOUNT, RECVTYPE, ROOT, COMM, IERROR)
-
+     if(lwp) write(*,*) 'assembling done'
      
+     call mppsync()
+
+     CALL MPI_SCATTERV(buff_scatterv_tot,sendcount_array, jpdispl_count, MPI_DOUBLE_PRECISION, buff_scatter, sendcount,MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, IERR)
+
+
+     call mppsync()
+     if(lwp) write(*,*) "scatterv done"
 
      !iogni processore rieve il buffer e si costruisce il suo pezzo di matrice
 
-    ! do ji =1 , jpi
-    !                                            i_contribution= jpk*jpj * (ji - 1 )
-    !                                            do jj =1 , jpj
-    !                                                    j_contribution=jpk*(jj-1)
-    !                                                    do jk =1 , jpk
-    !                                                            ind =  jk + j_contribution + i_contribution
-    !                                                            bufftrn   (ind)= traIO_HIGH(jk,jj,ji,counter_var_high)
-    !                                                    enddo
-    !                                            enddo
-    !                                    enddo
-!
+     do ji =1 , jpi
+         i_contribution= jpk*jpj * (ji - 1 )
+         do jj =1 , jpj
+                 j_contribution=jpk*(jj-1)
+                 do jk =1 , jpk
+                         ind =  jk + j_contribution + i_contribution
+                         matrix_scatter_local(jk,jj,ji)=buff_scatter(ind)
+                 enddo
+         enddo
+     enddo
+
+     call mppsync()
+     if(lwp) write(*,*) "reconstruction done"
+
+     !STOP
+
+!---------------------------------
+!-----------------------------------
+!test al contrario
+
+!ogni proc rimette la sua matrice 3d in un buffer
+
+     do ji =1 , jpi
+         i_contribution= jpk*jpj * (ji - 1 )
+         do jj =1 , jpj
+                 j_contribution=jpk*(jj-1)
+                 do jk =1 , jpk
+                         ind =  jk + j_contribution + i_contribution
+                         test_buff_scatter(ind)=matrix_scatter_local(jk,jj,ji)
+                 enddo
+         enddo
+     enddo
+     if(lwp) write(*,*) 'test riassembling done'
+     call mppsync()
+!con gatherv il proc 0 recupera tutto il buffer
+
+     CALL MPI_GATHERV(test_buff_scatter, sendcount, MPI_DOUBLE_PRECISION,  test_buff_scatterv_tot, jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, IERR)
+     call mppsync()
+     if(lwp) write(*,*) 'test gatherv done'
+
+!il proc 0 lo riassembla
+
+     if(lwp) then
+
+        DO idrank = 0,mpi_glcomm_size-1
+                ! ******* WRITING RANK sets indexes of tot matrix where to place buffers of idrank
+                irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
+                jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
+                totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
+                totiend   = totistart + irange - 1
+                totjstart = jstart_a(idrank+1) + jPd_a(idrank+1) - 1
+                totjend   = totjstart + jrange - 1
+                relistart = 1 + iPd_a(idrank+1) - 1
+                reliend   = relistart + irange - 1
+                reljstart = 1 + jPd_a(idrank+1) - 1
+                reljend   = reljstart + jrange - 1
+
+                ! **** ASSEMBLING *** WRITING RANK  puts in tot matrix buffer received by idrank
+                do ji =totistart,totiend
+                        i_contribution   = jpk*jpj_rec_a(idrank+1)*(ji-1-totistart+ relistart)
+                        do jj =totjstart,totjend
+                                j_contribution = jpk*(jj-1-totjstart+ reljstart)
+                                do jk =1, jpk
+                                        ind = jk + j_contribution + i_contribution
+                                         test_buf_glo(jk,jj,ji)=test_buff_scatterv_tot(ind+jpdispl_count(idrank+1))
+                                enddo
+                        enddo
+                enddo
+        END DO
+        write(*,*) 'proc 0 assembling 3d done'
+        DIR='AVE_FREQ_1/'
+        var_to_store='vozocrtx'
+        output_file_nc=trim(DIR)//'ave.RECONSTRUCETD_TEST.'//trim(var_to_store)//'.nc'
+        date_from='20220302-12:00:00'
+        date_To='20220302-13:00:00'
+
+        CALL WRITE_AVE(output_file_nc,var_to_store,date_from, date_To, test_buf_glo, deflate_ave, deflate_level_ave)
+    
+
+     end if
+
+
+!il proc 0 lo stampa
+
+     call mppsync()
+     if(lwp) write(*,*) "writing done"
+
+     STOP
+
+
+!-------------------------------------------
+!-----------------------------------------
     !pronti
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'

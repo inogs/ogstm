@@ -69,18 +69,18 @@
          enddo
        enddo
 
-       write(*,*) "zgrid", zgrid(1:bottom+1) 
-       write(*,*) "Edtop", Edtop
-       write(*,*) "Estop", Estop
-       write(*,*) "a",a(1:bottom,1:2)
-       write(*,*) "bt",bt(1:bottom,1:2)
-       write(*,*) "bb",bb(1:bottom,1:2)
-       write(*,*) "rd",rd
-       write(*,*) "rs",rs
-       write(*,*) "ru",ru
-       write(*,*) "vd",vd(1:bottom,1:2)
-       write(*,*) "vs",vs
-       write(*,*) "vu",vu
+!      write(*,*) "zgrid", zgrid(1:bottom+1) 
+!      write(*,*) "Edtop", Edtop
+!      write(*,*) "Estop", Estop
+!      write(*,*) "a",a(1:bottom,1:2)
+!      write(*,*) "bt",bt(1:bottom,1:2)
+!      write(*,*) "bb",bb(1:bottom,1:2)
+!      write(*,*) "rd",rd
+!      write(*,*) "rs",rs
+!      write(*,*) "ru",ru
+!      write(*,*) "vd",vd(1:bottom,1:2)
+!      write(*,*) "vs",vs
+!      write(*,*) "vu",vu
       
 
        call solve_direct(bottom+1, zgrid(:), bottom, zgrid(:), nlt, a(:,:), bt(:,:), & 

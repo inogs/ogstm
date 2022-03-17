@@ -95,13 +95,16 @@
              bottom = mbathy(jj,ji)
              bottom = min(bottom,37) ! Stop at approx 500 mt
 
-             MODE = 0 ! exact solution
+!            MODE = 0 ! exact solution
 !            MODE = 0 ! exact solution
 !            MODE = 1 ! approximate solution
-!            MODE = 2 ! library solution
+             MODE = 2 ! library solution
 
              Ed_0m(:,jj,ji) =5.0D0
              Es_0m(:,jj,ji) =5.0D0
+
+             RMU(jj,ji) = rmud(jj,ji)
+
        
              if ((maxval(Ed_0m(:,jj,ji)) < 0.0001d0) .AND. (maxval(Es_0m(:,jj,ji))< 0.0001d0)) then
   
@@ -133,9 +136,9 @@
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)
                  Eu(1,jj,ji,:) = Eu_0m(:)
-                 write(*,*) "Ed", jl,jk,"=", Ed(1,jj,ji,:)
-                 write(*,*) "Es", jl,jk,"=", Es(1,jj,ji,:)
-                 write(*,*) "Eu", jl,jk,"=", Eu(1,jj,ji,:)
+!                write(*,*) "Ed", jl,jk,"=", Ed(1,jj,ji,:)
+!                write(*,*) "Es", jl,jk,"=", Es(1,jj,ji,:)
+!                write(*,*) "Eu", jl,jk,"=", Eu(1,jj,ji,:)
 
 
                  do jl=1, nlt
@@ -143,32 +146,32 @@
                         Ed(jk,jj,ji,jl) = Edz(jk-1,jl)
                         Es(jk,jj,ji,jl) = Esz(jk-1,jl)
                         Eu(jk,jj,ji,jl) = Euz(jk-1,jl)
-                        write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
-                        write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
-                        write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
+!                       write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
+!                       write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
+!                       write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
                     enddo
                  enddo
-                 write(*,*) "++++++++++++++++++"
+!                write(*,*) "++++++++++++++++++"
 
                  do jl=1, nchl+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
-                        write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
+!                       write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
                     enddo
                  enddo
-                 write(*,*) "++++++++++++++++++"
-                 STOP
+!                write(*,*) "++++++++++++++++++"
+!                STOP
                  ENDIF
 
                  IF (MODE .EQ. 2) then
                      zgrid(1)=0.0D0
                      do jk =1,jpk
                          zgrid(jk+1) = zgrid(jk) + e3w(jk,jj,ji)
-                         write(*,*) "zgrid", jk+1, "=", zgrid(jk+1)
+!                        write(*,*) "zgrid", jk+1, "=", zgrid(jk+1)
                      enddo
                     
-                     write(*,*) "Bottom", Bottom
-                     write(*,*) "rmud", rmud(jj,ji)
+!                    write(*,*) "Bottom", Bottom
+!                    write(*,*) "rmud", rmud(jj,ji)
 
                      E(:,:,:)  = 0.0001d0
                      PARz(:,:) = 0.0001d0
@@ -181,22 +184,22 @@
                         Ed(jk,jj,ji,jl) = E(1,jk,jl)
                         Es(jk,jj,ji,jl) = E(2,jk,jl)
                         Eu(jk,jj,ji,jl) = E(3,jk,jl)
-                        write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
-                        write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
-                        write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
+!                       write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
+!                       write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
+!                       write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
                     enddo
                  enddo
-                 write(*,*) "++++++++++++++++++"
+!                write(*,*) "++++++++++++++++++"
 
                  do jl=1, nchl+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
-                        write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
+!                       write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
                     enddo
                  enddo 
-                 write(*,*) "++++++++++++++++++"
+!                write(*,*) "++++++++++++++++++"
 
-                 STOP
+!                STOP
 
                  ENDIF
 

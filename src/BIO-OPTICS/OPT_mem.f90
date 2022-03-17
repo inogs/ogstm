@@ -35,8 +35,7 @@
 ! in-water model
       INTEGER                       :: it_check
       double precision              :: aw(33),bw(33)
-      !double precision,allocatable  :: aw1(:,:), bw1(:,:)
-      double precision              :: ac(4,33),bc(4,33)
+      double precision              :: ac(4,33),ac_ps(4,33),bc(4,33),bbc(4,33)
       double precision              :: acdom(33)
       double precision              :: apoc(33), bpoc(33), bbpoc(33) 
 ! Variables related to computation of solar zenith angle
@@ -76,6 +75,7 @@
 ! Outputs of radiative transfer model 
       double precision,allocatable  :: Ed(:,:,:,:), Es(:,:,:,:), Eu(:,:,:,:) ! depth, lat, lon, wave length
       double precision,allocatable  :: PAR(:,:,:,:) ! depth, lat, lon, phyto
+      double precision,allocatable  :: RMU(:,:)     ! lat, lon
       double precision,allocatable  :: Ed_DIA_IO(:,:,:,:),Es_DIA_IO(:,:,:,:),Eu_DIA_IO(:,:,:,:)
       double precision,allocatable  :: Ed_DIA_IO_HIGH(:,:,:,:),Es_DIA_IO_HIGH(:,:,:,:),Eu_DIA_IO_HIGH(:,:,:,:)
 
@@ -164,6 +164,7 @@
 ! Allocate output variables
        allocate(Ed(jpk,jpj,jpi,nlt),Es(jpk,jpj,jpi,nlt),Eu(jpk,jpj,jpi,nlt))
        allocate(PAR(jpk,jpj,jpi,nchl+1)) ! last index total par
+       allocate(RMU(jpj,jpi))
        allocate(Ed_DIA_IO(jpk,jpj,jpi,nlt),Es_DIA_IO(jpk,jpj,jpi,nlt),Eu_DIA_IO(jpk,jpj,jpi,nlt))
        allocate(Ed_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Es_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Eu_DIA_IO_HIGH(jpk,jpj,jpi,nlt))
 
@@ -172,6 +173,7 @@
       Es(:,:,:,:)   = 0.0d0
       Eu(:,:,:,:)   = 0.0d0 
       PAR(:,:,:,:)  = 0.0d0
+      RMU(:,:)  = 0.0d0
       Ed_DIA_IO(:,:,:,:)   = 0.0d0
       Es_DIA_IO(:,:,:,:)   = 0.0d0
       Eu_DIA_IO(:,:,:,:)   = 0.0d0

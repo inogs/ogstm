@@ -1,7 +1,7 @@
       subroutine lidata()
 !     subroutine lidata(lam,aw,bw,ac,bc)
 
-      USE OPT_mem, ONLY: nlt, nchl, lam,aw,bw,ac,bc,apoc,bpoc,bbpoc
+      USE OPT_mem, ONLY: nlt, nchl, lam,aw,bw,ac,ac_ps,bc,bbc,apoc,bpoc,bbpoc
       USE myalloc, only: lwp
       IMPLICIT NONE 
 !  Reads in radiative transfer data: specifically 
@@ -15,7 +15,7 @@
       character*80 title
       character*80 cfle
       character cacbc*11,cabw*15,cacbpoc*10
-      double precision saw,sbw,sac,sbc,sapoc,sbpoc,sbbpoc
+      double precision saw,sbw,sac,sac_ps,sbc,sbb,sapoc,sbpoc,sbbpoc
       character*4 cdir
 !     integer lam(nlt)
 !     double precision aw(nlt),bw(nlt)
@@ -23,8 +23,7 @@
       data cdir /'bcs/'/
       data cacbc,cabw,cacbpoc /'acbc25b.dat','abw25_morel.dat','poc25b.dat'/
       integer    :: i, n, nl,lambda
-#ifndef IGNORE_lidata
-
+ 
 !  Water data files
       cfle = cdir//cabw
       open(4,file=cfle,status='old',form='formatted')
@@ -54,18 +53,22 @@
       do n = 1,nchl
        read(4,'(a80)')title
        do nl = 1,19
-        read(4,30)lambda,sac,sbc
+        read(4,30)lambda,sac,sac_ps,sbc,sbb
         ac(n,nl) = sac
+        ac_ps(n,nl) = sac_ps
         bc(n,nl) = sbc
-        if(lwp) write(*,*)lambda,ac(n,nl),bc(n,nl)
+        bbc(n,nl) = sbb
+        if(lwp) write(*,*)lambda,ac(n,nl),ac_ps(n,nl),bc(n,nl),bbc(n,nl)
        enddo
        do nl = 20,nlt
         ac(n,nl) = 0.0
+        ac_ps(n,nl) = 0.0
         bc(n,nl) = 0.0
+        bbc(n,nl) = 0.0
        enddo
       enddo
       close(4)
-30    format(i4,2f10.4)
+30    format(i4,4f10.4)
 !  POC absoprion, scattering and back scattering normalized to mgC/m3
       cfle = cdir//cacbpoc
       open(4,file=cfle,status='old',form='formatted')
@@ -82,6 +85,5 @@
       close(4)
 40    format(i5,3f10.2)
  
-#endif
       return
       end

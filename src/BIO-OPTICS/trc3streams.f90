@@ -42,7 +42,7 @@
 !- MID
 !- AVERAGE
 
-      V_POSITION = "BOTTOM"
+      V_POSITION = "AVERAGE"
 
 ! Compute RT every hour
 
@@ -95,7 +95,7 @@
              bottom = mbathy(jj,ji)
              bottom = min(bottom,37) ! Stop at approx 500 mt
 
-             MODE = 2 ! exact solution
+             MODE = 0 ! exact solution
 !            MODE = 0 ! exact solution
 !            MODE = 1 ! approximate solution
 !            MODE = 2 ! library solution

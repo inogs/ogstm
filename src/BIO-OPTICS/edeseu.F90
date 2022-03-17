@@ -31,8 +31,8 @@
       double precision :: actot(jpk,nlt),bctot(jpk,nlt),bbctot(jpk,nlt) 
       double precision :: a(jpk,nlt), bt(jpk,nlt), bb(jpk,nlt) 
       double precision :: zgrid(jpk+1)
-      double precision :: bbc(4)
-      data bbc /0.002d0, 0.00071d0, 0.001955d0, 0.0029d0/
+!     double precision :: bbc(4)
+!     data bbc /0.002d0, 0.00071d0, 0.001955d0, 0.0029d0/
       double precision bbw
       data bbw /0.5d0/       !backscattering to forward scattering ratio
  
@@ -51,7 +51,7 @@
           do n = 1,nchl
                actot(jk,nl)  = actot(jk,nl)  + CHLz(jk,n)*ac(n,nl)
                bctot(jk,nl)  = bctot(jk,nl)  + CHLz(jk,n)*bc(n,nl)
-               bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n)*bc(n,nl)
+               bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n,nl)*bc(n,nl)
           enddo
 
           a(jk,nl)  = aw(nl) + CDOMz(jk) * acdom(nl) + POCz(jk) * apoc(nl) + actot(jk,nl)

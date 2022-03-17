@@ -250,13 +250,13 @@
              do k =1,bottom
 
                 if (k .EQ. 1) then
-                    Edza(k,:) = (Edtop(:) -  Edz(k,:)) /( zd(k) * cd(k,:) + 0.000001d0 ) 
+                    Edza(k,:) = (Edtop(:) -  Edz(k,:)) /( zd(k) * cd(k,:))! + 0.000001d0 ) 
                 else
-                    Edza(k,:) = (Edz(k-1,:) -  Edz(k,:)) /( zd(k) * cd(k,:) + 0.000001d0 )
+                    Edza(k,:) = (Edz(k-1,:) -  Edz(k,:)) /( zd(k) * cd(k,:))! + 0.000001d0 )
                 endif
 
-                aux1(:)  = ( 1.0D0 - exp(-a_p(k,:)*zd(k)) )/( zd(k) * a_p(k,:) + 0.000001d0 )
-                aux2(:)  = ( 1.0D0 - exp( -a_m(k,:) *zd(k) ) ) /( zd(k) * a_m(k,:) + 0.000001d0 )
+                aux1(:)  = ( 1.0D0 - exp(-a_p(k,:)*zd(k)) )/( zd(k) * a_p(k,:))! + 0.000001d0 )
+                aux2(:)  = ( 1.0D0 - exp( -a_m(k,:) *zd(k) ) ) /( zd(k) * a_m(k,:))! + 0.000001d0 )
 
                 Esz(k,:) = sol_p(k,:)* aux1(:)  + sol_m(k,:)*r_m(k,:) * aux2(:) + inhox(k,:)*Edza(k,:)
                 Euz(k,:) = sol_p(k,:)*r_p(k,:) * aux1(:) + sol_m(k,:) * aux2(:) + inhoy(k,:)*Edza(k,:)
@@ -280,10 +280,10 @@
       PARz(:,:) = 0.0D0
 
       do p =1,nchl
-         do nl =5,19   ! 400 to 700 nm 
+         do nl =1,nlt   ! 400 to 700 nm 
             do k =1,bottom
 
-               PARz(k,p) = PARz(k,p) + WtoQ(nl) * ac(p,nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu )   
+               PARz(k,p) = PARz(k,p) + WtoQ(nl) * ac(p,nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu ) * 86400.0D0 
 
             enddo
          enddo
@@ -292,7 +292,7 @@
       do nl =5,17   ! 400 to 700 nm 
          do k =1,bottom
 
-            PARz(k,nchl+1) = PARz(k,nchl+1) + WtoQ(nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu )   
+            PARz(k,nchl+1) = PARz(k,nchl+1) + WtoQ(nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu ) * 86400.0D0
 
          enddo
       enddo

@@ -30,11 +30,11 @@
       double precision :: Plte
       double precision :: actot(bottom,nlt),bctot(bottom,nlt),bbctot(bottom,nlt) 
       double precision :: a(bottom,nlt), bt(bottom,nlt), bb(bottom,nlt) 
-      double precision :: bbc(4)
+!     double precision :: bbc(4)
+!     data bbc /0.002d0, 0.00071d0, 0.001955d0, 0.0029d0/
       double precision :: rd, rs, ru, vs, vu
       double precision :: vd(bottom,nlt)
       double precision :: E_ave(3,bottom,nlt),E_scalar(bottom,nlt)
-      data bbc /0.002d0, 0.00071d0, 0.001955d0, 0.0029d0/
       double precision bbw
       data bbw /0.5d0/       !backscattering to forward scattering ratio
  
@@ -58,7 +58,7 @@
           do n = 1,nchl
                actot(jk,nl)  = actot(jk,nl)  + CHLz(jk,n)*ac(n,nl)
                bctot(jk,nl)  = bctot(jk,nl)  + CHLz(jk,n)*bc(n,nl)
-               bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n)*bc(n,nl)
+               bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n,nl)*bc(n,nl)
           enddo
 
           a(jk,nl)  = aw(nl) + CDOMz(jk) * acdom(nl) + POCz(jk) * apoc(nl) + actot(jk,nl)
@@ -89,14 +89,14 @@
 !                        bb(1:bottom,:), rd, rs, ru, vd(1:bottom,:), vs, vu, Edtop(:),Estop(:), E(:,1:bottom+1,:), E_ave(:,1:bottom,:))
 
 
-      PARz(:,:)=0.0001d0
+      PARz(:,:)=0.0d0 !0.0001d0
 
       E_scalar(:,:)=E_ave(1,:,:)/vd + E_ave(2,:,:)/vs + E_ave(3,:,:)/vu
 
       do jk = 1,bottom
          do nl=1,nlt
             do n=1,nchl
-               PARz(jk,n)  = PARz(jk,n)  + WtoQ(nl) * ac(n,nl) * E_scalar(jk,nl)*86400.0D0
+               PARz(jk,n)  = PARz(jk,n)  + WtoQ(nl) * ac_ps(n,nl) * E_scalar(jk,nl)*86400.0D0
             enddo
          enddo
       enddo

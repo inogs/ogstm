@@ -283,7 +283,7 @@
          do nl =1,nlt   ! 400 to 700 nm 
             do k =1,bottom
 
-               PARz(k,p) = PARz(k,p) + WtoQ(nl) * ac(p,nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu ) * 86400.0D0 
+               PARz(k,p) = PARz(k,p) + WtoQ(nl) * ac(p,nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu )
 
             enddo
          enddo
@@ -292,7 +292,7 @@
       do nl =5,17   ! 400 to 700 nm 
          do k =1,bottom
 
-            PARz(k,nchl+1) = PARz(k,nchl+1) + WtoQ(nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu ) * 86400.0D0
+            PARz(k,nchl+1) = PARz(k,nchl+1) + WtoQ(nl) * ( Edz(k,nl) * rmud + Esz(k,nl) * rmus + Euz(k,nl) * rmuu )
 
          enddo
       enddo

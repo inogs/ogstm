@@ -96,14 +96,14 @@
       do jk = 1,bottom
          do nl=1,nlt
             do n=1,nchl
-               PARz(jk,n)  = PARz(jk,n)  + WtoQ(nl) * ac_ps(n,nl) * E_scalar(jk,nl)*86400.0D0
+               PARz(jk,n)  = PARz(jk,n)  + WtoQ(nl) * ac_ps(n,nl) * E_scalar(jk,nl)
             enddo
          enddo
       enddo
 
       do jk = 1,bottom
          do nl=5,17
-            PARz(jk,nchl+1)  = PARz(jk,nchl+1)  + WtoQ(nl) * E_scalar(jk,nl)*86400.0D0
+            PARz(jk,nchl+1)  = PARz(jk,nchl+1)  + WtoQ(nl) * E_scalar(jk,nl)
          enddo
       enddo
 

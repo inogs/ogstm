@@ -125,8 +125,9 @@
                  CHLz(1:bottom,2) = trn(1:bottom,jj,ji,ppP2l)
                  CHLz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3l)
                  CHLz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4l)
-                 write(*,*) 'WARNING: CDOM deactivated' 
-                 CDOMz(1:bottom)  = 0.0d0!trn(1:bottom,jj,ji,ppR1l) + trn(1:bottom,jj,ji,ppR2l) + trn(1:bottom,jj,ji,ppR3l)
+!                write(*,*) 'WARNING: CDOM deactivated' 
+!                CDOMz(1:bottom)  = 0.0d0!trn(1:bottom,jj,ji,ppR1l) + trn(1:bottom,jj,ji,ppR2l) + trn(1:bottom,jj,ji,ppR3l)
+                 CDOMz(1:bottom)  = trn(1:bottom,jj,ji,ppR1l) + trn(1:bottom,jj,ji,ppR2l) + trn(1:bottom,jj,ji,ppR3l)
     
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     

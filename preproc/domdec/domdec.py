@@ -305,7 +305,7 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
     nCandidates,_ = CANDIDATES.shape
     print("There are ", nCandidates, "candidate decompositions")
     print("nproc, nproci, nprocj, jpi, jpj, jpi*jpj, COMM, progr")
-    print CANDIDATES
+    print(CANDIDATES)
     totalwork = CANDIDATES[:,5]+CANDIDATES[:,6] # domain_size+communication
     choosen = totalwork.argmin()
     print ("choosen=", choosen)

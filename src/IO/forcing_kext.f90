@@ -20,7 +20,7 @@
       forcing_kext_partTime = MPI_WTIME()
 
       sec=datestring2sec(DATEstring)
-      call TimeInterpolation(sec,TC_LEX, BEFORE, AFTER, zweigh)
+      call TimeInterpolation(sec,TC_OPTATM, BEFORE, AFTER, zweigh)
 
       iswap  = 0
 
@@ -28,12 +28,12 @@
 ! ----------------------- INITIALIZATION -------------
       IF (datestring.eq.DATESTART) then
 
-          CALL LOAD_KEXT(TC_LEX%TimeStrings(TC_LEX%Before)) ! CALL dynrea(iperm1)
+          CALL LOAD_KEXT(TC_OPTATM%TimeStrings(TC_OPTATM%Before)) ! CALL dynrea(iperm1)
           iswap = 1
           call swap_KEXT
 
 
-        CALL LOAD_KEXT(TC_LEX%TimeStrings(TC_LEX%After)) !CALL dynrea(iper)
+        CALL LOAD_KEXT(TC_OPTATM%TimeStrings(TC_OPTATM%After)) !CALL dynrea(iper)
 
 
       ENDIF
@@ -48,17 +48,17 @@
 
 ! check the validity of the period in memory
 
-      IF (BEFORE.ne.TC_LEX%Before) then
-         TC_LEX%Before = BEFORE
-         TC_LEX%After  = AFTER
+      IF (BEFORE.ne.TC_OPTATM%Before) then
+         TC_OPTATM%Before = BEFORE
+         TC_OPTATM%After  = AFTER
 
          call swap_KEXT
          iswap = 1
 
 
-          CALL LOAD_KEXT(TC_LEX%TimeStrings(TC_LEX%After))
+          CALL LOAD_KEXT(TC_OPTATM%TimeStrings(TC_OPTATM%After))
 
-          IF(lwp) WRITE (numout,*) ' Extinction factor DATA READ for Time = ', TC_LEX%TimeStrings(TC_LEX%After)
+          IF(lwp) WRITE (numout,*) ' Extinction factor DATA READ for Time = ', TC_OPTATM%TimeStrings(TC_OPTATM%After)
 !      ******* LOADED NEW FRAME *************
       END IF
 
@@ -91,7 +91,7 @@
 
 ! ******************************************************
 !     SUBROUTINE LOAD_KEXT(datestring)
-!     loads FORCINGS/KextF_yyyy0107-00:00:00.nc in OPT_mem.kextIO
+!     loads OPTICS/atm_yyyy0107-00:00:00.nc
 ! ******************************************************
       SUBROUTINE LOAD_KEXT(datestring)
 ! ======================
@@ -108,23 +108,69 @@
 
       character(LEN=31) nomefile
 
-      nomefile='KEXT/KextF_yyyy0107-00:00:00.nc'
+      nomefile='OPTICS/atm_yyyy0107-00:00:00.nc'
 
 
 !     Starting I/O
 !    **********************************************************
-      nomefile = 'KEXT/KextF_'//datestring//'.nc'
+      nomefile = 'OPTICS/atm.'//datestring//'.nc'
 
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", myrank, " starting reading forcing fields from ", nomefile
+      if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", myrank, " starting reading atmospheric fields from ", nomefile
 
-      call readnc_slice_float_2d(nomefile,'kextfact',buf2,0)
-       kextIO(:,:,2) = buf2*tmask(1,:,:)
+       call readnc_slice_float_2d(nomefile,'sp',buf2,0)
+       spIO(:,:,2) = buf2*tmask(1,:,:)
+
+       call readnc_slice_float_2d(nomefile,'msl',buf2,0)
+       mslIO(:,:,2) = buf2*tmask(1,:,:)
+
+       call readnc_slice_float_2d(nomefile,'t2m',buf2,0)
+       t2mIO(:,:,2) = buf2*tmask(1,:,:)
+
+       call readnc_slice_float_2d(nomefile,'d2m',buf2,0)
+       d2mIO(:,:,2) = buf2*tmask(1,:,:)
+
+       call readnc_slice_float_2d(nomefile,'tcc',buf2,0)
+       tccIO(:,:,2) = buf2*tmask(1,:,:)
+
+       call readnc_slice_float_2d(nomefile,'w10',buf2,0)
+       w10IO(:,:,2) = buf2*tmask(1,:,:)
+
       
 
       END SUBROUTINE LOAD_KEXT
 
+! ******************************************************
+!     SUBROUTINE ACTUALIZE_PHYS(zweigh)
+!     performs time interpolation
+!     x(1)*(1-zweigh) + x(2)*zweigh
+! ******************************************************
 
+    SUBROUTINE actualize(zweigh,array3d, array2d)
+    use myalloc
+    double precision, INTENT(IN) :: zweigh
+    double precision, INTENT(IN) :: array3d(jpj,jpi,2)
+    double precision, INTENT(OUT) :: array2d(jpj,jpi)
+    INTEGER jj,ji
 
+        DO ji=1,jpi
+          DO jj=1,jpj
+             array2d(jj,ji) = ( (1. - zweigh) * array3d(jj,ji,1)+ zweigh * array3d(jj,ji,2) )
+          END DO
+        END DO
+   END SUBROUTINE actualize
+
+    SUBROUTINE swap(array3d)
+    use myalloc
+    double precision :: array3d(jpj,jpi,2)
+
+    INTEGER jj,ji
+
+        DO ji=1,jpi
+          DO jj=1,jpj
+             array3d(jj,ji,1) = array3d(jj,ji,2)
+          END DO
+        END DO
+   END SUBROUTINE swap
 
 
 ! ******************************************************
@@ -139,14 +185,15 @@
 
          double precision, INTENT(IN) :: zweigh
 
-        ! local
-        INTEGER jj,ji
 
-        DO ji=1,jpi
-          DO jj=1,jpj
-             kef(jj,ji) = ( (1. - zweigh) * kextIO(jj,ji,1)+ zweigh * kextIO(jj,ji,2) )
-          END DO
-        END DO
+        call actualize(zweigh,spIO,sp)
+        call actualize(zweigh,mslIO,msl)
+        call actualize(zweigh,t2mIO,t2m)
+        call actualize(zweigh,d2mIO,d2m)
+        call actualize(zweigh,tccIO,tcc)
+        call actualize(zweigh,w10IO,w10)
+
+
 
 
       END SUBROUTINE ACTUALIZE_KEXT
@@ -164,14 +211,13 @@
          USE OPT_mem
          IMPLICIT NONE
 
+        call swap(spIO)
+        call swap(mslIO)
+        call swap(t2mIO)
+        call swap(d2mIO)
+        call swap(tccIO)
+        call swap(w10IO)
 
-         INTEGER jj,ji
-
-            DO ji=1,jpi
-              DO jj=1,jpj
-                kextIO(jj,ji,1) = kextIO(jj,ji,2)
-              END DO
-            END DO
 
 
       END SUBROUTINE swap_KEXT

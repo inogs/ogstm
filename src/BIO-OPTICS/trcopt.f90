@@ -40,7 +40,7 @@
           zpar100(ji)         = zpar0m(ji)*0.01
           xpar(1,jj,ji) = zpar0m(ji)
           zpar(1,ji)          = zpar0m(1)
-          xEPS_ogstm(1,ji)          = kef(jj,ji)
+!          xEPS_ogstm(1,ji)          = kef(jj,ji)
 
       !   ENDDO
       ! ENDDO
@@ -49,27 +49,27 @@
             !       DO ji = 1,jpi
             ! DO jj = 1,jpj
 
-        DO jk = 2,jpk
-            xEPS_ogstm(jk,ji) = max(kef(jj,ji),1.D-15) ! avoid denormalized number
-         END DO
+!        DO jk = 2,jpk
+!            xEPS_ogstm(jk,ji) = max(kef(jj,ji),1.D-15) ! avoid denormalized number
+!         END DO
       !   END DO
       ! ENDDO
 
             !       DO ji = 1,jpi
             ! DO jj = 1,jpj
-      DO jk = 2,jpk
+!      DO jk = 2,jpk
             !print * ,"CHECK",xpar(jk-1,jj,ji),xEPS_ogstm(jk-1,ji),
-            xpar(jk,jj,ji) = max( xpar(jk-1,jj,ji) *exp(-1. * xEPS_ogstm(jk-1,ji)* e3t(jk-1,jj,ji)) ,1.D-15) ! avoid denormalized number
+!            xpar(jk,jj,ji) = max( xpar(jk-1,jj,ji) *exp(-1. * xEPS_ogstm(jk-1,ji)* e3t(jk-1,jj,ji)) ,1.D-15) ! avoid denormalized number
 
-          END DO
+!          END DO
       !   END DO
       ! ENDDO
 
             !       DO ji = 1,jpi
             ! DO jj = 1,jpj
-        DO jk = 1,jpk
-            xpar(jk,jj,ji) = max( xpar(jk,jj,ji) * exp(- xEPS_ogstm(jk,ji)* 0.5D+00* e3t(jk,jj,ji) ) ,1.D-15)
-          END DO
+!        DO jk = 1,jpk
+!            xpar(jk,jj,ji) = max( xpar(jk,jj,ji) * exp(- xEPS_ogstm(jk,ji)* 0.5D+00* e3t(jk,jj,ji) ) ,1.D-15)
+!          END DO
 
         END DO
       ENDDO

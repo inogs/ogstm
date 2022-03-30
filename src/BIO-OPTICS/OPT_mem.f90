@@ -16,10 +16,45 @@
       INTEGER, allocatable :: itabe(:),imaske(:,:) 
       double precision, allocatable :: zpar(:,:),xEPS_ogstm(:,:)
       double precision, allocatable :: zpar0m(:),zpar100(:) 
-      double precision, allocatable :: kef(:,:)
-      double precision, allocatable :: kextIO(:,:,:)
+!      double precision, allocatable :: kef(:,:)
+!      double precision, allocatable :: kextIO(:,:,:)
+
+! ######     Oasim inputs
+      double precision, allocatable :: spIO(:,:,:)
+      double precision, allocatable :: mslIO(:,:,:)
+      double precision, allocatable :: t2mIO(:,:,:)
+      double precision, allocatable :: d2mIO(:,:,:)
+      double precision, allocatable :: tccIO(:,:,:)
+      double precision, allocatable :: w10IO(:,:,:)
+      double precision, allocatable :: tclwIO(:,:,:)
+      double precision, allocatable :: tco3IO(:,:,:)
+      double precision, allocatable :: cdremIO(:,:,:)
+      double precision, allocatable :: cldtcmIO(:,:,:)
+      double precision, allocatable :: tauaIO(:,:,:,:)
+      double precision, allocatable :: asympIO(:,:,:,:)
+      double precision, allocatable :: ssalbIO(:,:,:,:)
+
+      double precision, allocatable :: sp(:,:)
+      double precision, allocatable :: msl(:,:)
+      double precision, allocatable :: t2m(:,:)
+      double precision, allocatable :: d2m(:,:)
+      double precision, allocatable :: tcc(:,:)
+      double precision, allocatable :: w10(:,:)
+      double precision, allocatable :: tclw(:,:)
+      double precision, allocatable :: tco3(:,:)
+      double precision, allocatable :: cdrem(:,:)
+      double precision, allocatable :: cldtcm(:,:)
+      double precision, allocatable :: taua(:,:,:)
+      double precision, allocatable :: asymp(:,:,:)
+      double precision, allocatable :: ssalb(:,:,:)
+! ############
       real, allocatable :: zkef_f (:,:)
   
+
+
+
+
+
  
       integer, parameter            :: nchl=4 
       integer, parameter            :: nlt=33                     
@@ -110,14 +145,36 @@
        zpar100 = huge(zpar100(1))
 !!!$omp end parallel
 
-       allocate(kef(jpj,jpi))       
-       kef     = huge(kef(1,1))
-       allocate(kextIO(jpj,jpi,2))  
-       kextIO  = huge(kextIO(1,1,1))
+!       allocate(kef(jpj,jpi))
+!       kef     = huge(kef(1,1))
+!       allocate(kextIO(jpj,jpi,2))
+!       kextIO  = huge(kextIO(1,1,1))
 
-#if ! defined  key_kef
-       kef(:,:) = 0.04
-#endif
+       allocate(sp (jpj,jpi))     ;   sp =huge(sp(1,1))
+       allocate(msl(jpj,jpi))     ;   msl=huge(sp(1,1))
+       allocate(t2m(jpj,jpi))     ;   t2m=huge(sp(1,1))
+       allocate(d2m(jpj,jpi))     ;   d2m=huge(sp(1,1))
+       allocate(tcc(jpj,jpi))     ;   tcc=huge(sp(1,1))
+       allocate(w10(jpj,jpi))     ;   w10=huge(sp(1,1))
+       allocate(tclw(jpj,jpi))    ;  tclw=huge(sp(1,1))
+       allocate(tco3(jpj,jpi))    ;  tco3=huge(sp(1,1))
+       allocate(taua(33,jpj,jpi)) ;  taua=huge(sp(1,1))
+       allocate(asymp(33,jpj,jpi)); asymp=huge(sp(1,1))
+       allocate(ssalb(33,jpj,jpi)); ssalb=huge(sp(1,1))
+
+       allocate(spIO (jpj,jpi,2))     ; spIO   =huge(sp(1,1))
+       allocate(mslIO(jpj,jpi,2))     ; mslIO  =huge(sp(1,1))
+       allocate(t2mIO(jpj,jpi,2))     ; t2mIO  =huge(sp(1,1))
+       allocate(d2mIO(jpj,jpi,2))     ; d2mIO  =huge(sp(1,1))
+       allocate(tccIO(jpj,jpi,2))     ; tccIO  =huge(sp(1,1))
+       allocate(w10IO(jpj,jpi,2))     ; w10IO =huge(sp(1,1))
+       allocate(tclwIO(jpj,jpi,2))    ; tclwIO =huge(sp(1,1))
+       allocate(tco3IO(jpj,jpi,2))    ; tco3IO =huge(sp(1,1))
+       allocate(tauaIO(33,jpj,jpi,2)) ; tauaIO =huge(sp(1,1))
+       allocate(asympIO(33,jpj,jpi,2)); asympIO=huge(sp(1,1))
+       allocate(ssalbIO(33,jpj,jpi,2)); ssalbIO=huge(sp(1,1))
+
+
 
 ! radiative transfer model
 
@@ -229,8 +286,8 @@
           deallocate(xEPS_ogstm)
           deallocate(zpar0m)
           deallocate(zpar100)
-          deallocate(kef)
-          deallocate(kextIO)
+!          deallocate(kef)
+!          deallocate(kextIO)
 
       end subroutine clean_memory_opt
 

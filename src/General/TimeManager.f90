@@ -36,7 +36,9 @@
       ! TYPE (TIME_CONTAINER) :: TC_TIN
       TYPE (TIME_CONTAINER) :: TC_ATM
       ! TYPE (TIME_CONTAINER) :: TC_GIB
-      TYPE (TIME_CONTAINER) :: TC_LEX
+      TYPE (TIME_CONTAINER) :: TC_OPTATM
+      TYPE (TIME_CONTAINER) :: TC_OPTAERO
+      TYPE (TIME_CONTAINER) :: TC_OPTCLIM
       TYPE (TIME_CONTAINER) :: TC_CO2
 
       TYPE (DUMP_CONTAINER) :: RESTARTS
@@ -191,18 +193,21 @@
       if (.not.CheckDatelist(DATESTART,TC_FOR)) then 
        B = .false.
        endif
-      ! if (.not.CheckDatelist(DATESTART,TC_TIN)) then
-       ! B = .false.
-       ! endif
+
       if (.not.CheckDatelist(DATESTART,TC_ATM)) then 
        B = .false.
        endif
-      ! if (.not.CheckDatelist(DATESTART,TC_GIB)) then
-       ! B = .false.
-       ! endif
-      if (.not.CheckDatelist(DATESTART,TC_LEX)) then 
+
+      if (.not.CheckDatelist(DATESTART,TC_OPTATM)) then
        B = .false.
        endif
+      if (.not.CheckDatelist(DATESTART,TC_OPTAERO)) then
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATESTART,TC_OPTCLIM)) then
+       B = .false.
+       endif
+
       if (.not.CheckDatelist(DATESTART,TC_CO2)) then 
        B = .false.
        endif
@@ -210,16 +215,18 @@
       if (.not.CheckDatelist(DATE__END,TC_FOR)) then 
        B = .false.
        endif
-      ! if (.not.CheckDatelist(DATE__END,TC_TIN)) then
-       ! B = .false.
-       ! endif
+
       if (.not.CheckDatelist(DATE__END,TC_ATM)) then 
        B = .false.
        endif
-      ! if (.not.CheckDatelist(DATE__END,TC_GIB)) then
-       ! B = .false.
-       ! endif
-      if (.not.CheckDatelist(DATE__END,TC_LEX)) then 
+
+      if (.not.CheckDatelist(DATE__END,TC_OPTATM)) then
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_OPTAERO)) then
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_OPTCLIM)) then
        B = .false.
        endif
       if (.not.CheckDatelist(DATE__END,TC_CO2)) then 
@@ -384,7 +391,11 @@
 
       AVE_FREQ1%Filename       = '1.aveTimes'
       AVE_FREQ2%Filename       = '2.aveTimes'
-      TC_LEX%Filename    = 'kextTimes'
+
+      TC_OPTATM%Filename = 'optatmTimes'
+      TC_OPTAERO%Filename = 'optAeroTimes'
+      TC_OPTCLIM%Filename = 'optclimTimes'
+
 
 #ifdef ExecDA
       DA_TIMES%Filename        = 'daTimes'
@@ -400,7 +411,9 @@
       ! call Load_Time_container(TC_TIN)
       call Load_Time_container(TC_ATM)
       ! call Load_Time_container(TC_GIB)
-      call Load_Time_container(TC_LEX)
+      call Load_Time_container(TC_OPTATM)
+      call Load_Time_container(TC_OPTAERO)
+      call Load_Time_container(TC_OPTCLIM)
       call Load_Time_container(TC_CO2)
 
       ! DUMP
@@ -419,7 +432,9 @@
 
           call unload_time_container(TC_FOR)
           call unload_time_container(TC_ATM)
-          call unload_time_container(TC_LEX)
+          call unload_time_container(TC_OPTATM)
+          call unload_time_container(TC_OPTAERO)
+          call unload_time_container(TC_OPTCLIM)
           call unload_time_container(TC_CO2)
 
           call unload_dump_container(RESTARTS)
@@ -558,7 +573,9 @@
          ! call TimeExtension(datestring,TC_TIN)
          call TimeExtension(datestring,TC_ATM)
          ! call TimeExtension(datestring,TC_GIB)
-         call TimeExtension(datestring,TC_LEX)
+         call TimeExtension(datestring,TC_OPTATM)
+         call TimeExtension(datestring,TC_OPTCLIM)
+         call TimeExtension(datestring,TC_OPTAERO)
          call TimeExtension(datestring,TC_CO2)
       endif
       END SUBROUTINE YEARLY

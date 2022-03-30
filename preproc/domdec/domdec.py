@@ -15,7 +15,7 @@ def riparto(lenglo,nprocs):
 
     Returns a numpy array of integers, called jpi or jpj in ogstm '''
     mean_value, remainder = divmod(lenglo,nprocs)
-    #print "rem = ", remainder
+    #print("rem = ", remainder)
     JP = np.ones((nprocs),np.int)*mean_value + 2
     JP[ 0] = JP[ 0] - 1
     JP[-1] = JP[-1] - 1
@@ -79,7 +79,7 @@ def get_wp_matrix(tmask, nprocj, nproci):
             end_i   = End_I[i] -1 
             start_j = Start_J[j] -1
             end_j   = End_J[j] -1
-            #print start_i, end_i, start_j, end_j
+            #print(start_i, end_i, start_j, end_j)
             m = tmask[start_j:end_j, start_i:end_i]
             M[j,i] = m.sum()
             C[j,i] = m[0,:].sum() + m[:,0].sum()
@@ -129,7 +129,7 @@ def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
             Comm_table[j,i] = C.sum()
     good = Needed_procs == nproc
     if good.sum()==0:
-        print "No valid candidate have been found. Try modify max_proc_i and/or max_proc_j."
+        print("No valid candidate have been found. Try modify max_proc_i and/or max_proc_j.")
         raise ValueError
     return Needed_procs,Comm_table
         
@@ -303,12 +303,12 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
             iCandidate = iCandidate+1
 
     nCandidates,_ = CANDIDATES.shape
-    print "There are ", nCandidates, "candidate decompositions"
-    print "nproc, nproci, nprocj, jpi, jpj, jpi*jpj, COMM, progr"
-    print CANDIDATES
+    print("There are ", nCandidates, "candidate decompositions")
+    print("nproc, nproci, nprocj, jpi, jpj, jpi*jpj, COMM, progr")
+    print(CANDIDATES)
     totalwork = CANDIDATES[:,5]+CANDIDATES[:,6] # domain_size+communication
     choosen = totalwork.argmin()
-    print "choosen=", choosen
+    print ("choosen=", choosen)
     nprocs  = CANDIDATES[choosen,0]
     nproci  = CANDIDATES[choosen,1]
     nprocj  = CANDIDATES[choosen,2]
@@ -336,7 +336,7 @@ def waterpoints_3d(maskobj, nprocj, nproci):
             end_i   = End_I[i] -1
             start_j = Start_J[j] -1
             end_j   = End_J[j] -1
-            #print start_i, end_i, start_j, end_j
+            #print(start_i, end_i, start_j, end_j)
             m = maskobj.mask[:,start_j:end_j, start_i:end_i]
             M[j,i] = m.sum()
     return M

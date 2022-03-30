@@ -122,6 +122,7 @@ MODULE module_step
 
       CALL forcings_PHYS(DATEstring)
       CALL forcings_KEXT(datestring)
+      CALL forcings_atm_clim(datestring)
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

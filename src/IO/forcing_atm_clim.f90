@@ -28,12 +28,12 @@
 ! ----------------------- INITIALIZATION -------------
       IF (datestring.eq.DATESTART) then
 
-          CALL LOAD_KEXT(TC_OPTCLIM%TimeStrings(TC_OPTCLIM%Before))
+          CALL LOAD_climatm(TC_OPTCLIM%TimeStrings(TC_OPTCLIM%Before))
           iswap = 1
-          call swap_KEXT
+          call swap_climatm
 
 
-        CALL LOAD_KEXT(TC_OPTCLIM%TimeStrings(TC_OPTCLIM%After))
+        CALL LOAD_climatm(TC_OPTCLIM%TimeStrings(TC_OPTCLIM%After))
 
 
       ENDIF
@@ -56,7 +56,7 @@
          iswap = 1
 
 
-          CALL LOAD_KEXT(TC_OPTCLIM%TimeStrings(TC_OPTCLIM%After))
+          CALL LOAD_climatm(TC_OPTCLIM%TimeStrings(TC_OPTCLIM%After))
 
           IF(lwp) WRITE (numout,*) ' Extinction factor DATA READ for Time = ', TC_OPTCLIM%TimeStrings(TC_OPTCLIM%After)
 !      ******* LOADED NEW FRAME *************
@@ -73,11 +73,11 @@
 !      we have to initialize DATA IF we have changed the period
               IF (iswap.eq.1) THEN
                  zweigh = 1.0
-                 call ACTUALIZE_KEXT(zweigh)! initialize now fields with the NEW DATA READ
+                 call ACTUALIZE_climatm(zweigh)! initialize now fields with the NEW DATA READ
               END IF
 
           CASE (1) ! ------------linear interpolation ---------------
-             call ACTUALIZE_KEXT(zweigh)
+             call ACTUALIZE_climatm(zweigh)
       END SELECT
 
 
@@ -90,14 +90,13 @@
       END
 
 ! ******************************************************
-!     SUBROUTINE LOAD_KEXT(datestring)
+!     SUBROUTINE LOAD_climatm(datestring)
 !     loads OPTICS/atm_yyyy0107-00:00:00.nc
 ! ******************************************************
-      SUBROUTINE LOAD_KEXT(datestring)
+      SUBROUTINE LOAD_climatm(datestring)
 ! ======================
       USE calendar
       USE myalloc
-      ! epascolo USE myalloc_mpp
       USE OPT_mem
       USE TIME_MANAGER
       USE BC_mem
@@ -132,48 +131,18 @@
 
       
 
-      END SUBROUTINE LOAD_KEXT
+      END SUBROUTINE LOAD_climatm
+
+
+
+
 
 ! ******************************************************
-!     SUBROUTINE ACTUALIZE_PHYS(zweigh)
+!     SUBROUTINE ACTUALIZE_climatm(zweigh)
 !     performs time interpolation
 !     x(1)*(1-zweigh) + x(2)*zweigh
 ! ******************************************************
-
-    SUBROUTINE actualize(zweigh,array3d, array2d)
-    use myalloc
-    double precision, INTENT(IN) :: zweigh
-    double precision, INTENT(IN) :: array3d(jpj,jpi,2)
-    double precision, INTENT(OUT) :: array2d(jpj,jpi)
-    INTEGER jj,ji
-
-        DO ji=1,jpi
-          DO jj=1,jpj
-             array2d(jj,ji) = ( (1. - zweigh) * array3d(jj,ji,1)+ zweigh * array3d(jj,ji,2) )
-          END DO
-        END DO
-   END SUBROUTINE actualize
-
-    SUBROUTINE swap(array3d)
-    use myalloc
-    double precision :: array3d(jpj,jpi,2)
-
-    INTEGER jj,ji
-
-        DO ji=1,jpi
-          DO jj=1,jpj
-             array3d(jj,ji,1) = array3d(jj,ji,2)
-          END DO
-        END DO
-   END SUBROUTINE swap
-
-
-! ******************************************************
-!     SUBROUTINE ACTUALIZE_PHYS(zweigh)
-!     performs time interpolation
-!     x(1)*(1-zweigh) + x(2)*zweigh
-! ******************************************************
-      SUBROUTINE ACTUALIZE_KEXT(zweigh)
+      SUBROUTINE ACTUALIZE_climatm(zweigh)
          USE myalloc
          USE OPT_mem
          IMPLICIT NONE
@@ -190,7 +159,7 @@
 
 
 
-      END SUBROUTINE ACTUALIZE_KEXT
+      END SUBROUTINE ACTUALIZE_climatm
 
 
 
@@ -200,7 +169,7 @@
 ! *    copia l'indice 2 nell'indice 1
 ! *************************************************************
 
-      SUBROUTINE swap_KEXT
+      SUBROUTINE swap_climatm
          USE myalloc
          USE OPT_mem
          IMPLICIT NONE
@@ -213,6 +182,6 @@
 
 
 
-      END SUBROUTINE swap_KEXT
+      END SUBROUTINE swap_climatm
 
 

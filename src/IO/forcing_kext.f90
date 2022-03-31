@@ -150,11 +150,15 @@
     double precision, INTENT(IN) :: zweigh
     double precision, INTENT(IN) :: array3d(jpj,jpi,2)
     double precision, INTENT(OUT) :: array2d(jpj,jpi)
+
+    double precision Umzweigh
+
     INTEGER jj,ji
 
+    Umzweigh  = 1.0 - zweigh
         DO ji=1,jpi
           DO jj=1,jpj
-             array2d(jj,ji) = ( (1. - zweigh) * array3d(jj,ji,1)+ zweigh * array3d(jj,ji,2) )
+             array2d(jj,ji) = ( Umzweigh * array3d(jj,ji,1)+ zweigh * array3d(jj,ji,2) )
           END DO
         END DO
    END SUBROUTINE actualize

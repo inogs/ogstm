@@ -2,7 +2,7 @@
 !     subroutine lidata(lam,aw,bw,ac,bc)
 
       USE OPT_mem, ONLY: nlt, nchl, lam,aw,bw,ac,ac_ps,bc,bbc,apoc,bpoc,bbpoc
-      USE myalloc, only: lwp
+      USE myalloc, only: lwp,numout
       IMPLICIT NONE 
 !  Reads in radiative transfer data: specifically 
 !  water data (seawater absorption and total scattering coefficients,
@@ -33,7 +33,7 @@
       enddo
       do nl = 1,nlt
        read(4,20)lambda,saw,sbw
-        if (lwp) write(6,20)lambda,saw,sbw
+        if (lwp) write(numout,20)lambda,saw,sbw
        lam(nl) = lambda
        aw(nl) = saw
        bw(nl) = sbw
@@ -58,7 +58,7 @@
         ac_ps(n,nl) = sac_ps
         bc(n,nl) = sbc
         bbc(n,nl) = sbb
-        if(lwp) write(*,*)lambda,ac(n,nl),ac_ps(n,nl),bc(n,nl),bbc(n,nl)
+!        if(lwp) write(*,*)lambda,ac(n,nl),ac_ps(n,nl),bc(n,nl),bbc(n,nl)
        enddo
        do nl = 20,nlt
         ac(n,nl) = 0.0
@@ -77,7 +77,7 @@
       enddo
       do nl = 1,nlt
        read(4,40)lambda,sapoc,sbpoc,sbbpoc
-       if (lwp) write(*,*) lambda,sapoc,sbpoc,sbbpoc
+       !if (lwp) write(*,*) lambda,sapoc,sbpoc,sbbpoc
        apoc(nl) = sapoc
        bpoc(nl) = sbpoc
        bbpoc(nl) = sbbpoc

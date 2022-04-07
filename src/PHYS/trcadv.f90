@@ -433,6 +433,7 @@
 
        !!trn could be allocate earlier
        !$acc enter data create(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+       !$acc enter data create(tra(1:jpk,1:jpj,1:jpi,1:jptra))
        !$acc enter data create(advmask(1:jpk,1:jpj,1:jpi))
        !$acc enter data create(flx_ridxt(1:Fsize,1:4))
        !$acc enter data create( diaflxBuff(1:FsizeMax, 1:7))
@@ -444,7 +445,7 @@
        !$acc enter data create( zbuf(1:jpk,1:jpj,1:jpi) )
 
 
-       
+       !$acc update device(tra(1:jpk,1:jpj,1:jpi,1:jptra))
        !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
        !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
        !$acc update device(flx_ridxt(1:Fsize,1:4))
@@ -614,9 +615,6 @@
        !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
        !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
 
-       !$acc exit data delete( trn, advmask ) finalize
-       !$acc exit data delete( flx_ridxt, diaflxBuff ) finalize        
-       !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
 
 
 !! 2.1 start of antidiffusive correction loop
@@ -928,8 +926,14 @@
            enddo
 
 
-           endif
+        endif
+       !$acc exit data delete( tra) finalize
+       !$acc exit data delete( trn, advmask ) finalize
+       !$acc exit data delete( flx_ridxt, diaflxBuff ) finalize        
+       !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
 
+
+        
         deallocate(zy )  
         deallocate(zx )
         deallocate(zz )

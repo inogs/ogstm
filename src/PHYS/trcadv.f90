@@ -163,6 +163,22 @@
          zdt = rdt*ndttrc
          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
 
+
+         
+!!!         !$acc enter data create(...)         
+
+
+
+       !$acc enter data create( zbtr_arr(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
+
+       !$acc update device( zbtr_arr(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
+
+         
+
+         
+!$acc kernels default(present)        
          DO ji = 1,jpi
          DO jj = 1,jpj
             !dir$ vector aligned
@@ -172,9 +188,19 @@
          END DO
          END DO
          !$OMP END TASK
-        
+!$acc end kernels
+         
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
           !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
+!!!!!$acc update host
+               
+       !$acc update host( zbtr_arr(1:jpk,1:jpj,1:jpi) )
+               
+!$acc exit data delete( zbtr_arr ) finalize
+!$acc exit data delete( e1t, e2t, e3t) finalize
+
+               
+
 
          DO ji = 1,jpi
          DO jj = 1,jpj
@@ -197,6 +223,8 @@
              END DO
              END DO
 
+             
+
             DO ji = 1,jpi
             DO jj = 1,jpj
             !dir$ vector aligned
@@ -206,11 +234,13 @@
             END DO
             END DO
             END DO
-      
+
+            
           !$OMP END TASK
            
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk)  default(none) &
           !$OMP shared(inv_ev,e1v,e2v,e3v,vn,zdt,zbb,big_fact_zbb)
+
 
          DO ji = 1,jpi
          DO jj = 1,jpj
@@ -221,6 +251,7 @@
          END DO
          END DO
 
+         
 
                  DO ji = 1,jpi
                  DO jj = 1,jpj
@@ -230,7 +261,9 @@
                 END DO
                 END DO
                 END DO
-      
+
+
+
                 DO ji = 1,jpi
                 DO jj = 1,jpj
                 !dir$ vector aligned
@@ -240,9 +273,11 @@
                 END DO
                 END DO
             !$OMP END TASK
-             
+
+                
             !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
             !$OMP shared(inv_et,e1t,e2t,e3w,wn,zcc,zdt,big_fact_zcc)   
+
 
          DO ji = 1,jpi
          DO jj = 1,jpj
@@ -254,6 +289,7 @@
          END DO
 
 
+
                DO ji = 1,jpi
                DO jj = 1,jpj
                !dir$ vector aligned
@@ -262,6 +298,8 @@
                END DO
                END DO
                END DO
+
+
 
                DO ji = 1,jpi
                DO jj = 1,jpj
@@ -276,6 +314,9 @@
       
       !$OMP TASKWAIT
 
+
+
+               
      
 !!     tracer loop parallelized (macrotasking)
 !!     =======================================

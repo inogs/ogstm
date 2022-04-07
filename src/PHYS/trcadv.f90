@@ -433,13 +433,19 @@
 
        !!trn could be allocate earlier
        !$acc enter data create(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+       !$acc enter data create(advmask(1:jpk,1:jpj,1:jpi))
+       
        
        !$acc enter data create( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( zbuf(1:jpk,1:jpj,1:jpi) )
 
+
+       
        !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+       !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
+
        !$acc update device( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc update device( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
        !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
@@ -462,53 +468,52 @@
         END DO
        !$acc end kernels
         
-       !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
-       !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
-       !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
-       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
-       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
-
-       !$acc exit data delete( trn ) finalize        
-       !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
-
-
-        
-
+       !$acc kernels default(present)
         DO ji = 2,jpim1
           !dir$ vector aligned
            DO jj = 2,jpjm1
                 zky(1,jj,ji ) = fsy(trn(1,jj,ji, jn),trn(1,jj+1,ji, jn),zbb(1,jj,ji))
            END DO
         END DO
-
+       !$acc end kernels
+        
+       !$acc kernels default(present)
        DO ji = 1,jpi
            !dir$ vector aligned
            DO jk = 2,jpk
             zkz(jk,1,ji ) = fsz(trn(jk,1,ji, jn),trn(jk-1,1,ji, jn),zcc(jk,1,ji))
             ENDDO
        ENDDO
-      
+       !$acc end kernels
+       
+       !$acc kernels default(present)
        DO ji = 1,jpi
             !dir$ vector aligned
             DO jk = 2,jpk
             zkz(jk,jpj,ji ) = fsz(trn(jk,jpj,ji, jn),trn(jk-1,jpj,ji, jn),zcc(jk,jpj,ji))
             END DO
-       END DO
+         END DO
+       !$acc end kernels
 ! loop unfusion
-      DO jj = 2,jpjm1
+       !$acc kernels default(present)
+       DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
             zkz(jk,jj,1 ) = fsz(trn(jk,jj,1, jn),trn(jk-1,jj,1, jn),zcc(jk,jj,1))
             END DO
-      END DO
-
+         END DO
+       !$acc end kernels
+         
+      !$acc kernels default(present)
       DO jj = 2,jpjm1
             !dir$ vector aligned
             DO jk = 2,jpk
             zkz(jk,jj,jpi ) = fsz(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
             END DO
       END DO
-
+      !$acc end kernels
+      
+      !$acc kernels default(present)
       DO  ji = 2,jpim1
         DO jj = 2,jpjm1
             !dir$ vector aligned
@@ -517,7 +522,9 @@
             END DO
          END DO
       END DO
-
+      !$acc end kernels
+      
+      !$acc kernels default(present)
       DO  ji = 2,jpim1
         DO jj = 2,jpjm1
             !dir$ vector aligned
@@ -526,7 +533,9 @@
               END DO
          END DO
       END DO
-
+      !$acc end kernels
+      
+     !$acc kernels default(present)
             DO  ji = 2,jpim1
         DO jj = 2,jpjm1
             !dir$ vector aligned
@@ -535,6 +544,16 @@
             END DO
          END DO
       END DO
+      !$acc end kernels
+      
+       !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+       !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
+
+       !$acc exit data delete( trn, advmask ) finalize        
+       !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
 
 
 ! ... Lateral boundary conditions on zk[xy]

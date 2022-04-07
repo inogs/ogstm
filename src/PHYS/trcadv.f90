@@ -172,7 +172,7 @@
        !$acc enter data create( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( zbtr_arr(1:jpk,1:jpj,1:jpi) )
 
-
+         
        !$acc enter data create( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
@@ -381,8 +381,8 @@
 
                
 !!!               !$acc exit data delete finalize
-!$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize
-!$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize
+!!!!$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize
+!!!!$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize
 
                
 
@@ -431,6 +431,21 @@
        zky(:,:,:)=0.  
        zkz(:,:,:)=0.
 
+       !!trn could be allocate earlier
+       !$acc enter data create(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+       
+       !$acc enter data create( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( zbuf(1:jpk,1:jpj,1:jpi) )
+
+       !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+       !$acc update device( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( zbuf(1:jpk,1:jpj,1:jpi) )
+
+       
 !        zkx(  :,:,1)=0.  
 !        zkx(:,:,jpi)=0.    
 !        zky(:,  1,:)=0.  
@@ -438,12 +453,25 @@
 !        zkz(1,:,:)  =0.
 ! ! loop unfusion
 
+       !$acc kernels default(present)
         DO ji = 2,jpim1
            !dir$ vector aligned
            DO jj = 2,jpjm1
                  zkx(1,jj,ji ) = fsx(trn(1,jj,ji, jn),trn(1,jj,ji + 1, jn),zaa(1,jj,ji))
            END DO
         END DO
+       !$acc end kernels
+        
+       !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+       !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
+
+       !$acc exit data delete( trn ) finalize        
+       !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
+
+
         
 
         DO ji = 2,jpim1
@@ -877,6 +905,8 @@
        END DO TRACER_LOOP
       !$OMP end taskloop 
 
+!$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize
+!$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize
         
        trcadvparttime = MPI_WTIME() - trcadvparttime
        trcadvtottime = trcadvtottime + trcadvparttime

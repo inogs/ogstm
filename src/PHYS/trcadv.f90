@@ -436,8 +436,7 @@
        !$acc enter data create(tra(1:jpk,1:jpj,1:jpi,1:jptra))
        !$acc enter data create(advmask(1:jpk,1:jpj,1:jpi))
        !$acc enter data create(flx_ridxt(1:Fsize,1:4))
-       !$acc enter data create( diaflxBuff(1:FsizeMax, 1:7))
-
+       !$acc enter data create( diaflx(1:7, 1:Fsize, 1:jptra))
        
        !$acc enter data create( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
@@ -449,7 +448,7 @@
        !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
        !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
        !$acc update device(flx_ridxt(1:Fsize,1:4))
-       !$acc update device( diaflxBuff(1:FsizeMax, 1:7))    
+       !$acc update device( diaflx(1:7, 1:Fsize, 1:jptra))    
        
        !$acc update device( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc update device( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
@@ -609,7 +608,7 @@
           !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
           !! !$acc update host(flx_ridxt(1:Fsize,1:4))
 
-       !$acc update host( diaflxBuff(1:FsizeMax, 1:7))    
+!!       !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra))    
        !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
        !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
@@ -899,7 +898,8 @@
 
           
            
-            if(ncor .EQ. 1) then
+               if(ncor .EQ. 1) then
+          !$acc kernels default(present)
           DO ji =2,jpim1
           DO jj =2,jpjm1
           DO jk =1,jpkm1
@@ -908,7 +908,9 @@
           ENDDO
           ENDDO
           ENDDO
-
+          !$acc end kernels
+          
+          !$acc kernels default(present)
          DO jf=1,Fsize
              jk = flx_ridxt(jf,2)
              jj = flx_ridxt(jf,3)
@@ -918,10 +920,12 @@
              diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )*rdt
              diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )*rdt
           ENDDO
-
+          !$acc end kernels
 
 
            else
+
+              !$acc kernels default(present)
          DO ji =2,jpim1
           DO jj =2,jpjm1
           DO jk =1,jpkm1
@@ -930,7 +934,9 @@
           ENDDO
           ENDDO
           ENDDO
-
+          !$acc end kernels
+          
+          !$acc kernels default(present)
          DO jf=1,Fsize
              jk = flx_ridxt(jf,2)
              jj = flx_ridxt(jf,3)
@@ -940,10 +946,10 @@
              diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )*rdt
              diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )*rdt
           ENDDO
+          !$acc end kernels
 
-
-
-
+       !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra))    
+       !$acc update host( ztj(1:jpk,1:jpj,1:jpi) )
 
 
            endif
@@ -978,7 +984,7 @@
         endif
        !$acc exit data delete( tra) finalize
        !$acc exit data delete( trn, advmask ) finalize
-       !$acc exit data delete( flx_ridxt, diaflxBuff ) finalize        
+       !$acc exit data delete( flx_ridxt, diaflx ) finalize        
        !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
 
 

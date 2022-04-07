@@ -163,17 +163,75 @@
          zdt = rdt*ndttrc
          !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
 
-
          
 !!!         !$acc enter data create(...)         
 
 
-
+       !$acc enter data create( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( zbtr_arr(1:jpk,1:jpj,1:jpi) )
-       !$acc enter data create( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
 
+
+       !$acc enter data create( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( e3w(1:jpk,1:jpj,1:jpi) )
+       !$acc enter data create( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) )
+
+         
+       !!!!!$acc update device
+
+       !$acc update device( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
        !$acc update device( zbtr_arr(1:jpk,1:jpj,1:jpi) )
+
        !$acc update device( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( e3w(1:jpk,1:jpj,1:jpi) )
+       !$acc update device( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) )
+
+
+       
+!!$       zaa(jpk,jpj,jpi)
+!!$       zbb(jpk,jpj,jpi)
+!!$       zcc(jpk,jpj,jpi)
+!!$       inv_eu(jpk,jpj,jpi)
+!!$       inv_ev(jpk,jpj,jpi)
+!!$       inv_et(jpk,jpj,jpi)
+!!$       big_fact_zaa (jpk,jpj,jpi)
+!!$       big_fact_zbb(jpk,jpj,jpi)
+!!$       big_fact_zcc(jpk,jpj,jpi)
+!!$       zbtr_arr(jpk,jpj,jpi)
+!!$
+!!$
+!!$
+!!$       e1t(jpj,jpi)
+!!$       e2t(jpj,jpi)
+!!$       e3t(jpk,jpj,jpi)
+!!$       e1u(jpj,jpi)
+!!$       e2u(jpj,jpi)
+!!$       e3u(jpk,jpj,jpi)
+!!$       e1v(jpj,jpi)
+!!$       e2v(jpj,jpi)
+!!$       e3v(jpk,jpj,jpi)
+!!$       un(jpk,jpj,jpi)
+!!$       vn(jpk,jpj,jpi)         
+!!$       wn(jpk,jpj,jpi)
+       
+
+!!$         zaa
+!!$         zbb         
+!!$         zcc
+!!$         inv_eu
+!!$         inv_ev         
+!!$         inv_et
+!!$         big_fact_zaa
+!!$         big_fact_zbb
+!!$         big_fact_zcc
+!!$         zbtr_arr
 
          
 
@@ -192,16 +250,8 @@
          
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
           !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
-!!!!!$acc update host
-               
-       !$acc update host( zbtr_arr(1:jpk,1:jpj,1:jpi) )
-               
-!$acc exit data delete( zbtr_arr ) finalize
-!$acc exit data delete( e1t, e2t, e3t) finalize
 
-               
-
-
+!$acc kernels default(present)        
          DO ji = 1,jpi
          DO jj = 1,jpj
             !dir$ vector aligned
@@ -210,10 +260,10 @@
          END DO
          END DO
          END DO
+!$acc end kernels
 
 
-
-
+!$acc kernels default(present)        
              DO ji = 1,jpi
              DO jj = 1,jpj
              !dir$ vector aligned
@@ -222,9 +272,9 @@
              END DO
              END DO
              END DO
-
+!$acc end kernels 
              
-
+!$acc kernels default(present)      
             DO ji = 1,jpi
             DO jj = 1,jpj
             !dir$ vector aligned
@@ -234,14 +284,14 @@
             END DO
             END DO
             END DO
-
+!$acc end kernels
             
           !$OMP END TASK
            
           !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk)  default(none) &
           !$OMP shared(inv_ev,e1v,e2v,e3v,vn,zdt,zbb,big_fact_zbb)
 
-
+!$acc kernels default(present)                   
          DO ji = 1,jpi
          DO jj = 1,jpj
             !dir$ vector aligned
@@ -250,9 +300,9 @@
          END DO
          END DO
          END DO
-
+!$acc end kernels
          
-
+!$acc kernels default(present)        
                  DO ji = 1,jpi
                  DO jj = 1,jpj
                   !dir$ vector aligned
@@ -261,9 +311,9 @@
                 END DO
                 END DO
                 END DO
+!$acc end kernels
 
-
-
+!$acc kernels        
                 DO ji = 1,jpi
                 DO jj = 1,jpj
                 !dir$ vector aligned
@@ -273,12 +323,12 @@
                 END DO
                 END DO
             !$OMP END TASK
-
+!$acc end kernels
                 
             !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
             !$OMP shared(inv_et,e1t,e2t,e3w,wn,zcc,zdt,big_fact_zcc)   
 
-
+!$acc kernels default(present)                       
          DO ji = 1,jpi
          DO jj = 1,jpj
             !dir$ vector aligned
@@ -287,9 +337,9 @@
          END DO
          END DO
          END DO
+!$acc end kernels
 
-
-
+!$acc kernels         
                DO ji = 1,jpi
                DO jj = 1,jpj
                !dir$ vector aligned
@@ -298,9 +348,9 @@
                END DO
                END DO
                END DO
+!$acc end kernels
 
-
-
+!$acc kernels default(present)                      
                DO ji = 1,jpi
                DO jj = 1,jpj
                !dir$ vector aligned 
@@ -309,12 +359,32 @@
                END DO
                END DO
                END DO
-
+!$acc end kernels
             !$OMP END TASK
       
       !$OMP TASKWAIT
 
 
+!!!!!$acc update host
+
+
+               
+       !$acc update host( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zbtr_arr(1:jpk,1:jpj,1:jpi) )
+               
+!!$       !$acc update host( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
+!!$       !$acc update host( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
+!!$       !$acc update host( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
+!!$       !$acc update host( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) )
+
+               
+!!!               !$acc exit data delete finalize
+!$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize
+!$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize
+
+               
 
                
      

@@ -434,7 +434,9 @@
        !!trn could be allocate earlier
        !$acc enter data create(trn(1:jpk,1:jpj,1:jpi,1:jptra))
        !$acc enter data create(advmask(1:jpk,1:jpj,1:jpi))
-       
+       !$acc enter data create(flx_ridxt(1:Fsize,1:4))
+       !$acc enter data create( diaflxBuff(1:FsizeMax, 1:7))
+
        
        !$acc enter data create( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc enter data create( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
@@ -445,7 +447,9 @@
        
        !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
        !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
-
+       !$acc update device(flx_ridxt(1:Fsize,1:4))
+       !$acc update device( diaflxBuff(1:FsizeMax, 1:7))    
+       
        !$acc update device( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc update device( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
        !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
@@ -545,15 +549,13 @@
          END DO
       END DO
       !$acc end kernels
-      
-       !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
-       !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
-       !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
-       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
-       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
 
-       !$acc exit data delete( trn, advmask ) finalize        
-       !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
+
+
+      
+       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
+      
+      
 
 
 ! ... Lateral boundary conditions on zk[xy]
@@ -572,9 +574,13 @@
                CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
 
+       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
+               
 
 !! 2. calcul of after field using an upstream advection scheme
 !! -----------------------------------------------------------
+
+          !$acc kernels default(present)
           DO ji =2,jpim1
           DO jj =2,jpjm1
           DO jk =1,jpkm1
@@ -585,7 +591,9 @@
           ENDDO
           ENDDO
           ENDDO
-
+          !$acc end kernels
+          
+          !$acc kernels default(present)
           DO jf=1,Fsize
              jk = flx_ridxt(jf,2)
              jj = flx_ridxt(jf,3)
@@ -595,7 +603,20 @@
              diaflx(2,jf, jn) = diaflx(2,jf, jn) + zky(jk,jj,ji )*rdt
              diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )*rdt
           ENDDO
+          !$acc end kernels
+          
+          !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+          !! !$acc update host(flx_ridxt(1:Fsize,1:4))
 
+       !$acc update host( diaflxBuff(1:FsizeMax, 1:7))    
+       !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
+
+       !$acc exit data delete( trn, advmask ) finalize
+       !$acc exit data delete( flx_ridxt, diaflxBuff ) finalize        
+       !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
 
 
 !! 2.1 start of antidiffusive correction loop

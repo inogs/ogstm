@@ -630,7 +630,7 @@
              if(jt .EQ. 1) then
 
                 if(ncor .EQ. 1) then
-
+             !$acc kernels default(present)
                          DO ji = 2,jpim1
                       DO jj = 2,jpjm1
                       !dir$ vector aligned
@@ -639,8 +639,10 @@
                         END DO
                       END DO
                    END DO
-
+              !$acc end kernels
+                   
                 else
+                   !$acc kernels default(present)
                          DO ji = 2,jpim1
                       DO jj = 2,jpjm1
                       !dir$ vector aligned
@@ -650,7 +652,9 @@
                          END DO
                       END DO
                    END DO
-
+                   !$acc end kernels
+                   
+             !$acc kernels default(present)
                         DO ji = 2,jpim1
                       DO jj = 2,jpjm1
                       !dir$ vector aligned
@@ -660,12 +664,12 @@
                          END DO
                       END DO
                    END DO
-                
+                   !$acc end kernels
                 
                 endif
 
              else
-
+             !$acc kernels default(present)
                       DO ji = 2,jpim1
                    DO jj = 2,jpjm1
                    !dir$ vector aligned
@@ -674,7 +678,9 @@
                       END DO
                    END DO
                 END DO
+                !$acc end kernels
 
+                !$acc kernels default(present)
                       DO ji = 2,jpim1
                    DO jj = 2,jpjm1
                    !dir$ vector aligned
@@ -683,10 +689,17 @@
                       END DO
                    END DO
                 END DO
-
+                !$acc end kernels
              endif
 
 
+
+
+       !$acc update host( zti(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
+
+
+             
 !! ... Lateral boundary conditions on zti
 #ifdef key_mpp
 ! ... Mpp : export boundary values to neighboring processors
@@ -698,7 +711,11 @@
 
 
 !! 2.3 calcul of the antidiffusive flux
-      
+
+       !$acc update device( zti(1:jpk,1:jpj,1:jpi) )
+
+
+                 
        
       !jk = 1
 !          DO jk = 1,jpkm1

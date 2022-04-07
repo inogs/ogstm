@@ -784,49 +784,62 @@
 !! 2.4 reinitialization
 !!            2.5 calcul of the final field:
 !!                advection by antidiffusive mass fluxes and an upstream scheme
-           
+
+                !$acc kernels default(present)
                  DO ji = 2,jpim1
                  !dir$ vector aligned
              DO jj = 2,jpjm1
                    zkx(1,jj,ji ) = fsx(zti(1,jj,ji ),zti(1,jj,ji+1 ),zx(1,jj,ji ))
                  END DO
              END DO
+      !$acc end kernels
 
+             !$acc kernels default(present)
                  DO ji = 2,jpim1
                  !dir$ vector aligned
              DO jj = 2,jpjm1 
                    zky(1,jj,ji ) = fsy(zti(1,jj,ji ),zti(1,jj+ 1,ji ),zy(1,jj,ji ))
                  END DO
               END DO
+      !$acc end kernels
 
+              !$acc kernels default(present)
             DO ji = 1,jpi 
             !dir$ vector aligned
                    DO jk = 2,jpk   
                         zkz(jk,1,ji ) = fsz(zti(jk,1,ji ),zti(jk-1,1,ji ),zz(jk,1,ji ))
                   ENDDO
             ENDDO
-               
+      !$acc end kernels
+
+            !$acc kernels default(present)
             DO ji = 1,jpi
             !dir$ vector aligned
                   DO jk = 2,jpk 
                         zkz(jk,jpj,ji ) = fsz(zti(jk,jpj,ji ),zti(jk-1,jpj,ji ),zz(jk,jpj,ji ))
                   ENDDO
             ENDDO
+      !$acc end kernels
 
+            !$acc kernels default(present)
              DO jj = 2,jpjm1
              !dir$ vector aligned
                   DO jk = 2,jpk
                         zkz(jk,jj,1 ) = fsz(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
                   ENDDO
             ENDDO   
+      !$acc end kernels
 
+            !$acc kernels default(present)
              DO jj = 2,jpjm1
              !dir$ vector aligned
                   DO jk = 2,jpk
                         zkz(jk,jj,jpi ) = fsz(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
                   END DO
              END DO
+      !$acc end kernels
 
+             !$acc kernels default(present)
                DO  ji = 2,jpim1
             DO jj = 2,jpjm1
             !dir$ vector aligned
@@ -837,7 +850,9 @@
          END DO
           END DO
            END DO
+         !$acc end kernels
 
+           !$acc kernels default(present)
         DO  ji = 2,jpim1
             DO jj = 2,jpjm1
             !dir$ vector aligned
@@ -848,7 +863,9 @@
          END DO
           END DO
            END DO
+        !$acc end kernels
 
+           !$acc kernels default(present)
         DO  ji = 2,jpim1
             DO jj = 2,jpjm1
             !dir$ vector aligned
@@ -859,6 +876,10 @@
          END DO
           END DO
            END DO
+         !$acc end kernels
+
+
+           !$acc update host(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
 
 !... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
@@ -872,6 +893,8 @@
                CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
 
+          !$acc update device(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
+               
 !!        2.6. calcul of after field using an upstream advection scheme
 
           

@@ -718,7 +718,8 @@
                  
        
       !jk = 1
-!          DO jk = 1,jpkm1
+                 !          DO jk = 1,jpkm1
+      !$acc kernels default(present)
       DO ji = 2,jpim1
             DO jj = 2,jpjm1
                   junk  = zti(1,jj,ji )
@@ -728,8 +729,10 @@
                   zy(1,jj,ji ) = big_fact_zbb(1,jj,ji)*(junkj - junk)/(junk + junkj + rtrn)* rsc
             END DO
       END DO
-
+      !$acc end kernels
+      
       !DO ju=1, dimen_jarr2
+      !$acc kernels default(present)
          DO ji = 2,jpim1
             DO jj = 2,jpjm1
             !dir$ vector aligned
@@ -752,9 +755,13 @@
            END DO
            END DO
            END DO
+           !$acc end kernels
 !                 endif
 
+   !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) 
 
+
+           
 ! ... Lateral boundary conditions on z[xyz]
 #ifdef key_mpp
 
@@ -771,6 +778,8 @@
                 CALL lbc( zy(:,:,:), 1, 1, 1, 1, jpk, 1 )
                 CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
+
+     !$acc update device(zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) 
 
 !! 2.4 reinitialization
 !!            2.5 calcul of the final field:

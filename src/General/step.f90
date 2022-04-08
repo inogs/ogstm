@@ -124,7 +124,9 @@ MODULE module_step
       CALL forcings_KEXT(datestring)
       CALL forcings_atm_clim(datestring)
       CALL forcings_atm_aero(datestring)
-!      CALL OASIM
+
+
+      CALL OASIM_CALLER
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

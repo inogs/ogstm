@@ -2,6 +2,7 @@
 
        USE modul_param
        USE timers
+       USE oasim, ONLY: oasim_lib, calc_unit
 
 #ifdef Mem_Monitor
        USE check_mem
@@ -44,6 +45,11 @@
       INTEGER, allocatable :: nimppt(:), njmppt(:), nlcit(:), nlcjt(:)
       INTEGER, allocatable ::  nldit(:),  nldjt(:), nleit(:), nlejt(:)
       double precision  mem_all
+
+
+      type(oasim_lib):: lib
+      type(calc_unit):: calc
+
 
       INTEGER npolj
 

@@ -42,6 +42,7 @@ MODULE OGSTM
       use module_step
       use api_bfm 
       USE TREd_var_MP
+      USE oasim, ONLY: oasim_lib, calc_unit
 
 
 #ifdef Mem_Monitor
@@ -101,9 +102,11 @@ SUBROUTINE ogstm_initialize()
 
 ! local declarations
 ! ==================
-     
+      IMPLICIT NONE
       ! *********************************************
-
+      CHARACTER(LEN=1024) :: YAML_FILE
+      INTEGER N_POINTS
+      LOGICAL ERR
       CALL mynode() !  Nodes selection
 
       narea = myrank+1
@@ -185,6 +188,13 @@ SUBROUTINE ogstm_initialize()
       call BFM0D_INIT_IO_CHANNELS()
 
       call Initialize()
+
+      YAML_FILE='/g100_scratch/userexternal/gbolzon0/V9C/DEV_OASIM_INPUTS/CODE/OASIM-experiments/dll/config.yaml'
+      !NPOINTS = jpi*jpj
+      lib = oasim_lib(trim(YAML_FILE),reshape(gphit,[size(gphit)]), reshape(glamt,[size(glamt)]),  ERR)
+      if (ERR) STOP
+
+      calc=calc_unit(1, lib)
 
 END SUBROUTINE ogstm_initialize
 
@@ -401,6 +411,9 @@ SUBROUTINE ogstm_finalize()
       call clean_memory_io()
       call clean_memory_adv()
       call clean_memory_zdf()
+
+      call calc%finalize()
+      call lib%finalize()
 
       END SUBROUTINE ogstm_finalize
 

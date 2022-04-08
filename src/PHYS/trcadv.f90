@@ -608,7 +608,7 @@
           !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
           !! !$acc update host(flx_ridxt(1:Fsize,1:4))
 
-!!       !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra))    
+       !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra))    
        !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
        !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
        !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
@@ -948,8 +948,8 @@
           ENDDO
           !$acc end kernels
 
-       !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra))    
-       !$acc update host( ztj(1:jpk,1:jpj,1:jpi) )
+!!$       !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra))
+!!$       !$acc update host( ztj(1:jpk,1:jpj,1:jpi) )
 
 
            endif
@@ -962,6 +962,8 @@
           
 
            if(ncor .EQ. 1) then
+
+           !$acc kernels default(present) 
            do ji=1,jpi
            do jj=1,jpj
            do jk=1,jpk
@@ -969,9 +971,11 @@
            enddo
            enddo
            enddo
-
+           !$acc end kernels
 
            else
+
+           !$acc kernels default(present)
            do ji=1,jpi
            do jj=1,jpj
            do jk=1,jpk
@@ -979,9 +983,21 @@
            enddo
            enddo
            enddo
-
+           !$acc end kernels
 
         endif
+
+
+        
+       !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra) )
+       !$acc update host( tra(1:jpk,1:jpj,1:jpi,1:jptra) )
+
+       !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )        
+
+        
        !$acc exit data delete( tra) finalize
        !$acc exit data delete( trn, advmask ) finalize
        !$acc exit data delete( flx_ridxt, diaflx ) finalize        

@@ -40,7 +40,7 @@
       INTEGER :: counter_var_phys_2d,counter_var_phys_high_2d,counter_var_phys, counter_var_phys_high
       CHARACTER(LEN=20) ::  var_to_store_diag_2d, var_to_store_diag
       CHARACTER(LEN=20) ::  var_to_store_phys_2d, var_to_store_phys
-      INTEGER :: n_dumping_cycles, jv, ivar, writing_rank, ind_col
+      INTEGER :: n_dumping_cycles, jv, ivar, writing_rank!, ind_col
       INTEGER :: var_to_send_2D, var_high_to_send_2D
       INTEGER :: var_to_send, var_high_to_send
      ! call mppsync()
@@ -107,7 +107,7 @@
                                 counter_var_2d = counter_var_2d + 1
                                 if (FREQ_GROUP.eq.1) counter_var_high_2d = counter_var_high_2d + 1
 
-                                CALL MPI_GATHERV(buffDIA2d, sendcount_2d,MPI_DOUBLE_PRECISION, buffDIA2d_TOT,jprcv_count_2d,jpdispl_count_2d, MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffDIA2d, sendcount_2d,MPI_DOUBLE_PRECISION, buffDIA2d_TOT,jprcv_count_2d,jpdispl_count_2d, MPI_DOUBLE_PRECISION,writing_rank, mycomm, IERR)
 
                         END IF
                 END DO
@@ -117,7 +117,7 @@
 
                 IF (WRITING_RANK_WR)then
 
-                        ind_col = (myrank / n_ranks_per_node) +1
+                        !ind_col = (myrank / n_ranks_per_node) +1
 
                         if (FREQ_GROUP.eq.2) then
                                 var_to_store_diag_2d = matrix_diag_2d_2(jv,ind_col)%var_name
@@ -129,7 +129,7 @@
                                 EXIT
                         ELSE
 
-                                do idrank = 0,mpi_glcomm_size-1
+                                do idrank = 0,mysize-1
                                          irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
                                          jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
                                          totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
@@ -241,14 +241,14 @@
 
                                 !GATHERV TO THE WRITING RANK
 
-                                CALL MPI_GATHERV(buffDIA, sendcount,MPI_DOUBLE_PRECISION, buffDIA_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffDIA, sendcount,MPI_DOUBLE_PRECISION, buffDIA_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,mycomm, IERR)
                         END IF
                 END DO
 
 ! *********** START WRITING **************************
                 IF (WRITING_RANK_WR)then
 
-                        ind_col = (myrank / n_ranks_per_node)+1
+                        !ind_col = (myrank / n_ranks_per_node)+1
 
                         if (FREQ_GROUP.eq.2) then
                                 var_to_store_diag = matrix_diag_2(jv,ind_col)%var_name
@@ -260,7 +260,7 @@
                                 EXIT
                         ELSE
 
-                                do idrank = 0,mpi_glcomm_size-1
+                                do idrank = 0,mysize-1
                                         irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
                                         jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
                                         totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
@@ -385,7 +385,7 @@
                                 counter_var_phys_2d = counter_var_phys_2d + 1
                                 if (freq_ave_phys.eq.1) counter_var_phys_high_2d = counter_var_phys_high_2d + 1
 
-                                CALL MPI_GATHERV(buffPHYS2d,sendcount_2d,MPI_DOUBLE_PRECISION,buffPHYS2d_TOT,jprcv_count_2d,jpdispl_count_2d,MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffPHYS2d,sendcount_2d,MPI_DOUBLE_PRECISION,buffPHYS2d_TOT,jprcv_count_2d,jpdispl_count_2d,MPI_DOUBLE_PRECISION,writing_rank, mycomm, IERR)
 
                         END IF
                 END DO
@@ -395,7 +395,7 @@
 
                 IF (WRITING_RANK_WR)then
 
-                        ind_col = (myrank / n_ranks_per_node) +1
+                        !ind_col = (myrank / n_ranks_per_node) +1
 
                         if (freq_ave_phys.eq.2) then
                                 var_to_store_phys_2d = matrix_phys_2d_2(jv,ind_col)%var_name
@@ -407,7 +407,7 @@
                                 EXIT
                         ELSE
 
-                                do idrank = 0,mpi_glcomm_size-1
+                                do idrank = 0,mysize-1
                                          irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
                                          jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
                                          totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
@@ -537,14 +537,14 @@
 
                                 !GATHERV TO THE WRITING RANK
 
-                                CALL MPI_GATHERV(buffPHYS,sendcount,MPI_DOUBLE_PRECISION, buffPHYS_TOT,jprcv_count,jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffPHYS,sendcount,MPI_DOUBLE_PRECISION, buffPHYS_TOT,jprcv_count,jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,mycomm, IERR)
                         END IF
                 END DO
 
 ! *********** START WRITING **************************
                 IF (WRITING_RANK_WR)then
 
-                        ind_col = (myrank / n_ranks_per_node)+1
+                        !ind_col = (myrank / n_ranks_per_node)+1
 
                         if (freq_ave_phys.eq.2) then
                                 var_to_store_phys = matrix_phys_2(jv,ind_col)%var_name
@@ -556,7 +556,7 @@
                                 EXIT
                         ELSE
 
-                                do idrank = 0,mpi_glcomm_size-1
+                                do idrank = 0,mysize-1
                                         irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
                                         jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
                                         totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1

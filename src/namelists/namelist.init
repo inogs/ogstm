@@ -77,3 +77,8 @@
       jpkef=7,
 /
 
+&Ensemble_setup
+    EnsDebug = 1
+    EnsSize = 2
+/
+

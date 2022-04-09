@@ -28,6 +28,9 @@
 #ifdef ExecDA
        USE DA_mem, ONLY : DA_Nprocs, TREd_procs_per_node, max_procs_per_one_node, satfile_suffix, satvarname, AssimilationLevels_sat,  AssimilationLevels_float
 #endif
+#ifdef ExecEns
+       USE Ens_MPI, ONLY : EnsDebug, EnsSize
+#endif
        IMPLICIT NONE
 
 ! local declarations
@@ -46,6 +49,9 @@
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 #ifdef ExecDA
       NAMELIST/DA_setup/ DA_Nprocs, TREd_procs_per_node, max_procs_per_one_node, satfile_suffix, satvarname, AssimilationLevels_sat, AssimilationLevels_float
+#endif
+#ifdef ExecEns
+    NAMELIST/Ensemble_setup/ EnsDebug, EnsSize
 #endif
 
 
@@ -282,6 +288,21 @@
       WRITE(numout,*) ' Assimiliation Levels_sat: ', AssimilationLevels_sat
       WRITE(numout,*) ' Assimiliation Levels_float: ', AssimilationLevels_float
       ENDIF
+#endif
+
+#ifdef ExecEns
+    EnsDebug=0
+    EnsSize=1
+    
+    REWIND(numnam)
+    READ(numnam, Ensemble_setup)
+    
+    IF(lwp) THEN
+        WRITE(numout,*) 'Ensemble_setup'
+        WRITE(numout,*) ' '
+        WRITE(numout,*) ' EnsDebug (verbosity): ', EnsDebug
+        WRITE(numout,*) ' EnsSize: ', EnsSize
+    END IF
 #endif
 
       CLOSE( numnam)

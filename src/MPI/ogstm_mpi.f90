@@ -20,7 +20,7 @@ use petscvec, only: PETSC_COMM_WORLD, PETSC_NULL_CHARACTER
 #endif
 
 implicit NONE
-
+integer :: glcomm, glsize, glrank
 
 
 contains
@@ -64,26 +64,26 @@ SUBROUTINE mynode
 !#endif
 
 #ifdef key_mpp_mpi
-
-      CALL mpi_comm_rank(mpi_comm_world,myrank,ierr)
-      CALL mpi_comm_size(mpi_comm_world,mpi_glcomm_size,ierr)
+    call mpi_comm_dup(MPI_comm_world,glcomm, ierr)
+      CALL mpi_comm_rank(glcomm,glrank,ierr)
+      CALL mpi_comm_size(glcomm,glsize,ierr)
       !call parlec ! in order to read DA_Nprocs
 
 !#ifdef ExecDA
 !      if(V3D_VAR_PARALLEL) then
-!        call MPI_Comm_split(MPI_COMM_WORLD, nodes * TREd_procs_per_node, myrank, Var3DCommunicator, ierr)
+!        call MPI_Comm_split(glcomm, nodes * TREd_procs_per_node, myrank, Var3DCommunicator, ierr)
         
 !        PETSC_COMM_WORLD = Var3DCommunicator
 !        call PetscInitialize(PETSC_NULL_CHARACTER,stat)
 !        CHKERRQ(stat)
 !      else
-!        call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED, myrank, Var3DCommunicator, ierr)
+!        call MPI_Comm_split(glcomm, MPI_UNDEFINED, myrank, Var3DCommunicator, ierr)
 !      endif
 !#endif
 
 #else
-      mpi_glcomm_size = 1
-      myrank = 0
+      glsize = 1
+      glrank = 0
 #endif
 
 END SUBROUTINE
@@ -322,7 +322,7 @@ SUBROUTINE mppsend(ktyp,pmess,kbytes,kdest,kid,ireqsend)
 
       INTEGER iflag
       CALL mpi_isend(pmess,kbytes,mpi_real8,kdest,ktyp, &
-     &    mpi_comm_world,ireqsend,iflag)
+     &    mycomm,ireqsend,iflag)
 
 
 #endif
@@ -365,7 +365,7 @@ END SUBROUTINE
 
       INTEGER iflag
 
-      CALL mpi_irecv(pmess,kbytes,mpi_real8,mpi_any_source,ktyp,mpi_comm_world,ireqrecv,iflag)
+      CALL mpi_irecv(pmess,kbytes,mpi_real8,mpi_any_source,ktyp,mycomm,ireqrecv,iflag)
 #endif
 
       RETURN
@@ -421,7 +421,7 @@ SUBROUTINE mppsync()
 
       INTEGER ierror
 
-      CALL mpi_barrier(mpi_comm_world,ierror)
+      CALL mpi_barrier(mycomm,ierror)
 
 #endif
       RETURN

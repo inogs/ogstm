@@ -77,8 +77,8 @@
                    endif
                enddo
            endif
-           do idrank = 1,mpi_glcomm_size-1
-               call MPI_RECV(INDflxBuff    , FsizeMax,                 mpi_integer, idrank, 1,mpi_comm_world, status, ierr)
+           do idrank = 1,mysize-1
+               call MPI_RECV(INDflxBuff    , FsizeMax,                 mpi_integer, idrank, 1,mycomm, status, ierr)
                do jf=1,FsizeMax
                    if (INDflxBuff(jf) .NE. 0) then
                        INDflxDUMPglo(counter) = INDflxBuff(jf)
@@ -104,9 +104,9 @@
                        endif
                    enddo
                endif
-               DO idrank = 1,mpi_glcomm_size-1
-                   call MPI_RECV(INDflxBuff    , FsizeMax,    mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
-                   call MPI_RECV(diaflxBuff    , FsizeMax*7,  mpi_real8,   idrank, 3,mpi_comm_world, status, ierr)
+               DO idrank = 1,mysize-1
+                   call MPI_RECV(INDflxBuff    , FsizeMax,    mpi_integer, idrank, 2,mycomm, status, ierr)
+                   call MPI_RECV(diaflxBuff    , FsizeMax*7,  mpi_real8,   idrank, 3,mycomm, status, ierr)
                    DO jf=1,FsizeMax
                        if (INDflxBuff(jf) .NE. 0) then
                            DO js=1,7
@@ -144,7 +144,7 @@
                    if ( (jj .EQ. 1) .OR. (jj .EQ. jpj) ) INDflxBuff(jf) = 0 ! Ghost cell value has index 0
                enddo
            endif
-           call MPI_SEND(INDflxBuff, FsizeMax, mpi_integer, 0, 1, mpi_comm_world, ierr)
+           call MPI_SEND(INDflxBuff, FsizeMax, mpi_integer, 0, 1, mycomm, ierr)
            DO jn=1,jptra
                IF (Fsize .GT. 0) THEN
                    DO jf=1,Fsize
@@ -155,8 +155,8 @@
                        endif
                    ENDDO
                ENDIF
-               call MPI_SEND(INDflxBuff, FsizeMax, mpi_integer, 0, 2, mpi_comm_world, ierr)
-               call MPI_SEND(diaflxBuff, FsizeMax*7, mpi_real8, 0, 3, mpi_comm_world, ierr)
+               call MPI_SEND(INDflxBuff, FsizeMax, mpi_integer, 0, 2, mycomm, ierr)
+               call MPI_SEND(diaflxBuff, FsizeMax*7, mpi_real8, 0, 3, mycomm, ierr)
            END DO ! loop on myrank for each tracers
 
 

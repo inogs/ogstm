@@ -161,18 +161,18 @@ MODULE TREd_var_MP
 
                 SELECT CASE (CASE_SELECTION)
                         CASE(1)
-                                call MPI_Comm_split(MPI_COMM_WORLD, max_procs_per_one_node,myrank,Var3DCommunicator, ierror)
+                                call MPI_Comm_split(mycomm, max_procs_per_one_node,myrank,Var3DCommunicator, ierror)
                         CASE(2)
-                                call MPI_Comm_split(MPI_COMM_WORLD,nodes*TREd_procs_per_node,myrank,Var3DCommunicator, ierror)
+                                call MPI_Comm_split(mycomm,nodes*TREd_procs_per_node,myrank,Var3DCommunicator, ierror)
                         CASE(3)
-                                call MPI_Comm_split(MPI_COMM_WORLD,DA_nprocs,myrank,Var3DCommunicator,ierror)
+                                call MPI_Comm_split(mycomm,DA_nprocs,myrank,Var3DCommunicator,ierror)
                 END SELECT
 
                 PETSC_COMM_WORLD = Var3DCommunicator
                 call PetscInitialize(PETSC_NULL_CHARACTER,stat)
                 CHKERRQ(stat)
         else
-                call MPI_Comm_split(MPI_COMM_WORLD, MPI_UNDEFINED,myrank,Var3DCommunicator, ierror)
+                call MPI_Comm_split(mycomm, MPI_UNDEFINED,myrank,Var3DCommunicator, ierror)
         endif
 #endif
                 

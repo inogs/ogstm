@@ -99,15 +99,42 @@ SUBROUTINE ogstm_launcher()
 ! *************************************************************
 SUBROUTINE ogstm_initialize()
 
+#ifdef ExecEns
+    use Ens_MPI, &
+        only: Ens_MPI_nodes_find_and_split
+#endif
+
 ! local declarations
 ! ==================
      
       ! *********************************************
 
       CALL mynode() !  Nodes selection
+      
+      lwp = glrank.EQ.0
+      
+      call parlec      ! read namelist.init
+      
+      call node_name_fill    ! give the name of each node
+      
+#ifdef ExecEns
+    
+    call Ens_MPI_nodes_find_and_split
+    
+    !lwp = glrank.EQ.0
+    lwp = myrank.EQ.0 !purtroppo non posso usare la riga precedente perche' in alcune parti del codice lwp e' usato per altro oltre a loggare (e.g., IO_mem.f90).
+      
+#else
+    
+    mycomm=glcomm
+    mysize=glsize
+    myrank=glrank
+    
+    call nodes_module_find    !calculate the number of nodes used
+
+#endif
 
       narea = myrank+1
-      lwp = narea.EQ.1
 
       IF(lwp) THEN
           OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
@@ -132,7 +159,7 @@ SUBROUTINE ogstm_initialize()
 
       call parini
 
-      call parlec      ! read namelist.init
+      !call parlec      ! read namelist.init
       call time_init
       call trclec
 
@@ -148,9 +175,9 @@ SUBROUTINE ogstm_initialize()
 ! 1. Model general initialization
 ! ===============================
 
-      call node_name_fill    ! give the name of each node
+      !call node_name_fill    ! give the name of each node
 
-      call nodes_module_find    !calculate the number of nodes used
+      !call nodes_module_find    !calculate the number of nodes used
 
       call populate_matrix_vars   !define matrix of variables to dump
 
@@ -246,8 +273,8 @@ SUBROUTINE ALLOC_ALL
        mem_all_tot=mem_all_tot+mem_all
       
       
-      call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
-      call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
+      call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,mycomm, ierr)
+      call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,mycomm, ierr)
 
       call myalloc_IO()  
       ! LEVEL1 write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 

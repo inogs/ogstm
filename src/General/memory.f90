@@ -34,7 +34,7 @@
 !!      mindi, mindj() : indexes array of the subdomain
 
       INTEGER, PARAMETER :: nizoom=1,  njzoom=1
-      INTEGER :: mpi_glcomm_size,myrank
+      INTEGER :: mycomm, mysize, myrank
       INTEGER nimpp,njmpp
       INTEGER nperio, narea, nlci, nlcj
       INTEGER nbondi, nbondj, nproc, noea, nowe, noso, nono

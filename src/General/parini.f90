@@ -21,21 +21,21 @@
       integer, allocatable, dimension(:,:) :: domdec
 
       call COUNTLINE ('domdec.txt', nn)
-      if (nn.ne.mpi_glcomm_size) then
+      if (nn.ne.mysize) then
          if (lwp) write(*,*) 'domdec.txt is not compliant with MPI ranks '
          STOP
       endif
 
         narea = myrank+1
-        allocate(domdec(mpi_glcomm_size,13))
+        allocate(domdec(mysize,13))
 
         open(3333,file='domdec.txt', form='formatted')
-        read(3333,*) ((domdec(ji,jj), jj=1,13),ji=1,mpi_glcomm_size)
+        read(3333,*) ((domdec(ji,jj), jj=1,13),ji=1,mysize)
         close(3333)
 
         if (domdec(narea,1).ne.myrank) write(*,*) 'ERROR'
 !        if (lwp) THEN
-!        do ji=1,mpi_glcomm_size
+!        do ji=1,mysize
 !        write(*,'(13I3)') domdec(ji,:)
 !        enddo
 !        endif

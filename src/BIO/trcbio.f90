@@ -56,12 +56,13 @@
 !!! local declarations
 !!! ==================
 
-      double precision,dimension(jptra,jpk) :: b
-      double precision,dimension(jpk,jptra) :: a
-      double precision,dimension(4,jpk) :: c
-      double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,11) :: er
-      double precision,dimension(jptra_dia_2d) :: d2
+      integer                    :: counter,counterS,counterB
+      integer,dimension(jpj*jpi) :: SRFidx,BOTidx
+      double precision,dimension(jpk*jpj*jpi,jptra) :: a,b
+      double precision,dimension(jpk*jpj*jpi,4) :: c
+      double precision,dimension(jptra_dia,jpk*jpj*jpi) :: d
+      double precision,dimension(jpk*jpj*jpi,11) :: er
+      double precision,dimension(jptra_dia_2d,jpj*jpi) :: d2
 
 
       integer :: jk,jj,ji,jb,jn
@@ -100,102 +101,146 @@
       er       = 1.0
       er(:,10) = 8.1
 
-
-#ifdef gdept1d
-! er(:,11) is calculated outside the loop on ji,jj
-      do jk=1, jpk
-         correct_fact= 1.0D0
-
-         if ( (gdept(jk) .GT. 1000.0D0 ) .AND.  (gdept(jk) .LT. 2000.0D0 )) then
-             correct_fact= 0.25D0
-         endif
-
-         if (gdept(jk) .GE. 2000.0D0 ) then
-             correct_fact= 0.0D0
-         endif
-
-         er(jk,11) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
-      enddo
-#endif
-
-
-      DO ji=1,jpi
-      DO jj=1,jpj
-      if (bfmmask(1,jj,ji) == 0) CYCLE
-      bottom = mbathy(jj,ji)
-
-
-                          DO jtr=1, jtrmax
-
-                             a(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
-
-                          END DO
+       DO jtr=1, jtrmax
+       counter=1
+       DO ji=1,jpi
+       DO jj=1,jpj
+       if (bfmmask(1,jj,ji) == 0) then
+         counter = counter + jpk
+         cycle
+       endif
+       bottom = mbathy(jj,ji)
+       DO jk=1,bottom
+        a(counter, jtr) = trn(jk,jj,ji,jtr) ! current biogeochemical concentrations
+        counter=counter+1
+       ENDDO
+       DO jk=bottom+1,jpk
+        counter=counter+1
+       ENDDO
+       ENDDO
+       ENDDO
+       ENDDO
 
 ! Environmental regulating factors (er,:)
+       counter=1
+       counterS=1
+       counterB=1
+       DO ji=1,jpi
+       DO jj=1,jpj
+       if (bfmmask(1,jj,ji) == 0) then
+         SRFidx(counterS)=counter
+         counterS = counterS + 1
+         counter = counter + jpk
+         BOTidx(counterB)=counter-1
+         counterB = counterB + 1
+         cycle
+       endif
+       bottom = mbathy(jj,ji)
+       SRFidx(counterS)=counter
+       counterS = counterS + 1
+       DO jk=1,bottom
+! Environmental regulating factors (er,:)
+               er(counter,1)  = tn (jk,jj,ji)! Temperature (Celsius)
+               er(counter,2)  = sn (jk,jj,ji)  ! Salinity PSU
+               er(counter,3)  = rho(jk,jj,ji)        ! Density Kg/m3
+               er(counter,4)  = ice                  ! from 0 to 1 adimensional
+               if (jk==1) then
+                    er(counter ,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
+               else
+                    er(counter ,5)  = 0.0D0
+               endif
+               er(counter,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+               if (jk==1) then
+                    er(counter   ,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
+               else
+                    er(counter   ,7)  = 0.0D0
+               endif
+               er(counter,8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
+               er(counter,9)  = vatm(jj,ji)                ! wind speed (m/s)
+               er(counter,10) = ogstm_PH(jk,jj,ji)   ! 8.1
 
-                          er(1:bottom,1)  = tn (1:bottom,jj,ji)! Temperature (Celsius)
-                          er(1:bottom,2)  = sn (1:bottom,jj,ji)  ! Salinity PSU
-                          er(1:bottom,3)  = rho(1:bottom,jj,ji)        ! Density Kg/m3
-                          er(1       ,4)  = ice                  ! from 0 to 1 adimensional
-                          er(1       ,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
-                          do jk=1, bottom
-                          er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                          enddo
-                          !if (is_night(COMMON_DATEstring))  then
-                          !    er(1:bottom,6)  = 0.001      
-                          !else
-                          !    er(1:bottom,6)  = 2.0*xpar(1:bottom,jj,ji)
-                          !endif
-                          !write(*,*) 'XPAR',  er(1,6)
+               correct_fact= 1.0D0
+               if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
+                    correct_fact= 0.25D0
+               endif
 
-                          er(1       ,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(1:bottom,8)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1       ,9)  = vatm(jj,ji)                ! wind speed (m/s)
-                          er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
+               if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
+                    correct_fact= 0.0D0
+               endif
 
-#ifndef gdept1d
-                         do jk=1,bottom
-                             correct_fact= 1.0D0
-                             if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
-                                 correct_fact= 0.25D0
-                             endif
+               er(counter,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
 
-                             if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
-                                 correct_fact= 0.0D0
-                             endif
+               counter=counter+1
 
-                             er(jk,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
-                         enddo
-#endif
-                          call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
+       ENDDO
+       DO jk=bottom+1,jpk
+        counter=counter+1
+       ENDDO
+       BOTidx(counterB)=counter-1
+       counterB = counterB + 1
+       ENDDO
+       ENDDO
 
-                         call BFM1D_reset()
+!      call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
+       call BFM1D_Input_EcologyDynamics(SRFidx,BOTidx,a,jtrmax,er)
 
-                         call EcologyDynamics()
+       call BFM1D_reset()
 
-                         call BFM1D_Output_EcologyDynamics(b, c, d, d2)
+       call EcologyDynamics()
 
-                          DO jtr=1, jtrmax
-                             tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +b(jtr,1:bottom) ! trend
-                          END DO
+       call BFM1D_Output_EcologyDynamics(b, c, d, d2)
 
-                          DO jtr=1,4
-                             ogstm_sediPI(1:bottom,jj,ji,jtr) = c(jtr,1:bottom)      ! BFM output of sedimentation speed (m/d)
-                          END DO
+       DO jtr=1, jtrmax
+       counter =1
+       DO ji=1,jpi
+       DO jj=1,jpj
+       if (bfmmask(1,jj,ji) == 0) then
+            counter = counter + jpk
+            cycle
+       endif
+
+       DO jk=1, jpk
+          tra(jk,jj,ji,jtr) = tra(jk,jj,ji,jtr) + b(counter,jtr) * tmask(jk,jj,ji) ! trend
+          counter = counter + 1
+       ENDDO
+
+       ENDDO
+       ENDDO
+       ENDDO
+
+       counter=1
+       DO ji=1,jpi
+       DO jj=1,jpj
+       if (bfmmask(1,jj,ji) == 0) then
+            counter = counter + jpk
+            cycle
+       endif
+
+       DO jk=1, jpk
+
+       DO jtr=1, jtrmax
+          tra_DIA(jtr, jk ,jj,ji) = d(jtr,counter) * tmask(jk,jj,ji) ! diagnostic
+       ENDDO
+          ogstm_PH(jk,jj,ji) = d(pppH,counter) ! Follows solver guess, put 8.0 if pppH is not defined
+       DO jtr=1, 4
+          ogstm_sediPI(jk,jj,ji,jtr) = c(counter,jtr) * tmask(jk,jj,ji)     ! BFM output of sedimentation speed (m/d)
+       ENDDO
+
+          counter = counter + 1
+       ENDDO
+
+       ENDDO
+       ENDDO
+
+       counter=1
+       DO ji=1,jpi
+       DO jj=1,jpj
+           tra_DIA_2d(:,jj,ji) = d2(:,counter) * tmask(1,jj,ji)! diagnostic
+           counter = counter +1
+       ENDDO
+       ENDDO
 
 
-                          DO jk = 1,bottom
-                          DO jtr=1,jptra_dia
-                             tra_DIA(jtr, jk ,jj,ji) = d(jtr,jk) ! diagnostic
-                          END DO
-                          ENDDO
-
-                         tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
-
-                          ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
-
-      END DO
-      END DO
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

@@ -312,13 +312,22 @@
 
       if (Fsize.NE.0) then
          B=FLXRe_Indexing()
+#ifdef ExecEns
+         !write(*,*) 'domrea->FLXRE_Indexing finita, myrank=', myrank
+#else
          write(*,*) 'domrea->FLXRE_Indexing finita, myrank=', myrank
+#endif
 
       endif
 
       call alloc_DIA_MPI_flx()
-
+      
+#ifdef ExecEns
+      CALL mpi_barrier(glcomm,ierr)
+      if (glrank==0) write(*,*) 'DOMREA finita.'
+#else
       write(*,*) 'DOMREA finita, myrank = ', myrank
+#endif
 
    !   DEALLOCATE(idxt)
     !  DEALLOCATE(idxt2glo)

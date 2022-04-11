@@ -52,6 +52,10 @@ MODULE OGSTM
       USE DA_MEM
       USE DA_VARS_module
 #endif
+#ifdef ExecEns
+    use Ens_MPI, &
+        only: Ens_MPI_nodes_find_and_split, Ens_MPI_Finalize
+#endif
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
@@ -121,8 +125,8 @@ SUBROUTINE ogstm_initialize()
     
     call Ens_MPI_nodes_find_and_split
     
-    !lwp = glrank.EQ.0
-    lwp = myrank.EQ.0 !purtroppo non posso usare la riga precedente perche' in alcune parti del codice lwp e' usato per altro oltre a loggare (e.g., IO_mem.f90).
+    lwp = glrank.EQ.0 ! only member 0 produces a log
+    !lwp = myrank.EQ.0 ! every ensemble member produces a log
       
 #else
     
@@ -400,6 +404,10 @@ END SUBROUTINE set_to_zero
 SUBROUTINE ogstm_finalize()
 
       CALL mppstop
+      
+#ifdef ExecEns
+    call Ens_MPI_Finalize
+#endif
 
       if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
 

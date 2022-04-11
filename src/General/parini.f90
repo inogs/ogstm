@@ -34,7 +34,7 @@
         close(3333)
 
         if (domdec(narea,1).ne.myrank) write(*,*) 'ERROR'
-!        if (lwp) THEN
+!        if (myrank==0) THEN
 !        do ji=1,mysize
 !        write(*,'(13I3)') domdec(ji,:)
 !        enddo

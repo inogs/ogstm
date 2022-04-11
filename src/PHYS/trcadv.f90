@@ -98,7 +98,7 @@
          big_fact_zcc = 0.
          zbtr_arr = 0.
 
-         write(*,*) "Storing good points ..."
+         !write(*,*) "Storing good points ..."
 
          allpoints = 0
 
@@ -113,7 +113,7 @@
             END DO
          END DO
 
-         write(*,*) 'trcadv: RANK -> ', myrank, ' all_points -> ', allpoints
+         !write(*,*) 'trcadv: RANK -> ', myrank, ' all_points -> ', allpoints
 
          goodpoints = 0
          DO ji = 1,jpi
@@ -149,7 +149,7 @@
             END DO
          END DO
 
-         write(*,*) 'trcadv: RANK -> ', myrank, ' good_points -> ', goodpoints
+         !write(*,*) 'trcadv: RANK -> ', myrank, ' good_points -> ', goodpoints
 
 
 

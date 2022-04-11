@@ -183,37 +183,40 @@ MODULE module_step
 ! OGSTM TEMPORIZATION
        IF (TAU.GT.0) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
-           if (lwp) then
-               write(*,*) "************* OGSTM TEMPORIZATION *********"
-               write(*,*) "              Iteration",TAU
-               write(*,*) "routine******time_tot*********time_ave*****"
-           endif
-           B = writeTemporization("forPhys___", forcing_phys_TotTime)
-           B = writeTemporization("forKext___", forcing_kext_TotTime)
-           B = writeTemporization("bcCO2_____", bc_co2_TotTime)
-           B = writeTemporization("bcTIN_____", bc_tin_TotTime)
-           B = writeTemporization("bcATM_____", bc_atm_TotTime)
-           B = writeTemporization("bcGIB_____", bc_gib_TotTime)
-           B = writeTemporization("density___", density_TotTime)
-           B = writeTemporization("averaging_", ave_TotTime   )
-           B = writeTemporization("trcopt____", trcopttottime)
-           B = writeTemporization("trcbio____", BIOtottime)
-           B = writeTemporization("trcadv____", trcadvtottime)
-           B = writeTemporization("trcdmp____", trcdmptottime)
-           B = writeTemporization("trcbil____", trcbilaphdftottime)
-           B = writeTemporization("trcsbc____", trcsbctottime)
-           B = writeTemporization("trcsms____", trcsmstottime)
-           B = writeTemporization("trczdf____", trczdftottime)
-           B = writeTemporization("snutel____", snuteltottime)
-           B = writeTemporization("check_____", checkVtottime)
-           B = writeTemporization("trcnxt____", trcnxttottime)
-           B = writeTemporization("trcstp____", trcstptottime)
+            if (.false.) then
+                if (lwp) then
+                    write(*,*) "************* OGSTM TEMPORIZATION *********"
+                    write(*,*) "              Iteration",TAU
+                    write(*,*) "routine******time_tot*********time_ave*****"
+                endif
+            
+                B = writeTemporization("forPhys___", forcing_phys_TotTime)
+                B = writeTemporization("forKext___", forcing_kext_TotTime)
+                B = writeTemporization("bcCO2_____", bc_co2_TotTime)
+                B = writeTemporization("bcTIN_____", bc_tin_TotTime)
+                B = writeTemporization("bcATM_____", bc_atm_TotTime)
+                B = writeTemporization("bcGIB_____", bc_gib_TotTime)
+                B = writeTemporization("density___", density_TotTime)
+                B = writeTemporization("averaging_", ave_TotTime   )
+                B = writeTemporization("trcopt____", trcopttottime)
+                B = writeTemporization("trcbio____", BIOtottime)
+                B = writeTemporization("trcadv____", trcadvtottime)
+                B = writeTemporization("trcdmp____", trcdmptottime)
+                B = writeTemporization("trcbil____", trcbilaphdftottime)
+                B = writeTemporization("trcsbc____", trcsbctottime)
+                B = writeTemporization("trcsms____", trcsmstottime)
+                B = writeTemporization("trczdf____", trczdftottime)
+                B = writeTemporization("snutel____", snuteltottime)
+                B = writeTemporization("check_____", checkVtottime)
+                B = writeTemporization("trcnxt____", trcnxttottime)
+                B = writeTemporization("trcstp____", trcstptottime)
 
 
-           B = writeTemporization("flxdump___",flx_TotTime  )
-           B = writeTemporization("stp_______", stptottime  )
+                B = writeTemporization("flxdump___",flx_TotTime  )
+                B = writeTemporization("stp_______", stptottime  )
+            end if
 
-           call reset_Timers()
+            call reset_Timers()
        ENDIF
       ENDIF
 

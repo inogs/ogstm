@@ -719,7 +719,7 @@ subroutine alloc_tot()
        tra_PHYS_2d_IO_HIGH = huge(tra_PHYS_2d_IO_HIGH(1,1,1))
 
 
-      if(lwp) then
+      if(myrank==0) then
        allocate(tottrn(jpk, jpjglo, jpiglo))      
        tottrn = huge(tottrn(1,1,1)) 
        allocate(tottrb(jpk, jpjglo, jpiglo))      
@@ -940,7 +940,7 @@ subroutine alloc_tot()
             deallocate(tra_PHYS_2d_IO_HIGH)
             
 
-            if(lwp) then
+            if(myrank==0) then
                 deallocate(tottrn)
                 deallocate(tottrb)
 !                deallocate(tottrnIO)

@@ -78,7 +78,7 @@
 /
 
 &Ensemble_setup
-    EnsDebug = 1
-    EnsSize = 2
+    EnsDebug = 0
+    EnsSize = 1
 /
 

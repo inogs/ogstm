@@ -443,6 +443,7 @@ SUBROUTINE mppstop
 
 #ifdef key_mpp_mpi
       CALL mppsync
+      call mpi_comm_free(glcomm, info)
 #endif
 
       RETURN

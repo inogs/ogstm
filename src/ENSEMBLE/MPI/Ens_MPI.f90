@@ -17,6 +17,10 @@ contains
             ONLY: glcomm, glsize, glrank
         use myalloc, &
             only: lwp, mycomm, myrank, mysize
+            
+        integer, parameter :: procs_distribution_type=2 
+            ! 1: faster communications inside ogstm communicator (mycomm)
+            ! 2 (suggested): faster communications between ensemble members (EnsComm). Less RAM per per node needed.
         
         INTEGER :: i, j, k
         INTEGER :: IERROR
@@ -30,6 +34,8 @@ contains
         !call mpi_comm_split_type(glcomm, SPLIT_TYPE, KEY, INFO, NEWCOMM, IERROR) Openmpi permette di usare il tipo OMPI_COMM_TYPE_SOCKET. Si potrebbe usarlo per individuare i socket a cui sono bindati i task.
         !Ma intelmpi pare non supporti la cosa e il tutto e' ancora mal documentato. Per il momento lasciamo perdere.
 
+        ! counting nodes:
+        
         IF (glrank == 0) THEN
             
             nodes = 0
@@ -60,22 +66,45 @@ contains
         
         call mpi_scatter(nodes_array, 1, MPI_INT, ind_col, 1, MPI_INT, 0, glcomm, ierror)
         
+        ! ordering:
+        
         call mpi_comm_split(glcomm, 0, ind_col, glcomm_ordered, ierror)
+        call mpi_comm_free(glcomm, ierror)
         glcomm = glcomm_ordered
         CALL mpi_comm_rank(glcomm,glrank,ierror)
         
+        ! creating ensemble communicators:
+        
         if (mod(glsize,EnsSize)/=0) then
             write(*,*) "The total number of mpi tasks (glsize=,", glsize, ") is not multiple of the ensemble size (EnsSize=", EnsSize, "). Aborting."
+            call MPI_abort(glcomm, 1, ierror)
         end if
         
-        call MPI_Comm_split(glcomm, glrank/(glsize/EnsSize), glrank, mycomm, ierror)
-        CALL mpi_comm_rank(mycomm,myrank,ierror)
-        CALL mpi_comm_size(mycomm,mysize,ierror)
+        SELECT CASE (procs_distribution_type)
+            CASE(1)
+                call MPI_Comm_split(glcomm, glrank/(glsize/EnsSize), glrank, mycomm, ierror)
+                CALL mpi_comm_rank(mycomm,myrank,ierror)
+                CALL mpi_comm_size(mycomm,mysize,ierror)
+                
+                call MPI_Comm_split(glcomm, myrank, glrank, EnsComm, ierror)
+                CALL mpi_comm_rank(EnsComm,EnsRank,ierror)
+                !CALL mpi_comm_size(EnsComm,EnsSize,ierror)
+                
+            CASE(2)
+                call MPI_Comm_split(glcomm, glrank/EnsSize, glrank, EnsComm, ierror)
+                CALL mpi_comm_rank(EnsComm,EnsRank,ierror)
+                !CALL mpi_comm_size(EnsComm,EnsSize,ierror)
+                
+                call MPI_Comm_split(glcomm, EnsRank, glrank, mycomm, ierror)
+                CALL mpi_comm_rank(mycomm,myrank,ierror)
+                CALL mpi_comm_size(mycomm,mysize,ierror)   
+                
+            CASE DEFAULT
+                write(*,*) 'Wrong procs_distribution_type value. Aborting.'
+                call MPI_abort(glcomm, 1, ierror)
+        END SELECT
         
-        call MPI_Comm_split(glcomm, myrank, glrank, EnsComm, ierror)
-        CALL mpi_comm_rank(EnsComm,EnsRank,ierror)
-        !CALL mpi_comm_size(EnsComm,EnsSize,ierror)
-        
+        ! computing ind_col and writing_procs:
         
         call mpi_comm_split(mycomm, ind_col, myrank, nodecomm, ierror)
         CALL mpi_comm_rank(nodecomm,noderank,ierror)
@@ -97,16 +126,28 @@ contains
         call mpi_comm_free(writingcomm, IERROR)
         
         if (EnsDebug>1) then
-            do i=1,glsize
+            do i=0,glsize-1
                 CALL mpi_barrier(glcomm,ierror)
                 if (glrank==i) then
                     write(*,*) 'gl = ',i, ', my = ',myrank ,', ind_col = ',ind_col
                     write(*,*) 'writing_procs = ', writing_procs
                 end if
             end do
+            !CALL mpi_barrier(glcomm,ierror)
+            !call MPI_abort(glcomm, 1, ierror)
         end if
     
     end subroutine
     
+    subroutine Ens_MPI_Finalize
+        use myalloc, &
+            only: mycomm
+            
+        integer ierror
+        
+        call mpi_comm_free(mycomm, ierror)
+        call mpi_comm_free(EnsComm, ierror)
+        
+    end subroutine
 
 end module

@@ -48,32 +48,32 @@
 
 ! Compute RT every hour
 
-      if (datestring .eq. DATESTART) then
-         call read_date_string(datestring, year, month, day, sec)
-         it_check = int(sec/3600.d0) 
-      endif
-
-      call read_date_string(datestring, year, month, day, sec)
-
-      it_actual = int(sec/3600.d0)
-
-      ihr       = it_actual ! from 0 to 23 
-      
-      if ( (it_actual .eq. it_check) .and. (datestring.ne.DATESTART)) then 
-
-         if (lwp) write(*,*) 'Skip computing RT at : ', datestring
-
-         trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop
-
-         trcopttottime = trcopttottime + trcoptparttime
-
-         return ! no need to compute RT
-
-      else
-
-         it_check = it_actual
-
-      endif
+!      if (datestring .eq. DATESTART) then
+!         call read_date_string(datestring, year, month, day, sec)
+!         it_check = int(sec/3600.d0)
+!      endif
+!
+!      call read_date_string(datestring, year, month, day, sec)
+!
+!      it_actual = int(sec/3600.d0)
+!
+!      ihr       = it_actual ! from 0 to 23
+!
+!      if ( (it_actual .eq. it_check) .and. (datestring.ne.DATESTART)) then
+!
+!         if (lwp) write(*,*) 'Skip computing RT at : ', datestring
+!
+!         trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop
+!
+!         trcopttottime = trcopttottime + trcoptparttime
+!
+!         return ! no need to compute RT
+!
+!      else
+!
+!         it_check = it_actual
+!
+!      endif
 
       call tau2julianday(datestringToTAU(datestring), deltaT, day_of_year)
      
@@ -105,8 +105,8 @@
 !            MODE = 1 ! approximate solution
              MODE = 2 ! library solution
 
-             Ed_0m(:,jj,ji) =5.0D0
-             Es_0m(:,jj,ji) =5.0D0
+!             Ed_0m(:,jj,ji) =5.0D0
+!             Es_0m(:,jj,ji) =5.0D0
 
              RMU(jj,ji) = rmud(jj,ji)
 

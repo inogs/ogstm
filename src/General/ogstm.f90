@@ -189,12 +189,15 @@ SUBROUTINE ogstm_initialize()
 
       call Initialize()
 
-      YAML_FILE='/g100_scratch/userexternal/gbolzon0/V9C/DEV_OASIM_INPUTS/CODE/OASIM-experiments/dll/config.yaml'
-      !NPOINTS = jpi*jpj
-      lib = oasim_lib(trim(YAML_FILE),reshape(gphit,[size(gphit)]), reshape(glamt,[size(glamt)]),  ERR)
-      if (ERR) STOP
+      YAML_FILE='oasim_config.yaml'
+      lib = oasim_lib(trim(YAML_FILE),LAT_ARRAY, LON_ARRAY,  ERR)
+      if (ERR) then
+        if (lwp) write(*,*) 'ERROR in OASIM initialization'
+        STOP
+      endif
 
-      calc=calc_unit(1, lib)
+
+      calc=calc_unit(jpi*jpj, lib)
 
 END SUBROUTINE ogstm_initialize
 

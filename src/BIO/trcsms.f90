@@ -35,8 +35,6 @@
 !! this first routines are parallelized on vertical slab
 
        CALL trcopt ! tracers: optical model
-
-       CALL trc3streams(datestring) ! 3-stream radiative model
        
        CALL trcbio ! tracers: biological model
 

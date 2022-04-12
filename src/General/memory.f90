@@ -100,6 +100,7 @@
       double precision, allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
       double precision, allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
       double precision, allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
+      double precision, allocatable, dimension(:)   :: lon_array, lat_array
 
 !!----------------------------------------------------------------------
 !!       vertical coordinate and scale factors
@@ -532,6 +533,8 @@ subroutine alloc_tot()
       e2f      = huge(e2f(1,1))
       allocate(ff (jpj,jpi))            
       ff       = huge(ff(1,1))
+      allocate(lon_array(jpj*jpi)); lon_array=huge(lon_array(1))
+      allocate(lat_array(jpj*jpi)); lat_array=huge(lat_array(1))
 
 #ifdef gdept1d
       allocate(gdept(jpk)) 
@@ -988,6 +991,52 @@ subroutine alloc_tot()
 
         end subroutine clean_memory
 
+      SUBROUTINE FLATTEN_2D(MATRIX, ARRAY)
+      double precision, intent(IN) :: MATRIX(jpj,jpi)
+      double precision, intent(OUT) :: ARRAY(jpj*jpi)
+
+      integer ji,jj, counter
+      counter=1
+      do ji=1,jpi
+      do jj=1,jpj
+         ARRAY(counter) = MATRIX(jj,ji)
+         counter=counter+1
+      enddo
+      enddo
+      END SUBROUTINE FLATTEN_2D
+
+      SUBROUTINE FLATTEN_33(ARRAY3D, ARRAY2D)
+      double precision, intent(IN) ::  ARRAY3D(33, jpj,jpi)
+      double precision, intent(OUT) :: ARRAY2D(jpj*jpi,33)
+      integer ji,jj, counter
+
+      counter=1
+      do ji=1,jpi
+      do jj=1,jpj
+
+         ARRAY2D(counter,:) = ARRAY3D(:,jj,ji)
+         counter=counter+1
+      enddo
+      enddo
+
+      END SUBROUTINE FLATTEN_33
+
+      SUBROUTINE UNFLATTEN_33(ARRAY2D, ARRAY3D)
+      double precision, intent(IN)  :: ARRAY2D(jpj*jpi,33)
+      double precision, intent(OUT) :: ARRAY3D(33, jpj,jpi)
+
+      integer ji,jj, counter
+
+      counter=1
+      do ji=1,jpi
+      do jj=1,jpj
+         ARRAY3D(:,jj,ji) = ARRAY2D(counter,:)
+         counter=counter+1
+      enddo
+      enddo
+
+      END SUBROUTINE UNFLATTEN_33
 
 
         END MODULE myalloc
+

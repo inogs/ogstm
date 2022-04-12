@@ -97,6 +97,9 @@
       call readnc_slice_double_2d(maskfile,'gphiv', gphiv)
       !call readnc_slice_double_2d(maskfile,'gphif', gphif)
 
+      call FLATTEN_2D(glamt, LON_ARRAY)
+      call FLATTEN_2D(gphit, LAT_ARRAY)
+
 
 ! 2. Horizontal scale factors
 ! ---------------------------

@@ -41,7 +41,7 @@ elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
 #  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0 ")
 #  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
-  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -cpp -g -pg -acc=gpu -gpu=cc70 ")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -cpp -g -acc=gpu -gpu=cc70 ")
   set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})

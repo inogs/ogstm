@@ -67,7 +67,7 @@
          
 
              bottom = mbathy(jj,ji)
-             bottom = min(bottom,37) ! Stop at approx 500 mt
+             bottom = min(bottom,jpk_opt) ! Stop at approx 500 mt
 
              allocate( E(3,bottom+1,nlt))
              allocate( PARz(bottom,nchl+1))

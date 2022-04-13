@@ -68,6 +68,7 @@
 !!               for linear equation of state (neos=1 or 2)
       double precision Euphotic_lev
       INTEGER jpk_eu
+      INTEGER jpk_opt
       LOGICAL forcing_phys_initialized
       LOGICAL read_W_from_file, internal_sponging, ingv_files_direct_reading
       INTEGER ingv_lon_shift

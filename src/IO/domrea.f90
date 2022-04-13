@@ -162,6 +162,14 @@
 
        enddo
        if (lwp) write(*,*) 'Euphotic level at k = ', jpk_eu
+       do kk=1,jpk
+#ifdef gdept1d
+          if (gdept(kk).lt.500.0) jpk_opt=kk
+#else
+       if (gdept(kk,1,1).lt.500.0) jpk_opt=kk
+#endif
+       enddo
+       if (lwp) write(*,*) 'Optical level at k = ', jpk_opt
 
       CALL readnc_slice_double (maskfile,'e3t_0', e3t_0 )
       CALL readnc_slice_double (maskfile,'e3u_0', e3u_0 )

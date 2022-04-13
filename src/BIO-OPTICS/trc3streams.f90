@@ -27,9 +27,9 @@
       CHARACTER(LEN=20) :: V_POSITION     
       double precision :: solz(jpj,jpi), rmud(jpj,jpi)
       double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt)
-      double precision :: E(3,jpk+1,nlt)
-      double precision, allocatable :: E_to_call(:,:,:), PARz_to_call(:,:)
-      double precision :: PARz(jpk,nchl+1)
+      double precision, allocatable::  E(:,:,:) !(3,jpk+1,nlt)
+
+      double precision, allocatable  :: PARz(:,:) !(jpk,nchl+1)
       double precision :: CHLz(jpk,nchl),CDOMz(jpk),POCz(jpk)
       double precision :: Eu_0m(nlt)
       double precision :: zgrid(jpk+1)
@@ -37,7 +37,7 @@
       integer j3
 
 
-      trcoptparttime = MPI_WTIME() ! cronometer-start
+
 
 ! Where to compute irradiance options are
 !- BOTTOM
@@ -84,7 +84,7 @@
       call getrmud(solz,rmud)
 
 
-      PARz(:,:) = 0.0D0
+
 ! Start computing  RT when and where needed
 
       do ji=1,jpi
@@ -97,16 +97,16 @@
              bottom = mbathy(jj,ji)
              bottom = min(bottom,37) ! Stop at approx 500 mt
 
-             allocate( E_to_call(3,bottom+1,nlt))
-             allocate( PARz_to_call(bottom,nchl+1))
+             allocate( E(3,bottom+1,nlt))
+             allocate( PARz(bottom,nchl+1))
+             E(:,:,:)  = 0.0001d0
+             PARz(:,:) = 0.0001d0
 
-!            MODE = 0 ! exact solution
 !            MODE = 0 ! exact solution
 !            MODE = 1 ! approximate solution
              MODE = 2 ! library solution
 
-!             Ed_0m(:,jj,ji) =5.0D0
-!             Es_0m(:,jj,ji) =5.0D0
+
 
              RMU(jj,ji) = rmud(jj,ji)
 
@@ -179,27 +179,10 @@
 !                    write(*,*) "Bottom", Bottom
 !                    write(*,*) "rmud", rmud(jj,ji)
 
-                     E(:,:,:)  = 0.0001d0
-                     PARz(:,:) = 0.0001d0
 
-                     do jl=1, nlt ! just to avoid temporary arrays
-                     do jk=1,bottom+1
-                     do j3=1,3
-                      E_to_call(j3,jk,jl) =    E(j3,jk,jl)
-                     enddo
-                     enddo
-                     enddo
 
-                     do jl=1,nchl+1
-                     do jk=1,bottom
-                        PARz_to_call(jk,jl) = PARz(jk,jl)
-                     enddo
-                     enddo
-
-!                     call edeseu2(MODE,V_POSITION,bottom,zgrid,Ed_0m(:,jj,ji),Es_0m(:,jj,ji), &
-!                                  CHLz,CDOMz,POCz,rmud(jj,ji),E(:,1:bottom+1,:),PARz(1:bottom,:))
                      call edeseu2(MODE,V_POSITION,bottom,zgrid,Ed_0m(:,jj,ji),Es_0m(:,jj,ji), &
-                                  CHLz,CDOMz,POCz,rmud(jj,ji),E_to_call,PARz_to_call)
+                                  CHLz,CDOMz,POCz,rmud(jj,ji),E,PARz)
                 
                  do jl=1, nlt
                     do jk =1, bottom+1 ! Defined on w faces (cell's interfaces)
@@ -229,14 +212,12 @@
 
              endif
             
-            deallocate(E_to_call)
-            deallocate(PARz_to_call)
+            deallocate(E)
+            deallocate(PARz)
          enddo
       enddo
 
 
-      trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop
-      trcopttottime = trcopttottime + trcoptparttime
 
 #else
 

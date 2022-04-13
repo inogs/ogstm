@@ -24,7 +24,6 @@
       double precision, INTENT(IN) :: Edtop(nlt),Estop(nlt)
       double precision, INTENT(OUT) :: PARz(bottom,nchl+1)
       double precision, INTENT(OUT) :: E(3,bottom+1,nlt)
-!     double precision, intent(OUT) :: Eutop(nlt)
 !     Local variables
       double precision :: Etop
       double precision :: Plte

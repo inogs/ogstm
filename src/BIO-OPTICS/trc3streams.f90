@@ -46,34 +46,6 @@
 
       V_POSITION = "AVERAGE"
 
-! Compute RT every hour
-
-!      if (datestring .eq. DATESTART) then
-!         call read_date_string(datestring, year, month, day, sec)
-!         it_check = int(sec/3600.d0)
-!      endif
-!
-!      call read_date_string(datestring, year, month, day, sec)
-!
-!      it_actual = int(sec/3600.d0)
-!
-!      ihr       = it_actual ! from 0 to 23
-!
-!      if ( (it_actual .eq. it_check) .and. (datestring.ne.DATESTART)) then
-!
-!         if (lwp) write(*,*) 'Skip computing RT at : ', datestring
-!
-!         trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop
-!
-!         trcopttottime = trcopttottime + trcoptparttime
-!
-!         return ! no need to compute RT
-!
-!      else
-!
-!         it_check = it_actual
-!
-!      endif
 
       call tau2julianday(datestringToTAU(datestring), deltaT, day_of_year)
      
@@ -130,8 +102,7 @@
                  CHLz(1:bottom,2) = trn(1:bottom,jj,ji,ppP2l)
                  CHLz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3l)
                  CHLz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4l)
-!                write(*,*) 'WARNING: CDOM deactivated' 
-!                CDOMz(1:bottom)  = 0.0d0!trn(1:bottom,jj,ji,ppR1l) + trn(1:bottom,jj,ji,ppR2l) + trn(1:bottom,jj,ji,ppR3l)
+
                  CDOMz(1:bottom)  = trn(1:bottom,jj,ji,ppR1l) + trn(1:bottom,jj,ji,ppR2l) + trn(1:bottom,jj,ji,ppR3l)
     
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
@@ -142,9 +113,7 @@
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)
                  Eu(1,jj,ji,:) = Eu_0m(:)
-!                write(*,*) "Ed", jl,jk,"=", Ed(1,jj,ji,:)
-!                write(*,*) "Es", jl,jk,"=", Es(1,jj,ji,:)
-!                write(*,*) "Eu", jl,jk,"=", Eu(1,jj,ji,:)
+
 
 
                  do jl=1, nlt
@@ -153,11 +122,10 @@
                         Es(jk,jj,ji,jl) = Esz(jk-1,jl)
                         Eu(jk,jj,ji,jl) = Euz(jk-1,jl)
 !                       write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
-!                       write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
-!                       write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
+
                     enddo
                  enddo
-!                write(*,*) "++++++++++++++++++"
+
 
                  do jl=1, nchl+1
                     do jk =1, bottom
@@ -165,19 +133,16 @@
 !                       write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
                     enddo
                  enddo
-!                write(*,*) "++++++++++++++++++"
-!                STOP
+
                  ENDIF
 
                  IF (MODE .EQ. 2) then
                      zgrid(1)=0.0D0
                      do jk =1,jpk
                          zgrid(jk+1) = zgrid(jk) + e3w(jk,jj,ji)
-!                        write(*,*) "zgrid", jk+1, "=", zgrid(jk+1)
                      enddo
                     
-!                    write(*,*) "Bottom", Bottom
-!                    write(*,*) "rmud", rmud(jj,ji)
+
 
 
 
@@ -189,22 +154,16 @@
                         Ed(jk,jj,ji,jl) = E(1,jk,jl)
                         Es(jk,jj,ji,jl) = E(2,jk,jl)
                         Eu(jk,jj,ji,jl) = E(3,jk,jl)
-!                       write(*,*) "Ed", jl,jk,"=", Ed(jk,jj,ji,jl)
-!                       write(*,*) "Es", jl,jk,"=", Es(jk,jj,ji,jl)
-!                       write(*,*) "Eu", jl,jk,"=", Eu(jk,jj,ji,jl)
+
                     enddo
                  enddo
-!                write(*,*) "++++++++++++++++++"
 
                  do jl=1, nchl+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
-!                       write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
                     enddo
                  enddo 
-!                write(*,*) "++++++++++++++++++"
 
-!                STOP
 
                  ENDIF
 

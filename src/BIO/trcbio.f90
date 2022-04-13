@@ -140,23 +140,33 @@
        counterS = counterS + 1
        DO jk=1,bottom
 ! Environmental regulating factors (er,:)
-               er(counter,1)  = tn (jk,jj,ji)! Temperature (Celsius)
+               er(counter,1)  = tn (jk,jj,ji)  ! Temperature (Celsius)
                er(counter,2)  = sn (jk,jj,ji)  ! Salinity PSU
-               er(counter,3)  = rho(jk,jj,ji)        ! Density Kg/m3
-               er(counter,4)  = ice                  ! from 0 to 1 adimensional
+               er(counter,3)  = rho(jk,jj,ji)  ! Density Kg/m3
+               er(counter,4)  = ice            ! from 0 to 1 adimensional
+
                if (jk==1) then
                     er(counter ,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
                else
-                    er(counter ,5)  = 0.0D0
+                    er(counter ,5)  = huge(er(1,1))
                endif
+
                er(counter,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+
                if (jk==1) then
                     er(counter   ,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
                else
-                    er(counter   ,7)  = 0.0D0
+                    er(counter   ,7)  = huge(er(1,1))
                endif
+
                er(counter,8)  = e3t(jk,jj,ji)        ! depth in meters of the given cell
-               er(counter,9)  = vatm(jj,ji)                ! wind speed (m/s)
+
+               if (jk==1) then
+                    er(counter,9)  = vatm(jj,ji)                ! wind speed (m/s)
+               else
+                    er(counter,9)  = huge(er(1,1))
+               endif
+
                er(counter,10) = ogstm_PH(jk,jj,ji)   ! 8.1
 
                correct_fact= 1.0D0
@@ -182,6 +192,7 @@
        ENDDO
 
 !      call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
+
        call BFM1D_Input_EcologyDynamics(SRFidx,BOTidx,a,jtrmax,er)
 
        call BFM1D_reset()

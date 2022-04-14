@@ -86,8 +86,10 @@ MODULE MATRIX_VARS
 !------------------------------------------------------------
         SUBROUTINE POPULATE_MATRIX_VARS()
         INTEGER :: i,j
-        INTEGER :: counter,counter_high,trans_high,counter_dia2d,trans_dia2d_low,counter_dia2d_high,trans_dia2d_high,trans_dia_low,counter_dia,counter_dia_high,trans_dia_high
-        INTEGER ::counter_phys2d,trans_phys2d_low,counter_phys2d_high,trans_phys2d_high,trans_phys_low,counter_phys,counter_phys_high,trans_phys_high
+        INTEGER :: counter,counter_high,trans_high,counter_dia2d,trans_dia2d_low,counter_dia2d_high
+        INTEGER :: trans_dia2d_high,trans_dia_low,counter_dia,counter_dia_high,trans_dia_high
+        INTEGER :: counter_phys2d,trans_phys2d_low,counter_phys2d_high,trans_phys2d_high,trans_phys_low
+        INTEGER :: counter_phys,counter_phys_high,trans_phys_high
 
         counter = 0
         counter_high = 0

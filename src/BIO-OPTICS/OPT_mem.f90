@@ -51,6 +51,7 @@
       real, allocatable :: zkef_f (:,:)
       CHARACTER(LEN=5), allocatable,dimension(:) :: Ednm, Esnm, Eunm
       INTEGER, allocatable, dimension(:) :: EdWR,EsWR,EuWR
+      integer Ed_dumped_vars, Es_dumped_vars, Eu_dumped_vars
 
 
 
@@ -298,8 +299,7 @@
       namelist /ES_3D/      Esnm, EsWR
       namelist /EU_3D/      Eunm, EuWR
       !local
-      integer jk,jj,ji, tmask_levels
-      integer jn, Ed_dumped_vars, Es_dumped_vars, Eu_dumped_vars
+      integer jk,jj,ji, tmask_levels, jn
 
       OPEN(unit=numnat, file='namelist.optics', status= 'OLD')
 

@@ -20,6 +20,7 @@ MODULE MATRIX_VARS
         USE myalloc
         USE IO_mem
         USE FN_mem
+        USE OPT_mem
         USE TIME_MANAGER
         use mpi
         USE ogstm_mpi_module
@@ -43,11 +44,18 @@ MODULE MATRIX_VARS
         type(processor_string), allocatable :: matrix_phys_2d_2(:,:)
         type(processor_string), allocatable :: matrix_phys_1(:,:)
         type(processor_string), allocatable :: matrix_phys_2(:,:)
+
+        type(processor_string), allocatable, dimension(:,:) :: matrix_Ed, matrix_Es,matrix_Eu
+
         INTEGER :: matrix_state_1_row, matrix_state_2_row
         INTEGER :: matrix_diag_2d_1_row, matrix_diag_2d_2_row
         INTEGER :: matrix_diag_1_row, matrix_diag_2_row
         INTEGER :: matrix_phys_2d_1_row, matrix_phys_2d_2_row
         INTEGER :: matrix_phys_1_row, matrix_phys_2_row
+        INTEGER :: matrix_Ed_row, matrix_Es_row, matrix_Eu_row
+
+
+
         INTEGER :: matrix_col != nodes
 
         INTEGER :: jptra_dia_2d_wri, jptra_dia_2d_high_wri
@@ -80,6 +88,10 @@ MODULE MATRIX_VARS
         ALLOCATE (matrix_phys_2d_2(matrix_phys_2d_2_row, matrix_col))
         ALLOCATE (matrix_phys_1(matrix_phys_1_row, matrix_col))
         ALLOCATE (matrix_phys_2(matrix_phys_2_row, matrix_col))
+        ALLOCATE (matrix_Ed (matrix_Ed_row, matrix_col))
+        ALLOCATE (matrix_Es (matrix_Es_row, matrix_col))
+        ALLOCATE (matrix_Eu (matrix_Eu_row, matrix_col))
+
         END SUBROUTINE ALLOCATE_MATRIX_VARS
 !------------------------------------------------------------
 
@@ -88,6 +100,7 @@ MODULE MATRIX_VARS
         INTEGER :: i,j
         INTEGER :: counter,counter_high,trans_high,counter_dia2d,trans_dia2d_low,counter_dia2d_high,trans_dia2d_high,trans_dia_low,counter_dia,counter_dia_high,trans_dia_high
         INTEGER ::counter_phys2d,trans_phys2d_low,counter_phys2d_high,trans_phys2d_high,trans_phys_low,counter_phys,counter_phys_high,trans_phys_high
+        INTEGER:: counter_Ed, counter_Es, counter_Eu, trans_E
 
         counter = 0
         counter_high = 0
@@ -99,6 +112,10 @@ MODULE MATRIX_VARS
         counter_phys2d_high = 0
         counter_phys = 0
         counter_phys_high = 0
+        counter_Ed=0
+        counter_Es=0
+        counter_Eu=0
+
 
         ! define how many rows will be in the procs matrix
         
@@ -181,6 +198,24 @@ MODULE MATRIX_VARS
                 matrix_phys_1_row = (jptra_phys_high_wri/nodes) + 1
         END IF
 
+       IF (MOD(Ed_dumped_vars, nodes)==0 ) THEN
+               matrix_Ed_row = (Ed_dumped_vars/nodes)
+       ELSE
+               matrix_Ed_row = (Ed_dumped_vars/nodes)  + 1
+       ENDIF
+
+       IF (MOD(Es_dumped_vars, nodes)==0 ) THEN
+               matrix_Es_row = (Es_dumped_vars/nodes)
+       ELSE
+               matrix_Es_row = (Es_dumped_vars/nodes)  + 1
+       ENDIF
+
+       IF (MOD(Eu_dumped_vars, nodes)==0 ) THEN
+               matrix_Eu_row = (Eu_dumped_vars/nodes)
+       ELSE
+               matrix_Eu_row = (Eu_dumped_vars/nodes)  + 1
+       ENDIF
+
 
         !allocate matrix
 
@@ -249,6 +284,25 @@ MODULE MATRIX_VARS
                         matrix_phys_1(i,j)%var_name = novars
                 END DO
         END DO
+
+        DO i=1,matrix_Ed_row
+                DO j=1,matrix_col
+                        matrix_Ed(i,j)%var_name = novars
+                END DO
+        END DO
+        DO i=1,matrix_Es_row
+                DO j=1,matrix_col
+                        matrix_Es(i,j)%var_name = novars
+                END DO
+        END DO
+        DO i=1,matrix_Eu_row
+                DO j=1,matrix_col
+                        matrix_Eu(i,j)%var_name = novars
+                END DO
+        END DO
+
+
+
 
         !OK
         !insert variable string inside matrix of procs
@@ -388,7 +442,48 @@ MODULE MATRIX_VARS
                 END DO
         END DO
         
-        end if 
+        end if
+
+
+        DO i=1,matrix_Ed_row
+                DO j=1,matrix_col
+                        IF (counter==Ed_dumped_vars)THEN
+                                EXIT
+                        ELSE
+                                trans_E = Ed_table(counter_Ed+1)
+                                matrix_Ed(i,j)%var_name = Ednm(trans_E)
+                                counter_Ed =counter_Ed + 1
+                        END IF
+                END DO
+        END DO
+
+
+        DO i=1,matrix_Es_row
+                DO j=1,matrix_col
+                        IF (counter==Es_dumped_vars)THEN
+                                EXIT
+                        ELSE
+                                trans_E = Es_table(counter_Es+1)
+                                matrix_Es(i,j)%var_name = Esnm(trans_E)
+                                counter_Es=counter_Es + 1
+                        END IF
+                END DO
+        END DO
+
+        DO i=1,matrix_Eu_row
+                DO j=1,matrix_col
+                        IF (counter==Eu_dumped_vars)THEN
+                                EXIT
+                        ELSE
+                                trans_E = Eu_table(counter_Eu+1)
+                                matrix_Eu(i,j)%var_name = Eunm(trans_E)
+                                counter_Eu=counter_Eu + 1
+                        END IF
+                END DO
+        END DO
+
+
+
 
         END SUBROUTINE POPULATE_MATRIX_VARS
 !----------------------------------------------------------

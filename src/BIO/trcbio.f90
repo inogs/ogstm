@@ -183,11 +183,11 @@
                counter=counter+1
 
        ENDDO
+       BOTidx(counterB)=counter-1
+       counterB = counterB + 1
        DO jk=bottom+1,jpk
         counter=counter+1
        ENDDO
-       BOTidx(counterB)=counter-1
-       counterB = counterB + 1
        ENDDO
        ENDDO
 
@@ -211,7 +211,7 @@
        endif
 
        DO jk=1, jpk
-          tra(jk,jj,ji,jtr) = tra(jk,jj,ji,jtr) + b(counter,jtr) * tmask(jk,jj,ji) ! trend
+          tra(jk,jj,ji,jtr) = tra(jk,jj,ji,jtr) + b(counter,jtr) * bfmmask(jk,jj,ji) ! trend
           counter = counter + 1
        ENDDO
 
@@ -230,11 +230,11 @@
        DO jk=1, jpk
 
        DO jtr=1, jtrmax
-          tra_DIA(jtr, jk ,jj,ji) = d(jtr,counter) * tmask(jk,jj,ji) ! diagnostic
+          tra_DIA(jtr, jk ,jj,ji) = d(jtr,counter) * bfmmask(jk,jj,ji) ! diagnostic
        ENDDO
           ogstm_PH(jk,jj,ji) = d(pppH,counter) ! Follows solver guess, put 8.0 if pppH is not defined
        DO jtr=1, 4
-          ogstm_sediPI(jk,jj,ji,jtr) = c(counter,jtr) * tmask(jk,jj,ji)     ! BFM output of sedimentation speed (m/d)
+          ogstm_sediPI(jk,jj,ji,jtr) = c(counter,jtr) * bfmmask(jk,jj,ji)     ! BFM output of sedimentation speed (m/d)
        ENDDO
 
           counter = counter + 1
@@ -246,7 +246,7 @@
        counter=1
        DO ji=1,jpi
        DO jj=1,jpj
-           tra_DIA_2d(:,jj,ji) = d2(:,counter) * tmask(1,jj,ji)! diagnostic
+           tra_DIA_2d(:,jj,ji) = d2(:,counter) * bfmmask(1,jj,ji)! diagnostic
            counter = counter +1
        ENDDO
        ENDDO

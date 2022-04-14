@@ -114,6 +114,7 @@
       double precision,allocatable  :: RMU(:,:)     ! lat, lon
       double precision,allocatable  :: Ed_IO(:,:,:,:),Es_IO(:,:,:,:),Eu_IO(:,:,:,:)
       INTEGER(kind = 1), allocatable, dimension(:,:,:) :: opt_mask
+      INTEGER, allocatable, dimension(:) :: Ed_table, Es_table, Eu_table
 
 
 
@@ -298,6 +299,7 @@
       namelist /EU_3D/      Eunm, EuWR
       !local
       integer jk,jj,ji, tmask_levels
+      integer jn, Ed_dumped_vars, Es_dumped_vars, Eu_dumped_vars
 
       OPEN(unit=numnat, file='namelist.optics', status= 'OLD')
 
@@ -311,6 +313,53 @@
       READ(numnat,EU_3D)
 
       CLOSE(numnat)
+
+      Ed_dumped_vars=0
+      Es_dumped_vars=0
+      Eu_dumped_vars=0
+
+      do jn=1,nlt
+        if (EdWR(jn)==1)  Ed_dumped_vars=Ed_dumped_vars+1
+        if (EsWR(jn)==1)  Es_dumped_vars=Es_dumped_vars+1
+        if (EuWR(jn)==1)  Eu_dumped_vars=Eu_dumped_vars+1
+      enddo
+
+      allocate(Ed_table(Ed_dumped_vars))
+      allocate(Es_table(Es_dumped_vars))
+      allocate(Eu_table(Eu_dumped_vars))
+
+      Ed_dumped_vars=0
+      do jn=1,nlt
+         if (EdWR(jn).eq.1) then
+            Ed_dumped_vars=Ed_dumped_vars+1
+            Ed_table(Ed_dumped_vars) = jn
+            if (lwp) WRITE(numout,*) Ednm(jn),' will be dumped'
+         endif
+      enddo
+
+
+      Es_dumped_vars=0
+      do jn=1,nlt
+         if (EsWR(jn).eq.1) then
+            Es_dumped_vars=Es_dumped_vars+1
+            Es_table(Es_dumped_vars) = jn
+            if (lwp) WRITE(numout,*) Esnm(jn),' will be dumped'
+         endif
+      enddo
+
+      Eu_dumped_vars=0
+      do jn=1,nlt
+         if (EdWR(jn).eq.1) then
+            Eu_dumped_vars=Eu_dumped_vars+1
+            Eu_table(Eu_dumped_vars) = jn
+            if (lwp) WRITE(numout,*) Eunm(jn),' will be dumped'
+         endif
+      enddo
+
+
+
+
+
 
       do ji=1,jpi
       do jj=1,jpj

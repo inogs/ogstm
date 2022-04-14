@@ -138,7 +138,8 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                                 if (FREQ_GROUP.eq.1) counter_var_high = counter_var_high + 1
 
                                 !GATHERV TO THE WRITING RANK
-                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count, jpdispl_count, MPI_DOUBLE_PRECISION, writing_rank, MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count,& 
+                                                jpdispl_count, MPI_DOUBLE_PRECISION, writing_rank, MPI_COMM_WORLD, IERR)
 
                         END IF
 
@@ -182,14 +183,14 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 
                                         ! **** ASSEMBLING *** WRITING RANK  puts in tot matrix buffer received by idrank
                                         do ji =totistart,totiend
-                                                i_contribution   = jpk*jpj_rec_a(idrank+1)*(ji-1-totistart+ relistart)
-                                                        do jj =totjstart,totjend
-                                                                j_contribution = jpk*(jj-1-totjstart+ reljstart)
-                                                                        do jk =1, jpk
-                                                                                ind = jk + j_contribution + i_contribution
-                                                                                tottrnIO(jk,jj,ji)= bufftrn_TOT(ind+jpdispl_count(idrank+1))
-                                                                        enddo
-                                                        enddo
+                                         i_contribution   = jpk*jpj_rec_a(idrank+1)*(ji-1-totistart+ relistart)
+                                          do jj =totjstart,totjend
+                                           j_contribution = jpk*(jj-1-totjstart+ reljstart)
+                                           do jk =1, jpk
+                                            ind = jk + j_contribution + i_contribution
+                                            tottrnIO(jk,jj,ji)= bufftrn_TOT(ind+jpdispl_count(idrank+1))
+                                           enddo
+                                          enddo
                                         enddo
                                 END DO
 
@@ -197,9 +198,11 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                                 bkpname = DIR//'ave.'//datemean//'.'//trim(var_to_store)//'.nc.bkp'
 
                                 if (IsBackup) then
-                                        CALL WRITE_AVE_BKP(bkpname,var_to_store,datefrom, dateTo,tottrnIO,elapsed_time, deflate_ave, deflate_level_ave)
+                                        CALL WRITE_AVE_BKP(bkpname,var_to_store,datefrom,&
+                                                dateTo,tottrnIO,elapsed_time, deflate_ave, deflate_level_ave)
                                 else
-                                        CALL WRITE_AVE(output_file_nc,var_to_store,datefrom, dateTo, tottrnIO, deflate_ave, deflate_level_ave)
+                                        CALL WRITE_AVE(output_file_nc,var_to_store,datefrom,&
+                                                dateTo, tottrnIO, deflate_ave, deflate_level_ave)
                                 endif
                         END IF
                         !writing_rank_fin_time = MPI_Wtime()

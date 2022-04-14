@@ -171,7 +171,7 @@ MODULE module_step
 
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp(DATEstring)    ! se commento questo non fa calcoli
-        call trcave
+        call trcave(DATEstring)
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
 

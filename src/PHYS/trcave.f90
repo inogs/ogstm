@@ -1,15 +1,20 @@
-      SUBROUTINE trcave
+      SUBROUTINE trcave(datestring)
       USE myalloc
       USE IO_mem
       USE FN_mem
+      USE OPT_mem
+      USE TIME_MANAGER
       use mpi
 
       implicit none
+      character(LEN=17), INTENT(IN) ::  datestring
 !     local
       integer jk,jj,ji,jn
       integer :: jn_high, jn_on_all
       double precision ::  Miss_val =1.e20
       double precision :: elapsed_time, inv_incremented_time
+      integer :: year, month, day, ihr
+      double precision :: sec
 
       ave_partTime = MPI_WTIME()
 
@@ -213,6 +218,67 @@
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime
+
+
+!     *********************  DIAGNOSTICS RT **********
+
+      call read_date_string(datestring, year, month, day, sec)
+
+!     ihr = int(sec/3600.d0) ! from 0 to 23
+
+      if (( sec .GE. 9.9D0*3600.0d0) .AND. ( sec .LT. 13.9D0*3600.0D0)) then
+        elapsed_time = elapsed_time_3
+        inv_incremented_time = 1./(elapsed_time_3 + rdt)
+
+
+       DO jn=1, nlt
+       DO ji=1, jpi
+       DO jj=1, jpj
+       DO jk=1, jpk
+          IF(opt_mask(jk,jj,ji) .NE. 0.) THEN
+           Ed_IO(jk,jj,ji,jn) = (Ed_IO(jk,jj,ji,jn)*elapsed_time + Ed(jk,jj,ji,jn)*rdt)*inv_incremented_time
+         ELSE
+            Ed_IO(jk,jj,ji,: )=Miss_val
+          ENDIF
+       END DO
+       END DO
+       END DO
+       END DO
+
+       DO jn=1, nlt
+       DO ji=1, jpi
+       DO jj=1, jpj
+       DO jk=1, jpk
+          IF(opt_mask(jk,jj,ji) .NE. 0.) THEN
+           Es_IO(jk,jj,ji,jn) = (Es_IO(jk,jj,ji,jn)*elapsed_time + Es(jk,jj,ji,jn)*rdt)*inv_incremented_time
+         ELSE
+            Es_IO(jk,jj,ji,: )=Miss_val
+          ENDIF
+       END DO
+       END DO
+       END DO
+       END DO
+
+       DO jn=1, nlt
+       DO ji=1, jpi
+       DO jj=1, jpj
+       DO jk=1, jpk
+          IF(opt_mask(jk,jj,ji) .NE. 0.) THEN
+           Eu_IO(jk,jj,ji,jn) = (Eu_IO(jk,jj,ji,jn)*elapsed_time + Eu(jk,jj,ji,jn)*rdt)*inv_incremented_time
+         ELSE
+            Eu_IO(jk,jj,ji,: )=Miss_val
+          ENDIF
+       END DO
+       END DO
+       END DO
+       END DO
+
+
+
+
+
+        elapsed_time_3 = elapsed_time_3 + rdt ! increased here instead of in step.f90
+     endif
 
       END SUBROUTINE trcave
 

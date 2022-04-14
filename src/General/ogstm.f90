@@ -189,6 +189,8 @@ SUBROUTINE ogstm_initialize()
 
       call Initialize()
 
+
+      call init_opt
       YAML_FILE='oasim_config.yaml'
       lib = oasim_lib(trim(YAML_FILE),LAT_ARRAY, LON_ARRAY,  ERR)
       if (ERR) then
@@ -198,6 +200,7 @@ SUBROUTINE ogstm_initialize()
 
 
       calc=calc_unit(jpi*jpj, lib)
+
 
 END SUBROUTINE ogstm_initialize
 

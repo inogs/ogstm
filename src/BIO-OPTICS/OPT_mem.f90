@@ -49,7 +49,8 @@
       double precision, allocatable :: ssalb(:,:,:)
 ! ############
       real, allocatable :: zkef_f (:,:)
-  
+      CHARACTER(LEN=5), allocatable,dimension(:) :: Ednm, Esnm, Eunm
+      INTEGER, allocatable, dimension(:) :: EdWR,EsWR,EuWR
 
 
 
@@ -111,8 +112,10 @@
       double precision,allocatable  :: Ed(:,:,:,:), Es(:,:,:,:), Eu(:,:,:,:) ! depth, lat, lon, wave length
       double precision,allocatable  :: PAR(:,:,:,:) ! depth, lat, lon, phyto
       double precision,allocatable  :: RMU(:,:)     ! lat, lon
-      double precision,allocatable  :: Ed_DIA_IO(:,:,:,:),Es_DIA_IO(:,:,:,:),Eu_DIA_IO(:,:,:,:)
-      double precision,allocatable  :: Ed_DIA_IO_HIGH(:,:,:,:),Es_DIA_IO_HIGH(:,:,:,:),Eu_DIA_IO_HIGH(:,:,:,:)
+      double precision,allocatable  :: Ed_IO(:,:,:,:),Es_IO(:,:,:,:),Eu_IO(:,:,:,:)
+      INTEGER(kind = 1), allocatable, dimension(:,:,:) :: opt_mask
+
+
 
 
 !----------------------------------------------------------------------
@@ -179,6 +182,13 @@
        allocate(ssalbIO(33,jpj,jpi,2)); ssalbIO=huge(sp(1,1))
 
 
+       allocate(Ednm(nlt))
+       allocate(Esnm(nlt))
+       allocate(Eunm(nlt))
+
+       allocate(EdWR(nlt)); EdWR=huge(EdWR(1))
+       allocate(EsWR(nlt)); EsWR=huge(EdWR(1))
+       allocate(EuWR(nlt)); EuWR=huge(EdWR(1))
 
 ! radiative transfer model
 
@@ -226,8 +236,9 @@
        allocate(Ed(jpk,jpj,jpi,nlt),Es(jpk,jpj,jpi,nlt),Eu(jpk,jpj,jpi,nlt))
        allocate(PAR(jpk,jpj,jpi,nchl+1)) ! last index total par
        allocate(RMU(jpj,jpi))
-       allocate(Ed_DIA_IO(jpk,jpj,jpi,nlt),Es_DIA_IO(jpk,jpj,jpi,nlt),Eu_DIA_IO(jpk,jpj,jpi,nlt))
-       allocate(Ed_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Es_DIA_IO_HIGH(jpk,jpj,jpi,nlt),Eu_DIA_IO_HIGH(jpk,jpj,jpi,nlt))
+       allocate(Ed_IO(jpk,jpj,jpi,nlt),Es_IO(jpk,jpj,jpi,nlt),Eu_IO(jpk,jpj,jpi,nlt))
+       allocate(opt_mask(jpk,jpj,jpi)) ; opt_mask=huge(opt_mask(1,1,1))
+
 
 
       Ed(:,:,:,:)   = 0.0d0
@@ -235,12 +246,10 @@
       Eu(:,:,:,:)   = 0.0d0 
       PAR(:,:,:,:)  = 0.0d0
       RMU(:,:)  = 0.0d0
-      Ed_DIA_IO(:,:,:,:)   = 0.0d0
-      Es_DIA_IO(:,:,:,:)   = 0.0d0
-      Eu_DIA_IO(:,:,:,:)   = 0.0d0
-      Ed_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
-      Es_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
-      Eu_DIA_IO_HIGH(:,:,:,:)   = 0.0d0
+      Ed_IO(:,:,:,:)   = 0.0d0
+      Es_IO(:,:,:,:)   = 0.0d0
+      Eu_IO(:,:,:,:)   = 0.0d0
+
 
       h = 6.6256E-34   !Plancks constant J sec
       c = 2.998E8      !speed of light m/sec
@@ -272,13 +281,52 @@
       acdom(16)= 0.00032974519698294086D0
       acdom(17)= 0.00021557744657913622D0
       acdom(18)= 0.00012792345684771735D0
-        
+
+
         
 #ifdef Mem_Monitor
               mem_all=get_mem(err) - aux_mem
 #endif
         
       END subroutine myalloc_OPT
+
+      SUBROUTINE init_OPT
+
+      IMPLICIT NONE
+      namelist /ED_3D/      Ednm, EdWR
+      namelist /ES_3D/      Esnm, EsWR
+      namelist /EU_3D/      Eunm, EuWR
+      !local
+      integer jk,jj,ji, tmask_levels
+
+      OPEN(unit=numnat, file='namelist.optics', status= 'OLD')
+
+      REWIND(numnat)
+      READ(numnat,ED_3D)
+
+      REWIND(numnat)
+      READ(numnat,ES_3D)
+
+      REWIND(numnat)
+      READ(numnat,EU_3D)
+
+      CLOSE(numnat)
+
+      do ji=1,jpi
+      do jj=1,jpj
+
+          tmask_levels = mbathy(jj,ji)
+          if (gdept(tmask_levels,jj,ji).lt.500.0) then
+            opt_mask(1:tmask_levels+1,jj,ji) = 1
+
+          else
+            opt_mask(1:jpk_opt+1,jj,ji) = 1
+          endif
+
+      enddo
+      enddo
+
+      END SUBROUTINE init_OPT
         
         
 

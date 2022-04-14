@@ -37,7 +37,8 @@ MODULE MPI_GATHER_INFO
         
         !timing
 
-        DOUBLE PRECISION :: communication_start_time_gather_info, communication_finish_time_gather_info, communication_proctime_time_gather_info, communication_max_time_gather_info
+        DOUBLE PRECISION :: communication_start_time_gather_info, communication_finish_time_gather_info
+        DOUBLE PRECISION :: communication_proctime_time_gather_info, communication_max_time_gather_info
 
         !variable do loops
 

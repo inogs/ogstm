@@ -434,11 +434,29 @@
        !$acc update device(flx_ridxt(1:Fsize,1:4))
        !$acc update device( diaflx(1:7, 1:Fsize, 1:jptra))    
        
-       !$acc update device( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
-       !$acc update device( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
-       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
-       !$acc update device( zbuf(1:jpk,1:jpj,1:jpi) )
-      
+!!$       !$acc update device( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+!!$       !$acc update device( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+!!$       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+!!$       !$acc update device( zbuf(1:jpk,1:jpj,1:jpi) )
+
+         !$acc kernels default(present)
+         DO ji = 1, jpi
+            DO jj = 1, jpj
+               DO jk = 1, jpk
+                  zy(jk,jj,ji) = 0
+                  zz(jk,jj,ji) = 0 
+                  zx(jk,jj,ji) = 0
+                  ztj(jk,jj,ji)= 0
+                  zti(jk,jj,ji)= 0
+                  zbuf(jk,jj,ji) = 0.
+                  zkx(jk,jj,ji)=0.  
+                  zky(jk,jj,ji)=0.  
+                  zkz(jk,jj,ji)=0.
+               ENDDO
+            ENDDO
+         ENDDO
+         !$acc end kernels 
+       
 !$omp taskloop default(none) private(jf,junk,junki,junkj,junkk,zbtr) &
 !$omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
 !$omp shared(big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
@@ -477,23 +495,23 @@
 !!$       zky(:,:,:)=0.  
 !!$       zkz(:,:,:)=0.
 
-         !$acc kernels default(present)
-         DO ji = 1, jpi
-            DO jj = 1, jpj
-               DO jk = 1, jpk
-                  zy(jk,jj,ji) = 0
-                  zz(jk,jj,ji) = 0 
-                  zx(jk,jj,ji) = 0
-                  ztj(jk,jj,ji)= 0
-                  zti(jk,jj,ji)= 0
-                  zbuf(jk,jj,ji) = 0.
-                  zkx(jk,jj,ji)=0.  
-                  zky(jk,jj,ji)=0.  
-                  zkz(jk,jj,ji)=0.
-               ENDDO
-            ENDDO
-         ENDDO
-         !$acc end kernels 
+!!$         !$acc kernels default(present)
+!!$         DO ji = 1, jpi
+!!$            DO jj = 1, jpj
+!!$               DO jk = 1, jpk
+!!$                  zy(jk,jj,ji) = 0
+!!$                  zz(jk,jj,ji) = 0 
+!!$                  zx(jk,jj,ji) = 0
+!!$                  ztj(jk,jj,ji)= 0
+!!$                  zti(jk,jj,ji)= 0
+!!$                  zbuf(jk,jj,ji) = 0.
+!!$                  zkx(jk,jj,ji)=0.  
+!!$                  zky(jk,jj,ji)=0.  
+!!$                  zkz(jk,jj,ji)=0.
+!!$               ENDDO
+!!$            ENDDO
+!!$         ENDDO
+!!$         !$acc end kernels 
 
          
 !        zkx(  :,:,1)=0.  

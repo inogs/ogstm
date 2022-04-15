@@ -455,10 +455,15 @@ MODULE MATRIX_VARS
                         ELSE
                                 trans_E = Ed_table(counter_Ed+1)
                                 matrix_Ed(i,j)%var_name = Ednm(trans_E)
+                                matrix_Ed(i,j)%var_index = trans_E
                                 counter_Ed =counter_Ed + 1
                         END IF
                 END DO
         END DO
+
+
+
+
 
 
         DO i=1,matrix_Es_row
@@ -468,6 +473,7 @@ MODULE MATRIX_VARS
                         ELSE
                                 trans_E = Es_table(counter_Es+1)
                                 matrix_Es(i,j)%var_name = Esnm(trans_E)
+                                matrix_Es(i,j)%var_index = trans_E
                                 counter_Es=counter_Es + 1
                         END IF
                 END DO
@@ -480,6 +486,7 @@ MODULE MATRIX_VARS
                         ELSE
                                 trans_E = Eu_table(counter_Eu+1)
                                 matrix_Eu(i,j)%var_name = Eunm(trans_E)
+                                matrix_Eu(i,j)%var_index = trans_E
                                 counter_Eu=counter_Eu + 1
                         END IF
                 END DO
@@ -489,7 +496,13 @@ MODULE MATRIX_VARS
 
 
         END SUBROUTINE POPULATE_MATRIX_VARS
+
 !----------------------------------------------------------
+
+!       SUBROUTINE DIA_MATRIX_VARS()
+
+!----------------------------------------------------------
+
         SUBROUTINE DIA_MATRIX_VARS()
 
         INTEGER :: i
@@ -647,6 +660,10 @@ MODULE MATRIX_VARS
 
 
         END SUBROUTINE DIA_MATRIX_VARS
+!------------------------------------------------------------
+
+!       SUBROUTINE CLEAN_MATRIX_VARS()
+
 !------------------------------------------------------------
         SUBROUTINE CLEAN_MATRIX_VARS()
 

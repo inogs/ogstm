@@ -138,6 +138,7 @@ SUBROUTINE ogstm_initialize()
       call parlec      ! read namelist.init
       call time_init
       call trclec
+      call opt_lec
 
       ! -------------------------
       call ALLOC_ALL ! Needs Time_Manager

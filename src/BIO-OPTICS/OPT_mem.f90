@@ -184,13 +184,7 @@
        allocate(ssalbIO(33,jpj,jpi,2)); ssalbIO=huge(sp(1,1))
 
 
-       allocate(Ednm(nlt))
-       allocate(Esnm(nlt))
-       allocate(Eunm(nlt))
 
-       allocate(EdWR(nlt)); EdWR=huge(EdWR(1))
-       allocate(EsWR(nlt)); EsWR=huge(EdWR(1))
-       allocate(EuWR(nlt)); EuWR=huge(EdWR(1))
 
 ! radiative transfer model
 
@@ -292,14 +286,22 @@
         
       END subroutine myalloc_OPT
 
-      SUBROUTINE init_OPT
+      SUBROUTINE opt_lec
 
       IMPLICIT NONE
       namelist /ED_3D/      Ednm, EdWR
       namelist /ES_3D/      Esnm, EsWR
       namelist /EU_3D/      Eunm, EuWR
       !local
-      integer jk,jj,ji, tmask_levels, jn
+      integer jn
+
+       allocate(Ednm(nlt))
+       allocate(Esnm(nlt))
+       allocate(Eunm(nlt))
+
+       allocate(EdWR(nlt)); EdWR=huge(EdWR(1))
+       allocate(EsWR(nlt)); EsWR=huge(EdWR(1))
+       allocate(EuWR(nlt)); EuWR=huge(EdWR(1))
 
       OPEN(unit=numnat, file='namelist.optics', status= 'OLD')
 
@@ -323,6 +325,8 @@
         if (EsWR(jn)==1)  Es_dumped_vars=Es_dumped_vars+1
         if (EuWR(jn)==1)  Eu_dumped_vars=Eu_dumped_vars+1
       enddo
+
+
 
       allocate(Ed_table(Ed_dumped_vars))
       allocate(Es_table(Es_dumped_vars))
@@ -349,7 +353,7 @@
 
       Eu_dumped_vars=0
       do jn=1,nlt
-         if (EdWR(jn).eq.1) then
+         if (EuWR(jn).eq.1) then
             Eu_dumped_vars=Eu_dumped_vars+1
             Eu_table(Eu_dumped_vars) = jn
             if (lwp) WRITE(numout,*) Eunm(jn),' will be dumped'
@@ -358,23 +362,25 @@
 
 
 
+      END SUBROUTINE opt_lec
 
+      SUBROUTINE init_OPT
+      IMPLICIT NONE
+      integer jk,jj,ji, tmask_levels
 
+          do ji=1,jpi
+          do jj=1,jpj
 
-      do ji=1,jpi
-      do jj=1,jpj
+              tmask_levels = mbathy(jj,ji)
+              if (gdept(tmask_levels,jj,ji).lt.500.0) then
+                opt_mask(1:tmask_levels+1,jj,ji) = 1
 
-          tmask_levels = mbathy(jj,ji)
-          if (gdept(tmask_levels,jj,ji).lt.500.0) then
-            opt_mask(1:tmask_levels+1,jj,ji) = 1
+              else
+                opt_mask(1:jpk_opt+1,jj,ji) = 1
+              endif
 
-          else
-            opt_mask(1:jpk_opt+1,jj,ji) = 1
-          endif
-
-      enddo
-      enddo
-
+          enddo
+          enddo
       END SUBROUTINE init_OPT
         
         

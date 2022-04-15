@@ -16,6 +16,12 @@
       CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
       CALL fluxdump(datemean, datefrom, dateend,FREQ_GROUP)
 
+      if (FREQ_GROUP.eq.1) then
+         CALL Ed_dump(datemean, datefrom, dateend)
+         CALL Es_dump(datemean, datefrom, dateend)
+         CALL Eu_dump(datemean, datefrom, dateend)
+      endif
+
 
        trcdiaparttime =   MPI_WTIME() - trcdiaparttime  ! cronometer-stop
        trcdiatottime  = trcdiatottime + trcdiaparttime

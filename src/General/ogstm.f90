@@ -52,10 +52,6 @@ MODULE OGSTM
       USE DA_MEM
       USE DA_VARS_module
 #endif
-#ifdef ExecEns
-    use Ens_MPI, &
-        only: Ens_MPI_nodes_find_and_split, Ens_MPI_Finalize
-#endif
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
@@ -79,7 +75,6 @@ SUBROUTINE ogstm_launcher()
 
      
       double precision :: timetosolution
-
       
       timetosolution = MPI_Wtime()
 
@@ -91,9 +86,15 @@ SUBROUTINE ogstm_launcher()
 
       call ogstm_finalize()
 
+#ifdef ExecEns
+    if (glrank==0) then
+        timetosolution = MPI_Wtime() - timetosolution
+        write(*,*) "TIME TO SOLUTION =",timetosolution
+    end if
+#else
       timetosolution = MPI_Wtime() - timetosolution
       print*,"TIME TO SOLUTION =",timetosolution
-
+#endif
      
       END SUBROUTINE ogstm_launcher
 
@@ -105,7 +106,9 @@ SUBROUTINE ogstm_initialize()
 
 #ifdef ExecEns
     use Ens_MPI, &
-        only: Ens_MPI_nodes_find_and_split
+        only: Ens_MPI_nodes_find_and_split, EnsDebug
+        
+    integer ierr
 #endif
 
 ! local declarations
@@ -211,11 +214,18 @@ SUBROUTINE ogstm_initialize()
 
 ! Initialization of Biogeochemical reactor with 1D approach
       call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
-      parallel_rank=myrank
+      parallel_rank=glrank
       call Init_bfm()
       call BFM0D_INIT_IO_CHANNELS()
 
       call Initialize()
+      
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (glrank==0) write(*,*) "end of initializzation" 
+    end if
+#endif
 
 END SUBROUTINE ogstm_initialize
 
@@ -403,8 +413,13 @@ END SUBROUTINE set_to_zero
 
 SUBROUTINE ogstm_finalize()
 
+#ifdef ExecEns
+    use Ens_MPI, &
+        only: Ens_MPI_Finalize
+#endif
+
       CALL mppstop
-      
+
 #ifdef ExecEns
     call Ens_MPI_Finalize
 #endif

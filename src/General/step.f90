@@ -57,6 +57,11 @@ MODULE module_step
 
 !      trcstp, trcdia  passive tracers interface
 
+#ifdef ExecEns
+    Use Ens_MPI, &
+        only: EnsDebug
+#endif
+
        IMPLICIT NONE
 
 
@@ -68,6 +73,10 @@ MODULE module_step
       character(LEN=17)  date_aveforDA
       LOGICAL B, isFIRST
       INTEGER :: jk,jj,ji,jn
+      
+#ifdef ExecEns
+    integer ierr
+#endif
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
 !++++++++++++++++++++++++++++++c
@@ -82,13 +91,21 @@ MODULE module_step
        datestring =  DATESTART
       TAU = 0
       DO WHILE (.not.ISOVERTIME(datestring))
+      
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm, ierr)
+        if (glrank==0) write(*,*) 'start step loop'
+        call mpi_barrier(glcomm, ierr)
+    end if
+
+#endif
 
          stpparttime = MPI_WTIME()  ! stop cronomether
          COMMON_DATESTRING = DATEstring
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates
-
 
          if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
          if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
@@ -219,6 +236,14 @@ MODULE module_step
             call reset_Timers()
        ENDIF
       ENDIF
+      
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm, ierr)
+        if (glrank==0) write(*,*) 'end step loop'
+        call mpi_barrier(glcomm, ierr)
+    end if
+#endif
 
 
 !+++++++++++++++++++++++++++++c
@@ -226,6 +251,7 @@ MODULE module_step
 !+++++++++++++++++++++++++++++c
       datestring = UPDATE_TIMESTRING(datestring, rdt)
       TAU = TAU + 1
+      
       END DO  
 
       CONTAINS

@@ -442,7 +442,7 @@ SUBROUTINE mppstop
       INTEGER info
 
 #ifdef key_mpp_mpi
-      CALL mppsync
+      CALL mpi_barrier(glcomm,info)
       call mpi_comm_free(glcomm, info)
 #endif
 

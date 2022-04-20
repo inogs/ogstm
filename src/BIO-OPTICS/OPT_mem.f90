@@ -49,7 +49,7 @@
       double precision, allocatable :: ssalb(:,:,:)
 ! ############
       real, allocatable :: zkef_f (:,:)
-      CHARACTER(LEN=5), allocatable,dimension(:) :: Ednm, Esnm, Eunm
+      CHARACTER(LEN=7), allocatable,dimension(:) :: Ednm, Esnm, Eunm
       INTEGER, allocatable, dimension(:) :: EdWR,EsWR,EuWR
       integer Ed_dumped_vars, Es_dumped_vars, Eu_dumped_vars
 

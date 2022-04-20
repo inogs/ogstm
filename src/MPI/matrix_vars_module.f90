@@ -450,7 +450,7 @@ MODULE MATRIX_VARS
 
         DO i=1,matrix_Ed_row
                 DO j=1,matrix_col
-                        IF (counter==Ed_dumped_vars)THEN
+                        IF (counter_Ed==Ed_dumped_vars)THEN
                                 EXIT
                         ELSE
                                 trans_E = Ed_table(counter_Ed+1)
@@ -468,7 +468,7 @@ MODULE MATRIX_VARS
 
         DO i=1,matrix_Es_row
                 DO j=1,matrix_col
-                        IF (counter==Es_dumped_vars)THEN
+                        IF (counter_Es==Es_dumped_vars)THEN
                                 EXIT
                         ELSE
                                 trans_E = Es_table(counter_Es+1)
@@ -481,7 +481,7 @@ MODULE MATRIX_VARS
 
         DO i=1,matrix_Eu_row
                 DO j=1,matrix_col
-                        IF (counter==Eu_dumped_vars)THEN
+                        IF (counter_Eu==Eu_dumped_vars)THEN
                                 EXIT
                         ELSE
                                 trans_E = Eu_table(counter_Eu+1)

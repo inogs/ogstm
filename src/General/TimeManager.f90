@@ -85,7 +85,7 @@
           DO I=1, RESTARTS%N
         if (datestring.eq.RESTARTS%TimeStrings(I)) then
             IsaRestart = .true.
-            CYCLE
+            exit
         endif
           ENDDO
 
@@ -115,7 +115,7 @@
           DO I=1, DA_TIMES%N
         if (datestring.eq.DA_TIMES%TimeStrings(I)) then
             IsaDataAssimilation = .true.
-            CYCLE
+            exit
         endif
           ENDDO
 
@@ -143,14 +143,14 @@
               DO I=1, AVE_FREQ1%N
                   if (datestring.eq.AVE_FREQ1%TimeStrings(I)) then
                      IsAnAveDump = .true.
-                     CYCLE
+                     exit
                   endif
               ENDDO
          CASE (2)
               DO I=1, AVE_FREQ2%N
                   if (datestring.eq.AVE_FREQ2%TimeStrings(I)) then
                      IsAnAveDump = .true.
-                     CYCLE
+                     exit
                   endif
               ENDDO
       END SELECT

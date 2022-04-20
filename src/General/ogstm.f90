@@ -259,7 +259,7 @@ SUBROUTINE ALLOC_ALL
        mem_all_tot=mem_all_tot+mem_all
       !call myalloc_HDF() 
       ! write(*,*)'My_Rank:',myrank,'alloc_HDF  (MB):', mem_all 
-       mem_all_tot=mem_all_tot+mem_all
+       !mem_all_tot=mem_all_tot+mem_all
       call myalloc_ZDF() 
        !write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all

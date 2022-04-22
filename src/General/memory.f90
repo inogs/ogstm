@@ -1014,8 +1014,11 @@ subroutine alloc_tot()
       counter=1
       do ji=1,jpi
       do jj=1,jpj
-
+      if (tmask(1,jj,ji).ne.0) then
          ARRAY2D(counter,:) = ARRAY3D(:,jj,ji)
+      else
+          ARRAY2D(counter,:) = 0.5
+      endif
          counter=counter+1
       enddo
       enddo

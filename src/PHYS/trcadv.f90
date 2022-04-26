@@ -611,7 +611,7 @@
 
 
       
-       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
+!!!       !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
       
       
 
@@ -621,8 +621,14 @@
 
 !  ... Mpp : export boundary values to neighboring processors
 
+#ifndef _OPENACC      
          CALL mpplnk_my(zkx)
          CALL mpplnk_my(zky)
+#else
+         CALL mpplnk_my_openacc(zkx)
+         CALL mpplnk_my_openacc(zky)
+
+#endif         
 
 #else
 
@@ -632,7 +638,7 @@
                CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
 
-       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
+!!!       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
                
 
 !! 2. calcul of after field using an upstream advection scheme
@@ -752,15 +758,19 @@
 
 
 
-       !$acc update host( zti(1:jpk,1:jpj,1:jpi) )
-       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
+!!       !$acc update host( zti(1:jpk,1:jpj,1:jpi) )
+!!       !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
 
 
              
 !! ... Lateral boundary conditions on zti
 #ifdef key_mpp
 ! ... Mpp : export boundary values to neighboring processors
-         CALL mpplnk_my(zti)
+#ifndef _OPENACC                   
+             CALL mpplnk_my(zti)
+#else
+             CALL mpplnk_my_openacc(zti)
+#endif             
 #else
 ! ... T-point, 3D array, full local array zti is initialised
                  CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1 )
@@ -769,7 +779,7 @@
 
 !! 2.3 calcul of the antidiffusive flux
 
-       !$acc update device( zti(1:jpk,1:jpj,1:jpi) )
+!!       !$acc update device( zti(1:jpk,1:jpj,1:jpi) )
 
 
                  
@@ -815,7 +825,7 @@
            !$acc end kernels
 !                 endif
 
-   !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) 
+!!   !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) 
 
 
            
@@ -823,11 +833,15 @@
 #ifdef key_mpp
 
 ! ... Mpp : export boundary values to neighboring processors
-
+#ifndef _OPENACC      
          CALL mpplnk_my(zx)
          CALL mpplnk_my(zy)
          CALL mpplnk_my(zz)
-
+#else
+         CALL mpplnk_my_openacc(zx)
+         CALL mpplnk_my_openacc(zy)
+         CALL mpplnk_my_openacc(zz)
+#endif         
 #else
 
 !  ... T-point, 3D array, full local array z[xyz] are initialised
@@ -836,7 +850,7 @@
                 CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
 
-     !$acc update device(zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) 
+!!     !$acc update device(zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) 
 
 !! 2.4 reinitialization
 !!            2.5 calcul of the final field:
@@ -936,21 +950,25 @@
          !$acc end kernels
 
 
-           !$acc update host(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
+!!           !$acc update host(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
 
 !... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
 !  ... Mpp : export boundary values to neighboring processors
-
+#ifndef _OPENACC      
          CALL mpplnk_my(zkx)
          CALL mpplnk_my(zky)
+#else
+         CALL mpplnk_my_openacc(zkx)
+         CALL mpplnk_my_openacc(zky)
+#endif         
 #else
 ! ... T-point, 3D array, full local array zk[xy] are initialised
                CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1 )
                CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
 
-          !$acc update device(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
+!!          !$acc update device(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
                
 !!        2.6. calcul of after field using an upstream advection scheme
 

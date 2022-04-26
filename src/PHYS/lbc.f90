@@ -77,6 +77,8 @@
 !!     Horizontal slab
 !!     ===============
 !!
+
+!$acc kernels default(present)
           DO jk = kjstart, kjpend, kstep
 !!
 !!
@@ -177,6 +179,9 @@
 !!     ===========
 !!
            END DO
+
+!$acc end kernels
+           
 !!
 !!
          ELSEIF ( kdoloop.EQ.2 ) THEN
@@ -185,6 +190,8 @@
 !!     Vertical slab
 !!     =============
 !!
+
+!$acc kernels default(present)            
           DO jj = kjstart, kjpend, kstep
 !!
 !! 1. East-West boundary conditions
@@ -314,6 +321,8 @@
 !!     ===========
 !!
            END DO
+!$acc end kernels 
+
 !!
          ELSEIF ( kdoloop.EQ.3 ) THEN
 !!
@@ -321,6 +330,8 @@
 !!     Vertical slab for a 2D array (jpi,jpj)
 !!     ============================
 !!
+
+!$acc kernels default(present)            
           DO jj = kjstart, kjpend, kstep
 !!
 !! 1. East-West boundary conditions
@@ -420,6 +431,8 @@
 !!     ===========
 !!
            END DO
+!$acc end kernels 
+
 !!
          ELSE
 !!

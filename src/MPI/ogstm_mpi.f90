@@ -279,7 +279,173 @@ END SUBROUTINE
 
 END SUBROUTINE
 
+SUBROUTINE mpplnk_my_openacc(ptab)
 
+      double precision ptab(jpk,jpj,jpi)
+
+
+#ifdef key_mpp_mpi
+
+      INTEGER jk,jj,ji
+      INTEGER reqs1, reqs2, reqr1, reqr2
+      INTEGER reqs3, reqs4, reqr3, reqr4
+      INTEGER jw, packsize
+
+!!     trcadvparttime = MPI_WTIME()
+
+!!
+!!2. East and west directions exchange
+!!------------------------------------
+
+
+
+!!
+!!2.2 Migrations
+!!
+!!
+!               3     4
+!               |     ^
+!               |     |
+!               v     |
+!           ________________
+!          |                |
+!     1<-- |                | 1 <--
+!     2--> |                | 2 -->
+!          |________________|
+!               3     4
+!               |     ^
+!               |     |
+!               v     |
+
+    packsize=jpk*jpj
+
+
+!$acc host_data use_device(ptab)
+    
+      IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
+
+          CALL mppsend(2,ptab(:,:,jpi-1),packsize,noea,0,reqs1)
+          CALL mpprecv(1,ptab(:,:,  jpi),packsize,reqr1)
+
+      ELSE IF(nbondi.eq.0) THEN
+          CALL mppsend(1, ptab(:,:    ,2),packsize,nowe,0,reqs1)
+          CALL mppsend(2, ptab(:,:,jpi-1),packsize,noea,0,reqs2)
+
+          CALL mpprecv(1,ptab(:,:,jpi),packsize,reqr1)
+          CALL mpprecv(2,ptab(:,:,  1),packsize,reqr2)
+
+      ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
+
+          CALL mppsend(1,ptab(:,:,2), packsize, nowe,0, reqs1)
+          CALL mpprecv(2,ptab(:,:,1), packsize, reqr1)
+
+
+      ENDIF
+!$acc end host_data 
+
+!!
+!!
+!!3. North and south directions
+!!-----------------------------
+!!
+!!3.1 Read Dirichlet lateral conditions
+!!
+
+!$acc kernels default(present)
+      IF(nbondj.eq.0.or.nbondj.eq.-1) THEN
+         DO jw=1,NORTH_count_send
+              ji = NORTHpoints_send(1,jw)
+              jk = NORTHpoints_send(2,jw)
+              tn_send(jw) = ptab(jk,jpj-1,ji)
+         ENDDO
+     ENDIF
+     IF(nbondj.eq.0.or.nbondj.eq.1) THEN
+         DO jw=1,SOUTH_count_send
+             ji = SOUTHpoints_send(1,jw)
+             jk = SOUTHpoints_send(2,jw)
+             ts_send(jw) = ptab(jk,2,ji)
+         ENDDO
+
+
+      ENDIF!    PACK_LOOP4
+!$acc end kernels
+
+!!
+!!2.2 Migrations
+!!
+!!
+
+      
+      !$acc host_data use_device(tn_send,tn_recv,ts_send,ts_recv)
+      
+      IF(nbondj.eq.-1) THEN ! We are at the south side of the domain
+          CALL mppsend(4,tn_send,NORTH_count_send,nono,0,reqs4)
+          CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr3)
+          CALL mppwait(reqs4)
+          CALL mppwait(reqr3)
+      ELSE IF(nbondj.eq.0) THEN
+          CALL mppsend(4, tn_send,NORTH_count_send,nono,0,reqs4)
+          CALL mppsend(3, ts_send,SOUTH_count_send,noso,0,reqs3)
+          CALL mpprecv(3,tn_recv,NORTH_count_recv,reqr3)
+          CALL mpprecv(4,ts_recv,SOUTH_count_recv,reqr4)
+
+          CALL mppwait(reqs4)
+          CALL mppwait(reqs3)
+          CALL mppwait(reqr3)
+          CALL mppwait(reqr4)
+      ELSE IF(nbondj.eq.1) THEN ! We are at the north side of the domain
+          CALL mppsend(3,ts_send, SOUTH_count_send, noso,0, reqs3)
+          CALL mpprecv(4,ts_recv, SOUTH_count_recv, reqr4)
+          CALL mppwait(reqs3)
+          CALL mppwait(reqr4)
+      ENDIF
+      !$acc end host_data
+
+
+!!
+!!2.3 Write Dirichlet lateral conditions
+!!
+
+      !$acc kernels default(present)
+      IF(nbondj.eq.0.or.nbondj.eq.1) THEN ! All but south boundary, we received from south
+
+         DO jw=1,SOUTH_count_recv
+              ji = SOUTHpoints_recv(1,jw)
+              jk = SOUTHpoints_recv(2,jw)
+              ptab(jk,1,ji)= ts_recv(jw)
+         ENDDO
+
+      ENDIF
+
+      IF(nbondj.eq.-1.or.nbondj.eq.0) THEN ! All but north boundary, we received from north
+
+        DO jw=1,NORTH_count_recv
+              ji = NORTHpoints_recv(1,jw)
+              jk = NORTHpoints_recv(2,jw)
+             ptab(jk,jpj,ji)= tn_recv(jw)
+        ENDDO
+
+      ENDIF ! PACK_LOOP5
+      !$acc end kernels
+
+!!!  East - West waits
+
+      IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
+          CALL mppwait(reqs1)
+          CALL mppwait(reqr1)
+      ELSE IF(nbondi.eq.0) THEN
+          CALL mppwait(reqs1)
+          CALL mppwait(reqs2)
+          CALL mppwait(reqr1)
+          CALL mppwait(reqr2)
+      ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
+          CALL mppwait(reqs1)
+          CALL mppwait(reqr1)
+      ENDIF
+
+#endif
+
+END SUBROUTINE
 
 
 !!!---------------------------------------------------------------------

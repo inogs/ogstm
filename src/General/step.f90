@@ -145,6 +145,7 @@ MODULE module_step
 
          datefrom_1      = DATEstring
          elapsed_time_1  = 0.0  !  reset the time counter
+         elapsed_time_3  = 0.0  !  reset the time counter
          IsStartBackup_1 = .false.
 
         if (lwp)  B = writeTemporization("trcdia____", trcdiatottime)

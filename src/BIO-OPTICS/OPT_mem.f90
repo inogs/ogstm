@@ -114,7 +114,7 @@
       double precision,allocatable  :: PAR(:,:,:,:) ! depth, lat, lon, phyto
       double precision,allocatable  :: RMU(:,:)     ! lat, lon
       double precision,allocatable  :: Ed_IO(:,:,:,:),Es_IO(:,:,:,:),Eu_IO(:,:,:,:)
-      INTEGER(kind = 1), allocatable, dimension(:,:,:) :: opt_mask
+      logical, allocatable, dimension(:,:,:) :: opt_mask
       INTEGER, allocatable, dimension(:) :: Ed_table, Es_table, Eu_table
 
 
@@ -233,7 +233,7 @@
        allocate(PAR(jpk,jpj,jpi,nchl+1)) ! last index total par
        allocate(RMU(jpj,jpi))
        allocate(Ed_IO(jpk,jpj,jpi,nlt),Es_IO(jpk,jpj,jpi,nlt),Eu_IO(jpk,jpj,jpi,nlt))
-       allocate(opt_mask(jpk,jpj,jpi)) ; opt_mask=huge(opt_mask(1,1,1))
+       allocate(opt_mask(jpk,jpj,jpi)) ; opt_mask=0
 
 
 

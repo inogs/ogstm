@@ -235,7 +235,7 @@
        DO ji=1, jpi
        DO jj=1, jpj
        DO jk=1, jpk
-          IF (opt_mask(jk,jj,ji)) THEN
+          IF (tmask(jk,jj,ji) .NE. 0.) THEN
            Ed_IO(jk,jj,ji,jn) = (Ed_IO(jk,jj,ji,jn)*elapsed_time + Ed(jk,jj,ji,jn)*rdt)*inv_incremented_time
          ELSE
             Ed_IO(jk,jj,ji,: )=Miss_val
@@ -249,7 +249,7 @@
        DO ji=1, jpi
        DO jj=1, jpj
        DO jk=1, jpk
-          IF (opt_mask(jk,jj,ji)) THEN
+          IF (tmask(jk,jj,ji) .NE. 0.) THEN
            Es_IO(jk,jj,ji,jn) = (Es_IO(jk,jj,ji,jn)*elapsed_time + Es(jk,jj,ji,jn)*rdt)*inv_incremented_time
          ELSE
             Es_IO(jk,jj,ji,: )=Miss_val
@@ -263,7 +263,7 @@
        DO ji=1, jpi
        DO jj=1, jpj
        DO jk=1, jpk
-          IF (opt_mask(jk,jj,ji)) THEN
+          IF (tmask(jk,jj,ji) .NE. 0.) THEN
            Eu_IO(jk,jj,ji,jn) = (Eu_IO(jk,jj,ji,jn)*elapsed_time + Eu(jk,jj,ji,jn)*rdt)*inv_incremented_time
          ELSE
             Eu_IO(jk,jj,ji,: )=Miss_val

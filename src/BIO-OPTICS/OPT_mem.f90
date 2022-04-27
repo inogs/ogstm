@@ -237,14 +237,14 @@
 
 
 
-      Ed(:,:,:,:)   = 0.0d0
-      Es(:,:,:,:)   = 0.0d0
-      Eu(:,:,:,:)   = 0.0d0 
+      Ed(:,:,:,:)   = 1.e-4
+      Es(:,:,:,:)   = 1.e-4
+      Eu(:,:,:,:)   = 1.e-8
       PAR(:,:,:,:)  = 0.0d0
       RMU(:,:)  = 0.0d0
-      Ed_IO(:,:,:,:)   = 0.0d0
-      Es_IO(:,:,:,:)   = 0.0d0
-      Eu_IO(:,:,:,:)   = 0.0d0
+      Ed_IO(:,:,:,:)   = 1.e-4
+      Es_IO(:,:,:,:)   = 1.e-4
+      Eu_IO(:,:,:,:)   = 1.e-8
 
 
       h = 6.6256E-34   !Plancks constant J sec
@@ -375,7 +375,7 @@
               tmask_levels = mbathy(jj,ji)
               !if (tmask_levels.eq.0) cycle
               if (gdept(tmask_levels,jj,ji).lt.500.0) then
-                opt_mask(1:tmask_levels+1,jj,ji) = 1
+                opt_mask(1:tmask_levels,jj,ji) = 1
 
               else
                 opt_mask(1:jpk_opt+1,jj,ji) = 1

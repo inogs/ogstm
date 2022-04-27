@@ -4,7 +4,7 @@ MODULE module_step
       USE myalloc
       USE TIME_MANAGER
       USE BC_mem
-      USE IO_mem, only: elapsed_time_1, elapsed_time_2
+      USE IO_mem, only: elapsed_time_1, elapsed_time_2, elapsed_time_3
       USE mpi
       USE mod_atmbc
       USE mod_cbc

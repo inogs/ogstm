@@ -85,15 +85,15 @@
        
              if ((maxval(Ed_0m(:,jj,ji)) < 0.0001d0) .AND. (maxval(Es_0m(:,jj,ji))< 0.0001d0)) then
   
-                 Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
-                 Es(1,jj,ji,:) = Es_0m(:,jj,ji)
+  !               Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
+  !               Es(1,jj,ji,:) = Es_0m(:,jj,ji)
 
-                 if (MODE .EQ. 0)  Eu(1,jj,ji,:) = 0.0d0
+                 if (MODE .EQ. 0)  Eu(1,jj,ji,:) = 1.0E-08
                  if (MODE .EQ. 1)  Eu(1,jj,ji,:) = -1.0d0
                  if (MODE .EQ. 2)  Eu(1,jj,ji,:) = 1.0E-08
   
-                 Ed(2:bottom,jj,ji,:) = 0.0001d0
-                 Es(2:bottom,jj,ji,:) = 0.0001d0
+                 Ed(1:bottom,jj,ji,:) = 0.0001d0
+                 Es(1:bottom,jj,ji,:) = 0.0001d0
                  Eu(2:bottom,jj,ji,:) = 1.0E-08
                  PAR(1:bottom,jj,ji,:) = 0.0001d0
 

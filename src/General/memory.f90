@@ -992,6 +992,7 @@ subroutine alloc_tot()
 
         end subroutine clean_memory
 
+
       SUBROUTINE FLATTEN_2D(MATRIX, ARRAY)
       double precision, intent(IN) :: MATRIX(jpj,jpi)
       double precision, intent(OUT) :: ARRAY(jpj*jpi)
@@ -1040,6 +1041,29 @@ subroutine alloc_tot()
       enddo
 
       END SUBROUTINE UNFLATTEN_33
+
+
+    INTEGER FUNCTION find_index_var(string)
+    !
+    ! finds string in statevars
+    !
+    IMPLICIT NONE
+    character(LEN=20), INTENT(IN) :: string
+    integer jn
+
+    find_index_var=0
+    do jn=1,jptra
+       if (trim(string).eq.trim(ctrcnm(jn))) then
+         find_index_var=jn
+         cycle
+       endif
+    enddo
+
+    if (find_index_var.eq.0) then
+       if (lwp) write(*,*)  trim(string), ' not found. Stop.'
+       STOP
+    endif
+    END FUNCTION find_index_var
 
 
         END MODULE myalloc

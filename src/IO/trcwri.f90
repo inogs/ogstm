@@ -77,7 +77,8 @@
                                 enddo
                                 COUNTER_VAR_TRCWRI = COUNTER_VAR_TRCWRI + 1
 
-                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(bufftrn, sendcount,MPI_DOUBLE_PRECISION,&
+                                  bufftrn_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
 
                         END IF
 

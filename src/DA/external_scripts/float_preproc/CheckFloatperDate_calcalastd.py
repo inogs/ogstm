@@ -57,7 +57,7 @@ month=int(idate0[4:6])
 day=int(idate0[6:8])
 #idate1 data del float, cambio per DA ogni 3day
 idate1=timerequestors.Interval_req(year,month,day, days=3)
-print idate1.string
+print (idate1.string)
 
 #idate2 data del modello
 strdate2='20150905'
@@ -96,7 +96,7 @@ nWMO=len(WMOlist)              #NUMBER OF float IN THE SELECTED PERIOD
 
 totallines=0
 for wmo in WMOlist :
-        #print wmo
+        #print (wmo)
 
 # SAVE in the "Goodlist" all the profiles for a given FLOAT ID
         Goodlist = []
@@ -108,7 +108,7 @@ for wmo in WMOlist :
 
 #  AllProfiles matrix: 0 Model, 1 Ref, 2 Misfit,3 Lat,4 Lon,5 ID FLOAT
 #  NOTE: the number of profile per float is len(Goodlist)
-        print "number of Goodlist Profiles:",  len(Goodlist)
+        print ("number of Goodlist Profiles:",  len(Goodlist))
         if (Goodlist!=[]):
           #AllProfiles = np.zeros((len(Goodlist),dimnewpress,6),np.float64)   
           OneProfile = np.zeros((1,dimnewpress,6),np.float64)
@@ -116,7 +116,7 @@ for wmo in WMOlist :
           # PROFILES FOR FLOAT AND MODEL
           AllProfiles = OneProfile
           for ip, pp in enumerate(Goodlist):
-              print ip,pp.time
+              print (ip,pp.time)
               singlefloatmatchup = M.getMatchups([pp], nav_lev, VARLIST[0])
               s200 = singlefloatmatchup.subset(layer)               #values NOT interpolated
               #vertical interpolation at the grid defined in NewPress (1meter)
@@ -174,7 +174,7 @@ for wmo in WMOlist :
           del AllProfiles
           del OneProfile
         else:
-          print "Goodlist vuota"
+          print ("Goodlist vuota")
         del Goodlist
 
 

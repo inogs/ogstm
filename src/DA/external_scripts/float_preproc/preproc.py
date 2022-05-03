@@ -76,7 +76,8 @@ nav_lev = TheMask.zlevels
 layer   = Layer(0, deplim)
 
 errbase = 0.24  # (Mignot et al., 2019)
-Check_Obj = check.check(OUTDIR,verboselevel=1)
+erro2obase = 5.  # (Approximation based on QuID V7c evaluation)
+Check_Obj = check.check(OUTDIR,verboselevel=1,threshold_nitrate=2)
 
 year  = int(datestr[0:4])
 month = int(datestr[4:6])
@@ -88,7 +89,7 @@ TI.end_time = datetime(year, month, day, 23, 59)
 
 errorfloat = [0.0690, 0.0969, 0.0997, 0.0826, 0.0660, 0.0500, 0.0360, 0.0140, 0.0320, 0.0390, 0.0340, 0.0490]
 
-DICTflag = {'P_l': 0, 'N3n': 1}
+DICTflag = {'P_l': 0, 'N3n': 1, 'O2o': 2}
 
 Profilelist = bio_float.FloatSelector(FLOATVARS[varmod], TI, OGS.med)
 TL = TimeList.fromfilenames(TI, INPUTDIR,"RSTbefore.*13:00*.nc", filtervar=varmod, prefix="RSTbefore.")
@@ -175,9 +176,11 @@ for wmo in WMOlist:
             testo += "\t%10.5f\t%10.5f" % (0.2, Profile[ilev, 2])
 # errore fisso che aumenta  verso il fondo
             if varmod == 'N3n':
-                if lev <= 450: errnut = errbase
-                if lev > 450:  errnut = errbase*(1+(1.5-1.)/(600-450)*(lev-450))
+                errnut = errbase
                 testo += "\t%10.5f\t%i\n" % (errnut, Profile[ ilev, 5])
+            if varmod == 'O2o':
+                erro2o = erro2obase
+                testo += "\t%10.5f\t%i\n" % (erro2o, Profile[ ilev, 5])
             if varmod == 'P_l':
                 testo += "\t%10.5f\t%i\n" % (errorfloat[month-1], Profile[ilev, 5])
             MISFIT_LINES.append(testo)

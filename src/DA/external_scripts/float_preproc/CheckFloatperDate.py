@@ -61,11 +61,11 @@ month=int(idate0[4:6])
 day=int(idate0[6:8])
 #idate1 data del float, cambio per DA ogni 3day
 idate1=timerequestors.Interval_req(year,month,day, days=3)
-#print idate1.string
+#print (idate1.string)
 
 #idate2 data del modello
 idate2=timerequestors.Daily_req(year,month,day)
-#print idate2
+#print (idate2)
 
 
 # Variable name
@@ -94,7 +94,7 @@ WMOlist=bio_float.get_wmo_list(Profilelist_1)
 nWMO=len(WMOlist)              #NUMBER OF float IN THE SELECTED PERIOD
 
 for wmo in WMOlist :
-        #print wmo
+        #print (wmo)
 
 # SAVE in the "Goodlist" all the profiles for a given FLOAT ID
         Goodlist = []
@@ -103,7 +103,7 @@ for wmo in WMOlist :
         for i in SubProfilelist_1:
             Pres, Profile, Qc=i.read('CHLA',read_adjusted[0])
             if((Pres<200).sum() > 5) :
-                      print idate1.string+"-00:00:00"
+                      print (idate1.string+"-00:00:00")
                       import sys
                       sys.exit()
 

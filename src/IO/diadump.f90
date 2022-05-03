@@ -107,7 +107,9 @@
                                 counter_var_2d = counter_var_2d + 1
                                 if (FREQ_GROUP.eq.1) counter_var_high_2d = counter_var_high_2d + 1
 
-                                CALL MPI_GATHERV(buffDIA2d, sendcount_2d,MPI_DOUBLE_PRECISION, buffDIA2d_TOT,jprcv_count_2d,jpdispl_count_2d, MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffDIA2d,sendcount_2d,MPI_DOUBLE_PRECISION, &
+                                                 buffDIA2d_TOT,jprcv_count_2d,jpdispl_count_2d,&
+                                                 MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
 
                         END IF
                 END DO
@@ -154,7 +156,8 @@
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc'
 
                                 if (IsBackup) then
-                                        CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_diag_2d,datefrom, dateTo,tottrnIO2d, elapsed_time)
+                                        CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_diag_2d,datefrom, &
+                                                              dateTo,tottrnIO2d, elapsed_time)
 
                                 else
                                         d2f2d = REAL(tottrnIO2d(:,:),4)
@@ -241,7 +244,8 @@
 
                                 !GATHERV TO THE WRITING RANK
 
-                                CALL MPI_GATHERV(buffDIA, sendcount,MPI_DOUBLE_PRECISION, buffDIA_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffDIA, sendcount,MPI_DOUBLE_PRECISION,buffDIA_TOT,jprcv_count, &
+                                    jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
                         END IF
                 END DO
 
@@ -289,9 +293,11 @@
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag)//'.nc'
               
                                 if (IsBackup) then
-                                        CALL WRITE_AVE_BKP(bkpname,var_to_store_diag,datefrom, dateTo,tottrnIO,elapsed_time,deflate_ave, deflate_level_ave)
+                                        CALL WRITE_AVE_BKP(bkpname,var_to_store_diag,datefrom, dateTo,&
+                                                       tottrnIO,elapsed_time,deflate_ave, deflate_level_ave)
                                 else
-                                        CALL WRITE_AVE(dia_file_nc,var_to_store_diag,datefrom,dateTo, tottrnIO,deflate_ave, deflate_level_ave)
+                                        CALL WRITE_AVE(dia_file_nc,var_to_store_diag,datefrom,dateTo, &
+                                         tottrnIO,deflate_ave, deflate_level_ave)
                                 endif
 
 
@@ -385,7 +391,8 @@
                                 counter_var_phys_2d = counter_var_phys_2d + 1
                                 if (freq_ave_phys.eq.1) counter_var_phys_high_2d = counter_var_phys_high_2d + 1
 
-                                CALL MPI_GATHERV(buffPHYS2d,sendcount_2d,MPI_DOUBLE_PRECISION,buffPHYS2d_TOT,jprcv_count_2d,jpdispl_count_2d,MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffPHYS2d,sendcount_2d,MPI_DOUBLE_PRECISION,buffPHYS2d_TOT,jprcv_count_2d, &
+                                jpdispl_count_2d,MPI_DOUBLE_PRECISION,writing_rank, MPI_COMM_WORLD, IERR)
 
                         END IF
                 END DO
@@ -430,11 +437,13 @@
                                 phys_file_nc =DIR//'ave.'//datemean//'.'//trim(var_to_store_phys_2d)//'.nc'
 
                                 if (IsBackup) then
-                                        CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_phys_2d,datefrom, dateTo,tottrnIO2d, elapsed_time)
+                                        CALL WRITE_AVE_2d_BKP(bkpname,var_to_store_phys_2d,datefrom, &
+                                        dateTo,tottrnIO2d, elapsed_time)
 
                                 else
                                         d2f2d = REAL(tottrnIO2d(:,:),4)
-                                        CALL WRITE_AVE_2d(phys_file_nc,var_to_store_phys_2d,datefrom,dateTo, d2f2d)
+                                        CALL WRITE_AVE_2d(phys_file_nc,var_to_store_phys_2d,datefrom,&
+                                                         dateTo, d2f2d)
 
                                 endif
                         end if
@@ -537,7 +546,8 @@
 
                                 !GATHERV TO THE WRITING RANK
 
-                                CALL MPI_GATHERV(buffPHYS,sendcount,MPI_DOUBLE_PRECISION, buffPHYS_TOT,jprcv_count,jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(buffPHYS,sendcount,MPI_DOUBLE_PRECISION,buffPHYS_TOT,jprcv_count, &
+                                                 jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
                         END IF
                 END DO
 
@@ -583,9 +593,11 @@
                                 phys_file_nc =DIR//'ave.'//datemean//'.'//trim(var_to_store_phys)//'.nc'
 
                                 if (IsBackup) then
-                                        CALL WRITE_AVE_BKP(bkpname,var_to_store_phys,datefrom,dateTo,tottrnIO,elapsed_time,deflate_ave, deflate_level_ave)
+                                        CALL WRITE_AVE_BKP(bkpname,var_to_store_phys,datefrom,dateTo,tottrnIO,& 
+                                             elapsed_time,deflate_ave, deflate_level_ave)
                                 else
-                                        CALL WRITE_AVE(phys_file_nc,var_to_store_phys,datefrom,dateTo, tottrnIO,deflate_ave,deflate_level_ave)
+                                        CALL WRITE_AVE(phys_file_nc,var_to_store_phys,datefrom,dateTo, tottrnIO, & 
+                                                   deflate_ave,deflate_level_ave)
                                 endif
 
 

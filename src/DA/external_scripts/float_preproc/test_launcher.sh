@@ -1,28 +1,30 @@
 #! /bin/bash
 
 module purge
-module load profile/base
-module load intel/pe-xe-2018--binary intelmpi/2018--binary
 module load autoload
-module load hdf5/1.8.18--intel--pe-xe-2018--binary netcdf/4.6.1--intel--pe-xe-2018--binary
-module load numpy/1.15.2--python--2.7.12 #mpi4py/3.0.0--intelmpi--2018--binary
-module load ncview
+module load autoload
+module load intel/oneapi-2021--binary
+module load intelmpi/oneapi-2021--binary
+#module load numpy/1.15.2--python--2.7.12 #mpi4py/3.0.0--intelmpi--2018--binary
 
 
-export     ONLINE_REPO=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V5C/ONLINE_V5C
-export        MASKFILE=/gpfs/work/OGS_prod_0/OPA/V6C/devel/wrkdir/analysis/2/MODEL/meshmask.nc
-export      OPA_SCRDIR=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V6C/bin
-export          DA_DIR=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V6C/TEST/DA
-export      DA__FREQ_1=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V6C/TEST/DA__FREQ_1
-export      OPA_VENV_1=/gpfs/work/OGS20_PRACE_P/COPERNICUS/py_env_2.7.12/
-export      OPA_BITSEA=/gpfs/work/OGS20_PRACE_P/COPERNICUS/bit.sea
-export      OPA_BINDIR=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V6C/CODE/ogstm/src/DA/external_scripts/float_preproc
-export OPA_POSTPROCDIR=/gpfs/scratch/userexternal/gbolzon0/CHAIN_V6C/bin
+BASE=/g100_scratch/userexternal/camadio0
+export     ONLINE_REPO=/g100_scratch/userexternal/camadio0/SUPERFLOAT_2012_2021_V8c/
+export        MASKFILE=$BASE/Multivariate_Assimilation_2017_2018/wrkdir/MODEL/meshmask.nc
+export      OPA_SCRDIR=$BASE/Multivariate_Assimilation_2017_2018/wrkdir/POSTPROC/bin
+export          DA_DIR=$BASE/Multivariate_Assimilation_2017_2018/wrkdir/DA
+export      DA__FREQ_1=$BASE/Multivariate_Assimilation_2017_2018/wrkdir/MODEL/DA__FREQ_1
+export      OPA_VENV_1=/g100_work/OGS20_PRACE_P_2/COPERNICUS/py_env_3.6.8/
+export      OPA_BITSEA=/g100/home/userexternal/camadio0/bit.sea_py3/
+export      OPA_BINDIR=$BASE/Multivariate_Assimilation_2017_2018/wrkdir/float_preproc
+export OPA_POSTPROCDIR=$BASE/Multivariate_Assimilation_2017_2018/wrkdir/POSTPROC/bin
 
 # edit Float_misfit_gen.sh
 # rename opa_prex_ -->  my_prex
 # rename opa_profile --> profile
 # comment module unload numpy, is useful only for chain 
-./Float_misfit_gen.sh -t 20190919
+
+mv end.txt start.txt
+./Float_misfit_gen.sh #-t 20170101
 
 

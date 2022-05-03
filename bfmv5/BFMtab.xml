@@ -54,6 +54,9 @@
 <var name="O3c" maxvalue="200000" highfreq="false" dump="false" ></var>
 <var name="O3h" maxvalue="20000"  highfreq="false" dump="false" ></var>	
 <var name="O5c" maxvalue="200000" highfreq="false" dump="false" ></var>
+<var name="R1l" maxvalue="10" highfreq="false" dump="false" ></var>
+<var name="R2l" maxvalue="10" highfreq="false" dump="false" ></var>
+<var name="R3l" maxvalue="10" highfreq="false" dump="false" ></var>
 </ModelVars>
 
 
@@ -201,6 +204,16 @@
 <var name="BFM1D_exR2cc_iiP3"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_exR2cc_iiP4"     highfreq="false" dump="false" ></var>
 <var name="ffCO2"                 highfreq="false" dump="true" ></var>
+<var name="PAR_phyto1"     highfreq="false" dump="false" ></var>
+<var name="PAR_phyto2"     highfreq="false" dump="false" ></var>
+<var name="PAR_phyto3"     highfreq="false" dump="false" ></var>
+<var name="PAR_phyto4"     highfreq="false" dump="false" ></var>
+<var name="PAR"     highfreq="false" dump="false" ></var>
+
+<var name="qlcOMT_iiR1"     highfreq="false" dump="false" ></var>
+<var name="qlcOMT_iiR2"     highfreq="false" dump="false" ></var>
+<var name="qlcOMT_iiR3"     highfreq="false" dump="false" ></var>
+<var name="qlcOMT_iiR6"     highfreq="false" dump="false" ></var>
 
 </Diagnostics>
 
@@ -219,5 +232,6 @@
 <var name="totsysp" highfreq="false" dump="false" ></var>
 <var name="totsyss" highfreq="false" dump="false" ></var>
 <var name="EICE" highfreq="false" dump="false" ></var>
+<var name="COSED" highfreq="false" dump="false" ></var>
 </Diagnostics_2D>
 </root>

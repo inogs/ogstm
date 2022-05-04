@@ -30,7 +30,7 @@
       double precision, allocatable::  E(:,:,:) !(3,jpk+1,nlt)
 
       double precision, allocatable  :: PARz(:,:) !(jpk,nchl+1)
-      double precision :: CHLz(jpk,nchl),CDOMz(jpk),POCz(jpk)
+      double precision :: CHLz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
       double precision :: Eu_0m(nlt)
       double precision :: zgrid(jpk+1)
       double precision :: sec
@@ -104,8 +104,10 @@
                  CHLz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3l)
                  CHLz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4l)
 
-                 CDOMz(1:bottom)  = trn(1:bottom,jj,ji,ppR1l) + trn(1:bottom,jj,ji,ppR2l) + trn(1:bottom,jj,ji,ppR3l)
-    
+                 CDOMz(1:bottom,1)  = trn(1:bottom,jj,ji,ppR1l)
+                 CDOMz(1:bottom,2)  = trn(1:bottom,jj,ji,ppR2l)
+                 CDOMz(1:bottom,3)  = trn(1:bottom,jj,ji,ppR3l)
+
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     
                  IF ( (MODE .EQ. 0) .OR. (MODE .EQ. 1)) then

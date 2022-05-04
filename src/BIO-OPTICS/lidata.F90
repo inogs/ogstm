@@ -1,7 +1,7 @@
       subroutine lidata()
 !     subroutine lidata(lam,aw,bw,ac,bc)
 
-      USE OPT_mem, ONLY: nlt, nchl, lam,aw,bw,ac,ac_ps,bc,bbc,apoc,bpoc,bbpoc
+      USE OPT_mem, ONLY: nlt, nchl, lam,aw,bw,ac,ac_ps,bc,bbc,apoc,bpoc,bbpoc,acdom
       USE myalloc, only: lwp,numout
       IMPLICIT NONE 
 !  Reads in radiative transfer data: specifically 
@@ -14,14 +14,14 @@
 !     parameter(nchl=5)
       character*80 title
       character*80 cfle
-      character cacbc*11,cabw*15,cacbpoc*10
-      double precision saw,sbw,sac,sac_ps,sbc,sbb,sapoc,sbpoc,sbbpoc
+      character cacbc*11,cabw*20,cacbpoc*10,cacdom*11
+      double precision saw,sbw,sac,sac_ps,sbc,sbb,sapoc,sbpoc,sbbpoc,sacdom1,sacdom2,sacdom3
       character*4 cdir
 !     integer lam(nlt)
 !     double precision aw(nlt),bw(nlt)
 !     double precision ac(nchl,nlt),bc(nchl,nlt)
       data cdir /'bcs/'/
-      data cacbc,cabw,cacbpoc /'acbc25b.dat','abw25_morel.dat','poc25b.dat'/
+      data cacbc,cabw,cacbpoc,cacdom /'acbc25b.dat','abw25_morel.dat','poc25b.dat','cdom25b.dat'/
       integer    :: i, n, nl,lambda
  
 !  Water data files
@@ -69,7 +69,7 @@
       enddo
       close(4)
 30    format(i4,4f10.4)
-!  POC absoprion, scattering and back scattering normalized to mgC/m3
+!  POC absorption, scattering and back scattering normalized to mgC/m3
       cfle = cdir//cacbpoc
       open(4,file=cfle,status='old',form='formatted')
       do i = 1,6
@@ -84,6 +84,21 @@
       enddo
       close(4)
 40    format(i5,3f10.2)
- 
+
+!  CDOM absorption, m2 mgC-1
+      cfle = cdir//cacdom
+      open(4,file=cfle,status='old',form='formatted')
+      do i = 1,6
+       read(4,'(a80)')title
+      enddo
+      do nl = 1,nlt
+       read(4,50)lambda,sacdom1,sacdom2,sacdom3
+       acdom(1,nl) = sacdom1
+       acdom(2,nl) = sacdom2
+       acdom(3,nl) = sacdom3
+      enddo
+      close(4)
+50    format(i5,3E14.6)
+
       return
       end

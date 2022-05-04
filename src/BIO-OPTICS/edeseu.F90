@@ -19,7 +19,7 @@
       integer, INTENT(IN)          :: bottom
       double precision, INTENT(IN) :: rmud
       double precision, INTENT(IN) :: dzRT(jpk)
-      double precision, INTENT(IN) :: CHLz(jpk,nchl),CDOMz(jpk),POCz(jpk)
+      double precision, INTENT(IN) :: CHLz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
       double precision, INTENT(IN) :: Edtop(nlt),Estop(nlt)
       double precision, INTENT(OUT) :: Edz(jpk,nlt),Esz(jpk,nlt)
       double precision, INTENT(OUT) :: Euz(jpk,nlt)
@@ -54,7 +54,7 @@
                bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n,nl)*bc(n,nl)
           enddo
 
-          a(jk,nl)  = aw(nl) + CDOMz(jk) * acdom(nl) + POCz(jk) * apoc(nl) + actot(jk,nl)
+          a(jk,nl)  = aw(nl) + CDOMz(jk,1) * acdom(1,nl) + CDOMz(jk,2) * acdom(2,nl) + CDOMz(jk,3) * acdom(3,nl) + POCz(jk) * apoc(nl) + actot(jk,nl)
           bt(jk,nl) = bw(nl) + bctot(jk,nl) + POCz(jk) * bpoc(nl)
           bb(jk,nl) = bbw*bw(nl) + bbctot(jk,nl) + POCz(jk) * bbpoc(nl)
           bb(jk,nl) = max(bb(jk,nl),0.0002d0)

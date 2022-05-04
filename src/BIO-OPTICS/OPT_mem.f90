@@ -73,7 +73,7 @@
       INTEGER                       :: it_check
       double precision              :: aw(33),bw(33)
       double precision              :: ac(4,33),ac_ps(4,33),bc(4,33),bbc(4,33)
-      double precision              :: acdom(33)
+      double precision              :: acdom(3,33)
       double precision              :: apoc(33), bpoc(33), bbpoc(33) 
 ! Variables related to computation of solar zenith angle
       double precision              :: rad 
@@ -257,29 +257,8 @@
        WtoQ(nl) = rlamm*hcoavo*1000000.0D0 !Watts to micro mol quanta conversion
       enddo
 
-      acdom(:)= 0.0D0
-
-      acdom(1)= 0.5389318763451755D0
-      acdom(2)= 0.1265408203815677D0
-      acdom(3)= 0.08272856495101208D0
-      acdom(4)= 0.05408543613212374D0
-      acdom(5)= 0.03535942395875263D0
-      acdom(6)= 0.023116923003828883D0
-      acdom(7)= 0.015113145785076434D0
-      acdom(8)= 0.009880518072545476D0
-      acdom(9)= 0.006459584177259625D0
-      acdom(10)= 0.004223080959595189D0
-      acdom(11)= 0.0027609227315404956D0
-      acdom(12)= 0.001805007860959341D0
-      acdom(13)= 0.0011800596014170728D0
-      acdom(14)= 0.0007714873120588532D0
-      acdom(15)= 0.0005043750942351194D0
-      acdom(16)= 0.00032974519698294086D0
-      acdom(17)= 0.00021557744657913622D0
-      acdom(18)= 0.00012792345684771735D0
 
 
-        
 #ifdef Mem_Monitor
               mem_all=get_mem(err) - aux_mem
 #endif

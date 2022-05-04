@@ -27,7 +27,298 @@ MODULE module_step
 
  contains
  
+#ifdef ExecEns
+
  SUBROUTINE step
+!---------------------------------------------------------------------
+!
+!                      ROUTINE STEP
+!                     ****************
+!
+!  PURPOSE :
+!  ---------
+!    Time loop of ogstm
+!
+!   METHOD :
+!   -------
+!
+!      READ the dynamics fiels and update for time step
+!
+!      Call passive tracer model trcstp
+!                     and diagnostics trcdia
+!                     and specific restart trcwri
+!
+!   INPUT :
+!   -----
+!
+!
+!   OUTPUT :            : no
+!   ------
+!
+!   EXTERNAL :
+
+!      trcstp, trcdia  passive tracers interface
+     
+    Use Ens_Mem, &
+        only: EnsRankZero, &
+            EnsDebug, EnsRank, EnsSize, &
+            EnsSaveEachRestart, EnsSaveMeanRestart, Ens_restart_ens_prefix, Ens_restart_prefix, &
+            DAstate, n_DAstate, win_DAstate, gl_DAstate
+    Use Ens_IO, &
+        only: Ens_trcwri, Ens_trcdia
+    use Ens_Custom, &
+        only: Ens_state2DA, Ens_DA2state_0
+    use Ens_Utilities, &
+        only: Ens_ReduceMean
+
+    IMPLICIT NONE
+
+
+! local declarations
+! ==================
+    INTEGER TAU
+    character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
+    LOGICAL B, isFIRST
+    INTEGER :: jk,jj,ji,jn
+    integer ierr
+
+!++++++++++++++++++++++++++++++c
+!         Time  loop           c
+!++++++++++++++++++++++++++++++c
+
+
+    isFIRST=.true.
+
+    datefrom_1 =  DATESTART
+    if (IsStartBackup_1) datefrom_1 = BKPdatefrom_1
+    datefrom_2 =  DATESTART
+    if (IsStartBackup_2) datefrom_2 = BKPdatefrom_2
+    datestring =  DATESTART
+    TAU = 0
+    DO WHILE (.not.ISOVERTIME(datestring))
+      
+        if (EnsDebug>1) then
+            call mpi_barrier(glcomm, ierr)
+            if (lwp) write(*,*) 'start step loop'
+        end if
+
+        stpparttime = MPI_WTIME()  ! stop cronomether
+        COMMON_DATESTRING = DATEstring
+
+        call yearly(DATEstring) ! Performs yearly updates
+        call daily(DATEstring)  ! Performs daily  updates
+
+        if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
+        if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
+
+        if (IsaRestart(DATEstring)) then
+            
+            if (EnsSize>1 .and. EnsSaveEachRestart) then
+                if (EnsDebug>0) then
+                    call mpi_barrier(glcomm, ierr)
+                    if (lwp) write(*,*) 'Saving each ens restart. Time: ', MPI_WTIME()-stpparttime
+                end if
+                call Ens_trcwri(trim(Ens_restart_ens_prefix), DATEstring, EnsRank, trn)
+                if (EnsDebug>0) then
+                    call mpi_barrier(glcomm, ierr)
+                    if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-stpparttime
+                end if
+            end if
+            
+            if (EnsSize==1 .or. EnsSaveMeanRestart) then
+            
+                if (EnsSize==1) then
+                    call Ens_trcwri(Ens_restart_prefix, DATEstring, -1, trn)
+                else
+                    if (EnsDebug>0) then
+                        call mpi_barrier(glcomm, ierr)
+                        if (lwp) write(*,*) 'Preparing mean restart. Time: ', MPI_WTIME()-stpparttime
+                    end if
+                    
+                    call Ens_state2DA
+                    if (EnsDebug>0) then
+                        call mpi_barrier(glcomm, ierr)
+                        if (lwp) write(*,*) 'State transformed. Time: ', MPI_WTIME()-stpparttime
+                    end if
+                    
+                    call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
+                    if (EnsDebug>0) then
+                        call mpi_barrier(glcomm, ierr)
+                        if (lwp) write(*,*) 'Reduced. Time: ', MPI_WTIME()-stpparttime
+                    end if
+                    
+                    call Ens_DA2state_0
+                    if (EnsDebug>0) then
+                        call mpi_barrier(glcomm, ierr)
+                        if (lwp) write(*,*) 'Transformed back to state. Time: ', MPI_WTIME()-stpparttime
+                    end if
+                    
+                    if (EnsRank==EnsRankZero) call Ens_trcwri(trim(Ens_restart_prefix), DATEstring, -1, DAstate)
+                    if (EnsDebug>0) then
+                        call mpi_barrier(glcomm, ierr)
+                        if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-stpparttime
+                    end if
+                end if
+                
+            end if
+            
+            if (AVE_FREQ1%N .gt.0) then              !  void 1.aveTimes -> no backup
+                if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
+                    CALL Ens_trcdia(datestring, datefrom_1, datestring,1)
+                endif
+            endif
+
+            if (AVE_FREQ2%N .gt.0) then
+                if (.not.IsAnAveDump(DATEstring,2)) then ! backup conditions group 2
+                if (save_bkp_group2) CALL Ens_trcdia(datestring, datefrom_2, datestring,2)
+                endif
+            endif
+
+            if (lwp) then
+                B = writeTemporization("trcdia____", trcdiatottime)
+                B = writeTemporization("trcwri____", trcwritottime)
+            endif
+        endif
+
+        if (IsAnAveDump(DATEstring,1)) then
+            call MIDDLEDATE(datefrom_1, DATEstring, datemean)
+            CALL Ens_trcdia(datemean, datefrom_1, datestring,1)
+
+            datefrom_1      = DATEstring
+            elapsed_time_1  = 0.0  !  reset the time counter
+            IsStartBackup_1 = .false.
+
+            if (lwp)  B = writeTemporization("trcdia____", trcdiatottime)
+        endif
+
+        if (IsAnAveDump(DATEstring,2)) then
+            call MIDDLEDATE(datefrom_2, DATEstring, datemean)
+            CALL Ens_trcdia(datemean, datefrom_2, datestring,2)
+            datefrom_2      = DATEstring
+            elapsed_time_2  = 0.0  !  reset the time counter
+            IsStartBackup_2 = .false.
+            if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
+        endif
+
+
+#ifdef ExecDA
+        if (IsaDataAssimilation(DATEstring)) then
+            CALL mainAssimilation(DATEstring, datefrom_1)
+            if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
+        endif
+#endif
+
+
+! For offline simulation READ DATA or precalculalted dynamics fields
+! ------------------------------------------------------------------
+
+        CALL forcings_PHYS(DATEstring)
+        CALL forcings_KEXT(datestring)
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+        call boundaries%update(datestring)
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+        CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
+        CALL bc_co2       (DATEstring)
+        CALL eos          ()               ! Water density
+
+
+! Call Passive tracer model between synchronization for small parallelisation
+        CALL trcstp    ! se commento questo non fa calcoli
+        call trcave
+        
+        elapsed_time_1 = elapsed_time_1 + rdt
+        elapsed_time_2 = elapsed_time_2 + rdt
+
+        if (EnsDebug>0) call mpi_barrier(glcomm, ierr)
+        stpparttime = MPI_WTIME() - stpparttime
+        stptottime  = stptottime  + stpparttime
+        if (EnsDebug>0 .and. lwp) write(*,*) 'step in seconds: ', stpparttime
+
+! OGSTM TEMPORIZATION
+        IF (TAU.GT.0) THEN
+            IF( mod( TAU, nwritetrc ).EQ.0) THEN
+                if (.false.) then
+                    if (lwp) then
+                        write(*,*) "************* OGSTM TEMPORIZATION *********"
+                        write(*,*) "              Iteration",TAU
+                        write(*,*) "routine******time_tot*********time_ave*****"
+                    endif
+                
+                    B = writeTemporization("forPhys___", forcing_phys_TotTime)
+                    B = writeTemporization("forKext___", forcing_kext_TotTime)
+                    B = writeTemporization("bcCO2_____", bc_co2_TotTime)
+                    B = writeTemporization("bcTIN_____", bc_tin_TotTime)
+                    B = writeTemporization("bcATM_____", bc_atm_TotTime)
+                    B = writeTemporization("bcGIB_____", bc_gib_TotTime)
+                    B = writeTemporization("density___", density_TotTime)
+                    B = writeTemporization("averaging_", ave_TotTime   )
+                    B = writeTemporization("trcopt____", trcopttottime)
+                    B = writeTemporization("trcbio____", BIOtottime)
+                    B = writeTemporization("trcadv____", trcadvtottime)
+                    B = writeTemporization("trcdmp____", trcdmptottime)
+                    B = writeTemporization("trcbil____", trcbilaphdftottime)
+                    B = writeTemporization("trcsbc____", trcsbctottime)
+                    B = writeTemporization("trcsms____", trcsmstottime)
+                    B = writeTemporization("trczdf____", trczdftottime)
+                    B = writeTemporization("snutel____", snuteltottime)
+                    B = writeTemporization("check_____", checkVtottime)
+                    B = writeTemporization("trcnxt____", trcnxttottime)
+                    B = writeTemporization("trcstp____", trcstptottime)
+
+
+                    B = writeTemporization("flxdump___",flx_TotTime  )
+                    B = writeTemporization("stp_______", stptottime  )
+                end if
+
+                call reset_Timers()
+            ENDIF
+        ENDIF
+      
+        if (EnsDebug>1) then
+            call mpi_barrier(glcomm, ierr)
+            if (lwp) write(*,*) 'end step loop'
+            !call mpi_barrier(glcomm, ierr)
+        end if
+
+
+!+++++++++++++++++++++++++++++c
+!      End of time loop       c
+!+++++++++++++++++++++++++++++c
+        datestring = UPDATE_TIMESTRING(datestring, rdt)
+        TAU = TAU + 1
+        
+      END DO   
+
+      CONTAINS
+
+      LOGICAL FUNCTION writeTemporization(string, elapsedtime)
+      IMPLICIT NONE
+      CHARACTER(LEN=*) string
+      double precision elapsedtime
+
+      if (isFIRST) then
+         write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," myrank->", myrank
+         isFirst=.false.
+      else
+         write(*,250) string,elapsedtime,elapsedtime/nwritetrc," myrank->", myrank
+      endif
+      writeTemporization = .true.
+250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I3 )
+      END FUNCTION writeTemporization
+
+END SUBROUTINE
+      
+#else
+ 
+  SUBROUTINE step
 !---------------------------------------------------------------------
 !
 !                       ROUTINE STEP
@@ -57,11 +348,6 @@ MODULE module_step
 
 !      trcstp, trcdia  passive tracers interface
 
-#ifdef ExecEns
-    Use Ens_MPI, &
-        only: EnsDebug
-#endif
-
        IMPLICIT NONE
 
 
@@ -73,10 +359,6 @@ MODULE module_step
       character(LEN=17)  date_aveforDA
       LOGICAL B, isFIRST
       INTEGER :: jk,jj,ji,jn
-      
-#ifdef ExecEns
-    integer ierr
-#endif
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
 !++++++++++++++++++++++++++++++c
@@ -91,21 +373,13 @@ MODULE module_step
        datestring =  DATESTART
       TAU = 0
       DO WHILE (.not.ISOVERTIME(datestring))
-      
-#ifdef ExecEns
-    if (EnsDebug>1) then
-        call mpi_barrier(glcomm, ierr)
-        if (glrank==0) write(*,*) 'start step loop'
-        call mpi_barrier(glcomm, ierr)
-    end if
-
-#endif
 
          stpparttime = MPI_WTIME()  ! stop cronomether
          COMMON_DATESTRING = DATEstring
 
          call yearly(DATEstring) ! Performs yearly updates
          call daily(DATEstring)  ! Performs daily  updates
+
 
          if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
          if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
@@ -200,50 +474,39 @@ MODULE module_step
 ! OGSTM TEMPORIZATION
        IF (TAU.GT.0) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
-            if (.false.) then
-                if (lwp) then
-                    write(*,*) "************* OGSTM TEMPORIZATION *********"
-                    write(*,*) "              Iteration",TAU
-                    write(*,*) "routine******time_tot*********time_ave*****"
-                endif
-            
-                B = writeTemporization("forPhys___", forcing_phys_TotTime)
-                B = writeTemporization("forKext___", forcing_kext_TotTime)
-                B = writeTemporization("bcCO2_____", bc_co2_TotTime)
-                B = writeTemporization("bcTIN_____", bc_tin_TotTime)
-                B = writeTemporization("bcATM_____", bc_atm_TotTime)
-                B = writeTemporization("bcGIB_____", bc_gib_TotTime)
-                B = writeTemporization("density___", density_TotTime)
-                B = writeTemporization("averaging_", ave_TotTime   )
-                B = writeTemporization("trcopt____", trcopttottime)
-                B = writeTemporization("trcbio____", BIOtottime)
-                B = writeTemporization("trcadv____", trcadvtottime)
-                B = writeTemporization("trcdmp____", trcdmptottime)
-                B = writeTemporization("trcbil____", trcbilaphdftottime)
-                B = writeTemporization("trcsbc____", trcsbctottime)
-                B = writeTemporization("trcsms____", trcsmstottime)
-                B = writeTemporization("trczdf____", trczdftottime)
-                B = writeTemporization("snutel____", snuteltottime)
-                B = writeTemporization("check_____", checkVtottime)
-                B = writeTemporization("trcnxt____", trcnxttottime)
-                B = writeTemporization("trcstp____", trcstptottime)
+           if (lwp) then
+               write(*,*) "************* OGSTM TEMPORIZATION *********"
+               write(*,*) "              Iteration",TAU
+               write(*,*) "routine******time_tot*********time_ave*****"
+           endif
+           B = writeTemporization("forPhys___", forcing_phys_TotTime)
+           B = writeTemporization("forKext___", forcing_kext_TotTime)
+           B = writeTemporization("bcCO2_____", bc_co2_TotTime)
+           B = writeTemporization("bcTIN_____", bc_tin_TotTime)
+           B = writeTemporization("bcATM_____", bc_atm_TotTime)
+           B = writeTemporization("bcGIB_____", bc_gib_TotTime)
+           B = writeTemporization("density___", density_TotTime)
+           B = writeTemporization("averaging_", ave_TotTime   )
+           B = writeTemporization("trcopt____", trcopttottime)
+           B = writeTemporization("trcbio____", BIOtottime)
+           B = writeTemporization("trcadv____", trcadvtottime)
+           B = writeTemporization("trcdmp____", trcdmptottime)
+           B = writeTemporization("trcbil____", trcbilaphdftottime)
+           B = writeTemporization("trcsbc____", trcsbctottime)
+           B = writeTemporization("trcsms____", trcsmstottime)
+           B = writeTemporization("trczdf____", trczdftottime)
+           B = writeTemporization("snutel____", snuteltottime)
+           B = writeTemporization("check_____", checkVtottime)
+           B = writeTemporization("trcnxt____", trcnxttottime)
+           B = writeTemporization("trcstp____", trcstptottime)
 
 
-                B = writeTemporization("flxdump___",flx_TotTime  )
-                B = writeTemporization("stp_______", stptottime  )
-            end if
+           B = writeTemporization("flxdump___",flx_TotTime  )
+           B = writeTemporization("stp_______", stptottime  )
 
-            call reset_Timers()
+           call reset_Timers()
        ENDIF
       ENDIF
-      
-#ifdef ExecEns
-    if (EnsDebug>1) then
-        call mpi_barrier(glcomm, ierr)
-        if (glrank==0) write(*,*) 'end step loop'
-        call mpi_barrier(glcomm, ierr)
-    end if
-#endif
 
 
 !+++++++++++++++++++++++++++++c
@@ -251,7 +514,6 @@ MODULE module_step
 !+++++++++++++++++++++++++++++c
       datestring = UPDATE_TIMESTRING(datestring, rdt)
       TAU = TAU + 1
-      
       END DO  
 
       CONTAINS
@@ -272,6 +534,7 @@ MODULE module_step
       END FUNCTION writeTemporization
 
       END SUBROUTINE step
+#endif
 
 
       SUBROUTINE trcstp

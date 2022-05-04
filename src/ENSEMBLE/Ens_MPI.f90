@@ -2,10 +2,10 @@
 
 module Ens_MPI
     use mpi
+    use Ens_Mem, &
+        only: EnsDebug, EnsComm, EnsRank, EnsSize
 
 implicit none
-    integer :: EnsDebug
-    integer :: EnsComm, EnsRank, EnsSize
 
 contains
     subroutine Ens_MPI_nodes_find_and_split
@@ -18,16 +18,16 @@ contains
         use myalloc, &
             only: lwp, mycomm, myrank, mysize
             
-        integer, parameter :: procs_distribution_type=2 
-            ! 1: faster communications inside ogstm communicator (mycomm)
-            ! 2 (suggested): faster communications between ensemble members (EnsComm). Less RAM per per node needed.
+        integer, parameter :: procs_distribution_type=2 !1 is not supported at this moment
+            ! 1 (not supported): faster communications inside ogstm communicator (mycomm)
+            ! 2 (supported if ranks per node is multiple of EnsSize): faster communications between ensemble members (EnsComm). Less RAM per per node needed.
         
         INTEGER :: i, j, k
         INTEGER :: IERROR
         CHARACTER (len = MPI_MAX_PROCESSOR_NAME), dimension(glsize) :: total_array
         integer, dimension(glsize) :: nodes_array
         integer, dimension(:), allocatable :: ranks_per_node_array
-        integer :: glcomm_ordered, nodecomm, noderank, writingcomm
+        integer :: glcomm_ordered, nodecomm, noderank, nodesize, writingcomm
 
         CALL MPI_GATHER(local_array, MPI_MAX_PROCESSOR_NAME,MPI_CHAR, total_array,MPI_MAX_PROCESSOR_NAME,MPI_CHAR, 0, glcomm, IERROR)
         
@@ -59,6 +59,12 @@ contains
             if (EnsDebug>1) then
                 do i=1,glsize
                     write(*,*) i,': ',total_array(i), ', ', nodes_array(i)
+                end do
+            end if
+            
+            if (EnsDebug>0) then
+                do i=1,glsize
+                    write(*,*) 'proc ', i,': node ', nodes_array(i)
                 end do
             end if
         
@@ -104,10 +110,21 @@ contains
                 call MPI_abort(glcomm, 1, ierror)
         END SELECT
         
+        !check
+        call mpi_comm_split(EnsComm, ind_col, EnsRank, nodecomm, ierror)
+        call mpi_comm_size(nodecomm, nodesize, ierror)
+        if (nodesize/=EnsSize) then
+            write(*,*) 'The number of task per node is not a multiple of EnsSize. This is not supported at this moment. Aborting.'
+            write(*,*) 'glrank: ', glrank, ', node number: ', ind_col, ', procs in this node: ', nodesize
+            call MPI_abort(glcomm, 1, ierror)
+        end if
+        call mpi_comm_free(nodecomm, ierror)
+        
         ! computing ind_col and writing_procs:
         
         call mpi_comm_split(mycomm, ind_col, myrank, nodecomm, ierror)
-        CALL mpi_comm_rank(nodecomm,noderank,ierror)
+        CALL mpi_comm_rank(nodecomm,noderank,ierror)            
+        
         call mpi_comm_split(mycomm, noderank, myrank, writingcomm, ierror)
         
         CALL mpi_comm_rank(writingcomm,ind_col,ierror)

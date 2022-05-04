@@ -8,7 +8,12 @@
           INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP, INDflxDUMPglo, INDflxBuff, INDflxDUMPZERO
           INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
 
+#ifdef ExecEns
+            double precision,    pointer, DIMENSION(:,:,:) :: diaflx
+#else
           double precision,    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
+#endif
+
           double precision,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
           real,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo_Float
           logical existFileFluxes
@@ -48,8 +53,10 @@
        flx_ridxt  = huge(flx_ridxt(1,1))
        allocate(INDflxDUMP    (Fsize             ))  
        INDflxDUMP = huge(INDflxDUMP(1))
+#ifndef ExecEns
        allocate(diaflx        (7, Fsize, jptra   ))
        diaflx = 0
+#endif
       END SUBROUTINE alloc_DIA_local_flx
 
 
@@ -92,11 +99,11 @@
           if (allocated(INDflxDUMP)) then
               deallocate(INDflxDUMP)
           endif
-
+#ifndef ExecEns
           if (allocated(diaflx)) then
               deallocate(diaflx)
           endif
-
+#endif
           if (allocated(INDflxDUMPZERO)) then
               deallocate(INDflxDUMPZERO)
           endif

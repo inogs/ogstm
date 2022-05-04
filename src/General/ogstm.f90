@@ -73,26 +73,34 @@ SUBROUTINE ogstm_launcher()
 #include "BFM_module_list.h"
 #endif
 
+#ifdef ExecEns
+    use Ens_Mem, &
+        only: EnsDebug
+        
+    integer ierr
+#endif
      
       double precision :: timetosolution
       
       timetosolution = MPI_Wtime()
 
       call ogstm_initialize()
+#ifdef ExecEns
+    if (EnsDebug>0) then
+        call mpi_barrier(glcomm, ierr)
+        if (glrank==0) write(*,*) "Ogstm initialization completed in seconds: ", MPI_Wtime() - timetosolution
+    end if
+#endif
       
-
       call step
 
-
+      
       call ogstm_finalize()
-
+      
+    timetosolution = MPI_Wtime() - timetosolution
 #ifdef ExecEns
-    if (glrank==0) then
-        timetosolution = MPI_Wtime() - timetosolution
-        write(*,*) "TIME TO SOLUTION =",timetosolution
-    end if
+    if (EnsDebug>=0.and.glrank==0) write(*,*) "TIME TO SOLUTION =",timetosolution
 #else
-      timetosolution = MPI_Wtime() - timetosolution
       print*,"TIME TO SOLUTION =",timetosolution
 #endif
      
@@ -105,8 +113,12 @@ SUBROUTINE ogstm_launcher()
 SUBROUTINE ogstm_initialize()
 
 #ifdef ExecEns
+    use Ens_Mem, &
+        only: EnsDebug
     use Ens_MPI, &
-        only: Ens_MPI_nodes_find_and_split, EnsDebug
+        only: Ens_MPI_nodes_find_and_split
+    use Ens_Routines, &
+        only: Ens_Init
         
     integer ierr
 #endif
@@ -199,8 +211,12 @@ SUBROUTINE ogstm_initialize()
       call trccof        ! initialisation of data fields
 
       call set_to_zero() ! set to zero some data arrays
-
+      
+#ifdef ExecEns
+    call Ens_Init
+#else
       call trcrst        ! read restarts
+#endif
 
       call photo_init
 
@@ -221,7 +237,7 @@ SUBROUTINE ogstm_initialize()
       call Initialize()
       
 #ifdef ExecEns
-    if (EnsDebug>1) then
+    if (EnsDebug>0) then
         call mpi_barrier(glcomm,ierr)
         if (glrank==0) write(*,*) "end of initializzation" 
     end if
@@ -416,6 +432,8 @@ SUBROUTINE ogstm_finalize()
 #ifdef ExecEns
     use Ens_MPI, &
         only: Ens_MPI_Finalize
+    use Ens_Routines, &
+        only: Ens_Finalize
 #endif
 
       CALL mppstop
@@ -452,6 +470,10 @@ SUBROUTINE ogstm_finalize()
       call clean_memory_io()
       call clean_memory_adv()
       call clean_memory_zdf()
+      
+#ifdef ExecEns
+    call Ens_Finalize
+#endif
 
       END SUBROUTINE ogstm_finalize
 

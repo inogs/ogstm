@@ -108,8 +108,8 @@
        END DO
       END DO
 
-      DO jj=1, jpj
         DO ji=1, jpi
+      DO jj=1, jpj
            IF (tmask(1,jj,ji) .NE. 0.) THEN
                vatmIO(jj,ji)=(vatmIO(jj,ji)*elapsed_time+vatm(jj,ji)*rdt)*inv_incremented_time
                empIO (jj,ji)=(empIO (jj,ji)*elapsed_time+emp (jj,ji)*rdt)*inv_incremented_time

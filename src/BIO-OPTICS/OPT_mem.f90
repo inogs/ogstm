@@ -352,13 +352,7 @@
 
               if (bfmmask(1,jj,ji).eq.0 ) cycle
               tmask_levels = mbathy(jj,ji)
-              !if (tmask_levels.eq.0) cycle
-              if (gdept(tmask_levels,jj,ji).lt.500.0) then
-                opt_mask(1:tmask_levels,jj,ji) = 1
-
-              else
-                opt_mask(1:jpk_opt+1,jj,ji) = 1
-              endif
+              opt_mask(1:tmask_levels+1,jj,ji) = 1
 
           enddo
           enddo

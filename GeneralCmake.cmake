@@ -40,7 +40,7 @@ if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   if (CMAKE_C_COMPILER MATCHES "nvc")
-    set (CMAKE_Fortran_FLAGS_RELEASE " -O2 -Mpreprocess -g -acc -gpu=cc70 -Minfo=accel")
+    set (CMAKE_Fortran_FLAGS_RELEASE " -O2 -Mpreprocess -g -acc -gpu=cc70,pinned -Minfo=accel")
     set (CMAKE_Fortran_FLAGS_DEBUG   " -O1 -Mpreprocess -g -acc -gpu=cc70,autocompare -Minfo=accel")
   else()
     set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0 ")

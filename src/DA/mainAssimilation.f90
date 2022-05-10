@@ -34,6 +34,8 @@
       DAY  =datestr(1:8)
       HOUR =datestr(10:11)
 
+      condition_to_3dvar = .true.
+
       ! DA_Params init
       DA_Date = datestr
       ShortDate = ConvertDate(datestr)

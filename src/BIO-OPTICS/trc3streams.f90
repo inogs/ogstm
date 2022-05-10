@@ -111,7 +111,7 @@
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     
                  IF ( (MODE .EQ. 0) .OR. (MODE .EQ. 1)) then
-                     call edeseu(MODE,V_POSITION,bottom,e3w(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
+                     call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
     
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)
@@ -142,7 +142,7 @@
                  IF (MODE .EQ. 2) then
                      zgrid(1)=0.0D0
                      do jk =1,jpk
-                         zgrid(jk+1) = zgrid(jk) + e3w(jk,jj,ji)
+                         zgrid(jk+1) = zgrid(jk) + e3t(jk,jj,ji)
                      enddo
                     
 

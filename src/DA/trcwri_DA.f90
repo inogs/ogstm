@@ -12,11 +12,11 @@ SUBROUTINE trcwriDA(datestring)
         !  SUBROUTINE:
         !       - trcwriDA
         !       - write_BeforeAss
+        !       - write_chlsup
                 
     
    
 
-        USE netcdf
         USE myalloc
         USE IO_mem
         USE calendar
@@ -30,7 +30,7 @@ SUBROUTINE trcwriDA(datestring)
         USE MATRIX_VARS
         USE NODES_MODULE
         USE DTYPE_PROCS_STRING_MODULE
-        USE DA_VARS_module
+        USE DA_VARS_module, only : DA_table, matrix_DA, num_DA_vars, PX_DA, matrix_DA_row
         
         IMPLICIT NONE
         CHARACTER(LEN=17), INTENT(IN) :: datestring
@@ -42,7 +42,6 @@ SUBROUTINE trcwriDA(datestring)
 ! ==================
         double precision ::  Miss_val =1.e20
         INTEGER jk,jj,ji,jn
-        INTEGER s, nc, counter
         integer timid, depid, yid, xid, idvar
         double precision julian
 
@@ -177,14 +176,13 @@ END SUBROUTINE trcwriDA
 !SOLO PROC CHE FA CHL
 SUBROUTINE CHL_subroutine(datestring)
 
-        USE netcdf
         USE myalloc
         USE IO_mem
         USE calendar
         USE TIME_MANAGER
         use mpi
         USE ogstm_mpi_module
-        USE DA_mem
+        USE DA_mem, only : CHL_SUP,CHLtot
 
         USE MPI_GATHER_INFO
 
@@ -198,8 +196,6 @@ SUBROUTINE CHL_subroutine(datestring)
 
         double precision ::  Miss_val =1.e20
         INTEGER jk,jj,ji,jn
-        INTEGER s, nc, counter
-        integer timid, depid, yid, xid, idvar
         double precision julian
 
         CHARACTER(LEN=45) BeforeName
@@ -309,26 +305,37 @@ SUBROUTINE CHL_subroutine(datestring)
 
         END DO DA_CHL_LOOP
 
-        IF(myrank==0)then
+        IF(myrank==0) call write_chlsup(CHLSUP_FOR_DA)
 
-                s = nf90_create(CHLSUP_FOR_DA, NF90_CLOBBER, nc)
-                s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
-                s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
-                s= nf90_def_dim(nc,'depth'         , 1   ,depid)
-                s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
-                s = nf90_def_var(nc, 'lchlm', nf90_float, (/xid,yid,depid,timid/),  idVAR)
-
-                s = nf90_put_att(nc,idVAR, 'missing_value',4.e+20)
-
-                s =nf90_enddef(nc)
-
-                CHL_SUP = CHLtot(:,:,1)
-                s = nf90_put_var(nc, idVAR  ,CHL_SUP ); call handle_err1(s,counter,CHLSUP_FOR_DA)
-                s=nf90_close(nc)
-        
-        END IF
 
 END SUBROUTINE CHL_subroutine
+
+SUBROUTINE write_chlsup(fileNetCDF)
+
+    USE netcdf
+    use myalloc
+    use DA_mem, only : CHL_SUP,CHLtot
+    IMPLICIT NONE
+    CHARACTER*(*), intent(in) :: fileNetCDF
+    INTEGER s, nc, counter
+    integer timid, depid, yid, xid, idvar
+
+    s = nf90_create(fileNetCDF, NF90_CLOBBER, nc)
+    s= nf90_def_dim(nc,'lon'           , jpiglo,  xid)
+    s= nf90_def_dim(nc,'lat'           , jpjglo,  yid)
+    s= nf90_def_dim(nc,'depth'         , 1   ,depid)
+    s= nf90_def_dim(nc,'time'  , NF90_UNLIMITED,timid)
+    s = nf90_def_var(nc, 'lchlm', nf90_float, (/xid,yid,depid,timid/),  idVAR)
+
+    s = nf90_put_att(nc,idVAR, 'missing_value',4.e+20)
+
+    s =nf90_enddef(nc)
+
+    CHL_SUP = CHLtot(:,:,1)
+    s = nf90_put_var(nc, idVAR  ,CHL_SUP ); call handle_err1(s,counter,fileNetCDF)
+    s=nf90_close(nc)
+
+END SUBROUTINE write_chlsup
 
        !****************************************************************************
        !****************************************************************************

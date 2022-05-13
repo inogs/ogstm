@@ -2,7 +2,7 @@
 # author : E.Pascolo, S.Bna, L.Calori
 
 # CMAKE setting
-cmake_minimum_required (VERSION 2.6)
+cmake_minimum_required (VERSION 3.18)
 project (OGSTM)
 set (CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR}/cmake/)
 enable_language(Fortran C)
@@ -15,6 +15,8 @@ find_package(BFM REQUIRED)
 find_package(3DVAR REQUIRED)
 find_package(PETSc REQUIRED)
 find_package(PnetCDF REQUIRED)
+find_package(BIOPTIMOD_3STREAM REQUIRED)
+find_package(OASIM_ATM)
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
@@ -44,8 +46,8 @@ if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend-source")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
-  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -align array64byte")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-0")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
@@ -56,6 +58,8 @@ endif ()
 
 #include
 include_directories(${BFM_INCLUDES})
+include_directories(${BIOPTIMOD_3STREAM_INCLUDES})
+include_directories(${OASIM_ATM_INCLUDES})
 include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
@@ -64,7 +68,7 @@ include_directories(${DA_INCLUDES})
 include_directories(${PETSC_INCLUDES})
 
 # Search Fortran module to compile
-set( FOLDERS BIO  DA  General  IO  MPI  namelists  PHYS BC)
+set( FOLDERS BIO BIO-OPTICS DA  General  IO  MPI  namelists  PHYS BC)
   foreach(FOLDER ${FOLDERS})
   file(GLOB TMP src/${FOLDER}/*)
   list (APPEND FORTRAN_SOURCES ${TMP})
@@ -73,4 +77,4 @@ endforeach()
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES} ${BIOPTIMOD_3STREAM_LIBRARIES}  ${OASIM_ATM_LIBRARIES})

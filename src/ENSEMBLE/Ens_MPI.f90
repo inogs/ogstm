@@ -70,7 +70,7 @@ contains
         
         end if
         
-        call mpi_scatter(nodes_array, 1, MPI_INT, ind_col, 1, MPI_INT, 0, glcomm, ierror)
+        call mpi_scatter(nodes_array, 1, mpi_integer, ind_col, 1, mpi_integer, 0, glcomm, ierror)
         
         ! ordering:
         
@@ -110,15 +110,26 @@ contains
                 call MPI_abort(glcomm, 1, ierror)
         END SELECT
         
-        !check
+        !checks
+        call mpi_barrier(glcomm,ierror)
         call mpi_comm_split(EnsComm, ind_col, EnsRank, nodecomm, ierror)
         call mpi_comm_size(nodecomm, nodesize, ierror)
         if (nodesize/=EnsSize) then
             write(*,*) 'The number of task per node is not a multiple of EnsSize. This is not supported at this moment. Aborting.'
-            write(*,*) 'glrank: ', glrank, ', node number: ', ind_col, ', procs in this node: ', nodesize
+            write(*,*) 'glrank: ', glrank, ', node number: ', ind_col, ', Ens-procs in this node: ', nodesize
             call MPI_abort(glcomm, 1, ierror)
         end if
         call mpi_comm_free(nodecomm, ierror)
+        
+call mpi_barrier(glcomm,ierror)
+call mpi_comm_split(glComm, ind_col, glRank, nodecomm, ierror)
+CALL mpi_comm_rank(nodecomm, noderank,ierror)  
+call mpi_comm_size(nodecomm, nodesize, ierror)
+if (noderank==0 .and. nodesize>48) then
+    write(*,*) 'WARNING!!! node ', ind_col, ' has ', nodesize, ' procs.'
+    !call mpi_abort(glcomm, 1, ierror)
+end if
+call mpi_comm_free(nodecomm, ierror)
         
         ! computing ind_col and writing_procs:
         
@@ -129,15 +140,15 @@ contains
         
         CALL mpi_comm_rank(writingcomm,ind_col,ierror)
         ind_col=ind_col+1
-        CALL MPI_Bcast(ind_col,1,MPI_INT,0,nodecomm, IERROR)
+        CALL MPI_Bcast(ind_col,1,mpi_integer,0,nodecomm, IERROR)
         
         CALL mpi_comm_size(writingcomm,nodes,ierror)
-        CALL MPI_Bcast(nodes,1,MPI_INT,0,nodecomm, IERROR)
+        CALL MPI_Bcast(nodes,1,mpi_integer,0,nodecomm, IERROR)
         
         ALLOCATE (writing_procs(nodes))
         
-        if (noderank==0) CALL mpi_allgather(myrank, 1,MPI_INT, writing_procs,1,MPI_INT, writingcomm, IERROR)
-        CALL MPI_Bcast(writing_procs,nodes,MPI_INT,0,nodecomm, IERROR)
+        if (noderank==0) CALL mpi_allgather(myrank, 1,mpi_integer, writing_procs,1,mpi_integer, writingcomm, IERROR)
+        CALL MPI_Bcast(writing_procs,nodes,mpi_integer,0,nodecomm, IERROR)
         
         call mpi_comm_free(nodecomm, IERROR)
         call mpi_comm_free(writingcomm, IERROR)

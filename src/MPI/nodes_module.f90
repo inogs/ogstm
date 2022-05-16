@@ -85,7 +85,7 @@ MODULE NODES_MODULE
         !rank 0 send to all ranks nodes
 
                 DO i=1, mysize - 1
-                        CALL MPI_Send(nodes,1,MPI_INT,i,4,mycomm,IERROR)
+                        CALL MPI_Send(nodes,1,mpi_integer,i,4,mycomm,IERROR)
                 END DO
 
                 if (lwp) write(*,*) 'nodes sent'
@@ -114,7 +114,7 @@ MODULE NODES_MODULE
         !rank 0 send to all ranks writing_procs
 
                 DO i=1, mysize - 1
-                        CALL MPI_Send(writing_procs,nodes,MPI_INT,i,3,mycomm,IERROR)
+                        CALL MPI_Send(writing_procs,nodes,mpi_integer,i,3,mycomm,IERROR)
                 END DO
 
         END IF
@@ -124,18 +124,18 @@ MODULE NODES_MODULE
         
         IF (myrank >0) THEN
                 
-                CALL MPI_Recv(nodes,1,MPI_INT,0,4,mycomm,MPI_STATUS_IGNORE, IERROR)
+                CALL MPI_Recv(nodes,1,mpi_integer,0,4,mycomm,MPI_STATUS_IGNORE, IERROR)
                 
                 ALLOCATE (writing_procs(nodes))
 
-                CALL MPI_Recv(writing_procs,nodes,MPI_INT,0,3,mycomm,MPI_STATUS_IGNORE, IERROR)
+                CALL MPI_Recv(writing_procs,nodes,mpi_integer,0,3,mycomm,MPI_STATUS_IGNORE, IERROR)
 
 !                DO k=1, nodes
 !                        write (*,*) 'writing procs position is ', k, writing_procs(k)
 !                END DO
         END IF
         
-        call mpi_scatter(nodes_array, 1, MPI_INT, ind_col, 1, MPI_INT, 0, mycomm, ierror)
+        call mpi_scatter(nodes_array, 1, mpi_integer, ind_col, 1, mpi_integer, 0, mycomm, ierror)
 
 !check number of nodes
 

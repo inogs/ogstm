@@ -307,6 +307,12 @@
       double precision, pointer, contiguous ::  tra_PHYS_IO_HIGH(:,:,:,:)
       double precision, pointer, contiguous ::  tra_PHYS_2d_IO(:,:,:)
       double precision, pointer, contiguous ::  tra_PHYS_2d_IO_HIGH(:,:,:)
+      
+      !trcadv 
+      !double precision, allocatable,dimension(:,:,:) :: zti,ztj
+      !double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
+      !double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
+      
 #else
       double precision, allocatable ::  traIO(:,:,:,:)
       double precision, allocatable ::  traIO_HIGH(:,:,:,:)
@@ -711,7 +717,17 @@ subroutine alloc_tot()
        allocate(buf2   (jpj,jpi))                          
        buf2          = huge(buf2(1,1))
        
-#ifndef ExecEns
+#ifdef ExecEns
+       !allocate(zy(jpk,jpj,jpi))  
+       !allocate(zx(jpk,jpj,jpi))
+       !allocate(zz(jpk,jpj,jpi))
+       !allocate(ztj(jpk,jpj,jpi)) 
+       !allocate(zti(jpk,jpj,jpi))    
+       !allocate(zkx(jpk,jpj,jpi)) 
+       !allocate(zky(jpk,jpj,jpi)) 
+       !allocate(zkz(jpk,jpj,jpi)) 
+       !allocate(zbuf(jpk,jpj,jpi))
+#else
        allocate(traIO(jpk,jpj,jpi,jptra))                  
        traIO  = huge(traIO(1,1,1,1)) 
        allocate(tra_DIA_IO(jptra_dia,jpk,jpj,jpi))         
@@ -946,7 +962,17 @@ subroutine alloc_tot()
             deallocate(buf)
             deallocate(buf2)
             
-#ifndef ExecEns
+#ifdef ExecEns
+            !deallocate(zy )  
+            !deallocate(zx )
+            !deallocate(zz )
+            !deallocate(ztj ) 
+            !deallocate(zti )    
+            !deallocate(zkx ) 
+            !deallocate(zky ) 
+            !deallocate(zkz ) 
+            !deallocate(zbuf )
+#else
             deallocate(traIO)
             deallocate(tra_DIA_IO)
             deallocate(tra_PHYS_IO)

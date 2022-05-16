@@ -79,11 +79,16 @@
 &Ensemble_setup
     EnsDebug = 0 !0: no debug info, 1: some debug info, 2: more debug info
     EnsSize = 1 !Ensemble size
-    EnsShareRestart = 1 !0: each ensemble member has its own restart, 1: same restart for everyone.
+    
+    !************************************************************************************************!
+    ! This part is relevant only for EnsSize>1
+    EnsShareRestart = 0 !0: each ensemble member has its own restart, 1: same restart for everyone.
     EnsSaveEachRestart=.true. 
     EnsSaveMeanRestart=.true.
     EnsSaveEachAve=.true.
     EnsSaveMeanAve=.true.
+    !************************************************************************************************!
+    
     EnsAveDouble=.false.
     Ens_restart_prefix='RESTARTS/RST'
     Ens_restart_ens_prefix='RESTARTS/ENSEMBLE/RST'
@@ -93,5 +98,10 @@
     Ens_ave_freq_2_ens_prefix='AVE_FREQ_2/ENSEMBLE/ave'
     Ens_flux_prefix='FLUXES/flux'
     Ens_flux_ens_prefix='FLUXES/ENSEMBLE/flux'
+/
+
+&Ensemble_DA_setup
+    EnsSaveAfterForecast=.false.
+    EnsSaveAfterAnalysis=.true.
 /
 

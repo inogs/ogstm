@@ -60,16 +60,13 @@ MODULE module_step
 !      trcstp, trcdia  passive tracers interface
      
     Use Ens_Mem, &
-        only: EnsRankZero, &
-            EnsDebug, EnsRank, EnsSize, &
-            EnsSaveEachRestart, EnsSaveMeanRestart, Ens_restart_ens_prefix, Ens_restart_prefix, &
-            DAstate, n_DAstate, win_DAstate, gl_DAstate
+        only: EnsDebug, EnsRank, EnsSize, &
+            EnsSaveAfterForecast, EnsSaveAfterAnalysis, &
+            IsaForecast
     Use Ens_IO, &
-        only: Ens_trcwri, Ens_trcdia
+        only: Ens_SaveRestarts, Ens_trcdia
     use Ens_Custom, &
-        only: Ens_state2DA, Ens_DA2state_0
-    use Ens_Utilities, &
-        only: Ens_ReduceMean
+        only: EnsForecast, EnsObs, EnsAnalysis
 
     IMPLICIT NONE
 
@@ -79,8 +76,9 @@ MODULE module_step
     INTEGER TAU
     character(LEN=17)  datestring, datemean, datefrom_1, datefrom_2
     LOGICAL B, isFIRST
-    INTEGER :: jk,jj,ji,jn
+    INTEGER :: indexi, indexj
     integer ierr
+    double precision :: Ens_Timers(16)
 
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
@@ -113,54 +111,7 @@ MODULE module_step
 
         if (IsaRestart(DATEstring)) then
             
-            if (EnsSize>1 .and. EnsSaveEachRestart) then
-                if (EnsDebug>0) then
-                    call mpi_barrier(glcomm, ierr)
-                    if (lwp) write(*,*) 'Saving each ens restart. Time: ', MPI_WTIME()-stpparttime
-                end if
-                call Ens_trcwri(trim(Ens_restart_ens_prefix), DATEstring, EnsRank, trn)
-                if (EnsDebug>0) then
-                    call mpi_barrier(glcomm, ierr)
-                    if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-stpparttime
-                end if
-            end if
-            
-            if (EnsSize==1 .or. EnsSaveMeanRestart) then
-            
-                if (EnsSize==1) then
-                    call Ens_trcwri(Ens_restart_prefix, DATEstring, -1, trn)
-                else
-                    if (EnsDebug>0) then
-                        call mpi_barrier(glcomm, ierr)
-                        if (lwp) write(*,*) 'Preparing mean restart. Time: ', MPI_WTIME()-stpparttime
-                    end if
-                    
-                    call Ens_state2DA
-                    if (EnsDebug>0) then
-                        call mpi_barrier(glcomm, ierr)
-                        if (lwp) write(*,*) 'State transformed. Time: ', MPI_WTIME()-stpparttime
-                    end if
-                    
-                    call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
-                    if (EnsDebug>0) then
-                        call mpi_barrier(glcomm, ierr)
-                        if (lwp) write(*,*) 'Reduced. Time: ', MPI_WTIME()-stpparttime
-                    end if
-                    
-                    call Ens_DA2state_0
-                    if (EnsDebug>0) then
-                        call mpi_barrier(glcomm, ierr)
-                        if (lwp) write(*,*) 'Transformed back to state. Time: ', MPI_WTIME()-stpparttime
-                    end if
-                    
-                    if (EnsRank==EnsRankZero) call Ens_trcwri(trim(Ens_restart_prefix), DATEstring, -1, DAstate)
-                    if (EnsDebug>0) then
-                        call mpi_barrier(glcomm, ierr)
-                        if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-stpparttime
-                    end if
-                end if
-                
-            end if
+            call Ens_SaveRestarts(DATEstring)
             
             if (AVE_FREQ1%N .gt.0) then              !  void 1.aveTimes -> no backup
                 if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
@@ -202,10 +153,29 @@ MODULE module_step
 
 
 #ifdef ExecDA
-        if (IsaDataAssimilation(DATEstring)) then
-            CALL mainAssimilation(DATEstring, datefrom_1)
-            if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
-        endif
+        !if (IsaDataAssimilation(DATEstring)) then
+        !    CALL mainAssimilation(DATEstring, datefrom_1)
+        !    if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
+        !endif
+#endif
+
+#ifdef ExecEnsDA
+        if (EnsSize>1) then
+            if (IsaForecast(DATEstring).or.IsaDataAssimilation(DATEstring)) then
+                call EnsForecast
+                if (EnsSaveAfterForecast) then
+                
+                end if
+            end if
+
+            if (IsaDataAssimilation(DATEstring)) then
+                call EnsObs
+                CALL EnsAnalysis
+                if (EnsSaveAfterAnalysis) then
+                
+                end if
+            endif
+        end if
 #endif
 
 
@@ -241,41 +211,69 @@ MODULE module_step
         stpparttime = MPI_WTIME() - stpparttime
         stptottime  = stptottime  + stpparttime
         if (EnsDebug>0 .and. lwp) write(*,*) 'step in seconds: ', stpparttime
+        !if (EnsDebug>0) then
+        !    Ens_Timers=myrank 
+        !    Ens_Timers(1:15:2)=(/trcadvparttime, trcdmpparttime, trcbilaphdfparttime, trcsbcparttime, trcsmsparttime, trczdfparttime, snutelparttime, trcnxtparttime/)
+        !    call MPI_ALLREDUCE(MPI_in_place, Ens_Timers, 8, MPI_2DOUBLE_PRECISION, mpi_maxloc, glcomm, ierr)
+        !    
+        !    if (lwp) then
+        !        write(*,*) 'trcadvparttime, trcdmpparttime, trcbilaphdfparttime, trcsbcparttime, trcsmsparttime, trczdfparttime, snutelparttime, trcnxtparttime'
+        !        write(*,*) Ens_Timers
+        !    end if
+        !end if
 
 ! OGSTM TEMPORIZATION
-        IF (TAU.GT.0) THEN
+        IF (TAU.GT.0.and.EnsDebug>0) THEN
             IF( mod( TAU, nwritetrc ).EQ.0) THEN
-                if (.false.) then
-                    if (lwp) then
-                        write(*,*) "************* OGSTM TEMPORIZATION *********"
-                        write(*,*) "              Iteration",TAU
-                        write(*,*) "routine******time_tot*********time_ave*****"
-                    endif
+                if (lwp) then
+                    write(*,*) "************* OGSTM TEMPORIZATION *********"
+                    write(*,*) "              Iteration",TAU
+                    write(*,*) "routine******time_tot*********time_ave*****"
+                endif
+                if (EnsDebug>1) then
+                    do indexi=0, mysize-1
+                        do indexj=0, EnsSize-1
+                            call mpi_barrier(glcomm, ierr)
+                            
+                            if (indexi==myrank.and.indexj==EnsRank) then
+                        
+                                B = writeTemporization("forPhys___", forcing_phys_TotTime)
+                                B = writeTemporization("forKext___", forcing_kext_TotTime)
+                                B = writeTemporization("bcCO2_____", bc_co2_TotTime)
+                                B = writeTemporization("bcTIN_____", bc_tin_TotTime)
+                                B = writeTemporization("bcATM_____", bc_atm_TotTime)
+                                B = writeTemporization("bcGIB_____", bc_gib_TotTime)
+                                B = writeTemporization("density___", density_TotTime)
+                                B = writeTemporization("averaging_", ave_TotTime   )
+                                B = writeTemporization("trcopt____", trcopttottime)
+                                B = writeTemporization("trcbio____", BIOtottime)
+                                B = writeTemporization("trcadv____", trcadvtottime)
+                                B = writeTemporization("trcdmp____", trcdmptottime)
+                                B = writeTemporization("trcbil____", trcbilaphdftottime)
+                                B = writeTemporization("trcsbc____", trcsbctottime)
+                                B = writeTemporization("trcsms____", trcsmstottime)
+                                B = writeTemporization("trczdf____", trczdftottime)
+                                B = writeTemporization("snutel____", snuteltottime)
+                                B = writeTemporization("check_____", checkVtottime)
+                                B = writeTemporization("trcnxt____", trcnxttottime)
+                                B = writeTemporization("trcstp____", trcstptottime)
+
+
+                                B = writeTemporization("flxdump___",flx_TotTime  )
+                                B = writeTemporization("stp_______", stptottime  )
+                            end if
+                        end do
+                    end do
+                End if
                 
-                    B = writeTemporization("forPhys___", forcing_phys_TotTime)
-                    B = writeTemporization("forKext___", forcing_kext_TotTime)
-                    B = writeTemporization("bcCO2_____", bc_co2_TotTime)
-                    B = writeTemporization("bcTIN_____", bc_tin_TotTime)
-                    B = writeTemporization("bcATM_____", bc_atm_TotTime)
-                    B = writeTemporization("bcGIB_____", bc_gib_TotTime)
-                    B = writeTemporization("density___", density_TotTime)
-                    B = writeTemporization("averaging_", ave_TotTime   )
-                    B = writeTemporization("trcopt____", trcopttottime)
-                    B = writeTemporization("trcbio____", BIOtottime)
-                    B = writeTemporization("trcadv____", trcadvtottime)
-                    B = writeTemporization("trcdmp____", trcdmptottime)
-                    B = writeTemporization("trcbil____", trcbilaphdftottime)
-                    B = writeTemporization("trcsbc____", trcsbctottime)
-                    B = writeTemporization("trcsms____", trcsmstottime)
-                    B = writeTemporization("trczdf____", trczdftottime)
-                    B = writeTemporization("snutel____", snuteltottime)
-                    B = writeTemporization("check_____", checkVtottime)
-                    B = writeTemporization("trcnxt____", trcnxttottime)
-                    B = writeTemporization("trcstp____", trcstptottime)
-
-
-                    B = writeTemporization("flxdump___",flx_TotTime  )
-                    B = writeTemporization("stp_______", stptottime  )
+                Ens_Timers=myrank 
+                Ens_Timers(1:15:2)=(/trcadvtottime, trcdmptottime, trcbilaphdftottime, trcsbctottime, trcsmstottime, trczdftottime, snuteltottime, trcnxttottime/)
+                call MPI_ALLREDUCE(MPI_in_place, Ens_Timers, 8, MPI_2DOUBLE_PRECISION, mpi_maxloc, glcomm, ierr)
+                
+                if (lwp) then
+                    write(*,*) 'trcadvtottime, trcdmptottime, trcbilaphdftottime, trcsbctottime, trcsmstottime, trczdftottime, snuteltottime, trcnxttottime'
+                    write(*,*) Ens_Timers(1:15:2)
+                    write(*,*) Ens_Timers(2:16:2)
                 end if
 
                 call reset_Timers()
@@ -295,26 +293,155 @@ MODULE module_step
         datestring = UPDATE_TIMESTRING(datestring, rdt)
         TAU = TAU + 1
         
-      END DO   
+    END DO   
 
-      CONTAINS
+    CONTAINS
 
-      LOGICAL FUNCTION writeTemporization(string, elapsedtime)
-      IMPLICIT NONE
-      CHARACTER(LEN=*) string
-      double precision elapsedtime
+    LOGICAL FUNCTION writeTemporization(string, elapsedtime)
+        IMPLICIT NONE
+        CHARACTER(LEN=*) string
+        double precision elapsedtime
+        
+        character(len=100) :: format_string
+        
+        format_string='(A,ES11.4,A,ES20.7,A,I3,A,I3)'
 
-      if (isFIRST) then
-         write(*,250) string,elapsedtime,elapsedtime/(TAU-TimeStepStart +1)," myrank->", myrank
-         isFirst=.false.
-      else
-         write(*,250) string,elapsedtime,elapsedtime/nwritetrc," myrank->", myrank
-      endif
-      writeTemporization = .true.
-250   FORMAT (A , ES11.4 ,ES20.7 ,A20 , I3 )
-      END FUNCTION writeTemporization
+        if (isFIRST) then
+            write(*,trim(format_string)) string,elapsedtime,', avg: ',elapsedtime/(TAU-TimeStepStart +1),", myrank ", myrank, ', EnsRank: ', EnsRank
+            isFirst=.false.
+        else
+            write(*,trim(format_string)) string,elapsedtime,', avg: ',elapsedtime/nwritetrc,", myrank ", myrank, ', EnsRank: ', EnsRank
+        endif
+        writeTemporization = .true.
+    END FUNCTION writeTemporization
 
 END SUBROUTINE
+
+SUBROUTINE trcstp
+!---------------------------------------------------------------------
+!
+!                       ROUTINE trcstp
+!                     *****************
+!
+!  PURPOSE :
+!  ---------
+!	time loop of ogstm for passive tracer
+!
+!   METHOD :
+!   -------
+!      compute the well/spring evolution
+!
+!      compute the time evolution of tracers concentration
+!         with advection
+!         with horizontal diffusion
+!         with surface boundary condition
+!         with IMPLICIT vertical diffusion
+
+    use Ens_Mem, &
+        only: EnsDebug
+
+    IMPLICIT NONE
+    
+    integer ierr
+    
+    trcstpparttime = MPI_WTIME() ! cronometer-start
+
+    IF (ladv) CALL trcadv ! tracers: advection
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done trcadv, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+#    if defined key_trc_dmp
+    CALL trcdmp ! tracers: damping for passive tracerstrcstp
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done trcdmp, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+! ----------------------------------------------------------------------
+!  BEGIN BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+    call boundaries%apply(e3t, trb, tra)
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done boundaries%apply, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+! ----------------------------------------------------------------------
+!  END BC_REFACTORING SECTION
+!  ---------------------------------------------------------------------
+
+#    endif
+
+! tracers: horizontal diffusion IF namelist flags are activated
+! -----------------------------
+
+    IF (lhdf) CALL trchdf
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done trchdf, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+! tracers: sink and source (must be  parallelized on vertical slab)
+    IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done trcsbc, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+    IF (lbfm) CALL trcsms
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done trcsms, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+    IF (lzdf) CALL trczdf ! tracers: vertical diffusion
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done trczdf, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+    IF (lsnu) CALL snutel
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done snutel, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+    call boundaries%apply_dirichlet()
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done boundaries%apply_dirichlet, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+
+    ! CALL checkValues
+    
+    if (EnsDebug>0) then
+        call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done checkValues, time: ',  MPI_WTIME()-trcstpparttime
+    end if
+
+    CALL trcnxt ! tracers: fields at next time step
+    
+    !if (EnsDebug>0) then
+    !    call mpi_barrier(glcomm, ierr)
+    !    if (lwp) write(*,*) 'Done trcnxt, time: ',  MPI_WTIME()-trcstpparttime
+    !end if
+    
+    trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
+    trcstptottime = trcstptottime + trcstpparttime
+
+END SUBROUTINE trcstp
       
 #else
  
@@ -534,7 +661,6 @@ END SUBROUTINE
       END FUNCTION writeTemporization
 
       END SUBROUTINE step
-#endif
 
 
       SUBROUTINE trcstp
@@ -602,5 +728,6 @@ END SUBROUTINE
       trcstptottime = trcstptottime + trcstpparttime
 
       END SUBROUTINE trcstp
+#endif
 
 end module

@@ -21,7 +21,7 @@ contains
         use Ens_IO, &
             only: Ens_Init_IO, Ens_Finalize_IO, Ens_trcrst
         use Ens_Custom, &
-            only: Ens_Init_Custom
+            only: Ens_Init_DA
         use Ens_Utilities, &
             only: int2str
             
@@ -32,11 +32,10 @@ contains
         
         integer ierr
         
-        call Ens_Init_Custom
         call Ens_allocate
         call Ens_Init_IO
         
-        if (EnsSize==1) then
+        if (EnsSize<=1) then
         
             call Ens_trcrst(trim(Ens_restart_prefix), trim(Ens_ave_freq_1_prefix), trim(Ens_ave_freq_2_prefix))
             
@@ -66,6 +65,11 @@ contains
                     
             end select
             
+#ifdef ExecEnsDA
+        call Ens_Init_DA
+        
+#endif
+            
         end if
     end subroutine
     
@@ -74,9 +78,16 @@ contains
             only: Ens_deallocate
         use Ens_IO, &
             only:  Ens_Finalize_IO
+        use Ens_Custom, &
+            only: Ens_Finalize_DA
         
         call Ens_deallocate
         call Ens_Finalize_IO
+        
+#ifdef ExecEnsDA
+        call Ens_Finalize_DA
+        
+#endif
         
     end subroutine
 

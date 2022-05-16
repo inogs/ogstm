@@ -28,14 +28,7 @@
 #ifdef ExecDA
        USE DA_mem, ONLY : DA_Nprocs, TREd_procs_per_node, max_procs_per_one_node, satfile_suffix, satvarname, AssimilationLevels_sat,  AssimilationLevels_float
 #endif
-#ifdef ExecEns
-       USE Ens_Mem, &
-            ONLY : EnsDebug, EnsSize, EnsShareRestart, &
-                EnsSaveEachRestart, EnsSaveMeanRestart, EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble, &
-                Ens_restart_prefix, Ens_restart_ens_prefix, &
-                Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
-                Ens_flux_prefix, Ens_flux_ens_prefix
-#endif
+
        IMPLICIT NONE
 
 ! local declarations
@@ -55,14 +48,6 @@
 #ifdef ExecDA
       NAMELIST/DA_setup/ DA_Nprocs, TREd_procs_per_node, max_procs_per_one_node, satfile_suffix, satvarname, AssimilationLevels_sat, AssimilationLevels_float
 #endif
-#ifdef ExecEns
-        NAMELIST/Ensemble_setup/ EnsDebug, EnsSize, EnsShareRestart, &
-            EnsSaveEachRestart, EnsSaveMeanRestart, EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble, &
-            Ens_restart_prefix, Ens_restart_ens_prefix, &
-            Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
-            Ens_flux_prefix, Ens_flux_ens_prefix
-#endif
-
 
       IF(lwp) THEN
           WRITE(numout,*) ' '
@@ -297,49 +282,6 @@
       WRITE(numout,*) ' Assimiliation Levels_sat: ', AssimilationLevels_sat
       WRITE(numout,*) ' Assimiliation Levels_float: ', AssimilationLevels_float
       ENDIF
-#endif
-
-#ifdef ExecEns
-    EnsDebug=0
-    EnsSize=1
-    EnsShareRestart=1
-    EnsSaveEachRestart=.true.
-    EnsSaveMeanRestart=.true.
-    EnsSaveEachAve=.true.
-    EnsSaveMeanAve=.true.
-    EnsAveDouble=.false.
-    Ens_restart_prefix='RESTART/RST'
-    Ens_restart_ens_prefix='RESTART/ENSEMBLE/RST'
-    Ens_ave_freq_1_prefix='AVE_FREQ_1/ave'
-    Ens_ave_freq_1_ens_prefix='AVE_FREQ_1/ENSEMBLE/ave'
-    Ens_ave_freq_2_prefix='AVE_FREQ_2/ave'
-    Ens_ave_freq_2_ens_prefix='AVE_FREQ_2/ENSEMBLE/ave'
-    Ens_flux_prefix='FLUXES/flux'
-    Ens_flux_ens_prefix='FLUXES/ENSEMBLE/flux'
-    
-    REWIND(numnam)
-    READ(numnam, Ensemble_setup)
-    
-    IF(lwp) THEN
-        WRITE(numout,*) 'Ensemble_setup'
-        WRITE(numout,*) ' '
-        WRITE(numout,*) ' EnsDebug (verbosity): ', EnsDebug
-        WRITE(numout,*) ' EnsSize: ', EnsSize
-        WRITE(numout,*) ' EnsShareRestart: ', EnsShareRestart
-        WRITE(numout,*) ' EnsSaveEachRestart: ', EnsSaveEachRestart
-        WRITE(numout,*) ' EnsSaveMeanRestart: ', EnsSaveMeanRestart
-        WRITE(numout,*) ' EnsSaveEachAve: ', EnsSaveEachAve
-        WRITE(numout,*) ' EnsSaveMeanAve: ', EnsSaveMeanAve
-        WRITE(numout,*) ' EnsAveDouble: ', EnsAveDouble
-        WRITE(numout,*) ' Ens_restart_prefix: ', Ens_restart_prefix
-        WRITE(numout,*) ' Ens_restart_ens_prefix: ', Ens_restart_ens_prefix
-        WRITE(numout,*) ' Ens_ave_freq_1_prefix: ', Ens_ave_freq_1_prefix
-        WRITE(numout,*) ' Ens_ave_freq_1_ens_prefix: ', Ens_ave_freq_1_ens_prefix
-        WRITE(numout,*) ' Ens_ave_freq_2_prefix: ', Ens_ave_freq_2_prefix
-        WRITE(numout,*) ' Ens_ave_freq_2_ens_prefix: ', Ens_ave_freq_2_ens_prefix
-        WRITE(numout,*) ' Ens_flux_prefix: ', Ens_flux_prefix
-        WRITE(numout,*) ' Ens_flux_ens_prefix: ', Ens_flux_ens_prefix
-    END IF
 #endif
 
       CLOSE( numnam)

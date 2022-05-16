@@ -1,43 +1,132 @@
 ! developed by Simone Spada (sspada@ogs.it) at OGS
 
 module Ens_Mem
+    use Time_Manager, &
+        only: dump_container, &
+            Load_Dump_container, Unload_Dump_container
     
 implicit none
-    integer, parameter :: EnsRankZero=0
+    integer, parameter :: EnsRankZero=0, EnsIOUnit=86
     double precision, parameter :: Ens_Miss_val=1.0d20
+    
     integer :: EnsDebug, EnsShareRestart
     integer :: EnsComm, EnsRank, EnsSize
     logical :: EnsSaveEachRestart, EnsSaveMeanRestart, EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble
     character(Len=100) :: Ens_restart_prefix, Ens_restart_ens_prefix, &
         Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
         Ens_flux_prefix, Ens_flux_ens_prefix
-    double precision, pointer, contiguous, dimension(:) :: DAstate 
-    integer :: n_DAstate 
-    integer :: win_DAstate
-    double precision, pointer, contiguous, dimension(:,:) :: gl_DAstate
+       
+    logical :: EnsSaveAfterForecast, EnsSaveAfterAnalysis
+    type(dump_container) :: ForecastTimes
+    
     
 contains
-    
-    subroutine Ens_allocate
+
+    subroutine Ens_Namelist(filename)
+        use myalloc, &
+            only: lwp
             
-        !double precision, dimension(:), POINTER, contiguous :: member_pointer
-        double precision, dimension(:,:), POINTER, contiguous :: global_pointer
+        character(len=*) :: filename
         
-        call Ens_shared_alloc(n_DAstate, DAstate, global_pointer, win_DAstate)
-        !n_DAstate=jpk*jpj*jpi*jptra
-        !DAstate(1:jpk,1:jpj,1:jpi,1:jptra)=>member_pointer
-        gl_DAstate(1:n_DAstate, 0:EnsSize-1)=>global_pointer
-        DAstate  = huge(DAstate(1)) 
+        NAMELIST/Ensemble_setup/ EnsDebug, EnsSize, EnsShareRestart, &
+            EnsSaveEachRestart, EnsSaveMeanRestart, EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble, &
+            EnsSaveAfterForecast, EnsSaveAfterAnalysis, &
+            Ens_restart_prefix, Ens_restart_ens_prefix, &
+            Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
+            Ens_flux_prefix, Ens_flux_ens_prefix
+            
+        NAMELIST/Ensemble_DA_setup/ EnsSaveAfterForecast, EnsSaveAfterAnalysis
+        
+        if (lwp) then
+            
+        end if
+        
+        OPEN(unit=EnsIOUnit, file=filename, status='OLD')
+        
+            EnsDebug=0
+            EnsSize=1
+
+            !*****************************************!
+            ! This part is relevant only for EnsSize>1
+            EnsShareRestart=1
+            EnsSaveEachRestart=.true.
+            EnsSaveMeanRestart=.true.
+            EnsSaveEachAve=.true.
+            EnsSaveMeanAve=.true.
+            !*****************************************!
+
+            EnsAveDouble=.false. ! saves ave faster and in double precision. Double space needed.
+            Ens_restart_prefix='RESTART/RST'
+            Ens_restart_ens_prefix='RESTART/ENSEMBLE/RST'
+            Ens_ave_freq_1_prefix='AVE_FREQ_1/ave'
+            Ens_ave_freq_1_ens_prefix='AVE_FREQ_1/ENSEMBLE/ave'
+            Ens_ave_freq_2_prefix='AVE_FREQ_2/ave'
+            Ens_ave_freq_2_ens_prefix='AVE_FREQ_2/ENSEMBLE/ave'
+            Ens_flux_prefix='FLUXES/flux'
+            Ens_flux_ens_prefix='FLUXES/ENSEMBLE/flux'
+
+            !REWIND(EnsIOUnit)
+            READ(EnsIOUnit, Ensemble_setup)
+            
+            if (EnsSize<1) EnsSize=1
+
+            IF(lwp) THEN
+                write(*,*) 'Namelist Ensemble parameters:'
+                WRITE(*,*) ' '
+                WRITE(*,*) 'Ensemble_setup'
+                WRITE(*,*) ' '
+                WRITE(*,*) ' EnsDebug (verbosity): ', EnsDebug
+                WRITE(*,*) ' EnsSize: ', EnsSize
+                WRITE(*,*) ' EnsShareRestart: ', EnsShareRestart
+                WRITE(*,*) ' EnsSaveEachRestart: ', EnsSaveEachRestart
+                WRITE(*,*) ' EnsSaveMeanRestart: ', EnsSaveMeanRestart
+                WRITE(*,*) ' EnsSaveEachAve: ', EnsSaveEachAve
+                WRITE(*,*) ' EnsSaveMeanAve: ', EnsSaveMeanAve
+                WRITE(*,*) ' EnsAveDouble: ', EnsAveDouble
+                WRITE(*,*) ' Ens_restart_prefix: ', trim(Ens_restart_prefix)
+                WRITE(*,*) ' Ens_restart_ens_prefix: ', trim(Ens_restart_ens_prefix)
+                WRITE(*,*) ' Ens_ave_freq_1_prefix: ', trim(Ens_ave_freq_1_prefix)
+                WRITE(*,*) ' Ens_ave_freq_1_ens_prefix: ', trim(Ens_ave_freq_1_ens_prefix)
+                WRITE(*,*) ' Ens_ave_freq_2_prefix: ', trim(Ens_ave_freq_2_prefix)
+                WRITE(*,*) ' Ens_ave_freq_2_ens_prefix: ', trim(Ens_ave_freq_2_ens_prefix)
+                WRITE(*,*) ' Ens_flux_prefix: ', trim(Ens_flux_prefix)
+                WRITE(*,*) ' Ens_flux_ens_prefix: ', trim(Ens_flux_ens_prefix)
+            END IF
+
+            EnsSaveAfterForecast=.false.
+            EnsSaveAfterAnalysis=.true.
+
+            REWIND(EnsIOUnit)
+            READ(EnsIOUnit, Ensemble_DA_setup)
+
+            IF(lwp) THEN
+                WRITE(*,*) ' '
+                WRITE(*,*) 'Ensemble_DA_setup'
+                WRITE(*,*) ' '
+                WRITE(*,*) ' EnsSaveAfterForecast: ', EnsSaveAfterForecast
+                WRITE(*,*) ' EnsSaveAfterAnalysis: ', EnsSaveAfterAnalysis
+            END IF
+
+        CLOSE(EnsIOUnit)
         
     end subroutine
     
+    subroutine Ens_allocate
+    
+#ifdef ExecEnsDA 
+        ForecastTimes%FileName = 'forecastTimes'
+        ForecastTimes%Name='...'
+        call Load_Dump_container(ForecastTimes)
+
+#endif
+    end subroutine
+    
     subroutine Ens_deallocate
-        use mpi 
-        
-        integer ierror
-        
-        CALL MPI_Win_free(win_DAstate, ierror)
-        
+    
+#ifdef ExecEnsDA 
+        call Unload_Dump_container(ForecastTimes)
+
+#endif
     end subroutine
     
     Subroutine Ens_shared_alloc(member_size, member_pointer, global_pointer, window)
@@ -72,5 +161,28 @@ contains
         
         CALL C_F_POINTER(C_pointer, global_pointer, SHAPE = (/member_size, EnsSize/))
     end subroutine
+
     
+    LOGICAL FUNCTION IsaForecast(datestring)
+        use Time_Manager, &
+            only: DATESTART
+        
+        CHARACTER(LEN=17), INTENT(IN) :: datestring
+        ! LOCAL
+        INTEGER I
+
+        IsaForecast = .false.
+        
+        if (datestring.eq.DATESTART) return
+        
+        DO I=1, ForecastTimes%N
+            if (datestring.eq.ForecastTimes%TimeStrings(I)) then
+                IsaForecast = .true.
+                return
+            endif
+        ENDDO
+        
+    end function
+        
+        
 end module

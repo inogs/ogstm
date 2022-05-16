@@ -72,11 +72,14 @@
       double precision :: zbtr,zdt
       double precision :: junk, junki, junkj, junkk
       double precision :: timer
+      
+#ifndef ExecEnsNO
       double precision,dimension(:), allocatable :: array 
       double precision,dimension(:,:), allocatable :: surface 
       double precision, allocatable,dimension(:,:,:) :: zti,ztj
       double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
       double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
+#endif
 
 !-------------------------------------------------------------------
 
@@ -299,7 +302,7 @@
 !!           and mass fluxes calculated above
 !!       calcul of tracer flux in the i and j direction
        
-     
+#ifndef ExecEnsNO
        allocate(zy(jpk,jpj,jpi))  
        allocate(zx(jpk,jpj,jpi))
        allocate(zz(jpk,jpj,jpi))
@@ -309,6 +312,7 @@
        allocate(zky(jpk,jpj,jpi)) 
        allocate(zkz(jpk,jpj,jpi)) 
        allocate(zbuf(jpk,jpj,jpi))
+#endif
 
        zy(:,:,:) = 0
        zz(:,:,:) = 0 
@@ -751,6 +755,7 @@
 
            endif
 
+#ifndef ExecEnsNO
         deallocate(zy )  
         deallocate(zx )
         deallocate(zz )
@@ -760,7 +765,7 @@
         deallocate(zky ) 
         deallocate(zkz ) 
         deallocate(zbuf )
-
+#endif
 
 
        END DO TRACER_LOOP

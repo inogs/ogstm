@@ -4,7 +4,8 @@ module Ens_IO
     use modul_param, &
         only: jpiglo, jpjglo, jpi, jpj, jpk, jptra, jptra_dia, jptra_dia_2d
     use myalloc, &
-        only: jptra_high, jptra_dia_high, jptra_dia2d_high, jptra_phys, jptra_phys_2d, &
+        only: lwp, &
+            jptra_high, jptra_dia_high, jptra_dia2d_high, jptra_phys, jptra_phys_2d, &
             traIO, traIO_HIGH, tra_DIA_IO, tra_DIA_IO_HIGH, tra_DIA_2d_IO, tra_DIA_2d_IO_HIGH, &
             tra_PHYS_IO, tra_PHYS_IO_HIGH, tra_PHYS_2d_IO, tra_PHYS_2d_IO_HIGH, &
             freq_ave_phys, snIO, tnIO, vatmIO, empIO, qsrIO, unIO, vnIO, wnIO, avtIO, e3tIO
@@ -12,22 +13,38 @@ module Ens_IO
         only: Fsize, diaflx
     use MPI_GATHER_INFO, &
             only: WRITING_RANK_WR
+    use ogstm_mpi_module, &
+        only: glcomm
+    use Ens_Mem, &
+        only: EnsRankZero, &
+            EnsDebug, EnsRank, EnsSize, &
+            EnsSaveEachRestart, EnsSaveMeanRestart, Ens_restart_ens_prefix, Ens_restart_prefix, &
+            EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble, &
+            Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
+            Ens_flux_prefix, Ens_flux_ens_prefix
+    use Ens_Utilities, &
+        only: int2str, Ens_ReduceMean
+    use Ens_Custom, &
+        only: Ens_RST2DA, Ens_DA2RST, Ens_Ave2DA, Ens_DA2Ave
             
     implicit none
     double precision, dimension(:,:,:), allocatable :: Ens_copy_in, Ens_copy_in_real
-    integer :: n_traIO, n_traIO_HIGH, n_tra_DIA_IO, n_tra_DIA_IO_HIGH, n_tra_DIA_2d_IO, n_tra_DIA_2d_IO_HIGH, &
+    double precision, dimension(:,:,:,:), pointer, contiguous :: trn_IO
+    integer :: n_trn_IO, n_traIO, n_traIO_HIGH, &
+        n_tra_DIA_IO, n_tra_DIA_IO_HIGH, n_tra_DIA_2d_IO, n_tra_DIA_2d_IO_HIGH, &
         n_tra_PHYS_IO, n_tra_PHYS_IO_HIGH, n_tra_PHYS_2d_IO, n_tra_PHYS_2d_IO_HIGH, n_diaflx
-    integer :: win_traIO, win_traIO_HIGH, win_tra_DIA_IO, win_tra_DIA_IO_HIGH, win_tra_DIA_2d_IO, win_tra_DIA_2d_IO_HIGH, &
+    integer :: win_trn_IO, win_traIO, win_traIO_HIGH, &
+        win_tra_DIA_IO, win_tra_DIA_IO_HIGH, win_tra_DIA_2d_IO, win_tra_DIA_2d_IO_HIGH, &
         win_tra_PHYS_IO, win_tra_PHYS_IO_HIGH, win_tra_PHYS_2d_IO, win_tra_PHYS_2d_IO_HIGH, win_diaflx
-    double precision, dimension(:,:), contiguous, pointer :: gl_traIO, gl_traIO_HIGH, gl_tra_DIA_IO, gl_tra_DIA_IO_HIGH, gl_tra_DIA_2d_IO, gl_tra_DIA_2d_IO_HIGH, &
+    double precision, dimension(:,:), pointer, contiguous :: gl_trn_IO, gl_traIO, gl_traIO_HIGH, &
+        gl_tra_DIA_IO, gl_tra_DIA_IO_HIGH, gl_tra_DIA_2d_IO, gl_tra_DIA_2d_IO_HIGH, &
         gl_tra_PHYS_IO, gl_tra_PHYS_IO_HIGH, gl_tra_PHYS_2d_IO, gl_tra_PHYS_2d_IO_HIGH, gl_diaflx
         
 contains
 
     Subroutine Ens_Init_IO
         use Ens_Mem, &
-            only: EnsSize, EnsAveDouble, & 
-                Ens_shared_alloc
+            only: Ens_shared_alloc
         
         double precision, dimension(:), POINTER, contiguous :: member_pointer
         double precision, dimension(:,:), POINTER, contiguous :: global_pointer
@@ -36,6 +53,13 @@ contains
             allocate(Ens_copy_in(jpiglo, jpjglo, jpk))
             if (.not.EnsAveDouble) allocate(Ens_copy_in_real(jpiglo, jpjglo, jpk))
         end if
+        
+        
+        n_trn_IO=jpk*jpj*jpi*jptra
+        call Ens_shared_alloc(n_trn_IO, member_pointer, global_pointer, win_trn_IO)
+        trn_IO(1:jpk,1:jpj,1:jpi,1:jptra)=>member_pointer
+        gl_trn_IO(1:n_trn_IO, 0:EnsSize-1)=>global_pointer
+        trn_IO  = huge(trn_IO(1,1,1,1)) 
         
         
         n_traIO=jpk*jpj*jpi*jptra
@@ -113,13 +137,11 @@ contains
             diaflx    = 0.0d0
         end if
         
+        
     end subroutine
     
     Subroutine Ens_Finalize_IO
         use mpi
-        
-        use Ens_Mem, &
-            only: EnsAveDouble
         
         integer ierror
         
@@ -127,6 +149,8 @@ contains
             deallocate(Ens_copy_in)          
             if (.not.EnsAveDouble) deallocate(Ens_copy_in_real)          
         end if        
+        
+        CALL MPI_Win_free(win_trn_IO, ierror)
         
         CALL MPI_Win_free(win_traIO, ierror)
         CALL MPI_Win_free(win_traIO_HIGH, ierror)
@@ -146,6 +170,7 @@ contains
         end if
         
         if (Fsize.NE.0) CALL MPI_Win_free(win_diaflx, ierror)
+        
         
     end subroutine
 
@@ -363,8 +388,6 @@ contains
 !use mpi     
 
        USE myalloc
-       Use Ens_Mem, &
-            only: EnsAveDouble
 
        IMPLICIT NONE
 
@@ -916,24 +939,86 @@ contains
 
 
       END SUBROUTINE
+    
+    subroutine Ens_SaveRestarts(DATEstring)
+        use mpi 
+        
+        use myalloc, &
+            only: trn
+        
+        character(LEN=17), intent(in) :: DATEstring
+        
+        double precision :: parttime
+        integer :: ierr
+        
+        parttime=MPI_WTIME()
+        
+        if (EnsDebug>0) then
+            call mpi_barrier(glcomm, ierr)
+            if (lwp) write(*,*) 'Saving Restarts.'
+        end if
+
+        if (EnsSize>1 .and. EnsSaveEachRestart) then
+            if (EnsDebug>1) then
+                call mpi_barrier(glcomm, ierr)
+                if (lwp) write(*,*) 'Saving each ens restart. Time: ', MPI_WTIME()-parttime
+            end if
+            call Ens_trcwri(trim(Ens_restart_ens_prefix), DATEstring, EnsRank, trn)
+            if (EnsDebug>1) then
+                call mpi_barrier(glcomm, ierr)
+                if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-parttime
+            end if
+        end if
+        
+        if (EnsSize<=1 .or. EnsSaveMeanRestart) then
+        
+            if (EnsSize<=1) then
+                call Ens_trcwri(Ens_restart_prefix, DATEstring, -1, trn)
+            else
+                if (EnsDebug>1) then
+                    call mpi_barrier(glcomm, ierr)
+                    if (lwp) write(*,*) 'Preparing mean restart. Time: ', MPI_WTIME()-parttime
+                end if
+                
+                call Ens_RST2DA(trn_IO)
+                if (EnsDebug>1) then
+                    call mpi_barrier(glcomm, ierr)
+                    if (lwp) write(*,*) 'State transformed. Time: ', MPI_WTIME()-parttime
+                end if
+                
+                call Ens_ReduceMean(win_trn_IO, n_trn_IO, gl_trn_IO)
+                if (EnsDebug>1) then
+                    call mpi_barrier(glcomm, ierr)
+                    if (lwp) write(*,*) 'Reduced. Time: ', MPI_WTIME()-parttime
+                end if
+                
+                call Ens_DA2RST(trn_IO)
+                if (EnsDebug>1) then
+                    call mpi_barrier(glcomm, ierr)
+                    if (lwp) write(*,*) 'Transformed back to state. Time: ', MPI_WTIME()-parttime
+                end if
+                
+                if (EnsRank==EnsRankZero) call Ens_trcwri(trim(Ens_restart_prefix), DATEstring, -1, trn_IO)
+                if (EnsDebug>1) then
+                    call mpi_barrier(glcomm, ierr)
+                    if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-parttime
+                end if
+            end if
+            
+        end if
+        
+        if (EnsDebug>0) then
+            call mpi_barrier(glcomm, ierr)
+            if (lwp) write(*,*) 'Restarts saved in seconds: ', MPI_WTIME()-parttime
+        end if
+    
+    end subroutine
       
     SUBROUTINE Ens_trcdia(datemean, datefrom, dateend, FREQ_GROUP)
         use mpi
         
         USE myalloc, &
-            only: lwp, trcdiaparttime, trcdiatottime
-        use ogstm_mpi_module, &
-            only: glcomm
-        use Ens_Mem, &
-            only: EnsRankZero, &
-                EnsDebug, EnsRank, EnsSize, &
-                EnsSaveEachAve, EnsSaveMeanAve, &
-                Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
-                Ens_flux_prefix, Ens_flux_ens_prefix
-        use Ens_Utilities, &
-            only: int2str, Ens_ReduceMean
-        use Ens_Custom, &
-            only: Ens_Ave2DA, Ens_DA2Ave
+            only: trcdiaparttime, trcdiatottime
 
         CHARACTER(LEN=17), INTENT(IN) :: datemean, datefrom, dateend
         INTEGER, INTENT(IN) :: FREQ_GROUP
@@ -986,42 +1071,42 @@ contains
         !   writes ave files for tracer concentration
         
         if (EnsSize>1.and.(IsBackup.or.EnsSaveEachAve)) then
-            if (EnsDebug>0) then
+            if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Saving each ave. Time: ', MPI_WTIME()-trcdiaparttime
             end if
             CALL Ens_trcdit(trim(Ens_ave_freq_1_ens_prefix)//int2str(EnsRank,3), & 
                 trim(Ens_ave_freq_2_ens_prefix)//int2str(EnsRank,3), &
                 datemean, datefrom, dateend,FREQ_GROUP)
-            if (EnsDebug>0) then
+            if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Ens_trcdit done. Time: ', MPI_WTIME()-trcdiaparttime
             end if
             CALL Ens_diadump(trim(Ens_ave_freq_1_ens_prefix)//int2str(EnsRank,3), &
                 trim(Ens_ave_freq_2_ens_prefix)//int2str(EnsRank,3), &
                 datemean, datefrom, dateend,FREQ_GROUP)
-            if (EnsDebug>0) then
+            if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Ens_diadump done. Time: ', MPI_WTIME()-trcdiaparttime
             end if
             CALL Ens_fluxdump(trim(Ens_flux_ens_prefix)//int2str(EnsRank,3), &
                 datemean, datefrom, dateend,FREQ_GROUP)
-            if (EnsDebug>0) then
+            if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Ens_fluxdump done. Time: ', MPI_WTIME()-trcdiaparttime
             end if
         end if
         
-        if (EnsSize==1.or.((.not.IsBackup).and.EnsSaveMeanAve)) then
+        if (EnsSize<=1.or.((.not.IsBackup).and.EnsSaveMeanAve)) then
             
             if (EnsSize>1)then
-                if (EnsDebug>0) then
+                if (EnsDebug>1) then
                     call mpi_barrier(glcomm, ierr)
                     if (lwp) write(*,*) 'Saving ave mean. Time: ', MPI_WTIME()-trcdiaparttime
                 end if
             
                 call Ens_Ave2DA
-                if (EnsDebug>0) then
+                if (EnsDebug>1) then
                     call mpi_barrier(glcomm, ierr)
                     if (lwp) write(*,*) 'Ave transformed. Time: ', MPI_WTIME()-trcdiaparttime
                 end if
@@ -1046,13 +1131,13 @@ contains
                 end if
                 
                 IF (Fsize.NE.0 ) call Ens_ReduceMean(win_diaflx, n_diaflx, gl_diaflx)
-                if (EnsDebug>0) then
+                if (EnsDebug>1) then
                     call mpi_barrier(glcomm, ierr)
                     if (lwp) write(*,*) 'Ave reduced. Time: ', MPI_WTIME()-trcdiaparttime
                 end if
                 
                 call Ens_DA2Ave
-                if (EnsDebug>0) then
+                if (EnsDebug>1) then
                     call mpi_barrier(glcomm, ierr)
                     if (lwp) write(*,*) 'Transformed back to ave. Time: ', MPI_WTIME()-trcdiaparttime
                 end if
@@ -1060,21 +1145,26 @@ contains
         
             if (EnsRank==EnsRankZero) CALL Ens_trcdit(trim(Ens_ave_freq_1_prefix), trim(Ens_ave_freq_2_prefix), &
                 datemean, datefrom, dateend,FREQ_GROUP)
-            if (EnsDebug>0) then
+            if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Ens_trcdit done. Time: ', MPI_WTIME()-trcdiaparttime
             end if
             if (EnsRank==EnsRankZero) CALL Ens_diadump(trim(Ens_ave_freq_1_prefix), trim(Ens_ave_freq_2_prefix), &
                 datemean, datefrom, dateend,FREQ_GROUP)
-            if (EnsDebug>0) then
+            if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Ens_diadump done. Time: ', MPI_WTIME()-trcdiaparttime
             end if
             if (EnsRank==EnsRankZero) CALL Ens_fluxdump(trim(Ens_flux_prefix), datemean, datefrom, dateend,FREQ_GROUP)
-            if (EnsDebug>0) then
+            if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Ens_fluxdump done. Time: ', MPI_WTIME()-trcdiaparttime
             end if
+        end if
+        
+        if (EnsDebug>0) then
+            call mpi_barrier(glcomm, ierr)
+            if (lwp) write(*,*) 'Ave Group ', FREQ_GROUP, ' saved in seconds: ', MPI_WTIME()-trcdiaparttime
         end if
         
         if (.not.IsBackup) then

@@ -114,7 +114,8 @@ SUBROUTINE ogstm_initialize()
 
 #ifdef ExecEns
     use Ens_Mem, &
-        only: EnsDebug
+        only: EnsDebug, &
+            Ens_Namelist
     use Ens_MPI, &
         only: Ens_MPI_nodes_find_and_split
     use Ens_Routines, &
@@ -137,6 +138,8 @@ SUBROUTINE ogstm_initialize()
       call node_name_fill    ! give the name of each node
       
 #ifdef ExecEns
+    
+    call Ens_Namelist('namelist.init')
     
     call Ens_MPI_nodes_find_and_split
     

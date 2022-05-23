@@ -20,6 +20,7 @@ SUBROUTINE trcadv
   use mpi
   use omp_lib
   USE ogstm_mpi_module
+  USE mpi
 
   implicit none
 
@@ -77,6 +78,8 @@ SUBROUTINE trcadv
   double precision, allocatable,dimension(:,:,:) :: zti,ztj
   double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
   double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
+  real(kind=8) :: t1,t2
+  real(kind=8),save :: comm_time=0,mpi_time=0,kernel_time=0,init_time=0,cpu_time=0
 
   !-------------------------------------------------------------------
 
@@ -87,6 +90,7 @@ SUBROUTINE trcadv
 
 
 
+     t1=MPI_WTime()
      zaa  = 0.
      zbb  = 0.
      zcc  = 0.
@@ -154,6 +158,8 @@ SUBROUTINE trcadv
 
 
      adv_initialized=.true.
+     t2=MPI_Wtime()
+     cpu_time=cpu_time+t2-t1
   endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end initialization phase
@@ -167,12 +173,16 @@ SUBROUTINE trcadv
 !!!         !$acc enter data create(...)
 
 
+  t1=MPI_Wtime()
   !$acc enter data create( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
   !$acc enter data create( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
   !$acc enter data create( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
   !$acc enter data create( zbtr_arr(1:jpk,1:jpj,1:jpi) )
+  t2=MPI_Wtime()
+  init_time=init_time+t2-t1
 
 
+  t1=MPI_Wtime()
   !$acc enter data create( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
   !$acc enter data create( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
   !$acc enter data create( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
@@ -192,6 +202,8 @@ SUBROUTINE trcadv
   !$acc update device( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
   !$acc update device( e3w(1:jpk,1:jpj,1:jpi) )
   !$acc update device( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) )
+  t2=MPI_Wtime()
+  comm_time=comm_time+t2-t1
 
 
 
@@ -236,6 +248,7 @@ SUBROUTINE trcadv
 
 
 
+  t1=MPI_Wtime()
   !$acc kernels default(present)
   DO ji = 1,jpi
      DO jj = 1,jpj
@@ -363,12 +376,15 @@ SUBROUTINE trcadv
   !$OMP END TASK
 
   !$OMP TASKWAIT
+  t2=MPI_Wtime()
+  kernel_time=kernel_time+t2-t1
 
 
 !!!!!$acc update host
 
 
 
+  t1=MPI_Wtime()
   !$acc update host( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
   !$acc update host( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
   !$acc update host( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
@@ -378,11 +394,16 @@ SUBROUTINE trcadv
 !!$       !$acc update host( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
 !!$       !$acc update host( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
 !!$       !$acc update host( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) )
+  t2=MPI_Wtime()
+  comm_time=comm_time+t2-t1
 
 
+  t1=MPI_Wtime()
 !!!               !$acc exit data delete finalize
 !!!!$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize
 !!!!$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize
+  t2=MPI_Wtime()
+  init_time=init_time+t2-t1
 
 
 
@@ -395,6 +416,7 @@ SUBROUTINE trcadv
 
 
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
+  t1=MPI_Wtime()
   allocate(zy(jpk,jpj,jpi))
   allocate(zx(jpk,jpj,jpi))
   allocate(zz(jpk,jpj,jpi))
@@ -414,7 +436,10 @@ SUBROUTINE trcadv
   zkx(:,:,:)=0.
   zky(:,:,:)=0.
   zkz(:,:,:)=0.
+  t2=MPI_Wtime()
+  cpu_time=cpu_time+t2-t1
 
+  t1=MPI_Wtime()
   !!trn could be allocate earlier
   !$acc enter data create(trn(1:jpk,1:jpj,1:jpi,1:jptra))
   !$acc enter data create(tra(1:jpk,1:jpj,1:jpi,1:jptra))
@@ -426,8 +451,11 @@ SUBROUTINE trcadv
   !$acc enter data create( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
   !$acc enter data create( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
   !$acc enter data create( zbuf(1:jpk,1:jpj,1:jpi) )
+  t2=MPI_Wtime()
+  init_time=init_time+t2-t1
 
 
+  t1=MPI_Wtime()
   !$acc update device(tra(1:jpk,1:jpj,1:jpi,1:jptra))
   !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
   !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
@@ -438,7 +466,10 @@ SUBROUTINE trcadv
 !!$       !$acc update device( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
 !!$       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
 !!$       !$acc update device( zbuf(1:jpk,1:jpj,1:jpi) )
+  t2=MPI_Wtime()
+  comm_time=comm_time+t2-t1
 
+  t1=MPI_Wtime()
   !$acc kernels default(present)
   DO ji = 1, jpi
      DO jj = 1, jpj
@@ -456,6 +487,8 @@ SUBROUTINE trcadv
      ENDDO
   ENDDO
   !$acc end kernels
+  t2=MPI_Wtime()
+  kernel_time=kernel_time+t2-t1
 
   !$omp taskloop default(none) private(jf,junk,junki,junkj,junkk,zbtr) &
   !$omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
@@ -521,6 +554,7 @@ SUBROUTINE trcadv
      !        zkz(1,:,:)  =0.
      ! ! loop unfusion
 
+     t1=MPI_Wtime()
      !$acc kernels default(present)
      DO ji = 2,jpim1
         !dir$ vector aligned
@@ -607,6 +641,8 @@ SUBROUTINE trcadv
         END DO
      END DO
      !$acc end kernels
+     t2=MPI_Wtime()
+     kernel_time=kernel_time+t2-t1
 
 
 
@@ -617,6 +653,7 @@ SUBROUTINE trcadv
 
 
      ! ... Lateral boundary conditions on zk[xy]
+     t1=MPI_Wtime()
 #ifdef key_mpp
 
      !  ... Mpp : export boundary values to neighboring processors
@@ -631,12 +668,15 @@ SUBROUTINE trcadv
 #endif
 
 #else
+#error
 
      ! !!   ... T-point, 3D array, full local arrays zk[xy] are initialised
 
      CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1 )
      CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
+     t2=MPI_Wtime()
+     mpi_time=mpi_time+t2-t1
 
 !!!       !$acc update device( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
 
@@ -644,6 +684,7 @@ SUBROUTINE trcadv
      !! 2. calcul of after field using an upstream advection scheme
      !! -----------------------------------------------------------
 
+     t1=MPI_Wtime()
      !$acc kernels default(present)
      DO ji =2,jpim1
         DO jj =2,jpjm1
@@ -668,6 +709,8 @@ SUBROUTINE trcadv
         diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )*rdt
      ENDDO
      !$acc end kernels
+     t2=MPI_Wtime()
+     kernel_time=kernel_time+t2-t1
 
      !! !$acc update host(trn(1:jpk,1:jpj,1:jpi,1:jptra))
      !! !$acc update host(flx_ridxt(1:Fsize,1:4))
@@ -690,6 +733,7 @@ SUBROUTINE trcadv
 
 
 
+        t1=MPI_Wtime()
         if(jt .EQ. 1) then
 
            if(ncor .EQ. 1) then
@@ -754,6 +798,8 @@ SUBROUTINE trcadv
            END DO
            !$acc end kernels
         endif
+        t2=MPI_Wtime()
+        kernel_time=kernel_time+t2-t1
 
 
 
@@ -764,6 +810,7 @@ SUBROUTINE trcadv
 
 
         !! ... Lateral boundary conditions on zti
+        t1=MPI_Wtime()
 #ifdef key_mpp
         ! ... Mpp : export boundary values to neighboring processors
 #ifndef _OPENACC
@@ -775,6 +822,8 @@ SUBROUTINE trcadv
         ! ... T-point, 3D array, full local array zti is initialised
         CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
+        t2=MPI_Wtime()
+        mpi_time=mpi_time+t2-t1
 
 
         !! 2.3 calcul of the antidiffusive flux
@@ -783,6 +832,7 @@ SUBROUTINE trcadv
 
 
 
+        t1=MPI_Wtime()
 
         !jk = 1
         !          DO jk = 1,jpkm1
@@ -823,6 +873,8 @@ SUBROUTINE trcadv
            END DO
         END DO
         !$acc end kernels
+        t2=MPI_Wtime()
+        kernel_time=kernel_time+t2-t1
         !                 endif
 
         !!   !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
@@ -830,6 +882,7 @@ SUBROUTINE trcadv
 
 
         ! ... Lateral boundary conditions on z[xyz]
+        t1=MPI_Wtime()
 #ifdef key_mpp
 
         ! ... Mpp : export boundary values to neighboring processors
@@ -849,6 +902,8 @@ SUBROUTINE trcadv
         CALL lbc( zy(:,:,:), 1, 1, 1, 1, jpk, 1 )
         CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
+        t2=MPI_Wtime()
+        mpi_time=mpi_time+t2-t1
 
         !!     !$acc update device(zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
 
@@ -856,6 +911,7 @@ SUBROUTINE trcadv
         !!            2.5 calcul of the final field:
         !!                advection by antidiffusive mass fluxes and an upstream scheme
 
+        t1=MPI_Wtime()
         !$acc kernels default(present)
         DO ji = 2,jpim1
            !dir$ vector aligned
@@ -948,11 +1004,14 @@ SUBROUTINE trcadv
            END DO
         END DO
         !$acc end kernels
+        t2=MPI_Wtime()
+        kernel_time=kernel_time+t2-t1
 
 
         !!           !$acc update host(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
 
         !... Lateral boundary conditions on zk[xy]
+        t1=MPI_Wtime()
 #ifdef key_mpp
         !  ... Mpp : export boundary values to neighboring processors
 #ifndef _OPENACC
@@ -967,6 +1026,8 @@ SUBROUTINE trcadv
         CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1 )
         CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
+        t2=MPI_Wtime()
+        mpi_time=mpi_time+t2-t1
 
         !!          !$acc update device(zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi) )
 
@@ -974,6 +1035,7 @@ SUBROUTINE trcadv
 
 
 
+        t1=MPI_Wtime()
         if(ncor .EQ. 1) then
            !$acc kernels default(present)
            DO ji =2,jpim1
@@ -1029,6 +1091,8 @@ SUBROUTINE trcadv
 
 
         endif
+        t2=MPI_Wtime()
+        kernel_time=kernel_time+t2-t1
 
      ENDDO ANTIDIFF_CORR
 
@@ -1037,6 +1101,7 @@ SUBROUTINE trcadv
 
 
 
+     t1=MPI_Wtime()
      if(ncor .EQ. 1) then
 
         !$acc kernels default(present)
@@ -1062,6 +1127,8 @@ SUBROUTINE trcadv
         !$acc end kernels
 
      endif
+     t2=MPI_Wtime()
+     kernel_time=kernel_time+t2-t1
 
 !!$       !!OpenMP compatibility broken. Possibility to use ifdef OpenMP + rename the file in trcadv.F90 to keep it
 !!$        deallocate(zy )
@@ -1079,6 +1146,7 @@ SUBROUTINE trcadv
   END DO TRACER_LOOP
   !$OMP end taskloop
 
+  t1=MPI_Wtime()
   !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra) )
   !$acc update host( tra(1:jpk,1:jpj,1:jpi,1:jptra) )
 
@@ -1086,14 +1154,19 @@ SUBROUTINE trcadv
   !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
   !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
   !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
+  t2=MPI_Wtime()
+  comm_time=comm_time+t2-t1
 
-
+  t1=MPI_Wtime()
   !$acc exit data delete( tra) finalize
   !$acc exit data delete( trn, advmask ) finalize
   !$acc exit data delete( flx_ridxt, diaflx ) finalize
   !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
+  t2=MPI_Wtime()
+  init_time=init_time+t2-t1
 
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
+  t1=MPI_Wtime()
   deallocate(zy )
   deallocate(zx )
   deallocate(zz )
@@ -1103,14 +1176,22 @@ SUBROUTINE trcadv
   deallocate(zky )
   deallocate(zkz )
   deallocate(zbuf )
+  t2=MPI_Wtime()
+  cpu_time=cpu_time+t2-t1
 
 
+  t1=MPI_Wtime()
   !$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize
   !$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize
+  t2=MPI_Wtime()
+  init_time=init_time+t2-t1
 
   trcadvparttime = MPI_WTIME() - trcadvparttime
   trcadvtottime = trcadvtottime + trcadvparttime
 !!!!
+
+  print *, ">>> comm kernel init (ms) ", comm_time*1000._8, kernel_time*1000._8, init_time*1000._8
+  print *, ">>> mpi cpu total (ms) ", mpi_time*1000._8, cpu_time*1000._8, (comm_time+kernel_time+init_time+mpi_time+cpu_time)*1000._8
 
 contains
 

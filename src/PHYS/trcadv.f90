@@ -631,7 +631,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels default(present)
+     !$acc parallel loop collapse(3) gang vector default(present)
      DO  ji = 2,jpim1
         DO jj = 2,jpjm1
            !dir$ vector aligned
@@ -640,7 +640,7 @@ SUBROUTINE trcadv
            END DO
         END DO
      END DO
-     !$acc end kernels
+     !$acc end parallel loop
      t2=MPI_Wtime()
      kernel_time=kernel_time+t2-t1
 

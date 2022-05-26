@@ -19,6 +19,10 @@ def argument():
                             type = str,
                             required = True,
                             help = 'path of the input chlorophyll misfit file')
+    parser.add_argument(   '--oxy', '-x',
+                            type = str,
+                            required = True,
+                            help = 'path of the input oxygen misfit file')
     parser.add_argument(   '--outfile', '-o',
                             type = str,
                             help = 'path of the output misfit file')
@@ -30,6 +34,7 @@ args = argument()
 
 arg_misN3n = args.nit
 arg_misP_l = args.chl
+arg_misO2o = args.oxy
 
 exists = os.path.isfile(arg_misN3n)
 if exists:
@@ -52,8 +57,18 @@ else:
     P_lmis = [0]
     P_lmis0 = []
 
-totobs =  np.int(P_lmis[0]) + np.int(N3nmis[0])
-allmis0 = N3nmis0 + P_lmis0
+exists = os.path.isfile(arg_misO2o)
+if exists:
+    merge3 = arg_misO2o
+    O2omis = file2stringlist(arg_misO2o)
+    O2omis0 = O2omis[1:]
+else:
+    merge3 = ''
+    O2omis = [0]
+    O2omis0 = []
+
+totobs =  np.int(P_lmis[0]) + np.int(N3nmis[0]) + np.int(O2omis[0])
+allmis0 = N3nmis0 + P_lmis0 + O2omis0
 
 allmis = [np.str(totobs)] + allmis0
 

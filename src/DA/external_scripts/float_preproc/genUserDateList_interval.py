@@ -7,4 +7,4 @@ def perdelta(start, end, delta):
         curr += delta
 
 for result in perdelta(date(2015, 01, 3), date(2015, 12, 31), timedelta(days=3)):
-    print result
+    print (result)

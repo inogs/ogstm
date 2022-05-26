@@ -56,17 +56,17 @@ class read_descriptor():
             self.AGGREGATE_VARS.append(aggvar)
 
     def printStatus(self):
-        print len(self.NATIVE_VARS), "native vars"
-        print len(self.AGGR_VARS), " vars which we aggregate"
-        print len(self.SOME_VARS), " vars for Some Statistics"
-        print len(self.LIST_To_Online_PostPROC), "variables for online postproc"
+        print (len(self.NATIVE_VARS), "native vars")
+        print (len(self.AGGR_VARS), " vars which we aggregate")
+        print (len(self.SOME_VARS), " vars for Some Statistics")
+        print (len(self.LIST_To_Online_PostPROC), "variables for online postproc")
         
                 
     def printError(self,group, var):
-        print "*** ERROR in ", group ," variables: ", var , "not defined in model. "
+        print ("*** ERROR in ", group ," variables: ", var , "not defined in model. ")
         sys.exit(1) 
     def printFreqError(self,group, var):
-        print "*** ERROR in ", group ," variables: ", var , "not dumped at high frequency. "
+        print ("*** ERROR in ", group ," variables: ", var , "not dumped at high frequency. ")
         sys.exit(1)         
                     
     
@@ -76,15 +76,15 @@ class read_descriptor():
     def check_highfreq(self):
         repeatition=self.SOME_VARS.intersection(self.NATIVE_VARS)
         for i in repeatition :
-            print "**** removing", i , "from var_for_Some_Statistics" 
+            print ("**** removing", i , "from var_for_Some_Statistics")
             self.SOME_VARS.remove(i)
                     
         SET_ARCHIVE_VARS=set(self.ARCHIVE_VARS)
         if len(SET_ARCHIVE_VARS) != len(self.ARCHIVE_VARS):
-            print "duplication in toArchive vars"
+            print ("duplication in toArchive vars")
             for var in SET_ARCHIVE_VARS:
                 if self.ARCHIVE_VARS.count(var) > 1 :
-                    print var, "is duplicated. REMOVE it from xml descriptor ***************"
+                    print (var, "is duplicated. REMOVE it from xml descriptor ***************")
         # link with MODEL directory
         MODELDIR = os.getenv("CINECA_SCRATCH") + "/" + os.getenv("OPA_HOME") + "/wrkdir/MODEL/"
         if os.path.exists(MODELDIR):
@@ -148,7 +148,7 @@ class read_descriptor():
                 if var not in HIGHFREQ_MODELVARS: self.printFreqError("Some statistics", var)
             
         #    for var in MODELVARS:
-        #        if var not in LIST_To_Online_PostPROC: print var ,"produced by model but not processed"
+        #        if var not in LIST_To_Online_PostPROC: print (var ,"produced by model but not processed")
 
 
 

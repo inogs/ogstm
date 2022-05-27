@@ -198,6 +198,10 @@
 <var name="BFM1D_exR2ac_iiP2"     highfreq="true" dump="true" ></var>
 <var name="BFM1D_exR2ac_iiP3"     highfreq="true" dump="true" ></var>
 <var name="BFM1D_exR2ac_iiP4"     highfreq="true" dump="true" ></var>
+<var name="BFM1D_exR2st_iiP1"     highfreq="true" dump="true" comment="servono alla ppn" ></var>
+<var name="BFM1D_exR2st_iiP2"     highfreq="true" dump="true" ></var>
+<var name="BFM1D_exR2st_iiP3"     highfreq="true" dump="true" ></var>
+<var name="BFM1D_exR2st_iiP4"     highfreq="true" dump="true" ></var>
 
 <var name="BFM1D_exR2cc_iiP1"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_exR2cc_iiP2"     highfreq="false" dump="false" ></var>

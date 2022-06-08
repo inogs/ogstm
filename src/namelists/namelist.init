@@ -77,12 +77,12 @@
 /
 
 &Ensemble_setup
-    EnsDebug = 0 !0: no debug info, 1: some debug info, 2: more debug info
-    EnsSize = 1 !Ensemble size
+    EnsDebug=0 !0: no debug info, 1: some debug info, 2: more debug info
+    EnsSize=1 !Ensemble size
     
     !************************************************************************************************!
     ! This part is relevant only for EnsSize>1
-    EnsShareRestart = 0 !0: each ensemble member has its own restart, 1: same restart for everyone.
+    EnsShareRestart=0 !0: each ensemble member has its own restart, 1: same restart for everyone.
     EnsSaveEachRestart=.true. 
     EnsSaveMeanRestart=.true.
     EnsSaveEachAve=.true.
@@ -103,5 +103,14 @@
 &Ensemble_DA_setup
     EnsSaveAfterForecast=.false.
     EnsSaveAfterAnalysis=.true.
+    LocalRange=30
+    UseLocalObsDumping=.true.
+    ForgettingFactor=0.7d0
+    Ens_forecast_prefix='ENS_FORECAST/RST'
+    Ens_forecast_ens_prefix='ENS_FORECAST/ENSEMBLE/RST'
+    Ens_analysis_prefix='ENS_ANALYSIS/RST'
+    Ens_analysis_ens_prefix='ENS_ANALYSIS/ENSEMBLE/RST'
+    satfile_suffix='_d-OC_CNR-L3-CHL-MedOC4AD4_MULTI_1KM-MED-DT-v02.nc'
+    satvarname='CHL'
 /
 

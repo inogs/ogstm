@@ -1,12 +1,18 @@
 ! developed by Simone Spada (sspada@ogs.it) at OGS
 
 module Ens_Mem
+    USE mpi
+    
+    use myalloc, &
+            only: lwp    
     use Time_Manager, &
         only: dump_container, &
             Load_Dump_container, Unload_Dump_container
+    USE ogstm_mpi_module, &
+            ONLY: glcomm
     
 implicit none
-    integer, parameter :: EnsRankZero=0, EnsIOUnit=86
+    integer, parameter :: EnsRankZero=0, myrankZero=0, EnsIOUnit=86
     double precision, parameter :: Ens_Miss_val=1.0d20
     
     integer :: EnsDebug, EnsShareRestart
@@ -15,16 +21,19 @@ implicit none
     character(Len=100) :: Ens_restart_prefix, Ens_restart_ens_prefix, &
         Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
         Ens_flux_prefix, Ens_flux_ens_prefix
-       
+
+    type(dump_container) :: ForecastTimes, daTimes
     logical :: EnsSaveAfterForecast, EnsSaveAfterAnalysis
-    type(dump_container) :: ForecastTimes
+    integer :: LocalRange
+    logical :: UseLocalObsDumping
+    double precision :: ForgettingFactor
+    character(len=100) :: Ens_forecast_prefix, Ens_forecast_ens_prefix, Ens_analysis_prefix, Ens_analysis_ens_prefix
     
+    character(len=100) :: satfile_suffix, satvarname
     
 contains
 
     subroutine Ens_Namelist(filename)
-        use myalloc, &
-            only: lwp
             
         character(len=*) :: filename
         
@@ -35,7 +44,11 @@ contains
             Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
             Ens_flux_prefix, Ens_flux_ens_prefix
             
-        NAMELIST/Ensemble_DA_setup/ EnsSaveAfterForecast, EnsSaveAfterAnalysis
+        NAMELIST/Ensemble_DA_setup/ EnsSaveAfterForecast, EnsSaveAfterAnalysis, &
+            LocalRange, UseLocalObsDumping, &
+            ForgettingFactor, &
+            Ens_forecast_prefix, Ens_forecast_ens_prefix, Ens_analysis_prefix, Ens_analysis_ens_prefix, &
+            satfile_suffix, satvarname
         
         if (lwp) then
             
@@ -95,6 +108,15 @@ contains
 
             EnsSaveAfterForecast=.false.
             EnsSaveAfterAnalysis=.true.
+            LocalRange=30
+            UseLocalObsDumping=.true.
+            ForgettingFactor=0.9d0
+            Ens_forecast_prefix='ENS_FORECAST/RST'
+            Ens_forecast_ens_prefix='ENS_FORECAST/ENSEMBLE/RST'
+            Ens_analysis_prefix='ENS_ANALYSIS/RST'
+            Ens_analysis_ens_prefix='ENS_ANALYSIS/ENSEMBLE/RST'
+            satfile_suffix='_d-OC_CNR-L3-CHL-MedOC4AD4_MULTI_1KM-MED-DT-v02.nc'
+            satvarname='CHL'
 
             REWIND(EnsIOUnit)
             READ(EnsIOUnit, Ensemble_DA_setup)
@@ -105,6 +127,15 @@ contains
                 WRITE(*,*) ' '
                 WRITE(*,*) ' EnsSaveAfterForecast: ', EnsSaveAfterForecast
                 WRITE(*,*) ' EnsSaveAfterAnalysis: ', EnsSaveAfterAnalysis
+                WRITE(*,*) ' LocalRange: ', LocalRange
+                WRITE(*,*) ' UseLocalObsDumping: ', UseLocalObsDumping
+                WRITE(*,*) ' ForgettingFactor: ', ForgettingFactor
+                WRITE(*,*) ' Ens_forecast_prefix: ', TRIM(Ens_forecast_prefix)
+                WRITE(*,*) ' Ens_forecast_ens_prefix: ', trim(Ens_forecast_ens_prefix)
+                WRITE(*,*) ' Ens_analysis_prefix: ', trim(Ens_analysis_prefix)
+                WRITE(*,*) ' Ens_analysis_ens_prefix: ', trim(Ens_analysis_ens_prefix)
+                WRITE(*,*) ' satfile_suffix: ', trim(satfile_suffix)
+                WRITE(*,*) ' satvarname: ', trim(satvarname)
             END IF
 
         CLOSE(EnsIOUnit)
@@ -114,27 +145,30 @@ contains
     subroutine Ens_allocate
     
 #ifdef ExecEnsDA 
-        ForecastTimes%FileName = 'forecastTimes'
-        ForecastTimes%Name='...'
-        call Load_Dump_container(ForecastTimes)
-
+        if (EnsSize>1) then
+            ForecastTimes%FileName = 'forecastTimes'
+            ForecastTimes%Name='...'
+            call Load_Dump_container(ForecastTimes)
+            
+            daTimes%FileName = 'daTimes'
+            daTimes%Name='...'
+            call Load_Dump_container(daTimes)
+        end if
 #endif
     end subroutine
     
     subroutine Ens_deallocate
     
 #ifdef ExecEnsDA 
-        call Unload_Dump_container(ForecastTimes)
-
+        if (EnsSize>1) then
+            call Unload_Dump_container(ForecastTimes)
+            call Unload_Dump_container(daTimes)
+        end if
 #endif
     end subroutine
     
-    Subroutine Ens_shared_alloc(member_size, member_pointer, global_pointer, window)
-        USE mpi
+    Subroutine Ens_shared_alloc(member_size, member_pointer, global_pointer, window)        
         USE, INTRINSIC :: ISO_C_BINDING
-        
-        USE ogstm_mpi_module, &
-            ONLY: glcomm
         
         INTEGER, intent(in) :: member_size
         double precision, dimension(:), POINTER, contiguous, intent(out) :: member_pointer
@@ -157,11 +191,43 @@ contains
  
         CALL C_F_POINTER(C_pointer, member_pointer, SHAPE = (/member_size/))
     
-        call MPI_Win_shared_query(window, 0, window_buffer_size, double_size, C_pointer, ierror)
+        call MPI_Win_shared_query(window, MPI_PROC_NULL, window_buffer_size, double_size, C_pointer, ierror)
         
         CALL C_F_POINTER(C_pointer, global_pointer, SHAPE = (/member_size, EnsSize/))
     end subroutine
-
+    
+    Subroutine Ens_shared_alloc_base(member_size, member_pointer, global_pointer, window)
+        USE, INTRINSIC :: ISO_C_BINDING
+        
+        INTEGER, intent(in) :: member_size
+        double precision, dimension(:), POINTER, contiguous, intent(out) :: member_pointer
+        double precision, dimension(:,:), POINTER, contiguous, intent(out) :: global_pointer
+        INTEGER, intent(out) :: window
+        
+        INTEGER :: ierror
+        INTEGER :: double_size
+        INTEGER(KIND=MPI_ADDRESS_KIND) :: window_buffer_size
+        TYPE(C_PTR) :: C_pointer
+        
+        CALL MPI_Type_size(MPI_real8, double_size, ierror)
+        window_buffer_size = double_size * member_size
+        
+        if (EnsRank==EnsRankZero) then
+            CALL MPI_Win_allocate_shared(0, double_size, MPI_INFO_NULL, EnsComm, C_pointer, window, ierror)
+        else
+            CALL MPI_Win_allocate_shared(window_buffer_size, double_size, MPI_INFO_NULL, EnsComm, C_pointer, window, ierror)
+        end if
+        if (ierror/=0) then
+            WRITE(*, *) 'Error with MPI_Win_allocate_shared. Aborting.'
+            call MPI_abort(glcomm, 1, ierror)
+        end if
+ 
+        if (EnsRank/=EnsRankZero) CALL C_F_POINTER(C_pointer, member_pointer, SHAPE = (/member_size/))
+    
+        call MPI_Win_shared_query(window, MPI_PROC_NULL, window_buffer_size, double_size, C_pointer, ierror)
+        
+        CALL C_F_POINTER(C_pointer, global_pointer, SHAPE = (/member_size, EnsSize-1/))
+    end subroutine
     
     LOGICAL FUNCTION IsaForecast(datestring)
         use Time_Manager, &
@@ -173,7 +239,7 @@ contains
 
         IsaForecast = .false.
         
-        if (datestring.eq.DATESTART) return
+        !if (datestring.eq.DATESTART) return
         
         DO I=1, ForecastTimes%N
             if (datestring.eq.ForecastTimes%TimeStrings(I)) then
@@ -182,7 +248,27 @@ contains
             endif
         ENDDO
         
-    end function
+    end function       
+    
+    LOGICAL FUNCTION IsaDataAssimilation(datestring)
+        use Time_Manager, &
+            only: DATESTART
         
+        CHARACTER(LEN=17), INTENT(IN) :: datestring
+        ! LOCAL
+        INTEGER I
+
+        IsaDataAssimilation = .false.
+        
+        !if (datestring.eq.DATESTART) return
+        
+        DO I=1, daTimes%N
+            if (datestring.eq.daTimes%TimeStrings(I)) then
+                IsaDataAssimilation = .true.
+                return
+            endif
+        ENDDO
+        
+    end function       
         
 end module

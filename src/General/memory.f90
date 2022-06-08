@@ -308,6 +308,8 @@
       double precision, pointer, contiguous ::  tra_PHYS_2d_IO(:,:,:)
       double precision, pointer, contiguous ::  tra_PHYS_2d_IO_HIGH(:,:,:)
       
+      integer, allocatable, dimension(:,:) :: domdec
+      
       !trcadv 
       !double precision, allocatable,dimension(:,:,:) :: zti,ztj
       !double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
@@ -983,6 +985,8 @@ subroutine alloc_tot()
             deallocate(tra_DIA_2d_IO_HIGH)
             deallocate(tra_PHYS_2d_IO)
             deallocate(tra_PHYS_2d_IO_HIGH)
+            
+            deallocate(domdec)
 #endif
 
             if(myrank==0) then

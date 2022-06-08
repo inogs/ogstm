@@ -59,4 +59,41 @@ contains
         
     end subroutine
     
+    subroutine Ens_ReduceMeanAndBase(window, member_size, gl_pointer)
+        use mpi
+        
+        use myalloc, &
+            only: myrank
+        use Ens_Mem, &
+            only: EnsRankZero, Ens_Miss_val, &
+                EnsDebug, EnsRank, EnsSize
+        
+        integer, intent(in) :: window, member_size
+        double precision, pointer, dimension(:,:), intent(inout) :: gl_pointer !dimension(member_size, 0:EnsSize-1)
+         
+        integer :: ierror
+        integer :: istart, istop, indexi
+        
+        if (EnsDebug>1) write(*,*) '1st fence. EnsRank: ', EnsRank, ', myrank: ', myrank
+        CALL MPI_Win_fence(0, window, ierror)
+        
+            if (EnsDebug>1) write(*,*) '1st fenced. EnsRank: ', EnsRank, ', myrank: ', myrank
+            istart = 1 + (EnsRank*member_size)/EnsSize
+            istop = ((EnsRank+1)*member_size)/EnsSize
+            
+            !gl_pointer(istart:istop, EnsRankZero) = sum(gl_pointer(istart:istop, :), dim=2)/EnsSize
+            do indexi=istart, istop
+                if (gl_pointer(indexi, EnsRankZero)<Ens_Miss_val) then
+                    gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :))/EnsSize
+                    gl_pointer(indexi,0:EnsRankZero-1)=gl_pointer(indexi,0:EnsRankZero-1)-gl_pointer(indexi,EnsRankZero)
+                    gl_pointer(indexi,EnsRankZero+1:EnsSize-1)=gl_pointer(indexi,EnsRankZero+1:EnsSize-1)-gl_pointer(indexi,EnsRankZero)
+                end if
+            end do
+            if (EnsDebug>1) write(*,*) 'reduction computed: ', EnsRank, ', myrank: ', myrank
+            
+        CALL MPI_Win_fence(0, window, ierror)
+        if (EnsDebug>1) write(*,*) '2st fenced. EnsRank: ', EnsRank, ', myrank: ', myrank
+        
+    end subroutine
+    
 end module

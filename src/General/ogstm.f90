@@ -221,15 +221,36 @@ SUBROUTINE ogstm_initialize()
       call trcrst        ! read restarts
 #endif
 
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (lwp) write(*,*) "before photo_init" 
+    end if
+#endif
+
       call photo_init
 
 #ifdef ExecDA
-      call DA_Init
+      !call DA_Init
 
-      call DA_VARS
+      !call DA_VARS
+#endif
+
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (lwp) write(*,*) "before init_phys" 
+    end if
 #endif
 
       call init_phys
+      
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (lwp) write(*,*) "after init_phys" 
+    end if
+#endif
 
 ! Initialization of Biogeochemical reactor with 1D approach
       call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
@@ -240,9 +261,9 @@ SUBROUTINE ogstm_initialize()
       call Initialize()
       
 #ifdef ExecEns
-    if (EnsDebug>0) then
+    if (EnsDebug>1) then
         call mpi_barrier(glcomm,ierr)
-        if (glrank==0) write(*,*) "end of initializzation" 
+        if (lwp) write(*,*) "end of initializzation" 
     end if
 #endif
 

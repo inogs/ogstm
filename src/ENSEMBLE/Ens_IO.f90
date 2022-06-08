@@ -16,9 +16,9 @@ module Ens_IO
     use ogstm_mpi_module, &
         only: glcomm
     use Ens_Mem, &
-        only: EnsRankZero, &
+        only: EnsRankZero, Ens_Miss_val, &
             EnsDebug, EnsRank, EnsSize, &
-            EnsSaveEachRestart, EnsSaveMeanRestart, Ens_restart_ens_prefix, Ens_restart_prefix, &
+            EnsSaveEachRestart, EnsSaveMeanRestart, &
             EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble, &
             Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
             Ens_flux_prefix, Ens_flux_ens_prefix
@@ -59,20 +59,22 @@ contains
         call Ens_shared_alloc(n_trn_IO, member_pointer, global_pointer, win_trn_IO)
         trn_IO(1:jpk,1:jpj,1:jpi,1:jptra)=>member_pointer
         gl_trn_IO(1:n_trn_IO, 0:EnsSize-1)=>global_pointer
-        trn_IO  = huge(trn_IO(1,1,1,1)) 
-        
+        !trn_IO  = huge(trn_IO(1,1,1,1)) 
+        trn_IO = 0.0d0
         
         n_traIO=jpk*jpj*jpi*jptra
         call Ens_shared_alloc(n_traIO, member_pointer, global_pointer, win_traIO)
         traIO(1:jpk,1:jpj,1:jpi,1:jptra)=>member_pointer
         gl_traIO(1:n_traIO, 0:EnsSize-1)=>global_pointer
-        traIO  = huge(traIO(1,1,1,1)) 
+        !traIO  = huge(traIO(1,1,1,1)) 
+        traIO = Ens_Miss_val
         
         n_traIO_HIGH=jpk*jpj*jpi*jptra_HIGH
         call Ens_shared_alloc(n_traIO_HIGH, member_pointer, global_pointer, win_traIO_HIGH)
         traIO_HIGH(1:jpk,1:jpj,1:jpi,1:jptra_HIGH)=>member_pointer
         gl_traIO_HIGH(1:n_traIO_HIGH, 0:EnsSize-1)=>global_pointer
-        traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
+        !traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
+        traIO_HIGH = Ens_Miss_val
         
         
         n_tra_DIA_IO=jpk*jpj*jpi*jptra_dia
@@ -940,13 +942,14 @@ contains
 
       END SUBROUTINE
     
-    subroutine Ens_SaveRestarts(DATEstring)
+    subroutine Ens_SaveRestarts(prefix, ens_prefix, DATEstring)
         use mpi 
         
         use myalloc, &
             only: trn
         
         character(LEN=17), intent(in) :: DATEstring
+        character(LEN=*), intent(in) :: prefix, ens_prefix
         
         double precision :: parttime
         integer :: ierr
@@ -963,7 +966,7 @@ contains
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Saving each ens restart. Time: ', MPI_WTIME()-parttime
             end if
-            call Ens_trcwri(trim(Ens_restart_ens_prefix), DATEstring, EnsRank, trn)
+            call Ens_trcwri(trim(ens_prefix), DATEstring, EnsRank, trn)
             if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-parttime
@@ -973,7 +976,7 @@ contains
         if (EnsSize<=1 .or. EnsSaveMeanRestart) then
         
             if (EnsSize<=1) then
-                call Ens_trcwri(Ens_restart_prefix, DATEstring, -1, trn)
+                call Ens_trcwri(trim(prefix), DATEstring, -1, trn)
             else
                 if (EnsDebug>1) then
                     call mpi_barrier(glcomm, ierr)
@@ -998,7 +1001,7 @@ contains
                     if (lwp) write(*,*) 'Transformed back to state. Time: ', MPI_WTIME()-parttime
                 end if
                 
-                if (EnsRank==EnsRankZero) call Ens_trcwri(trim(Ens_restart_prefix), DATEstring, -1, trn_IO)
+                if (EnsRank==EnsRankZero) call Ens_trcwri(trim(prefix), DATEstring, -1, trn_IO)
                 if (EnsDebug>1) then
                     call mpi_barrier(glcomm, ierr)
                     if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-parttime

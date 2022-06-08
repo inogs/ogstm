@@ -61,12 +61,11 @@ MODULE module_step
      
     Use Ens_Mem, &
         only: EnsDebug, EnsRank, EnsSize, &
-            EnsSaveAfterForecast, EnsSaveAfterAnalysis, &
-            IsaForecast
+            Ens_restart_prefix, Ens_restart_ens_prefix
     Use Ens_IO, &
         only: Ens_SaveRestarts, Ens_trcdia
-    use Ens_Custom, &
-        only: EnsForecast, EnsObs, EnsAnalysis
+    Use Ens_Routines, &
+        only: EnsDA
 
     IMPLICIT NONE
 
@@ -79,6 +78,7 @@ MODULE module_step
     INTEGER :: indexi, indexj
     integer ierr
     double precision :: Ens_Timers(16)
+    logical :: DoDA
 
 !++++++++++++++++++++++++++++++c
 !         Time  loop           c
@@ -111,7 +111,7 @@ MODULE module_step
 
         if (IsaRestart(DATEstring)) then
             
-            call Ens_SaveRestarts(DATEstring)
+            call Ens_SaveRestarts(Ens_restart_prefix, Ens_restart_ens_prefix, DATEstring)
             
             if (AVE_FREQ1%N .gt.0) then              !  void 1.aveTimes -> no backup
                 if (.not.IsAnAveDump(DATEstring,1)) then ! backup conditions group 1
@@ -161,20 +161,9 @@ MODULE module_step
 
 #ifdef ExecEnsDA
         if (EnsSize>1) then
-            if (IsaForecast(DATEstring).or.IsaDataAssimilation(DATEstring)) then
-                call EnsForecast
-                if (EnsSaveAfterForecast) then
-                
-                end if
-            end if
-
-            if (IsaDataAssimilation(DATEstring)) then
-                call EnsObs
-                CALL EnsAnalysis
-                if (EnsSaveAfterAnalysis) then
-                
-                end if
-            endif
+        
+            call EnsDA(DateString)
+            
         end if
 #endif
 
@@ -270,10 +259,13 @@ MODULE module_step
                 Ens_Timers(1:15:2)=(/trcadvtottime, trcdmptottime, trcbilaphdftottime, trcsbctottime, trcsmstottime, trczdftottime, snuteltottime, trcnxttottime/)
                 call MPI_ALLREDUCE(MPI_in_place, Ens_Timers, 8, MPI_2DOUBLE_PRECISION, mpi_maxloc, glcomm, ierr)
                 
-                if (lwp) then
+                if (glrank==0) then
+                    call MPI_REDUCE(MPI_in_place, Ens_Timers, 8, MPI_2DOUBLE_PRECISION, mpi_maxloc, 0, glcomm, ierr)
                     write(*,*) 'trcadvtottime, trcdmptottime, trcbilaphdftottime, trcsbctottime, trcsmstottime, trczdftottime, snuteltottime, trcnxttottime'
                     write(*,*) Ens_Timers(1:15:2)
                     write(*,*) Ens_Timers(2:16:2)
+                else
+                    call MPI_REDUCE(Ens_Timers, 0, 8, MPI_2DOUBLE_PRECISION, mpi_maxloc, 0, glcomm, ierr)
                 end if
 
                 call reset_Timers()

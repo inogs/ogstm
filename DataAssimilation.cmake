@@ -43,6 +43,7 @@ IF (BFMv2)
 ENDIF()
 
 add_definitions(-DExecEns)
+add_definitions(-DExecEnsDA)
 
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort

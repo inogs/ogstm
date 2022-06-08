@@ -18,7 +18,10 @@
 ! ==================
       INTEGER ji,jj,nn
       INTEGER nproci, nprocj
+      
+#ifndef ExecEns
       integer, allocatable, dimension(:,:) :: domdec
+#endif
 
       call COUNTLINE ('domdec.txt', nn)
       if (nn.ne.mysize) then
@@ -107,7 +110,9 @@
       jpij=jpi*jpj
       jpkbm1=jpkb-1
 
+#ifndef ExecEns
       deallocate(domdec)
+#endif
 
       CLOSE(numnam)
       CONTAINS

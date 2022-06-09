@@ -8,7 +8,8 @@ module Ens_Routines
     use ogstm_mpi_module, &
         only: glcomm
     use Ens_Mem, &
-        only: EnsDebug, EnsShareRestart, EnsRank, EnsSize, &
+        only: EnsDebug, EnsRank, EnsSize, &
+            UseParams, EnsShareRestart, EnsShareParams, &
             Ens_restart_prefix, Ens_restart_ens_prefix, &
             Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
             EnsSaveAfterForecast, EnsSaveAfterAnalysis, &
@@ -16,7 +17,8 @@ module Ens_Routines
             IsaForecast, IsaDataAssimilation, &
             Ens_allocate, Ens_deallocate
     use Ens_IO, &
-        only: Ens_Init_IO, Ens_Finalize_IO, Ens_trcrst, Ens_SaveRestarts
+        only: Ens_Init_IO, Ens_Finalize_IO, Ens_trcrst, Ens_SaveRestarts, &
+            Ens_ReadParams
     use Ens_Custom, &
         only: Ens_state2DA, Ens_DA2state, &
             Ens_Init_DA, Ens_Finalize_DA
@@ -29,6 +31,8 @@ module Ens_Routines
         only: Ens_Init_Filter, Ens_Finalize_Filter, EnsForecast, EnsAnalysis
     use Timers, &
         only: DAparttime, DAtottime
+    use Ens_Params, &
+        only: Ens_Init_Params, Ens_Finalize_Params, Ens_SetParams
         
     
 implicit none
@@ -47,15 +51,23 @@ contains
         call Ens_allocate
         call Ens_Init_IO
         
+#ifdef ExecEnsParams
+        if (UseParams) call Ens_Init_Params
+#endif
+
         if (EnsSize<=1) then
         
             call Ens_trcrst(trim(Ens_restart_prefix), trim(Ens_ave_freq_1_prefix), trim(Ens_ave_freq_2_prefix))
+            
+#ifdef ExecEnsParams
+            if (UseParams) call Ens_ReadParams(trim(Ens_restart_prefix))
+#endif
             
         else
         
             Select case (EnsShareRestart)
         
-                case (0) !each member has is own restart
+                case (0) !each member has its own restart
                     call Ens_trcrst(trim(Ens_restart_ens_prefix)//int2str(EnsRank, 3), &
                         trim(Ens_ave_freq_1_ens_prefix)//int2str(EnsRank, 3), &
                         trim(Ens_ave_freq_2_ens_prefix)//int2str(EnsRank, 3))
@@ -76,6 +88,32 @@ contains
                     call MPI_abort(glcomm, 1, ierr)
                     
             end select
+
+#ifdef ExecEnsParams
+            if (UseParams) then
+                Select case (EnsShareParams)
+            
+                    case (0) !each member has its own parameters
+                        call Ens_ReadParams(trim(Ens_restart_ens_prefix)//int2str(EnsRank, 3))
+                        
+                    case (1) !same initial parameters from all ensemble members
+                        call Ens_ReadParams(trim(Ens_restart_prefix))
+
+                    case default
+                        if (lwp) write(*,*) "invalid EnsShareParams value. Aborting."
+                        call mpi_barrier(glcomm,ierr)
+                        call MPI_abort(glcomm, 1, ierr)
+                        
+                end select
+                
+                if (EnsDebug>0) then
+                    call mpi_barrier(glcomm,ierr)
+                    if (lwp) write(*,*) "parameters loaded!" 
+                end if
+                
+                call Ens_SetParams
+            end if
+#endif
             
 #ifdef ExecEnsDA
             call Ens_Init_DA
@@ -96,7 +134,11 @@ contains
                 if (lwp) write(*,*) "Ens_Init_Filter done!" 
             end if
 #endif
-            
+
+            if (EnsDebug>0) then
+                call mpi_barrier(glcomm,ierr)
+                if (lwp) write(*,*) "Ens_Init done!" 
+            end if
         end if
         
     end subroutine
@@ -105,6 +147,10 @@ contains
         
         call Ens_deallocate
         call Ens_Finalize_IO
+        
+#ifdef ExecEnsParams
+        if (UseParams) call Ens_Finalize_Params
+#endif
         
 #ifdef ExecEnsDA
         if (EnsSize>1) then

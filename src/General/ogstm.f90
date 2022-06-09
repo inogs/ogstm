@@ -114,7 +114,7 @@ SUBROUTINE ogstm_initialize()
 
 #ifdef ExecEns
     use Ens_Mem, &
-        only: EnsDebug, &
+        only: EnsDebug, EnsSize, &
             Ens_Namelist
     use Ens_MPI, &
         only: Ens_MPI_nodes_find_and_split
@@ -215,9 +215,7 @@ SUBROUTINE ogstm_initialize()
 
       call set_to_zero() ! set to zero some data arrays
       
-#ifdef ExecEns
-    call Ens_Init
-#else
+#ifndef ExecEns
       call trcrst        ! read restarts
 #endif
 
@@ -231,9 +229,11 @@ SUBROUTINE ogstm_initialize()
       call photo_init
 
 #ifdef ExecDA
-      !call DA_Init
+    if (EnsSize<=1) then
+      call DA_Init
 
-      !call DA_VARS
+      call DA_VARS
+    end if
 #endif
 
 #ifdef ExecEns
@@ -259,6 +259,10 @@ SUBROUTINE ogstm_initialize()
       call BFM0D_INIT_IO_CHANNELS()
 
       call Initialize()
+      
+#ifdef ExecEns
+    call Ens_Init
+#endif
       
 #ifdef ExecEns
     if (EnsDebug>1) then

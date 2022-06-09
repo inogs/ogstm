@@ -153,17 +153,17 @@ MODULE module_step
 
 
 #ifdef ExecDA
-        !if (IsaDataAssimilation(DATEstring)) then
-        !    CALL mainAssimilation(DATEstring, datefrom_1)
-        !    if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
-        !endif
+        if (EnsSize<=1) then
+            if (IsaDataAssimilation(DATEstring)) then
+                CALL mainAssimilation(DATEstring, datefrom_1)
+                if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
+            endif
+        end if
 #endif
 
 #ifdef ExecEnsDA
         if (EnsSize>1) then
-        
             call EnsDA(DateString)
-            
         end if
 #endif
 

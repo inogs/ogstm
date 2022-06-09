@@ -15,8 +15,10 @@ implicit none
     integer, parameter :: EnsRankZero=0, myrankZero=0, EnsIOUnit=86
     double precision, parameter :: Ens_Miss_val=1.0d20
     
-    integer :: EnsDebug, EnsShareRestart
+    integer :: EnsDebug
     integer :: EnsComm, EnsRank, EnsSize
+    logical :: UseParams
+    integer :: EnsShareRestart, EnsShareParams
     logical :: EnsSaveEachRestart, EnsSaveMeanRestart, EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble
     character(Len=100) :: Ens_restart_prefix, Ens_restart_ens_prefix, &
         Ens_ave_freq_1_prefix, Ens_ave_freq_1_ens_prefix, Ens_ave_freq_2_prefix, Ens_ave_freq_2_ens_prefix, &
@@ -37,7 +39,7 @@ contains
             
         character(len=*) :: filename
         
-        NAMELIST/Ensemble_setup/ EnsDebug, EnsSize, EnsShareRestart, &
+        NAMELIST/Ensemble_setup/ EnsDebug, EnsSize, UseParams, EnsShareRestart, EnsShareParams, &
             EnsSaveEachRestart, EnsSaveMeanRestart, EnsSaveEachAve, EnsSaveMeanAve, EnsAveDouble, &
             EnsSaveAfterForecast, EnsSaveAfterAnalysis, &
             Ens_restart_prefix, Ens_restart_ens_prefix, &
@@ -58,10 +60,12 @@ contains
         
             EnsDebug=0
             EnsSize=1
+            UseParams=.false.
 
             !*****************************************!
             ! This part is relevant only for EnsSize>1
-            EnsShareRestart=1
+            EnsShareRestart=0
+            EnsShareParams=0
             EnsSaveEachRestart=.true.
             EnsSaveMeanRestart=.true.
             EnsSaveEachAve=.true.
@@ -90,7 +94,9 @@ contains
                 WRITE(*,*) ' '
                 WRITE(*,*) ' EnsDebug (verbosity): ', EnsDebug
                 WRITE(*,*) ' EnsSize: ', EnsSize
+                WRITE(*,*) ' UseParams: ', UseParams
                 WRITE(*,*) ' EnsShareRestart: ', EnsShareRestart
+                WRITE(*,*) ' EnsShareParams: ', EnsShareParams
                 WRITE(*,*) ' EnsSaveEachRestart: ', EnsSaveEachRestart
                 WRITE(*,*) ' EnsSaveMeanRestart: ', EnsSaveMeanRestart
                 WRITE(*,*) ' EnsSaveEachAve: ', EnsSaveEachAve

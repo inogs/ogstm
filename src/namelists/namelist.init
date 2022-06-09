@@ -79,10 +79,12 @@
 &Ensemble_setup
     EnsDebug=0 !0: no debug info, 1: some debug info, 2: more debug info
     EnsSize=1 !Ensemble size
+    UseParams=.false. !if true, parameters are read/written from file as restarts
     
     !************************************************************************************************!
     ! This part is relevant only for EnsSize>1
     EnsShareRestart=0 !0: each ensemble member has its own restart, 1: same restart for everyone.
+    EnsShareParams=0 !0: each ensemble member has its own parameters, 1: same parameters for everyone.
     EnsSaveEachRestart=.true. 
     EnsSaveMeanRestart=.true.
     EnsSaveEachAve=.true.

@@ -44,6 +44,7 @@ ENDIF()
 
 add_definitions(-DExecEns)
 add_definitions(-DExecEnsDA)
+add_definitions(-DExecEnsParams)
 
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort

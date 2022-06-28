@@ -1116,6 +1116,7 @@ contains
 
   double precision FUNCTION fsx( pfx1, pfx2, pfu )
     !dir$ attributes vector :: fsx
+    !$acc routine seq
     IMPLICIT NONE
     double precision, INTENT(IN) :: pfx1, pfx2, pfu
     double precision ::  abspfu
@@ -1126,6 +1127,7 @@ contains
 
   double precision FUNCTION fsy( pfy1, pfy2, pfv  )
     !dir$ attributes vector :: fsy
+    !$acc routine seq
     IMPLICIT NONE
     double precision, INTENT(IN) :: pfy1, pfy2, pfv
     double precision :: abspfv
@@ -1136,6 +1138,7 @@ contains
 
   double precision FUNCTION fsz( pfz1, pfz2, pfw )
     !dir$ attributes vector :: fsz
+    !$acc routine seq
     IMPLICIT NONE
     double precision, INTENT(IN) :: pfz1, pfz2, pfw
     double precision abspfw

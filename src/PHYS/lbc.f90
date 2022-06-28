@@ -1,5 +1,5 @@
 
-      SUBROUTINE lbc ( ptab, ktype, ksgn,kdoloop, kjstart, kjpend, kstep )
+      SUBROUTINE lbc ( ptab, ktype, ksgn,kdoloop, kjstart, kjpend, kstep, gpu )
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE lbc
@@ -62,6 +62,12 @@
 
       INTEGER ijt, iju
       INTEGER ji, jj, jk
+      logical,optional :: gpu
+      logical :: use_gpu
+
+      use_gpu=.false.
+      if(present(gpu)) use_gpu=gpu
+
 !! 0. Sign setting
 !! ---------------
 
@@ -78,7 +84,7 @@
 !!     ===============
 !!
 
-!$acc kernels default(present)
+!$acc kernels default(present) if(use_gpu)
           DO jk = kjstart, kjpend, kstep
 !!
 !!
@@ -191,7 +197,7 @@
 !!     =============
 !!
 
-!$acc kernels default(present)            
+!$acc kernels default(present) if(use_gpu)
           DO jj = kjstart, kjpend, kstep
 !!
 !! 1. East-West boundary conditions
@@ -331,7 +337,7 @@
 !!     ============================
 !!
 
-!$acc kernels default(present)            
+!$acc kernels default(present) if(use_gpu)
           DO jj = kjstart, kjpend, kstep
 !!
 !! 1. East-West boundary conditions

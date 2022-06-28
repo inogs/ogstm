@@ -279,17 +279,21 @@ END SUBROUTINE
 
 END SUBROUTINE
 
-SUBROUTINE mpplnk_my_openacc(ptab)
+SUBROUTINE mpplnk_my_openacc(ptab,gpu)
 
       double precision ptab(jpk,jpj,jpi)
-
-
 #ifdef key_mpp_mpi
 
       INTEGER jk,jj,ji
       INTEGER reqs1, reqs2, reqr1, reqr2
       INTEGER reqs3, reqs4, reqr3, reqr4
       INTEGER jw, packsize
+      logical,optional :: gpu
+      logical :: use_gpu
+
+      use_gpu=.false.
+      if(present(gpu)) use_gpu=gpu
+
 
 !!     trcadvparttime = MPI_WTIME()
 
@@ -320,7 +324,7 @@ SUBROUTINE mpplnk_my_openacc(ptab)
     packsize=jpk*jpj
 
 
-!$acc host_data use_device(ptab)
+!$acc host_data use_device(ptab) if(use_gpu)
     
       IF(nbondi.eq.-1) THEN ! We are at the west side of the domain
 
@@ -351,7 +355,7 @@ SUBROUTINE mpplnk_my_openacc(ptab)
 !!3.1 Read Dirichlet lateral conditions
 !!
 
-!$acc kernels default(present)
+!$acc kernels default(present) if(use_gpu)
       IF(nbondj.eq.0.or.nbondj.eq.-1) THEN
          DO jw=1,NORTH_count_send
               ji = NORTHpoints_send(1,jw)
@@ -376,7 +380,7 @@ SUBROUTINE mpplnk_my_openacc(ptab)
 !!
 
       
-      !$acc host_data use_device(tn_send,tn_recv,ts_send,ts_recv)
+      !$acc host_data use_device(tn_send,tn_recv,ts_send,ts_recv) if(use_gpu)
       
       IF(nbondj.eq.-1) THEN ! We are at the south side of the domain
           CALL mppsend(4,tn_send,NORTH_count_send,nono,0,reqs4)
@@ -406,7 +410,7 @@ SUBROUTINE mpplnk_my_openacc(ptab)
 !!2.3 Write Dirichlet lateral conditions
 !!
 
-      !$acc kernels default(present)
+      !$acc kernels default(present) if(use_gpu)
       IF(nbondj.eq.0.or.nbondj.eq.1) THEN ! All but south boundary, we received from south
 
          DO jw=1,SOUTH_count_recv

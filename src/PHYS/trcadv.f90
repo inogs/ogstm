@@ -282,7 +282,7 @@ SUBROUTINE trcadv
   END DO
   !$acc end kernels
 
-  !$acc kernels if(use_gpu)
+  !$acc kernels default(present) if(use_gpu)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -308,7 +308,7 @@ SUBROUTINE trcadv
   END DO
   !$acc end kernels
 
-  !$acc kernels if(use_gpu)
+  !$acc kernels default(present) if(use_gpu)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -445,6 +445,7 @@ SUBROUTINE trcadv
      !!       calcul of tracer flux in the i and j direction
 
      !$acc kernels default(present) if(use_gpu)
+     !$acc loop independent
      DO ji = 2,jpim1
         !dir$ vector aligned
         DO jj = 2,jpjm1
@@ -456,6 +457,7 @@ SUBROUTINE trcadv
      !$acc kernels default(present) if(use_gpu)
      DO ji = 2,jpim1
         !dir$ vector aligned
+        !$acc loop independent
         DO jj = 2,jpjm1
            zky(1,jj,ji ) = fsy(trn(1,jj,ji, jn),trn(1,jj+1,ji, jn),zbb(1,jj,ji))
         END DO
@@ -465,6 +467,7 @@ SUBROUTINE trcadv
      !$acc kernels default(present) if(use_gpu)
      DO ji = 1,jpi
         !dir$ vector aligned
+        !$acc loop independent
         DO jk = 2,jpk
            zkz(jk,1,ji ) = fsz(trn(jk,1,ji, jn),trn(jk-1,1,ji, jn),zcc(jk,1,ji))
         ENDDO
@@ -474,6 +477,7 @@ SUBROUTINE trcadv
      !$acc kernels default(present) if(use_gpu)
      DO ji = 1,jpi
         !dir$ vector aligned
+        !$acc loop independent
         DO jk = 2,jpk
            zkz(jk,jpj,ji ) = fsz(trn(jk,jpj,ji, jn),trn(jk-1,jpj,ji, jn),zcc(jk,jpj,ji))
         END DO
@@ -483,6 +487,7 @@ SUBROUTINE trcadv
      !$acc kernels default(present) if(use_gpu)
      DO jj = 2,jpjm1
         !dir$ vector aligned
+        !$acc loop independent
         DO jk = 2,jpk
            zkz(jk,jj,1 ) = fsz(trn(jk,jj,1, jn),trn(jk-1,jj,1, jn),zcc(jk,jj,1))
         END DO
@@ -492,6 +497,7 @@ SUBROUTINE trcadv
      !$acc kernels default(present) if(use_gpu)
      DO jj = 2,jpjm1
         !dir$ vector aligned
+        !$acc loop independent
         DO jk = 2,jpk
            zkz(jk,jj,jpi ) = fsz(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
         END DO
@@ -499,6 +505,7 @@ SUBROUTINE trcadv
      !$acc end kernels
 
      !$acc kernels default(present) if(use_gpu)
+     !$acc loop independent
      DO  ji = 2,jpim1
         DO jj = 2,jpjm1
            !dir$ vector aligned
@@ -511,6 +518,7 @@ SUBROUTINE trcadv
 
      !$acc kernels default(present) if(use_gpu)
      DO  ji = 2,jpim1
+        !$acc loop independent
         DO jj = 2,jpjm1
            !dir$ vector aligned
            DO jk = 2,jpk
@@ -796,6 +804,7 @@ SUBROUTINE trcadv
         !!                advection by antidiffusive mass fluxes and an upstream scheme
 
         !$acc kernels default(present) if(use_gpu)
+        !$acc loop independent
         DO ji = 2,jpim1
            !dir$ vector aligned
            DO jj = 2,jpjm1
@@ -807,6 +816,7 @@ SUBROUTINE trcadv
         !$acc kernels default(present) if(use_gpu)
         DO ji = 2,jpim1
            !dir$ vector aligned
+           !$acc loop independent
            DO jj = 2,jpjm1
               zky(1,jj,ji ) = fsy(zti(1,jj,ji ),zti(1,jj+ 1,ji ),zy(1,jj,ji ))
            END DO
@@ -816,6 +826,7 @@ SUBROUTINE trcadv
         !$acc kernels default(present) if(use_gpu)
         DO ji = 1,jpi
            !dir$ vector aligned
+           !$acc loop independent
            DO jk = 2,jpk
               zkz(jk,1,ji ) = fsz(zti(jk,1,ji ),zti(jk-1,1,ji ),zz(jk,1,ji ))
            ENDDO
@@ -825,6 +836,7 @@ SUBROUTINE trcadv
         !$acc kernels default(present) if(use_gpu)
         DO ji = 1,jpi
            !dir$ vector aligned
+           !$acc loop independent
            DO jk = 2,jpk
               zkz(jk,jpj,ji ) = fsz(zti(jk,jpj,ji ),zti(jk-1,jpj,ji ),zz(jk,jpj,ji ))
            ENDDO
@@ -834,6 +846,7 @@ SUBROUTINE trcadv
         !$acc kernels default(present) if(use_gpu)
         DO jj = 2,jpjm1
            !dir$ vector aligned
+           !$acc loop independent
            DO jk = 2,jpk
               zkz(jk,jj,1 ) = fsz(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
            ENDDO
@@ -843,6 +856,7 @@ SUBROUTINE trcadv
         !$acc kernels default(present) if(use_gpu)
         DO jj = 2,jpjm1
            !dir$ vector aligned
+           !$acc loop independent
            DO jk = 2,jpk
               zkz(jk,jj,jpi ) = fsz(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
            END DO
@@ -850,6 +864,7 @@ SUBROUTINE trcadv
         !$acc end kernels
 
         !$acc kernels default(present) if(use_gpu)
+        !$acc loop independent
         DO  ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
@@ -864,6 +879,7 @@ SUBROUTINE trcadv
 
         !$acc kernels default(present) if(use_gpu)
         DO  ji = 2,jpim1
+           !$acc loop independent
            DO jj = 2,jpjm1
               !dir$ vector aligned
               DO jk = 2,jpk
@@ -879,6 +895,7 @@ SUBROUTINE trcadv
         DO  ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
+              !$acc loop independent
               DO jk = 2,jpk
                  !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
                  !zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)

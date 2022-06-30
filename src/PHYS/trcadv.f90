@@ -20,6 +20,7 @@ SUBROUTINE trcadv
   use mpi
   use omp_lib
   USE ogstm_mpi_module
+  use mpi
 
   implicit none
 
@@ -78,6 +79,10 @@ SUBROUTINE trcadv
   double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
   double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
   logical :: use_gpu
+  integer::ierr
+  real(kind=8) :: t1,t2,min,max,avg
+  real(kind=8),save :: comm_time=0,kernel_time=0,init_time=0,dt_time=0
+  real(kind=8),save :: comm_mpi_time=0, comm_kernel_time=0,barr_time=0
 
   use_gpu=.true.
 
@@ -85,6 +90,7 @@ SUBROUTINE trcadv
 
   MPI_CHECK = .FALSE.
 
+  t1=mpi_wtime()
   if(.not.adv_initialized ) then  ! INIT phase
 
 
@@ -178,6 +184,11 @@ SUBROUTINE trcadv
   !$acc enter data create( e3w(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc enter data create( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
 
+  !$acc wait
+  t2=mpi_wtime()
+  init_time=init_time+t2-t1
+  t1=mpi_wtime()
+
   !$acc update device( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update device( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update device( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
@@ -188,6 +199,11 @@ SUBROUTINE trcadv
   !$acc update device( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update device( e3w(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update device( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
+
+  !$acc wait
+  t2=mpi_wtime()
+  dt_time=dt_time+t2-t1
+  t1=mpi_wtime()
 
   !$acc kernels default(present) if(use_gpu)
   DO ji = 1,jpi
@@ -317,10 +333,20 @@ SUBROUTINE trcadv
 
   !$OMP TASKWAIT
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+  t1=mpi_wtime()
+
   !$acc update host( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update host( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update host( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update host( zbtr_arr(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
+
+  !$acc wait
+  t2=mpi_wtime()
+  dt_time=dt_time+t2-t1
+  t1=mpi_wtime()
 
 
   !!     tracer loop parallelized (macrotasking)
@@ -362,11 +388,21 @@ SUBROUTINE trcadv
   !$acc enter data create( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc enter data create( zbuf(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
 
+  !$acc wait
+  t2=mpi_wtime()
+  init_time=init_time+t2-t1
+  t1=mpi_wtime()
+
   !$acc update device(tra(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
   !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
   !$acc update device(advmask(1:jpk,1:jpj,1:jpi)) if(use_gpu)
   !$acc update device(flx_ridxt(1:Fsize,1:4)) if(use_gpu)
   !$acc update device( diaflx(1:7, 1:Fsize, 1:jptra)) if(use_gpu)
+
+  !$acc wait
+  t2=mpi_wtime()
+  dt_time=dt_time+t2-t1
+  t1=mpi_wtime()
 
   !$acc kernels default(present) if(use_gpu)
   DO ji = 1, jpi
@@ -386,6 +422,10 @@ SUBROUTINE trcadv
   ENDDO
   !$acc end kernels
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+
   !$omp taskloop default(none) private(jf,junk,junki,junkj,junkk,zbtr) &
   !$omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
   !$omp shared(big_fact_zaa,big_fact_zbb,big_fact_zcc,zaa,zbb,zcc,inv_eu,inv_ev,inv_et) &
@@ -394,6 +434,7 @@ SUBROUTINE trcadv
 
 
   TRACER_LOOP: DO  jn = 1, jptra
+  t1=mpi_wtime()
 
 
      !!        1. tracer flux in the 3 directions
@@ -490,6 +531,16 @@ SUBROUTINE trcadv
      END DO
      !$acc end parallel loop
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+
+  t1=mpi_wtime()
+  call mpi_barrier(MPI_COMM_WORLD,ierr)
+  t2=mpi_wtime()
+  barr_time=barr_time+t2-t1
+  t1=mpi_wtime()
+
      ! ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
 
@@ -499,8 +550,8 @@ SUBROUTINE trcadv
      CALL mpplnk_my(zkx)
      CALL mpplnk_my(zky)
 #else
-     CALL mpplnk_my_openacc(zkx,gpu=use_gpu)
-     CALL mpplnk_my_openacc(zky,gpu=use_gpu)
+     CALL mpplnk_my_openacc(zkx,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
+     CALL mpplnk_my_openacc(zky,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
 
 #endif
 
@@ -511,6 +562,12 @@ SUBROUTINE trcadv
      CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
      CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
+
+  !$acc wait
+  t2=mpi_wtime()
+  comm_time=comm_time+t2-t1
+  t1=mpi_wtime()
+
 
 
      !! 2. calcul of after field using an upstream advection scheme
@@ -544,7 +601,12 @@ SUBROUTINE trcadv
 
      !! 2.1 start of antidiffusive correction loop
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+
      ANTIDIFF_CORR: DO jt = 1,ncor
+  t1=mpi_wtime()
 
         !! 2.2 calcul of intermediary field zti
 
@@ -618,6 +680,15 @@ SUBROUTINE trcadv
         endif
 
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+
+  t1=mpi_wtime()
+  call mpi_barrier(MPI_COMM_WORLD,ierr)
+  t2=mpi_wtime()
+  barr_time=barr_time+t2-t1
+  t1=mpi_wtime()
 
 
         !! ... Lateral boundary conditions on zti
@@ -626,12 +697,18 @@ SUBROUTINE trcadv
 #ifndef _OPENACC
         CALL mpplnk_my(zti)
 #else
-        CALL mpplnk_my_openacc(zti,gpu=use_gpu)
+        CALL mpplnk_my_openacc(zti,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
 #endif
 #else
         ! ... T-point, 3D array, full local array zti is initialised
         CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
+
+  !$acc wait
+  t2=mpi_wtime()
+  comm_time=comm_time+t2-t1
+  t1=mpi_wtime()
+
 
 
         !! 2.3 calcul of the antidiffusive flux
@@ -677,6 +754,15 @@ SUBROUTINE trcadv
         !$acc end kernels
         !                 endif
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+
+  t1=mpi_wtime()
+  call mpi_barrier(MPI_COMM_WORLD,ierr)
+  t2=mpi_wtime()
+  barr_time=barr_time+t2-t1
+  t1=mpi_wtime()
 
         ! ... Lateral boundary conditions on z[xyz]
 #ifdef key_mpp
@@ -687,9 +773,9 @@ SUBROUTINE trcadv
         CALL mpplnk_my(zy)
         CALL mpplnk_my(zz)
 #else
-        CALL mpplnk_my_openacc(zx,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zy,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zz,gpu=use_gpu)
+        CALL mpplnk_my_openacc(zx,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
+        CALL mpplnk_my_openacc(zy,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
+        CALL mpplnk_my_openacc(zz,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
 #endif
 #else
 
@@ -698,6 +784,12 @@ SUBROUTINE trcadv
         CALL lbc( zy(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
         CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
+
+  !$acc wait
+  t2=mpi_wtime()
+  comm_time=comm_time+t2-t1
+  t1=mpi_wtime()
+
 
         !! 2.4 reinitialization
         !!            2.5 calcul of the final field:
@@ -796,6 +888,15 @@ SUBROUTINE trcadv
         END DO
         !$acc end kernels
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+
+  t1=mpi_wtime()
+  call mpi_barrier(MPI_COMM_WORLD,ierr)
+  t2=mpi_wtime()
+  barr_time=barr_time+t2-t1
+  t1=mpi_wtime()
 
         !... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
@@ -804,8 +905,8 @@ SUBROUTINE trcadv
         CALL mpplnk_my(zkx)
         CALL mpplnk_my(zky)
 #else
-        CALL mpplnk_my_openacc(zkx,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zky,gpu=use_gpu)
+        CALL mpplnk_my_openacc(zkx,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
+        CALL mpplnk_my_openacc(zky,comm_mpi_time,comm_kernel_time,gpu=use_gpu)
 #endif
 #else
         ! ... T-point, 3D array, full local array zk[xy] are initialised
@@ -814,6 +915,11 @@ SUBROUTINE trcadv
 #endif
 
         !!        2.6. calcul of after field using an upstream advection scheme
+
+  !$acc wait
+  t2=mpi_wtime()
+  comm_time=comm_time+t2-t1
+  t1=mpi_wtime()
 
 
 
@@ -870,7 +976,13 @@ SUBROUTINE trcadv
 
         endif
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
+
      ENDDO ANTIDIFF_CORR
+
+  t1=mpi_wtime()
 
 
      !!       3. trend due to horizontal and vertical advection of tracer jn
@@ -914,9 +1026,13 @@ SUBROUTINE trcadv
 !!$        deallocate(zkz )
 !!$        deallocate(zbuf )
 
+  !$acc wait
+  t2=mpi_wtime()
+  kernel_time=kernel_time+t2-t1
 
 
   END DO TRACER_LOOP
+  t1=mpi_wtime()
   !$OMP end taskloop
 
   !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra) ) if(use_gpu)
@@ -926,6 +1042,12 @@ SUBROUTINE trcadv
   !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
+
+  !$acc wait
+  t2=mpi_wtime()
+  dt_time=dt_time+t2-t1
+  t1=mpi_wtime()
+
 
   !$acc exit data delete( tra) finalize if(use_gpu)
   !$acc exit data delete( trn, advmask ) finalize if(use_gpu)
@@ -946,8 +1068,47 @@ SUBROUTINE trcadv
   !$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize if(use_gpu)
   !$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize if(use_gpu)
 
+  !$acc wait
+  t2=mpi_wtime()
+  comm_time=comm_time+t2-t1
+  t1=mpi_wtime()
+
+
   trcadvparttime = MPI_WTIME() - trcadvparttime
   trcadvtottime = trcadvtottime + trcadvparttime
+
+
+  if(myrank .eq. 0) print '(a)', ">>> type min max avg (s)"
+
+  call mpi_reduce(init_time, min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(init_time, max, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(init_time, avg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,ierr)
+  if(myrank .eq. 0) print '(a,F10.1,X,F10.1,X,F10.1)', ">>> init ", min, max, avg/97._8
+  call mpi_reduce(barr_time, min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(barr_time, max, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(barr_time, avg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,ierr)
+  if(myrank .eq. 0) print '(a,F10.1,X,F10.1,X,F10.1)', ">>> barrier ", min, max, avg/97._8
+  call mpi_reduce(comm_time, min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(comm_time, max, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(comm_time, avg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,ierr)
+  if(myrank .eq. 0) print '(a,F10.1,X,F10.1,X,F10.1)', ">>> comm ", min, max, avg/97._8
+  call mpi_reduce(comm_mpi_time, min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(comm_mpi_time, max, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(comm_mpi_time, avg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,ierr)
+  if(myrank .eq. 0) print '(a,F10.1,X,F10.1,X,F10.1)', ">>> comm (MPI)", min, max, avg/97._8
+  call mpi_reduce(comm_kernel_time, min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(comm_kernel_time, max, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(comm_kernel_time, avg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,ierr)
+  if(myrank .eq. 0) print '(a,F10.1,X,F10.1,X,F10.1)', ">>> comm (kernel)", min, max, avg/97._8
+  call mpi_reduce(dt_time, min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(dt_time, max, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(dt_time, avg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,ierr)
+  if(myrank .eq. 0) print '(a,F10.1,X,F10.1,X,F10.1)', ">>> dt ", min, max, avg/97._8
+  call mpi_reduce(kernel_time, min, 1, MPI_DOUBLE, MPI_MIN, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(kernel_time, max, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,ierr)
+  call mpi_reduce(kernel_time, avg, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,ierr)
+  if(myrank .eq. 0) print '(a,F10.1,X,F10.1,X,F10.1)', ">>> kernel ", min, max, avg/97._8
+
 !!!!
 
 contains

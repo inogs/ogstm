@@ -279,7 +279,7 @@ END SUBROUTINE
 
 END SUBROUTINE
 
-SUBROUTINE mpplnk_my_openacc(ptab,comm_time,kernel_time,gpu)
+SUBROUTINE mpplnk_my_openacc(ptab,gpu)
 
       double precision ptab(jpk,jpj,jpi)
 #ifdef key_mpp_mpi
@@ -290,9 +290,6 @@ SUBROUTINE mpplnk_my_openacc(ptab,comm_time,kernel_time,gpu)
       INTEGER jw, packsize
       logical,optional :: gpu
       logical :: use_gpu
-  integer::ierr
-  real(kind=8) :: t1,t2,min,max,avg
-  real(kind=8),intent(inout) :: comm_time,kernel_time
 
       use_gpu=.false.
       if(present(gpu)) use_gpu=gpu
@@ -324,7 +321,6 @@ SUBROUTINE mpplnk_my_openacc(ptab,comm_time,kernel_time,gpu)
 !               |     |
 !               v     |
 
-  t1=mpi_wtime()
     packsize=jpk*jpj
 
 
@@ -349,12 +345,7 @@ SUBROUTINE mpplnk_my_openacc(ptab,comm_time,kernel_time,gpu)
 
 
       ENDIF
-!$acc end host_data
-
-  !$acc wait
-  t2=mpi_wtime()
-  comm_time=comm_time+t2-t1
-  t1=mpi_wtime()
+!$acc end host_data 
 
 !!
 !!
@@ -382,11 +373,6 @@ SUBROUTINE mpplnk_my_openacc(ptab,comm_time,kernel_time,gpu)
 
       ENDIF!    PACK_LOOP4
 !$acc end kernels
-
-  !$acc wait
-  t2=mpi_wtime()
-  kernel_time=kernel_time+t2-t1
-  t1=mpi_wtime()
 
 !!
 !!2.2 Migrations
@@ -419,49 +405,32 @@ SUBROUTINE mpplnk_my_openacc(ptab,comm_time,kernel_time,gpu)
       ENDIF
       !$acc end host_data
 
-  !$acc wait
-  t2=mpi_wtime()
-  comm_time=comm_time+t2-t1
-  t1=mpi_wtime()
 
 !!
 !!2.3 Write Dirichlet lateral conditions
 !!
 
-      ! XXX: Those loops are currently executed sequentially on the GPU because
-      ! of the ptab array. It's not clear for the compiler if he can parallelize
-      ! or not even if it should be parallelizable.
-
       !$acc kernels default(present) if(use_gpu)
       IF(nbondj.eq.0.or.nbondj.eq.1) THEN ! All but south boundary, we received from south
 
-         !!$acc parallel loop gang vector default(present) if(use_gpu)
          DO jw=1,SOUTH_count_recv
               ji = SOUTHpoints_recv(1,jw)
               jk = SOUTHpoints_recv(2,jw)
               ptab(jk,1,ji)= ts_recv(jw)
          ENDDO
-         !!$acc end parallel loop
 
       ENDIF
 
       IF(nbondj.eq.-1.or.nbondj.eq.0) THEN ! All but north boundary, we received from north
 
-        !!$acc parallel loop gang vector default(present) if(use_gpu)
         DO jw=1,NORTH_count_recv
               ji = NORTHpoints_recv(1,jw)
               jk = NORTHpoints_recv(2,jw)
              ptab(jk,jpj,ji)= tn_recv(jw)
         ENDDO
-        !!$acc end parallel loop
 
       ENDIF ! PACK_LOOP5
       !$acc end kernels
-
-  !$acc wait
-  t2=mpi_wtime()
-  kernel_time=kernel_time+t2-t1
-  t1=mpi_wtime()
 
 !!!  East - West waits
 
@@ -477,10 +446,6 @@ SUBROUTINE mpplnk_my_openacc(ptab,comm_time,kernel_time,gpu)
           CALL mppwait(reqs1)
           CALL mppwait(reqr1)
       ENDIF
-
-  !$acc wait
-  t2=mpi_wtime()
-  comm_time=comm_time+t2-t1
 
 #endif
 

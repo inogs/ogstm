@@ -32,6 +32,7 @@ implicit none
     character(len=100) :: Ens_forecast_prefix, Ens_forecast_ens_prefix, Ens_analysis_prefix, Ens_analysis_ens_prefix
     
     character(len=100) :: satfile_suffix, satvarname
+    double precision :: SatMultError
     
 contains
 
@@ -50,7 +51,7 @@ contains
             LocalRange, UseLocalObsDumping, &
             ForgettingFactor, &
             Ens_forecast_prefix, Ens_forecast_ens_prefix, Ens_analysis_prefix, Ens_analysis_ens_prefix, &
-            satfile_suffix, satvarname
+            satfile_suffix, satvarname, SatMultError
         
         if (lwp) then
             
@@ -123,6 +124,7 @@ contains
             Ens_analysis_ens_prefix='ENS_ANALYSIS/ENSEMBLE/RST'
             satfile_suffix='_d-OC_CNR-L3-CHL-MedOC4AD4_MULTI_1KM-MED-DT-v02.nc'
             satvarname='CHL'
+            SatMultError=0.35d0
 
             REWIND(EnsIOUnit)
             READ(EnsIOUnit, Ensemble_DA_setup)
@@ -142,6 +144,7 @@ contains
                 WRITE(*,*) ' Ens_analysis_ens_prefix: ', trim(Ens_analysis_ens_prefix)
                 WRITE(*,*) ' satfile_suffix: ', trim(satfile_suffix)
                 WRITE(*,*) ' satvarname: ', trim(satvarname)
+                WRITE(*,*) ' SatMultError: ', SatMultError
             END IF
 
         CLOSE(EnsIOUnit)

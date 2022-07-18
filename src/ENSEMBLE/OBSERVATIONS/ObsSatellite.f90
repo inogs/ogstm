@@ -20,7 +20,8 @@ module ObsSatellite
             EnsRank, EnsSize, &
             UseLocalObsDumping, &
             satfile_suffix, satvarname, &
-            Ens_shared_alloc
+            Ens_shared_alloc, &
+            SatMultError
     use Ens_Custom, &   
         only: nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate, &
             DAMask, DAVariablesIndex
@@ -114,7 +115,8 @@ contains
             call readnc_slice_double_2d(trim(SATFILE),trim(satvarname), Sat_Data)
             call readnc_slice_double_2d(trim(VARFILE),'variance', Sat_var_additive)
             !Sat_std1_ji=1.0d0/sqrt(Sat_var_additive(nldj:nlej, nldi:nlei))
-            Sat_var_log=0.0d0
+            !Sat_var_log=0.3d0**2
+            Sat_var_log=log(1.0d0+SatMultError)**2
             
             if (LocalObs) then
             

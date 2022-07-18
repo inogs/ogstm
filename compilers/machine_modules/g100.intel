@@ -3,7 +3,7 @@ module load autoload
 module load intel/oneapi-2021--binary
 module load intelmpi/oneapi-2021--binary
 module load mkl/oneapi-2021--binary
-module load cmake/3.18.4--gcc--10.2.0
+module load cmake/3.21.4
 module load netcdf/4.7.4--oneapi--2021.2.0-ifort
 module load netcdff/4.5.3--oneapi--2021.2.0-ifort
 

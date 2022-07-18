@@ -15,7 +15,7 @@ module Seik
             Ens_shared_alloc, Ens_shared_alloc_base
     use Ens_Custom, &   
         only: nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate, &
-            DAstate_kjit, win_DAstate, n_DAstate, gl_DAstate, &
+            DAstate_kjit, win_DAstate, n_DAstate, gl_DAstate, gl_DAstate_kjitn, &
             DAMask
     use Ens_Utilities, &
         only: Ens_ReduceMeanAndBase
@@ -38,8 +38,6 @@ module Seik
     integer :: win_Hstate, win_SqrtR1HLi, win_HLTR1HLi_loc
     double precision, pointer, contiguous, dimension(:,:) :: gl_Hstate
     double precision, pointer, contiguous, dimension(:,:,:,:) :: gl_SqrtR1HLi, gl_HLTR1HLi_loc
-    
-    double precision, dimension(:,:,:,:,:), pointer :: gl_DAstate_kjitn
     
     double precision, dimension(:,:), allocatable :: EnsCov1, ForecastCov1, TTW1T
     
@@ -77,8 +75,6 @@ contains
         HLTR1HLi_loc(1:EnsSize-1, 1:nj_DAstate, 1:ni_DAstate)=>member_pointer
         gl_HLTR1HLi_loc(1:EnsSize-1, 1:nj_DAstate, 1:ni_DAstate, 0:EnsSize-1)=>global_pointer
         HLTR1HLi_loc  = huge(HLTR1HLi_loc(1,1,1))
-        
-        gl_DAstate_kjitn(1:nk_DAstate, 1:nj_DAstate, 1:ni_DAstate, 1:ntra_DAstate, 0:EnsSize-1) => gl_DAstate
         
         allocate(EnsCov1(EnsSize-1, EnsSize-1))
         EnsCov1=Huge(EnsCov1(1,1))

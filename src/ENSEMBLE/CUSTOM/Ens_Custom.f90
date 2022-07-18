@@ -6,20 +6,28 @@ module Ens_Custom
     use myalloc, &
         only: nldj, nlej, nldi, nlei, bfmmask, tmask
     use Ens_Mem, &
-        only: EnsSize, &
+        only: EnsRankZero, &
+            EnsSize, &
             LocalRange
+    use Ens_Utilities, &
+        only: Ens_ReduceMean
         
     implicit none
     
-    double precision, parameter :: small=exp(-20.0d0), logsmall=-20.0d0
+    !double precision, parameter :: small=exp(-20.0d0), logsmall=-20.0d0
+    double precision, parameter :: small=10.0d0**(-5)
+    double precision, parameter :: logsmall=log(small)
     integer :: nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate
     double precision, pointer, contiguous, dimension(:) :: DAstate 
     integer :: n_DAstate 
     integer :: win_DAstate
     double precision, pointer, contiguous, dimension(:,:) :: gl_DAstate
     double precision, pointer, contiguous, dimension(:,:,:,:) :: DAstate_kjit
+    double precision, dimension(:,:,:,:,:), pointer :: gl_DAstate_kjitn
     integer, dimension(:), allocatable :: DAVariablesIndex
     integer(1), dimension(:,:,:), allocatable :: DAMask
+    
+    double precision, dimension(:,:,:,:), allocatable :: DAstate_debias
     
 contains
     
@@ -56,6 +64,7 @@ contains
         !DAstate(1:jpk,1:jpj,1:jpi,1:jptra)=>member_pointer
         gl_DAstate(1:n_DAstate, 0:EnsSize-1)=>global_pointer
         DAstate_kjit(1:nk_DAstate, 1:nj_DAstate, 1:ni_DAstate, 1:ntra_DAstate)=>DAstate
+        gl_DAstate_kjitn(1:nk_DAstate, 1:nj_DAstate, 1:ni_DAstate, 1:ntra_DAstate, 0:EnsSize-1) => gl_DAstate
         !DAstate  = huge(DAstate(1)) 
         DAstate  = 0.0d0
         
@@ -66,6 +75,9 @@ contains
         !        if (glamt(nldj-1+indexj,nldi-1+indexi)<-6.0d0) DAMask(:, indexj,indexi)=0
         !    end do
         !end do
+        
+        allocate(DAstate_debias(nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate))
+        DAstate_debias=0.0d0
         
     end
     
@@ -79,6 +91,8 @@ contains
         
         deallocate(DAMask)
         
+        deallocate(DAstate_debias)
+        
     end subroutine
     
     subroutine Ens_state2DA
@@ -91,6 +105,29 @@ contains
         integer indexi, indexj, indexk, indext
         
         !DAstate_kjit=log(trn(:,nldj:nlej,nldi:nlei,DAVariablesIndex))
+        
+        do indext=1, ntra_DAstate
+            do indexi=1, ni_DAstate
+                do indexj=1, nj_DAstate
+                    do indexk=1, nk_DAstate
+                        if (DAMask(indexk, indexj, indexi)==0) then
+                            !DAstate_kjit(indexk:nk_DAstate, indexj, indexi, indext)=0.0d0
+                            exit
+                        end if
+                        !if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
+                        !    DAstate_kjit(indexk, indexj, indexi, indext)=logsmall
+                        !else
+                            DAstate_kjit(indexk, indexj, indexi, indext)=log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext)))
+                        !end if
+                    end do
+                end do
+            end do
+        end do      
+        
+        call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
+        
+        DAstate_debias=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)        
+        
         do indext=1, ntra_DAstate
             do indexi=1, ni_DAstate
                 do indexj=1, nj_DAstate
@@ -109,6 +146,30 @@ contains
             end do
         end do        
             
+        call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
+        
+        DAstate_debias=DAstate_debias - gl_DAstate_kjitn(:,:,:,:,EnsRankZero)   
+        
+        do indext=1, ntra_DAstate
+            do indexi=1, ni_DAstate
+                do indexj=1, nj_DAstate
+                    do indexk=1, nk_DAstate
+                        if (DAMask(indexk, indexj, indexi)==0) then
+                            !DAstate_kjit(indexk:nk_DAstate, indexj, indexi, indext)=0.0d0
+                            exit
+                        end if
+                        if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
+                            DAstate_kjit(indexk, indexj, indexi, indext) = DAstate_debias(indexk, indexj, indexi, indext) + logsmall
+                        else
+                            DAstate_kjit(indexk, indexj, indexi, indext) = DAstate_debias(indexk, indexj, indexi, indext) + &
+                                log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext)))
+                        end if
+                    end do
+                end do
+            end do
+        end do    
+        
+        
     end subroutine
     
     subroutine Ens_DA2state
@@ -159,11 +220,11 @@ contains
                 do indexj=1, jpj
                     do indexk=1, jpk
                         if (tmask(indexk, indexj, indexi)==0) exit
-                        if (trn(indexk, indexj, indexi, indext)<small) then
-                            tracer(indexk, indexj, indexi, indext)=logsmall
-                        else
+                        !if (trn(indexk, indexj, indexi, indext)<small) then
+                        !    tracer(indexk, indexj, indexi, indext)=logsmall
+                        !else
                             tracer(indexk, indexj, indexi, indext)=log(trn(indexk, indexj, indexi, indext))
-                        end if
+                        !end if
                     end do
                 end do
             end do
@@ -221,11 +282,11 @@ contains
                     do indexj=1, jpj
                         do indexk=1, jpk
                             if (tmask(indexk, indexj, indexi)==0) exit
-                            if (temparray(indexk, indexj, indexi, indext)<small) then
-                                temparray(indexk, indexj, indexi, indext)=logsmall
-                            else
+                            !if (temparray(indexk, indexj, indexi, indext)<small) then
+                            !    temparray(indexk, indexj, indexi, indext)=logsmall
+                            !else
                                 temparray(indexk, indexj, indexi, indext)=log(temparray(indexk, indexj, indexi, indext))
-                            end if
+                            !end if
                         end do
                     end do
                 end do
@@ -279,6 +340,7 @@ contains
         logical :: IsEnsDAVar
         
         !if ((name(1:1).eq."P").or.(name(1:1).eq."N").or.(name(1:1).eq."O")) then
+        !if ((name(1:1).eq."P")) then
         if (.true.) then
             IsEnsDAVar=.true.
         else

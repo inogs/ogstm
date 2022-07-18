@@ -941,27 +941,6 @@ contains
 
 
       END SUBROUTINE
-      
-    subroutine Ens_ReadParams(prefix)
-        use Ens_Mem, &
-            only: EnsIOUnit
-        use TIME_MANAGER, &
-            only: DateStart
-        use Ens_Params, &
-            only: n_params, &
-                ParamArray, ParamNames
-                
-        character(LEN=*), intent(in) :: prefix
-        
-        integer indexi
-        
-        do indexi=1,n_params
-            open(EnsIOUnit, file=trim(prefix)//'.'//DateStart//'.'//trim(ParamNames(indexi))//'.txt', status = 'old')
-                read(EnsIOUnit,*) ParamArray(indexi)
-            close(EnsIOUnit)
-        end do
-        
-    end subroutine
     
     subroutine Ens_SaveRestarts(prefix, ens_prefix, DATEstring)
         use mpi 

@@ -17,8 +17,7 @@ module Ens_Routines
             IsaForecast, IsaDataAssimilation, &
             Ens_allocate, Ens_deallocate
     use Ens_IO, &
-        only: Ens_Init_IO, Ens_Finalize_IO, Ens_trcrst, Ens_SaveRestarts, &
-            Ens_ReadParams
+        only: Ens_Init_IO, Ens_Finalize_IO, Ens_trcrst, Ens_SaveRestarts
     use Ens_Custom, &
         only: Ens_state2DA, Ens_DA2state, &
             Ens_Init_DA, Ens_Finalize_DA
@@ -32,7 +31,7 @@ module Ens_Routines
     use Timers, &
         only: DAparttime, DAtottime
     use Ens_Params, &
-        only: Ens_Init_Params, Ens_Finalize_Params, Ens_SetParams
+        only: Ens_Init_Params, Ens_Finalize_Params, Ens_SetParams, Ens_ReadParams
         
     
 implicit none

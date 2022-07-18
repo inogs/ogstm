@@ -1,0 +1,29 @@
+&Params_setup 
+    ParamName(1)='PRMS.B1.p_pu_ra'
+    UseParam(1)=.true.
+    
+    ParamName(2)='PRMS.Z5.p_sum'
+    UseParam(2)=.true.
+    
+    ParamName(3)='PRMS.Z6.p_sum'
+    UseParam(3)=.true.
+    
+    ParamName(4)='PRMS.P1.p_qlcPPY'
+    UseParam(4)=.false.
+    
+    ParamName(5)='PRMS.P3.p_qlcPPY'
+    UseParam(5)=.false.
+    
+    ParamName(6)='PRMS.P3.p_qpcPPY'
+    UseParam(6)=.true.
+    
+    ParamName(7)='PRMS.P1.p_qplc'
+    UseParam(7)=.true.
+    
+    ParamName(8)='PRMS.P1.p_srs'
+    UseParam(8)=.true.
+    
+    ParamName(9)='PRMS.R6.rm'
+    UseParam(9)=.true.
+
+/ 

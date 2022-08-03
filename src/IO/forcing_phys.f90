@@ -137,7 +137,7 @@
 
       character(LEN=17), INTENT(IN) :: datestring
       LOGICAL :: B
-      !integer  :: jk,jj,ji, jstart
+      integer  :: jk,jj,ji, jstart
       ! LOCAL
       character(LEN=30) nomefile
       character(LEN=36) DeltaT_name
@@ -145,54 +145,6 @@
       double precision diff_e3t(jpk,jpj,jpi)
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
-
-      !TEST
-      CHARACTER(LEN=20)  var_to_store,DIR,date_from,date_To
-      CHARACTER(LEN=56) output_file_nc
-      double precision, dimension(jpk,jpjglo,jpiglo) :: buf_glo, test_buf_glo
-     
-      INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
-      INTEGER irange, jrange
-      INTEGER totistart, totiend, relistart, reliend
-      INTEGER totjstart, totjend, reljstart, reljend
-      INTEGER jk,jj,ji,i,j,k
-      INTEGER ind, i_contribution, j_contribution
-
-      DOUBLE PRECISION, allocatable, dimension(:) :: buff_scatterv_tot, test_buff_scatterv_tot
-      !INTEGER, allocatable, dimension(:) :: sendcount_array
-      integer, dimension(mpi_glcomm_size)::sendcount_array
-      double precision, allocatable :: buff_scatter(:), test_buff_scatter(:)
-      double precision, dimension(jpk,jpj,jpi) :: matrix_scatter_local
-
-      allocate(buff_scatter (jpi_max* jpj_max* jpk))
-      allocate(test_buff_scatter (jpi_max* jpj_max* jpk))
-
-
-      buff_scatter = huge(buff_scatter(1))
-      test_buff_scatter = huge(test_buff_scatter(1))
-     ! if(lwp) then
-              ALLOCATE (buff_scatterv_tot(jpiglo* jpjglo* jpk))
-              ALLOCATE (test_buff_scatterv_tot(jpiglo* jpjglo* jpk))
-              !ALLOCATE (sendcount_array(mpi_glcomm_size))
-              buff_scatterv_tot = huge(buff_scatterv_tot(1))      
-              test_buff_scatterv_tot = huge(test_buff_scatterv_tot(1))
-              if(lwp) write(*,*) 'allocation done'
-      !end if 
-
-      call mppsync()
-      CALL MPI_Gather(sendcount, 1, MPI_INT,sendcount_array, 1, MPI_INT, 0,MPI_COMM_WORLD, IERR)
-      write(*,*) "gather done"
-
-      if (lwp) then
-        DO idrank = 0,mpi_glcomm_size-1
-                write(*,*) 'rank ', idrank+1, 'sendcount is ', sendcount_array(idrank+1)
-        END DO
-      end if
-
-
-      call mppsync()
-
-      !STOP
 
 
       if (variable_rdt) then
@@ -205,200 +157,35 @@
           rdt = real(jk , 8)
       endif
 
-      nomefile='FORCINGS/U19951206-12:00:00.nc'
 
 ! Starting I/O
 ! U  *********************************************************
       nomefile = 'FORCINGS/U'//datestring//'.nc'
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
-      if(lwp) then
-              call readnc_slice_float_INITIAL(nomefile,'vozocrtx',buf_glo,ingv_lon_shift)
-              udta(:,:,:,2) = buf * umask
-              DIR='AVE_FREQ_1/'
-              var_to_store='vozocrtx'
-              output_file_nc=trim(DIR)//'ave.TEST.'//trim(var_to_store)//'.nc'
-              date_from='20220302-12:00:00'
-              date_To='20220302-13:00:00'
-
-
-              CALL WRITE_AVE(output_file_nc,var_to_store,date_from, date_To, buf_glo, deflate_ave, deflate_level_ave)
-      end if
-
-      call mppsync()
-      if (lwp) write(*,*) 'write ave done'
-     ! STOP
-     
-      !!! il proc 0 deve trasformare la matrice 3d in un array monodimensionale, secondo gli indici dei processori
-
-      if(lwp) then
-
-        DO idrank = 0,mpi_glcomm_size-1
-                ! ******* WRITING RANK sets indexes of tot matrix where to place buffers of idrank
-                irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
-                jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
-                totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
-                totiend   = totistart + irange - 1
-                totjstart = jstart_a(idrank+1) + jPd_a(idrank+1) - 1
-                totjend   = totjstart + jrange - 1
-                relistart = 1 + iPd_a(idrank+1) - 1
-                reliend   = relistart + irange - 1
-                reljstart = 1 + jPd_a(idrank+1) - 1
-                reljend   = reljstart + jrange - 1
-
-                ! **** ASSEMBLING *** WRITING RANK  puts in tot matrix buffer received by idrank
-                do ji =totistart,totiend
-                        i_contribution   = jpk*jpj_rec_a(idrank+1)*(ji-1-totistart+ relistart)
-                        do jj =totjstart,totjend
-                                j_contribution = jpk*(jj-1-totjstart+ reljstart)
-                                do jk =1, jpk
-                                        ind = jk + j_contribution + i_contribution
-                                         buff_scatterv_tot(ind+jpdispl_count(idrank+1))=buf_glo(jk,jj,ji)
-                                enddo
-                        enddo
-                enddo
-        END DO
-
-     end if
-
-     !sendcount_array
-     !mpi gather
-     !ttui devono mandare il loro sendcount a 0
-     !   call mpi_scatterv()
-        
-        !adesso il proc 0 manda i pezzi del buff scatterv tot a tutti i procs
-     if(lwp) write(*,*) 'assembling done'
-     
-     call mppsync()
-
-     CALL MPI_SCATTERV(buff_scatterv_tot,sendcount_array, jpdispl_count, MPI_DOUBLE_PRECISION, buff_scatter, sendcount,MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, IERR)
-
-
-     call mppsync()
-     if(lwp) write(*,*) "scatterv done"
-
-     !iogni processore rieve il buffer e si costruisce il suo pezzo di matrice
-
-     do ji =1 , jpi
-         i_contribution= jpk*jpj * (ji - 1 )
-         do jj =1 , jpj
-                 j_contribution=jpk*(jj-1)
-                 do jk =1 , jpk
-                         ind =  jk + j_contribution + i_contribution
-                         matrix_scatter_local(jk,jj,ji)=buff_scatter(ind)
-                 enddo
-         enddo
-     enddo
-
-     call mppsync()
-     if(lwp) write(*,*) "reconstruction done"
-
-     !STOP
-
-!---------------------------------
-!-----------------------------------
-!test al contrario
-
-!ogni proc rimette la sua matrice 3d in un buffer
-
-     do ji =1 , jpi
-         i_contribution= jpk*jpj * (ji - 1 )
-         do jj =1 , jpj
-                 j_contribution=jpk*(jj-1)
-                 do jk =1 , jpk
-                         ind =  jk + j_contribution + i_contribution
-                         test_buff_scatter(ind)=matrix_scatter_local(jk,jj,ji)
-                 enddo
-         enddo
-     enddo
-     if(lwp) write(*,*) 'test riassembling done'
-     call mppsync()
-!con gatherv il proc 0 recupera tutto il buffer
-
-     CALL MPI_GATHERV(test_buff_scatter, sendcount, MPI_DOUBLE_PRECISION,  test_buff_scatterv_tot, jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, IERR)
-     call mppsync()
-     if(lwp) write(*,*) 'test gatherv done'
-
-!il proc 0 lo riassembla
-
-     if(lwp) then
-
-        DO idrank = 0,mpi_glcomm_size-1
-                ! ******* WRITING RANK sets indexes of tot matrix where to place buffers of idrank
-                irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
-                jrange    = jPe_a(idrank+1) - jPd_a(idrank+1) + 1
-                totistart = istart_a(idrank+1) + iPd_a(idrank+1) - 1
-                totiend   = totistart + irange - 1
-                totjstart = jstart_a(idrank+1) + jPd_a(idrank+1) - 1
-                totjend   = totjstart + jrange - 1
-                relistart = 1 + iPd_a(idrank+1) - 1
-                reliend   = relistart + irange - 1
-                reljstart = 1 + jPd_a(idrank+1) - 1
-                reljend   = reljstart + jrange - 1
-
-                ! **** ASSEMBLING *** WRITING RANK  puts in tot matrix buffer received by idrank
-                do ji =totistart,totiend
-                        i_contribution   = jpk*jpj_rec_a(idrank+1)*(ji-1-totistart+ relistart)
-                        do jj =totjstart,totjend
-                                j_contribution = jpk*(jj-1-totjstart+ reljstart)
-                                do jk =1, jpk
-                                        ind = jk + j_contribution + i_contribution
-                                         test_buf_glo(jk,jj,ji)=test_buff_scatterv_tot(ind+jpdispl_count(idrank+1))
-                                enddo
-                        enddo
-                enddo
-        END DO
-        write(*,*) 'proc 0 assembling 3d done'
-        DIR='AVE_FREQ_1/'
-        var_to_store='vozocrtx'
-        output_file_nc=trim(DIR)//'ave.RECONSTRUCETD_TEST.'//trim(var_to_store)//'.nc'
-        date_from='20220302-12:00:00'
-        date_To='20220302-13:00:00'
-
-        CALL WRITE_AVE(output_file_nc,var_to_store,date_from, date_To, test_buf_glo, deflate_ave, deflate_level_ave)
-    
-
-     end if
-
-
-!il proc 0 lo stampa
-
-     call mppsync()
-     if(lwp) write(*,*) "writing done"
-
-     STOP
-
+      call read_float(nomefile, 'vozocrtx', ingv_lon_shift, 0, buf)    
+      udta(:,:,:,2) = buf * umask
 
 !-------------------------------------------
 !-----------------------------------------
     !pronti
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
-      if (lwp) then
-              call readnc_slice_float_INITIAL(nomefile,'vomecrty',buf,ingv_lon_shift)
-              vdta(:,:,:,2) = buf * vmask
-      end if
+      call read_float(nomefile, 'vomecrty', ingv_lon_shift, 0, buf)
+      vdta(:,:,:,2) = buf * vmask
 
 
 ! W *********************************************************
 
-
       nomefile = 'FORCINGS/W'//datestring//'.nc'
-
-      if (lwp) then
-              call readnc_slice_float_INITIAL(nomefile,'votkeavt',buf,ingv_lon_shift)
-              avtdta(:,:,:,2) = buf*tmask
-      end if
+      call read_float(nomefile, 'votkeavt', ingv_lon_shift, 0, buf)
+      avtdta(:,:,:,2) = buf*tmask
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
-      if (lwp) then 
-              call readnc_slice_float_INITIAL(nomefile,'votemper',buf,ingv_lon_shift)
-              tdta(:,:,:,2) = buf*tmask
+      call read_float(nomefile, 'votemper', ingv_lon_shift, 0, buf)        
+      tdta(:,:,:,2) = buf*tmask
 
-              call readnc_slice_float_INITIAL(nomefile,'vosaline',buf,ingv_lon_shift)
-              sdta(:,:,:,2) = buf*tmask
-      end if
-
+      call read_float(nomefile, 'vosaline', ingv_lon_shift, 0, buf)
+      sdta(:,:,:,2) = buf*tmask
 
     
     if (IS_FREE_SURFACE) then
@@ -501,7 +288,7 @@
 
       if (read_W_from_file) then
           nomefile = 'FORCINGS/W'//datestring//'.nc'
-          call readnc_slice_float(nomefile,'vovecrtz',buf,ingv_lon_shift)
+          call read_float(nomefile, 'vovecrtz', ingv_lon_shift, 0, buf)
           wdta(:,:,:,2) = buf * tmask
       else
           CALL COMPUTE_W()               ! vertical velocity

@@ -32,6 +32,7 @@ MODULE NODES_MODULE
         PUBLIC
 
         INTEGER :: nodes
+        integer :: ind_col
         
         INTEGER, allocatable, dimension (:) :: writing_procs
         
@@ -41,25 +42,25 @@ MODULE NODES_MODULE
         SUBROUTINE NODES_MODULE_FIND()
         
         INTEGER :: i, j, p, k
-        INTEGER :: IERROR
-        CHARACTER*(MPI_MAX_PROCESSOR_NAME) buff_recv
-        
+        INTEGER :: IERROR        
 
-        CHARACTER (len = lengt), dimension(mpi_glcomm_size) :: total_array
+        CHARACTER (len = MPI_MAX_PROCESSOR_NAME), dimension(mysize) :: total_array
+        integer, dimension(mysize) :: nodes_array
         
 !        write (*,*) 'allocation rank',myrank, lengt, local_array
 
         call mppsync()
 
-        CALL MPI_GATHER( local_array, lengt,MPI_CHAR, total_array,lengt,MPI_CHAR, 0, MPI_COMM_WORLD, IERROR)
+        CALL MPI_GATHER( local_array, MPI_MAX_PROCESSOR_NAME,MPI_CHAR, total_array,MPI_MAX_PROCESSOR_NAME,MPI_CHAR, 0, mycomm, IERROR)
 
        
         IF (myrank == 0) THEN
                 nodes = 1
                 p=1
                 k=2
-        
-                DO i=2, mpi_glcomm_size
+                
+                nodes_array(1)=1
+                DO i=2, mysize
                         IF (i==1) THEN
                                ! write(*,*)
                         END IF
@@ -70,6 +71,9 @@ MODULE NODES_MODULE
                         END DO
                         IF (i==j) THEN
                                 nodes = nodes + 1 
+                                nodes_array(i)=nodes
+                        else
+                                nodes_array(i)=nodes_array(j)
                         END IF
                 END DO
 
@@ -80,8 +84,8 @@ MODULE NODES_MODULE
 
         !rank 0 send to all ranks nodes
 
-                DO i=1, mpi_glcomm_size - 1
-                        CALL MPI_Send(nodes,1,MPI_INT,i,4,MPI_COMM_WORLD,IERROR)
+                DO i=1, mysize - 1
+                        CALL MPI_Send(nodes,1,mpi_integer,i,4,mycomm,IERROR)
                 END DO
 
                 if (lwp) write(*,*) 'nodes sent'
@@ -93,12 +97,12 @@ MODULE NODES_MODULE
                 ALLOCATE (writing_procs(nodes))        
         
                 writing_procs(1) = 0
-                DO i=2, mpi_glcomm_size
+                DO i=2, mysize
                         IF (nodes==1) THEN
                                 !if the number of node is one break, no sense to calculate, avoid problems
                                 EXIT
                         
-                        ELSE IF (total_array(p) /= total_array(i)) THEN
+                        ELSE IF (nodes_array(p) < nodes_array(i)) THEN
                                 writing_procs(k)= i-1
                                 p=i
                                 k=k+1
@@ -109,8 +113,8 @@ MODULE NODES_MODULE
 
         !rank 0 send to all ranks writing_procs
 
-                DO i=1, mpi_glcomm_size - 1
-                        CALL MPI_Send(writing_procs,nodes,MPI_INT,i,3,MPI_COMM_WORLD,IERROR)
+                DO i=1, mysize - 1
+                        CALL MPI_Send(writing_procs,nodes,mpi_integer,i,3,mycomm,IERROR)
                 END DO
 
         END IF
@@ -120,16 +124,18 @@ MODULE NODES_MODULE
         
         IF (myrank >0) THEN
                 
-                CALL MPI_Recv(nodes,1,MPI_INT,0,4,MPI_COMM_WORLD,MPI_STATUS_IGNORE, IERROR)
+                CALL MPI_Recv(nodes,1,mpi_integer,0,4,mycomm,MPI_STATUS_IGNORE, IERROR)
                 
                 ALLOCATE (writing_procs(nodes))
 
-                CALL MPI_Recv(writing_procs,nodes,MPI_INT,0,3,MPI_COMM_WORLD,MPI_STATUS_IGNORE, IERROR)
+                CALL MPI_Recv(writing_procs,nodes,mpi_integer,0,3,mycomm,MPI_STATUS_IGNORE, IERROR)
 
 !                DO k=1, nodes
 !                        write (*,*) 'writing procs position is ', k, writing_procs(k)
 !                END DO
         END IF
+        
+        call mpi_scatter(nodes_array, 1, mpi_integer, ind_col, 1, mpi_integer, 0, mycomm, ierror)
 
 !check number of nodes
 

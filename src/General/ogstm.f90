@@ -73,23 +73,36 @@ SUBROUTINE ogstm_launcher()
 #include "BFM_module_list.h"
 #endif
 
+#ifdef ExecEns
+    use Ens_Mem, &
+        only: EnsDebug
+        
+    integer ierr
+#endif
      
       double precision :: timetosolution
-
       
       timetosolution = MPI_Wtime()
 
       call ogstm_initialize()
+#ifdef ExecEns
+    if (EnsDebug>0) then
+        call mpi_barrier(glcomm, ierr)
+        if (glrank==0) write(*,*) "Ogstm initialization completed in seconds: ", MPI_Wtime() - timetosolution
+    end if
+#endif
       
-
       call step
 
-
+      
       call ogstm_finalize()
-
-      timetosolution = MPI_Wtime() - timetosolution
+      
+    timetosolution = MPI_Wtime() - timetosolution
+#ifdef ExecEns
+    if (EnsDebug>=0.and.glrank==0) write(*,*) "TIME TO SOLUTION =",timetosolution
+#else
       print*,"TIME TO SOLUTION =",timetosolution
-
+#endif
      
       END SUBROUTINE ogstm_launcher
 
@@ -99,15 +112,51 @@ SUBROUTINE ogstm_launcher()
 ! *************************************************************
 SUBROUTINE ogstm_initialize()
 
+#ifdef ExecEns
+    use Ens_Mem, &
+        only: EnsDebug, EnsSize, &
+            Ens_Namelist
+    use Ens_MPI, &
+        only: Ens_MPI_nodes_find_and_split
+    use Ens_Routines, &
+        only: Ens_Init
+        
+    integer ierr
+#endif
+
 ! local declarations
 ! ==================
      
       ! *********************************************
 
       CALL mynode() !  Nodes selection
+      
+      lwp = glrank.EQ.0
+      
+      call parlec      ! read namelist.init
+      
+      call node_name_fill    ! give the name of each node
+      
+#ifdef ExecEns
+    
+    call Ens_Namelist('namelist.init')
+    
+    call Ens_MPI_nodes_find_and_split
+    
+    lwp = glrank.EQ.0 ! only member 0 produces a log
+    !lwp = myrank.EQ.0 ! every ensemble member produces a log
+      
+#else
+    
+    mycomm=glcomm
+    mysize=glsize
+    myrank=glrank
+    
+    call nodes_module_find    !calculate the number of nodes used
+
+#endif
 
       narea = myrank+1
-      lwp = narea.EQ.1
 
       IF(lwp) THEN
           OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
@@ -132,7 +181,7 @@ SUBROUTINE ogstm_initialize()
 
       call parini
 
-      call parlec      ! read namelist.init
+      !call parlec      ! read namelist.init
       call time_init
       call trclec
 
@@ -148,9 +197,9 @@ SUBROUTINE ogstm_initialize()
 ! 1. Model general initialization
 ! ===============================
 
-      call node_name_fill    ! give the name of each node
+      !call node_name_fill    ! give the name of each node
 
-      call nodes_module_find    !calculate the number of nodes used
+      !call nodes_module_find    !calculate the number of nodes used
 
       call populate_matrix_vars   !define matrix of variables to dump
 
@@ -165,26 +214,62 @@ SUBROUTINE ogstm_initialize()
       call trccof        ! initialisation of data fields
 
       call set_to_zero() ! set to zero some data arrays
-
+      
+#ifndef ExecEns
       call trcrst        ! read restarts
+#endif
+
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (lwp) write(*,*) "before photo_init" 
+    end if
+#endif
 
       call photo_init
 
 #ifdef ExecDA
+    if (EnsSize<=1) then
       call DA_Init
 
       call DA_VARS
+    end if
+#endif
+
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (lwp) write(*,*) "before init_phys" 
+    end if
 #endif
 
       call init_phys
+      
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (lwp) write(*,*) "after init_phys" 
+    end if
+#endif
 
 ! Initialization of Biogeochemical reactor with 1D approach
       call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
-      parallel_rank=myrank
+      parallel_rank=glrank
       call Init_bfm()
       call BFM0D_INIT_IO_CHANNELS()
 
       call Initialize()
+      
+#ifdef ExecEns
+    call Ens_Init
+#endif
+      
+#ifdef ExecEns
+    if (EnsDebug>1) then
+        call mpi_barrier(glcomm,ierr)
+        if (lwp) write(*,*) "end of initializzation" 
+    end if
+#endif
 
 END SUBROUTINE ogstm_initialize
 
@@ -218,7 +303,7 @@ SUBROUTINE ALLOC_ALL
        mem_all_tot=mem_all_tot+mem_all
       !call myalloc_HDF() 
       ! write(*,*)'My_Rank:',myrank,'alloc_HDF  (MB):', mem_all 
-       mem_all_tot=mem_all_tot+mem_all
+       !mem_all_tot=mem_all_tot+mem_all
       call myalloc_ZDF() 
        !write(*,*)'My_Rank:',myrank,'alloc_ZDF  (MB):', mem_all
        mem_all_tot=mem_all_tot+mem_all
@@ -246,8 +331,8 @@ SUBROUTINE ALLOC_ALL
        mem_all_tot=mem_all_tot+mem_all
       
       
-      call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
-      call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,MPI_COMM_WORLD, ierr)
+      call MPI_ALLREDUCE(jpi, jpi_max, 1, MPI_INTEGER, MPI_MAX,mycomm, ierr)
+      call MPI_ALLREDUCE(jpj, jpj_max, 1, MPI_INTEGER, MPI_MAX,mycomm, ierr)
 
       call myalloc_IO()  
       ! LEVEL1 write(*,*)'My_Rank:',myrank,'alloc_IO   (MB):', mem_all 
@@ -372,7 +457,18 @@ END SUBROUTINE set_to_zero
 
 SUBROUTINE ogstm_finalize()
 
+#ifdef ExecEns
+    use Ens_MPI, &
+        only: Ens_MPI_Finalize
+    use Ens_Routines, &
+        only: Ens_Finalize
+#endif
+
       CALL mppstop
+
+#ifdef ExecEns
+    call Ens_MPI_Finalize
+#endif
 
       if(lwp) WRITE(numout,*) 'End of calculation. Good bye.'
 
@@ -402,6 +498,10 @@ SUBROUTINE ogstm_finalize()
       call clean_memory_io()
       call clean_memory_adv()
       call clean_memory_zdf()
+      
+#ifdef ExecEns
+    call Ens_Finalize
+#endif
 
       END SUBROUTINE ogstm_finalize
 

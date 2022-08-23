@@ -4,7 +4,7 @@
 /
 
 &PHYS_freq
-    freq_ave_phys        = 1 !  1=group 1, 2 = group 2
+    freq_ave_phys        = 1 ! 0 = none (forces physWR* to zero), 1=group 1, 2 = group 2
 /
 
 &PHYS_3D 

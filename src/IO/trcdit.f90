@@ -50,7 +50,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 
         CHARACTER(LEN=20)  var_to_store
 
-        INTEGER :: ind_col
+        !INTEGER :: ind_col
         DOUBLE PRECISION :: start_time_trcdit_info,finish_time_trcdit_info, proctime_time_trcdit_info, max_time_trcdit_info
         DOUBLE PRECISION :: gatherv_fin_time,gatherv_init_time,gatherv_delta_time,gatherv_sum_time,gatherv_mean_time
         DOUBLE PRECISION :: writing_rank_fin_time, writing_rank_init_time,writing_rank_delta_time, writing_rank_sum_time
@@ -138,8 +138,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                                 if (FREQ_GROUP.eq.1) counter_var_high = counter_var_high + 1
 
                                 !GATHERV TO THE WRITING RANK
-                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count,& 
-                                                jpdispl_count, MPI_DOUBLE_PRECISION, writing_rank, MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count, jpdispl_count, MPI_DOUBLE_PRECISION, writing_rank, mycomm, IERR)
 
                         END IF
 
@@ -147,7 +146,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                 gatherv_fin_time = MPI_Wtime()
 
                 gatherv_delta_time = gatherv_fin_time - gatherv_init_time
-                CALL MPI_Reduce( gatherv_delta_time, gatherv_sum_time, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD,IERROR)
+                CALL MPI_Reduce( gatherv_delta_time, gatherv_sum_time, 1, MPI_DOUBLE, MPI_SUM, 0, mycomm,IERROR)
 
 
                 ! *************** COLLECTING DATA *****************************
@@ -156,7 +155,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
 
                         writing_rank_init_time = MPI_Wtime()
 
-                        ind_col = (myrank / n_ranks_per_node)+1
+                        !ind_col = (myrank / n_ranks_per_node)+1
 
                         if (FREQ_GROUP.eq.2) then
                                 var_to_store = matrix_state_2(jv,ind_col)%var_name
@@ -167,7 +166,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
                         IF (var_to_store == "novars_input")then
                                 EXIT
                         ELSE
-                                DO idrank = 0,mpi_glcomm_size-1
+                                DO idrank = 0,mysize-1
 
                                         ! ******* WRITING RANK sets indexes of tot matrix where to place buffers of idrank
                                         irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
@@ -223,7 +222,7 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
         finish_time_trcdit_info= MPI_Wtime()
         proctime_time_trcdit_info=finish_time_trcdit_info - start_time_trcdit_info
 
-        CALL MPI_Reduce( proctime_time_trcdit_info,max_time_trcdit_info, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD,IERROR)
+        CALL MPI_Reduce( proctime_time_trcdit_info,max_time_trcdit_info, 1, MPI_DOUBLE, MPI_MAX, 0, mycomm,IERROR)
 
         !if(myrank == 0) then
         !        write(*,*) 'TRCDIT TIME is', max_time_trcdit_info

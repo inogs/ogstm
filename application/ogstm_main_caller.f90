@@ -8,7 +8,7 @@ PROGRAM OGSTM_MAIN
       USE ogstm
       implicit none
       integer :: info,ierr
-      write(*,*) "Starting ..."
+      !write(*,*) "Starting ..."
       CALL mpi_init(ierr)
 
       !$OMP PARALLEL

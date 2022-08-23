@@ -37,8 +37,7 @@
 
 &General_IO
 
-   nwritetrc = 10000,
-   freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
+   nwritetrc = 10000
    freq_flux_dump       = 1 ! 1=group 1, 2 = group 2
    save_bkp_group2      = .true.
    deflate_ave          = 0
@@ -75,5 +74,46 @@
       jpice=5,
       jpqsr=6,
       jpkef=7,
+/
+
+&Ensemble_setup
+    EnsDebug=0 !0: no debug info, 1: some debug info, 2: more debug info
+    EnsSize=1 !Ensemble size
+    UseParams=.false. !if true, parameters are read/written from file as restarts
+    
+    !************************************************************************************************!
+    ! This part is relevant only for EnsSize>1
+    EnsShareRestart=0 !0: each ensemble member has its own restart, 1: same restart for everyone.
+    EnsShareParams=0 !0: each ensemble member has its own parameters, 1: same parameters for everyone.
+    EnsSaveEachRestart=.true. 
+    EnsSaveMeanRestart=.true.
+    EnsSaveEachAve=.true.
+    EnsSaveMeanAve=.true.
+    !************************************************************************************************!
+    
+    EnsAveDouble=.false.
+    Ens_restart_prefix='RESTARTS/RST'
+    Ens_restart_ens_prefix='RESTARTS/ENSEMBLE/RST'
+    Ens_ave_freq_1_prefix='AVE_FREQ_1/ave'
+    Ens_ave_freq_1_ens_prefix='AVE_FREQ_1/ENSEMBLE/ave'
+    Ens_ave_freq_2_prefix='AVE_FREQ_2/ave'
+    Ens_ave_freq_2_ens_prefix='AVE_FREQ_2/ENSEMBLE/ave'
+    Ens_flux_prefix='FLUXES/flux'
+    Ens_flux_ens_prefix='FLUXES/ENSEMBLE/flux'
+/
+
+&Ensemble_DA_setup
+    EnsSaveAfterForecast=.false.
+    EnsSaveAfterAnalysis=.true.
+    LocalRange=30
+    UseLocalObsDumping=.true.
+    ForgettingFactor=0.7d0
+    Ens_forecast_prefix='ENS_FORECAST/RST'
+    Ens_forecast_ens_prefix='ENS_FORECAST/ENSEMBLE/RST'
+    Ens_analysis_prefix='ENS_ANALYSIS/RST'
+    Ens_analysis_ens_prefix='ENS_ANALYSIS/ENSEMBLE/RST'
+    satfile_suffix='_d-OC_CNR-L3-CHL-MedOC4AD4_MULTI_1KM-MED-DT-v02.nc'
+    satvarname='CHL'
+    SatMultError=0.35d0
 /
 

@@ -47,7 +47,7 @@
 
 
           call readNetCDF_2dvar(SATFILE,trim(satvarname)   ,jpiglo,jpjglo,  CHLsat  ) ! testcase value around 0.25
-          call readNetCDF_2dvar(VARFILE,'variance',jpiglo,jpjglo,  VAR2D   ) !                around 0.0005
+          if (OPTION.eq.'2') call readNetCDF_2dvar(VARFILE,'variance',jpiglo,jpjglo,  VAR2D   ) !                around 0.0005
 
 
           fillvalue999=-999.0
@@ -194,8 +194,8 @@
         call handle_err1(s, counter,FileNetCDF)
 
 
-        s = nf90_put_var(ncid, ID_lon   , REAL(totglamt(:,jpjglo),4)    ); call handle_err1(s, counter,FileNetCDF)
-        s = nf90_put_var(ncid, ID_lat   , REAL(totgphit(jpiglo,:),4)    ); call handle_err1(s, counter,FileNetCDF)
+        s = nf90_put_var(ncid, ID_lon   , REAL(totglamt(jpjglo,:),4)    ); call handle_err1(s, counter,FileNetCDF)
+        s = nf90_put_var(ncid, ID_lat   , REAL(totgphit(:,jpiglo),4)    ); call handle_err1(s, counter,FileNetCDF)
         s = nf90_put_var(ncid, ID_misf  , MISFIT ); call handle_err1(s, counter,FileNetCDF)
         s = nf90_put_var(ncid, ID_err   , ERRsat ); call handle_err1(s, counter,FileNetCDF)
         s = nf90_put_var(ncid, ID_NoLog , cMISFIT); call handle_err1(s, counter,FileNetCDF)

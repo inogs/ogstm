@@ -16,6 +16,10 @@ find_package(3DVAR REQUIRED)
 find_package(PETSc REQUIRED)
 find_package(PnetCDF REQUIRED)
 
+# NEW EnsDA PACKAGES
+set(BLA_VENDOR Intel10_64lp_seq)
+find_package(LAPACK REQUIRED)
+
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
       "Choose the type of build, options are: Debug Release."
@@ -38,10 +42,14 @@ IF (BFMv2)
     add_definitions(-DBFMv2)
 ENDIF()
 
+add_definitions(-DExecEns)
+add_definitions(-DExecEnsDA)
+add_definitions(-DExecEnsParams)
+
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend-source")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -cpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-132")
@@ -64,13 +72,14 @@ include_directories(${DA_INCLUDES})
 include_directories(${PETSC_INCLUDES})
 
 # Search Fortran module to compile
-set( FOLDERS BIO  DA  General  IO  MPI  namelists  PHYS BC)
-  foreach(FOLDER ${FOLDERS})
-  file(GLOB TMP src/${FOLDER}/*)
+#set( FOLDERS BIO  DA  General  IO  MPI  namelists  PHYS BC)
+#  foreach(FOLDER ${FOLDERS})
+#  file(GLOB TMP src/${FOLDER}/*)
+  file(GLOB_RECURSE TMP src/*)
   list (APPEND FORTRAN_SOURCES ${TMP})
-endforeach()
+#endforeach()
 
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES} ${LAPACK_LIBRARIES})

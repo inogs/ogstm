@@ -101,6 +101,8 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 
 !      ***** namelist PHYS_freq:
 
+        freq_ave_phys=0
+
       REWIND(numphys)
       READ(numphys,phys_freq)
 
@@ -117,6 +119,11 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 !      *****
 
       CLOSE(numphys)
+      
+      if (freq_ave_phys==0) then
+        physWR=0
+        physWR_2d=0
+      end if
 
 !----------------------
 !--------------------- PRINTING

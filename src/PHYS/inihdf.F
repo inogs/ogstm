@@ -117,8 +117,6 @@
           WRITE(numout,*) '         aht profile at T-level : '
           WRITE(numout,*)
           WRITE(numout,9200)
-          DO jk = 1, jpk
-          END DO
       ENDIF
  9200 FORMAT(' level    aht          depth t-level ' )
  9210 FORMAT(i6,2f12.4)

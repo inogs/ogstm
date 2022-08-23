@@ -42,7 +42,7 @@ MODULE MPI_GATHER_INFO
         !variable do loops
 
         INTEGER :: loop_ind,loop_ind_2d
-        INTEGER :: cont,cont_2d
+        INTEGER :: cont,cont_2d,total_dim_jpijk
         INTEGER :: sendcount,sendcount_2d
 
         LOGICAL :: WRITING_RANK_WR
@@ -214,15 +214,16 @@ MODULE MPI_GATHER_INFO
                 
         sendcount = jpi * jpj * jpk
         sendcount_2d = jpi * jpj
-
-        if(WRITING_RANK_WR)then
         
+        if(WRITING_RANK_WR)then
+                total_dim_jpijk=0
                 cont = 0
                 DO loop_ind = 1, mpi_glcomm_size
                         jprcv_count(loop_ind) = jpi_rec_a(loop_ind) * jpj_rec_a(loop_ind) * jpk
                         jpdispl_count(loop_ind) = cont
-                        cont = cont + jprcv_count(loop_ind)        
-                        !write(*,*) 'do loop',loop_ind,jprcv_count(loop_ind),jpdispl_count(loop_ind),cont
+                        cont = cont + jprcv_count(loop_ind)
+                        total_dim_jpijk=total_dim_jpijk + jprcv_count(loop_ind)        
+                        !if(lwp) write(*,*) 'do loop',loop_ind,jprcv_count(loop_ind),jpdispl_count(loop_ind),cont
                 end DO        
                 !write(*,*) 'do loop finished'
 

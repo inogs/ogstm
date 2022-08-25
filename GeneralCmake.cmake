@@ -10,6 +10,9 @@ set (NETCDF_F90 "YES")
 find_package(MPI REQUIRED)
 find_package(NetCDF REQUIRED)
 find_package(BFM REQUIRED)
+set(BLA_VENDOR Intel10_64lp_seq)
+find_package(LAPACK REQUIRED)
+
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
@@ -33,10 +36,14 @@ IF (BFMv2)
     add_definitions(-DBFMv2)
 ENDIF()
 
+add_definitions(-DExecEns)
+add_definitions(-DExecEnsParams)
+
+
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend-source")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -g -cpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0 ")
@@ -55,13 +62,15 @@ include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
 # Search Fortran module to compile
-set( FOLDERS BIO  General  IO  MPI  namelists  PHYS BC)
+set( FOLDERS BIO General  IO  MPI  namelists  PHYS BC)
   foreach(FOLDER ${FOLDERS})
   file(GLOB TMP src/${FOLDER}/*)
   list (APPEND FORTRAN_SOURCES ${TMP})
 endforeach()
+file(GLOB_RECURSE TMP src/ENSEMBLE/*)
+list (APPEND FORTRAN_SOURCES ${TMP})
 
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${LAPACK_LIBRARIES})

@@ -100,7 +100,7 @@ contains
 
         ! TO DO: implement one more dimension to account for different geometries for different variables
         ! TO DO: single or double precision?
-        call readnc_slice_double(self%get_file_by_index(1), trim(self%m_var_names_data(1)), self%m_buffer)
+        call read_double(self%get_file_by_index(1), trim(self%m_var_names_data(1)),0, self%m_buffer)
 
         ! This is set to the largest dimension.
         ! Once computed, the real size will be used instead to allocate the right amount of memory
@@ -274,7 +274,7 @@ contains
 
                 ! directly operate on self%m_values
                 do i = 1, self%m_n_vars
-                    call readnc_slice_double(self%get_file_by_index(idx), trim(self%m_var_names_data(i)), self%m_buffer)
+                    call read_double(self%get_file_by_index(idx), trim(self%m_var_names_data(i)),0, self%m_buffer)
                     do j = 1, self%m_size
                         self%m_values(j, i) = self%m_buffer( &
                             self%m_sponge_points(3, j), &
@@ -287,7 +287,7 @@ contains
             else
                 
                 do i = 1, self%m_n_vars
-                    call readnc_slice_double(self%get_file_by_index(idx), trim(self%m_var_names_data(i)), self%m_buffer)
+                    call read_double(self%get_file_by_index(idx), trim(self%m_var_names_data(i)),0, self%m_buffer)
                     do j = 1, self%m_size
                         self%m_values_dtatrc(j, 2, i) = self%m_buffer( &
                             self%m_sponge_points(3, j), &

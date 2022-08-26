@@ -87,28 +87,28 @@
                 end if
       end do
 
-      call readnc_slice_double_2d(maskfile,'glamt', glamt)
-      call readnc_slice_double_2d(maskfile,'glamu', glamu)
-      call readnc_slice_double_2d(maskfile,'glamv', glamv)
-      !call readnc_slice_double_2d(maskfile,'glamf', glamf)
+      call read_double_2d(maskfile,'glamt',0, glamt)
+      call read_double_2d(maskfile,'glamu',0, glamu)
+      call read_double_2d(maskfile,'glamv',0, glamv)
+      !call read_double_2d(maskfile,'glamf',0, glamf)
 
-      call readnc_slice_double_2d(maskfile,'gphit', gphit)
-      call readnc_slice_double_2d(maskfile,'gphiu', gphiu)
-      call readnc_slice_double_2d(maskfile,'gphiv', gphiv)
-      !call readnc_slice_double_2d(maskfile,'gphif', gphif)
+      call read_double_2d(maskfile,'gphit',0, gphit)
+      call read_double_2d(maskfile,'gphiu',0, gphiu)
+      call read_double_2d(maskfile,'gphiv',0, gphiv)
+      !call read_double_2d(maskfile,'gphif',0, gphif)
 
 
 ! 2. Horizontal scale factors
 ! ---------------------------
-      call readnc_slice_double_2d(maskfile,'e1t', e1t)
-      call readnc_slice_double_2d(maskfile,'e1u', e1u)
-      call readnc_slice_double_2d(maskfile,'e1v', e1v)
-      !call readnc_slice_double_2d(maskfile,'e1f', e1f)
+      call read_double_2d(maskfile,'e1t',0, e1t)
+      call read_double_2d(maskfile,'e1u',0, e1u)
+      call read_double_2d(maskfile,'e1v',0 ,e1v)
+      !call read_double_2d(maskfile,'e1f',0, e1f)
 
-      call readnc_slice_double_2d(maskfile,'e2t', e2t)
-      call readnc_slice_double_2d(maskfile,'e2u', e2u)
-      call readnc_slice_double_2d(maskfile,'e2v', e2v)
-      !call readnc_slice_double_2d(maskfile,'e2f', e2f)
+      call read_double_2d(maskfile,'e2t',0, e2t)
+      call read_double_2d(maskfile,'e2u',0, e2u)
+      call read_double_2d(maskfile,'e2v',0, e2v)
+      !call read_double_2d(maskfile,'e2f',0, e2f)
 
 
 
@@ -117,7 +117,7 @@
 
       CALL readnc_slice_int1 (maskfile,'umask', umask )
       CALL readnc_slice_int1 (maskfile,'vmask', vmask )
-!      CALL readnc_slice_double (maskfile,'fmask', fmask )
+!      CALL read_double (maskfile,'fmask',0, fmask )
       CALL readnc_slice_int1 (maskfile,'tmask', tmask )
 !      CALL readnc_global_double(maskfile,'tmask', tmaskglo)
 
@@ -137,7 +137,7 @@
        enddo
       enddo
 
-!      CALL readnc_slice_double_2d(maskfile,'ff', ff )
+!      CALL read_double_2d(maskfile,'ff',0, ff )
 
 
 ! 4. depth and vertical scale factors
@@ -146,7 +146,7 @@
 #ifdef gdept1d
        CALL readmask_double_1d(maskfile,'gdept', gdept)
 #else
-      CALL readnc_slice_double(maskfile,'gdept', gdept)
+      CALL read_double(maskfile,'gdept',0, gdept)
 #endif
        CALL readmask_double_1d(maskfile,'gdepw', gdepw)
        jpk_eu = 0
@@ -160,10 +160,10 @@
        enddo
        if (lwp) write(*,*) 'Euphotic level at k = ', jpk_eu
 
-      CALL readnc_slice_double (maskfile,'e3t_0', e3t_0 )
-      CALL readnc_slice_double (maskfile,'e3u_0', e3u_0 )
-      CALL readnc_slice_double (maskfile,'e3v_0', e3v_0 )
-      CALL readnc_slice_double (maskfile,'e3w_0', e3w_0 )
+      CALL read_double (maskfile,'e3t_0',0, e3t_0 )
+      CALL read_double (maskfile,'e3u_0',0, e3u_0 )
+      CALL read_double (maskfile,'e3v_0',0, e3v_0 )
+      CALL read_double (maskfile,'e3w_0',0, e3w_0 )
 
       IF (.not.IS_FREE_SURFACE) then
          e3t = e3t_0
@@ -320,8 +320,8 @@
 
       write(*,*) 'DOMREA finita, myrank = ', myrank
 
-   !   DEALLOCATE(idxt)
-    !  DEALLOCATE(idxt2glo)
+     !   DEALLOCATE(idxt)
+     !  DEALLOCATE(idxt2glo)
      ! DEALLOCATE(resto)
 
 

@@ -49,7 +49,7 @@
 
          filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))// & 
                 '.nc'
-         CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
+         CALL read_double(filename, 'TRN'//trim(ctrcnm(jn)),0, trn(:,:,:,jn) )
 
 
 
@@ -67,7 +67,7 @@
 
           if (existFilebkp) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
+             CALL read_double(bkpname,ctrcnm(jn),0, traIO(:,:,:,jn) )
              if (.not.bkp2hasbeenread) then
                call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
                call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
@@ -86,7 +86,7 @@
 
            if (existFilebkp) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO_HIGH(:,:,:,jn_high) )
+             CALL read_double(bkpname,ctrcnm(jn),0, traIO_HIGH(:,:,:,jn_high) )
                 if (.not.bkp1hasbeenread) then
                   call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
                   call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
@@ -110,7 +110,7 @@
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,dianm(jn), tra_DIA_IO(jn,:,:,:) )
+             CALL read_double(bkpname,dianm(jn),0, tra_DIA_IO(jn,:,:,:) )
              if (.not.bkp2hasbeenread) then
                 call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
@@ -126,7 +126,7 @@
            INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_IO_HIGH(jn_high,:,:,:) )
+             CALL read_double(bkpname,trim(dianm(jn)),0, tra_DIA_IO_HIGH(jn_high,:,:,:) )
                     if (.not.bkp1hasbeenread) then
                       call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
@@ -150,7 +150,7 @@
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double_2d(bkpname,dianm_2d(jn), tra_DIA_2d_IO(jn,:,:) )
+             CALL read_double_2d(bkpname,dianm_2d(jn),0, tra_DIA_2d_IO(jn,:,:) )
              if (.not.bkp2hasbeenread) then
                 call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
                 call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
@@ -166,7 +166,7 @@
            INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double_2d(bkpname,trim(dianm_2d(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
+             CALL read_double_2d(bkpname,trim(dianm_2d(jn)),0, tra_DIA_2d_IO_HIGH(jn_high,:,:) )
                     if (.not.bkp1hasbeenread) then
                       call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
                       call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
@@ -195,7 +195,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double(   bkpname,'vosaline',  snIO) 
+          call read_double(   bkpname,'vosaline',0,  snIO) 
         else 
           snIO = 0.0
         end if
@@ -206,7 +206,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double(   bkpname,'votemper',  tnIO)      
+          call read_double(   bkpname,'votemper',0,  tnIO)      
         else
           tnIO = 0.0
         end if
@@ -216,7 +216,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double(   bkpname,'vozocrtx',  unIO)  
+          call read_double(   bkpname,'vozocrtx',0,  unIO)  
         else
           unIO = 0.0
         end if
@@ -226,7 +226,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double(   bkpname,'vomecrty',  vnIO)  
+          call read_double(   bkpname,'vomecrty',0,  vnIO)  
         else
           vnIO = 0.0
         end if
@@ -236,7 +236,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double(   bkpname,'vovecrtz',  wnIO)  
+          call read_double(   bkpname,'vovecrtz',0,  wnIO)  
         else
           wnIO = 0.0
         end if
@@ -246,7 +246,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double(   bkpname,'votkeavt',  avtIO)  
+          call read_double(   bkpname,'votkeavt',0,  avtIO)  
         else
           avtIO = 0.0
         end if
@@ -256,7 +256,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double(   bkpname,'e3t',  e3tIO)  
+          call read_double(   bkpname,'e3t',0,  e3tIO)  
         else
           e3tIO = 0.0
         end if
@@ -266,7 +266,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double_2d(   bkpname,'soshfldo', qsrIO)  
+          call read_double_2d(   bkpname,'soshfldo',0, qsrIO)  
         else
           qsrIO = 0.0
         end if
@@ -276,7 +276,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double_2d(   bkpname,'sowindsp',  vatmIO)  
+          call read_double_2d(   bkpname,'sowindsp',0,  vatmIO)  
         else
           vatmIO = 0.0
         end if
@@ -286,7 +286,7 @@
         INQUIRE(FILE=bkpname, EXIST=existFilebkp)
         if (existFilebkp) then
           if(lwp)  write(*,*) 'reading ', bkpname
-          call readnc_slice_double_2d(   bkpname,'sowaflcd',  empIO)  
+          call read_double_2d(   bkpname,'sowaflcd',0,  empIO)  
         else
           empIO = 0.0
         end if

@@ -187,9 +187,10 @@
       call read_float(nomefile, 'vosaline', ingv_lon_shift, 0, buf)
       sdta(:,:,:,2) = buf*tmask
 
-    
+   !read_float_2d(filename, var_to_store, shift,reading_proc,matrix_scatter_local_2d) 
     if (IS_FREE_SURFACE) then
-         call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
+         !call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
+         call read_float_2d(nomefile,'sossheig',ingv_lon_shift,0,buf2)
          ssh = buf2*tmask(1,:,:)
 
           e3tdta(:,:,:,2) = e3t_0
@@ -265,22 +266,26 @@
 
       if (ingv_files_direct_reading) then
            nomefile = 'FORCINGS/U'//datestring//'.nc'
-           call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
+           !call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
+           call read_float_2d(nomefile,'sozotaux',ingv_lon_shift,0,buf2)
            taux = buf2*tmask(1,:,:)*umask(1,:,:)
 
            nomefile = 'FORCINGS/V'//datestring//'.nc'
-           call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
+           !call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
+           call read_float_2d(nomefile,'sometauy',ingv_lon_shift,0,buf2)
            tauy = buf2*tmask(1,:,:)*vmask(1,:,:)
 
            call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
       else
           nomefile = 'FORCINGS/T'//datestring//'.nc'
-          call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
+          !call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
+          call read_float_2d(nomefile,'sowindsp',ingv_lon_shift,0,buf2)
       endif
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
       nomefile = 'FORCINGS/T'//datestring//'.nc'
-      call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
+      !call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
+      call read_float_2d(nomefile,'soshfldo',ingv_lon_shift,0,buf2)
       flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.
       flxdta(:,:,jpemp ,2) = 0.

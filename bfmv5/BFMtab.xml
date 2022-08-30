@@ -89,6 +89,7 @@
 <var name="flN3O4n"      highfreq="false" dump="false" ></var> 
 <var name="flN4N3n"      highfreq="false" dump="false" ></var> 
 <var name="sediR2"       highfreq="false" dump="false" ></var> 
+<var name="sediR3"       highfreq="false" dump="false" ></var>
 <var name="sediR6"       highfreq="false" dump="false" ></var> 
 <var name="sediO5"       highfreq="false" dump="false" ></var>
 <var name="xEPS"         highfreq="false" dump="false" ></var> 
@@ -191,17 +192,18 @@
 <var name="BFM1D_rsp_iiP2"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_rsp_iiP3"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_rsp_iiP4"     highfreq="false" dump="false" ></var>
-<var name="BFM1D_exR2ac_iiP1"     highfreq="true" dump="true" comment="servono alla ppn" ></var>
-<var name="BFM1D_exR2ac_iiP2"     highfreq="true" dump="true" ></var>
-<var name="BFM1D_exR2ac_iiP3"     highfreq="true" dump="true" ></var>
-<var name="BFM1D_exR2ac_iiP4"     highfreq="true" dump="true" ></var>
+<var name="exPPYR2ac_iiP1"     highfreq="true" dump="true" comment="servono alla ppn" ></var>
+<var name="exPPYR2ac_iiP2"     highfreq="true" dump="true" ></var>
+<var name="exPPYR2ac_iiP3"     highfreq="true" dump="true" ></var>
+<var name="exPPYR2ac_iiP4"     highfreq="true" dump="true" ></var>
 
 <var name="BFM1D_exR2cc_iiP1"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_exR2cc_iiP2"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_exR2cc_iiP3"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_exR2cc_iiP4"     highfreq="false" dump="false" ></var>
 <var name="ffCO2"                 highfreq="false" dump="true" ></var>
-
+<var name="BGE"                 highfreq="false" dump="false" ></var>
+<var name="BIOALK"                 highfreq="false" dump="false" ></var>
 </Diagnostics>
 
 
@@ -219,5 +221,8 @@
 <var name="totsysp" highfreq="false" dump="false" ></var>
 <var name="totsyss" highfreq="false" dump="false" ></var>
 <var name="EICE" highfreq="false" dump="false" ></var>
+<var name="dpco2"                 highfreq="false" dump="false" ></var>
+<var name="dpo2"                 highfreq="false" dump="false" ></var>
+<var name="ETAUB"                 highfreq="false" dump="false" ></var>
 </Diagnostics_2D>
 </root>

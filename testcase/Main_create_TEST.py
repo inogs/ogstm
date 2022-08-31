@@ -18,6 +18,8 @@ import pickle
 
 import create_meshmask_nc as c_mask
 
+import create_bfmmask_nc as c_bfmmask
+
 import create_Dom_Dec as c_dom
 
 import create_extinction_nc as c_ext
@@ -45,9 +47,11 @@ for test in TEST_LIST:
 
     DA.create_dataset(test)
 
-    c_dom.create_Dom_Dec(test)
-
     c_mask.create_meshmask_nc(test)
+
+    c_bfmmask.create_bfmmask_nc(test)
+
+    c_dom.create_Dom_Dec(test)
 
     c_for.create_forcings_nc(test)
 

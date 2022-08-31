@@ -32,7 +32,7 @@
             atlantic_bfm  = .true.
             bottom_flux   = 1.
             Euphotic_lev  = 200.
-          is_free_surface = .true.
+          is_free_surface = .false.
 /
 
 &General_IO
@@ -48,8 +48,8 @@
    isCheckLOG = .false.
    read_W_from_file = .false.
    internal_sponging = .true.
-   ingv_files_direct_reading = .true.
-   ingv_lon_shift   = 222
+   ingv_files_direct_reading = .false.
+   ingv_lon_shift   = 0 ! for 1/24 set to 222
 /
 
 

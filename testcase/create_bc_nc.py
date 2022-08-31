@@ -10,6 +10,73 @@ import pickle
 
 def create_bc_nc(test):
 
+# Create boundaries namelist
+    filename = test['Dir'].decode() + '/boundaries.nml'
+    f01 = open(filename,'w')
+    f01.write("1")
+    f01.write("\n")
+    f01.write("riv, RIV, riv.nml, files_namelist_riv.dat, T, F")
+    f01.close()
+# Create riv.nml namelist
+    filename = test['Dir'].decode() + '/riv.nml'
+    f01 = open(filename,'w')
+    f01.write("&VARS_DIMENSION")
+    f01.write("\n")
+    f01.write("\n")
+    f01.write("    n_vars = 6")
+    f01.write("\n")
+    f01.write("\n")
+    f01.write("/")
+    f01.write("\n")
+    f01.write("\n")
+    f01.write("&CORE")
+    f01.write("\n")
+    f01.write("\n")
+    f01.write("    vars(1) = \"N1p\"")
+    f01.write("\n")
+    f01.write("    vars(2) = \"N3n\"")
+    f01.write("\n")
+    f01.write("    vars(3) = \"N5s\"")
+    f01.write("\n")
+    f01.write("    vars(4) = \"O3c\"")
+    f01.write("\n")
+    f01.write("    vars(5) = \"O3h\"")
+    f01.write("\n")
+    f01.write("    vars(6) = \"O2o\"")
+    f01.write("\n")
+    f01.write("\n")
+    f01.write("/")
+    f01.close()
+# Create files_namelist_riv.dat namelist
+    filename = test['Dir'].decode() + '/files_namelist_riv.dat'
+    f01 = open(filename,'w')
+    f01.write("12")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0115-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0215-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0315-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0415-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0515-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0615-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0715-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0815-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy0915-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy1015-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy1115-00:00:00.nc\'")
+    f01.write("\n")
+    f01.write("\'BC/TIN_yyyy1215-00:00:00.nc\'")
+    f01.close()
+
     jpi=test['jpi'];
     jpj=test['jpj'];
     jpk=test['jpk'];
@@ -183,27 +250,33 @@ def create_bc_nc(test):
                 riv_index[tin_idxt]=index[jk,jj,ji]
                 tin_idxt += 1
 
-    riv_N1p=np.zeros(tin_idxt,dtype=float); riv_N1p[0]=0.35*10**(-5)
-    riv_N3n=np.zeros(tin_idxt,dtype=float); riv_N3n[0]=0.2*10**(-3)
-    riv_N5s=np.zeros(tin_idxt,dtype=float); riv_N5s[0]=1.0*10**(-4)
-    riv_O3c=np.zeros(tin_idxt,dtype=float); riv_O3c[0]=0.35
-    riv_O3h=np.zeros(tin_idxt,dtype=float); riv_O3h[0]=0.01
-    riv_O2o=np.zeros(tin_idxt,dtype=float); riv_O2o[0]=0.002
+    riv_N1p=np.zeros((jpj,jpi),dtype=float)-1.0; riv_N1p[0,0]=0.35*10**(-5)
+    riv_N3n=np.zeros((jpj,jpi),dtype=float)-1.0; riv_N3n[0,0]=0.2*10**(-3)
+    riv_N5s=np.zeros((jpj,jpi),dtype=float)-1.0; riv_N5s[0,0]=1.0*10**(-4)
+    riv_O3c=np.zeros((jpj,jpi),dtype=float)-1.0; riv_O3c[0,0]=0.35
+    riv_O3h=np.zeros((jpj,jpi),dtype=float)-1.0; riv_O3h[0,0]=0.01
+    riv_O2o=np.zeros((jpj,jpi),dtype=float)-1.0; riv_O2o[0,0]=0.002
 
     for date in TIN_DATE:
         # Create RIV file
         outfile = test['Dir'].decode() + '/BC/TIN_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
-        ncOUT.createDimension('riv_idxt'    ,tin_idxt);
+        ncOUT.createDimension('lon'    ,jpi);
+        ncOUT.createDimension('lat'    ,jpj);
 
-        ncvar = ncOUT.createVariable('riv_idxt'     ,'i',('riv_idxt',) ); ncvar[:] = riv_index;
-        ncvar = ncOUT.createVariable('riv_N1p'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N1p;
-        ncvar = ncOUT.createVariable('riv_N3n'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N3n;
-        ncvar = ncOUT.createVariable('riv_N5s'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N5s;
-        ncvar = ncOUT.createVariable('riv_O3c'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3c;
-        ncvar = ncOUT.createVariable('riv_O3h'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3h;
-        ncvar = ncOUT.createVariable('riv_O2o'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O2o;
+        ncvar = ncOUT.createVariable('riv_N1p'      ,'d',('lat','lon') ); ncvar[:] = riv_N1p;
+        ncvar.missing_value = 1e20
+        ncvar = ncOUT.createVariable('riv_N3n'      ,'d',('lat','lon') ); ncvar[:] = riv_N3n;
+        ncvar.missing_value = 1e20
+        ncvar = ncOUT.createVariable('riv_N5s'      ,'d',('lat','lon') ); ncvar[:] = riv_N5s;
+        ncvar.missing_value = 1e20
+        ncvar = ncOUT.createVariable('riv_O3c'      ,'d',('lat','lon') ); ncvar[:] = riv_O3c;
+        ncvar.missing_value = 1e20
+        ncvar = ncOUT.createVariable('riv_O3h'      ,'d',('lat','lon') ); ncvar[:] = riv_O3h;
+        ncvar.missing_value = 1e20
+        ncvar = ncOUT.createVariable('riv_O2o'      ,'d',('lat','lon') ); ncvar[:] = riv_O2o;
+        ncvar.missing_value = 1e20
         ncOUT.close()
 
 # GIB

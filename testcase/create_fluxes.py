@@ -34,7 +34,7 @@ def create_fluxes(test):
     for i in range(1,jpi-1):
         for k in range(0,5):
             new_el = index[k,j_transect,i]
-            if new_el in LIST: print "already", i,k, new_el
+            if new_el in LIST: print("already " + str(i) + " " +  str(k) + " " + str(new_el))
             LIST.append(new_el) 
     
     n=len(LIST)

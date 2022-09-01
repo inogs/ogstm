@@ -132,6 +132,28 @@ SUBROUTINE ogstm_initialize()
       CALL mynode() !  Nodes selection
       
       lwp = glrank.EQ.0
+
+      IF(lwp) THEN
+          OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
+          WRITE(numout,*) '                  Geofisica Sperimentale'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '                           OGS'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '                        OGSTM model'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+          WRITE(numout,*) '  Giorgio Bolzon (gbolzon@ogs.trieste.it)'
+          WRITE(numout,*) '  Paolo Lazzari  (plazzari@ogs.trieste.it)'
+          WRITE(numout,*) ' '
+          WRITE(numout,*) ' '
+      ENDIF
+
       
       call parlec      ! read namelist.init
       
@@ -158,26 +180,6 @@ SUBROUTINE ogstm_initialize()
 
       narea = myrank+1
 
-      IF(lwp) THEN
-          OPEN(UNIT=numout,FILE='ogstm.out',FORM='FORMATTED')
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '          Istituto Nazionale di Oceanografia e di '
-          WRITE(numout,*) '                  Geofisica Sperimentale'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '                           OGS'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '                        OGSTM model'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-          WRITE(numout,*) '  Giorgio Bolzon (gbolzon@ogs.trieste.it)'
-          WRITE(numout,*) '  Paolo Lazzari  (plazzari@ogs.trieste.it)'
-          WRITE(numout,*) ' '
-          WRITE(numout,*) ' '
-      ENDIF
 
       call parini
 

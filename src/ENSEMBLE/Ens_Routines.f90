@@ -39,11 +39,6 @@ implicit none
 contains
     
     subroutine Ens_init
-            
-#ifdef ExecSEIK
-        use ciccio, &
-            only: createbase, readbase, createens
-#endif
         
         integer ierr
         
@@ -70,16 +65,9 @@ contains
                     call Ens_trcrst(trim(Ens_restart_ens_prefix)//int2str(EnsRank, 3), &
                         trim(Ens_ave_freq_1_ens_prefix)//int2str(EnsRank, 3), &
                         trim(Ens_ave_freq_2_ens_prefix)//int2str(EnsRank, 3))
-#ifdef ExecSEIK
-                    call createbase
-#endif
                     
                 case (1) !same initial restart from all ensemble members
                     call Ens_trcrst(trim(Ens_restart_prefix), trim(Ens_ave_freq_1_prefix), trim(Ens_ave_freq_2_prefix))
-#ifdef ExecSEIK
-                    call readbase
-                    call createens
-#endif
 
                 case default
                     if (lwp) write(*,*) "invalid EnsShareRestart value. Aborting."

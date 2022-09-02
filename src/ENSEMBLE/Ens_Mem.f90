@@ -34,6 +34,8 @@ implicit none
     character(len=100) :: satfile_suffix, satvarname
     double precision :: SatMultError
     
+    double precision, allocatable, dimension(:) :: EnsWeights
+    
 contains
 
     subroutine Ens_Namelist(filename)
@@ -152,9 +154,13 @@ contains
     end subroutine
     
     subroutine Ens_allocate
-    
-#ifdef ExecEnsDA 
+     
         if (EnsSize>1) then
+            
+            allocate(EnsWeights(0:EnsSize-1))
+            EnsWeights=1/EnsSize
+
+#ifdef ExecEnsDA
             ForecastTimes%FileName = 'forecastTimes'
             ForecastTimes%Name='...'
             call Load_Dump_container(ForecastTimes)
@@ -162,18 +168,23 @@ contains
             daTimes%FileName = 'daTimes'
             daTimes%Name='...'
             call Load_Dump_container(daTimes)
-        end if
 #endif
+        end if
+
     end subroutine
     
     subroutine Ens_deallocate
-    
-#ifdef ExecEnsDA 
+     
         if (EnsSize>1) then
+        
+            deallocate(EnsWeights)
+            
+#ifdef ExecEnsDA
             call Unload_Dump_container(ForecastTimes)
             call Unload_Dump_container(daTimes)
-        end if
 #endif
+        end if
+
     end subroutine
     
     Subroutine Ens_shared_alloc(member_size, member_pointer, global_pointer, window)        

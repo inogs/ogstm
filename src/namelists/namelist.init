@@ -117,3 +117,7 @@
     SatMultError=0.35d0
 /
 
+&GHOSH_setup
+    GhoshOrder=5
+/
+

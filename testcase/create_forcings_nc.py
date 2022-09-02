@@ -83,7 +83,7 @@ def create_forcings_nc(test):
         outfile = test['Dir'].decode() + '/FORCINGS/T' + date + '.nc'
         DeltaTfile = test['Dir'].decode() + '/DELTA_T/DeltaT_' + date + '.txt'
         f01 = open(DeltaTfile,'w')
-        f01.write("  1800    1800.0 0 0 0")
+        f01.write("1800 1800.0 0 0 0")
         f01.write("\n")
         f01.close()
 

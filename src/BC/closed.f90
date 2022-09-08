@@ -265,7 +265,7 @@ contains
         integer, intent(in) :: idx
         integer :: i, j
 
-        if (self%m_size > 0) then
+        !if (self%m_size > 0) then
 
             if (self%const_data()) then
 
@@ -296,7 +296,7 @@ contains
 
             endif
 
-        endif
+        !endif
 
     end subroutine load
 

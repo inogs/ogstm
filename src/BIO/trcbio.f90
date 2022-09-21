@@ -38,6 +38,7 @@
       USE BIO_mem
       USE BC_mem
       USE mpi
+      use mem, only: D3STATE
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
@@ -57,7 +58,7 @@
 !!! ==================
 
       double precision,dimension(jptra,jpk) :: b
-      double precision,dimension(jpk,jptra) :: a
+!      double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
       double precision,dimension(jpk,11) :: er
@@ -96,7 +97,7 @@
 
 
 !    Initialization
-      a        = 1.0
+!      a        = 1.0
       er       = 1.0
       er(:,10) = 8.1
 
@@ -124,10 +125,9 @@
       if (bfmmask(1,jj,ji) == 0) CYCLE
       bottom = mbathy(jj,ji)
 
-
                           DO jtr=1, jtrmax
 
-                             a(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
+                             D3STATE(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
 
                           END DO
 
@@ -167,7 +167,7 @@
                              er(jk,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
                          enddo
 #endif
-                          call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
+                          call BFM1D_Input_EcologyDynamics(bottom,er)
 
                          call BFM1D_reset()
 

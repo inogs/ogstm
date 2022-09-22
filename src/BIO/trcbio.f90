@@ -38,7 +38,7 @@
       USE BIO_mem
       USE BC_mem
       USE mpi
-      use mem, only: D3STATE
+      use mem, only: D3STATE, D3SOURCE
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
@@ -57,12 +57,13 @@
 !!! local declarations
 !!! ==================
 
-      double precision,dimension(jptra,jpk) :: b
+!      double precision,dimension(jptra,jpk) :: b
 !      double precision,dimension(jpk,jptra) :: a
-      double precision,dimension(4,jpk) :: c
-      double precision,dimension(jptra_dia,jpk) :: d
+
+      double precision,dimension(jpk,4) :: sediPPY
+      double precision,dimension(jpk, jptra_dia) :: local_D3DIAGNOS
       double precision,dimension(jpk,11) :: er
-      double precision,dimension(jptra_dia_2d) :: d2
+      double precision,dimension(jptra_dia_2d) :: local_D2DIAGNOS
 
 
       integer :: jk,jj,ji,jb,jn
@@ -81,13 +82,10 @@
 !   | --------------|
 
         BIOparttime = MPI_WTIME()
-
+         D3STATE=1.0
           surf_mask(:) = 0.
           surf_mask(1) = 1.
 ! -------------------------------------------------
-
-          ! tra_idx = tra_matrix_gib(1)
-          jtrmax=jptra
 
 ! ---------------- Fuori dai punti BFM
 
@@ -125,9 +123,9 @@
       if (bfmmask(1,jj,ji) == 0) CYCLE
       bottom = mbathy(jj,ji)
 
-                          DO jtr=1, jtrmax
+                          DO jn=1, jptra
 
-                             D3STATE(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
+                             D3STATE(1:bottom, jn) = trn(1:bottom,jj,ji,jn) ! current biogeochemical concentrations
 
                           END DO
 
@@ -173,26 +171,27 @@
 
                          call EcologyDynamics()
 
-                         call BFM1D_Output_EcologyDynamics(b, c, d, d2)
+                         call BFM1D_Output_EcologyDynamics(sediPPY, local_D3DIAGNOS, local_D2DIAGNOS)
 
-                          DO jtr=1, jtrmax
-                             tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +b(jtr,1:bottom) ! trend
+                          DO jn=1, jptra
+
+                             tra(1:bottom,jj,ji,jn) =tra(1:bottom,jj,ji,jn) + D3SOURCE(1:bottom,jn) ! trend
                           END DO
 
-                          DO jtr=1,4
-                             ogstm_sediPI(1:bottom,jj,ji,jtr) = c(jtr,1:bottom)      ! BFM output of sedimentation speed (m/d)
+                          DO jn=1,4
+                             ogstm_sediPI(1:bottom,jj,ji,jn) = sediPPY(1:bottom,jn)   ! BFM output of sedimentation speed (m/d)
                           END DO
 
 
                           DO jk = 1,bottom
-                          DO jtr=1,jptra_dia
-                             tra_DIA(jtr, jk ,jj,ji) = d(jtr,jk) ! diagnostic
+                          DO jn=1,jptra_dia
+                             tra_DIA(jn, jk ,jj,ji) = local_D3DIAGNOS(jk,jn)
                           END DO
                           ENDDO
 
-                         tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
+                         tra_DIA_2d(:,jj,ji) = local_D2DIAGNOS(:)
 
-                          ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
+                         ogstm_PH(1:bottom,jj,ji) = local_D3DIAGNOS(1:bottom,pppH) ! Follows solver guess, put 8.0 if pppH is not defined
 
       END DO
       END DO

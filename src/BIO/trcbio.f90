@@ -182,10 +182,9 @@
                              ogstm_sediPI(1:bottom,jj,ji,jn) = sediPPY(1:bottom,jn)   ! BFM output of sedimentation speed (m/d)
                           END DO
 
-
-                          DO jk = 1,bottom
                           DO jn=1,jptra_dia
-                             tra_DIA(jn, jk ,jj,ji) = local_D3DIAGNOS(jk,jn)
+                          DO jk = 1,jpk
+                             tra_DIA(jk,jj,ji,jn) = local_D3DIAGNOS(jk,jn)
                           END DO
                           ENDDO
 
@@ -200,7 +199,7 @@
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
+      call boundaries%fix_diagnostic_vars()
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

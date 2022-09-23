@@ -148,19 +148,19 @@ contains
 
 
 
-    subroutine fix_diagnostic_vars(self, tra_dia, tra_dia_2d)
+    subroutine fix_diagnostic_vars(self)
 
         use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jptra_dia, jptra_dia_2d
+        use myalloc, only: tra_dia, tra_dia_2d
 
         implicit none
 
         class(bc_set), intent(inout) :: self
-        double precision, dimension(jptra_dia, jpk, jpj, jpi), intent(inout) :: tra_dia
-        double precision, dimension(jptra_dia_2d, jpj, jpi), intent(inout) :: tra_dia_2d
         integer :: i
 
         do i = 1, self%m_n_bcs
-            call self%m_bcs(i)%content%fix_diagnostic_vars(jptra_dia, tra_dia, jptra_dia_2d, tra_dia_2d)
+            call self%m_bcs(i)%content%fix_diagnostic_vars()
         enddo
 
     end subroutine fix_diagnostic_vars

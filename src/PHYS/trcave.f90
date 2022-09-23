@@ -135,18 +135,19 @@
       inv_incremented_time = 1./(elapsed_time_2 + rdt)
 
 
-
+         DO jn = 1,jptra_dia
          DO ji=1, jpi
          DO jj=1, jpj
          DO jk=1, jpk
            IF(tmask(jk,jj,ji) .NE. 0.) THEN
-           tra_DIA_IO(:,jk,jj,ji)=(tra_DIA_IO(:,jk,jj,ji)*elapsed_time+tra_DIA(:,jk,jj,ji)*rdt)*inv_incremented_time
+           tra_DIA_IO(jk,jj,ji,jn)=(tra_DIA_IO(jk,jj,ji,jn)*elapsed_time+tra_DIA(jk,jj,ji,jn)*rdt)*inv_incremented_time
            ELSE
-                tra_DIA_IO(:,jk,jj,ji )=Miss_val
+                tra_DIA_IO(jk,jj,ji,jn )=Miss_val
            ENDIF
          END DO
          END DO
          END DO
+         ENDDO
 
 !     *********************  DIAGNOSTICS 2D **********
 
@@ -171,18 +172,18 @@
 
 
       if (jptra_dia_high.gt.0) THEN
+         DO jn_high=1, jptra_dia_high
+         jn_on_all = highfreq_table_dia(jn_high )
          DO ji=1, jpi
          DO jj=1, jpj
          DO jk=1, jpk
          IF(tmask(jk,jj,ji) .NE. 0.) THEN
-            DO jn_high=1, jptra_dia_high
-               jn_on_all = highfreq_table_dia(jn_high )
-               tra_DIA_IO_HIGH(jn_high, jk,jj,ji )= &
-     &         (tra_DIA_IO_HIGH(jn_high, jk,jj,ji )*elapsed_time+tra_DIA(jn_on_all,jk,jj,ji)*rdt)*inv_incremented_time
-            END DO
+               tra_DIA_IO_HIGH(jk,jj,ji,jn_high )= &
+     &         (tra_DIA_IO_HIGH(jk,jj,ji,jn_high )*elapsed_time+tra_DIA(jk,jj,ji,jn_on_all)*rdt)*inv_incremented_time
          ELSE
-            tra_DIA_IO_HIGH(:, jk,jj,ji )=Miss_val
+            tra_DIA_IO_HIGH(jk,jj,ji,jn_high )=Miss_val
          ENDIF
+         END DO
          END DO
          END DO
          END DO

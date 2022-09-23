@@ -4,7 +4,7 @@
       !-
         INTEGER, DIMENSION(30) :: 
      &         prime=(/1,2,3,5,7,11,13,17,19,23,29,31,37,41,43, 
-     &         47,53,59,61,67,71,73,79,83,89,97,101,103,107,109/)
+     &        47,53,59,61,67,71,73,79,83,89,97,101,103,107,109/)
       !-
       !---------------------------------------------------------------------
       CONTAINS
@@ -232,7 +232,7 @@
                   minpos = MINLOC(loczeros)
                   len = LEN_TRIM(str_tab(minpos(1)))
                   IF ( (INDEX(str_tab(minpos(1)),str(1:il)) > 0) 
-     &                 .AND.(len == il) ) THEN
+     &                .AND.(len == il) ) THEN
                      pos = minpos(1)
                   ELSE
                      loczeros(minpos(1)) = 99999

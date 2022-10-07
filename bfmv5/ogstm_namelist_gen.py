@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /usr/bin/env python
 from xml.dom import minidom
 import sys
 

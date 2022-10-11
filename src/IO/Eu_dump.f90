@@ -63,6 +63,7 @@ SUBROUTINE Eu_dump(datemean,datefrom,dateTo)
         INTEGER irange, jrange
         INTEGER totistart, totiend, relistart, reliend
         INTEGER totjstart, totjend, reljstart, reljend
+        REAL, dimension(jpjglo, jpiglo) :: M2d
 
         ! ----------------------------------------
         IsBackup =  (datemean.eq.dateTo)
@@ -173,8 +174,17 @@ SUBROUTINE Eu_dump(datemean,datefrom,dateTo)
                                         CALL WRITE_AVE_BKP(bkpname,var_to_store,datefrom,&
                                                 dateTo,tottrnIO,elapsed_time, deflate_ave, deflate_level_ave)
                                 else
+                                   if (Eu3D(ind_var).eq.1) then
                                         CALL WRITE_AVE(output_file_nc,var_to_store,datefrom,&
                                                 dateTo, tottrnIO, deflate_ave, deflate_level_ave)
+                                   else
+                                        do ji = 1, jpiglo
+                                        do jj = 1, jpjglo
+                                           M2d(jj,ji) = REAL(tottrnIO(1,jj,ji),4)
+                                        enddo
+                                        enddo
+                                        CALL WRITE_AVE_2d(output_file_nc,var_to_store,datefrom,dateTo, M2d)
+                                   endif
                                 endif
                         END IF
 

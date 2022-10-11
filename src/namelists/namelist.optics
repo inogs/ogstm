@@ -1,304 +1,408 @@
-&ED_3D 
+&Ed_nam
    Ednm(1)="Ed_0250"
    EdWR(1)=1
+   Ed3D(1)=0
 
    Ednm(2)="Ed_0325"
    EdWR(2)=1
+   Ed3D(2)=0
 
    Ednm(3)="Ed_0350"
    EdWR(3)=1
+   Ed3D(3)=0
 
    Ednm(4)="Ed_0375"
    EdWR(4)=1
+   Ed3D(4)=1
 
    Ednm(5)="Ed_0400"
    EdWR(5)=1
+   Ed3D(5)=1
 
    Ednm(6)="Ed_0425"
    EdWR(6)=1
+   Ed3D(6)=1
 
    Ednm(7)="Ed_0450"
    EdWR(7)=1
+   Ed3D(7)=0
 
    Ednm(8)="Ed_0475"
    EdWR(8)=1
+   Ed3D(8)=1
 
    Ednm(9)="Ed_0500"
    EdWR(9)=1
+   Ed3D(9)=1
 
    Ednm(10)="Ed_0525"
    EdWR(10)=1
+   Ed3D(10)=0
 
    Ednm(11)="Ed_0550"
    EdWR(11)=1
+   Ed3D(11)=0
 
    Ednm(12)="Ed_0575"
    EdWR(12)=1
+   Ed3D(12)=0
 
    Ednm(13)="Ed_0600"
    EdWR(13)=1
+   Ed3D(13)=0
 
    Ednm(14)="Ed_0625"
    EdWR(14)=1
+   Ed3D(14)=0
 
    Ednm(15)="Ed_0650"
    EdWR(15)=1
+   Ed3D(15)=0
 
    Ednm(16)="Ed_0675"
    EdWR(16)=1
+   Ed3D(16)=0
 
    Ednm(17)="Ed_0700"
    EdWR(17)=1
+   Ed3D(17)=0
 
    Ednm(18)="Ed_0725"
    EdWR(18)=1
+   Ed3D(18)=0
 
    Ednm(19)="Ed_0775"
    EdWR(19)=1
+   Ed3D(19)=0
 
    Ednm(20)="Ed_0850"
    EdWR(20)=1
+   Ed3D(20)=0
 
    Ednm(21)="Ed_0950"
    EdWR(21)=1
+   Ed3D(21)=0
 
    Ednm(22)="Ed_1050"
    EdWR(22)=1
+   Ed3D(22)=0
 
    Ednm(23)="Ed_1150"
    EdWR(23)=1
+   Ed3D(23)=0
 
    Ednm(24)="Ed_1250"
    EdWR(24)=1
+   Ed3D(24)=0
 
    Ednm(25)="Ed_1350"
    EdWR(25)=1
+   Ed3D(25)=0
 
    Ednm(26)="Ed_1450"
    EdWR(26)=1
+   Ed3D(26)=0
 
    Ednm(27)="Ed_1550"
    EdWR(27)=1
+   Ed3D(27)=0
 
    Ednm(28)="Ed_1650"
    EdWR(28)=1
+   Ed3D(28)=0
 
    Ednm(29)="Ed_1750"
    EdWR(29)=1
+   Ed3D(29)=0
 
    Ednm(30)="Ed_1900"
    EdWR(30)=1
+   Ed3D(30)=0
 
    Ednm(31)="Ed_2200"
    EdWR(31)=1
+   Ed3D(31)=0
 
    Ednm(32)="Ed_2900"
    EdWR(32)=1
+   Ed3D(32)=0
 
    Ednm(33)="Ed_3700"
    EdWR(33)=1
+   Ed3D(33)=0
+
 /
 
-&ES_3D
+
+&Es_nam
    Esnm(1)="Es_0250"
    EsWR(1)=1
+   Es3D(1)=0
 
    Esnm(2)="Es_0325"
    EsWR(2)=1
+   Es3D(2)=0
 
    Esnm(3)="Es_0350"
    EsWR(3)=1
+   Es3D(3)=0
 
    Esnm(4)="Es_0375"
    EsWR(4)=1
+   Es3D(4)=1
 
    Esnm(5)="Es_0400"
    EsWR(5)=1
+   Es3D(5)=1
 
    Esnm(6)="Es_0425"
    EsWR(6)=1
+   Es3D(6)=1
 
    Esnm(7)="Es_0450"
    EsWR(7)=1
+   Es3D(7)=0
 
    Esnm(8)="Es_0475"
    EsWR(8)=1
+   Es3D(8)=1
 
    Esnm(9)="Es_0500"
    EsWR(9)=1
+   Es3D(9)=1
 
    Esnm(10)="Es_0525"
    EsWR(10)=1
+   Es3D(10)=0
 
    Esnm(11)="Es_0550"
    EsWR(11)=1
+   Es3D(11)=0
 
    Esnm(12)="Es_0575"
    EsWR(12)=1
+   Es3D(12)=0
 
    Esnm(13)="Es_0600"
    EsWR(13)=1
+   Es3D(13)=0
 
    Esnm(14)="Es_0625"
    EsWR(14)=1
+   Es3D(14)=0
 
    Esnm(15)="Es_0650"
    EsWR(15)=1
+   Es3D(15)=0
 
    Esnm(16)="Es_0675"
    EsWR(16)=1
+   Es3D(16)=0
 
    Esnm(17)="Es_0700"
    EsWR(17)=1
+   Es3D(17)=0
 
    Esnm(18)="Es_0725"
    EsWR(18)=1
+   Es3D(18)=0
 
    Esnm(19)="Es_0775"
    EsWR(19)=1
+   Es3D(19)=0
 
    Esnm(20)="Es_0850"
    EsWR(20)=1
+   Es3D(20)=0
 
    Esnm(21)="Es_0950"
    EsWR(21)=1
+   Es3D(21)=0
 
    Esnm(22)="Es_1050"
    EsWR(22)=1
+   Es3D(22)=0
 
    Esnm(23)="Es_1150"
    EsWR(23)=1
+   Es3D(23)=0
 
    Esnm(24)="Es_1250"
    EsWR(24)=1
+   Es3D(24)=0
 
    Esnm(25)="Es_1350"
    EsWR(25)=1
+   Es3D(25)=0
 
    Esnm(26)="Es_1450"
    EsWR(26)=1
+   Es3D(26)=0
 
    Esnm(27)="Es_1550"
    EsWR(27)=1
+   Es3D(27)=0
 
    Esnm(28)="Es_1650"
    EsWR(28)=1
+   Es3D(28)=0
 
    Esnm(29)="Es_1750"
    EsWR(29)=1
+   Es3D(29)=0
 
    Esnm(30)="Es_1900"
    EsWR(30)=1
+   Es3D(30)=0
 
    Esnm(31)="Es_2200"
    EsWR(31)=1
+   Es3D(31)=0
 
    Esnm(32)="Es_2900"
    EsWR(32)=1
+   Es3D(32)=0
 
    Esnm(33)="Es_3700"
    EsWR(33)=1
+   Es3D(33)=0
 
 /
 
-&EU_3D
+
+&Eu_nam
    Eunm(1)="Eu_0250"
    EuWR(1)=1
+   Eu3D(1)=0
 
    Eunm(2)="Eu_0325"
    EuWR(2)=1
+   Eu3D(2)=0
 
    Eunm(3)="Eu_0350"
    EuWR(3)=1
+   Eu3D(3)=0
 
    Eunm(4)="Eu_0375"
    EuWR(4)=1
+   Eu3D(4)=1
 
    Eunm(5)="Eu_0400"
    EuWR(5)=1
+   Eu3D(5)=1
 
    Eunm(6)="Eu_0425"
    EuWR(6)=1
+   Eu3D(6)=1
 
    Eunm(7)="Eu_0450"
    EuWR(7)=1
+   Eu3D(7)=0
 
    Eunm(8)="Eu_0475"
    EuWR(8)=1
+   Eu3D(8)=1
 
    Eunm(9)="Eu_0500"
    EuWR(9)=1
+   Eu3D(9)=1
 
    Eunm(10)="Eu_0525"
    EuWR(10)=1
+   Eu3D(10)=0
 
    Eunm(11)="Eu_0550"
    EuWR(11)=1
+   Eu3D(11)=0
 
    Eunm(12)="Eu_0575"
    EuWR(12)=1
+   Eu3D(12)=0
 
    Eunm(13)="Eu_0600"
    EuWR(13)=1
+   Eu3D(13)=0
 
    Eunm(14)="Eu_0625"
    EuWR(14)=1
+   Eu3D(14)=0
 
    Eunm(15)="Eu_0650"
    EuWR(15)=1
+   Eu3D(15)=0
 
    Eunm(16)="Eu_0675"
    EuWR(16)=1
+   Eu3D(16)=0
 
    Eunm(17)="Eu_0700"
    EuWR(17)=1
+   Eu3D(17)=0
 
    Eunm(18)="Eu_0725"
    EuWR(18)=1
+   Eu3D(18)=0
 
    Eunm(19)="Eu_0775"
    EuWR(19)=1
+   Eu3D(19)=0
 
    Eunm(20)="Eu_0850"
    EuWR(20)=1
+   Eu3D(20)=0
 
    Eunm(21)="Eu_0950"
    EuWR(21)=1
+   Eu3D(21)=0
 
    Eunm(22)="Eu_1050"
    EuWR(22)=1
+   Eu3D(22)=0
 
    Eunm(23)="Eu_1150"
    EuWR(23)=1
+   Eu3D(23)=0
 
    Eunm(24)="Eu_1250"
    EuWR(24)=1
+   Eu3D(24)=0
 
    Eunm(25)="Eu_1350"
    EuWR(25)=1
+   Eu3D(25)=0
 
    Eunm(26)="Eu_1450"
    EuWR(26)=1
+   Eu3D(26)=0
 
    Eunm(27)="Eu_1550"
    EuWR(27)=1
+   Eu3D(27)=0
 
    Eunm(28)="Eu_1650"
    EuWR(28)=1
+   Eu3D(28)=0
 
    Eunm(29)="Eu_1750"
    EuWR(29)=1
+   Eu3D(29)=0
 
    Eunm(30)="Eu_1900"
    EuWR(30)=1
+   Eu3D(30)=0
 
    Eunm(31)="Eu_2200"
    EuWR(31)=1
+   Eu3D(31)=0
 
    Eunm(32)="Eu_2900"
    EuWR(32)=1
+   Eu3D(32)=0
 
    Eunm(33)="Eu_3700"
    EuWR(33)=1
+   Eu3D(33)=0
 
 /
+
+

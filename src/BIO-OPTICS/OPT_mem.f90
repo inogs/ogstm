@@ -51,6 +51,7 @@
       real, allocatable :: zkef_f (:,:)
       CHARACTER(LEN=7), allocatable,dimension(:) :: Ednm, Esnm, Eunm
       INTEGER, allocatable, dimension(:) :: EdWR,EsWR,EuWR
+      INTEGER, allocatable, dimension(:) :: Ed3D,Es3D,Eu3D
       integer Ed_dumped_vars, Es_dumped_vars, Eu_dumped_vars
 
 
@@ -268,9 +269,9 @@
       SUBROUTINE opt_lec
 
       IMPLICIT NONE
-      namelist /ED_3D/      Ednm, EdWR
-      namelist /ES_3D/      Esnm, EsWR
-      namelist /EU_3D/      Eunm, EuWR
+      namelist /ED_nam/      Ednm, EdWR, Ed3D
+      namelist /ES_nam/      Esnm, EsWR, Es3D
+      namelist /EU_nam/      Eunm, EuWR, Eu3D
       !local
       integer jn
 
@@ -282,16 +283,21 @@
        allocate(EsWR(nlt)); EsWR=huge(EdWR(1))
        allocate(EuWR(nlt)); EuWR=huge(EdWR(1))
 
+       allocate(Ed3D(nlt)); Ed3D=huge(Ed3D(1))
+       allocate(Es3D(nlt)); Es3D=huge(Ed3D(1))
+       allocate(Eu3D(nlt)); Eu3D=huge(Ed3D(1))
+
+
       OPEN(unit=numnat, file='namelist.optics', status= 'OLD')
 
       REWIND(numnat)
-      READ(numnat,ED_3D)
+      READ(numnat,ED_nam)
 
       REWIND(numnat)
-      READ(numnat,ES_3D)
+      READ(numnat,ES_nam)
 
       REWIND(numnat)
-      READ(numnat,EU_3D)
+      READ(numnat,EU_nam)
 
       CLOSE(numnat)
 

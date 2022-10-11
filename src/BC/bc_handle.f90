@@ -27,6 +27,8 @@ contains
         character(len=3) :: bc_type_str
         character(len=1) :: periodic_str
         character(len=1) :: nudged_str
+        character(len=7) :: standard_namelist_file
+        character(len=22):: standard_filenames_list
 
         character(len=3), dimension(4), parameter :: avail_bc_types = (/ "RIV", "CLO", "SPO", "OPE" /)
 
@@ -45,13 +47,17 @@ contains
         bc_type = bc_type_str(1:1)
 
         namelist_file = bc_string(11:17)
-        if (namelist_file /= bc_name//".nml") then
-            write(*, *) 'WARN: boundary conditions namelist: not a standard namelist: ', namelist_file
+        standard_namelist_file=bc_name//".nml"
+        if (namelist_file /= standard_namelist_file) then
+            if (lwp) write(*, '(A,A)') 'WARN: boundary conditions namelist: not a standard namelist: ', namelist_file
+            if (lwp) write(*,'(A,A,A)')  'Use a file called ',standard_namelist_file, ' to avoid this warning.'
         endif
 
         filenames_list = bc_string(20:41)
-        if (filenames_list /= "files_namelist_"//bc_name//".dat") then
-            write(*, *) 'WARN: boundary conditions namelist: not a standard files namelist: ', filenames_list
+        standard_filenames_list = "files_namelist_"//bc_name//".dat"
+        if (filenames_list /= standard_filenames_list) then
+            if (lwp)  write(*, '(A,A)') 'WARN: boundary conditions namelist: not a standard files namelist: ', filenames_list
+            if (lwp) write(*,'(A,A,A)')   'Use a file called ', standard_filenames_list, ' to avoid this warning.'
         endif
 
         periodic_str = bc_string(44:44)

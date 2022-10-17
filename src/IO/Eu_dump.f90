@@ -135,6 +135,7 @@ SUBROUTINE Eu_dump(datemean,datefrom,dateTo)
 
                         ind_col = (myrank / n_ranks_per_node)+1
                         var_to_store = matrix_Eu(jv,ind_col)%var_name
+                        ind_var      = matrix_Eu(jv,ind_col)%var_index
 
 
                         IF (var_to_store == "novars_input")then

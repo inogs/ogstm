@@ -136,6 +136,7 @@ SUBROUTINE Ed_dump(datemean,datefrom,dateTo)
 
                         ind_col = (myrank / n_ranks_per_node)+1
                         var_to_store = matrix_Ed(jv,ind_col)%var_name
+                        ind_var      = matrix_Ed(jv,ind_col)%var_index
 
 
                         IF (var_to_store == "novars_input")then

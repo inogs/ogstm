@@ -99,6 +99,25 @@
       er       = 1.0
       er(:,10) = 8.1
 
+       DO jtr=1, jtrmax
+       counter=1
+       DO ji=1,jpi
+       DO jj=1,jpj
+       if (bfmmask(1,jj,ji) == 0) then
+         counter = counter + jpk
+         cycle
+       endif
+       bottom = mbathy(jj,ji)
+       DO jk=1,bottom
+        a(counter, jtr) = trn(jk,jj,ji,jtr) ! current biogeochemical concentrations
+        counter=counter+1
+       ENDDO
+       DO jk=bottom+1,jpk
+        counter=counter+1
+       ENDDO
+       ENDDO
+       ENDDO
+       ENDDO
 
 #ifdef gdept1d
 ! er(:,11) is calculated outside the loop on ji,jj
@@ -127,9 +146,14 @@
 
                              D3STATE(1:bottom, jn) = trn(1:bottom,jj,ji,jn) ! current biogeochemical concentrations
 
-                          END DO
+       counter=1
+       DO ji=1,jpi
+       DO jj=1,jpj
+           tra_DIA_2d(:,jj,ji) = d2(:,counter) * bfmmask(1,jj,ji)! diagnostic
+           counter = counter +1
+       ENDDO
+       ENDDO
 
-! Environmental regulating factors (er,:)
 
                           er(1:bottom,1)  = tn (1:bottom,jj,ji)! Temperature (Celsius)
                           er(1:bottom,2)  = sn (1:bottom,jj,ji)  ! Salinity PSU

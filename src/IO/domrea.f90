@@ -792,7 +792,16 @@
       NORTH_count_recv = counter
 
 
-
+      !$acc update device( EASTpoints_send( 1:2, 1:EAST_count_send ) )
+      !$acc update device( WESTpoints_send( 1:2, 1:WEST_count_send ) )
+      !$acc update device( NORTHpoints_send( 1:2, 1:NORTH_count_send ) )
+      !$acc update device( SOUTHpoints_send( 1:2, 1:SOUTH_count_send ) )
+      
+      !$acc update device( EASTpoints_recv( 1:2, 1:EAST_count_recv ) )
+      !$acc update device( WESTpoints_recv( 1:2, 1:WEST_count_recv ) )
+      !$acc update device( NORTHpoints_recv( 1:2, 1:NORTH_count_recv ) )
+      !$acc update device( SOUTHpoints_recv( 1:2, 1:SOUTH_count_recv ) )
+      
 
 
         SENDRECV_Indexing =.true.

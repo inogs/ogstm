@@ -68,7 +68,7 @@ contains
             ParamName(9)='PRMS.R6.rm'
             UseParam(9)=.true.
             
-            !REWIND(EnsIOUnit)
+            REWIND(EnsIOUnit)
             READ(EnsIOUnit, Params_setup)
             
             IF(lwp) THEN

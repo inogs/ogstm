@@ -112,9 +112,17 @@
     Ens_forecast_ens_prefix='ENS_FORECAST/ENSEMBLE/RST'
     Ens_analysis_prefix='ENS_ANALYSIS/RST'
     Ens_analysis_ens_prefix='ENS_ANALYSIS/ENSEMBLE/RST'
+/
+
+&Obs_Sat_setup
     satfile_suffix='_d-OC_CNR-L3-CHL-MedOC4AD4_MULTI_1KM-MED-DT-v02.nc'
     satvarname='CHL'
     SatMultError=0.35d0
+/
+
+&Obs_Float_setup
+    FloatMultError=0.35d0
+    FloatAddError=0.02d0
 /
 
 &GHOSH_setup

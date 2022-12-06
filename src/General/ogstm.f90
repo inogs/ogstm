@@ -179,7 +179,7 @@ SUBROUTINE ogstm_initialize()
       call init_phys
 
 ! Initialization of Biogeochemical reactor with 1D approach
-      call BFM1D_NO_BOXES(jpk,1,1,jpk,1)
+      call BFM1D_NO_BOXES(jpi * jpj * jpk, jpi, jpj, jpk, jpi * jpj)
       parallel_rank=myrank
       call Init_bfm()
       call BFM1D_INIT_IO_CHANNELS()

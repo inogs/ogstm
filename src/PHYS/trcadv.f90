@@ -403,7 +403,7 @@ SUBROUTINE trcadv
      !!           and mass fluxes calculated above
      !!       calcul of tracer flux in the i and j direction
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      !$acc loop independent
      DO ji = 2,jpim1
         !dir$ vector aligned
@@ -413,7 +413,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      DO ji = 2,jpim1
         !dir$ vector aligned
         !$acc loop independent
@@ -423,7 +423,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      DO ji = 1,jpi
         !dir$ vector aligned
         !$acc loop independent
@@ -433,7 +433,7 @@ SUBROUTINE trcadv
      ENDDO
      !$acc end kernels
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      DO ji = 1,jpi
         !dir$ vector aligned
         !$acc loop independent
@@ -443,7 +443,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
      ! loop unfusion
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      DO jj = 2,jpjm1
         !dir$ vector aligned
         !$acc loop independent
@@ -453,7 +453,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      DO jj = 2,jpjm1
         !dir$ vector aligned
         !$acc loop independent
@@ -463,7 +463,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      !$acc loop independent
      DO  ji = 2,jpim1
         DO jj = 2,jpjm1
@@ -475,7 +475,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels async default(present) if(use_gpu)
      DO  ji = 2,jpim1
         !$acc loop independent
         DO jj = 2,jpjm1
@@ -487,7 +487,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc parallel loop collapse(3) gang vector default(present) if(use_gpu)
+     !$acc parallel loop async collapse(3) gang vector default(present) if(use_gpu)
      DO  ji = 2,jpim1
         DO jj = 2,jpjm1
            !dir$ vector aligned
@@ -497,6 +497,7 @@ SUBROUTINE trcadv
         END DO
      END DO
      !$acc end parallel loop
+     !$acc wait
 
      ! ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp

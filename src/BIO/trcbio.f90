@@ -106,13 +106,13 @@ SUBROUTINE trcbio
           er(jlinear, 6) = instant_par(COMMON_DATEstring, xpar(jk, jj, ji)) ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
           er(jlinear, 8) = e3t(jk, jj, ji) ! depth in meters of the given cell
           er(jlinear, 10) = ogstm_PH(jk, jj, ji) ! 8.1
-          #ifdef gdept1d
+#ifdef gdept1d
           gdept_local = gdept(jk)
           gdeptmax_local = gdept(jpk)
-          #else
+#else
           gdept_local = gdept(jk, jj, ji)
           gdeptmax_local = gdept(jpk, jj, ji)
-          #endif
+#endif
           if (gdept_local .lt. 1000.0D0) then
             correct_fact = 1.0D0
           else if (gdept_local .lt. 2000.0D0) then

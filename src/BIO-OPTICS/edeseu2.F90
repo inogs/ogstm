@@ -1,4 +1,4 @@
-      subroutine edeseu2(MODE,V_POSITION,bottom,zgrid,Edtop,Estop,CHLz,CDOMz,POCz,rmud,E,PARz)
+      subroutine edeseu2(MODE,V_POSITION,bottom,zgrid,Edtop,Estop,CHLz,PCz,CDOMz,POCz,rmud,E,PARz)
       USE myalloc
       USE mpi
       USE OPT_mem
@@ -20,7 +20,7 @@
       integer, INTENT(IN)          :: bottom
       double precision, INTENT(IN) :: rmud
       double precision, INTENT(IN) :: zgrid(bottom+1)
-      double precision, INTENT(IN) :: CHLz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
+      double precision, INTENT(IN) :: CHLz(jpk,nchl),PCz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
       double precision, INTENT(IN) :: Edtop(nlt),Estop(nlt)
       double precision, INTENT(OUT) :: PARz(bottom,nchl+1)
       double precision, INTENT(OUT) :: E(3,bottom+1,nlt)
@@ -56,8 +56,8 @@
 
           do n = 1,nchl
                actot(jk,nl)  = actot(jk,nl)  + CHLz(jk,n)*ac(n,nl)
-               bctot(jk,nl)  = bctot(jk,nl)  + CHLz(jk,n)*bc(n,nl)
-               bbctot(jk,nl) = bbctot(jk,nl) + CHLz(jk,n)*bbc(n,nl)*bc(n,nl)
+               bctot(jk,nl)  = bctot(jk,nl)  + PCz(jk,n)*bc(n,nl)
+               bbctot(jk,nl) = bbctot(jk,nl) + PCz(jk,n)*bbc(n,nl)*bc(n,nl)
           enddo
 
           a(jk,nl)  = aw(nl) + CDOMz(jk,1) * acdom(1,nl) + CDOMz(jk,2) * acdom(2,nl) + CDOMz(jk,3) * acdom(3,nl) + POCz(jk) * apoc(nl) + actot(jk,nl)

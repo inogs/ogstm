@@ -30,7 +30,7 @@
       double precision, allocatable::  E(:,:,:) !(3,jpk+1,nlt)
 
       double precision, allocatable  :: PARz(:,:) !(jpk,nchl+1)
-      double precision :: CHLz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
+      double precision :: CHLz(jpk,nchl),PCz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
       double precision :: Eu_0m(nlt)
       double precision :: zgrid(jpk+1)
       double precision :: sec
@@ -104,6 +104,11 @@
                  CHLz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3l)
                  CHLz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4l)
 
+                 PCz(1:bottom,1) = trn(1:bottom,jj,ji,ppP1c)
+                 PCz(1:bottom,2) = trn(1:bottom,jj,ji,ppP2c)
+                 PCz(1:bottom,3) = trn(1:bottom,jj,ji,ppP3c)
+                 PCz(1:bottom,4) = trn(1:bottom,jj,ji,ppP4c)
+                 
                  CDOMz(1:bottom,1)  = trn(1:bottom,jj,ji,ppR1l)
                  CDOMz(1:bottom,2)  = trn(1:bottom,jj,ji,ppR2l)
                  CDOMz(1:bottom,3)  = trn(1:bottom,jj,ji,ppR3l)
@@ -111,7 +116,7 @@
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     
                  IF ( (MODE .EQ. 0) .OR. (MODE .EQ. 1)) then
-                     call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
+                     call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,PCz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
     
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)
@@ -150,7 +155,7 @@
 
 
                      call edeseu2(MODE,V_POSITION,bottom,zgrid,Ed_0m(:,jj,ji),Es_0m(:,jj,ji), &
-                                  CHLz,CDOMz,POCz,rmud(jj,ji),E,PARz)
+                                  CHLz,PCz,CDOMz,POCz,rmud(jj,ji),E,PARz)
                 
                  do jl=1, nlt
                     do jk =1, bottom+1 ! Defined on w faces (cell's interfaces)

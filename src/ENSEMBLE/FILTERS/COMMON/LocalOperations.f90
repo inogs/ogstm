@@ -261,12 +261,12 @@ subroutine LocalSendRecive(this, patch)
             call MPI_Recv(this%DiagonalPatch, LocalRange*LocalRange*this%EnsDim, MPI_real8, nosoea, 80, mycomm, MPI_STATUS_IGNORE, ierr)
             this%LocalPatch(:,1-LocalRange:0, ni_DAstate+1:ni_DAstate+LocalRange)=this%DiagonalPatch
         end if
-        
+
         if (nonowe/=-1) then
-            this%DiagonalPatch=patch(:,nj_DAstate-1-LocalRange:nj_DAstate-1,2:2+LocalRange)
+            this%DiagonalPatch=patch(:,nj_DAstate+1-LocalRange:nj_DAstate,1:LocalRange)
             call MPI_Send(this%DiagonalPatch, LocalRange*LocalRange*this%EnsDim, MPI_real8, nonowe, 80, mycomm, ierr)
             call MPI_Recv(this%DiagonalPatch, LocalRange*LocalRange*this%EnsDim, MPI_real8, nonowe, 70, mycomm, MPI_STATUS_IGNORE, ierr)
-            this%LocalPatch(:,nj_DAstate:nj_DAstate+LocalRange, 1-LocalRange:1)=this%DiagonalPatch
+            this%LocalPatch(:,nj_DAstate+1:nj_DAstate+LocalRange, 1-LocalRange:0)=this%DiagonalPatch
         end if
     else
         if (nonowe/=-1) then

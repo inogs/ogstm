@@ -25,8 +25,8 @@ module ObsFloat
     
     implicit none
     
+    logical :: UseFloat
     integer :: Float_nObs, Float_n_SqrtR1
-    
     integer, dimension(4) :: FloatVariablesIndex
     type(dump_container) :: FloatTimes
     
@@ -55,14 +55,15 @@ subroutine Float_Namelist(filename)
             
     character(len=*) :: filename
     
-    NAMELIST/Obs_Float_setup/ FloatMultError, FloatAddError
+    NAMELIST/Obs_Float_setup/ UseFloat, FloatMultError, FloatAddError
     
     if (lwp) then
         
     end if
     
     OPEN(unit=EnsIOUnit, file=filename, status='OLD')
-    
+        
+        UseFloat=.true.
         FloatMultError=0.35d0
         FloatAddError=0.02d0
 
@@ -72,6 +73,7 @@ subroutine Float_Namelist(filename)
         IF(lwp) THEN
             write(*,*) 'Namelist ObsFloat parameters:'
             WRITE(*,*) ' '
+            WRITE(*,*) ' UseFloat: ', UseFloat
             WRITE(*,*) ' FloatMultError: ', FloatMultError
             WRITE(*,*) ' FloatAddError: ', FloatAddError
             WRITE(*,*) ' '
@@ -179,6 +181,8 @@ Subroutine Float_Init
     FloatTimes%Name='...'
     call Load_Dump_container(floatTimes)
     
+    nfloats=0
+    
 end subroutine
 
 Subroutine Float_Finalize
@@ -216,8 +220,10 @@ subroutine Float_LoadObs(DateString, nObs, n_SqrtR1)
     
     nObs=0
     n_SqrtR1=0
+    Float_nObs=nObs
+    Float_n_SqrtR1=n_SqrtR1
     
-    if (.not.IsaDAFloat(DateString)) return
+    if ((.not.IsaDAFloat(DateString)).or.(.not.UseFloat)) return
     
     if (allocated(Floats)) then
         do indexi=1,nFloats
@@ -237,7 +243,7 @@ subroutine Float_LoadObs(DateString, nObs, n_SqrtR1)
     dLat=(gphit(2,1)-gphit(1,1))*0.5d0
     dLon=(glamt(2,1)-glamt(1,1))*0.5d0
         
-    OPEN(UNIT=EnsIOUnit,file=FloatIndexFile,status='old', position='rewind')
+    OPEN(UNIT=EnsIOUnit,file=FloatIndexFile, status='old', position='rewind')
         do indexj=1,2
             nFloats=0
             DO 
@@ -351,6 +357,8 @@ Function Float_Misfit(ObsState)
     integer indexi, indexj
     
     Float_Misfit=0.0d0
+    if (.not.UseFloat) return
+    
     indexj=0
     do indexi=1, nFloats
         if (Floats(indexi)%i==0) cycle
@@ -370,6 +378,8 @@ function Float_H(State)
     integer indexi, indexj
     
     Float_H=0.0d0
+    if (.not.UseFloat) return
+    
     indexj=0
     do indexi=1, nFloats
         if (Floats(indexi)%i==0) cycle
@@ -391,6 +401,8 @@ function Float_SqrtR1(HLi)
     integer indexi, indexj
     
     Float_SqrtR1=0.0d0
+    if (.not.UseFloat) return
+    
     indexj=0
     do indexi=1, nFloats
         if (Floats(indexi)%i==0) cycle

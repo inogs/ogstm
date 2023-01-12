@@ -11,6 +11,13 @@ find_package(MPI REQUIRED)
 find_package(NetCDF REQUIRED)
 find_package(BFM REQUIRED)
 
+# NEW EnsDA PACKAGES
+set(BLA_VENDOR Intel10_64lp_seq)
+find_package(LAPACK REQUIRED)
+add_definitions(-DExecEns)
+add_definitions(-DExecEnsDA)
+add_definitions(-DExecEnsParams)
+
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
       "Choose the type of build, options are: Debug Release."
@@ -35,8 +42,9 @@ ENDIF()
 
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source") #-qopenmp
+  #set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
+  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -cpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -extend_source") #-fpe0 removed due to dsyevr needing ieee exceptions #-qopenmp
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0 ")
@@ -55,13 +63,16 @@ include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
 # Search Fortran module to compile
-set( FOLDERS BIO  General  IO  MPI  namelists  PHYS BC)
-  foreach(FOLDER ${FOLDERS})
-  file(GLOB TMP src/${FOLDER}/*)
-  list (APPEND FORTRAN_SOURCES ${TMP})
-endforeach()
+#set( FOLDERS BIO  General  IO  MPI  namelists  PHYS BC)
+  #foreach(FOLDER ${FOLDERS})
+  #file(GLOB TMP src/${FOLDER}/*)
+  #list (APPEND FORTRAN_SOURCES ${TMP})
+#endforeach()
+file(GLOB_RECURSE TMP src/*)
+list (APPEND FORTRAN_SOURCES ${TMP})
+list(FILTER FORTRAN_SOURCES EXCLUDE REGEX src/DA/*)
 
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${LAPACK_LIBRARIES})

@@ -52,18 +52,25 @@ contains
         
     end subroutine
 
-    subroutine SymChangeBase(matrix, ierr)
+    subroutine SymChangeBase(matrix, ierr, debug_opt)
     
         double precision, dimension(EnsDim, EnsDim), intent(inout) :: matrix
+        integer, intent(in), optional :: debug_opt
         integer, intent(out) :: ierr
-        integer :: indexi, neigenvalues
+        integer :: indexi, neigenvalues, debug
         double precision dlamch
         
+        debug=0
+        if (present(debug_opt)) debug=debug_opt
         ierr=0
+        
+        if (debug>0) write(*,*) 'before dsyevr'
         
         call dsyevr("V", "A", "U", EnsDim, matrix, EnsDim, 0.0d0, 0.0d0,0.0d0, 0.0d0, &
             dlamch('S'), neigenvalues, eigenvalues, eigenvectors, EnsDim, &
             isuppz, work, lwork, iwork, liwork, ierr)
+            
+        if (debug>0) write(*,*) 'after dsyevr'
 
         if (ierr/=0) then
             write(*,*) "something wrong with svd. ierr=", ierr
@@ -75,6 +82,8 @@ contains
             write(*,*) "something strange in the number of eigenvalues! neigenvalues=", neigenvalues
             return
         end if
+        
+        if (debug>0) write(*,*) eigenvalues
         
         if (eigenvalues(1)<10**(-10)) then
             ierr=1

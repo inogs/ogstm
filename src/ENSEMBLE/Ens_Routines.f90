@@ -159,7 +159,7 @@ contains
         DoDA=IsaDataAssimilation(DATEstring)
         if (IsaForecast(DATEstring).or.DoDA) then
             
-            if (EnsDebug>1) then
+            if (EnsDebug>0) then
                 call mpi_barrier(glcomm, ierr)
                 if (lwp) write(*,*) 'Starting EnsDA'
                 DAparttime = MPI_WTIME()

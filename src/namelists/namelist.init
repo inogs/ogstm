@@ -39,6 +39,7 @@
 
    nwritetrc = 10000
    freq_flux_dump       = 1 ! 1=group 1, 2 = group 2
+   save_bkp_group1      = .true.
    save_bkp_group2      = .true.
    deflate_ave          = 0
    deflate_level_ave    = 4
@@ -115,12 +116,15 @@
 /
 
 &Obs_Sat_setup
+    UseSat=.true.
     satfile_suffix='_d-OC_CNR-L3-CHL-MedOC4AD4_MULTI_1KM-MED-DT-v02.nc'
     satvarname='CHL'
     SatMultError=0.35d0
+    SatAddError=0.02d0
 /
 
 &Obs_Float_setup
+    UseFloat=.true.
     FloatMultError=0.35d0
     FloatAddError=0.02d0
 /

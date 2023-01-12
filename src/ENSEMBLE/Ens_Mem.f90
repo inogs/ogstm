@@ -148,7 +148,7 @@ subroutine Ens_allocate
     if (EnsSize>1) then
         
         allocate(EnsWeights(0:EnsSize-1))
-        EnsWeights=1/EnsSize
+        EnsWeights=1.0d0/EnsSize
 
 #ifdef ExecEnsDA
         ForecastTimes%FileName = 'forecastTimes'

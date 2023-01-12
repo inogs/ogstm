@@ -50,7 +50,7 @@ if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
   #set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
   set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -cpp -align array64byte")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source") #-qopenmp
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -extend_source") #-fpe0 removed due to dsyevr needing ieee exceptions #-qopenmp
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-132")

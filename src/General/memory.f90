@@ -272,7 +272,7 @@
 
       double precision ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
-      LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
+      LOGICAL :: save_bkp_group1, save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
       INTEGER :: ctr_hf(jptra)
 

@@ -10,7 +10,7 @@ module Ens_Obs
     
     implicit none
     
-    logical, parameter :: UseSatellite=.true., UseFloat=.true.
+    !logical, parameter :: UseSatellite=.true., UseFloat=.true.
     
     integer :: nObs, n_SqrtR1
     integer :: Sat_nObs, Sat_n_SqrtR1
@@ -43,17 +43,17 @@ contains
         Float_nObs=0
         Float_n_SqrtR1=0
         
-        if (UseSatellite) then
-            call Sat_LoadObs(DateString, Sat_nObs, Sat_n_SqrtR1)
-            nObs=nObs+Sat_nObs
-            n_SqrtR1=n_SqrtR1+Sat_n_SqrtR1
-        end if
+        !if (UseSatellite) then
+        call Sat_LoadObs(DateString, Sat_nObs, Sat_n_SqrtR1)
+        nObs=nObs+Sat_nObs
+        n_SqrtR1=n_SqrtR1+Sat_n_SqrtR1
+        !end if
         
-        if (UseFloat) then
-            call Float_LoadObs(DateString, Float_nObs, Float_n_SqrtR1)
-            nObs=nObs+Float_nObs
-            n_SqrtR1=n_SqrtR1+Float_n_SqrtR1
-        end if
+        !if (UseFloat) then
+        call Float_LoadObs(DateString, Float_nObs, Float_n_SqrtR1)
+        nObs=nObs+Float_nObs
+        n_SqrtR1=n_SqrtR1+Float_n_SqrtR1
+        !end if
         
     end subroutine
     

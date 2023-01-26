@@ -26,7 +26,7 @@
       INTEGER :: it_actual
       CHARACTER(LEN=20) :: V_POSITION     
       double precision :: solz(jpj,jpi), rmud(jpj,jpi)
-      double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),PARz(jpk,nchl+1)
+      double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),PARz(jpk,nchl+1),SWRz(jpk)
       double precision :: CHLz(jpk,nchl),CDOMz(jpk),POCz(jpk)
       double precision :: Eu_0m(nlt)
       double precision :: sec
@@ -107,6 +107,7 @@
                  Es(2:bottom,jj,ji,:) = 0.0001d0
                  Eu(2:bottom,jj,ji,:) = 0.0001d0
                  PAR(1:bottom,jj,ji,:) = 0.0001d0
+                 SWR_RT(1:bottom,jj,ji) = 0.0001d0
 
              else
              
@@ -119,7 +120,7 @@
     
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     
-                 call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
+                 call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz,SWRz)
     
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)
@@ -140,12 +141,17 @@
                     enddo
                  enddo
 
+
+                 do jk =1, bottom
+                       SWR_RT(jk,jj,ji) = SWRz(jk)
+                 enddo
                  
 
              endif
             
          enddo
       enddo
+
 
 
       trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop

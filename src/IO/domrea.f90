@@ -47,8 +47,8 @@
       character(len=10) bfmmask_file
 
       CHARACTER(LEN=50) filename
-      CHARACTER(LEN=3), DIMENSION(7) :: var_nc
-      CHARACTER(LEN=5) nomevar01
+      CHARACTER(LEN=20), DIMENSION(7) :: var_nc
+      CHARACTER(LEN=22) nomevar01
       LOGICAL B
 
 ! -------------------
@@ -186,7 +186,7 @@
       IF (NWATERPOINTS.GT.0) THEN
       do jn=1,jn_gib
 
-         nomevar01='re'//var_nc(jn)
+         nomevar01='re'//TRIM(var_nc(jn))
          call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn),0)
 
       enddo

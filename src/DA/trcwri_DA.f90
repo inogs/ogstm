@@ -29,7 +29,7 @@
       CHARACTER(LEN=45) BeforeName
       CHARACTER(LEN=43) BeforeNameShort
 
-      CHARACTER(LEN=3) varname
+      CHARACTER(LEN=20) varname
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -53,7 +53,7 @@
       if (lwp) tottrn = Miss_val
 
        DO jn=1,jptra
-        if(.not.isaDAvar(ctrcnm(jn))) CYCLE
+        if(.not.isaDAvar(TRIM(ctrcnm(jn)))) CYCLE
         if(myrank == 0) then
            istart = nimpp
            jstart = njmpp
@@ -151,8 +151,8 @@
         if(myrank == 0) then
 
             varname=ctrcnm(jn)
-            BeforeName = 'DA__FREQ_1/RSTbefore.'//datestring//'.'//varname//'.nc'
-            BeforeNameShort = 'DA__FREQ_1/RSTbefore.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//varname//'.nc'
+            BeforeName = 'DA__FREQ_1/RSTbefore.'//datestring//'.'//TRIM(varname)//'.nc'
+            BeforeNameShort = 'DA__FREQ_1/RSTbefore.'//datestring(1:11)//datestring(13:14)//datestring(16:17)//'.'//TRIM(varname)//'.nc'
             do ji=1,jpiglo
               do jj=1,jpjglo
                   do jk=1,jpk
@@ -221,7 +221,7 @@
 
        IMPLICIT NONE
        CHARACTER*(*), intent(in) :: fileNetCDF
-       CHARACTER(LEN=3),intent(in):: VAR
+       CHARACTER*(*),intent(in):: VAR
 
        ! local
 
@@ -236,7 +236,7 @@
         s= nf90_def_dim(nc,'z'   , jpk   ,depid)
 
 
-        s = nf90_def_var(nc,VAR, nf90_float, (/xid,yid,depid /), idN)
+        s = nf90_def_var(nc,TRIM(VAR), nf90_float, (/xid,yid,depid /), idN)
         s = nf90_put_att(nc,idN   , 'missing_value',1.e+20)
         s =nf90_enddef(nc)
         s = nf90_put_var(nc, idN,  tottrnDA); call handle_err1(s,counter,fileNetCDF)

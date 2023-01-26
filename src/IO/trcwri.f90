@@ -22,9 +22,9 @@
       double precision julian
 
 
-      CHARACTER(LEN=37) filename
+      CHARACTER(LEN=54) filename
 
-      CHARACTER(LEN=3) varname
+      CHARACTER(LEN=20) varname
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -145,9 +145,9 @@
         if(myrank == 0) then
 
             varname=ctrcnm(jn)
-            filename = 'RESTARTS/RST.'//datestring//'.'//varname//'.nc'
+            filename = 'RESTARTS/RST.'//datestring//'.'//TRIM(varname)//'.nc'
 
-        CALL write_restart(filename,varname,julian, deflate_rst, deflate_level_rst)
+        CALL write_restart(TRIM(filename),TRIM(varname),julian, deflate_rst, deflate_level_rst)
 
         endif ! if myrank = 0
       END DO ! DO jn=1,jptra

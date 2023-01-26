@@ -10,7 +10,7 @@
       character(LEN=200) satfile_suffix
       character(LEN=40 ) satvarname
 
-      CHARACTER(LEN=3) ::varlistDA(17)
+      CHARACTER(LEN=20) ::varlistDA(17)
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHL_SUP
       REAL(4), ALLOCATABLE, DIMENSION(:,:,:):: CHLtot
       REAL(4), ALLOCATABLE, DIMENSION(:,:) :: CHLsat,VAR2D
@@ -164,7 +164,7 @@
       ! *************************************************
       LOGICAL FUNCTION IsaDAvar(string)
       IMPLICIT NONE
-      CHARACTER(LEN=3), INTENT(IN) :: string
+      CHARACTER(LEN=20), INTENT(IN) :: string
           ! LOCAL
           INTEGER I
 
@@ -172,7 +172,7 @@
 
 
           DO I=1,17
-          if (varlistDA(I).eq.string) THEN
+          if (TRIM(varlistDA(I)).eq.TRIM(string)) THEN
             IsaDAvar = .true.
             CYCLE
           endif
@@ -183,7 +183,7 @@
 
       LOGICAL FUNCTION IsaCHLvar(string)
       IMPLICIT NONE
-      CHARACTER(LEN=3), INTENT(IN) :: string
+      CHARACTER(LEN=20), INTENT(IN) :: string
           ! LOCAL
           INTEGER I
 
@@ -191,7 +191,7 @@
 
 
           DO I=1,4
-          if (varlistDA(I).eq.string) THEN
+          if (TRIM(varlistDA(I)).eq.TRIM(string)) THEN
             IsaCHLvar = .true.
             CYCLE
           endif

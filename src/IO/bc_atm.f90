@@ -93,7 +93,7 @@ contains
           CHARACTER(LEN=17), INTENT(IN) :: datestring
 
 !         local
-          character(LEN=7) :: nomevar
+          character(LEN=100) :: nomevar
           character(LEN=27) :: nomefile
           INTEGER(4) jn,jv,j,i
           double precision,allocatable,dimension(:,:) :: M1
@@ -112,7 +112,7 @@ contains
               M1 = 0
               nomevar = 'atm_'//ctrcnm(tra_matrix_atm(jn))
               !CALL ioogsnc_bc_1d2(nomefile,nomevar,Asizeglo,atm_aux)
-              call readnc_slice_float_2d(nomefile,nomevar,M1,0)
+              call readnc_slice_float_2d(nomefile,TRIM(nomevar),M1,0)
             !CALL readnc_double_1d(nomefile,nomevar, Asizeglo,atm_aux)
 
             DO i=1,jpi

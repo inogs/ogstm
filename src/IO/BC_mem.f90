@@ -114,7 +114,7 @@
 
       jn_gib  = 7
       ! jn_riv  = 6
-      jn_atm  = 2
+      jn_atm  = 4
 
        ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
        allocate(resto(jpk,jpj,jpi,jn_gib))
@@ -173,8 +173,10 @@
            allocate(atm_idxtglo(   jpj,jpi))  
        atm_idxtglo    = huge(atm_idxtglo(1,1))
 
-          tra_matrix_atm(1) = ppN1p ! phosphates
-          tra_matrix_atm(2) = ppN3n ! nitrates
+          tra_matrix_atm(1) = ppN1p  ! phosphates
+          tra_matrix_atm(2) = ppN3n  ! nitrates
+          tra_matrix_atm(3) = ppHg2  ! HgII
+          tra_matrix_atm(4) = ppMMHg ! Mono Methyl Mercurio
        ENDIF
 
 

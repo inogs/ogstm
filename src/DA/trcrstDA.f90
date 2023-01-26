@@ -25,7 +25,7 @@
 ! ==================
       INTEGER jn, jDA, shift
       CHARACTER(LEN=45) filename
-      CHARACTER(LEN=6)  varname
+      CHARACTER(LEN=23)  varname
 
 
       shift = 0
@@ -39,7 +39,7 @@
          varname  = 'TRN'//ctrcnm(jn)
          filename = 'DA__FREQ_1/RST_after.'//datestring//'.'//trim(ctrcnm(jn))//'.nc'
          if (lwp) write(*,*) 'reading ', filename
-         CALL readnc_slice_floatDA(filename,varname, trn(:,:,:,jn), shift)
+         CALL readnc_slice_floatDA(filename,TRIM(varname), trn(:,:,:,jn), shift)
 
 
 

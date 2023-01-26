@@ -1,4 +1,4 @@
-      subroutine radmod(V_POSITION,bottom,zd,Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eu0,PARz)
+      subroutine radmod(V_POSITION,bottom,zd,Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eu0,PARz,SWRz)
       USE OPT_mem
       IMPLICIT NONE
  
@@ -27,6 +27,7 @@
       character(*), INTENT(IN)        ::  V_POSITION
       double precision, INTENT(OUT)   :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),Eu0(nlt)     
       double precision, INTENT(OUT)   :: PARz(jpk,nchl+1)
+      double precision, INTENT(OUT)   :: SWRz(jpk)
 
 ! local variables
       double precision, parameter     :: rd=1.5d0   !these are taken from Ackleson, et al. 1994 (JGR)
@@ -197,10 +198,7 @@
 
       do p =1,nchl
          do nl =5,19   ! 400 to 700 nm 
-
-            PARz(1,p) = PARz(1,p) + WtoQ(nl) * ac(p,nl) * ( Edz(1,nl) * rmud + Esz(1,nl) * rmus)   
-
-            do jk =2,bottom
+            do jk =1,bottom
                PARz(jk,p) = PARz(jk,p) + WtoQ(nl) * ac(p,nl) * ( Edz(jk,nl) * rmud + Esz(jk,nl) * rmus + Euz(jk,nl) * rmuu )   
             enddo
          enddo
@@ -208,12 +206,16 @@
         
       do nl =5,19  ! 400 to 700 nm  
 
-         PARz(1,nchl+1) = PARz(1,nchl+1) + WtoQ(nl) * ( Edz(1,nl) * rmud + Esz(1,nl) * rmus )   
-
-         do jk =2,bottom
+         do jk =1,bottom
 
             PARz(jk,nchl+1) = PARz(jk,nchl+1) + WtoQ(nl) * ( Edz(jk,nl) * rmud + Esz(jk,nl) * rmus + Euz(jk,nl) * rmuu )   
 
+         enddo
+      enddo
+
+      do nl =1,nlt  ! 0 to 4 um  
+         do jk =1,bottom
+            SWRz(jk) = SWRz(jk) +  Edz(jk,nl) * rmud + Esz(jk,nl) * rmus + Euz(jk,nl) * rmuu    
          enddo
       enddo
 

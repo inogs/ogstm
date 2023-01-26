@@ -36,7 +36,7 @@
 
       USE myalloc
       USE BIO_mem
-      USE OPT_mem, ONLY: PAR
+      USE OPT_mem, ONLY: PAR,SWR_RT
       USE BC_mem
       USE mpi
 
@@ -69,7 +69,7 @@
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,14) :: er
+      double precision,dimension(jpk,15) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 #endif
 
@@ -200,13 +200,14 @@
                           er(1:bottom,8)  = PAR(1:bottom,jj,ji,5) ! PAR for pico phytoplankton
                           er(1:bottom,9)  = PAR(1:bottom,jj,ji,5) ! PAR for dinoflagellates
                           er(1:bottom,10) = PAR(1:bottom,jj,ji,5) ! total PAR for CDOM
+                          er(1:bottom,11) = SWR_RT(1:bottom,jj,ji) !  Short wave radiation [0 4 um]
 !                         do jk=1, bottom
 !                         er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
 !                         enddo
-                          er(1       ,11)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(1:bottom,12)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1       ,13)  = vatm(jj,ji)                ! wind speed (m/s)
-                          er(1:bottom,14) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
+                          er(1       ,12)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
+                          er(1:bottom,13)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
+                          er(1       ,14)  = vatm(jj,ji)                ! wind speed (m/s)
+                          er(1:bottom,15) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
 
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 

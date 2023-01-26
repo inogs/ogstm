@@ -1,4 +1,4 @@
-      subroutine edeseu(MODE,V_POSITION,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,POCz,rmud,Edz,Esz,Euz,Eutop,PARz)
+      subroutine edeseu(MODE,V_POSITION,bottom,dzRT,Edtop,Estop,CHLz,CDOMz,POCz,rmud,Edz,Esz,Euz,Eutop,PARz,SWRz)
       USE myalloc
       USE mpi
       USE OPT_mem
@@ -24,6 +24,7 @@
       double precision, INTENT(OUT) :: Edz(jpk,nlt),Esz(jpk,nlt)
       double precision, INTENT(OUT) :: Euz(jpk,nlt)
       double precision, INTENT(OUT) :: PARz(jpk,nchl+1)
+      double precision, INTENT(OUT) :: SWRz(jpk)
       double precision, intent(OUT) :: Eutop(nlt)
 !     Local variables
       double precision :: Etop
@@ -62,11 +63,11 @@
        enddo
        
        if (MODE == 1) then ! condition on level < 200 mt
-           call radmod(V_POSITION,bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop,PARz)
+           call radmod(V_POSITION,bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop,PARz,SWRz)
        endif 
 ! condition on level > 200 mt
        if ( MODE ==0) then
-           call radmod_ex(V_POSITION,bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop,PARz)
+           call radmod_ex(V_POSITION,bottom,dzRT(:),Edtop,Estop,rmud,a,bt,bb,Edz,Esz,Euz,Eutop,PARz,SWRz)
        endif
 
 

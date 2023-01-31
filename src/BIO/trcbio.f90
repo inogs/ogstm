@@ -223,16 +223,16 @@
                               er(1:bottom,11) = 0.001 * 0.217/0.5!  Short wave radiation [0 4 um] W/m2
                           else
 !                             er(6)  = 2.0 * xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                              er(1:bottom,6)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for diatoms
-                              er(1:bottom,7)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for flagellates
-                              er(1:bottom,8)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for pico phytoplankton
-                              er(1:bottom,9)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for dinoflagellates
-                              er(1:bottom,10) = 2.0 * xpar(1:bottom,jj,ji) ! total PAR for CDOM
-                              er(1:bottom,11) = 2.0 * xpar(1:bottom,jj,ji) *0.217/0.5 !  Short wave radiation [0 4 um] W/m2
+                              do jk=1, bottom
+                                  er(jk,6)  = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))           ! PAR for diatoms
+                                  er(jk,7)  = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))           ! PAR for flagellates
+                                  er(jk,8)  = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))           ! PAR for pico phytoplankton
+                                  er(jk,9)  = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))           ! PAR for dinoflagellates
+                                  er(jk,10) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))           ! total PAR for CDOM
+                                  er(jk,11) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))*0.217/0.5 !  Short wave radiation [0 4 um] W/m2
+                              enddo
                           endif
-!                         do jk=1, bottom
 !                         er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-!                         enddo
                           er(1       ,12)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
                           er(1:bottom,13)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
                           er(1       ,14)  = vatm(jj,ji)                ! wind speed (m/s)

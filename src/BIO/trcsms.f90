@@ -33,7 +33,7 @@
 
        CALL trcopt ! tracers: optical model
 
-       CALL trc3streams(datestring)
+!      CALL trc3streams(datestring)
        
        CALL trcbio ! tracers: biological model
 

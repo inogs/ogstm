@@ -14,9 +14,9 @@
 !      writes ave files for tracer concentration
       CALL   trcdit(datemean, datefrom, dateend,FREQ_GROUP)
       CALL  diadump(datemean, datefrom, dateend,FREQ_GROUP)
-      CALL  Eddump(datemean, datefrom, dateend,FREQ_GROUP)
-      CALL  Esdump(datemean, datefrom, dateend,FREQ_GROUP)
-      CALL  Eudump(datemean, datefrom, dateend,FREQ_GROUP)
+!     CALL  Eddump(datemean, datefrom, dateend,FREQ_GROUP)
+!     CALL  Esdump(datemean, datefrom, dateend,FREQ_GROUP)
+!     CALL  Eudump(datemean, datefrom, dateend,FREQ_GROUP)
       CALL fluxdump(datemean, datefrom, dateend,FREQ_GROUP)
 
 

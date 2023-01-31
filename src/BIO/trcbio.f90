@@ -213,12 +213,23 @@
                           er(1:bottom,3)  = rho(1:bottom,jj,ji)   ! Density Kg/m3
                           er(1       ,4)  = ice                   ! from 0 to 1 adimensional
                           er(1       ,5)  = ogstm_co2(jj,ji)      ! CO2 Mixing Ratios (ppm)  390
-                          er(1:bottom,6)  = PAR(1:bottom,jj,ji,5) ! PAR for diatoms
-                          er(1:bottom,7)  = PAR(1:bottom,jj,ji,5) ! PAR for flagellates
-                          er(1:bottom,8)  = PAR(1:bottom,jj,ji,5) ! PAR for pico phytoplankton
-                          er(1:bottom,9)  = PAR(1:bottom,jj,ji,5) ! PAR for dinoflagellates
-                          er(1:bottom,10) = PAR(1:bottom,jj,ji,5) ! total PAR for CDOM
-                          er(1:bottom,11) = SWR_RT(1:bottom,jj,ji) !  Short wave radiation [0 4 um]
+                          if (is_night(COMMON_DATEstring)) then
+!                             er(6)  = 0.001       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                              er(1:bottom,6)  = 0.001 ! PAR for diatoms
+                              er(1:bottom,7)  = 0.001 ! PAR for flagellates
+                              er(1:bottom,8)  = 0.001 ! PAR for pico phytoplankton
+                              er(1:bottom,9)  = 0.001 ! PAR for dinoflagellates
+                              er(1:bottom,10) = 0.001 ! total PAR for CDOM
+                              er(1:bottom,11) = 0.001 * 0.217/0.5!  Short wave radiation [0 4 um] W/m2
+                          else
+!                             er(6)  = 2.0 * xpar(jk,jj,ji)       ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+                              er(1:bottom,6)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for diatoms
+                              er(1:bottom,7)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for flagellates
+                              er(1:bottom,8)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for pico phytoplankton
+                              er(1:bottom,9)  = 2.0 * xpar(1:bottom,jj,ji) ! PAR for dinoflagellates
+                              er(1:bottom,10) = 2.0 * xpar(1:bottom,jj,ji) ! total PAR for CDOM
+                              er(1:bottom,11) = 2.0 * xpar(1:bottom,jj,ji) *0.217/0.5 !  Short wave radiation [0 4 um] W/m2
+                          endif
 !                         do jk=1, bottom
 !                         er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
 !                         enddo

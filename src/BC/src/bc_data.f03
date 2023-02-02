@@ -3,6 +3,8 @@
 !> The dataset consists of a series of files referring to some specific times
 !! distributed along the whole simulation period.
 module bc_data_mod
+    use Time_Manager, only:  DATESTART, DATE__END
+    use myalloc, only : lwp
     
     use calendar
 
@@ -101,6 +103,16 @@ contains
             bc_data_default%m_time_strings(i) = bc_data_default%m_files(i)(pos+4:pos+20)
             bc_data_default%m_times(i) = datestring2sec(bc_data_default%m_time_strings(i))
         enddo
+
+
+        if (bc_data_default%m_times(1).gt.datestring2sec(DATESTART)) then
+           if (lwp) write(*,*) trim(bc_data_default%m_files(1)), ' not in Start_End_Times. STOP. '
+           STOP
+         endif
+        if (bc_data_default%m_times( bc_data_default%m_n_files).lt.datestring2sec(DATE__END)) then
+           if (lwp) write(*,*) trim(bc_data_default%m_files( bc_data_default%m_n_files)), ' not in Start_End_Times. STOP. '
+           STOP
+         endif
 
         ! initialize interpolation variables
         bc_data_default%m_prev_idx = 1

@@ -78,6 +78,8 @@ SUBROUTINE trcadv
   double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
   double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
   logical :: use_gpu
+  
+  trcadvparttime = MPI_WTIME()
 
   use_gpu=.true.
 
@@ -326,7 +328,6 @@ SUBROUTINE trcadv
   !!     tracer loop parallelized (macrotasking)
   !!     =======================================
 
-  trcadvparttime = MPI_WTIME()
 
 
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it

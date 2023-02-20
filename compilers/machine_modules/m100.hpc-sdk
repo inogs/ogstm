@@ -2,13 +2,9 @@ module purge
 module load profile/advanced
 module load autoload
 
-module load netcdf/4.7.3--spectrum_mpi--10.4.0--hpc-sdk--2021--binary
-module load netcdff/4.5.2--spectrum_mpi--10.4.0--hpc-sdk--2021--binary
 module load cmake
-module load hpc-sdk
-module load cuda
-module load spectrum_mpi
+module load netcdff/4.5.2--spectrum_mpi--10.4.0--hpc-sdk--2021--binary
 module load numpy/1.19.4--python--3.8.2
+export OMPI_FC=nvfortran
 export FC=pgf90
 export CC=pgcc
-#module load petsc/3.13.1--spectrum_mpi--10.4.0--hpc-sdk--2021--binary

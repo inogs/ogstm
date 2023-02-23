@@ -104,7 +104,7 @@ Subroutine Sat_Init
     
     indexj=0
     do indexi=1, ntra_DAstate
-        if (IsaSatVar(ctrcnm(DAVariablesIndex(indexi)))) then
+        if (IsaSatVar(trim(ctrcnm(DAVariablesIndex(indexi))))) then
             indexj=indexj+1
             SatVariablesIndex(indexj)=indexi
         end if

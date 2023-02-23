@@ -34,6 +34,7 @@ module Ens_Custom
     
     double precision, dimension(:,:,:,:), allocatable :: DAstate_avg, stddev, DAstate_biased
     double precision :: stdCoef
+    double precision, dimension(:), allocatable :: MaxStd1
     
 contains
     
@@ -53,14 +54,20 @@ contains
         
         ntra_DAstate=0
         do indexi=1,jptra
-            if (IsEnsDAVar(ctrcnm(indexi))) ntra_DAstate=ntra_DAstate+1
+            if (IsEnsDAVar(trim(ctrcnm(indexi)))) ntra_DAstate=ntra_DAstate+1
         end do
         allocate(DAVariablesIndex(ntra_DAstate))
+        allocate(MaxStd1(ntra_DAstate))
         ntra_DAstate=0
         do indexi=1,jptra
-            if (IsEnsDAVar(ctrcnm(indexi))) then
+            if (IsEnsDAVar(trim(ctrcnm(indexi)))) then
                 ntra_DAstate=ntra_DAstate+1
                 DAVariablesIndex(ntra_DAstate)=indexi
+                if (IsObserved(trim(ctrcnm(indexi)))) then
+                    MaxStd1(ntra_DAstate)=0.0d0
+                else
+                    MaxStd1(ntra_DAstate)=1.0d0/MaxStd
+                end if
             end if
         end do
         
@@ -256,10 +263,10 @@ contains
                 do indexj=1, nj_DAstate
                     do indexk=1, nk_DAstate
                         if (DAMask(indexk, indexj, indexi)==0) exit
-                        if (stddev(indexk, indexj, indexi, indext)<=MaxStd) then  
+                        if (stddev(indexk, indexj, indexi, indext)*MaxStd1(indext)<=1.0d0) then  
                             stdCoef=1.0d0
                         else
-                            stdCoef=MaxStd/stddev(indexk, indexj, indexi, indext)
+                            stdCoef=1.0d0/(stddev(indexk, indexj, indexi, indext)*MaxStd1(indext))
                         end if
                         if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
                             DAstate_kjit(indexk, indexj, indexi, indext) = (logsmall - DAstate_biased(indexk, indexj, indexi, indext))*stdCoef + &
@@ -442,16 +449,32 @@ contains
         
         !if ((name(1:1).eq."P").or.(name(1:1).eq."N").or.(name(1:1).eq."O")) then
         !if ((name(1:1).eq."P")) then
-        if (.true.) then
-            IsEnsDAVar=.true.
-        else
-            IsEnsDAVar=.false.
-        end if
-!         if ((name(1:1).eq."O").and.(.not.(name.eq."O2o"))) then
-!             IsEnsDAVar=.false.
-!         else
+!         if (.true.) then
 !             IsEnsDAVar=.true.
+!         else
+!             IsEnsDAVar=.false.
 !         end if
+        if (((name(1:1).eq."O").and.(.not.(name.eq."O2o"))).or.(name.eq."R3c")) then
+            IsEnsDAVar=.false.
+        else
+            IsEnsDAVar=.true.
+        end if
+            
+    end function
+    
+    function IsObserved(name)
+        implicit none
+        
+        character(LEN=*), intent(in) :: name
+        logical :: IsObserved
+        
+!         if ((name(1:1).eq."P").and.(name(3:3).eq."l")) then
+!             IsObserved=.true.
+!         else
+!             IsObserved=.false.
+!         end if
+        
+        IsObserved=.false.
             
     end function
     

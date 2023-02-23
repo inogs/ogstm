@@ -171,7 +171,7 @@ Subroutine Float_Init
     
     indexj=0
     do indexi=1, ntra_DAstate
-        if (IsaFloatVar(ctrcnm(DAVariablesIndex(indexi)))) then
+        if (IsaFloatVar(trim(ctrcnm(DAVariablesIndex(indexi))))) then
             indexj=indexj+1
             FloatVariablesIndex(indexj)=indexi
         end if

@@ -223,7 +223,7 @@ Subroutine Ens_shared_alloc_base(member_size, member_pointer, global_pointer, wi
     window_buffer_size = double_size * member_size
     
     if (EnsRank==EnsRankZero) then
-        CALL MPI_Win_allocate_shared(0, double_size, MPI_INFO_NULL, EnsComm, C_pointer, window, ierror)
+        CALL MPI_Win_allocate_shared(0_MPI_ADDRESS_KIND, double_size, MPI_INFO_NULL, EnsComm, C_pointer, window, ierror)
     else
         CALL MPI_Win_allocate_shared(window_buffer_size, double_size, MPI_INFO_NULL, EnsComm, C_pointer, window, ierror)
     end if

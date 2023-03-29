@@ -39,8 +39,8 @@ module ObsFloat
         real, dimension(:), allocatable :: tracer, depth, qc, std1, k
         !integer, dimension(:), allocatable :: k
     contains
-        procedure Init => FloatType_Init
-        procedure Free => FloatType_Free
+        procedure :: Init => FloatType_Init
+        procedure :: Free => FloatType_Free
     end type
     
     integer :: nFloats

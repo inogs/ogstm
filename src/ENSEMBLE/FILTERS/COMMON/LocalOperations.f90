@@ -21,12 +21,12 @@ module LocalOperations
         integer EnsDim
         double precision, dimension(:,:,:), allocatable :: LocalPatch, VerticalPatch, HorizontalPatch, DiagonalPatch
     contains
-        procedure Init => Local_alloc
-        procedure Free => Local_dealloc
-        procedure SendRecive => LocalSendRecive
-        procedure Sum => SummingLocalPatch
-        procedure WeightedSum => SummingLocalPatchWeighted
-        procedure ComputeAll => LocalComputeAll
+        procedure :: Init => Local_alloc
+        procedure :: Free => Local_dealloc
+        procedure :: SendRecive => LocalSendRecive
+        procedure :: Sum => SummingLocalPatch
+        procedure :: WeightedSum => SummingLocalPatchWeighted
+        procedure :: ComputeAll => LocalComputeAll
     end type
     
 contains

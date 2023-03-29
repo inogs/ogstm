@@ -44,11 +44,13 @@ if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
   #set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
   set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -cpp -align array64byte")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -extend_source") #-fpe0 removed due to dsyevr needing ieee exceptions #-qopenmp
+  #set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O1 -ipo -qopt-report5 -fpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -fpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -extend_source") #-fpe0 removed due to dsyevr needing ieee exceptions #-qopenmp
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0 ")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
+  #set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid -pedantic -ffree-line-length-0 ") #-ffpe-trap=overflow removed because it may interfere with dsyevr
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})

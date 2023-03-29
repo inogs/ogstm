@@ -31,7 +31,7 @@ module Ens_Routines
     use Timers, &
         only: DAparttime, DAtottime
     use Ens_Params, &
-        only: Ens_Init_Params, Ens_Finalize_Params, Ens_SetParams, Ens_ReadParams
+        only: Ens_Init_Params, Ens_Finalize_Params, Ens_ReadParams!, Ens_SetParams
         
     
 implicit none
@@ -98,7 +98,7 @@ contains
                     if (lwp) write(*,*) "parameters loaded!" 
                 end if
                 
-                call Ens_SetParams
+!                 call Ens_SetParams
             end if
 #endif
             

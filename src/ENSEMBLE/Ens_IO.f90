@@ -973,41 +973,37 @@ contains
             end if
         end if
         
-        if (EnsSize<=1 .or. EnsSaveMeanRestart) then
-        
-            if (EnsSize<=1) then
-                call Ens_trcwri(trim(prefix), DATEstring, -1, trn)
-            else
-                if (EnsDebug>1) then
-                    call mpi_barrier(glcomm, ierr)
-                    if (lwp) write(*,*) 'Preparing mean restart. Time: ', MPI_WTIME()-parttime
-                end if
-                
-                call Ens_RST2DA(trn_IO)
-                if (EnsDebug>1) then
-                    call mpi_barrier(glcomm, ierr)
-                    if (lwp) write(*,*) 'State transformed. Time: ', MPI_WTIME()-parttime
-                end if
-                
-                call Ens_ReduceMean(win_trn_IO, n_trn_IO, gl_trn_IO)
-                if (EnsDebug>1) then
-                    call mpi_barrier(glcomm, ierr)
-                    if (lwp) write(*,*) 'Reduced. Time: ', MPI_WTIME()-parttime
-                end if
-                
-                call Ens_DA2RST(trn_IO)
-                if (EnsDebug>1) then
-                    call mpi_barrier(glcomm, ierr)
-                    if (lwp) write(*,*) 'Transformed back to state. Time: ', MPI_WTIME()-parttime
-                end if
-                
-                if (EnsRank==EnsRankZero) call Ens_trcwri(trim(prefix), DATEstring, -1, trn_IO)
-                if (EnsDebug>1) then
-                    call mpi_barrier(glcomm, ierr)
-                    if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-parttime
-                end if
+        if (EnsSize<=1) then
+            call Ens_trcwri(trim(prefix), DATEstring, -1, trn)
+        else if (EnsSaveMeanRestart) then
+            if (EnsDebug>1) then
+                call mpi_barrier(glcomm, ierr)
+                if (lwp) write(*,*) 'Preparing mean restart. Time: ', MPI_WTIME()-parttime
             end if
             
+            call Ens_RST2DA(trn_IO)
+            if (EnsDebug>1) then
+                call mpi_barrier(glcomm, ierr)
+                if (lwp) write(*,*) 'State transformed. Time: ', MPI_WTIME()-parttime
+            end if
+            
+            call Ens_ReduceMean(win_trn_IO, n_trn_IO, gl_trn_IO)
+            if (EnsDebug>1) then
+                call mpi_barrier(glcomm, ierr)
+                if (lwp) write(*,*) 'Reduced. Time: ', MPI_WTIME()-parttime
+            end if
+            
+            call Ens_DA2RST(trn_IO)
+            if (EnsDebug>1) then
+                call mpi_barrier(glcomm, ierr)
+                if (lwp) write(*,*) 'Transformed back to state. Time: ', MPI_WTIME()-parttime
+            end if
+            
+            if (EnsRank==EnsRankZero) call Ens_trcwri(trim(prefix), DATEstring, -1, trn_IO)
+            if (EnsDebug>1) then
+                call mpi_barrier(glcomm, ierr)
+                if (lwp) write(*,*) 'Saved. Time: ', MPI_WTIME()-parttime
+            end if
         end if
         
         if (EnsDebug>0) then

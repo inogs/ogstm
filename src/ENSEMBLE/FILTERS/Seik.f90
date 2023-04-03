@@ -217,12 +217,14 @@ contains
             
             CALL MPI_Win_fence(0, win_HLTR1HLi_loc, ierror)
             
-                if (EnsDebug>0.and.EnsRank==EnsRankZero) then
+                if (EnsDebug>1.and.EnsRank==EnsRankZero) then
                     if (myrank==myrankZero) then
                         write(*,*) '-------------------------------------------------------'
                         write(*,*) '-------------------------------------------------------'
                         write(*,*) ''
-                        write(*,*) 'DEBUG: parameters estimation (332, 284).'
+                        do indexk=0,1
+                            write(*,'(A,I3,A)') 'DEBUG: parameters estimation (',332+10*indexk,', 284).'
+                        end do
                         write(*,*) ''
                         write(*,*) '-------------------------------------------------------'
                         write(*,*) '-------------------------------------------------------'
@@ -230,73 +232,75 @@ contains
                     do indexj=0, mysize-1
                         call mpi_barrier(mycomm, ierror)
                         if (myrank==indexj) then
-                            write(*,*) ''
-                            write(*,*) 'myrank: ', myrank
-                            write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
-!                             write(*,*) ''
-!                             write(*,*) 'gl_DAstate_kjitn'
-!                             write(*,*) ''
-!                             do indexi=0,EnsSize-1
-!                                 write(*,*) gl_DAstate_kjitn(1, 14, 28, (/14,19,23,27/), indexi)
-!                             end do
-!                             write(*,*) ''
-!                             write(*,*) '-------------------------------------------------------'
-!                             write(*,*) ''
-!                             write(*,*) 'gl_Hstate'
-!                             write(*,*) ''
-!                             do indexi=0,EnsSize-1
-!                                 write(*,*) gl_Hstate(14+27*nj_DAstate,indexi)
-!                             end do
-!                             write(*,*) ''
-!                             write(*,*) '-------------------------------------------------------'
-!                             write(*,*) ''
-!                             write(*,*) 'ForecastCov1'
-!                             write(*,*) ''
-!                             do indexi=1,EnsSize-1
-!                                 write(*,*) ForecastCov1(:,indexi)
-!                             end do
-!                             write(*,*) ''
-!                             write(*,*) '-------------------------------------------------------'
-                            write(*,*) ''
-                            write(*,*) 'gl_HLTR1HLi_loc diagonal'
-                            write(*,*) ''
-                            EnsCov1(:,1:EnsRankZero)=gl_HLTR1HLi_loc(:, 14, 28, 0:EnsRankZero-1)
-                            EnsCov1(:,EnsRankZero+1:EnsSize-1)=gl_HLTR1HLi_loc(:, 14, 28, EnsRankZero+1:EnsSize-1)
-                            do indexi=1,EnsSize-3,3
-                                write(*,*) EnsCov1(indexi, indexi), EnsCov1(indexi+1, indexi+1), EnsCov1(indexi+2, indexi+2)
+                            do indexk=0,1
+                                write(*,*) ''
+                                write(*,*) 'myrank: ', myrank, ', x=', 332+10*indexk, ', y=284' 
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                write(*,*) 'gl_DAstate_kjitn'
+                                write(*,*) ''
+                                do indexi=0,EnsSize-1
+                                    write(*,*) gl_DAstate_kjitn(1, 14, 28+10*indexk, (/14,19,23,27/), indexi)
+                                end do
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+    !                             write(*,*) ''
+    !                             write(*,*) 'gl_Hstate'
+    !                             write(*,*) ''
+    !                             do indexi=0,EnsSize-1
+    !                                 write(*,*) gl_Hstate(14+27*nj_DAstate,indexi)
+    !                             end do
+    !                             write(*,*) ''
+    !                             write(*,*) '-------------------------------------------------------'
+    !                             write(*,*) ''
+    !                             write(*,*) 'ForecastCov1'
+    !                             write(*,*) ''
+    !                             do indexi=1,EnsSize-1
+    !                                 write(*,*) ForecastCov1(:,indexi)
+    !                             end do
+    !                             write(*,*) ''
+    !                             write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                write(*,*) 'gl_HLTR1HLi_loc diagonal'
+                                write(*,*) ''
+                                EnsCov1(:,1:EnsRankZero)=gl_HLTR1HLi_loc(:, 14, 28+10*indexk, 0:EnsRankZero-1)
+                                EnsCov1(:,EnsRankZero+1:EnsSize-1)=gl_HLTR1HLi_loc(:, 14, 28+10*indexk, EnsRankZero+1:EnsSize-1)
+                                do indexi=1,EnsSize-3,3
+                                    write(*,*) EnsCov1(indexi, indexi), EnsCov1(indexi+1, indexi+1), EnsCov1(indexi+2, indexi+2)
+                                end do
+                                if (mod(EnsSize-1,3)==1) then
+                                    write(*,*) EnsCov1(EnsSize-1, EnsSize-1)
+                                elseif (mod(EnsSize-1,3)==2) then
+                                    write(*,*) EnsCov1(EnsSize-2, EnsSize-2), EnsCov1(EnsSize-1, EnsSize-1)
+                                endif
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                write(*,*) 'determinant gl_HLTR1HLi_loc: ', det(EnsSize-1,EnsCov1)
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                EnsCov1=ForecastCov1
+                                write(*,*) 'determinant ForecastCov1: ', det(EnsSize-1,EnsCov1)
+                                write(*,*) ''
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                EnsCov1(:,1:EnsRankZero)=ForecastCov1(:,1:EnsRankZero)+gl_HLTR1HLi_loc(:, 14, 28+10*indexk, 0:EnsRankZero-1)
+                                EnsCov1(:,EnsRankZero+1:EnsSize-1)=ForecastCov1(:,EnsRankZero+1:EnsSize-1)+gl_HLTR1HLi_loc(:, 14, 28+10*indexk, EnsRankZero+1:EnsSize-1)
+                                write(*,*) 'determinant EnsCov1: ', det(EnsSize-1,EnsCov1)
+                                write(*,*) ''
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                write(*,*) 'Misfit'
+                                write(*,*) ''
+                                write(*,*) gl_HLTR1HLi_loc(:, 14, 28+10*indexk, EnsRankZero)
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) '-------------------------------------------------------'
                             end do
-                            if (mod(EnsSize-1,3)==1) then
-                                write(*,*) EnsCov1(EnsSize-1, EnsSize-1)
-                            elseif (mod(EnsSize-1,3)==2) then
-                                write(*,*) EnsCov1(EnsSize-2, EnsSize-2), EnsCov1(EnsSize-1, EnsSize-1)
-                            endif
-                            write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
-                            write(*,*) ''
-                            write(*,*) 'determinant gl_HLTR1HLi_loc: ', det(EnsSize-1,EnsCov1)
-                            write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
-                            write(*,*) ''
-                            EnsCov1=ForecastCov1
-                            write(*,*) 'determinant ForecastCov1: ', det(EnsSize-1,EnsCov1)
-                            write(*,*) ''
-                            write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
-                            write(*,*) ''
-                            EnsCov1(:,1:EnsRankZero)=ForecastCov1(:,1:EnsRankZero)+gl_HLTR1HLi_loc(:, 14, 28, 0:EnsRankZero-1)
-                            EnsCov1(:,EnsRankZero+1:EnsSize-1)=ForecastCov1(:,EnsRankZero+1:EnsSize-1)+gl_HLTR1HLi_loc(:, 14, 28, EnsRankZero+1:EnsSize-1)
-                            write(*,*) 'determinant EnsCov1: ', det(EnsSize-1,EnsCov1)
-                            write(*,*) ''
-                            write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
-                            write(*,*) ''
-                            write(*,*) 'Misfit'
-                            write(*,*) ''
-                            write(*,*) gl_HLTR1HLi_loc(:, 14, 28, EnsRankZero)
-                            write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
-                            write(*,*) '-------------------------------------------------------'
                         end if
                     end do
                 end if
@@ -312,7 +316,11 @@ contains
                         if (DAMask(1, indexj,indexi)==1) then
                             rankc=rankc+1
                             
+!call mpi_barrier(glcomm,ierror)
+                            
                             if (Mod(rankc, EnsSize)==EnsRank) then
+                            
+!write(*,*) "rank: ", EnsRank, ', i: ', indexi, ', j: ', indexj, 'inizio'
                             
                                 EnsCov1(:,1:EnsRankZero)=ForecastCov1(:,1:EnsRankZero)+gl_HLTR1HLi_loc(:, indexj, indexi, 0:EnsRankZero-1)
                                 EnsCov1(:,EnsRankZero+1:EnsSize-1)=ForecastCov1(:,EnsRankZero+1:EnsSize-1)+gl_HLTR1HLi_loc(:, indexj, indexi, EnsRankZero+1:EnsSize-1)
@@ -329,12 +337,35 @@ contains
 !                                     write(*,*) '-------------------------------------------------------'
 !                                 end if                                
                                 
+! write(*,*) 'before symchange'
+! if (indexj>=46.and.indexi==1) then
+! if (indexj==46) then
+! open(13,file='ciccio46.txt')
+! else
+! open(13,file='ciccio47.txt')
+! end if
+! do indexk=1,EnsSize-1
+! write(*,*) EnsCov1(:,indexk)
+! write(13,'(A)', advance='no') '['
+! do indext=1,EnsSize-2
+! write(13,'(D,A)', advance='no') EnsCov1(indext,indexk), ','
+! end do
+! write(13,*) EnsCov1(indext,indexk), '],'
+! end do
+! close(13)
+! write(*,*) 'mysymchange:'
+! call SymChangeBase(EnsCov1,ierror,debug_opt=1)
+! write(*,*) 'done'
+! end if
+
                                 call SymChangeBase(EnsCov1,ierror)
                                 if (ierror/=0) then
                                     write(*,*) 'myrank: ', myrank, ', EnsRank: ', EnsRank, ', i_DA: ', indexi, ', j_DA: ', indexj
                                     call MPI_abort(glcomm, 1, ierror)
                                 end if
-                                
+
+!write(*,*) 'after symchange'
+
 !                                 if (EnsDebug>1.and.indexi==28.and.indexj==14) then
 !                                     write(*,*) ''
 !                                     write(*,*) 'EnsCov1 SymChangeBase'
@@ -351,46 +382,56 @@ contains
                                 gl_HLTR1HLi_loc(:, indexj, indexi, EnsRankZero)=matmul(matmul(gl_HLTR1HLi_loc(:, indexj, indexi, EnsRankZero),EnsCov1),EnsCov1)
                                 gl_HLTR1HLi_loc(:, indexj, indexi, EnsRankZero+1:EnsSize-1)=EnsCov1(:,EnsRankZero+1:EnsSize-1)
                                 
+!write(*,*) "rank: ", EnsRank, ', i: ', indexi, ', j: ', indexj, 'Fine'
+                                
                             end if                        
                         end if
                     end do
                 end do
             CALL MPI_Win_fence(0, win_HLTR1HLi_loc, ierror)   
             
-            if (EnsDebug>0.and.EnsRank==EnsRankZero) then
+            if (EnsDebug>1.and.EnsRank==EnsRankZero) then
                 do indexj=0, mysize-1
                     call mpi_barrier(mycomm, ierror)
                     if (myrank==indexj) then
-                        write(*,*) ''
-                        write(*,*) 'myrank: ', myrank
-                        write(*,*) ''
-!                         write(*,*) '-------------------------------------------------------'
-!                         write(*,*) ''
-!                         write(*,*) 'gl_HLTR1HLi_loc changebase'
-!                         write(*,*) ''
-!                         do indexi=0,EnsRankZero-1
-!                             write(*,*) gl_HLTR1HLi_loc(:, 14, 28, indexi)
-!                         end do
-!                         do indexi=EnsRankZero+1,EnsSize-1
-!                             write(*,*) gl_HLTR1HLi_loc(:, 14, 28, indexi)
-!                         end do
-!                         write(*,*) ''
-                        write(*,*) '-------------------------------------------------------'
-                        write(*,*) ''
-                        write(*,*) 'analysis coeff oldbase'
-                        write(*,*) ''
-                        write(*,*) gl_HLTR1HLi_loc(:, 14, 28, EnsRankZero)
-                        write(*,*) ''
-                        write(*,*) '-------------------------------------------------------'
-                        write(*,*) ''
-                        write(*,*) 'sum: ', sum(gl_HLTR1HLi_loc(:, 14, 28, EnsRankZero))
-                        write(*,*) ''
-                        write(*,*) '-------------------------------------------------------'
-                        write(*,*) ''
-                        write(*,*) 'abssum: ', sum(abs(gl_HLTR1HLi_loc(:, 14, 28, EnsRankZero)))
-                        write(*,*) ''
-                        write(*,*) '-------------------------------------------------------'
-                        write(*,*) '-------------------------------------------------------'
+                        do indexk=0,1
+                            write(*,*) ''
+                            write(*,*) 'myrank: ', myrank, ', x=', 332+10*indexk, ', y=284' 
+                            write(*,*) ''
+    !                         write(*,*) '-------------------------------------------------------'
+    !                         write(*,*) ''
+    !                         write(*,*) 'gl_HLTR1HLi_loc changebase'
+    !                         write(*,*) ''
+    !                         do indexi=0,EnsRankZero-1
+    !                             write(*,*) gl_HLTR1HLi_loc(:, 14, 28, indexi)
+    !                         end do
+    !                         do indexi=EnsRankZero+1,EnsSize-1
+    !                             write(*,*) gl_HLTR1HLi_loc(:, 14, 28, indexi)
+    !                         end do
+    !                         write(*,*) ''
+                            write(*,*) '-------------------------------------------------------'
+                            write(*,*) ''
+                            write(*,*) 'analysis coeff oldbase'
+                            write(*,*) ''
+                            write(*,*) gl_HLTR1HLi_loc(:, 14, 28+10*indexk, EnsRankZero)
+                            write(*,*) ''
+                            write(*,*) '-------------------------------------------------------'
+                            write(*,*) ''
+                            write(*,*) 'sum: ', sum(gl_HLTR1HLi_loc(:, 14, 28+10*indexk, EnsRankZero))
+                            write(*,*) ''
+                            write(*,*) '-------------------------------------------------------'
+                            write(*,*) ''
+                            write(*,*) 'abssum: ', sum(abs(gl_HLTR1HLi_loc(:, 14, 28+10*indexk, EnsRankZero)))
+                            write(*,*) ''
+                            write(*,*) '-------------------------------------------------------'
+                            write(*,*) ''
+                            write(*,*) 'transformation first line: '
+                            write(*,*) ''
+                            write(*,*) gl_HLTR1HLi_loc(:, 14, 28+10*indexk, 1)
+                            write(*,*) ''
+                            write(*,*) '-------------------------------------------------------'
+                            write(*,*) '-------------------------------------------------------'
+                        end do
                     end if
                 end do
             end if
@@ -411,12 +452,9 @@ contains
                                 do indexi=1,ni_DAstate
                                     do indexj=1, nj_DAstate
                                         do indexk=1, nk_DAstate
-                                            if (DAMask(indexk, indexj,indexi)==1) then
-                                                DAstate_kjit(indexk, indexj, indexi, indext)=DAstate_kjit(indexk, indexj, indexi, indext) + &
-                                                    gl_DAstate_kjitn(indexk, indexj, indexi, indext, indexd) * HLTR1HLi_loc(c, indexj, indexi)
-                                            else
-                                                exit
-                                            end if
+                                            if (DAMask(indexk, indexj,indexi)==0) exit
+                                            DAstate_kjit(indexk, indexj, indexi, indext)=DAstate_kjit(indexk, indexj, indexi, indext) + &
+                                                gl_DAstate_kjitn(indexk, indexj, indexi, indext, indexd) * HLTR1HLi_loc(c, indexj, indexi)
                                         end do
                                     end do
                                 end do
@@ -456,12 +494,9 @@ contains
                                 do indexi=1,ni_DAstate
                                     do indexj=1, nj_DAstate
                                         do indexk=1, nk_DAstate
-                                            if (DAMask(indexk, indexj,indexi)==1) then
-                                                NewBase(indexk, indexj, indexi, indext)=NewBase(indexk, indexj, indexi, indext) + &
-                                                    gl_DAstate_kjitn(indexk, indexj, indexi, indext, indexd) * HLTR1HLi_loc(c, indexj, indexi)
-                                            else
-                                                exit
-                                            end if
+                                            if (DAMask(indexk, indexj,indexi)==0) exit
+                                            NewBase(indexk, indexj, indexi, indext)=NewBase(indexk, indexj, indexi, indext) + &
+                                                gl_DAstate_kjitn(indexk, indexj, indexi, indext, indexd) * HLTR1HLi_loc(c, indexj, indexi)
                                         end do
                                     end do
                                 end do
@@ -507,25 +542,34 @@ contains
                     do indexj=0, mysize-1
                         call mpi_barrier(mycomm, ierror)
                         if (myrank==indexj) then
-                            write(*,*) ''
-                            write(*,*) 'myrank: ', myrank
-                            write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
-                            write(*,*) ''
-                            write(*,*) 'gl_NewBase'
-                            write(*,*) ''
-                            do indexi=0,EnsRankZero-1
-                                write(*,*) gl_NewBase(1, 14, 28, (/14,19,23,27/), indexi)
+                            do indexk=0,1
+                                write(*,*) ''
+                                write(*,*) 'myrank: ', myrank, ', x=', 332+10*indexk, ', y=284' 
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                write(*,*) 'gl_NewBase'
+                                write(*,*) ''
+                                do indexi=0,EnsRankZero-1
+                                    write(*,*) gl_NewBase(1, 14, 28+10*indexk, (/14,19,23,27/), indexi)
+                                end do
+                                do indexi=EnsRankZero+1,EnsSize-1
+                                    write(*,*) gl_NewBase(1, 14, 28+10*indexk, (/14,19,23,27/), indexi)
+                                end do
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) ''
+                                write(*,*) 'DAstate_kjit'
+                                write(*,*) ''
+                                write(*,*) DAstate_kjit(1, 14, 28+10*indexk, (/14,19,23,27/))
+                                write(*,*) ''
+                                write(*,*) '-------------------------------------------------------'
+                                write(*,*) '-------------------------------------------------------'
                             end do
-                            do indexi=EnsRankZero+1,EnsSize-1
-                                write(*,*) gl_NewBase(1, 14, 28, (/14,19,23,27/), indexi)
-                            end do
                             write(*,*) ''
-                            write(*,*) '-------------------------------------------------------'
+                            write(*,*) 'ChangeBase'
                             write(*,*) ''
-                            write(*,*) 'DAstate_kjit'
-                            write(*,*) ''
-                            write(*,*) DAstate_kjit(1, 14, 28, (/14,19,23,27/))
+                            write(*,*) ChangeBase
                             write(*,*) ''
                             write(*,*) '-------------------------------------------------------'
                             write(*,*) '-------------------------------------------------------'
@@ -538,21 +582,18 @@ contains
                 do indexd=0,EnsSize-1
                     if (indexd/=EnsRankZero) then
                         c=c+1
-                    do indext=1, ntra_DAstate
-                        do indexi=1,ni_DAstate
-                            do indexj=1, nj_DAstate
-                                do indexk=1, nk_DAstate
-                                    if (DAMask(indexk, indexj,indexi)==1) then
+                        do indext=1, ntra_DAstate
+                            do indexi=1,ni_DAstate
+                                do indexj=1, nj_DAstate
+                                    do indexk=1, nk_DAstate
+                                        if (DAMask(indexk, indexj,indexi)==0) exit
                                         DAstate_kjit(indexk, indexj, indexi, indext)=DAstate_kjit(indexk, indexj, indexi, indext) + &
                                             !gl_NewBase(indexk, indexj, indexi, indext, indexd) * ChangeBase(indexd)
                                             gl_NewBase(indexk, indexj, indexi, indext, indexd) * ChangeBase(c)
-                                    else
-                                        exit
-                                    end if
+                                    end do
                                 end do
                             end do
                         end do
-                    end do
                     end if
                 end do            
             CALL MPI_Win_fence(0, win_NewBase, ierror)

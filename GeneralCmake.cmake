@@ -1,5 +1,6 @@
 # CMake project file for OGSTM
 # author : E.Pascolo, S.Bna, L.Calori
+# edited by: S.Spada (sspada@ogs.it)
 
 # CMAKE setting
 cmake_minimum_required (VERSION 3.18)
@@ -13,6 +14,13 @@ find_package(BFM REQUIRED)
 set(BLA_VENDOR Intel10_64lp_seq)
 find_package(LAPACK REQUIRED)
 
+
+# NEW EnsDA PACKAGES
+set(BLA_VENDOR Intel10_64lp_seq)
+find_package(LAPACK REQUIRED)
+add_definitions(-DExecEns)
+add_definitions(-DExecEnsDA)
+add_definitions(-DExecEnsParams)
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
@@ -42,12 +50,12 @@ add_definitions(-DExecEnsParams)
 
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -g -cpp -align array64byte")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -fpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -fpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -extend_source") #-fpe0 removed due to dsyevr needing ieee exceptions 
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0 ")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid -pedantic -ffree-line-length-0 ") #-ffpe-trap=overflow removed because it may interfere with dsyevr
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
@@ -62,13 +70,9 @@ include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
 
 # Search Fortran module to compile
-set( FOLDERS BIO General  IO  MPI  namelists  PHYS BC)
-  foreach(FOLDER ${FOLDERS})
-  file(GLOB TMP src/${FOLDER}/*)
-  list (APPEND FORTRAN_SOURCES ${TMP})
-endforeach()
-file(GLOB_RECURSE TMP src/ENSEMBLE/*)
+file(GLOB_RECURSE TMP src/*)
 list (APPEND FORTRAN_SOURCES ${TMP})
+list(FILTER FORTRAN_SOURCES EXCLUDE REGEX src/DA/*)
 
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})

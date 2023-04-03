@@ -1,6 +1,9 @@
 ! developed by Simone Spada (sspada@ogs.it) at OGS
 
 module Ens_Utilities
+    use Ens_Mem, &
+        only: EnsWeights
+        
     implicit none
 contains
     function str2int(str)
@@ -50,12 +53,12 @@ contains
             
             !gl_pointer(istart:istop, EnsRankZero) = sum(gl_pointer(istart:istop, :), dim=2)/EnsSize
             do indexi=istart, istop
-                if (gl_pointer(indexi, EnsRankZero)<Ens_Miss_val) gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :))/EnsSize
+                if (gl_pointer(indexi, EnsRankZero)<Ens_Miss_val) gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :)*EnsWeights)
             end do
             if (EnsDebug>1) write(*,*) 'reduction computed: ', EnsRank, ', myrank: ', myrank
             
         CALL MPI_Win_fence(0, window, ierror)
-        if (EnsDebug>1) write(*,*) '2st fenced. EnsRank: ', EnsRank, ', myrank: ', myrank
+        if (EnsDebug>1) write(*,*) '2nd fenced. EnsRank: ', EnsRank, ', myrank: ', myrank
         
     end subroutine
     
@@ -84,7 +87,7 @@ contains
             !gl_pointer(istart:istop, EnsRankZero) = sum(gl_pointer(istart:istop, :), dim=2)/EnsSize
             do indexi=istart, istop
                 if (gl_pointer(indexi, EnsRankZero)<Ens_Miss_val) then
-                    gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :))/EnsSize
+                    gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :)*EnsWeights)
                     gl_pointer(indexi,0:EnsRankZero-1)=gl_pointer(indexi,0:EnsRankZero-1)-gl_pointer(indexi,EnsRankZero)
                     gl_pointer(indexi,EnsRankZero+1:EnsSize-1)=gl_pointer(indexi,EnsRankZero+1:EnsSize-1)-gl_pointer(indexi,EnsRankZero)
                 end if

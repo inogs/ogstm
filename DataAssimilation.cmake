@@ -1,5 +1,6 @@
 # CMake project file for OGSTM
-# author : E.Pascolo, S.Bna, L.Calori
+# original authors : E.Pascolo, S.Bna, L.Calori
+# edited by: S.Spada (sspada@ogs.it)
 
 # CMAKE setting
 cmake_minimum_required (VERSION 2.6)
@@ -48,12 +49,12 @@ add_definitions(-DExecEnsParams)
 
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -cpp -align array64byte")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend_source")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -fpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -fpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -extend_source") #-fpe0 removed due to dsyevr needing ieee exceptions
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
-  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -align array64byte")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid -pedantic -ffree-line-length-0 ") #-ffpe-trap=overflow removed because it may interfere with dsyevr
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
@@ -72,12 +73,8 @@ include_directories(${DA_INCLUDES})
 include_directories(${PETSC_INCLUDES})
 
 # Search Fortran module to compile
-#set( FOLDERS BIO  DA  General  IO  MPI  namelists  PHYS BC)
-#  foreach(FOLDER ${FOLDERS})
-#  file(GLOB TMP src/${FOLDER}/*)
-  file(GLOB_RECURSE TMP src/*)
-  list (APPEND FORTRAN_SOURCES ${TMP})
-#endforeach()
+file(GLOB_RECURSE TMP src/*)
+list (APPEND FORTRAN_SOURCES ${TMP})
 
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})

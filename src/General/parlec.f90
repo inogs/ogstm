@@ -40,7 +40,7 @@
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, latmosph, &
       ahtrb0,trcrat,ahtrc0,vsed,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
-      NAMELIST/General_IO/ nwritetrc, freq_flux_dump, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
+      NAMELIST/General_IO/ nwritetrc, freq_flux_dump, save_bkp_group1, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift
 
       NAMELIST/Domain_Characteristic/  jperio
@@ -202,6 +202,8 @@
 ! ************* namelist GENERAL_IO  *****************
 
       nwritetrc = 10
+      save_bkp_group1=.true.
+      save_bkp_group2=.true.
       read_W_from_file = .false.
       freq_flux_dump = 1
       internal_sponging = .true.

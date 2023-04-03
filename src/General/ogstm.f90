@@ -165,7 +165,7 @@ SUBROUTINE ogstm_initialize()
     
     call Ens_MPI_nodes_find_and_split
     
-    lwp = glrank.EQ.0 ! only member 0 produces a log
+    !lwp = glrank.EQ.0 ! only member 0 produces a log
     !lwp = myrank.EQ.0 ! every ensemble member produces a log
       
 #else

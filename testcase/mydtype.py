@@ -2,8 +2,8 @@
 
 import numpy as np
 
-test_conf=np.dtype([('jpi'   ,np.int)  ,('jpj',np.int)     ,('jpk',np.int),\
-                    ('nprocx',np.int)  ,('nprocy',np.int)  ,\
+test_conf=np.dtype([('jpi'   ,int)  ,('jpj',int)     ,('jpk',int),\
+                    ('nprocx',int)  ,('nprocy',int)  ,\
                     ('lon0'  ,np.float),('lat0',np.float)  ,\
                     ('dx'    ,np.float),('dy'    ,np.float),\
                     ('Start' ,'S100')  ,('End'   ,'S100')  ,\

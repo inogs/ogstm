@@ -98,7 +98,7 @@ def create_bc_nc(test):
 
 # Creating bounmask.nc
 
-    index=np.zeros((jpk,jpj,jpi),np.int)
+    index=np.zeros((jpk,jpj,jpi),int)
 
     waterpoints = 0;
 
@@ -109,7 +109,7 @@ def create_bc_nc(test):
                     waterpoints += 1
                     index[jk,jj,ji] = waterpoints
 
-    index_inv=np.zeros((waterpoints,3),np.int)
+    index_inv=np.zeros((waterpoints,3),int)
 
     waterpoints = 0;
 
@@ -238,7 +238,7 @@ def create_bc_nc(test):
             if (jk ==0 ):
                 tin_idxt += 1
 
-    riv_index=np.ones((tin_idxt),np.int)
+    riv_index=np.ones((tin_idxt),int)
 
     tin_idxt = 0;
 
@@ -300,7 +300,7 @@ def create_bc_nc(test):
         if ( (ji==1) | (jj==1) ) | ( (ji==jpi-2) | (jj==jpj-2) ):
             gib_idxt += 1
 
-    gib_index=np.ones((gib_idxt),np.int)
+    gib_index=np.ones((gib_idxt),int)
 
     gib_idxt = 0;
 

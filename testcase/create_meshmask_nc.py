@@ -109,13 +109,13 @@ def create_meshmask_nc(test):
     ff = np.ones((time,z_a,jpj,jpi),np.double);
 
 #    float nav_lat(y, x) ;
-    nav_lat = np.array(gphit,np.float);
+    nav_lat = np.array(gphit,float);
 
 #    float nav_lev(z) ;
-    nav_lev = np.array(gdept[0,0:jpk,0,0],np.float);
+    nav_lev = np.array(gdept[0,0:jpk,0,0],float);
 
 #    float nav_lon(y, x) ;
-    nav_lon = np.array(glamt,np.float);
+    nav_lon = np.array(glamt,float);
 
 #    float time(time) ;
     timef = 1.;

@@ -20,7 +20,7 @@ def create_bfmmask_nc(test):
     dy=test['dy']
 
 #    double bfmmask( z, y, x) ;
-    bfmmask = np.ones((jpk,jpj,jpi),np.bool);
+    bfmmask = np.ones((jpk,jpj,jpi),bool);
 
     ##############################################################
     # write bfmmask netcdf file !

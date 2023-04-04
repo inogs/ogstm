@@ -93,8 +93,8 @@ def create_bc_nc(test):
     tmask   =  M.variables['tmask'].data[0,:,:,:].astype(bool).copy()
     M.close()
 
-    D3=np.ones((1,jpk,jpj,jpi),np.float)
-    D2=np.ones((1,jpj,jpi),np.float)
+    D3=np.ones((1,jpk,jpj,jpi),float)
+    D2=np.ones((1,jpj,jpi),float)
 
 # Creating bounmask.nc
 
@@ -167,7 +167,7 @@ def create_bc_nc(test):
                 if tmask[0,jj,ji]:
                     atm_idxt += 1
 
-    atm_index=np.ones((atm_idxt),np.float)
+    atm_index=np.ones((atm_idxt),float)
 
     atm_idxt = 0;
 
@@ -201,7 +201,7 @@ def create_bc_nc(test):
 
     filein.close()
 
-    D2=np.ones((jpj,jpi),np.float)
+    D2=np.ones((jpj,jpi),float)
 
 
     for date in CO2_DATE:

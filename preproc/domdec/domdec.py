@@ -16,7 +16,7 @@ def riparto(lenglo,nprocs):
     Returns a numpy array of integers, called jpi or jpj in ogstm '''
     mean_value, remainder = divmod(lenglo,nprocs)
     #print("rem = ", remainder)
-    JP = np.ones((nprocs),np.int)*mean_value + 2
+    JP = np.ones((nprocs),int)*mean_value + 2
     JP[ 0] = JP[ 0] - 1
     JP[-1] = JP[-1] - 1
     for r in range(remainder):
@@ -116,8 +116,8 @@ def candidate_decompositions(tmask, max_proc_i,max_proc_j,nproc):
                     useful to choice between candidates.
 
     '''
-    Needed_procs = np.zeros((max_proc_j,max_proc_i),np.int)
-    Comm_table = np.zeros((max_proc_j,max_proc_i),np.int)
+    Needed_procs = np.zeros((max_proc_j,max_proc_i),int)
+    Comm_table = np.zeros((max_proc_j,max_proc_i),int)
     for i in range(max_proc_i):
         nproci = i+1
         for j in range(max_proc_j):
@@ -151,12 +151,12 @@ def neighbors(M,nproc,nproci,nprocj):
     * WEST, EAST, NORTH, SOUTH, NBONDI, NBONDJ *   1d arrays of integers (nproc)
     '''
     J,I = M.nonzero()
-    WEST =np.zeros((nproc,),dtype=np.int)
-    SOUTH=np.zeros((nproc,),dtype=np.int)
-    EAST =np.zeros((nproc,),dtype=np.int)
-    NORTH=np.zeros((nproc,),dtype=np.int)
-    NBONDI=np.zeros((nproc,),dtype=np.int)
-    NBONDJ=np.zeros((nproc,),dtype=np.int)
+    WEST =np.zeros((nproc,),dtype=int)
+    SOUTH=np.zeros((nproc,),dtype=int)
+    EAST =np.zeros((nproc,),dtype=int)
+    NORTH=np.zeros((nproc,),dtype=int)
+    NBONDI=np.zeros((nproc,),dtype=int)
+    NBONDJ=np.zeros((nproc,),dtype=int)
     
     for rank in range(nproc):
         j = J[rank]
@@ -276,7 +276,7 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
      * nproci, nprocj * integers
     '''
 
-    CANDIDATES = np.zeros((0,8),np.int)
+    CANDIDATES = np.zeros((0,8),int)
     min_nproc = max_nproc -8
     iCandidate=0
     for nproc in range(max_nproc,min_nproc,-1):
@@ -285,8 +285,8 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
         J,I = good.nonzero() # poi vanno incrementati di 1
         nCandidates = len(I)
 
-        HYP_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
-        EFF_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=np.int)
+        HYP_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=int)
+        EFF_COMMUNICATION_LINE=np.zeros(nCandidates,dtype=int)
 
         for k in range(nCandidates):
             nproci = I[k]+1
@@ -298,7 +298,7 @@ def get_best_decomposition(USED_PROCS, COMMUNICATION, max_nproc, jpiglo, jpjglo)
             JPJ = riparto(jpjglo,nprocj)
             xm,ym = np.meshgrid(JPI,JPJ)
             load = (xm*ym).max()
-            linearray = np.array([nproc, nproci, nprocj, JPI.max(), JPJ.max(), load, EFF_COMMUNICATION_LINE[k], iCandidate],dtype=np.int,ndmin=2)
+            linearray = np.array([nproc, nproci, nprocj, JPI.max(), JPJ.max(), load, EFF_COMMUNICATION_LINE[k], iCandidate],dtype=int,ndmin=2)
             CANDIDATES=np.concatenate((CANDIDATES,linearray),axis=0)
             iCandidate = iCandidate+1
 

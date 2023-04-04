@@ -1,5 +1,5 @@
 
-      SUBROUTINE lbc ( ptab, ktype, ksgn,kdoloop, kjstart, kjpend, kstep )
+      SUBROUTINE lbc ( ptab, ktype, ksgn,kdoloop, kjstart, kjpend, kstep, gpu )
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE lbc
@@ -62,6 +62,12 @@
 
       INTEGER ijt, iju
       INTEGER ji, jj, jk
+      logical,optional :: gpu
+      logical :: use_gpu
+
+      use_gpu=.false.
+      if(present(gpu)) use_gpu=gpu
+
 !! 0. Sign setting
 !! ---------------
 
@@ -77,6 +83,8 @@
 !!     Horizontal slab
 !!     ===============
 !!
+
+!$acc kernels default(present) if(use_gpu)
           DO jk = kjstart, kjpend, kstep
 !!
 !!
@@ -177,6 +185,9 @@
 !!     ===========
 !!
            END DO
+
+!$acc end kernels
+           
 !!
 !!
          ELSEIF ( kdoloop.EQ.2 ) THEN
@@ -185,6 +196,8 @@
 !!     Vertical slab
 !!     =============
 !!
+
+!$acc kernels default(present) if(use_gpu)
           DO jj = kjstart, kjpend, kstep
 !!
 !! 1. East-West boundary conditions
@@ -314,6 +327,8 @@
 !!     ===========
 !!
            END DO
+!$acc end kernels 
+
 !!
          ELSEIF ( kdoloop.EQ.3 ) THEN
 !!
@@ -321,6 +336,8 @@
 !!     Vertical slab for a 2D array (jpi,jpj)
 !!     ============================
 !!
+
+!$acc kernels default(present) if(use_gpu)
           DO jj = kjstart, kjpend, kstep
 !!
 !! 1. East-West boundary conditions
@@ -420,6 +437,8 @@
 !!     ===========
 !!
            END DO
+!$acc end kernels 
+
 !!
          ELSE
 !!

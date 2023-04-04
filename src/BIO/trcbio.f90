@@ -1,5 +1,3 @@
-
-      SUBROUTINE trcbio
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE trcbio
@@ -33,182 +31,154 @@
 !!!
 !!!   MODIFICATIONS:
 !!!   --------------
+SUBROUTINE trcbio
+  use myalloc
+  use BIO_mem
+  use BC_mem
+  use mpi
+  use mem, only: D3STATE, D3SOURCE
 
-      USE myalloc
-      USE BIO_mem
-      USE BC_mem
-      USE mpi
+  !----------------------------------------------------------------------
+  ! BEGIN BC_REFACTORING SECTION
+  ! ---------------------------------------------------------------------
+  use bc_set_mod
+  !----------------------------------------------------------------------
+  ! END BC_REFACTORING SECTION
+  ! ---------------------------------------------------------------------
 
-! ----------------------------------------------------------------------
-!  BEGIN BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
+  IMPLICIT NONE
 
-      use bc_set_mod
+  double precision, dimension(jpi * jpj * jpk, 4) :: sediPPY
+  double precision, dimension(jpi * jpj * jpk, jptra_dia) :: local_D3DIAGNOS
+  double precision, dimension(jpi * jpj, jptra_dia_2d) :: local_D2DIAGNOS
+  double precision, dimension(jpi * jpj * jpk, 11) :: er
 
-! ----------------------------------------------------------------------
-!  END BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-      
-      IMPLICIT NONE
+  integer :: jk, jj, ji, jn, jlinear2d, jlinear3d, bottom
+  double precision :: correct_fact, gdept_local, gdeptmax_local
 
+  BIOparttime = MPI_WTIME()
+  
+  ! Initialization
+  D3STATE = 1.0
+  er = 1.0
+  er(:,10) = 8.1
+  tra_DIA = 0.
+  tra_DIA_2d = 0. ! da sistemare (?)
 
-!!!----------------------------------------------------------------------
-!!! local declarations
-!!! ==================
+  ! ogstm_sediPI appear to be unused
+  ogstm_sediPI = 0.
 
-      double precision,dimension(jptra,jpk) :: b
-      double precision,dimension(jpk,jptra) :: a
-      double precision,dimension(4,jpk) :: c
-      double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,11) :: er
-      double precision,dimension(jptra_dia_2d) :: d2
+  ! Set D3STATE (pass state to BFM)
+  do jn = 1, jptra
+    do ji = 1, jpi
+      do jj = 1, jpj
+        if (bfmmask(1, jj, ji) == 0) then
+          cycle
+        else
+          bottom = mbathy(jj, ji)
+          do jk = 1, bottom
+            jlinear3d = jk + (jj - 1) * jpk + (ji - 1) * jpk * jpj
+            D3STATE(jlinear3d, jn) = trn(jk, jj, ji, jn)
+          end do
+        end if
+      end do
+    end do
+  end do
 
-
-      integer :: jk,jj,ji,jb,jn
-      integer :: jtr,jtrmax,tra_idx
-      integer :: bottom
-      double precision :: correct_fact
-
-
-!!!----------------------------------------------------------------------
-!!! statement functions
-!!! ===================
-
-
-!   | --------------|
-!   | BFM MODEL CALL|
-!   | --------------|
-
-        BIOparttime = MPI_WTIME()
-
-          surf_mask(:) = 0.
-          surf_mask(1) = 1.
-! -------------------------------------------------
-
-          ! tra_idx = tra_matrix_gib(1)
-          jtrmax=jptra
-
-! ---------------- Fuori dai punti BFM
-
-      ogstm_sediPI=0.
-      tra_DIA    = 0.
-      tra_DIA_2d = 0. ! da sistemare
-
-
-!    Initialization
-      a        = 1.0
-      er       = 1.0
-      er(:,10) = 8.1
-
-
+  ! Set er 
+  do ji = 1, jpi
+    do jj = 1, jpj
+      if (bfmmask(1, jj, ji) == 0) then
+        cycle
+      else
+        bottom = mbathy(jj, ji)
+        do jk = 1, bottom
+          jlinear3d = jk + (jj - 1) * jpk + (ji - 1) * jpk * jpj
+          if (jk .eq. 1) then
+            er(jlinear3d, 4) = ice ! from 0 to 1 adimensional
+            er(jlinear3d, 5) = ogstm_co2(jj, ji) ! CO2 Mixing Ratios (ppm)  390
+            er(jlinear3d, 7) = DAY_LENGTH(jj, ji) ! fotoperiod expressed in hours
+            er(jlinear3d, 9) = vatm(jj, ji) ! wind speed (m/s)
+          end if
+          er(jlinear3d, 1) = tn(jk, jj, ji) ! Temperature (Celsius)
+          er(jlinear3d, 2) = sn(jk, jj, ji) ! Salinity PSU
+          er(jlinear3d, 3) = rho(jk, jj, ji) ! Density Kg/m3
+          er(jlinear3d, 6) = instant_par(COMMON_DATEstring, xpar(jk, jj, ji)) ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+          er(jlinear3d, 8) = e3t(jk, jj, ji) ! depth in meters of the given cell
+          er(jlinear3d, 10) = ogstm_PH(jk, jj, ji) ! 8.1
 #ifdef gdept1d
-! er(:,11) is calculated outside the loop on ji,jj
-      do jk=1, jpk
-         correct_fact= 1.0D0
-
-         if ( (gdept(jk) .GT. 1000.0D0 ) .AND.  (gdept(jk) .LT. 2000.0D0 )) then
-             correct_fact= 0.25D0
-         endif
-
-         if (gdept(jk) .GE. 2000.0D0 ) then
-             correct_fact= 0.0D0
-         endif
-
-         er(jk,11) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
-      enddo
+          gdept_local = gdept(jk)
+          gdeptmax_local = gdept(jpk)
+#else
+          gdept_local = gdept(jk, jj, ji)
+          gdeptmax_local = gdept(jpk, jj, ji)
 #endif
+          if (gdept_local .lt. 1000.0D0) then
+            correct_fact = 1.0D0
+          else if (gdept_local .lt. 2000.0D0) then
+            correct_fact = 0.25D0
+          else
+            correct_fact = 0.0D0
+          end if
+          er(jlinear3d, 11) = correct_fact * (gdeptmax_local - gdept_local) / gdept_local
+        end do
+      end if
+    end do
+  end do
+   
+  call BFM1D_Input_EcologyDynamics(mbathy, er) ! here mbathy was bottom
+  call BFM1D_reset()
+  call EcologyDynamics()
+  call BFM1D_Output_EcologyDynamics(sediPPY, local_D3DIAGNOS, local_D2DIAGNOS)
 
+  ! The following copies could be avoided
+  do jn = 1, max(4, jptra, jptra_dia)
+    do ji = 1, jpi
+      do jj = 1, jpj
+        if (bfmmask(1, jj, ji) == 0) then
+          cycle
+        else
+          bottom = mbathy(jj, ji)
+          do jk = 1, bottom
+            jlinear3d = jk + (jj - 1) * jpk + (ji - 1) * jpk * jpj
+            if (jn .le. jptra) then
+             tra(jk, jj, ji, jn) = tra(jk, jj, ji, jn) + D3SOURCE(jlinear3d, jn) ! trend
+            end if
+            if (jn .le. jptra_dia) then 
+              tra_DIA(jk, jj, ji, jn) = local_D3DIAGNOS(jlinear3d, jn)
+            end if
+            if (jn .le. 4) then
+              ogstm_sediPI(jk, jj, ji, jn) = sediPPY(jlinear3d, jn)   ! BFM output of sedimentation speed (m/d)
+            end if
+          end do
+        end if
+      end do
+    end do
+  end do
+  
+  do ji = 1, jpi
+    do jj = 1, jpj
+      if (bfmmask(1, jj, ji) == 0) then
+        cycle
+      else
+        bottom = mbathy(jj, ji)
+        jlinear2d = jj + (ji - 1) * jpj
+        tra_DIA_2d(:, jj, ji) = local_D2DIAGNOS(jlinear2d, :)
+        do jk = 1, bottom
+          jlinear3d = jk + (jj - 1) * jpk + (ji - 1) * jpk * jpj
+          ogstm_PH(jk, jj, ji) = local_D3DIAGNOS(jlinear3d, pppH) ! Follows solver guess, put 8.0 if pppH is not defined
+        end do
+      end if
+    end do
+  end do
 
-      DO ji=1,jpi
-      DO jj=1,jpj
-      if (bfmmask(1,jj,ji) == 0) CYCLE
-      bottom = mbathy(jj,ji)
-
-
-                          DO jtr=1, jtrmax
-
-                             a(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
-
-                          END DO
-
-! Environmental regulating factors (er,:)
-
-                          er(1:bottom,1)  = tn (1:bottom,jj,ji)! Temperature (Celsius)
-                          er(1:bottom,2)  = sn (1:bottom,jj,ji)  ! Salinity PSU
-                          er(1:bottom,3)  = rho(1:bottom,jj,ji)        ! Density Kg/m3
-                          er(1       ,4)  = ice                  ! from 0 to 1 adimensional
-                          er(1       ,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
-                          do jk=1, bottom
-                          er(jk,6) = instant_par(COMMON_DATEstring,xpar(jk,jj,ji))  ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
-                          enddo
-                          !if (is_night(COMMON_DATEstring))  then
-                          !    er(1:bottom,6)  = 0.001      
-                          !else
-                          !    er(1:bottom,6)  = 2.0*xpar(1:bottom,jj,ji)
-                          !endif
-                          !write(*,*) 'XPAR',  er(1,6)
-
-                          er(1       ,7)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(1:bottom,8)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1       ,9)  = vatm(jj,ji)                ! wind speed (m/s)
-                          er(1:bottom,10) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
-
-#ifndef gdept1d
-                         do jk=1,bottom
-                             correct_fact= 1.0D0
-                             if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
-                                 correct_fact= 0.25D0
-                             endif
-
-                             if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
-                                 correct_fact= 0.0D0
-                             endif
-
-                             er(jk,11) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
-                         enddo
-#endif
-                          call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
-
-                         call BFM1D_reset()
-
-                         call EcologyDynamics()
-
-                         call BFM1D_Output_EcologyDynamics(b, c, d, d2)
-
-                          DO jtr=1, jtrmax
-                             tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +b(jtr,1:bottom) ! trend
-                          END DO
-
-                          DO jtr=1,4
-                             ogstm_sediPI(1:bottom,jj,ji,jtr) = c(jtr,1:bottom)      ! BFM output of sedimentation speed (m/d)
-                          END DO
-
-
-                          DO jk = 1,bottom
-                          DO jtr=1,jptra_dia
-                             tra_DIA(jtr, jk ,jj,ji) = d(jtr,jk) ! diagnostic
-                          END DO
-                          ENDDO
-
-                         tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
-
-                          ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
-
-      END DO
-      END DO
-
-! ----------------------------------------------------------------------
-!  BEGIN BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
-      call boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
-
-! ----------------------------------------------------------------------
-!  END BC_REFACTORING SECTION
-!  ---------------------------------------------------------------------
-
-
-                BIOparttime =  MPI_WTIME() -BIOparttime
-                BIOtottime  = BIOtottime  + BIOparttime
-               
-      END SUBROUTINE trcbio
+  !---------------------------------------------------------------------
+  ! BEGIN BC_REFACTORING SECTION
+  !---------------------------------------------------------------------
+  call boundaries%fix_diagnostic_vars()
+  !----------------------------------------------------------------------
+  ! END BC_REFACTORING SECTION
+  !---------------------------------------------------------------------
+  BIOparttime = MPI_WTIME() - BIOparttime
+  BIOtottime = BIOtottime + BIOparttime
+END SUBROUTINE trcbio

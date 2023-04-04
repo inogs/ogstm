@@ -418,7 +418,7 @@
        allocate(WESTpoints_recv( 2,WEST_count_recv )) ; WESTpoints_recv  = huge(WESTpoints_recv( 1,1))
        allocate(NORTHpoints_recv(2,NORTH_count_recv)) ; NORTHpoints_recv = huge(NORTHpoints_recv(1,1))
        allocate(SOUTHpoints_recv(2,SOUTH_count_recv)) ; SOUTHpoints_recv = huge(SOUTHpoints_recv(1,1))
-
+     
        allocate(te_send(EAST_count_send )) ; te_send = huge(te_send(1))
        allocate(tw_send(WEST_count_send )) ; tw_send = huge(tw_send(1))
        allocate(tn_send(NORTH_count_send)) ; tn_send = huge(tn_send(1))
@@ -429,6 +429,14 @@
        allocate(tn_recv(NORTH_count_recv)) ; tn_recv = huge(tn_recv(1))
        allocate(ts_recv(SOUTH_count_recv)) ; ts_recv = huge(ts_recv(1))
 
+       !$acc enter data create( EASTpoints_send(1:2, 1:EAST_count_send), WESTpoints_send(1:2, 1:WEST_count_send),  NORTHpoints_send(1:2, 1:NORTH_count_send), SOUTHpoints_send(1:2, 1:SOUTH_count_send) )
+       !$acc enter data create( EASTpoints_recv(1:2, 1:EAST_count_recv), WESTpoints_recv(1:2, 1:WEST_count_recv),  NORTHpoints_recv(1:2, 1:NORTH_count_recv), SOUTHpoints_recv(1:2, 1:SOUTH_count_recv) )
+
+       !$acc enter data create( te_send(1:EAST_count_send ), tw_send(1:WEST_count_send ), tn_send(1:NORTH_count_send), ts_send(1:SOUTH_count_send) )
+       !$acc enter data create( te_recv(1:EAST_count_recv ), tw_recv(1:WEST_count_recv ), tn_recv(1:NORTH_count_recv), ts_recv(1:SOUTH_count_recv) )
+
+       
+       
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
 #endif
@@ -667,7 +675,7 @@ subroutine alloc_tot()
        trn    = huge(trn(1,1,1,1))
        allocate(tra(jpk,jpj,jpi,jptra))                    
        tra    = huge(trn(1,1,1,1))
-       allocate(tra_DIA(jptra_dia,jpk,jpj,jpi))            
+       allocate(tra_DIA(jpk,jpj,jpi,jptra_dia))
        tra_DIA= huge(tra_DIA(1,1,1,1))
        allocate(tra_DIA_2d(jptra_dia_2d,jpj,jpi))
        tra_DIA_2d= huge(tra_DIA_2d(1,1,1))
@@ -697,11 +705,11 @@ subroutine alloc_tot()
        buf           = huge(buf(1,1,1))
        allocate(buf2   (jpj,jpi))                          
        buf2          = huge(buf2(1,1))
-       allocate(tra_DIA_IO(jptra_dia,jpk,jpj,jpi))         
+       allocate(tra_DIA_IO(jpk,jpj,jpi,jptra_dia))
        tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
        allocate(traIO_HIGH(   jpk,jpj,jpi,jptra_HIGH))     
        traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
-       allocate(tra_DIA_IO_HIGH(jptra_dia_HIGH,jpk,jpj,jpi))
+       allocate(tra_DIA_IO_HIGH(jpk,jpj,jpi,jptra_dia_HIGH))
        tra_DIA_IO_HIGH = huge(tra_DIA_IO_HIGH(1,1,1,1))
 
        allocate(tra_DIA_2d_IO(jptra_dia_2d, jpj,jpi))
@@ -795,6 +803,13 @@ subroutine alloc_tot()
             ! myalloc (memory.f90)
 
 #ifdef key_mpp
+
+            !$acc exit data delete(te_send, tw_send, tn_send, ts_send) finalize
+            !$acc exit data delete(te_recv, tw_recv, tn_recv, ts_recv) finalize
+          
+            !$acc exit data delete(EASTpoints_send, WESTpoints_send, NORTHpoints_send, SOUTHpoints_send) finalize
+            !$acc exit data delete(EASTpoints_recv, WESTpoints_recv, NORTHpoints_recv, SOUTHpoints_recv) finalize
+          
             deallocate(EASTpoints_send)
             deallocate(WESTpoints_send)
             deallocate(NORTHpoints_send)

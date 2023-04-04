@@ -54,6 +54,6 @@ def create_Dom_Dec(test):
 
     f01.close()
     f02.close()
-    tmask = np.ones((jpj,jpi),dtype=np.bool)
+    tmask = np.ones((jpj,jpi),dtype=bool)
     domdec.dump_outfile(tmask,nPx*nPy, nPx, nPy, filename=test['Dir'].decode() + '/domdec.txt')
 

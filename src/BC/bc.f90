@@ -301,22 +301,15 @@ contains
     !> It is supposed to assign values to the two diagnostic variables matrixes
     !> in the open boundary cells, where by default bfm is not executed.
     !> Values are set to be equal to the values of the neighbor cells.
-    subroutine fix_diagnostic_vars(self, n_vars_dia, tra_dia, n_vars_dia_2d, tra_dia_2d)
+    subroutine fix_diagnostic_vars(self)
 
         use modul_param, only: jpk, jpj, jpi
+        use modul_param, only: jptra_dia, jptra_dia_2d
+        use myalloc, only: tra_dia, tra_dia_2d
 
         implicit none
 
-        ! TO DO: to be removed. Find a way to enable both testing and production code.
-        ! integer, parameter :: jpk = 125
-        ! integer, parameter :: jpj = 380
-        ! integer, parameter :: jpi = 1085
-
         class(bc), intent(inout) :: self
-        integer, intent(in) :: n_vars_dia
-        double precision, dimension(n_vars_dia, jpk, jpj, jpi), intent(inout) :: tra_dia
-        integer, intent(in) :: n_vars_dia_2d
-        double precision, dimension(n_vars_dia_2d, jpj, jpi), intent(inout) :: tra_dia_2d
 
         ! write(*, *) 'WARN: base class does not implement this method. Only hard open overrides it'
 

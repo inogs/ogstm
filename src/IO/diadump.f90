@@ -222,7 +222,7 @@
                                                         j_contribution=jpk*(jj-1)
                                                         do jk =1 , jpk
                                                                 ind = jk + j_contribution + i_contribution
-                                                                buffDIA(ind) = tra_DIA_IO(var_to_send, jk,jj,ji)
+                                                                buffDIA(ind) = tra_DIA_IO(jk,jj,ji,var_to_send)
                                                         enddo
                                                 enddo
                                         enddo
@@ -233,7 +233,7 @@
                                                         j_contribution=jpk*(jj-1)
                                                         do jk =1 , jpk
                                                                 ind = jk + j_contribution + i_contribution
-                                                                buffDIA(ind) = tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH, jk,jj,ji)
+                                                                buffDIA(ind) = tra_DIA_IO_HIGH(jk,jj,ji,COUNTER_VAR_diag_HIGH)
                                                         enddo
                                                 enddo
                                         enddo

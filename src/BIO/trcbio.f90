@@ -69,7 +69,7 @@
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,16) :: er
+      double precision,dimension(jpk,17) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 #endif
 
@@ -251,6 +251,7 @@
                              er(jk,16) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
                          enddo
 #endif
+                         er(1       ,17)  = 3.14                   ! ATM Hg0    
 
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 

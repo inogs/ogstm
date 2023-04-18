@@ -1,0 +1,55 @@
+&PHYS_num
+    jptra_phys = 7
+    jptra_phys_2d = 3
+/
+
+&PHYS_freq
+    freq_ave_phys        = 1 !  1=group 1, 2 = group 2
+/
+
+&PHYS_3D 
+   physnm(1)="vosaline"
+   physun(1)="PSU"
+   physWR(1)=1
+
+   physnm(2)="votemper"
+   physun(2)="C"
+   physWR(2)=1
+
+   physnm(3)="vovecrtz"
+   physun(3)="m/s"
+   physWR(3)=1
+
+   physnm(4)="votkeavt"
+   physun(4)="m/s"
+   physWR(4)=1
+
+   physnm(5)="e3t"
+   physun(5)="m"
+   physWR(5)=1
+
+   physnm(6)="vozocrtx"
+   physun(6)="m/s"
+   physWR(6)=1
+
+   physnm(7)="vomecrty"
+   physun(7)="m/s"
+   physWR(7)=1
+/
+
+
+&PHYS_2D
+   physnm_2d(1)="sowindsp"
+   physun_2d(1)="m/s"
+   physWR_2d(1)=0
+
+   physnm_2d(2)="sowaflcd"
+   physun_2d(2)="kg/m*2/s"
+   physWR_2d(2)=1
+
+   physnm_2d(3)="soshfldo"
+   physun_2d(3)="W/m2"
+   physWR_2d(3)=0
+
+/
+

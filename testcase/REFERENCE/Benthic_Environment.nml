@@ -1,0 +1,46 @@
+! Settling_parameters !-------------------------------------------------------------------------!
+! BURIAL VELOCITIES into the sediment
+! NAME         [UNIT]/KIND            DESCRIPTION
+! p_burvel_R6     [m/d]          Bottom Burial Velocity for detritus 
+! p_burvel_R2     [m/d]          Bottom Burial Velocity for dissolved
+! p_burvel_PI     [m/d]          Bottom Burial Velocity for plankton 
+! p_burvel_O5     [m/d]          Bottom Burial Velocity for calcite
+! R6DeepBurial    logic          R6 Burial to Deep Sediment (Dunne et al., 2007)
+!-------------------------------------------------------------------------!
+&Settling_parameters  
+    p_burvel_R6       =  1.5      
+    p_burvel_O5       =  30.0     
+    p_burvel_R2       =  0.0      
+    p_burvel_PI       =  0.00     
+    R6DeepBurial      =  .FALSE.  
+/                     
+
+
+
+! BenthicReturn_parameters !-------------------------------------------------------------------------!
+! NAME         [UNIT]/KIND            DESCRIPTION
+! p_rmnQ1x        [d-1]       Remineralization rate of Dissolved OM
+! p_rmnQ6x        [d-1]       Remineralization rate of Particulate OM
+! p_pQIN3          [-]        Partitioning coeff. between NO3 and NH4
+! p_depscale       [m]        Depth level to scale remin. rates (for BFM-NEMO)
+! p_q10            [-]        Q10 value for remineralization rate (=0 disable) 
+! p_qBT           [degC]      Base Temperature for Q10 remin
+! p_chdo        [mmol/m3]     Half-saturation Oxygen conc. for MM^2 (=0 disable)
+!-------------------------------------------------------------------------!
+&BenthicReturn_parameters  
+    p_rmnQ1c               =  0.1   
+    p_rmnQ1n               =  0.1   
+    p_rmnQ1p               =  0.1   
+    p_rmnQ6c               =  0.05  
+    p_rmnQ6n               =  0.05  
+    p_rmnQ6p               =  0.05  
+    p_rmnQ6s               =  0.05  
+    p_pQIN3                =  0.1   
+    p_depscale             =  0.0   
+    p_q10                  =  3.0   
+    p_qBT                  =  20.0  
+    p_chdo                 =  50.0  
+/                          
+
+
+

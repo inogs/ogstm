@@ -1,0 +1,859 @@
+&NATTRC 
+   ctrcnm(1)="O2o"
+   ctrcun(1)="mmol O2/m3"
+   ctrmax(1)=1.000000e+03 
+   ctr_hf(1)=1
+
+   ctrcnm(2)="N1p"
+   ctrcun(2)="mmol P/m3"
+   ctrmax(2)=5.000000e+00 
+   ctr_hf(2)=1
+
+   ctrcnm(3)="N3n"
+   ctrcun(3)="mmol N/m3"
+   ctrmax(3)=5.000000e+02 
+   ctr_hf(3)=1
+
+   ctrcnm(4)="N4n"
+   ctrcun(4)="mmol N/m3"
+   ctrmax(4)=2.000000e+01 
+   ctr_hf(4)=1
+
+   ctrcnm(5)="O4n"
+   ctrcun(5)="mmol N/m3"
+   ctrmax(5)=2.400000e+02 
+   ctr_hf(5)=0
+
+   ctrcnm(6)="N5s"
+   ctrcun(6)="mmol Si/m3"
+   ctrmax(6)=2.500000e+02 
+   ctr_hf(6)=1
+
+   ctrcnm(7)="N6r"
+   ctrcun(7)="mmol S--/m3"
+   ctrmax(7)=5.000000e-01 
+   ctr_hf(7)=0
+
+   ctrcnm(8)="B1c"
+   ctrcun(8)="mg C/m3"
+   ctrmax(8)=5.000000e+02 
+   ctr_hf(8)=0
+
+   ctrcnm(9)="B1n"
+   ctrcun(9)="mmol N/m3"
+   ctrmax(9)=1.500000e+01 
+   ctr_hf(9)=0
+
+   ctrcnm(10)="B1p"
+   ctrcun(10)="mmol P/m3"
+   ctrmax(10)=1.500000e+00 
+   ctr_hf(10)=0
+
+   ctrcnm(11)="P1c"
+   ctrcun(11)="mg C/m3"
+   ctrmax(11)=2.000000e+02 
+   ctr_hf(11)=1
+
+   ctrcnm(12)="P1n"
+   ctrcun(12)="mmol N/m3"
+   ctrmax(12)=5.000000e+00 
+   ctr_hf(12)=0
+
+   ctrcnm(13)="P1p"
+   ctrcun(13)="mmol P/m3"
+   ctrmax(13)=2.000000e-01 
+   ctr_hf(13)=0
+
+   ctrcnm(14)="P1l"
+   ctrcun(14)="mg Chl/m3"
+   ctrmax(14)=2.000000e+00 
+   ctr_hf(14)=1
+
+   ctrcnm(15)="P1s"
+   ctrcun(15)="mmol Si/m3"
+   ctrmax(15)=2.500000e+00 
+   ctr_hf(15)=0
+
+   ctrcnm(16)="P2c"
+   ctrcun(16)="mg C/m3"
+   ctrmax(16)=1.250000e+02 
+   ctr_hf(16)=1
+
+   ctrcnm(17)="P2n"
+   ctrcun(17)="mmol N/m3"
+   ctrmax(17)=4.000000e+00 
+   ctr_hf(17)=0
+
+   ctrcnm(18)="P2p"
+   ctrcun(18)="mmol P/m3"
+   ctrmax(18)=5.000000e-01 
+   ctr_hf(18)=0
+
+   ctrcnm(19)="P2l"
+   ctrcun(19)="mg Chl/m3"
+   ctrmax(19)=1.500000e+00 
+   ctr_hf(19)=1
+
+   ctrcnm(20)="P3c"
+   ctrcun(20)="mg C/m3"
+   ctrmax(20)=2.000000e+02 
+   ctr_hf(20)=1
+
+   ctrcnm(21)="P3n"
+   ctrcun(21)="mmol N/m3"
+   ctrmax(21)=6.000000e+00 
+   ctr_hf(21)=0
+
+   ctrcnm(22)="P3p"
+   ctrcun(22)="mmol P/m3"
+   ctrmax(22)=5.000000e-01 
+   ctr_hf(22)=0
+
+   ctrcnm(23)="P3l"
+   ctrcun(23)="mg Chl/m3"
+   ctrmax(23)=4.000000e+00 
+   ctr_hf(23)=1
+
+   ctrcnm(24)="P4c"
+   ctrcun(24)="mg C/m3"
+   ctrmax(24)=1.000000e+02 
+   ctr_hf(24)=1
+
+   ctrcnm(25)="P4n"
+   ctrcun(25)="mmol N/m3"
+   ctrmax(25)=6.000000e-01 
+   ctr_hf(25)=0
+
+   ctrcnm(26)="P4p"
+   ctrcun(26)="mmol P/m3"
+   ctrmax(26)=1.000000e-01 
+   ctr_hf(26)=0
+
+   ctrcnm(27)="P4l"
+   ctrcun(27)="mg Chl/m3"
+   ctrmax(27)=1.500000e+00 
+   ctr_hf(27)=1
+
+   ctrcnm(28)="Z3c"
+   ctrcun(28)="mg C/m3"
+   ctrmax(28)=1.800000e+01 
+   ctr_hf(28)=0
+
+   ctrcnm(29)="Z3n"
+   ctrcun(29)="mmol N/m3"
+   ctrmax(29)=3.000000e-01 
+   ctr_hf(29)=0
+
+   ctrcnm(30)="Z3p"
+   ctrcun(30)="mmol P/m3"
+   ctrmax(30)=1.000000e-01 
+   ctr_hf(30)=0
+
+   ctrcnm(31)="Z4c"
+   ctrcun(31)="mg C/m3"
+   ctrmax(31)=1.000000e+02 
+   ctr_hf(31)=0
+
+   ctrcnm(32)="Z4n"
+   ctrcun(32)="mmol N/m3"
+   ctrmax(32)=1.500000e+00 
+   ctr_hf(32)=0
+
+   ctrcnm(33)="Z4p"
+   ctrcun(33)="mmol P/m3"
+   ctrmax(33)=3.000000e-01 
+   ctr_hf(33)=0
+
+   ctrcnm(34)="Z5c"
+   ctrcun(34)="mg C/m3"
+   ctrmax(34)=8.000000e+01 
+   ctr_hf(34)=0
+
+   ctrcnm(35)="Z5n"
+   ctrcun(35)="mmol N/m3"
+   ctrmax(35)=3.000000e+00 
+   ctr_hf(35)=0
+
+   ctrcnm(36)="Z5p"
+   ctrcun(36)="mmol P/m3"
+   ctrmax(36)=2.000000e-01 
+   ctr_hf(36)=0
+
+   ctrcnm(37)="Z6c"
+   ctrcun(37)="mg C/m3"
+   ctrmax(37)=1.000000e+02 
+   ctr_hf(37)=0
+
+   ctrcnm(38)="Z6n"
+   ctrcun(38)="mmol N/m3"
+   ctrmax(38)=4.000000e+00 
+   ctr_hf(38)=0
+
+   ctrcnm(39)="Z6p"
+   ctrcun(39)="mmol P/m3"
+   ctrmax(39)=3.000000e-01 
+   ctr_hf(39)=0
+
+   ctrcnm(40)="R1c"
+   ctrcun(40)="mg C/m3"
+   ctrmax(40)=6.000000e+01 
+   ctr_hf(40)=0
+
+   ctrcnm(41)="R1n"
+   ctrcun(41)="mmol N/m3"
+   ctrmax(41)=3.000000e+00 
+   ctr_hf(41)=0
+
+   ctrcnm(42)="R1p"
+   ctrcun(42)="mmol P/m3"
+   ctrmax(42)=3.000000e-01 
+   ctr_hf(42)=0
+
+   ctrcnm(43)="R2c"
+   ctrcun(43)="mg C/m3"
+   ctrmax(43)=5.000000e+02 
+   ctr_hf(43)=0
+
+   ctrcnm(44)="R3c"
+   ctrcun(44)="mg C/m3"
+   ctrmax(44)=1.000000e+05 
+   ctr_hf(44)=0
+
+   ctrcnm(45)="R6c"
+   ctrcun(45)="mg C/m3"
+   ctrmax(45)=2.000000e+02 
+   ctr_hf(45)=0
+
+   ctrcnm(46)="R6n"
+   ctrcun(46)="mmol N/m3"
+   ctrmax(46)=4.000000e+00 
+   ctr_hf(46)=0
+
+   ctrcnm(47)="R6p"
+   ctrcun(47)="mmol P/m3"
+   ctrmax(47)=5.000000e-01 
+   ctr_hf(47)=0
+
+   ctrcnm(48)="R6s"
+   ctrcun(48)="mmol Si/m3"
+   ctrmax(48)=3.000000e+00 
+   ctr_hf(48)=0
+
+   ctrcnm(49)="O3c"
+   ctrcun(49)="mg C/m3"
+   ctrmax(49)=2.000000e+05 
+   ctr_hf(49)=0
+
+   ctrcnm(50)="O3h"
+   ctrcun(50)="mmol eq/m3"
+   ctrmax(50)=2.000000e+04 
+   ctr_hf(50)=0
+
+   ctrcnm(51)="O5c"
+   ctrcun(51)="mg C/m3"
+   ctrmax(51)=2.000000e+05 
+   ctr_hf(51)=0
+
+/
+
+&NATTRC_DIAG
+   dianm(1)="Depth"
+   diaun(1)="m"
+   diahf(1)=0
+   diaWR(1)=0
+
+   dianm(2)="Volume"
+   diaun(2)="m3"
+   diahf(2)=0
+   diaWR(2)=0
+
+   dianm(3)="Area"
+   diaun(3)="m2"
+   diahf(3)=0
+   diaWR(3)=0
+
+   dianm(4)="ETW"
+   diaun(4)="C"
+   diahf(4)=0
+   diaWR(4)=0
+
+   dianm(5)="ESW"
+   diaun(5)="-"
+   diahf(5)=0
+   diaWR(5)=0
+
+   dianm(6)="ERHO"
+   diaun(6)="kg/m3"
+   diahf(6)=0
+   diaWR(6)=0
+
+   dianm(7)="EIR"
+   diaun(7)="uE/m2/s"
+   diahf(7)=0
+   diaWR(7)=0
+
+   dianm(8)="ESS"
+   diaun(8)="g/m3"
+   diahf(8)=0
+   diaWR(8)=0
+
+   dianm(9)="EPR"
+   diaun(9)="dbar"
+   diahf(9)=0
+   diaWR(9)=0
+
+   dianm(10)="DIC"
+   diaun(10)="umol/kg"
+   diahf(10)=1
+   diaWR(10)=1
+
+   dianm(11)="CO2"
+   diaun(11)="umol/kg"
+   diahf(11)=0
+   diaWR(11)=0
+
+   dianm(12)="pCO2"
+   diaun(12)="uatm"
+   diahf(12)=1
+   diaWR(12)=1
+
+   dianm(13)="HCO3"
+   diaun(13)="umol/kg"
+   diahf(13)=0
+   diaWR(13)=0
+
+   dianm(14)="CO3"
+   diaun(14)="umol/kg"
+   diahf(14)=0
+   diaWR(14)=0
+
+   dianm(15)="ALK"
+   diaun(15)="umol eq/kg"
+   diahf(15)=1
+   diaWR(15)=1
+
+   dianm(16)="pH"
+   diaun(16)="-"
+   diahf(16)=1
+   diaWR(16)=1
+
+   dianm(17)="OCalc"
+   diaun(17)="-"
+   diahf(17)=0
+   diaWR(17)=0
+
+   dianm(18)="OArag"
+   diaun(18)="-"
+   diahf(18)=0
+   diaWR(18)=0
+
+   dianm(19)="ffCO2"
+   diaun(19)="uatm"
+   diahf(19)=0
+   diaWR(19)=1
+
+   dianm(20)="totpelc"
+   diaun(20)="g C"
+   diahf(20)=0
+   diaWR(20)=0
+
+   dianm(21)="totpeln"
+   diaun(21)="g N"
+   diahf(21)=0
+   diaWR(21)=0
+
+   dianm(22)="totpelp"
+   diaun(22)="g P"
+   diahf(22)=0
+   diaWR(22)=0
+
+   dianm(23)="totpels"
+   diaun(23)="g Si"
+   diahf(23)=0
+   diaWR(23)=0
+
+   dianm(24)="cxoO2"
+   diaun(24)="mmol O2/m3"
+   diahf(24)=0
+   diaWR(24)=0
+
+   dianm(25)="eO2mO2"
+   diaun(25)="-"
+   diahf(25)=0
+   diaWR(25)=0
+
+   dianm(26)="Chla"
+   diaun(26)="mg Chl/m3"
+   diahf(26)=1
+   diaWR(26)=0
+
+   dianm(27)="flPTN6r"
+   diaun(27)="mmol O2/m3/d"
+   diahf(27)=0
+   diaWR(27)=0
+
+   dianm(28)="flN3O4n"
+   diaun(28)="mmol N/m3/d"
+   diahf(28)=0
+   diaWR(28)=0
+
+   dianm(29)="flN4N3n"
+   diaun(29)="mmol N/m3/d"
+   diahf(29)=0
+   diaWR(29)=0
+
+   dianm(30)="sediR2"
+   diaun(30)="m/d"
+   diahf(30)=0
+   diaWR(30)=0
+
+   dianm(31)="sediR3"
+   diaun(31)="m/d"
+   diahf(31)=0
+   diaWR(31)=0
+
+   dianm(32)="sediR6"
+   diaun(32)="m/d"
+   diahf(32)=0
+   diaWR(32)=0
+
+   dianm(33)="sediO5"
+   diaun(33)="m/d"
+   diahf(33)=0
+   diaWR(33)=0
+
+   dianm(34)="xEPS"
+   diaun(34)="1/m"
+   diahf(34)=0
+   diaWR(34)=0
+
+   dianm(35)="ABIO_eps"
+   diaun(35)="1/m"
+   diahf(35)=0
+   diaWR(35)=0
+
+   dianm(36)="BGE"
+   diaun(36)="-"
+   diahf(36)=0
+   diaWR(36)=0
+
+   dianm(37)="BIOALK"
+   diaun(37)="mmol/m3"
+   diahf(37)=0
+   diaWR(37)=0
+
+   dianm(38)="qpcPPY_iiP1"
+   diaun(38)="mmol P/mg C"
+   diahf(38)=0
+   diaWR(38)=0
+
+   dianm(39)="qpcPPY_iiP2"
+   diaun(39)="mmol P/mg C"
+   diahf(39)=0
+   diaWR(39)=0
+
+   dianm(40)="qpcPPY_iiP3"
+   diaun(40)="mmol P/mg C"
+   diahf(40)=0
+   diaWR(40)=0
+
+   dianm(41)="qpcPPY_iiP4"
+   diaun(41)="mmol P/mg C"
+   diahf(41)=0
+   diaWR(41)=0
+
+   dianm(42)="qncPPY_iiP1"
+   diaun(42)="mmol N/mg C"
+   diahf(42)=0
+   diaWR(42)=0
+
+   dianm(43)="qncPPY_iiP2"
+   diaun(43)="mmol N/mg C"
+   diahf(43)=0
+   diaWR(43)=0
+
+   dianm(44)="qncPPY_iiP3"
+   diaun(44)="mmol N/mg C"
+   diahf(44)=0
+   diaWR(44)=0
+
+   dianm(45)="qncPPY_iiP4"
+   diaun(45)="mmol N/mg C"
+   diahf(45)=0
+   diaWR(45)=0
+
+   dianm(46)="qscPPY_iiP1"
+   diaun(46)="mmol Si/mg C"
+   diahf(46)=0
+   diaWR(46)=0
+
+   dianm(47)="qscPPY_iiP2"
+   diaun(47)="mmol Si/mg C"
+   diahf(47)=0
+   diaWR(47)=0
+
+   dianm(48)="qscPPY_iiP3"
+   diaun(48)="mmol Si/mg C"
+   diahf(48)=0
+   diaWR(48)=0
+
+   dianm(49)="qscPPY_iiP4"
+   diaun(49)="mmol Si/mg C"
+   diahf(49)=0
+   diaWR(49)=0
+
+   dianm(50)="qlcPPY_iiP1"
+   diaun(50)="mg Chl /mg C"
+   diahf(50)=0
+   diaWR(50)=0
+
+   dianm(51)="qlcPPY_iiP2"
+   diaun(51)="mg Chl /mg C"
+   diahf(51)=0
+   diaWR(51)=0
+
+   dianm(52)="qlcPPY_iiP3"
+   diaun(52)="mg Chl /mg C"
+   diahf(52)=0
+   diaWR(52)=0
+
+   dianm(53)="qlcPPY_iiP4"
+   diaun(53)="mg Chl /mg C"
+   diahf(53)=0
+   diaWR(53)=0
+
+   dianm(54)="qccPPY_iiP1"
+   diaun(54)="mg C/mg C"
+   diahf(54)=0
+   diaWR(54)=0
+
+   dianm(55)="qccPPY_iiP2"
+   diaun(55)="mg C/mg C"
+   diahf(55)=0
+   diaWR(55)=0
+
+   dianm(56)="qccPPY_iiP3"
+   diaun(56)="mg C/mg C"
+   diahf(56)=0
+   diaWR(56)=0
+
+   dianm(57)="qccPPY_iiP4"
+   diaun(57)="mg C/mg C"
+   diahf(57)=0
+   diaWR(57)=0
+
+   dianm(58)="qpcMEZ_iiZ3"
+   diaun(58)="mmol P/mg C"
+   diahf(58)=0
+   diaWR(58)=0
+
+   dianm(59)="qpcMEZ_iiZ4"
+   diaun(59)="mmol P/mg C"
+   diahf(59)=0
+   diaWR(59)=0
+
+   dianm(60)="qncMEZ_iiZ3"
+   diaun(60)="mmol N/mg C"
+   diahf(60)=0
+   diaWR(60)=0
+
+   dianm(61)="qncMEZ_iiZ4"
+   diaun(61)="mmol N/mg C"
+   diahf(61)=0
+   diaWR(61)=0
+
+   dianm(62)="qpcMIZ_iiZ5"
+   diaun(62)="mmol P/mg C"
+   diahf(62)=0
+   diaWR(62)=0
+
+   dianm(63)="qpcMIZ_iiZ6"
+   diaun(63)="mmol P/mg C"
+   diahf(63)=0
+   diaWR(63)=0
+
+   dianm(64)="qncMIZ_iiZ5"
+   diaun(64)="mmol N/mg C"
+   diahf(64)=0
+   diaWR(64)=0
+
+   dianm(65)="qncMIZ_iiZ6"
+   diaun(65)="mmol N/mg C"
+   diahf(65)=0
+   diaWR(65)=0
+
+   dianm(66)="qpcOMT_iiR1"
+   diaun(66)="mmol N/mg C"
+   diahf(66)=0
+   diaWR(66)=0
+
+   dianm(67)="qpcOMT_iiR2"
+   diaun(67)="mmol N/mg C"
+   diahf(67)=0
+   diaWR(67)=0
+
+   dianm(68)="qpcOMT_iiR3"
+   diaun(68)="mmol N/mg C"
+   diahf(68)=0
+   diaWR(68)=0
+
+   dianm(69)="qpcOMT_iiR6"
+   diaun(69)="mmol N/mg C"
+   diahf(69)=0
+   diaWR(69)=0
+
+   dianm(70)="qncOMT_iiR1"
+   diaun(70)="mmol P/mg C"
+   diahf(70)=0
+   diaWR(70)=0
+
+   dianm(71)="qncOMT_iiR2"
+   diaun(71)="mmol P/mg C"
+   diahf(71)=0
+   diaWR(71)=0
+
+   dianm(72)="qncOMT_iiR3"
+   diaun(72)="mmol P/mg C"
+   diahf(72)=0
+   diaWR(72)=0
+
+   dianm(73)="qncOMT_iiR6"
+   diaun(73)="mmol P/mg C"
+   diahf(73)=0
+   diaWR(73)=0
+
+   dianm(74)="qscOMT_iiR1"
+   diaun(74)="mmol Si/mg C"
+   diahf(74)=0
+   diaWR(74)=0
+
+   dianm(75)="qscOMT_iiR2"
+   diaun(75)="mmol Si/mg C"
+   diahf(75)=0
+   diaWR(75)=0
+
+   dianm(76)="qscOMT_iiR3"
+   diaun(76)="mmol Si/mg C"
+   diahf(76)=0
+   diaWR(76)=0
+
+   dianm(77)="qscOMT_iiR6"
+   diaun(77)="mmol Si/mg C"
+   diahf(77)=0
+   diaWR(77)=0
+
+   dianm(78)="qpcPBA_iiB1"
+   diaun(78)="mmol P/mg C"
+   diahf(78)=0
+   diaWR(78)=0
+
+   dianm(79)="qncPBA_iiB1"
+   diaun(79)="mmol N/mg C"
+   diahf(79)=0
+   diaWR(79)=0
+
+   dianm(80)="sediPPY_iiP1"
+   diaun(80)="m/d"
+   diahf(80)=0
+   diaWR(80)=0
+
+   dianm(81)="sediPPY_iiP2"
+   diaun(81)="m/d"
+   diahf(81)=0
+   diaWR(81)=0
+
+   dianm(82)="sediPPY_iiP3"
+   diaun(82)="m/d"
+   diahf(82)=0
+   diaWR(82)=0
+
+   dianm(83)="sediPPY_iiP4"
+   diaun(83)="m/d"
+   diahf(83)=0
+   diaWR(83)=0
+
+   dianm(84)="sediMIZ_iiZ5"
+   diaun(84)="m/d"
+   diahf(84)=0
+   diaWR(84)=0
+
+   dianm(85)="sediMIZ_iiZ6"
+   diaun(85)="m/d"
+   diahf(85)=0
+   diaWR(85)=0
+
+   dianm(86)="sediMEZ_iiZ3"
+   diaun(86)="m/d"
+   diahf(86)=0
+   diaWR(86)=0
+
+   dianm(87)="sediMEZ_iiZ4"
+   diaun(87)="m/d"
+   diahf(87)=0
+   diaWR(87)=0
+
+   dianm(88)="sunPPY_iiP1"
+   diaun(88)="1/d"
+   diahf(88)=0
+   diaWR(88)=0
+
+   dianm(89)="sunPPY_iiP2"
+   diaun(89)="1/d"
+   diahf(89)=0
+   diaWR(89)=0
+
+   dianm(90)="sunPPY_iiP3"
+   diaun(90)="1/d"
+   diahf(90)=0
+   diaWR(90)=0
+
+   dianm(91)="sunPPY_iiP4"
+   diaun(91)="1/d"
+   diahf(91)=0
+   diaWR(91)=0
+
+   dianm(92)="eiPPY_iiP1"
+   diaun(92)="-"
+   diahf(92)=0
+   diaWR(92)=0
+
+   dianm(93)="eiPPY_iiP2"
+   diaun(93)="-"
+   diahf(93)=0
+   diaWR(93)=0
+
+   dianm(94)="eiPPY_iiP3"
+   diaun(94)="-"
+   diahf(94)=0
+   diaWR(94)=0
+
+   dianm(95)="eiPPY_iiP4"
+   diaun(95)="-"
+   diahf(95)=0
+   diaWR(95)=0
+
+   dianm(96)="ELiPPY_iiP1"
+   diaun(96)="W/m2"
+   diahf(96)=0
+   diaWR(96)=0
+
+   dianm(97)="ELiPPY_iiP2"
+   diaun(97)="W/m2"
+   diahf(97)=0
+   diaWR(97)=0
+
+   dianm(98)="ELiPPY_iiP3"
+   diaun(98)="W/m2"
+   diahf(98)=0
+   diaWR(98)=0
+
+   dianm(99)="ELiPPY_iiP4"
+   diaun(99)="W/m2"
+   diahf(99)=0
+   diaWR(99)=0
+
+   dianm(100)="exPPYR2ac_iiP1"
+   diaun(100)="mg C/ m3/d"
+   diahf(100)=1
+   diaWR(100)=1
+
+   dianm(101)="exPPYR2ac_iiP2"
+   diaun(101)="mg C/ m3/d"
+   diahf(101)=1
+   diaWR(101)=1
+
+   dianm(102)="exPPYR2ac_iiP3"
+   diaun(102)="mg C/ m3/d"
+   diahf(102)=1
+   diaWR(102)=1
+
+   dianm(103)="exPPYR2ac_iiP4"
+   diaun(103)="mg C/ m3/d"
+   diahf(103)=1
+   diaWR(103)=1
+
+   dianm(104)="ruPPYc"
+   diaun(104)="mg C/m3/d"
+   diahf(104)=1
+   diaWR(104)=1
+
+   dianm(105)="resPPYc"
+   diaun(105)="mg C/m3/d"
+   diahf(105)=1
+   diaWR(105)=1
+
+/ 
+
+&NATTRC_DIAG_2D
+   dianm_2d(1)="Area2d"
+   diaun_2d(1)="m2"
+   diahf_2d(1)=0
+   diaWR_2d(1)=0
+
+   dianm_2d(2)="ThereIsLight"
+   diaun_2d(2)="-"
+   diahf_2d(2)=0
+   diaWR_2d(2)=0
+
+   dianm_2d(3)="SUNQ"
+   diaun_2d(3)="h"
+   diahf_2d(3)=0
+   diaWR_2d(3)=0
+
+   dianm_2d(4)="EWIND"
+   diaun_2d(4)="m/s"
+   diahf_2d(4)=0
+   diaWR_2d(4)=0
+
+   dianm_2d(5)="EICE"
+   diaun_2d(5)="-"
+   diahf_2d(5)=0
+   diaWR_2d(5)=0
+
+   dianm_2d(6)="ETAUB"
+   diaun_2d(6)="N m/s"
+   diahf_2d(6)=0
+   diaWR_2d(6)=0
+
+   dianm_2d(7)="EPCO2air"
+   diaun_2d(7)="uatm"
+   diahf_2d(7)=0
+   diaWR_2d(7)=0
+
+   dianm_2d(8)="CO2airflux"
+   diaun_2d(8)="mmol/m2/d"
+   diahf_2d(8)=1
+   diaWR_2d(8)=1
+
+   dianm_2d(9)="dpco2"
+   diaun_2d(9)="uatm"
+   diahf_2d(9)=0
+   diaWR_2d(9)=0
+
+   dianm_2d(10)="dpo2"
+   diaun_2d(10)="atm"
+   diahf_2d(10)=0
+   diaWR_2d(10)=0
+
+   dianm_2d(11)="totsysc"
+   diaun_2d(11)="g C"
+   diahf_2d(11)=0
+   diaWR_2d(11)=1
+
+   dianm_2d(12)="totsysn"
+   diaun_2d(12)="g N"
+   diahf_2d(12)=0
+   diaWR_2d(12)=0
+
+   dianm_2d(13)="totsysp"
+   diaun_2d(13)="g P"
+   diahf_2d(13)=0
+   diaWR_2d(13)=0
+
+   dianm_2d(14)="totsyss"
+   diaun_2d(14)="g Si"
+   diahf_2d(14)=0
+   diaWR_2d(14)=0
+
+/
+

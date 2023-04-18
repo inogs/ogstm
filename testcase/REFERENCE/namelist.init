@@ -1,0 +1,79 @@
+&NAMHDF
+   aht0   =  -3.e9,
+/
+&NAMEOS
+   neos   =      0,
+   Rau0   =  1020.,
+   ralpha =  2.e-4,
+   rbeta  =  0.001,
+/
+&NAMRUN
+   CalendarType = 1,
+   nsptint = 1, 
+/
+
+&natnum     
+            rdt           =  1800,
+            variable_rdt  = .true.
+            rsc           =    1.,
+            rtrn          = 1.e-25,
+            ndttrc        = 1.0,
+            ncor          = 1,
+            ladv          = .true.,
+            lhdf          = .true.,
+            latmosph      = .true.,
+            lsbc          = .true.,
+            lbfm          = .true.,
+            lzdf          = .true.,
+            lsnu          = .true.,
+            vsed          = 3.0,
+            vsedO5c       = 30.0,
+            photop        = .false.
+            atlantic_bfm  = .true.
+            bottom_flux   = 1.
+            Euphotic_lev  = 200.
+          is_free_surface = .false.
+/
+
+&General_IO
+
+   nwritetrc = 10,
+   freq_ave_phys        = 1 ! 0 = none, 1=group 1, 2 = group 2
+   freq_flux_dump       = 1 ! 1=group 1, 2 = group 2
+   save_bkp_group2      = .true.
+   deflate_ave          = 0
+   deflate_level_ave    = 4
+   deflate_rst          = 1
+   deflate_level_rst    = 4
+   isCheckLOG = .false.
+   read_W_from_file = .false.
+   internal_sponging = .true.
+   ingv_files_direct_reading = .false.
+   ingv_lon_shift   = 0 ! for 1/24 set to 222
+/
+
+
+
+&Domain_Characteristic
+      jperio=0  
+/
+
+&DA_setup
+    DA_Nprocs = 20,
+    TREd_procs_per_node = 5,
+    max_procs_per_one_node = 9,
+    satfile_suffix = "_d-OC_CNR-L4-CHL-MedOC4_SAM_7KM-MED-REP-v02.nc",
+    satvarname     = "CHL"
+    AssimilationLevels_sat = 36
+    AssimilationLevels_float = 50
+/
+
+&Number_Fluxes
+      jpflx = 13,
+      jpwind=3,
+      jpemp=4,
+      jpice=5,
+      jpqsr=6,
+      jpkef=7,
+/
+

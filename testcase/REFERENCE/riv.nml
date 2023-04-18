@@ -1,0 +1,16 @@
+&VARS_DIMENSION
+
+    n_vars = 6
+
+/
+
+&CORE
+
+    vars(1) = "N1p"
+    vars(2) = "N3n"
+    vars(3) = "N5s"
+    vars(4) = "O3c"
+    vars(5) = "O3h"
+    vars(6) = "O2o"
+
+/

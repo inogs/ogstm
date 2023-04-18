@@ -1,0 +1,104 @@
+! standalone_nml !-------------------------------------------------------------------------!
+!NAME		KIND	DESCRIPTION
+!nboxes 	integer	Number of water volumes (boxes)
+!indepth 	real 	Depth of each box (m)
+!latitude 	real 	Latitude of each box
+!longitude 	real 	Longitude of each box
+!maxdelt 	real 	Maximum timestep duration (s)
+!mindelt 	real 	Minimum timestep duration (s)
+!method 	integer Integration method
+!			1. Euler forward
+!			2. Runge-Kutta 2nd order
+!			3. Leap-frog
+!-------------------------------------------------------------------------
+&standalone_nml  
+    nboxes       =  1       
+    indepth      =  5.0     
+    latitude     =  45.0    
+    longitude    =  13.5    
+    maxdelt      =  8640.0  
+    mindelt      =  1.0     
+    method       =  2       
+/                
+
+
+
+! time_nml !-------------------------------------------------------------------------!
+!Specify time related formats and variables here.
+!timefmt	integer	implicitly uses timestep=maxdelt
+!               	1- MaxN only - fake start time used.
+!               	2- start and stop - MaxN calculated.
+!               	3- start and MaxN - stop calculated.
+!               	4- simdays - fake start time used 
+!			   and MaxN calculated.
+!MaxN		integer	do loop from n=1,MaxN
+!start		string	Initial time: YYYY/MM/DD HH:MM:SS
+!stop		string	Final   time: YYYY/MM/DD HH:MM:SS
+!-------------------------------------------------------------------------!
+&time_nml    
+    timefmt  =  2                      
+    MaxN     =  144                    
+    simdays  =  5760                   
+    start    =  '2000-01-01 00:00:00'  
+    stop     =  '2010-01-01 00:00:00'  
+/            
+
+
+
+! forcings_nml !-------------------------------------------------------------------------!
+!forcing_method integer	Choice of the external forcing functions
+!			1 = analytical forcings
+!			2 = from file
+!			3 = interactive fluxes (not yet implemented)
+!
+!Method 1: Analytical forcing functions
+!lw		real	Sinusoidal light intensity (winter) W m^-2
+!ls		real	Sinusoidal light intensity (summer) W m^-2
+!sw		real	Sinusoidal salinity (winter)
+!ss		real	Sinusoidal salinity (summer)
+!tw		real	Sinusoidal temperature (winter) degC
+!ts		real	Sinusoidal temperature (summer) degC
+!tde		real	Sinusoidal temperature daily excursion degC
+!ww		real	Sinusoidal wind (winter) m/s
+!ws		real	Sinusoidal wind (summer) m/s
+!CO2inc         real    Linear increase in CO2 air partial pressure [% per year]
+!
+!Method 2: data file
+!forcing_file	char	Filename for external forcings
+!
+!use_external_data logical Read external data (user defined)
+!data_file	   char	   Filename for external data
+!
+!Bottom boundary conditions for benthic-only simulations
+!(not used in pelagic simulations)
+!botdep_c       real    Organic carbon deposition rate (mg C m^-2 d^-1)
+!botdep_n       real    Organic nitrogen deposition rate (mmol m^-2 d^-1)
+!botdep_p       real    Organic phosphorus deposition rate (mmol m^-2 d^-1)
+!botdep_si      real    Organic silicate deposition rate (mmol m^-2 d^-1)
+!botox_o       real    Pelagic oxygen ventilation rate (mmol m^-2 d^-1)
+!
+!-------------------------------------------------------------------------!
+&forcings_nml          
+    forcing_method     =  1        
+    ltype              =  1        
+    lw                 =  20.0     
+    ls                 =  300.0    
+    sw                 =  37.0     
+    ss                 =  34.0     
+    tw                 =  8.0      
+    ts                 =  28.0     
+    tde                =  1.0      
+    ww                 =  20.0     
+    ws                 =  10.0     
+    forcing_file       =  ''       
+    use_external_data  =  .false.  
+    data_file          =  ''       
+    botdep_c           =  0.0      
+    botdep_n           =  0.0      
+    botdep_p           =  0.0      
+    botdep_si          =  0.0      
+    botox_o            =  0.0      
+/                      
+
+
+

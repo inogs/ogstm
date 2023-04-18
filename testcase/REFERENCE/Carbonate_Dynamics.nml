@@ -1,0 +1,37 @@
+! CSYS_parameters  !-------------------------------------------------------------------------!
+! CARBONATE SYSYEM SETTING
+! NAME            [UNIT]/KIND             DESCRIPTION
+! AtmCO20          [ppmv]           Initial atmospheric concentration of CO2
+! MaxIterPHsolver  integer          Maximum number of iterations for SolveSAPHE (default 50)
+! CalcBioAlk       logical          Compute biological processes corrections on total alkalinity
+!              ---------  Parameters for calcium and calcite ---------
+! p_kdca          [d-1]           Calcite dissolution rate constant
+! p_nomega        [-]             Order of the dissolution rate dependence on Omega
+!              ---------  EXTERNAL DATA INPUT STRUCTURES -----------
+! AtmCO2_N       structure        Read external data for atmospheric CO2 values
+! AtmSLP_N       structure        Read external data for atmospheric sea level pressure
+! Example of general input structure for the data structure:
+!          ! Read  !   File                               ! NetCDF  !  Var    !
+!          ! Input !   name                               ! Logical !  name   !
+! AtmCO2_N =    0  , 'CMIP6_Historical_GHG_1765_2014.dat' , .FALSE.  , 'CO2'  ,
+!          !  RefTime          ! Input      !   Time   !
+!          !  yyyymmdd         ! Frequency  !  interp  !
+!           '1765-01-01 00:00' ,  'yearly'  ,  .TRUE.
+!
+! Convention for Input reading : 0 = use constant value (default if struct is not initialized)
+!                                1 = read timeseries file ( e.g. CO2 mixing ratios)
+!                                2 = read 2D fields using NEMO fldread
+!                                3 = field from a coupled model (e.g. atmospheric SLP from OGCM)
+!-----------------------------------------------------------------------------------!
+&CSYS_parameters     
+    AtmCO20          =  370.0E0  
+    MaxIterPHsolver  =  50       
+    CalcBioAlk       =  .TRUE.   
+    AtmCO2_N         =  0        'CMIP5_Historical_GHG_1765_2005.dat'  .FALSE.  'CO2'     '1764-07-01 00:00'  'yearly'  .TRUE.  
+    AtmSLP_N         =  0        'AtmSLP.nc'                           .TRUE.   'AtmSLP'  '1764-07-01 00:00'  'dummy'   .TRUE.  
+    p_kdca           =  10.9     
+    p_nomega         =  1        
+/                    
+
+
+

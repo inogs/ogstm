@@ -51,7 +51,8 @@ def compare_dumps(subdirectory):
 def print_results(tests):
     print('\n' + 'VARIABLE' + 8 * ' ' + 'MAX DIFF' + 8 * ' ' + 'RESULT')
     print(48 * "=")
-    for varname, (ispassed, maxdiff) in tests.items():
+    for varname in sorted(tests.keys()):
+        ispassed, maxdiff = tests[varname]
         print(f"{varname:16}{maxdiff:.2e}" + 8 * ' ', end='')
         print(colorize('PASS') if ispassed else colorize('FAIL', passed=False))
     if all(ispassed for ispassed, _ in tests.values()):

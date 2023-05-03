@@ -6,12 +6,9 @@ from pathlib import Path
 from tqdm import tqdm
 from colorama import Fore as fore
 from colorama import Style as stl
-from colorama import init
+from colorama import init as colorama_init
 import netCDF4 as nc
 import numpy as np
-
-init()
-
 
 parser = argparse.ArgumentParser(prog=__file__, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('dir1', type=Path, help="Path of first dir")
@@ -31,11 +28,10 @@ def intersect(A, B):
     return set.intersection(set(A), set(B))
 
 def allclose(xs, ys):
-    return np.allclose(xs, ys, rtol=cli_args.rtol, atol=cli_args.atol)
+    return np.ma.allclose(xs, ys, rtol=cli_args.rtol, atol=cli_args.atol)
 
 def colorize(string, passed=True):
     return stl.BRIGHT + (fore.GREEN if passed else fore.RED) + string + stl.RESET_ALL
-
 
 def compare_dumps(subdirectory):
     files_1, files_2 = [getfiles(directory / subdirectory) for directory in [cli_args.dir1, cli_args.dir2]]
@@ -47,25 +43,27 @@ def compare_dumps(subdirectory):
         for varname in variables:
             var_1, var_2 = [ds[varname][:] for ds in [ds_1, ds_2]]
             ispassed = allclose(var_1, var_2)
-            err = np.abs(var_1 - var_2).max()
-            tests[varname] = ispassed, err
+            diffs = np.ma.abs(var_1 - var_2)
+            tests[varname] = ispassed, diffs.max()
     
     return tests
+
+def print_results(tests):
+    print('\n' + 'VARIABLE' + 8 * ' ' + 'MAX DIFF' + 9 * ' ' + 'RESULT' + 26 * ' ')
+    print(48 * "=")
+    for varname, (ispassed, maxdiff) in tests.items():
+        print(f"{varname:16}{maxdiff:.2e}" + 9 * ' ', end='')
+        print(colorize('PASS') if ispassed else colorize('FAIL', passed=False))
+    if all(ispassed for ispassed, _ in tests.values()):
+        print(colorize(f"\nAll tests passed"))
+    else:
+        print(colorize(f"\nSome tests failed", passed=False))
+
+colorama_init()
 
 if __name__ == '__main__':
     tqdm.write("Running tests\n")
     tests = compare_dumps(cli_args.subdir)
+    print_results(tests)
    
-    print('\n' + 'VARIABLE' + 8 * ' ' + 'MAX ERROR' + 8 * ' ' + 'RESULT' + 26 * ' ')
-    print(48 * "=")
-    for (varname, (ispassed, err)) in tests.items():
-        tqdm.write(f"{varname:16}{err:.2e}" + 9 * ' ', end='')
-        if ispassed:
-            print(colorize('PASS'))
-        else:
-            print(colorize('FAIL', passed=False))
-    if all(ispassed for ispassed, _ in tests.values()):
-        print(colorize(f"\nAll tests passed for {cli_args.subdir}"))
-    else:
-        print(colorize(f"\nSome tests failed for {cli_args.subdir}", passed=False))
 

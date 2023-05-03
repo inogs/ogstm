@@ -49,10 +49,10 @@ def compare_dumps(subdirectory):
     return tests
 
 def print_results(tests):
-    print('\n' + 'VARIABLE' + 8 * ' ' + 'MAX DIFF' + 9 * ' ' + 'RESULT' + 26 * ' ')
+    print('\n' + 'VARIABLE' + 8 * ' ' + 'MAX DIFF' + 8 * ' ' + 'RESULT')
     print(48 * "=")
     for varname, (ispassed, maxdiff) in tests.items():
-        print(f"{varname:16}{maxdiff:.2e}" + 9 * ' ', end='')
+        print(f"{varname:16}{maxdiff:.2e}" + 8 * ' ', end='')
         print(colorize('PASS') if ispassed else colorize('FAIL', passed=False))
     if all(ispassed for ispassed, _ in tests.values()):
         print(colorize(f"\nAll tests passed"))

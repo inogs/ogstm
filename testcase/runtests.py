@@ -2,6 +2,7 @@
 
 import argparse
 import os
+import sys
 from pathlib import Path
 from tqdm import tqdm
 from colorama import Fore as fore
@@ -48,6 +49,9 @@ def compare_dumps(subdirectory):
     
     return tests
 
+def allpassed(tests):
+    return all(ispassed for ispassed, _ in tests.values())
+
 def print_results(tests):
     print('\n' + 'VARIABLE' + 8 * ' ' + 'MAX DIFF' + 8 * ' ' + 'RESULT')
     print(48 * "=")
@@ -55,10 +59,6 @@ def print_results(tests):
         ispassed, maxdiff = tests[varname]
         print(f"{varname:16}{maxdiff:.2e}" + 8 * ' ', end='')
         print(colorize('PASS') if ispassed else colorize('FAIL', passed=False))
-    if all(ispassed for ispassed, _ in tests.values()):
-        print(colorize(f"\nAll tests passed"))
-    else:
-        print(colorize(f"\nSome tests failed", passed=False))
 
 colorama_init()
 
@@ -66,5 +66,9 @@ if __name__ == '__main__':
     tqdm.write("Running tests\n")
     tests = compare_dumps(cli_args.subdir)
     print_results(tests)
+    if allpassed(tests):
+        print(colorize(f"\nAll tests passed"))
+    else:
+        sys.exit(colorize(f"\nSome tests failed", passed=False))
    
 

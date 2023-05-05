@@ -63,7 +63,7 @@ def print_results(tests):
 colorama_init()
 
 if __name__ == '__main__':
-    tqdm.write("Running tests\n")
+    tqdm.write("Comparing datasets\n")
     tests = compare_dumps(cli_args.subdir)
     print_results(tests)
     if allpassed(tests):

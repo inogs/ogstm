@@ -94,7 +94,7 @@
         buffPHYS   = huge(buffPHYS(1))
        allocate(buffPHYS2d (jpi_max* jpj_max     ))
         buffPHYS2d = huge(buffPHYS2d(1))
-       if (lwp) then
+       if (myrank==0) then
        allocate(d2f2d     (jpjglo,jpiglo))         
         d2f2d     = huge(d2f2d(1,1))
        endif
@@ -130,7 +130,7 @@
           deallocate(buffPHYS)
           deallocate(buffPHYS2d)
  
-          if (lwp) then
+          if (myrank==0) then
               deallocate(d2f2d)
           endif
 

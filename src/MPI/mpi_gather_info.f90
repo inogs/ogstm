@@ -71,8 +71,7 @@ MODULE MPI_GATHER_INFO
 
 
         CHARACTER(len=2) :: n_ranks_per_node_char
-        INTEGER :: n_ranks_per_node
-        !WRITING_RANK = .FALSE.
+        !INTEGER :: n_ranks_per_node
 
         CONTAINS
 
@@ -81,24 +80,24 @@ MODULE MPI_GATHER_INFO
 
 
 
-        ALLOCATE (jpi_rec_a(mpi_glcomm_size))
-        ALLOCATE (jpj_rec_a(mpi_glcomm_size))
-        ALLOCATE (istart_a(mpi_glcomm_size))
-        ALLOCATE (jstart_a(mpi_glcomm_size))
-        ALLOCATE (iPe_a(mpi_glcomm_size))
-        ALLOCATE (jPe_a(mpi_glcomm_size))
-        ALLOCATE (iPd_a(mpi_glcomm_size))
-        ALLOCATE (jPd_a(mpi_glcomm_size))
-        ALLOCATE (bufftrn_TOT(jpi_max* jpj_max* jpk* mpi_glcomm_size))
-        ALLOCATE (buffDIA2d_TOT(jpi_max* jpj_max*mpi_glcomm_size))
-        ALLOCATE (buffDIA_TOT(jpi_max* jpj_max* jpk*mpi_glcomm_size)) 
-        ALLOCATE (buffPHYS2d_TOT(jpi_max* jpj_max*mpi_glcomm_size))
-        ALLOCATE (buffPHYS_TOT(jpi_max* jpj_max* jpk*mpi_glcomm_size))
+        ALLOCATE (jpi_rec_a(mysize))
+        ALLOCATE (jpj_rec_a(mysize))
+        ALLOCATE (istart_a(mysize))
+        ALLOCATE (jstart_a(mysize))
+        ALLOCATE (iPe_a(mysize))
+        ALLOCATE (jPe_a(mysize))
+        ALLOCATE (iPd_a(mysize))
+        ALLOCATE (jPd_a(mysize))
+        ALLOCATE (bufftrn_TOT(jpi_max* jpj_max* jpk* mysize))
+        ALLOCATE (buffDIA2d_TOT(jpi_max* jpj_max*mysize))
+        ALLOCATE (buffDIA_TOT(jpi_max* jpj_max* jpk*mysize)) 
+        ALLOCATE (buffPHYS2d_TOT(jpi_max* jpj_max*mysize))
+        ALLOCATE (buffPHYS_TOT(jpi_max* jpj_max* jpk*mysize))
 
-        ALLOCATE (jprcv_count(mpi_glcomm_size))
-        ALLOCATE (jpdispl_count(mpi_glcomm_size))
-        ALLOCATE (jprcv_count_2d(mpi_glcomm_size))
-        ALLOCATE (jpdispl_count_2d(mpi_glcomm_size))
+        ALLOCATE (jprcv_count(mysize))
+        ALLOCATE (jpdispl_count(mysize))
+        ALLOCATE (jprcv_count_2d(mysize))
+        ALLOCATE (jpdispl_count_2d(mysize))
 
 
         DO wr_procs=1, nodes
@@ -124,12 +123,12 @@ MODULE MPI_GATHER_INFO
                         
                         allocate(tottrn(jpk, jpjglo, jpiglo))
                         tottrn = huge(tottrn(1,1,1))
-                        allocate(tottrb(jpk, jpjglo, jpiglo))
-                        tottrb = huge(tottrb(1,1,1))
+                        !allocate(tottrb(jpk, jpjglo, jpiglo))
+                        !tottrb = huge(tottrb(1,1,1))
                         !allocate(tottrnIO(jpk,jpjglo,jpiglo)) 
                         !tottrnIO  = huge(tottrnIO(1,1,1)) 
-                        allocate(tottrbIO(jpk,jpjglo,jpiglo)) 
-                        tottrbIO  = huge(tottrbIO(1,1,1)) 
+                        !allocate(tottrbIO(jpk,jpjglo,jpiglo)) 
+                        !tottrbIO  = huge(tottrbIO(1,1,1)) 
                         allocate(totsnIO (jpk,jpjglo,jpiglo)) 
                         totsnIO   = huge(totsnIO(1,1,1))  
                         allocate(tottnIO (jpk,jpjglo,jpiglo)) 
@@ -168,14 +167,14 @@ MODULE MPI_GATHER_INFO
 
         WRITING_RANK_WR = .FALSE.
 
-        call getenv('RANKS_PER_NODE', n_ranks_per_node_char)
-        if (n_ranks_per_node_char .eq. '') then
-                write(*,*) 'ERROR: RANKS_PER_NODE environment variable not defined'
-                write(*,*) 'EXAMPLE: export RANKS_PER_NODE=48'
-                stop
-        end if
+        !call getenv('RANKS_PER_NODE', n_ranks_per_node_char)
+        !if (n_ranks_per_node_char .eq. '') then
+        !        write(*,*) 'ERROR: RANKS_PER_NODE environment variable not defined'
+        !        write(*,*) 'EXAMPLE: export RANKS_PER_NODE=48'
+        !        stop
+        !end if
 
-        read(n_ranks_per_node_char , *) n_ranks_per_node
+        !read(n_ranks_per_node_char , *) n_ranks_per_node
 
         CALL ALLOCATE_MPI_GATHER_INFO()
         !gather(send+recv from each rank, stored in array of each indices)
@@ -188,20 +187,20 @@ MODULE MPI_GATHER_INFO
 
 
 
-                CALL MPI_GATHER( jpi, 1, MPI_INTEGER, jpi_rec_a,1,MPI_INTEGER, writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
-                CALL MPI_GATHER( jpj, 1, MPI_INTEGER, jpj_rec_a, 1,MPI_INTEGER, writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
-                CALL MPI_GATHER( nimpp, 1, MPI_INTEGER, istart_a, 1,MPI_INTEGER, writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
-                CALL MPI_GATHER( njmpp, 1, MPI_INTEGER, jstart_a, 1,MPI_INTEGER, writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
-                CALL MPI_GATHER( nlei, 1, MPI_INTEGER, iPe_a, 1, MPI_INTEGER,writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
-                CALL MPI_GATHER( nlej, 1, MPI_INTEGER, jPe_a, 1, MPI_INTEGER,writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
-                CALL MPI_GATHER( nldi, 1, MPI_INTEGER, iPd_a, 1, MPI_INTEGER,writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
-                CALL MPI_GATHER( nldj, 1, MPI_INTEGER, jPd_a, 1, MPI_INTEGER,writing_procs(wr_procs), MPI_COMM_WORLD, IERROR)
+                CALL MPI_GATHER( jpi, 1, MPI_INTEGER, jpi_rec_a,1,MPI_INTEGER, writing_procs(wr_procs), mycomm, IERROR)
+                CALL MPI_GATHER( jpj, 1, MPI_INTEGER, jpj_rec_a, 1,MPI_INTEGER, writing_procs(wr_procs), mycomm, IERROR)
+                CALL MPI_GATHER( nimpp, 1, MPI_INTEGER, istart_a, 1,MPI_INTEGER, writing_procs(wr_procs), mycomm, IERROR)
+                CALL MPI_GATHER( njmpp, 1, MPI_INTEGER, jstart_a, 1,MPI_INTEGER, writing_procs(wr_procs), mycomm, IERROR)
+                CALL MPI_GATHER( nlei, 1, MPI_INTEGER, iPe_a, 1, MPI_INTEGER,writing_procs(wr_procs), mycomm, IERROR)
+                CALL MPI_GATHER( nlej, 1, MPI_INTEGER, jPe_a, 1, MPI_INTEGER,writing_procs(wr_procs), mycomm, IERROR)
+                CALL MPI_GATHER( nldi, 1, MPI_INTEGER, iPd_a, 1, MPI_INTEGER,writing_procs(wr_procs), mycomm, IERROR)
+                CALL MPI_GATHER( nldj, 1, MPI_INTEGER, jPd_a, 1, MPI_INTEGER,writing_procs(wr_procs), mycomm, IERROR)
         
         END DO        
         communication_finish_time_gather_info= MPI_Wtime()
         communication_proctime_time_gather_info= communication_finish_time_gather_info - communication_start_time_gather_info
         
-        !CALL MPI_Reduce( communication_proctime_time_gather_info, communication_max_time_gather_info, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD, IERROR)
+        !CALL MPI_Reduce( communication_proctime_time_gather_info, communication_max_time_gather_info, 1, MPI_DOUBLE, MPI_MAX, 0, mycomm, IERROR)
 
         !if(myrank == 0) then
         !        write(*,*) 'Communication time gather info is', communication_max_time_gather_info
@@ -219,7 +218,7 @@ MODULE MPI_GATHER_INFO
         if(WRITING_RANK_WR)then
         
                 cont = 0
-                DO loop_ind = 1, mpi_glcomm_size
+                DO loop_ind = 1, mysize
                         jprcv_count(loop_ind) = jpi_rec_a(loop_ind) * jpj_rec_a(loop_ind) * jpk
                         jpdispl_count(loop_ind) = cont
                         cont = cont + jprcv_count(loop_ind)        
@@ -228,7 +227,7 @@ MODULE MPI_GATHER_INFO
                 !write(*,*) 'do loop finished'
 
                 cont_2d = 0
-                DO loop_ind_2d = 1, mpi_glcomm_size
+                DO loop_ind_2d = 1, mysize
                         jprcv_count_2d(loop_ind_2d) = jpi_rec_a(loop_ind_2d) * jpj_rec_a(loop_ind_2d) 
                         jpdispl_count_2d(loop_ind_2d) = cont_2d
                         cont_2d = cont_2d + jprcv_count_2d(loop_ind_2d)

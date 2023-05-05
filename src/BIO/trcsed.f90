@@ -50,7 +50,15 @@
        USE BIO_mem
        USE SED_mem
        USE DIA_mem
-       IMPLICIT NONE
+
+#ifdef ExecEnsParams
+      use Ens_Mem, &
+         only: UseParams
+      use Ens_Params, &
+         only: Ens_SetParams_trcsed
+#endif
+
+   IMPLICIT NONE
 
 
 !!----------------------------------------------------------------------
@@ -119,6 +127,9 @@
            ji = jarr_sed(2,jv)
            jj = jarr_sed(1,jv)
 
+#ifdef ExecEnsParams
+        if (UseParams) call Ens_SetParams_trcsed(jj, ji)
+#endif
 
                  DO js = 1, nsed
               DO  jk = 1,jpk

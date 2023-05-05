@@ -47,6 +47,12 @@ USED_PROCS, COMMUNICATION = candidate_decompositions(tmask, max_proc_i, max_proc
 
 choosen_procs, nproci, nprocj =  get_best_decomposition(USED_PROCS, COMMUNICATION, nproc, jpiglo, jpjglo)
 
+s=input("Selected decomposition data (press Return for automatic selection): nproc = ") 
+if s!='':
+    choosen_procs=int(s)
+    nproci=int(input("nproci = "))
+    nprocj=int(input("nprocj = "))
+    
 dump_outfile(tmask, choosen_procs,nproci, nprocj)
 
 fig, ax = plot_decomposition(tmask, nproci, nprocj)

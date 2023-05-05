@@ -28,6 +28,7 @@
 #ifdef ExecDA
        USE DA_mem, ONLY : DA_Nprocs, TREd_procs_per_node, max_procs_per_one_node, satfile_suffix, satvarname, AssimilationLevels_sat,  AssimilationLevels_float
 #endif
+
        IMPLICIT NONE
 
 ! local declarations
@@ -39,7 +40,7 @@
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
       namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, latmosph, &
       ahtrb0,trcrat,ahtrc0,vsed,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
-      NAMELIST/General_IO/ nwritetrc, freq_ave_phys, freq_flux_dump, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
+      NAMELIST/General_IO/ nwritetrc, freq_flux_dump, save_bkp_group1, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift
 
       NAMELIST/Domain_Characteristic/  jperio
@@ -47,7 +48,6 @@
 #ifdef ExecDA
       NAMELIST/DA_setup/ DA_Nprocs, TREd_procs_per_node, max_procs_per_one_node, satfile_suffix, satvarname, AssimilationLevels_sat, AssimilationLevels_float
 #endif
-
 
       IF(lwp) THEN
           WRITE(numout,*) ' '
@@ -202,6 +202,8 @@
 ! ************* namelist GENERAL_IO  *****************
 
       nwritetrc = 10
+      save_bkp_group1=.true.
+      save_bkp_group2=.true.
       read_W_from_file = .false.
       freq_flux_dump = 1
       internal_sponging = .true.
@@ -222,15 +224,15 @@
 
 
       if (lwp) then
-          if (freq_ave_phys.eq.2) then
-               WRITE(numout,*) 'Forcings phys will be dumped following 2.aveTimes file'
-               else
-               if (freq_ave_phys.eq.1) then
-                 WRITE(numout,*) 'Forcings phys will be dumped following 1.aveTimes file'
-               else
-                 WRITE(numout,*) 'Forcings phys will not be dumped'
-               endif
-          endif
+          !if (freq_ave_phys.eq.2) then
+          !     WRITE(numout,*) 'Forcings phys will be dumped following 2.aveTimes file'
+          !     else
+          !     if (freq_ave_phys.eq.1) then
+          !       WRITE(numout,*) 'Forcings phys will be dumped following 1.aveTimes file'
+          !     else
+          !       WRITE(numout,*) 'Forcings phys will not be dumped'
+          !     endif
+          !endif
           if (freq_flux_dump.eq.1) then
               WRITE(numout,*) 'flux files will be dumped following 1.aveTimes file'
           else

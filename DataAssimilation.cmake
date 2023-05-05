@@ -1,5 +1,6 @@
 # CMake project file for OGSTM
-# author : E.Pascolo, S.Bna, L.Calori
+# original authors : E.Pascolo, S.Bna, L.Calori
+# edited by: S.Spada (sspada@ogs.it)
 
 # CMAKE setting
 cmake_minimum_required (VERSION 2.6)
@@ -15,6 +16,10 @@ find_package(BFM REQUIRED)
 find_package(3DVAR REQUIRED)
 find_package(PETSc REQUIRED)
 find_package(PnetCDF REQUIRED)
+
+# NEW EnsDA PACKAGES
+set(BLA_VENDOR Intel10_64lp_seq)
+find_package(LAPACK REQUIRED)
 
 if (NOT CMAKE_BUILD_TYPE)
   set (CMAKE_BUILD_TYPE RELEASE CACHE STRING
@@ -38,14 +43,18 @@ IF (BFMv2)
     add_definitions(-DBFMv2)
 ENDIF()
 
+add_definitions(-DExecEns)
+add_definitions(-DExecEnsDA)
+add_definitions(-DExecEnsParams)
+
 if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
-  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend-source")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -Ofast -ipo -xHost -qopt-report5 -fpp -align array64byte")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -fpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -extend_source") #-fpe0 removed due to dsyevr needing ieee exceptions
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
-  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-132")
-  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid,overflow -pedantic -align array64byte")
+  set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp -ffree-line-length-0")
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -Wall -Wextra -cpp -fbounds-check -fimplicit-none -ffpe-trap=invalid -pedantic -ffree-line-length-0 ") #-ffpe-trap=overflow removed because it may interfere with dsyevr
 else ()
   message ("CMAKE_Fortran_COMPILER full path: " ${CMAKE_Fortran_COMPILER})
   message ("Fortran compiler: " ${Fortran_COMPILER_NAME})
@@ -64,13 +73,10 @@ include_directories(${DA_INCLUDES})
 include_directories(${PETSC_INCLUDES})
 
 # Search Fortran module to compile
-set( FOLDERS BIO  DA  General  IO  MPI  namelists  PHYS BC)
-  foreach(FOLDER ${FOLDERS})
-  file(GLOB TMP src/${FOLDER}/*)
-  list (APPEND FORTRAN_SOURCES ${TMP})
-endforeach()
+file(GLOB_RECURSE TMP src/*)
+list (APPEND FORTRAN_SOURCES ${TMP})
 
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES})
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${DA_LIBRARIES} ${PETSC_LIBRARIES} ${PNETCDF_LIBRARIES} ${LAPACK_LIBRARIES})

@@ -58,7 +58,7 @@ SUBROUTINE trcwriDA(datestring)
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
-        INTEGER :: jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da,ind_col
+        INTEGER :: jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da!,ind_col
         CHARACTER(LEN=20)  var_to_store
 
         julian=datestring2sec(datestring)
@@ -103,7 +103,7 @@ SUBROUTINE trcwriDA(datestring)
 
                                 counter_var_DA = counter_var_DA + 1
 
-                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count, jpdispl_count, MPI_DOUBLE_PRECISION, writing_rank, MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count, jpdispl_count, MPI_DOUBLE_PRECISION, writing_rank, mycomm, IERR)
 
                         END IF
 
@@ -114,14 +114,14 @@ SUBROUTINE trcwriDA(datestring)
 
                 if(WRITING_RANK_WR) then
 
-                        ind_col = (myrank / n_ranks_per_node)+1
+                        !ind_col = (myrank / n_ranks_per_node)+1
 
                         var_to_store = matrix_DA(jv,ind_col)%var_name
 
                         IF (var_to_store == "novars_input")then
                                 EXIT
                         ELSE
-                                DO idrank = 0,mpi_glcomm_size-1
+                                DO idrank = 0,mysize-1
 
                                         ! ******* WRITING RANK sets indexes of tot matrix where to place buffers of idrank
                                         irange    = iPe_a(idrank+1) - iPd_a(idrank+1) + 1
@@ -213,7 +213,7 @@ SUBROUTINE CHL_subroutine(datestring)
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
-        INTEGER ::jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da,ind_col
+        INTEGER ::jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da!,ind_col
         CHARACTER(LEN=20)  var_to_store
 
         julian=datestring2sec(datestring)
@@ -244,13 +244,13 @@ SUBROUTINE CHL_subroutine(datestring)
                         enddo
                 enddo
 
-                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count, jpdispl_count, MPI_DOUBLE_PRECISION, 0, MPI_COMM_WORLD, IERR)
+                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT, jprcv_count, jpdispl_count, MPI_DOUBLE_PRECISION, 0, mycomm, IERR)
 
                 if(MYRANK == 0) then
 
                         var_to_store = PX_matrix(jv)%var_name
 
-                        DO idrank = 0,mpi_glcomm_size-1
+                        DO idrank = 0,mysize-1
 
                                 ! ******* WRITING RANK sets indexes of
                                 ! tot matrix where to place buffers of

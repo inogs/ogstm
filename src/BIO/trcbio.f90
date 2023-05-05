@@ -49,6 +49,13 @@
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
       
+#ifdef ExecEnsParams
+      use Ens_Mem, &
+          only: UseParams
+      use Ens_Params, &
+          only: Ens_SetParams_trcbio
+#endif
+      
       IMPLICIT NONE
 
 
@@ -123,6 +130,10 @@
       DO jj=1,jpj
       if (bfmmask(1,jj,ji) == 0) CYCLE
       bottom = mbathy(jj,ji)
+      
+#ifdef ExecEnsParams
+      if (UseParams) call Ens_SetParams_trcbio(jj, ji)
+#endif
 
 
                           DO jtr=1, jtrmax

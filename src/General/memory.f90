@@ -34,7 +34,7 @@
 !!      mindi, mindj() : indexes array of the subdomain
 
       INTEGER, PARAMETER :: nizoom=1,  njzoom=1
-      INTEGER :: mpi_glcomm_size,myrank
+      INTEGER :: mycomm, mysize, myrank
       INTEGER nimpp,njmpp
       INTEGER nperio, narea, nlci, nlcj
       INTEGER nbondi, nbondj, nproc, noea, nowe, noso, nono
@@ -272,7 +272,7 @@
 
       double precision ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
-      LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
+      LOGICAL :: save_bkp_group1, save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
       INTEGER :: ctr_hf(jptra)
 
@@ -285,8 +285,6 @@
       double precision, allocatable ::  tra(:,:,:,:)
       double precision, allocatable ::  tra_DIA(:,:,:,:)
       double precision, allocatable ::  tra_DIA_2d(:,:,:)
-      double precision, allocatable ::  traIO(:,:,:,:)
-      double precision, allocatable ::  traIO_HIGH(:,:,:,:)
       double precision, allocatable ::  snIO(:,:,:) 
       double precision, allocatable ::  tnIO(:,:,:) 
       double precision, allocatable ::  vatmIO(:,:) 
@@ -297,6 +295,29 @@
       double precision, allocatable ::  wnIO(:,:,:) 
       double precision, allocatable ::  avtIO(:,:,:) 
       double precision, allocatable ::  e3tIO(:,:,:) 
+      
+#ifdef ExecEns
+      double precision, pointer, contiguous ::  traIO(:,:,:,:)
+      double precision, pointer, contiguous ::  traIO_HIGH(:,:,:,:)
+      double precision, pointer, contiguous ::  tra_DIA_IO(:,:,:,:)
+      double precision, pointer, contiguous ::  tra_DIA_IO_HIGH(:,:,:,:)
+      double precision, pointer, contiguous ::  tra_DIA_2d_IO(:,:,:)
+      double precision, pointer, contiguous ::  tra_DIA_2d_IO_HIGH(:,:,:)
+      double precision, pointer, contiguous ::  tra_PHYS_IO(:,:,:,:)
+      double precision, pointer, contiguous ::  tra_PHYS_IO_HIGH(:,:,:,:)
+      double precision, pointer, contiguous ::  tra_PHYS_2d_IO(:,:,:)
+      double precision, pointer, contiguous ::  tra_PHYS_2d_IO_HIGH(:,:,:)
+      
+      integer, allocatable, dimension(:,:) :: domdec
+      
+      !trcadv 
+      !double precision, allocatable,dimension(:,:,:) :: zti,ztj
+      !double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
+      !double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
+      
+#else
+      double precision, allocatable ::  traIO(:,:,:,:)
+      double precision, allocatable ::  traIO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_DIA_IO(:,:,:,:)
       double precision, allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_DIA_2d_IO(:,:,:)
@@ -305,6 +326,8 @@
       double precision, allocatable ::  tra_PHYS_IO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_PHYS_2d_IO(:,:,:)
       double precision, allocatable ::  tra_PHYS_2d_IO_HIGH(:,:,:)
+#endif
+      
       double precision, allocatable :: tottrn(:,:,:)
       double precision, allocatable :: tottrb(:,:,:)
 
@@ -671,8 +694,6 @@ subroutine alloc_tot()
        tra_DIA= huge(tra_DIA(1,1,1,1))
        allocate(tra_DIA_2d(jptra_dia_2d,jpj,jpi))
        tra_DIA_2d= huge(tra_DIA_2d(1,1,1))
-       allocate(traIO(jpk,jpj,jpi,jptra))                  
-       traIO  = huge(traIO(1,1,1,1)) 
        allocate(snIO(jpk,jpj,jpi))                         
        snIO   = huge(snIO(1,1,1))
        allocate(tnIO(jpk,jpj,jpi))                         
@@ -697,6 +718,20 @@ subroutine alloc_tot()
        buf           = huge(buf(1,1,1))
        allocate(buf2   (jpj,jpi))                          
        buf2          = huge(buf2(1,1))
+       
+#ifdef ExecEns
+       !allocate(zy(jpk,jpj,jpi))  
+       !allocate(zx(jpk,jpj,jpi))
+       !allocate(zz(jpk,jpj,jpi))
+       !allocate(ztj(jpk,jpj,jpi)) 
+       !allocate(zti(jpk,jpj,jpi))    
+       !allocate(zkx(jpk,jpj,jpi)) 
+       !allocate(zky(jpk,jpj,jpi)) 
+       !allocate(zkz(jpk,jpj,jpi)) 
+       !allocate(zbuf(jpk,jpj,jpi))
+#else
+       allocate(traIO(jpk,jpj,jpi,jptra))                  
+       traIO  = huge(traIO(1,1,1,1)) 
        allocate(tra_DIA_IO(jptra_dia,jpk,jpj,jpi))         
        tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
        allocate(traIO_HIGH(   jpk,jpj,jpi,jptra_HIGH))     
@@ -717,17 +752,17 @@ subroutine alloc_tot()
        tra_PHYS_2d_IO    = huge(tra_PHYS_2d_IO(1,1,1))
        allocate(tra_PHYS_2d_IO_HIGH(jptra_phys_2d,jpj,jpi))
        tra_PHYS_2d_IO_HIGH = huge(tra_PHYS_2d_IO_HIGH(1,1,1))
+#endif
 
-
-      if(lwp) then
+      if(myrank==0) then
        allocate(tottrn(jpk, jpjglo, jpiglo))      
        tottrn = huge(tottrn(1,1,1)) 
-       allocate(tottrb(jpk, jpjglo, jpiglo))      
-       tottrb = huge(tottrb(1,1,1))
+       !allocate(tottrb(jpk, jpjglo, jpiglo))      
+       !tottrb = huge(tottrb(1,1,1))
 !       allocate(tottrnIO(jpk,jpjglo,jpiglo))
 !       tottrnIO  = huge(tottrnIO(1,1,1))
-       allocate(tottrbIO(jpk,jpjglo,jpiglo)) 
-       tottrbIO  = huge(tottrbIO(1,1,1)) 
+       !allocate(tottrbIO(jpk,jpjglo,jpiglo)) 
+       !tottrbIO  = huge(tottrbIO(1,1,1)) 
        allocate(totsnIO (jpk,jpjglo,jpiglo)) 
        totsnIO   = huge(totsnIO(1,1,1))  
        allocate(tottnIO (jpk,jpjglo,jpiglo)) 
@@ -916,7 +951,6 @@ subroutine alloc_tot()
             deallocate(tra)
             deallocate(tra_DIA)
             deallocate(tra_DIA_2d)
-            deallocate(traIO)
             deallocate(snIO)
             deallocate(tnIO)
             deallocate(vatmIO)
@@ -929,6 +963,19 @@ subroutine alloc_tot()
             deallocate(e3tIO)
             deallocate(buf)
             deallocate(buf2)
+            
+#ifdef ExecEns
+            !deallocate(zy )  
+            !deallocate(zx )
+            !deallocate(zz )
+            !deallocate(ztj ) 
+            !deallocate(zti )    
+            !deallocate(zkx ) 
+            !deallocate(zky ) 
+            !deallocate(zkz ) 
+            !deallocate(zbuf )
+#else
+            deallocate(traIO)
             deallocate(tra_DIA_IO)
             deallocate(tra_PHYS_IO)
             deallocate(traIO_HIGH)
@@ -939,12 +986,14 @@ subroutine alloc_tot()
             deallocate(tra_PHYS_2d_IO)
             deallocate(tra_PHYS_2d_IO_HIGH)
             
+            deallocate(domdec)
+#endif
 
-            if(lwp) then
+            if(myrank==0) then
                 deallocate(tottrn)
-                deallocate(tottrb)
+                !deallocate(tottrb)
 !                deallocate(tottrnIO)
-                deallocate(tottrbIO)
+                !deallocate(tottrbIO)
                 deallocate(totsnIO)
                 deallocate(tottnIO)
                 deallocate(totvatmIO)

@@ -139,7 +139,7 @@
 
       call mppsync()
 
-      call MPI_Bcast(condition_to_3dvar,1,MPI_LOGICAL,0, MPI_COMM_WORLD, ierr)
+      call MPI_Bcast(condition_to_3dvar,1,MPI_LOGICAL,0, mycomm, ierr)
       if (condition_to_3dvar)  CALL trcrstDA(datestr)
 
 

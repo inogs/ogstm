@@ -36,7 +36,7 @@
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
         CHARACTER(LEN=20)  var_to_store
-        INTEGER :: COUNTER_VAR_TRCWRI, n_dumping_cycles, jv, ivar, writing_rank, ind_col 
+        INTEGER :: COUNTER_VAR_TRCWRI, n_dumping_cycles, jv, ivar, writing_rank!, ind_col 
 
         filename = 'RST.20111231-15:30:00.N1p.nc'
         julian=datestring2sec(datestring)
@@ -77,20 +77,19 @@
                                 enddo
                                 COUNTER_VAR_TRCWRI = COUNTER_VAR_TRCWRI + 1
 
-                                CALL MPI_GATHERV(bufftrn, sendcount,MPI_DOUBLE_PRECISION,&
-                                  bufftrn_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,MPI_COMM_WORLD, IERR)
+                                CALL MPI_GATHERV(bufftrn, sendcount, MPI_DOUBLE_PRECISION, bufftrn_TOT,jprcv_count, jpdispl_count,MPI_DOUBLE_PRECISION, writing_rank,mycomm, IERR)
 
                         END IF
 
                 END DO
 
                 if(WRITING_RANK_WR) then
-                        ind_col = (myrank / n_ranks_per_node)+1
+                        !ind_col = (myrank / n_ranks_per_node)+1
                         var_to_store =matrix_state_2(jv,ind_col)%var_name
                         IF (var_to_store == "novars_input")then
                                 EXIT
                         ELSE
-                                DO idrank = 0,mpi_glcomm_size-1
+                                DO idrank = 0,mysize-1
                                         ! ******* WRITING RANK sets
                                         ! indexes of tot matrix where to
                                         ! place buffers of idrank

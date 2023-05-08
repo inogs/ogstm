@@ -251,7 +251,7 @@
                              er(jk,16) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
                          enddo
 #endif
-                         er(1       ,17)  = 3.14                   ! ATM Hg0    
+                         er(1       ,17)  = atm_Hg0(jj,ji)                   ! ATM Hg0    
 
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 

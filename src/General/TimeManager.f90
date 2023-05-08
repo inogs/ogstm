@@ -38,6 +38,7 @@
       ! TYPE (TIME_CONTAINER) :: TC_GIB
       TYPE (TIME_CONTAINER) :: TC_LEX
       TYPE (TIME_CONTAINER) :: TC_CO2
+      TYPE (TIME_CONTAINER) :: TC_Hg0
 
       TYPE (DUMP_CONTAINER) :: RESTARTS
       TYPE (DUMP_CONTAINER) :: AVE_FREQ1, AVE_FREQ2
@@ -206,6 +207,9 @@
       if (.not.CheckDatelist(DATESTART,TC_CO2)) then 
        B = .false.
        endif
+      if (.not.CheckDatelist(DATESTART,TC_Hg0)) then 
+       B = .false.
+       endif
 
       if (.not.CheckDatelist(DATE__END,TC_FOR)) then 
        B = .false.
@@ -223,6 +227,9 @@
        B = .false.
        endif
       if (.not.CheckDatelist(DATE__END,TC_CO2)) then 
+       B = .false.
+       endif
+      if (.not.CheckDatelist(DATE__END,TC_Hg0)) then 
        B = .false.
        endif
 
@@ -378,6 +385,8 @@
       TC_CO2%Filename    = 'carbonTimes'
       TC_CO2%Name        = 'Co2 surface value'
 
+      TC_Hg0%Filename    = 'Hg0Times'
+      TC_Hg0%Name        = 'Hg0 surface value'
 
       RESTARTS%Filename  = 'restartTimes'
       RESTARTS%Name      = 'BFM files'
@@ -402,6 +411,7 @@
       ! call Load_Time_container(TC_GIB)
       call Load_Time_container(TC_LEX)
       call Load_Time_container(TC_CO2)
+      call Load_Time_container(TC_Hg0)
 
       ! DUMP
       call Load_Dump_container(RESTARTS)
@@ -421,6 +431,7 @@
           call unload_time_container(TC_ATM)
           call unload_time_container(TC_LEX)
           call unload_time_container(TC_CO2)
+          call unload_time_container(TC_Hg0)
 
           call unload_dump_container(RESTARTS)
           call unload_dump_container(AVE_FREQ1)
@@ -560,6 +571,7 @@
          ! call TimeExtension(datestring,TC_GIB)
          call TimeExtension(datestring,TC_LEX)
          call TimeExtension(datestring,TC_CO2)
+         call TimeExtension(datestring,TC_Hg0)
       endif
       END SUBROUTINE YEARLY
 

@@ -2,7 +2,7 @@
 # Find BFM package 
 
 
- find_library( BFM_LIBRARIES NAMES bfm libbfm HINTS $ENV{BFM_LIBRARY} )
+ find_library( BFM_LIBRARIES NAMES bfm.a libbfm.a HINTS $ENV{BFM_LIBRARY} )
  message(STATUS "BFM library =  ${BFM_LIBRARIES}  ")
  if (BFM_LIBRARIES)
     find_path (BFM_INCLUDES NAMES BFM_var_list.h HINTS $ENV{BFM_INCLUDE} NO_DEFAULT_PATH)

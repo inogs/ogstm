@@ -2,22 +2,21 @@
 
 ROOT="$CINECA_SCRATCH/BENCHMARKS"
 BUILD=PELCHEM_BUILD
-TEST=TEST
 
 cd $ROOT || exit
 
-./build.sh --fast --verbose --build-path="$BUILD"
+./build.sh --fast --verbose --build-path="$BUILD" || exit
 
-cd "$ROOT/ogstm/testcase/$TEST" || exit
+cd "$ROOT/ogstm/testcase/$1" || exit
 
 source "$ROOT/ogstm/compilers/machine_modules/m100.hpc-sdk"
 module unload numpy python
 export RANKS_PER_NODE=1
 
-mpirun -gpu -np 1 ./ogstm.xx
+mpirun -gpu -np 1 ./ogstm.xx || exit
 
 cd "$ROOT/ogstm/testcase" || exit
 
-conda run -n esiwace python comparedatasets.py --rtol=0.0 TEST REFERENCE AVE_FREQ_2
+conda run -n esiwace python scripts/comparedatasets.py --rtol=0.0 $1 REFERENCE AVE_FREQ_2
 
 

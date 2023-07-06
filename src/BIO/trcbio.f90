@@ -55,6 +55,9 @@ SUBROUTINE trcbio
 
   integer :: jk, jj, ji, jn, jlinear2d, jlinear3d, bottom
   double precision :: correct_fact, gdept_local, gdeptmax_local
+  
+  integer :: year, month, day
+  double precision :: sec
 
   BIOparttime = MPI_WTIME()
   
@@ -85,6 +88,8 @@ SUBROUTINE trcbio
     end do
   end do
 
+  call read_date_string(COMMON_DATEstring, year, month, day, sec)
+
   ! Set er 
   do ji = 1, jpi
     do jj = 1, jpj
@@ -103,7 +108,7 @@ SUBROUTINE trcbio
           er(jlinear3d, 1) = tn(jk, jj, ji) ! Temperature (Celsius)
           er(jlinear3d, 2) = sn(jk, jj, ji) ! Salinity PSU
           er(jlinear3d, 3) = rho(jk, jj, ji) ! Density Kg/m3
-          er(jlinear3d, 6) = instant_par(COMMON_DATEstring, xpar(jk, jj, ji)) ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
+          er(jlinear3d, 6) = instant_par_from_sec(sec, xpar(jk, jj, ji)) ! PAR umoles/m2/s | Watt to umoles photons W2E=1./0.217
           er(jlinear3d, 8) = e3t(jk, jj, ji) ! depth in meters of the given cell
           er(jlinear3d, 10) = ogstm_PH(jk, jj, ji) ! 8.1
 #ifdef gdept1d

@@ -13,6 +13,8 @@ source "$ROOT/ogstm/compilers/machine_modules/m100.hpc-sdk"
 module unload numpy python
 export RANKS_PER_NODE=1
 
+ln -sf "$ROOT/$BUILD/ogstm.xx" || exit
+
 mpirun -gpu -np 1 ./ogstm.xx || exit
 
 cd "$ROOT/ogstm/testcase" || exit

@@ -798,4 +798,17 @@
        END FUNCTION INSTANT_PAR
 
 
+       double precision FUNCTION INSTANT_PAR_from_sec(sec, MEAN_PAR)
+       IMPLICIT NONE
+       double precision, INTENT(IN) :: MEAN_PAR ! daily integral 
+       ! LOCAL
+       double precision :: POSITIVE_VALUE, sec, PI
+      
+       PI = 3.141592653589793
+
+       POSITIVE_VALUE = cos(2*PI*sec/86400. -PI )
+       INSTANT_PAR_from_sec=MAX(1.0d-3, PI*POSITIVE_VALUE*MEAN_PAR )
+       END FUNCTION INSTANT_PAR_from_sec
+
+
       END MODULE TIME_MANAGER

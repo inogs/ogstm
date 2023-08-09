@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
 ROOT="$CINECA_SCRATCH/BENCHMARKS"
-BUILD=PELCHEM_BUILD
+BUILD=GPU_BUILD
 
 cd "$ROOT/ogstm/testcase/$1" || exit
 

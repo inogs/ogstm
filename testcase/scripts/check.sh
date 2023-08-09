@@ -1,7 +1,7 @@
 #! /usr/bin/env bash
 
-ROOT="$CINECA_SCRATCH/BENCHMARKS"
-BUILD=PELCHEM_BUILD
+ROOT="$HOME/ModelBuild"
+BUILD=GPU_BUILD
 
 cd $ROOT || exit
 
@@ -14,7 +14,7 @@ export RANKS_PER_NODE=1
 
 ln -sf "$ROOT/$BUILD/ogstm.xx" || exit
 
-mpirun -gpu -np 1 ./ogstm.xx || exit
+mpirun -np 1 ./ogstm.xx || exit
 
 cd "$ROOT/ogstm/testcase" || exit
 

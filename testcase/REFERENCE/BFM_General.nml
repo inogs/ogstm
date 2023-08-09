@@ -20,16 +20,16 @@
 ! parallel_log   logical Set true in parallel jobs for a single log file 
 !-------------------------------------------------------------------------!
 &bfm_nml          
-    bio_calc      =  .TRUE.                    
-    bfm_init      =  0                         
-    bfm_rstctl    =  .FALSE.                   
-    bio_setup     =  1                         
-    out_fname     =  'BFM_standalone_pelagic'  
-    out_dir       =  '.'                       
-    out_title     =  'BFM_STANDALONE_PELAGIC'  
-    in_rst_fname  =  'in_bfm_restart'          
-    out_delta     =  300                       
-    parallel_log  =  .TRUE.                    
+    bio_calc      =  .TRUE.             
+    bfm_init      =  0                  
+    bfm_rstctl    =  .FALSE.            
+    bio_setup     =  1                  
+    out_fname     =  'BFM_ogs_pelagic'  
+    out_dir       =  '.'                
+    out_title     =  'BFM_OGS_PELAGIC'  
+    in_rst_fname  =  'in_bfm_restart'   
+    out_delta     =  300                
+    parallel_log  =  .TRUE.             
 /                 
 
 
@@ -149,16 +149,16 @@
 !   char  varname: name of the var in input file
 !-------------------------------------------------------------------------!
 ! Index of parameters for using inside InitVar structure
-!   O2o=1, Depth=1, Area2d=1, ThereIsLight=2, N1p=2, Volume=2, SUNQ=3, N3n=3, Area=3, 
-!   N4n=4, EWIND=4, ETW=4, O4n=5, EICE=5, ESW=5, N5s=6, ETAUB=6, ERHO=6, 
-!   EIR=7, EPCO2air=7, N6r=7, ESS=8, B1c=8, CO2airflux=8, B1n=9, dpco2=9, EPR=9, 
-!   dpo2=10, B1p=10, DIC=10, P1c=11, totsysc=11, CO2=11, P1n=12, pCO2=12, totsysn=12, 
-!   HCO3=13, P1p=13, totsysp=13, CO3=14, P1l=14, totsyss=14, ALK=15, P1s=15, pH=16, 
-!   P2c=16, P2n=17, OCalc=17, OArag=18, P2p=18, P2l=19, ffCO2=19, totpelc=20, P3c=20, 
-!   P3n=21, totpeln=21, P3p=22, totpelp=22, totpels=23, P3l=23, cxoO2=24, P4c=24, P4n=25, 
-!   eO2mO2=25, P4p=26, Chla=26, P4l=27, flPTN6r=27, Z3c=28, flN3O4n=28, flN4N3n=29, Z3n=29, 
-!   Z3p=30, sediR2=30, Z4c=31, sediR3=31, Z4n=32, sediR6=32, Z4p=33, sediO5=33, Z5c=34, 
-!   xEPS=34, Z5n=35, ABIO_eps=35, Z5p=36, BGE=36, BIOALK=37, Z6c=37, Z6n=38, Z6p=39, 
+!   Area2d=1, Depth=1, O2o=1, Volume=2, ThereIsLight=2, N1p=2, SUNQ=3, N3n=3, Area=3, 
+!   ETW=4, EWIND=4, N4n=4, ESW=5, O4n=5, EICE=5, ERHO=6, N5s=6, ETAUB=6, 
+!   N6r=7, EIR=7, EPCO2air=7, B1c=8, CO2airflux=8, ESS=8, dpco2=9, B1n=9, EPR=9, 
+!   B1p=10, dpo2=10, DIC=10, totsysc=11, CO2=11, P1c=11, pCO2=12, totsysn=12, P1n=12, 
+!   HCO3=13, totsysp=13, P1p=13, P1l=14, totsyss=14, CO3=14, P1s=15, ALK=15, pH=16, 
+!   P2c=16, P2n=17, OCalc=17, P2p=18, OArag=18, P2l=19, ffCO2=19, totpelc=20, P3c=20, 
+!   P3n=21, totpeln=21, totpelp=22, P3p=22, P3l=23, totpels=23, cxoO2=24, P4c=24, eO2mO2=25, 
+!   P4n=25, P4p=26, Chla=26, flPTN6r=27, P4l=27, Z3c=28, flN3O4n=28, flN4N3n=29, Z3n=29, 
+!   Z3p=30, sediR2=30, sediR3=31, Z4c=31, Z4n=32, sediR6=32, Z4p=33, sediO5=33, Z5c=34, 
+!   xEPS=34, Z5n=35, ABIO_eps=35, Z5p=36, BGE=36, Z6c=37, BIOALK=37, Z6n=38, Z6p=39, 
 !   R1c=40, R1n=41, R1p=42, R2c=43, R3c=44, R6c=45, R6n=46, R6p=47, R6s=48, 
 !   O3c=49, O3h=50, O5c=51, Q1c=273, Q1n=274, Q1p=275, Q11c=276, Q11n=277, Q11p=278, 
 !   Q6c=279, Q6n=280, Q6p=281, Q6s=282, Q16c=283, Q16n=284, Q16p=285, Q16s=286, totbenc=287, 

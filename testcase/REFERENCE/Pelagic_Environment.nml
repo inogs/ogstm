@@ -48,7 +48,7 @@
 ! p_clN6r     [mmolHS/m3]      Half-saturation concentration of
 !                              reduction equivalents for denitrification
 ! p_rPAo      [mmolO2/m3/d]    Reference anoxic mineralization rate
-! p_q10R6N5   [-]              Q10 factor for biogenic silica
+! p_aeR6N5    [kJ/mol]         Arrhenius activation energy for biogenic silica
 ! p_sR6N5     [1/d]            Specific remineralization rate of
 !                              biogenic silica
 !              --------- Iron parameters -----------
@@ -69,8 +69,8 @@
     p_sN3O4n         =  0.35   
     p_clN6r          =  1.0    
     p_rPAo           =  1.0    
-    p_q10R6N5        =  1.49   
-    p_sR6N5          =  0.1    
+    p_aeR6N5         =  60.0   
+    p_sR6N5          =  0.001  
 /                    
 
 

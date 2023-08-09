@@ -1,10 +1,7 @@
 ROOT=$CINECA_SCRATCH/BENCHMARKS
 
 cd $ROOT/ogstm/testcase/$1 || exit
-source $ROOT/ogstm/compilers/machine_modules/m100.hpc-sdk
-
-module unload numpy python
-module load cuda/11.4
+source $ROOT/ogstm/compilers/machine_modules/leonardo.nvhpc
 
 export RANKS_PER_NODE=1
 

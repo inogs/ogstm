@@ -9,8 +9,7 @@ cd $ROOT || exit
 
 cd "$ROOT/ogstm/testcase/$1" || exit
 
-source "$ROOT/ogstm/compilers/machine_modules/m100.hpc-sdk"
-module unload numpy python
+source "$ROOT/ogstm/compilers/machine_modules/leonardo.nvhpc"
 export RANKS_PER_NODE=1
 
 ln -sf "$ROOT/$BUILD/ogstm.xx" || exit
@@ -19,6 +18,6 @@ mpirun -gpu -np 1 ./ogstm.xx || exit
 
 cd "$ROOT/ogstm/testcase" || exit
 
-conda run -n esiwace python scripts/comparedatasets.py --rtol=0.0 $1 REFERENCE AVE_FREQ_2
+conda run -n ogstm-bfm python scripts/comparedatasets.py --rtol=0.0 $1 REFERENCE AVE_FREQ_2
 
 

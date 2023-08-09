@@ -5,8 +5,7 @@ BUILD=PELCHEM_BUILD
 
 cd "$ROOT/ogstm/testcase/$1" || exit
 
-source "$ROOT/ogstm/compilers/machine_modules/m100.hpc-sdk"
-module unload numpy python
+source "$ROOT/ogstm/compilers/machine_modules/leonardo.nvhpc"
 export RANKS_PER_NODE=1
 
 ln -sf "$ROOT/$BUILD/ogstm.xx" || exit

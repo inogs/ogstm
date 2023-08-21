@@ -1,0 +1,14 @@
+module load cmake
+module load nvhpc
+module load openmpi
+module load netcdf-fortran/4.6.0--openmpi--4.1.4--nvhpc--23.1
+export FC=pgf90
+export CC=pgcc
+export NETCDF_CFLAGS=$(nc-config --cflags)
+export NETCDF_CLIBS=$(nc-config --libs)
+export NETCDF_FFLAGS=$(nc-config --fflags)
+export NETCDF_FLIBS=$(nc-config --flibs)
+export NETCDF_LIB=$(nc-config --libdir)
+export NETCDF_INC=$(nc-config --includedir)
+export NETCDFF_LIB=$(nf-config --prefix)/lib
+export NETCDFF_INC=$(nf-config --includedir)

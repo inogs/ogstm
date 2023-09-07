@@ -58,7 +58,7 @@ contains
 
           CALL LOAD_atm_Hg0(TC_Hg0%TimeStrings(TC_Hg0%After))
 
-          IF(lwp) WRITE (numout,*) 'Carbon dioxide factor DATA READ for Time = ', TC_Hg0%TimeStrings(TC_Hg0%After)
+          IF(lwp) WRITE (numout,*) 'Hg0 atm  DATA READ for Time = ', TC_Hg0%TimeStrings(TC_Hg0%After)
 !      ******* LOADED NEW FRAME *************
       END IF
 

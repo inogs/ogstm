@@ -69,7 +69,7 @@
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,17) :: er
+      double precision,dimension(jpk,18) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 #endif
 
@@ -252,6 +252,7 @@
                          enddo
 #endif
                          er(1       ,17)  = atm_Hg0(jj,ji)                   ! ATM Hg0    
+                         er(1       ,18)  = atm_WIN(jj,ji)               !wind from atm model
 
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 

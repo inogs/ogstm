@@ -9,6 +9,7 @@ MODULE module_step
       USE mod_atmbc
       USE mod_cbc
       USE mod_Hgbc
+      USE mod_ATM_WIN
       ! USE mod_gibbc
       ! USE mod_tinbc
 
@@ -155,6 +156,7 @@ MODULE module_step
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
       CALL bc_co2       (DATEstring)
       CALL BC_atm_Hg0   (DATEstring)
+      CALL bc_ATM_WIN   (DATEstring)
       CALL eos          ()               ! Water density
 
 

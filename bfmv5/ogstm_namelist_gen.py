@@ -30,7 +30,7 @@ for node in NODES:
     if not XML_MODELVARS.has_key(var): # check about BFMtab formatting
         XML_MODELVARS[var] = [max,high]
     else:
-        print var + " is already defined."
+        print (var + " is already defined.")
         sys.exit(1)
 
 NODES=xmldoc.getElementsByTagName("Diagnostics")[0].getElementsByTagName("var")
@@ -41,12 +41,12 @@ for node in NODES:
     if not XML_DIA__VARS.has_key(var):
         XML_DIA__VARS[var] = high
     else:
-        print var + " is already defined."
+        print (var + " is already defined.")
         sys.exit(1)
     if not XML_DIA__DUMP.has_key(var):
         XML_DIA__DUMP[var] = dump
     else:
-        print var + " is already defined."
+        print (var + " is already defined.")
         sys.exit(1)  
 
 NODES=xmldoc.getElementsByTagName("Diagnostics_2D")[0].getElementsByTagName("var")
@@ -57,12 +57,12 @@ for node in NODES:
     if not XML_DIA2dVARS.has_key(var):
         XML_DIA2dVARS[var] = high
     else:
-        print var + " is already defined."
+        print (var + " is already defined.")
         sys.exit(1)
     if not XML_DIA2dDUMP.has_key(var):
         XML_DIA2dDUMP[var] = dump
     else:
-        print var + " is already defined."
+        print (var + " is already defined.")
         sys.exit(1) 
         
 
@@ -97,7 +97,7 @@ for il, line in enumerate(SECTION_NAMELIST):
                 MODEL_HF.append(varname)
             MODEL_LF.append(varname)
         else:
-            print "Error: " + varname + " not defined !"
+            print ("Error: " + varname + " not defined !")
             sys.exit(1)
             
 NAMELIST_NEW.append("/\n\n")
@@ -128,7 +128,7 @@ for il, line in enumerate(SECTION_NAMELIST):
                 if XML_DIA__DUMP[varname]: DIA_HF.append(varname)
             if XML_DIA__DUMP[varname]: DIA_LF.append(varname)
         else:
-            print "Error: " + varname + " not defined !"
+            print ("Error: " + varname + " not defined !")
             sys.exit(1)
 NAMELIST_NEW.append("/ \n\n")
 
@@ -159,7 +159,7 @@ for il, line in enumerate(SECTION_NAMELIST):
                 if XML_DIA2dDUMP[varname] : DIA_HF.append(varname)
             if XML_DIA2dDUMP[varname] :DIA_LF.append(varname)
         else:
-            print "Error: " + varname + " not defined !"
+            print("Error: " + varname + " not defined !")
             sys.exit(1)
 NAMELIST_NEW.append("/\n\n")
 
@@ -177,12 +177,12 @@ DUMP_DIA=[var for var in XML_DIA__DUMP.keys() if XML_DIA__DUMP[var] ]
 
 printout=True
 if printout:
-    print "HF variables : " , len(MODEL_HF), "State", len(DIA_HF), "Diagnostics"
-    print "LF variables : " , len(MODEL_LF), "State", len(DIA_LF), "Diagnostics", len(DUMP_DIA), "Dumped"
+    print("HF variables : " , len(MODEL_HF), "State", len(DIA_HF), "Diagnostics")
+    print("LF variables : " , len(MODEL_LF), "State", len(DIA_LF), "Diagnostics", len(DUMP_DIA), "Dumped")
 
-    print "HF LIST:"
-    for var in MODEL_HF: print var
-    for var in DIA_HF : print var
+    print("HF LIST:")
+    for var in MODEL_HF: print(var)
+    for var in DIA_HF : print(var)
 
-    print "\n\nDIA DUMPED:"
-    for var in DUMP_DIA : print "  ", var
+    print("\n\nDIA DUMPED:")
+    for var in DUMP_DIA : print("  ", var)

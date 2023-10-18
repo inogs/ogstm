@@ -10,7 +10,6 @@
       double precision :: forcing_kext_partTime=0.0, forcing_kext_TotTime = 0.0
       double precision :: bc_Co2_partTime      =0.0, bc_Co2_TotTime       = 0.0
       double precision :: bc_atm_Hg0_partTime  =0.0, bc_atm_Hg0_TotTime   = 0.0
-      double precision :: bc_atm_win_partTime  =0.0, bc_atm_win_TotTime   = 0.0
       double precision :: bc_atm_partTime      =0.0, bc_atm_TotTime       = 0.0
       double precision :: bc_tin_partTime      =0.0, bc_tin_TotTime       = 0.0
       double precision :: bc_gib_partTime      =0.0, bc_gib_TotTime       = 0.0

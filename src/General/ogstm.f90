@@ -295,7 +295,6 @@ SUBROUTINE time_init
         call TimeExtension(DATESTART,TC_LEX)
         call TimeExtension(DATESTART,TC_CO2)
         call TimeExtension(DATESTART,TC_Hg0)
-        call TimeExtension(DATESTART,TC_WIN)
 
 
         call TimeInterpolation(sec,TC_FOR, TC_FOR%Before, TC_FOR%After, t_interp)
@@ -305,7 +304,6 @@ SUBROUTINE time_init
         call TimeInterpolation(sec,TC_LEX, TC_LEX%Before, TC_LEX%After, t_interp)
         call TimeInterpolation(sec,TC_CO2, TC_CO2%Before, TC_CO2%After, t_interp)
         call TimeInterpolation(sec,TC_Hg0, TC_Hg0%Before, TC_Hg0%After, t_interp)
-        call TimeInterpolation(sec,TC_WIN, TC_WIN%Before, TC_WIN%After, t_interp)
 
         if (lwp) then
             write(*,*) 'BeforeForcings', TC_FOR%Before, 'AfterForcing', TC_FOR%After
@@ -314,7 +312,6 @@ SUBROUTINE time_init
             write(*,*) 'BeforeAtm',      TC_ATM%Before, 'AfterAtm',     TC_ATM%After
             write(*,*) 'BeforeCo2',      TC_CO2%Before, 'AfterCo2',     TC_CO2%After
             write(*,*) 'BeforeHg0',      TC_Hg0%Before, 'AfterHg0',     TC_Hg0%After
-            write(*,*) 'BeforeWIN',      TC_WIN%Before, 'AfterWIN',     TC_WIN%After
             write(*,*) 'BeforeKex',      TC_LEX%Before, 'AfterKex',     TC_LEX%After
 
         endif

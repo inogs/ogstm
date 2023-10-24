@@ -138,6 +138,8 @@
       double precision diff_e3t(jpk,jpj,jpi)
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
+      double precision kz_threshold, Kz_background, Kmin
+      integer  Ind_50m, Ind_150m, Ind_bottom
 
       if (variable_rdt) then
           DeltaT_name="DELTA_T/DeltaT_"//datestring//".txt"
@@ -294,6 +296,26 @@
         wdta(:,:,:,2) =   wdta(:,:,:,2) * spongeVel
       avtdta(:,:,:,2) = avtdta(:,:,:,2) * spongeVel
 
+      Ind_50m  = getDepthIndex( 50.0D0)
+      Ind_150m = getDepthIndex(150.0D0)
+      kz_threshold  = 1.e-4
+      Kz_background = 1.e-7
+
+      DO ji=1,jpi
+      DO jj=1,jpj
+      Ind_bottom = mbathy(jj,ji)
+          IF (Ind_bottom.gt.Ind_150m) then
+             Kmin = MINVAL(avtdta(Ind_50m:Ind_150m,jj,ji,2))
+             IF (Kmin.lt.0.00001D0) then
+                DO jk=Ind_150m,Ind_bottom  ! apply correction
+                  if (avtdta(jk,jj,ji,2).gt.KZ_THRESHOLD) then
+                       avtdta(jk,jj,ji,2) = Kz_background
+                  endif
+                ENDDO
+             ENDIF
+          ENDIF
+      ENDDO
+      ENDDO
 
 !        could be written for OpenMP
               DO ji=1,jpi

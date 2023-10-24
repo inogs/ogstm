@@ -1061,6 +1061,27 @@ subroutine alloc_tot()
     endif
     END FUNCTION find_index_var
 
+! *****************************************************************
+!     FUNCTION getDepthIndex
+!     RETURNS the index in gdept corresponding to a given depth
+! *****************************************************************
+      INTEGER FUNCTION getDepthIndex(depth)
+      USE modul_param , ONLY: jpk
+      DOUBLE PRECISION, INTENT(IN) :: depth
+      integer kk
+
+      getDepthIndex=1
+       do kk=1,jpk
+#ifdef gdept1d
+          if (gdept(kk).lt.depth)  getDepthIndex=kk
+#else
+          if (gdept(kk,1,1).lt.depth)  getDepthIndex=kk
+#endif
+
+       enddo
+
+      END FUNCTION getDepthIndex
+
 
         END MODULE myalloc
 

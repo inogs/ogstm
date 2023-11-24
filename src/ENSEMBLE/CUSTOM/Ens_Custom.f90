@@ -454,7 +454,8 @@ contains
 !         else
 !             IsEnsDAVar=.false.
 !         end if
-        if (((name(1:1).eq."O").and.(.not.(name.eq."O2o"))).or.(name.eq."R3c")) then
+!         if (((name(1:1).eq."O").and.(.not.(name.eq."O2o"))).or.(name.eq."R3c")) then
+        if ((name(1:1).eq."O").and.(.not.(name.eq."O2o"))) then
             IsEnsDAVar=.false.
         else
             IsEnsDAVar=.true.

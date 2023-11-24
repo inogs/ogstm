@@ -156,7 +156,7 @@ subroutine Sat_LoadObs(DateString, nObs, n_SqrtR1)
     SATFILE   = 'SATELLITE/' // DAY // trim(satfile_suffix)
     VARFILE   = 'DA_static_data/VAR_SAT/var2D.' // MONTH // '.nc'
     call readnc_slice_double_2d(trim(SATFILE),trim(satvarname), Sat_Data)
-    call readnc_slice_double_2d(trim(VARFILE),'variance', Sat_var_additive)
+    !call readnc_slice_double_2d(trim(VARFILE),'variance', Sat_var_additive)
     !Sat_std1_ji=1.0d0/sqrt(Sat_var_additive(nldj:nlej, nldi:nlei))
     !Sat_var_log=0.3d0**2
     Sat_var_log=log(1.0d0+SatMultError)**2

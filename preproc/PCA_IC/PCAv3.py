@@ -447,21 +447,23 @@ class Decomposition:
             s+=f' cell {i}: inside: x=[{cell.x_start} : {cell.x_next}], y=[{cell.y_start} : {cell.y_next}]; border: x=[{cell.x_start_wb} : {cell.x_next_wb}], y=[{cell.y_start_wb} : {cell.y_next_wb}]; vol={cell.vol(self.hmask)}\n'
         return s
     
-    def plot(self):
+    def plot(self, draw_border=True, draw_cells=True, border_color='r', cells_color='w'):
         fig,ax=plt.subplots()
         ax.imshow(self.hmask.mask.astype(np.int64), origin='lower')
         ylim=ax.get_ylim()
         xlim=ax.get_xlim()
-        for cell in self.cells:
-            ax.plot((cell.x_start_wb,cell.x_next_wb), (cell.y_start_wb,)*2,'r')
-            ax.plot((cell.x_start_wb,cell.x_next_wb), (cell.y_next_wb,)*2, 'r')
-            ax.plot((cell.x_start_wb,)*2, (cell.y_start_wb,cell.y_next_wb),'r')
-            ax.plot((cell.x_next_wb,)*2, (cell.y_start_wb,cell.y_next_wb),'r')
-        for cell in self.cells:
-            ax.plot((cell.x_start,)*2, (cell.y_start,cell.y_next),'w')
-            ax.plot((cell.x_next,)*2, (cell.y_start,cell.y_next),'w')
-            ax.plot((cell.x_start,cell.x_next), (cell.y_start,)*2,'w')
-            ax.plot((cell.x_start,cell.x_next), (cell.y_next,)*2, 'w')
+        if draw_border:
+            for cell in self.cells:
+                ax.plot((cell.x_start_wb,cell.x_next_wb), (cell.y_start_wb,)*2,border_color)
+                ax.plot((cell.x_start_wb,cell.x_next_wb), (cell.y_next_wb,)*2, border_color)
+                ax.plot((cell.x_start_wb,)*2, (cell.y_start_wb,cell.y_next_wb),border_color)
+                ax.plot((cell.x_next_wb,)*2, (cell.y_start_wb,cell.y_next_wb),border_color)
+        if draw_cells:
+            for cell in self.cells:
+                ax.plot((cell.x_start,)*2, (cell.y_start,cell.y_next),cells_color)
+                ax.plot((cell.x_next,)*2, (cell.y_start,cell.y_next),cells_color)
+                ax.plot((cell.x_start,cell.x_next), (cell.y_start,)*2,cells_color)
+                ax.plot((cell.x_start,cell.x_next), (cell.y_next,)*2, cells_color)
             
         ax.set_ylim(ylim)
         ax.set_xlim(xlim)
@@ -612,6 +614,7 @@ def main():
         log(mask_shape)
         hmask=hMask(mask.mask.sum(0), local_r=0)
         #hmask=hMask(mask.mask[0,:,:], local_r=local_r)
+        #hmask=hMask(mask.mask[0,:,:], local_r=0)
         dec=Decomposition(hmask, nodes=nodes)
         hmask.local_r=local_r
         for cell in dec.cells:
@@ -619,7 +622,7 @@ def main():
             cell.trim(hmask)        
         log(dec)
         if False:
-            dec.plot()
+            dec.plot(draw_border=False, draw_cells=True, cells_color='r')
             mpi.comm.Abort()
         
         mpi.bcast(mask_shape)

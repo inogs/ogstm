@@ -32,6 +32,8 @@ module Ens_Routines
         only: DAparttime, DAtottime
     use Ens_Params, &
         only: Ens_Init_Params, Ens_Finalize_Params, Ens_ReadParams!, Ens_SetParams
+    use Ens_ParallelWriter, &
+        only: PW_Init, PW_Finalize
         
     
 implicit none
@@ -44,6 +46,7 @@ contains
         
         call Ens_allocate
         call Ens_Init_IO
+        call PW_Init
         
 #ifdef ExecEnsParams
         if (UseParams) call Ens_Init_Params
@@ -134,6 +137,7 @@ contains
         
         call Ens_deallocate
         call Ens_Finalize_IO
+        call PW_Finalize
         
 #ifdef ExecEnsParams
         if (UseParams) call Ens_Finalize_Params
@@ -165,7 +169,7 @@ contains
                 DAparttime = MPI_WTIME()
             end if
             
-            call Ens_state2DA
+            call Ens_state2DA(DateString)
             
             if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)
@@ -180,7 +184,7 @@ contains
             end if
             
             if (EnsSaveAfterForecast) then
-                call Ens_DA2state
+                call Ens_DA2state(DateString)
                 call Ens_SaveRestarts(Ens_forecast_prefix, Ens_forecast_ens_prefix, DATEstring)
             end if
             
@@ -206,7 +210,7 @@ contains
                 end if
             endif
             
-            call Ens_DA2state
+            call Ens_DA2state(DateString)
             
             if (EnsDebug>1) then
                 call mpi_barrier(glcomm, ierr)

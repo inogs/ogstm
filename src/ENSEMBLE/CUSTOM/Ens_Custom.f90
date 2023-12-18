@@ -4,16 +4,21 @@ module Ens_Custom
     use modul_param, &
         only: jpi, jpj, jpk, jptra
     use myalloc, &
-        only: nldj, nlej, nldi, nlei, &
-            trn, trb, bfmmask, tmask
+        only: myrank, mycomm & 
+            nldj, nlej, nldi, nlei, &
+            trn, trb, bfmmask, tmask, &
+            ctrcnm
     use Ens_Mem, &
-        only: EnsRankZero, &
-            EnsSize, &
-            LocalRange
+        only: EnsDebug, EnsRankZero, myrankZero, &
+            EnsSize, EnsRank, &
+            LocalRange, ForgettingFactor, UseParams, &
+            Ens_restart_ens_prefix, Ens_analysis_ens_prefix
     use Ens_Utilities, &
         only: Ens_ReduceMean
     use ogstm_mpi_module, &
         only: mpplnk_my
+    use Ens_ParallelWriter, &
+        only: PW_prepare_writing, PW_write_all
         
     implicit none
     
@@ -33,86 +38,95 @@ module Ens_Custom
     integer(1), dimension(:,:,:), allocatable :: DAMask
     
     double precision, dimension(:,:,:,:), allocatable :: DAstate_avg, stddev, DAstate_biased
-    double precision :: stdCoef
     double precision, dimension(:), allocatable :: MaxStd1
+    
+    double precision, dimension(:,:), pointer :: Inflation
     
 contains
     
-    subroutine Ens_Init_DA
-        use myalloc, &
-            only: ctrcnm!, bfmmask, glamt
-        use Ens_Mem, &
-            only: Ens_shared_alloc
-        
-        !double precision, dimension(:), POINTER, contiguous :: member_pointer
-        double precision, dimension(:,:), POINTER, contiguous :: global_pointer
-        integer indexi, indexj
-        
-        nk_DAstate=jpk
-        nj_DAstate=nlej-nldj+1
-        ni_DAstate=nlei-nldi+1
-        
-        ntra_DAstate=0
-        do indexi=1,jptra
-            if (IsEnsDAVar(trim(ctrcnm(indexi)))) ntra_DAstate=ntra_DAstate+1
-        end do
-        allocate(DAVariablesIndex(ntra_DAstate))
-        allocate(MaxStd1(ntra_DAstate))
-        ntra_DAstate=0
-        do indexi=1,jptra
-            if (IsEnsDAVar(trim(ctrcnm(indexi)))) then
-                ntra_DAstate=ntra_DAstate+1
-                DAVariablesIndex(ntra_DAstate)=indexi
-                if (IsObserved(trim(ctrcnm(indexi)))) then
-                    MaxStd1(ntra_DAstate)=0.0d0
-                else
-                    MaxStd1(ntra_DAstate)=1.0d0/MaxStd
-                end if
+subroutine Ens_Init_DA
+    use Ens_Mem, &
+        only: Ens_shared_alloc
+    
+    !double precision, dimension(:), POINTER, contiguous :: member_pointer
+    double precision, dimension(:,:), POINTER, contiguous :: global_pointer
+    integer indexi, indexj
+    
+    nk_DAstate=jpk
+    nj_DAstate=nlej-nldj+1
+    ni_DAstate=nlei-nldi+1
+    
+    ntra_DAstate=0
+    do indexi=1,jptra
+        if (IsEnsDAVar(trim(ctrcnm(indexi)))) ntra_DAstate=ntra_DAstate+1
+    end do
+    allocate(DAVariablesIndex(ntra_DAstate))
+    allocate(MaxStd1(ntra_DAstate))
+    ntra_DAstate=0
+    do indexi=1,jptra
+        if (IsEnsDAVar(trim(ctrcnm(indexi)))) then
+            ntra_DAstate=ntra_DAstate+1
+            DAVariablesIndex(ntra_DAstate)=indexi
+            if (IsObserved(trim(ctrcnm(indexi)))) then
+                MaxStd1(ntra_DAstate)=0.0d0
+            else
+                MaxStd1(ntra_DAstate)=1.0d0/MaxStd
             end if
-        end do
-        
-        n_DAstate=nk_DAstate * nj_DAstate * ni_DAstate * ntra_DAstate
-        
-        call Ens_shared_alloc(n_DAstate, DAstate, global_pointer, win_DAstate)
-        !DAstate(1:jpk,1:jpj,1:jpi,1:jptra)=>member_pointer
-        gl_DAstate(1:n_DAstate, 0:EnsSize-1)=>global_pointer
-        DAstate_kjit(1:nk_DAstate, 1:nj_DAstate, 1:ni_DAstate, 1:ntra_DAstate)=>DAstate
-        gl_DAstate_kjitn(1:nk_DAstate, 1:nj_DAstate, 1:ni_DAstate, 1:ntra_DAstate, 0:EnsSize-1) => gl_DAstate
-        !DAstate  = huge(DAstate(1)) 
-        DAstate  = 0.0d0
-        
-        allocate(DAMask(nk_DAstate, nj_DAstate, ni_DAstate))
-        DAMask=bfmmask(:,nldj:nlej,nldi:nlei)
-        !do indexi=1,ni_DAstate
-        !    do indexj=1,nj_DAstate
-        !        if (glamt(nldj-1+indexj,nldi-1+indexi)<-6.0d0) DAMask(:, indexj,indexi)=0
-        !    end do
-        !end do
-        
-        allocate(DAstate_avg(nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate))
-        DAstate_avg=0.0d0
-        allocate(stddev(nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate))
-        stddev=0.0d0
-        allocate(DAstate_biased(nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate))
-        DAstate_biased=0.0d0
-    end
+        end if
+    end do
     
-    subroutine Ens_Finalize_DA
-        use mpi 
-        
-        integer ierror
-        
-        deallocate(DAVariablesIndex)
-        CALL MPI_Win_free(win_DAstate, ierror)
-        
-        deallocate(DAMask)
-        
-        deallocate(DAstate_avg)
-        deallocate(stddev)
-        deallocate(DAstate_biased)
-        
-    end subroutine
+    n_DAstate=nk_DAstate * nj_DAstate * ni_DAstate * ntra_DAstate
     
+    call Ens_shared_alloc(n_DAstate, DAstate, global_pointer, win_DAstate)
+    !DAstate(1:jpk,1:jpj,1:jpi,1:jptra)=>member_pointer
+    gl_DAstate(1:n_DAstate, 0:EnsSize-1)=>global_pointer
+    DAstate_kjit(1:nk_DAstate, 1:nj_DAstate, 1:ni_DAstate, 1:ntra_DAstate)=>DAstate
+    gl_DAstate_kjitn(1:nk_DAstate, 1:nj_DAstate, 1:ni_DAstate, 1:ntra_DAstate, 0:EnsSize-1) => gl_DAstate
+    !DAstate  = huge(DAstate(1)) 
+    DAstate  = 0.0d0
+    
+    allocate(DAMask(nk_DAstate, nj_DAstate, ni_DAstate))
+    DAMask=bfmmask(:,nldj:nlej,nldi:nlei)
+    !do indexi=1,ni_DAstate
+    !    do indexj=1,nj_DAstate
+    !        if (glamt(nldj-1+indexj,nldi-1+indexi)<-6.0d0) DAMask(:, indexj,indexi)=0
+    !    end do
+    !end do
+    
+    allocate(DAstate_avg(nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate))
+    DAstate_avg=0.0d0
+    allocate(stddev(nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate))
+    stddev=0.0d0
+    allocate(DAstate_biased(nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate))
+    DAstate_biased=0.0d0
+    
+    if (.not.(UseParams)) then
+        allocate(Inflation(jpj, jpi)) 
+    end if
+    !Inflation=1.0d0/sqrt(ForgettingFactor)
+    
+end subroutine
+
+subroutine Ens_Finalize_DA
+    use mpi 
+    
+    integer ierror
+    
+    deallocate(DAVariablesIndex)
+    CALL MPI_Win_free(win_DAstate, ierror)
+    
+    deallocate(DAMask)
+    
+    deallocate(DAstate_avg)
+    deallocate(stddev)
+    deallocate(DAstate_biased)
+    
+    if (.not.(UseParams)) then
+        deallocate(Inflation) 
+    end if
+    
+end subroutine
+
 !     subroutine Ens_state2DA
 !         use myalloc, &
 !             only: trn
@@ -188,304 +202,375 @@ contains
 !         end do 
 !         
 !     end subroutine
+
+subroutine Ens_state2DA(DateString)
+        
+    ! Transform and prepare the array for DA filter.
+    ! e.g., DAstate_kjit=log(trn)
     
-    subroutine Ens_state2DA
-            
-        ! Transform and prepare the array for DA filter.
-        ! e.g., DAstate_kjit=log(trn)
-        
-        integer indexi, indexj, indexk, indext, ierror
-        
-        !DAstate_kjit=log(trn(:,nldj:nlej,nldi:nlei,DAVariablesIndex))
-        
-        do indext=1, ntra_DAstate
-            do indexi=1, ni_DAstate
-                do indexj=1, nj_DAstate
-                    do indexk=1, nk_DAstate
-                        if (DAMask(indexk, indexj, indexi)==0) exit
+    character(len=17), intent(in) :: DateString
+    integer indexi, indexj, indexk, indext, ierror
+    double precision :: stdCoef
+    
+    !DAstate_kjit=log(trn(:,nldj:nlej,nldi:nlei,DAVariablesIndex))
+    
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    DAstate_kjit(indexk, indexj, indexi, indext)=log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext)))
+                end do
+            end do
+        end do
+    end do      
+    
+    call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
+    
+    DAstate_avg(:,:,:,:)=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)
+    
+    CALL MPI_Win_fence(0, win_DAstate, ierror)
+    
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
+                        DAstate_kjit(indexk, indexj, indexi, indext)=logsmall
+                    else
                         DAstate_kjit(indexk, indexj, indexi, indext)=log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext)))
-                    end do
-                end do
-            end do
-        end do      
-        
-        call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
-        
-        DAstate_avg(:,:,:,:)=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)
-        
-        CALL MPI_Win_fence(0, win_DAstate, ierror)
-        
-        do indext=1, ntra_DAstate
-            do indexi=1, ni_DAstate
-                do indexj=1, nj_DAstate
-                    do indexk=1, nk_DAstate
-                        if (DAMask(indexk, indexj, indexi)==0) exit
-                        if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
-                            DAstate_kjit(indexk, indexj, indexi, indext)=logsmall
-                        else
-                            DAstate_kjit(indexk, indexj, indexi, indext)=log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext)))
-                        end if
-                    end do
-                end do
-            end do
-        end do        
-            
-        call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
-        
-        DAstate_biased(:,:,:,:)=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)  
-        
-        CALL MPI_Win_fence(0, win_DAstate, ierror)
-        
-        do indext=1, ntra_DAstate
-            do indexi=1, ni_DAstate
-                do indexj=1, nj_DAstate
-                    do indexk=1, nk_DAstate
-                        if (DAMask(indexk, indexj, indexi)==0) exit
-                        if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
-                            DAstate_kjit(indexk, indexj, indexi, indext) = (logsmall - DAstate_biased(indexk, indexj, indexi, indext))**2
-                        else
-                            DAstate_kjit(indexk, indexj, indexi, indext) = (log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))) - &
-                                DAstate_biased(indexk, indexj, indexi, indext))**2                            
-                        end if
-                    end do
-                end do
-            end do
-        end do 
-        
-        call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
-        
-        stddev(:,:,:,:)=sqrt(gl_DAstate_kjitn(:,:,:,:,EnsRankZero))
-        
-        CALL MPI_Win_fence(0, win_DAstate, ierror)
-        
-        do indext=1, ntra_DAstate
-            do indexi=1, ni_DAstate
-                do indexj=1, nj_DAstate
-                    do indexk=1, nk_DAstate
-                        if (DAMask(indexk, indexj, indexi)==0) exit
-                        if (stddev(indexk, indexj, indexi, indext)*MaxStd1(indext)<=1.0d0) then  
-                            stdCoef=1.0d0
-                        else
-                            stdCoef=1.0d0/(stddev(indexk, indexj, indexi, indext)*MaxStd1(indext))
-                        end if
-                        if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
-                            DAstate_kjit(indexk, indexj, indexi, indext) = (logsmall - DAstate_biased(indexk, indexj, indexi, indext))*stdCoef + &
-                                DAstate_avg(indexk, indexj, indexi, indext)
-                        else
-                            DAstate_kjit(indexk, indexj, indexi, indext) = &
-                                (log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))) - DAstate_biased(indexk, indexj, indexi, indext))*stdCoef + &
-                                DAstate_avg(indexk, indexj, indexi, indext)
-                        end if
-                    end do
+                    end if
                 end do
             end do
         end do
+    end do        
         
-    end subroutine
+    call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
     
-    subroutine Ens_DA2state
-        
-        ! Transform back, from DA output to trn.
-        ! e.g. trn=exp(DAstate_kjit)
-        
-        integer indexi, indexj, indexk, indext
-        
-        !trn(:,nldj:nlej,nldi:nlei,DAVariablesIndex)=exp(DAstate_kjit)
-        do indext=1, ntra_DAstate
-            do indexi=1, ni_DAstate
-                do indexj=1, nj_DAstate
-                    do indexk=1, nk_DAstate
-                        if (DAMask(indexk, indexj, indexi)==0) exit
-                        trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))=exp(DAstate_kjit(indexk, indexj, indexi, indext))
-                    end do
+    DAstate_biased(:,:,:,:)=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)  
+    
+    CALL MPI_Win_fence(0, win_DAstate, ierror)
+    
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
+                        DAstate_kjit(indexk, indexj, indexi, indext) = (logsmall - DAstate_biased(indexk, indexj, indexi, indext))**2
+                    else
+                        DAstate_kjit(indexk, indexj, indexi, indext) = (log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))) - &
+                            DAstate_biased(indexk, indexj, indexi, indext))**2                            
+                    end if
                 end do
             end do
-        end do        
-        
-        do indexi=1,ntra_DAstate
-            CALL mpplnk_my(trn(:,:,:,DAVariablesIndex(indexi)))
-            trb(:,:,:,DAVariablesIndex(indexi))=trn(:,:,:,DAVariablesIndex(indexi))
         end do
-        
-    end subroutine
+    end do 
     
-    subroutine Ens_RST2DA(tracer)
-        use myalloc, &
-            only: trn
-        !Use Ens_IO, &
-        !    only: trn_IO
+    call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
+    
+    stddev(:,:,:,:)=sqrt(gl_DAstate_kjitn(:,:,:,:,EnsRankZero))
+    
+    CALL MPI_Win_fence(0, win_DAstate, ierror)
+    
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    stdCoef=stddev(indexk, indexj, indexi, indext)*MaxStd1(indext)
+                    if (stdCoef<=1.0d0) then  
+                        stdCoef=1.0d0
+                    else
+                        stdCoef=1.0d0/stdCoef
+                    end if
+                    if (trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))<small) then
+                        DAstate_kjit(indexk, indexj, indexi, indext) = (logsmall - DAstate_biased(indexk, indexj, indexi, indext))*stdCoef + &
+                            DAstate_avg(indexk, indexj, indexi, indext)
+                    else
+                        DAstate_kjit(indexk, indexj, indexi, indext) = &
+                            (log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))) - DAstate_biased(indexk, indexj, indexi, indext))*stdCoef + &
+                            DAstate_avg(indexk, indexj, indexi, indext)
+                    end if
+                end do
+            end do
+        end do
+    end do
+    
+    if (EnsRank==EnsRankZero) then
+        do indext=1,ntra_DAstate
+            call PW_prepare_writing(trim(Ens_restart_ens_prefix), DateString, "STD."//trim(ctrcnm(DAVariablesIndex(indext))), stddev(:, :,:, indext), nk_DAstate)
+        end do
+        call PW_write_all
         
-        double precision, dimension(jpk, jpj, jpi, jptra), intent(out) :: tracer
-            
-        ! Transform for averaging, going from trn to tracer
-        ! e.g., tracer=log(trn)
+        if (EnsDebug>0) then
+            call mpi_barrier(mycomm,ierr)
+            if (myrank==myrankZero) write(*,*) "STDbefore saved"
+        end if
+    end if
+    
+end subroutine
+
+subroutine Ens_DA2state(DateString)
+    
+    ! Transform back, from DA output to trn.
+    ! e.g. trn=exp(DAstate_kjit)
+    
+    character(len=17), intent(in) :: DateString
+    integer indexi, indexj, indexk, indext, ierror
+    double precision temp
+    
+    !trn(:,nldj:nlej,nldi:nlei,DAVariablesIndex)=exp(DAstate_kjit)
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))=exp(DAstate_kjit(indexk, indexj, indexi, indext))
+                end do
+            end do
+        end do
+    end do
+    
+    call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
+    
+    DAstate_avg(:,:,:,:)=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)
+    
+    CALL MPI_Win_fence(0, win_DAstate, ierror)
+    
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    DAstate_kjit(indexk, indexj, indexi, indext) = (log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))) - &
+                        DAstate_avg(indexk, indexj, indexi, indext))**2                            
+                end do
+            end do
+        end do
+    end do 
+    
+    call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
+    
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    
+                    temp=sqrt(gl_DAstate_kjitn(indexk, indexj, indexi, indext,EnsRankZero))
+                    if (temp > stddev(indexk, indexj, indexi, indext)) then
+                        trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext)) = &
+                            exp((log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))) - DAstate_avg(indexk, indexj, indexi, indext))* &
+                            stddev(indexk, indexj, indexi, indext)/temp + DAstate_avg(indexk, indexj, indexi, indext))
+                    else
+                        stddev(indexk, indexj, indexi, indext)=temp
+                    end if
+                end do
+            end do
+        end do
+    end do 
+    
+    CALL MPI_Win_fence(0, win_DAstate, ierror)
+    
+    do indexi=1,ntra_DAstate
+        CALL mpplnk_my(trn(:,:,:,DAVariablesIndex(indexi)))
+        trb(:,:,:,DAVariablesIndex(indexi))=trn(:,:,:,DAVariablesIndex(indexi))
+    end do
+    
+    if (EnsRank==EnsRankZero) then
+        do indext=1,ntra_DAstate
+            call PW_prepare_writing(trim(Ens_analysis_ens_prefix), DateString, "STD."//trim(ctrcnm(DAVariablesIndex(indext))), stddev(:, :,:, indext), nk_DAstate)
+        end do
+        call PW_write_all
         
-        integer indexi, indexj, indexk, indext
+        if (EnsDebug>0) then
+            call mpi_barrier(mycomm,ierr)
+            if (myrank==myrankZero) write(*,*) "STDbefore saved"
+        end if
+    end if
+    
+end subroutine
+
+subroutine Ens_RST2DA(tracer)
+    use myalloc, &
+        only: trn
+    !Use Ens_IO, &
+    !    only: trn_IO
+    
+    double precision, dimension(jpk, jpj, jpi, jptra), intent(out) :: tracer
         
-        !tracer=log(trn)
-        do indext=1, jptra
+    ! Transform for averaging, going from trn to tracer
+    ! e.g., tracer=log(trn)
+    
+    integer indexi, indexj, indexk, indext
+    
+    !tracer=log(trn)
+    do indext=1, jptra
+        do indexi=1, jpi
+            do indexj=1, jpj
+                do indexk=1, jpk
+                    if (tmask(indexk, indexj, indexi)==0) exit
+                    !if (trn(indexk, indexj, indexi, indext)<small) then
+                    !    tracer(indexk, indexj, indexi, indext)=logsmall
+                    !else
+                        tracer(indexk, indexj, indexi, indext)=log(trn(indexk, indexj, indexi, indext))
+                    !end if
+                end do
+            end do
+        end do
+    end do        
+        
+end subroutine
+
+subroutine Ens_DA2RST(tracer)
+    !Use Ens_IO, &
+    !    only: trn_IO
+    
+    double precision, dimension(jpk, jpj, jpi, jptra), intent(inout) :: tracer
+    
+    ! Transform back, but in place
+    ! e.g., tracer=exp(tracer)
+    
+    integer indexi, indexj, indexk, indext
+    
+    !tracer=exp(tracer)
+    do indext=1, jptra
+        do indexi=1, jpi
+            do indexj=1, jpj
+                do indexk=1, jpk
+                    if (tmask(indexk, indexj, indexi)==0) exit
+                    tracer(indexk, indexj, indexi, indext)=exp(tracer(indexk, indexj, indexi, indext))
+                end do
+            end do
+        end do
+    end do        
+    
+end subroutine
+
+subroutine Ens_Ave2DA
+    use modul_param, &
+        only: jptra_dia, jptra_dia_2d
+    use myalloc, &
+        only: jptra_high, jptra_dia_high, jptra_dia2d_high, jptra_phys, jptra_phys_2d, &
+            traIO, traIO_HIGH, tra_DIA_IO, tra_DIA_IO_HIGH, tra_DIA_2d_IO, tra_DIA_2d_IO_HIGH, &
+            tra_PHYS_IO, tra_PHYS_IO_HIGH, tra_PHYS_2d_IO, tra_PHYS_2d_IO_HIGH
+    use DIA_mem, &
+        only: Fsize, diaflx     
+        
+    ! Transform for averaging, in place.
+    ! e.g., traIO=log(traIO)
+    
+    integer indexi, indexj, indexk, indext, indexp
+    double precision, dimension(:,:,:,:), pointer :: temparray
+    
+    !traIO=log(traIO)
+    !traIO_HIGH=log(traIO_HIGH)
+    do indext=1, jptra
+        temparray => traIO
+        do indexp=1,2
             do indexi=1, jpi
                 do indexj=1, jpj
                     do indexk=1, jpk
                         if (tmask(indexk, indexj, indexi)==0) exit
-                        !if (trn(indexk, indexj, indexi, indext)<small) then
-                        !    tracer(indexk, indexj, indexi, indext)=logsmall
+                        !if (temparray(indexk, indexj, indexi, indext)<small) then
+                        !    temparray(indexk, indexj, indexi, indext)=logsmall
                         !else
-                            tracer(indexk, indexj, indexi, indext)=log(trn(indexk, indexj, indexi, indext))
+                            temparray(indexk, indexj, indexi, indext)=log(temparray(indexk, indexj, indexi, indext))
                         !end if
                     end do
                 end do
             end do
-        end do        
-            
-    end subroutine
+            if (indext>jptra_high) exit
+            temparray => traIO_HIGH
+        end do
+    end do        
+        
+end subroutine
+
+subroutine Ens_DA2Ave
+    use modul_param, &
+        only: jptra_dia, jptra_dia_2d
+    use myalloc, &
+        only: jptra_high, jptra_dia_high, jptra_dia2d_high, jptra_phys, jptra_phys_2d, &
+            traIO, traIO_HIGH, tra_DIA_IO, tra_DIA_IO_HIGH, tra_DIA_2d_IO, tra_DIA_2d_IO_HIGH, &
+            tra_PHYS_IO, tra_PHYS_IO_HIGH, tra_PHYS_2d_IO, tra_PHYS_2d_IO_HIGH
+    use DIA_mem, &
+        only: Fsize, diaflx      
+        
+    ! Transform back, in place
+    ! e.g., traIO=exp(traIO)
     
-    subroutine Ens_DA2RST(tracer)
-        !Use Ens_IO, &
-        !    only: trn_IO
-        
-        double precision, dimension(jpk, jpj, jpi, jptra), intent(inout) :: tracer
-        
-        ! Transform back, but in place
-        ! e.g., tracer=exp(tracer)
-        
-        integer indexi, indexj, indexk, indext
-        
-        !tracer=exp(tracer)
-        do indext=1, jptra
+    integer indexi, indexj, indexk, indext, indexp
+    double precision, dimension(:,:,:,:), pointer :: temparray
+    
+    !traIO=exp(traIO)
+    !traIO_HIGH=exp(traIO_HIGH)
+    do indext=1, jptra
+        temparray => traIO
+        do indexp=1,2
             do indexi=1, jpi
                 do indexj=1, jpj
                     do indexk=1, jpk
                         if (tmask(indexk, indexj, indexi)==0) exit
-                        tracer(indexk, indexj, indexi, indext)=exp(tracer(indexk, indexj, indexi, indext))
+                        temparray(indexk, indexj, indexi, indext)=exp(temparray(indexk, indexj, indexi, indext))
                     end do
                 end do
             end do
-        end do        
+            if (indext>jptra_high) exit
+            temparray => traIO_HIGH
+        end do
+    end do        
         
-    end subroutine
+end subroutine
+
+function IsEnsDAVar(name)
+    implicit none
     
-    subroutine Ens_Ave2DA
-        use modul_param, &
-            only: jptra_dia, jptra_dia_2d
-        use myalloc, &
-            only: jptra_high, jptra_dia_high, jptra_dia2d_high, jptra_phys, jptra_phys_2d, &
-                traIO, traIO_HIGH, tra_DIA_IO, tra_DIA_IO_HIGH, tra_DIA_2d_IO, tra_DIA_2d_IO_HIGH, &
-                tra_PHYS_IO, tra_PHYS_IO_HIGH, tra_PHYS_2d_IO, tra_PHYS_2d_IO_HIGH
-        use DIA_mem, &
-            only: Fsize, diaflx     
-            
-        ! Transform for averaging, in place.
-        ! e.g., traIO=log(traIO)
-        
-        integer indexi, indexj, indexk, indext, indexp
-        double precision, dimension(:,:,:,:), pointer :: temparray
-        
-        !traIO=log(traIO)
-        !traIO_HIGH=log(traIO_HIGH)
-        do indext=1, jptra
-            temparray => traIO
-            do indexp=1,2
-                do indexi=1, jpi
-                    do indexj=1, jpj
-                        do indexk=1, jpk
-                            if (tmask(indexk, indexj, indexi)==0) exit
-                            !if (temparray(indexk, indexj, indexi, indext)<small) then
-                            !    temparray(indexk, indexj, indexi, indext)=logsmall
-                            !else
-                                temparray(indexk, indexj, indexi, indext)=log(temparray(indexk, indexj, indexi, indext))
-                            !end if
-                        end do
-                    end do
-                end do
-                if (indext>jptra_high) exit
-                temparray => traIO_HIGH
-            end do
-        end do        
-            
-    end subroutine
+    character(LEN=*), intent(in) :: name
+    logical :: IsEnsDAVar
     
-    subroutine Ens_DA2Ave
-        use modul_param, &
-            only: jptra_dia, jptra_dia_2d
-        use myalloc, &
-            only: jptra_high, jptra_dia_high, jptra_dia2d_high, jptra_phys, jptra_phys_2d, &
-                traIO, traIO_HIGH, tra_DIA_IO, tra_DIA_IO_HIGH, tra_DIA_2d_IO, tra_DIA_2d_IO_HIGH, &
-                tra_PHYS_IO, tra_PHYS_IO_HIGH, tra_PHYS_2d_IO, tra_PHYS_2d_IO_HIGH
-        use DIA_mem, &
-            only: Fsize, diaflx      
-            
-        ! Transform back, in place
-        ! e.g., traIO=exp(traIO)
-        
-        integer indexi, indexj, indexk, indext, indexp
-        double precision, dimension(:,:,:,:), pointer :: temparray
-        
-        !traIO=exp(traIO)
-        !traIO_HIGH=exp(traIO_HIGH)
-        do indext=1, jptra
-            temparray => traIO
-            do indexp=1,2
-                do indexi=1, jpi
-                    do indexj=1, jpj
-                        do indexk=1, jpk
-                            if (tmask(indexk, indexj, indexi)==0) exit
-                            temparray(indexk, indexj, indexi, indext)=exp(temparray(indexk, indexj, indexi, indext))
-                        end do
-                    end do
-                end do
-                if (indext>jptra_high) exit
-                temparray => traIO_HIGH
-            end do
-        end do        
-            
-    end subroutine
-    
-    function IsEnsDAVar(name)
-        implicit none
-        
-        character(LEN=*), intent(in) :: name
-        logical :: IsEnsDAVar
-        
-        !if ((name(1:1).eq."P").or.(name(1:1).eq."N").or.(name(1:1).eq."O")) then
-        !if ((name(1:1).eq."P")) then
+    !if ((name(1:1).eq."P").or.(name(1:1).eq."N").or.(name(1:1).eq."O")) then
+    !if ((name(1:1).eq."P")) then
 !         if (.true.) then
 !             IsEnsDAVar=.true.
 !         else
 !             IsEnsDAVar=.false.
 !         end if
-        if (((name(1:1).eq."O").and.(.not.(name.eq."O2o"))).or.(name.eq."R3c")) then
-            IsEnsDAVar=.false.
-        else
-            IsEnsDAVar=.true.
-        end if
-            
-    end function
+!         if (((name(1:1).eq."O").and.(.not.(name.eq."O2o"))).or.(name.eq."R3c")) then
+    if ((name(1:1).eq."O").and.(.not.(name.eq."O2o"))) then
+        IsEnsDAVar=.false.
+    else
+        IsEnsDAVar=.true.
+    end if
+        
+end function
+
+function IsObserved(name)
+    implicit none
     
-    function IsObserved(name)
-        implicit none
-        
-        character(LEN=*), intent(in) :: name
-        logical :: IsObserved
-        
+    character(LEN=*), intent(in) :: name
+    logical :: IsObserved
+    
 !         if ((name(1:1).eq."P").and.(name(3:3).eq."l")) then
 !             IsObserved=.true.
 !         else
 !             IsObserved=.false.
 !         end if
-        
-        IsObserved=.false.
-            
-    end function
     
-    function LocalWeightFunction(radius2)
+    IsObserved=.false.
         
-        double precision, intent(in) :: radius2
-        double precision :: LocalWeightFunction
-        
-        LocalWeightFunction=(radius2/((LocalRange+1)**2)-1.0d0)**2
-        ! si puo' anche usare y= 1 + ( -3 + 2*x )*x^2 che e' di grado 3 anziche' 4
+end function
 
-    end function 
+function LocalWeightFunction(radius2)
+    
+    double precision, intent(in) :: radius2
+    double precision :: LocalWeightFunction
+    
+    LocalWeightFunction=(radius2/((LocalRange+1)**2)-1.0d0)**2
+    ! si puo' anche usare y= 1 + ( -3 + 2*x )*x^2 che e' di grado 3 anziche' 4
+
+end function 
     
 end module

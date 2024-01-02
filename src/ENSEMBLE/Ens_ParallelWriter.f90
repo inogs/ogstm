@@ -18,6 +18,7 @@ module Ens_ParallelWriter
     
     double precision, parameter :: PW_miss_val =1.d20
     
+    integer :: PW_add, PW_max
     character(len=1000) :: PW_filename
     character(len=100) :: PW_varname
     character(len=17) :: PW_datestring
@@ -32,6 +33,9 @@ contains
 subroutine PW_Init
 
     integer indexi, right_rank, top_rank
+    
+    PW_add=2
+    PW_max=mysize
     
     allocate(PW_tracer(jpk, jpjglo, jpiglo))
     PW_tracer=Huge(PW_tracer(1, 1, 1))
@@ -113,6 +117,8 @@ subroutine PW_prepare_writing(prefix, datestring, varname, tracer, n_vertical)
     
     integer ierr, indexi, indexj, indexk
     
+    return
+    
     allocate( PW_tracer_piece(n_vertical,nlej - nldj +1, nlei - nldi +1))
     
     !PW_tracer_piece(:,:,:)=tracer(:,nldj:nlej,nldi:nlei)*tmask(1:n_vertical,nldj:nlej,nldi:nlei) + (1-tmask(1:n_vertical,nldj:nlej,nldi:nlei))*PW_miss_val
@@ -146,10 +152,10 @@ subroutine PW_prepare_writing(prefix, datestring, varname, tracer, n_vertical)
     
     deallocate( PW_tracer_piece)
     
-    if ((myrank==PW_writing_rank).and.(EnsDebug>0)) write(*,*) trim(PW_filename), " prepared for writing."
+    if ((myrank==PW_writing_rank).and.(EnsDebug>1)) write(*,*) trim(PW_filename), " prepared for writing."
     
-    PW_writing_rank=PW_writing_rank+1
-    if (PW_writing_rank==mysize) call PW_write_all
+    PW_writing_rank=PW_writing_rank+PW_add
+    if (PW_writing_rank>=PW_max) call PW_write_all
     
 end subroutine
 
@@ -157,7 +163,7 @@ subroutine PW_write_all
 
     integer indexi
     
-    if (myrank>=PW_writing_rank) then
+    if ((myrank>=PW_writing_rank).or.(mod(myrank,PW_add)/=0)) then
         PW_writing_rank=0
         return
     end if
@@ -174,7 +180,7 @@ subroutine PW_write_all
     
     call PW_write(trim(PW_filename), trim(PW_varname), PW_datestring, deflate_rst, deflate_level_rst, PW_tracer, PW_n_vertical)
     
-    write(*,*) trim(PW_filename), " written."
+    if (EnsDebug>1) write(*,*) trim(PW_filename), " written."
     
     PW_writing_rank=0
     

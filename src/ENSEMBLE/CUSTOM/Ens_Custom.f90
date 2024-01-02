@@ -4,7 +4,7 @@ module Ens_Custom
     use modul_param, &
         only: jpi, jpj, jpk, jptra
     use myalloc, &
-        only: myrank, mycomm & 
+        only: myrank, mycomm, & 
             nldj, nlej, nldi, nlei, &
             trn, trb, bfmmask, tmask, &
             ctrcnm
@@ -305,7 +305,7 @@ subroutine Ens_state2DA(DateString)
         call PW_write_all
         
         if (EnsDebug>0) then
-            call mpi_barrier(mycomm,ierr)
+            call mpi_barrier(mycomm, ierror)
             if (myrank==myrankZero) write(*,*) "STDbefore saved"
         end if
     end if
@@ -386,8 +386,8 @@ subroutine Ens_DA2state(DateString)
         call PW_write_all
         
         if (EnsDebug>0) then
-            call mpi_barrier(mycomm,ierr)
-            if (myrank==myrankZero) write(*,*) "STDbefore saved"
+            call mpi_barrier(mycomm, ierror)
+            if (myrank==myrankZero) write(*,*) "STDafter saved"
         end if
     end if
     

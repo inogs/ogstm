@@ -4,6 +4,9 @@ CMakeLists.txt
 *.pyc
 testcase/TEST0*/
 testcase/TEST_LIST.dat
+testcase/archive
+testcase/*_PROFILING
+testcase/*_BENCHMARK
 bfmv5/namelist.passivetrc_new
 .cproject
 .project

@@ -9,7 +9,7 @@
 #SBATCH --gres=gpu:4
 #SBATCH --exclusive
 
-source "~/ModelBuild/ogstm/compilers/machine_modules/leonardo.nvhpc"
+source "/leonardo_scratch/large/userexternal/scampane/ModelBuild/ogstm/compilers/machine_modules/leonardo.nvhpc"
 export RANKS_PER_NODE=$SLURM_TASKS_PER_NODE
 export SRC=$(realpath $1)
 export DST=$TMPDIR/OGSTM-BFM_GPU_TEST
@@ -19,5 +19,5 @@ mkdir -p ${DST}
 cp -r "${SRC}" "${DST}"
 cd "${WRK}" || exit 
 
-mpirun -gpu -np $RANKS_PER_NODE ./ogstm.xx
+mpirun -np $RANKS_PER_NODE ./ogstm.xx
 

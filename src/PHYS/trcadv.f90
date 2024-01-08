@@ -419,7 +419,7 @@ SUBROUTINE trcadv
         !dir$ vector aligned
         !$acc loop independent
         DO jj = 2,jpjm1
-           zky(1,jj,ji ) = fsy(trn(1,jj,ji, jn),trn(1,jj+1,ji, jn),zbb(1,jj,ji))
+           zky(1,jj,ji ) = fsx(trn(1,jj,ji, jn),trn(1,jj+1,ji, jn),zbb(1,jj,ji))
         END DO
      END DO
      !$acc end kernels
@@ -429,7 +429,7 @@ SUBROUTINE trcadv
         !dir$ vector aligned
         !$acc loop independent
         DO jk = 2,jpk
-           zkz(jk,1,ji ) = fsz(trn(jk,1,ji, jn),trn(jk-1,1,ji, jn),zcc(jk,1,ji))
+           zkz(jk,1,ji ) = fsx(trn(jk,1,ji, jn),trn(jk-1,1,ji, jn),zcc(jk,1,ji))
         ENDDO
      ENDDO
      !$acc end kernels
@@ -439,7 +439,7 @@ SUBROUTINE trcadv
         !dir$ vector aligned
         !$acc loop independent
         DO jk = 2,jpk
-           zkz(jk,jpj,ji ) = fsz(trn(jk,jpj,ji, jn),trn(jk-1,jpj,ji, jn),zcc(jk,jpj,ji))
+           zkz(jk,jpj,ji ) = fsx(trn(jk,jpj,ji, jn),trn(jk-1,jpj,ji, jn),zcc(jk,jpj,ji))
         END DO
      END DO
      !$acc end kernels
@@ -449,7 +449,7 @@ SUBROUTINE trcadv
         !dir$ vector aligned
         !$acc loop independent
         DO jk = 2,jpk
-           zkz(jk,jj,1 ) = fsz(trn(jk,jj,1, jn),trn(jk-1,jj,1, jn),zcc(jk,jj,1))
+           zkz(jk,jj,1 ) = fsx(trn(jk,jj,1, jn),trn(jk-1,jj,1, jn),zcc(jk,jj,1))
         END DO
      END DO
      !$acc end kernels
@@ -459,7 +459,7 @@ SUBROUTINE trcadv
         !dir$ vector aligned
         !$acc loop independent
         DO jk = 2,jpk
-           zkz(jk,jj,jpi ) = fsz(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
+           zkz(jk,jj,jpi ) = fsx(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
         END DO
      END DO
      !$acc end kernels
@@ -482,7 +482,7 @@ SUBROUTINE trcadv
         DO jj = 2,jpjm1
            !dir$ vector aligned
            DO jk = 2,jpk
-              zky(jk,jj,ji ) = fsy(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
+              zky(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
            END DO
         END DO
      END DO
@@ -493,7 +493,7 @@ SUBROUTINE trcadv
         DO jj = 2,jpjm1
            !dir$ vector aligned
            DO jk = 2,jpk
-              zkz(jk,jj,ji ) = fsz(trn(jk,jj,ji, jn),trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
+              zkz(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
            END DO
         END DO
      END DO
@@ -728,7 +728,7 @@ SUBROUTINE trcadv
            !dir$ vector aligned
            !$acc loop independent
            DO jj = 2,jpjm1
-              zky(1,jj,ji ) = fsy(zti(1,jj,ji ),zti(1,jj+ 1,ji ),zy(1,jj,ji ))
+              zky(1,jj,ji ) = fsx(zti(1,jj,ji ),zti(1,jj+ 1,ji ),zy(1,jj,ji ))
            END DO
         END DO
         !$acc end kernels
@@ -738,7 +738,7 @@ SUBROUTINE trcadv
            !dir$ vector aligned
            !$acc loop independent
            DO jk = 2,jpk
-              zkz(jk,1,ji ) = fsz(zti(jk,1,ji ),zti(jk-1,1,ji ),zz(jk,1,ji ))
+              zkz(jk,1,ji ) = fsx(zti(jk,1,ji ),zti(jk-1,1,ji ),zz(jk,1,ji ))
            ENDDO
         ENDDO
         !$acc end kernels
@@ -748,7 +748,7 @@ SUBROUTINE trcadv
            !dir$ vector aligned
            !$acc loop independent
            DO jk = 2,jpk
-              zkz(jk,jpj,ji ) = fsz(zti(jk,jpj,ji ),zti(jk-1,jpj,ji ),zz(jk,jpj,ji ))
+              zkz(jk,jpj,ji ) = fsx(zti(jk,jpj,ji ),zti(jk-1,jpj,ji ),zz(jk,jpj,ji ))
            ENDDO
         ENDDO
         !$acc end kernels
@@ -758,7 +758,7 @@ SUBROUTINE trcadv
            !dir$ vector aligned
            !$acc loop independent
            DO jk = 2,jpk
-              zkz(jk,jj,1 ) = fsz(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
+              zkz(jk,jj,1 ) = fsx(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
            ENDDO
         ENDDO
         !$acc end kernels
@@ -768,7 +768,7 @@ SUBROUTINE trcadv
            !dir$ vector aligned
            !$acc loop independent
            DO jk = 2,jpk
-              zkz(jk,jj,jpi ) = fsz(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
+              zkz(jk,jj,jpi ) = fsx(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
            END DO
         END DO
         !$acc end kernels
@@ -780,8 +780,8 @@ SUBROUTINE trcadv
               !dir$ vector aligned
               DO jk = 2,jpk
                  zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zkz(jk,jj,ji ) = fsz(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
+                 !zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
+                 !zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
               END DO
            END DO
         END DO
@@ -794,8 +794,8 @@ SUBROUTINE trcadv
               !dir$ vector aligned
               DO jk = 2,jpk
                  !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zkz(jk,jj,ji ) = fsz(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
+                 zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
+                 !zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
               END DO
            END DO
         END DO
@@ -808,8 +808,8 @@ SUBROUTINE trcadv
               !$acc loop independent
               DO jk = 2,jpk
                  !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 zkz(jk,jj,ji ) = fsz(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
+                 !zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
+                 zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
               END DO
            END DO
         END DO
@@ -971,38 +971,15 @@ SUBROUTINE trcadv
 
 contains
 
-  double precision FUNCTION fsx( pfx1, pfx2, pfu )
+  double precision function fsx(pfx1, pfx2, pfu)
     !dir$ attributes vector :: fsx
     !$acc routine seq
     IMPLICIT NONE
     double precision, INTENT(IN) :: pfx1, pfx2, pfu
-    double precision ::  abspfu
+    double precision :: abspfu
     abspfu = abs(pfu)
-    fsx = ( ( pfu + abspfu ) * pfx1+( pfu - abspfu ) * pfx2 ) * 0.5
-  END FUNCTION fsx
-
-
-  double precision FUNCTION fsy( pfy1, pfy2, pfv  )
-    !dir$ attributes vector :: fsy
-    !$acc routine seq
-    IMPLICIT NONE
-    double precision, INTENT(IN) :: pfy1, pfy2, pfv
-    double precision :: abspfv
-    abspfv = abs(pfv)
-    fsy = ( ( pfv + abspfv ) * pfy1 +( pfv - abspfv ) * pfy2 ) * 0.5
-  END FUNCTION fsy
-
-
-  double precision FUNCTION fsz( pfz1, pfz2, pfw )
-    !dir$ attributes vector :: fsz
-    !$acc routine seq
-    IMPLICIT NONE
-    double precision, INTENT(IN) :: pfz1, pfz2, pfw
-    double precision abspfw
-    abspfw = abs(pfw)
-    fsz = ( ( pfw + abspfw ) * pfz1+( pfw - abspfw ) * pfz2 ) * 0.5
-  END FUNCTION fsz
-
+    fsx = ((pfu + abspfu) * pfx1 + (pfu - abspfu) * pfx2) * 0.5
+  end function fsx
 
 
 END SUBROUTINE trcadv

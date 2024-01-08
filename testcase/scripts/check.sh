@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-ROOT="$HOME/ModelBuild"
+ROOT="$CINECA_SCRATCH/ModelBuild"
 BUILD=GPU_BUILD
 
 cd $ROOT || exit
@@ -18,6 +18,6 @@ mpirun -np 1 ./ogstm.xx || exit
 
 cd "$ROOT/ogstm/testcase" || exit
 
-conda run -n ogstm-bfm python scripts/comparedatasets.py --rtol=0.0 $1 REFERENCE AVE_FREQ_2
+conda run -n ogstm-bfm python scripts/comparedatasets.py --atol=0.0 --rtol=0.0 $1 REFERENCE AVE_FREQ_2
 
 

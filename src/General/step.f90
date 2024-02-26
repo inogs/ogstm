@@ -57,6 +57,7 @@ MODULE module_step
 
 !      trcstp, trcdia  passive tracers interface
 
+       use simple_timer
        IMPLICIT NONE
 
 
@@ -81,8 +82,11 @@ MODULE module_step
        if (IsStartBackup_2) datefrom_2 = BKPdatefrom_2
        datestring =  DATESTART
       TAU = 0
+      call tstart("step_total")
       DO WHILE (.not.ISOVERTIME(datestring))
 
+
+         call tstart("step_1")
          stpparttime = MPI_WTIME()  ! stop cronomether
          COMMON_DATESTRING = DATEstring
 
@@ -92,7 +96,9 @@ MODULE module_step
 
          if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
          if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
+         call tstop("step_1")
 
+         call tstart("restart")
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
@@ -114,31 +120,39 @@ MODULE module_step
              B = writeTemporization("trcwri____", trcwritottime)
          endif
          endif
+         call tstop("restart")
 
 
 
 ! For offline simulation READ DATA or precalculalted dynamics fields
 ! ------------------------------------------------------------------
 
+      call tstart("forcing")
       CALL forcings_PHYS(DATEstring)
       CALL forcings_KEXT(datestring)
+      call tstop("forcing")
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
+      call tstart("boundaries%update")
       call boundaries%update(datestring)
+      call tstop("boundaries%update")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
+      call tstart("bc+eos")
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
+      call tstop("bc+eos")
 
 
 
+      call tstart("dump_ave_1")
       if (IsAnAveDump(DATEstring,1)) then
          call MIDDLEDATE(datefrom_1, DATEstring, datemean)
          CALL trcdia(datemean, datefrom_1, datestring,1)
@@ -149,7 +163,9 @@ MODULE module_step
 
         if (lwp)  B = writeTemporization("trcdia____", trcdiatottime)
       endif
+      call tstop("dump_ave_1")
 
+      call tstart("dump_ave_2")
       if (IsAnAveDump(DATEstring,2)) then
          call MIDDLEDATE(datefrom_2, DATEstring, datemean)
          CALL trcdia(datemean, datefrom_2, datestring,2)
@@ -158,20 +174,27 @@ MODULE module_step
          IsStartBackup_2 = .false.
          if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
+      call tstop("dump_ave_2")
 
 
 #ifdef ExecDA
+      call tstart("data_assim")
       if (IsaDataAssimilation(DATEstring)) then
         CALL mainAssimilation(DATEstring, datefrom_1)
          if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
       endif
+      call tstop("data_assim")
 #endif
 
 
 
 ! Call Passive tracer model between synchronization for small parallelisation
+        call tstart("trcstp_all")
         CALL trcstp    ! se commento questo non fa calcoli
+        call tstop("trcstp_all")
+        call tstart("trcave")
         call trcave
+        call tstop("trcave")
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
 
@@ -181,6 +204,7 @@ MODULE module_step
 
 
 ! OGSTM TEMPORIZATION
+       call tstart("temporization")
        IF (TAU.GT.0) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
            if (lwp) then
@@ -216,6 +240,7 @@ MODULE module_step
            call reset_Timers()
        ENDIF
       ENDIF
+       call tstop("temporization")
 
 
 !+++++++++++++++++++++++++++++c
@@ -265,20 +290,27 @@ MODULE module_step
 !         with surface boundary condition
 !         with IMPLICIT vertical diffusion
 
+      use simple_timer
        IMPLICIT NONE
       integer jn,jk,ji,jj
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
+      call tstart("trcadv")
       IF (ladv) CALL trcadv ! tracers: advection
+      call tstop("trcadv")
 
 #    if defined key_trc_dmp
+      call tstart("trcdmp")
       CALL trcdmp ! tracers: damping for passive tracerstrcstp
+      call tstop("trcdmp")
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
+      call tstart("boundaries%apply")
       call boundaries%apply(e3t, trb, tra)
+      call tstop("boundaries%apply")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -289,22 +321,34 @@ MODULE module_step
 ! tracers: horizontal diffusion IF namelist flags are activated
 ! -----------------------------
 
+      call tstart("trchdf")
       IF (lhdf) CALL trchdf
+      call tstop("trchdf")
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
+      call tstart("trcsbc")
       IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
+      call tstop("trcsbc")
 
+      call tstart("trcsms")
       IF (lbfm) CALL trcsms
+      call tstop("trcsms")
 
+      call tstart("trczdf")
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
+      call tstop("trczdf")
 
+      call tstart("snutel")
       IF (lsnu) CALL snutel
+      call tstop("snutel")
 
       call boundaries%apply_dirichlet()
 
       ! CALL checkValues
 
+      call tstart("trcadv")
       CALL trcnxt ! tracers: fields at next time step
+      call tstop("trcadv")
       
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime

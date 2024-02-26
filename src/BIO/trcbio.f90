@@ -45,6 +45,7 @@ SUBROUTINE trcbio
   !----------------------------------------------------------------------
   ! END BC_REFACTORING SECTION
   ! ---------------------------------------------------------------------
+  use simple_timer
 
   IMPLICIT NONE
 
@@ -59,6 +60,8 @@ SUBROUTINE trcbio
   integer :: year, month, day
   double precision :: sec
 
+
+  call tstart("trcbio_1")
   BIOparttime = MPI_WTIME()
   
   ! Initialization
@@ -130,11 +133,21 @@ SUBROUTINE trcbio
       end if
     end do
   end do
-   
+
+  call tstop("trcbio_1")
+  call tstart("BFM1D_In_EcologyDynamics")
   call BFM1D_Input_EcologyDynamics(mbathy, er) ! here mbathy was bottom
+  call tstop("BFM1D_In_EcologyDynamics")
+  call tstart("BFM1D_reset")
   call BFM1D_reset()
+  call tstop("BFM1D_reset")
+  call tstart("EcologyDynamics")
   call EcologyDynamics()
+  call tstop("EcologyDynamics")
+  call tstart("BFM1D_Out_EcologyDynamics")
   call BFM1D_Output_EcologyDynamics(sediPPY, local_D3DIAGNOS, local_D2DIAGNOS)
+  call tstop("BFM1D_Out_EcologyDynamics")
+  call tstart("trcbio_2")
 
   ! The following copies could be avoided
   do jn = 1, max(4, jptra, jptra_dia)
@@ -186,4 +199,5 @@ SUBROUTINE trcbio
   !---------------------------------------------------------------------
   BIOparttime = MPI_WTIME() - BIOparttime
   BIOtottime = BIOtottime + BIOparttime
+  call tstop("trcbio_2")
 END SUBROUTINE trcbio

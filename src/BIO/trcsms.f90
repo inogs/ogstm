@@ -22,6 +22,7 @@
 
        USE myalloc
        USE mpi
+       use simple_timer
        IMPLICIT NONE
 
 
@@ -34,7 +35,9 @@
 
        CALL trcopt ! tracers: optical model
        
+       call tstart("trcbio")
        CALL trcbio ! tracers: biological model
+       call tstop("trcbio")
 
 !! trcsed no updated for time step advancing
 #if  defined key_trc_sed

@@ -56,6 +56,7 @@ link_directories(${MPI_Fortran_LIBRARIES})
 include_directories(${BFM_INCLUDES})
 include_directories(${NETCDF_INCLUDES_C})
 include_directories(${NETCDFF_INCLUDES_F90})
+include_directories($ENV{SIMPLE_TIMER_INCLUDE_DIR})
 
 # Search Fortran module to compile
 set( FOLDERS BIO  General  IO  MPI  namelists  PHYS BC)
@@ -68,4 +69,4 @@ endforeach()
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries(ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} MPI::MPI_Fortran)
+target_link_libraries(ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} MPI::MPI_Fortran $ENV{SIMPLE_TIMER_LIBS})

@@ -60,6 +60,7 @@
 
  
       integer, parameter            :: nchl=4 
+      integer, parameter            :: ncdom=3 
       integer, parameter            :: nlt=33                     
       integer                       :: lam(33)
       double precision              :: WtoQ(33)
@@ -231,7 +232,7 @@
 
 ! Allocate output variables
        allocate(Ed(jpk,jpj,jpi,nlt),Es(jpk,jpj,jpi,nlt),Eu(jpk,jpj,jpi,nlt))
-       allocate(PAR(jpk,jpj,jpi,nchl+1)) ! last index total par
+       allocate(PAR(jpk,jpj,jpi,nchl+ncdom+1)) ! last index total par
        allocate(RMU(jpj,jpi))
        allocate(Ed_IO(jpk,jpj,jpi,nlt),Es_IO(jpk,jpj,jpi,nlt),Eu_IO(jpk,jpj,jpi,nlt))
        allocate(opt_mask(jpk,jpj,jpi)) ; opt_mask=0

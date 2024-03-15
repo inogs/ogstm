@@ -22,7 +22,7 @@
       double precision, INTENT(IN) :: zgrid(bottom+1)
       double precision, INTENT(IN) :: CHLz(jpk,nchl),PCz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
       double precision, INTENT(IN) :: Edtop(nlt),Estop(nlt)
-      double precision, INTENT(OUT) :: PARz(bottom,nchl+1)
+      double precision, INTENT(OUT) :: PARz(bottom,nchl+ncdom+1)
       double precision, INTENT(OUT) :: E(3,bottom+1,nlt)
 !     Local variables
       double precision :: Etop
@@ -100,11 +100,22 @@
          enddo
       enddo
 
+      ! PAR related to CDOM
       do jk = 1,bottom
-         do nl=5,17
-            PARz(jk,nchl+1)  = PARz(jk,nchl+1)  + WtoQ(nl) * E_scalar(jk,nl)
+         do nl=1,nlt
+            do nc=1,ncdom!nc cdom counter
+               PARz(jk,nchl+nc)  = PARz(jk,nchl+nc)  + WtoQ(nl) *  acdom(nc,nl)  * E_scalar(jk,nl)
+           enddo 
          enddo
       enddo
+
+      ! PAR classical definition
+      do jk = 1,bottom
+         do nl=5,17
+               PARz(jk,nchl+ncdom+1)  = PARz(jk,nchl+ncdom+1)  + WtoQ(nl)  * E_scalar(jk,nl)
+         enddo
+      enddo
+
 
       return
       end

@@ -29,7 +29,7 @@
       double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt)
       double precision, allocatable::  E(:,:,:) !(3,jpk+1,nlt)
 
-      double precision, allocatable  :: PARz(:,:) !(jpk,nchl+1)
+      double precision, allocatable  :: PARz(:,:) !(jpk,nchl+ncdom+1)
       double precision :: CHLz(jpk,nchl),PCz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
       double precision :: Eu_0m(nlt)
       double precision :: zgrid(jpk+1)
@@ -135,7 +135,7 @@
                  enddo
 
 
-                 do jl=1, nchl+1
+                 do jl=1, nchl+ncdom+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
 !                       write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
@@ -166,7 +166,7 @@
                     enddo
                  enddo
 
-                 do jl=1, nchl+1
+                 do jl=1, nchl+ncdom+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
                     enddo

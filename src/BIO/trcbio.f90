@@ -61,7 +61,7 @@
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,16) :: er
+      double precision,dimension(jpk,19) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 
 
@@ -143,12 +143,15 @@
                           er(1:bottom,7)  = PAR(1:bottom,jj,ji,2) ! PAR for flagellates
                           er(1:bottom,8)  = PAR(1:bottom,jj,ji,3) ! PAR for pico phytoplankton
                           er(1:bottom,9)  = PAR(1:bottom,jj,ji,4) ! PAR for dinoflagellates
-                          er(1:bottom,10) = PAR(1:bottom,jj,ji,5) ! total PAR for CDOM
-                          er(1       ,11)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(1:bottom,12)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1       ,13)  = vatm(jj,ji)                ! wind speed (m/s)
-                          er(1:bottom,14) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
-                          er(1       ,15)  = RMU(jj,ji)                ! avg. cosine direct
+                          er(1:bottom,10) = PAR(1:bottom,jj,ji,5) ! total PAR for CDOM 1
+                          er(1:bottom,11) = PAR(1:bottom,jj,ji,6) ! total PAR for CDOM 2
+                          er(1:bottom,12) = PAR(1:bottom,jj,ji,7) ! total PAR for CDOM 3
+                          er(1:bottom,13) = PAR(1:bottom,jj,ji,8) ! total PAR 
+                          er(1       ,14)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
+                          er(1:bottom,15)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
+                          er(1       ,16)  = vatm(jj,ji)                ! wind speed (m/s)
+                          er(1:bottom,17) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
+                          er(1       ,18)  = RMU(jj,ji)                ! avg. cosine direct
 
 #ifndef gdept1d
                          do jk=1,bottom
@@ -161,7 +164,7 @@
                                  correct_fact= 0.0D0
                              endif
 
-                             er(jk,16) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
+                             er(jk,19) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
                          enddo
 #endif
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)

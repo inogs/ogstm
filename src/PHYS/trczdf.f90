@@ -69,7 +69,7 @@
 
 
       LOGICAL :: l1,l2,l3
-      INTEGER :: jk,jj,ji, jn, jv, jf
+      INTEGER :: jk,jj,ji, jn, jv, jf, ntx
 ! omp variables
       
 
@@ -113,7 +113,11 @@
                END DO
             END DO
          END DO
-
+         !$acc enter data create(delta_tra,int_tra)
+         !$acc update device(jarr_zdf,jarr_zdf_flx)
+#ifdef _OPENACC
+         call myalloc_ZDF_gpu()
+#endif
       ENDIF
 
 
@@ -129,11 +133,18 @@
         ztavg = 0.e0
 !! vertical slab
 
+        !$acc parallel loop gang vector default(present) async
         DO jv = 1, dimen_jvzdf
 
            ji  = jarr_zdf(2,jv)
            jj  = jarr_zdf(1,jv)
            Aij = e1t(jj,ji) * e2t(jj,ji)
+
+#ifdef _OPENACC
+           ntx=jv
+#else
+           ntx=1
+#endif
 
 !! I. Vertical trends associated with lateral mixing
 !! -------------------------------------------------
@@ -155,14 +166,14 @@
 !!   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwi(jk, 1) = - z2dtt * avt(jk,jj,ji  )/( e3t(jk,jj,ji) * e3w(jk,jj,ji  ) )
-          zws(jk, 1) = - z2dtt * avt(jk+1,jj,ji)/( e3t(jk,jj,ji) * e3w(jk+1,jj,ji) )
-          zwd(jk, 1) = 1. - zwi(jk, 1) - zws(jk, 1)
+          zwi(jk, ntx) = - z2dtt * avt(jk,jj,ji  )/( e3t(jk,jj,ji) * e3w(jk,jj,ji  ) )
+          zws(jk, ntx) = - z2dtt * avt(jk+1,jj,ji)/( e3t(jk,jj,ji) * e3w(jk+1,jj,ji) )
+          zwd(jk, ntx) = 1. - zwi(jk, ntx) - zws(jk, ntx)
         END DO
 
 !! Surface boundary conditions
-          zwi(1,1) = 0.e0
-          zwd(1,1) = 1. - zws(1,1)
+          zwi(1,ntx) = 0.e0
+          zwd(1,ntx) = 1. - zws(1,ntx)
 
 !! II.1. Vertical diffusion on tr
 !! ------------------------------
@@ -170,7 +181,7 @@
 !!   ... Euler time stepping when starting from rest
         DO jk = 1, jpkm1
           z2dtt = zdt * rdt
-          zwy(jk,1) = trb(jk,jj,ji,jn)*e3t_back(jk,jj,ji)/e3t(jk,jj,ji) + z2dtt * tra(jk,jj,ji,jn)
+          zwy(jk,ntx) = trb(jk,jj,ji,jn)*e3t_back(jk,jj,ji)/e3t(jk,jj,ji) + z2dtt * tra(jk,jj,ji,jn)
         END DO
 
 !! Matrix inversion from the first level
@@ -208,22 +219,22 @@
         ikstp1=ikst+1
         ikenm2=jpk-2
 
-        zwt(ikst,1)=zwd(ikst,1)
+        zwt(ikst,ntx)=zwd(ikst,ntx)
 
         DO jk=ikstp1,jpkm1
-            zwt(jk,1)=zwd(jk,1)-zwi(jk,1)*zws(jk-1,1)/zwt(jk-1,1)
+            zwt(jk,ntx)=zwd(jk,ntx)-zwi(jk,ntx)*zws(jk-1,ntx)/zwt(jk-1,ntx)
         END DO
 
-          zwz(ikst,1)=zwy(ikst,1)
+          zwz(ikst,ntx)=zwy(ikst,ntx)
 
         DO jk=ikstp1,jpkm1
-            zwz(jk,1)=zwy(jk,1)-zwi(jk, 1)/zwt(jk-1, 1)*zwz(jk-1, 1)
+            zwz(jk,ntx)=zwy(jk,ntx)-zwi(jk, ntx)/zwt(jk-1, ntx)*zwz(jk-1, ntx)
         END DO
 
-        zwx(jpkm1, 1)=zwz(jpkm1, 1)/zwt(jpkm1, 1)
+        zwx(jpkm1, ntx)=zwz(jpkm1, ntx)/zwt(jpkm1, ntx)
 
         DO jk=ikenm2,ikst,-1
-            zwx(jk, 1)=( zwz(jk, 1)-zws(jk, 1)*zwx(jk+1, 1) )/zwt(jk, 1)
+            zwx(jk, ntx)=( zwz(jk, ntx)-zws(jk, ntx)*zwx(jk+1, ntx) )/zwt(jk, ntx)
         END DO
 
 ! calculate flux due to vertical diffusion (on top face of the grid cell jk)
@@ -232,7 +243,7 @@
       DO jk=1,jpkm1
 
          z2dtt = zdt * rdt
-         delta_tra(jk) = ( zwx(jk,1) - zwy(jk,1) ) / z2dtt * Aij * e3t(jk,jj,ji)! or trn(jk,jj,ji,jn+mytid)
+         delta_tra(jk) = ( zwx(jk,ntx) - zwy(jk,ntx) ) / z2dtt * Aij * e3t(jk,jj,ji)! or trn(jk,jj,ji,jn+mytid)
 
          IF (jk .EQ. 1) THEN
              int_tra(1)  = 0
@@ -258,16 +269,18 @@
 !! (c a u t i o n:  tracer not its trend, Leap-frog scheme done
 !!                  it will not be done in trcnxt)
          DO jk = 1, jpkm1
-            tra(jk,jj,ji,jn) = zwx(jk,1) * tmask(jk,jj,ji)
+            tra(jk,jj,ji,jn) = zwx(jk,ntx) * tmask(jk,jj,ji)
          END DO
 
         END DO ! jv
+        !$acc end parallel loop
 
 !      end if
 
        END DO TRACER_LOOP
 !!!$omp    end parallel do
 
+       !$acc wait
 
 
        trczdfparttime = MPI_WTIME() - trczdfparttime   !cronometer-stop

@@ -290,6 +290,10 @@ MODULE module_step
 !         with surface boundary condition
 !         with IMPLICIT vertical diffusion
 
+      ! XXX: to be removed
+      use DIA_mem, only: diaflx
+      use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,tmask,avt
+
       use simple_timer
        IMPLICIT NONE
       integer jn,jk,ji,jj
@@ -335,7 +339,11 @@ MODULE module_step
       call tstop("trcsms")
 
       call tstart("trczdf")
+
+      !$acc update device(e1t,diaflx,e3t_back,e2t,trb,tmask,e3t,tra,avt,e3w) if (lzdf)
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
+      !$acc update host(diaflx,tra) if (lzdf)
+
       call tstop("trczdf")
 
       call tstart("snutel")

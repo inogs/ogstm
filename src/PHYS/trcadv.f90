@@ -174,10 +174,8 @@ SUBROUTINE trcadv
   !$acc enter data create( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc enter data create( zbtr_arr(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
 
-  !$acc enter data create( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc enter data create( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc enter data create( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( e3w(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc enter data create( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
 
   !$acc update device( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
@@ -353,10 +351,8 @@ SUBROUTINE trcadv
 
   !!trn could be allocate earlier
   !$acc enter data create(trn(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
-  !$acc enter data create(tra(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
   !$acc enter data create(advmask(1:jpk,1:jpj,1:jpi)) if(use_gpu)
   !$acc enter data create(flx_ridxt(1:Fsize,1:4)) if(use_gpu)
-  !$acc enter data create( diaflx(1:7, 1:Fsize, 1:jptra)) if(use_gpu)
 
   !$acc enter data create( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc enter data create( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
@@ -946,9 +942,7 @@ SUBROUTINE trcadv
   !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
   !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
 
-  !$acc exit data delete( tra) finalize if(use_gpu)
   !$acc exit data delete( trn, advmask ) finalize if(use_gpu)
-  !$acc exit data delete( flx_ridxt, diaflx ) finalize if(use_gpu)
   !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize if(use_gpu)
 
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
@@ -963,7 +957,7 @@ SUBROUTINE trcadv
   deallocate(zbuf )
 
   !$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize if(use_gpu)
-  !$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize if(use_gpu)
+  !$acc exit data delete( e1u, e2u, e3u, e1v, e2v, e3v, un, vn, wn ) finalize if(use_gpu)
 
   trcadvparttime = MPI_WTIME() - trcadvparttime
   trcadvtottime = trcadvtottime + trcadvparttime

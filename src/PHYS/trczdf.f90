@@ -133,7 +133,8 @@
         ztavg = 0.e0
 !! vertical slab
 
-        !$acc parallel loop gang vector default(present) async
+        ! NOTE: kernel is too big, should be split
+        !$acc parallel loop gang vector default(present) async vector_length(32)
         DO jv = 1, dimen_jvzdf
 
            ji  = jarr_zdf(2,jv)

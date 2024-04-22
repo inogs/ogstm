@@ -346,9 +346,9 @@ MODULE module_step
 
       ! CALL checkValues
 
-      call tstart("trcadv")
+      call tstart("trcnxt")
       CALL trcnxt ! tracers: fields at next time step
-      call tstop("trcadv")
+      call tstop("trcnxt")
       
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime

@@ -865,7 +865,6 @@ SUBROUTINE trcadv
            !$acc end kernels
 
         endif
-        !$acc wait(queue)
 
      ENDDO ANTIDIFF_CORR
 

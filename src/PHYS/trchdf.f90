@@ -92,7 +92,9 @@
 
       USE DIA_mem
       use mpi
-      
+
+      use simple_timer
+
       IMPLICIT NONE
 !!----------------------------------------------------------------------
 !! local declarations
@@ -112,6 +114,8 @@
 !!----------------------------------------------------------------------
 !! statement functions
 !! ===================
+
+      call tstart("trchdf_1")
 
     !  #include "BFM_var_list.h"
        trcbilaphdfparttime = MPI_WTIME()
@@ -191,6 +195,9 @@
              allocate(ztv    (jpk,jpj,jpi)) 
 !! tracer slab
 !! =============
+
+      call tstop("trchdf_1")
+      call tstart("trchdf_tracer")
 
 ! $omp  taskloop default(none) private(jv,jk,jj,ji) &
 ! $omp  private(jn,ztu,ztv,zlt) firstprivate(jpi,jpj,jpk,trcrat) &
@@ -326,7 +333,7 @@
       !        jk = jarr_hdf(1,jv,2)
       !        jf = jarr_hdf_flx(jv)
           
-      ! $OMP TASKWAIT 
+      ! $OMP TASKWAIT
                   DO ji = 2,jpim1
               DO jj = 2,jpjm1
            DO jk = 1,jpk
@@ -340,7 +347,6 @@
                END DO
             END DO
           END DO
-
 
          DO jf=1,Fsize
              jk = flx_ridxt(jf,2)
@@ -360,6 +366,9 @@
         END DO TRACER_LOOP
         ! $OMP END TASKLOOP
 
+      call tstop("trchdf_tracer")
+      call tstart("trchdf_2")
+
         ! deallocate(hdfmask)
         ! deallocate(zeeu)
         ! deallocate(zeev)
@@ -372,5 +381,7 @@
 
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime
+
+      call tstop("trchdf_2")
 
       END SUBROUTINE trchdf

@@ -26,6 +26,8 @@ SUBROUTINE trcadv
   use omp_lib
   USE ogstm_mpi_module
 
+  use simple_timer
+
   implicit none
 
 !!!                      trcadv.smolar.h
@@ -97,6 +99,8 @@ SUBROUTINE trcadv
   !-------------------------------------------------------------------
 
   MPI_CHECK = .FALSE.
+
+  call tstart("trcadv_init")
 
   if(.not.adv_initialized ) then  ! INIT phase
 
@@ -173,6 +177,9 @@ SUBROUTINE trcadv
 
   endif
 
+  call tstop("trcadv_init")
+  call tstart("trcadv_alloc")
+
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
   allocate(zy(jpk,jpj,jpi))
   allocate(zx(jpk,jpj,jpi))
@@ -185,6 +192,8 @@ SUBROUTINE trcadv
   allocate(zbuf(jpk,jpj,jpi))
 
   !$acc enter data create(zy,zx,zz,ztj,zti,zkx,zky,zkz,zbuf)
+
+  call tstop("trcadv_alloc")
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end initialization phase
 
@@ -209,6 +218,8 @@ SUBROUTINE trcadv
   !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
   !$acc update device(flx_ridxt(1:Fsize,1:4))
   !$acc update device( diaflx(1:7, 1:Fsize, 1:jptra))
+
+  call tstart("trcadv_1")
 
   !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
@@ -366,9 +377,12 @@ SUBROUTINE trcadv
   !$omp shared(jpim1,jpjm1,un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr) &
   !$omp firstprivate(jpkm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt,jpj,jpi,jpk)
 
+  call tstop("trcadv_1")
+  call tstart("trcadv_tracer")
 
   TRACER_LOOP: DO  jn = 1, jptra
 
+     call tstart("trcadv_tracer_1")
 
      !!        1. tracer flux in the 3 directions
      !!        ----------------------------------
@@ -473,6 +487,9 @@ SUBROUTINE trcadv
      !$acc end parallel loop
      !$acc wait(queue)
 
+     call tstop("trcadv_tracer_1")
+     call tstart("trcadv_tracer_1_mpi")
+
      ! ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
 
@@ -495,6 +512,8 @@ SUBROUTINE trcadv
      CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
 
+     call tstop("trcadv_tracer_1_mpi")
+     call tstart("trcadv_tracer_2")
 
      !! 2. calcul of after field using an upstream advection scheme
      !! -----------------------------------------------------------
@@ -524,10 +543,14 @@ SUBROUTINE trcadv
      ENDDO
      !$acc end kernels
 
+     call tstop("trcadv_tracer_2")
+     call tstart("trcadv_antidiffcorr")
 
      !! 2.1 start of antidiffusive correction loop
 
      ANTIDIFF_CORR: DO jt = 1,ncor
+
+        call tstart("trcadv_antidiffcorr_1")
 
         !! 2.2 calcul of intermediary field zti
 
@@ -602,6 +625,9 @@ SUBROUTINE trcadv
 
         !$acc wait(queue)
 
+        call tstop("trcadv_antidiffcorr_1")
+        call tstart("trcadv_antidiffcorr_1_mpi")
+
         !! ... Lateral boundary conditions on zti
 #ifdef key_mpp
         ! ... Mpp : export boundary values to neighboring processors
@@ -615,6 +641,8 @@ SUBROUTINE trcadv
         CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
 
+        call tstop("trcadv_antidiffcorr_1_mpi")
+        call tstart("trcadv_antidiffcorr_2")
 
         !! 2.3 calcul of the antidiffusive flux
 
@@ -661,6 +689,9 @@ SUBROUTINE trcadv
 
         !$acc wait(queue)
 
+        call tstop("trcadv_antidiffcorr_2")
+        call tstart("trcadv_antidiffcorr_2_mpi")
+
         ! ... Lateral boundary conditions on z[xyz]
 #ifdef key_mpp
 
@@ -681,6 +712,9 @@ SUBROUTINE trcadv
         CALL lbc( zy(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
         CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
+
+        call tstop("trcadv_antidiffcorr_2_mpi")
+        call tstart("trcadv_antidiffcorr_3")
 
         !! 2.4 reinitialization
         !!            2.5 calcul of the final field:
@@ -790,6 +824,9 @@ SUBROUTINE trcadv
 
         !$acc wait(queue)
 
+        call tstop("trcadv_antidiffcorr_3")
+        call tstart("trcadv_antidiffcorr_3_mpi")
+
         !... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
         !  ... Mpp : export boundary values to neighboring processors
@@ -808,7 +845,8 @@ SUBROUTINE trcadv
 
         !!        2.6. calcul of after field using an upstream advection scheme
 
-
+        call tstop("trcadv_antidiffcorr_3_mpi")
+        call tstart("trcadv_antidiffcorr_4")
 
         if(ncor .EQ. 1) then
            !$acc kernels default(present) async(queue)
@@ -862,7 +900,12 @@ SUBROUTINE trcadv
 
         endif
 
+        call tstop("trcadv_antidiffcorr_4")
+
      ENDDO ANTIDIFF_CORR
+
+     call tstop("trcadv_antidiffcorr")
+     call tstart("trcadv_tracer_3")
 
 
      !!       3. trend due to horizontal and vertical advection of tracer jn
@@ -895,6 +938,8 @@ SUBROUTINE trcadv
 
      endif
 
+     call tstop("trcadv_tracer_3")
+
 !!$       !!OpenMP compatibility broken. Possibility to use ifdef OpenMP + rename the file in trcadv.F90 to keep it
 !!$        deallocate(zy )
 !!$        deallocate(zx )
@@ -910,6 +955,8 @@ SUBROUTINE trcadv
 
   END DO TRACER_LOOP
   !$acc wait(queue)
+
+  call tstop("trcadv_tracer")
 
   !$OMP end taskloop
 

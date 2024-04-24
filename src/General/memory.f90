@@ -791,7 +791,8 @@ subroutine alloc_tot()
        DAY_LENGTH = huge(DAY_LENGTH(1,1))
        forcing_phys_initialized = .false.
 
-      !$acc enter data create(e1t,e2t,e3t,e3w,e3t_back,tra,trb,tmask,avt)
+       !$acc enter data create(e1t,e2t,e3t,e3w,e3t_back,tra,trb,tmask,avt,&
+       !$acc& e1u,e2u,e3u,e1v,e2v,e3v,un,vn,wn,trn)
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
@@ -958,7 +959,7 @@ subroutine alloc_tot()
             deallocate(tra_DIA_2d_IO_HIGH)
             deallocate(tra_PHYS_2d_IO)
             deallocate(tra_PHYS_2d_IO_HIGH)
-            
+
 
             if(lwp) then
                 deallocate(tottrn)
@@ -999,6 +1000,8 @@ subroutine alloc_tot()
             deallocate(highfreq_table)
             deallocate(highfreq_table_dia)
             deallocate(highfreq_table_dia2d)
+
+            !$acc exit data delete(trn, e1u, e2u, e3u, e1v, e2v, e3v, un, vn, wn)
 
         end subroutine clean_memory
 

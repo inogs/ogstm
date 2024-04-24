@@ -114,6 +114,9 @@
       mem_all=get_mem(err) - aux_mem
 #endif
 
+      !$acc enter data create(advmask,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,&
+      !$acc& big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr)
+
       END subroutine myalloc_ADV
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
@@ -132,6 +135,9 @@
           deallocate(big_fact_zbb)
           deallocate(big_fact_zcc)
           deallocate(zbtr_arr)
+
+          !$acc exit data delete(advmask,zaa,zbb,zcc,inv_eu,inv_ev,inv_et,&
+          !$acc& big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr)
 
       end subroutine clean_memory_adv
 

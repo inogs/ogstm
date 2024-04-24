@@ -50,7 +50,7 @@
        INDflxDUMP = huge(INDflxDUMP(1))
        allocate(diaflx        (7, Fsize, jptra   ))
        diaflx = 0
-       !$acc enter data create(diaflx)
+       !$acc enter data create(flx_ridxt,diaflx)
       END SUBROUTINE alloc_DIA_local_flx
 
 

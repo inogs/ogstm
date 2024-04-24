@@ -413,6 +413,7 @@ SUBROUTINE mpplnk_my_openacc(ptab,gpu)
       !$acc kernels default(present) if(use_gpu)
       IF(nbondj.eq.0.or.nbondj.eq.1) THEN ! All but south boundary, we received from south
 
+         !$acc loop independent
          DO jw=1,SOUTH_count_recv
               ji = SOUTHpoints_recv(1,jw)
               jk = SOUTHpoints_recv(2,jw)
@@ -423,6 +424,7 @@ SUBROUTINE mpplnk_my_openacc(ptab,gpu)
 
       IF(nbondj.eq.-1.or.nbondj.eq.0) THEN ! All but north boundary, we received from north
 
+        !$acc loop independent
         DO jw=1,NORTH_count_recv
               ji = NORTHpoints_recv(1,jw)
               jk = NORTHpoints_recv(2,jw)

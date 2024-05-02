@@ -50,6 +50,10 @@
    internal_sponging = .true.
    ingv_files_direct_reading = .true.
    ingv_lon_shift   = 222
+   mld_flag = .true.
+   DvMLD    = 1.0
+   sigma    = 0.3
+   DvBackground = 1.e-07
 /
 
 

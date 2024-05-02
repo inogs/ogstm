@@ -136,6 +136,7 @@
       character(LEN=36) DeltaT_name
       double precision ssh(jpj,jpi)
       double precision diff_e3t(jpk,jpj,jpi)
+      double precision Eddy_viscosity (jpk,jpj,jpi)
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
       double precision kz_threshold, Kz_background, Kmin
@@ -171,9 +172,10 @@
 
 
       nomefile = 'FORCINGS/W'//datestring//'.nc'
-
+      if (.not.mld_flag) then
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
+      endif
 
 
 ! T *********************************************************
@@ -184,6 +186,20 @@
       call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
       sdta(:,:,:,2) = buf*tmask
 
+      if (mld_flag) then
+          call readnc_slice_float_2d(nomefile,'somxl010',buf2,ingv_lon_shift)
+          Eddy_viscosity=0.0
+          do ji=1,jpi
+          do jj=1,jpj
+          do jk=1,jpk
+            if (tmask(jk,jj,ji) .ne. 0.) then
+                Eddy_viscosity(jk,jj,ji) = DvMld * exp(-0.5* ( gdept(jk,jj,ji)/(sigma*buf2(jj,ji)) )  **2)  + DvBackground
+            endif
+          enddo
+          enddo
+          enddo
+          avtdta(:,:,:,2) = Eddy_viscosity
+      endif
 
 
     if (IS_FREE_SURFACE) then
@@ -301,6 +317,7 @@
       kz_threshold  = 1.e-4
       Kz_background = 1.e-7
 
+      if (.not.mld_flag) then
       DO ji=1,jpi
       DO jj=1,jpj
       Ind_bottom = mbathy(jj,ji)
@@ -316,6 +333,7 @@
           ENDIF
       ENDDO
       ENDDO
+      endif
 
 !        could be written for OpenMP
               DO ji=1,jpi

@@ -136,7 +136,6 @@
       character(LEN=36) DeltaT_name
       double precision ssh(jpj,jpi)
       double precision diff_e3t(jpk,jpj,jpi)
-      double precision Eddy_viscosity (jpk,jpj,jpi)
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
       double precision kz_threshold, Kz_background, Kmin
@@ -188,17 +187,16 @@
 
       if (mld_flag) then
           call readnc_slice_float_2d(nomefile,'somxl010',buf2,ingv_lon_shift)
-          Eddy_viscosity=0.0
+          avtdta(:,:,:,2)=0.0
           do ji=1,jpi
           do jj=1,jpj
           do jk=1,jpk
             if (tmask(jk,jj,ji) .ne. 0.) then
-                Eddy_viscosity(jk,jj,ji) = DvMld * exp(-0.5* ( gdept(jk,jj,ji)/(sigma*buf2(jj,ji)) )  **2)  + DvBackground
+                avtdta(jk,jj,ji,2) = DvMld * exp(-0.5* ( gdept(jk,jj,ji)/(sigma*buf2(jj,ji)) )  **2)  + DvBackground
             endif
           enddo
           enddo
           enddo
-          avtdta(:,:,:,2) = Eddy_viscosity
       endif
 
 

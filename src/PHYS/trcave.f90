@@ -10,14 +10,19 @@
       integer :: jn_high, jn_on_all
       double precision ::  Miss_val =1.e20
       double precision :: elapsed_time, inv_incremented_time
+      integer :: queue
 
       ave_partTime = MPI_WTIME()
 
+      queue=1
 
 !     FIRST, LOW FREQUENCY
       elapsed_time         =     elapsed_time_2
       inv_incremented_time = 1./(elapsed_time_2 + rdt)
 
+      !$acc update device(traIO,trn,umask,vmask,tmask,traIO_HIGH,highfreq_table,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,sn,tn,wn,avt,e3t,un,vn,tra_DIA_IO,tra_DIA,tra_DIA_2d_IO,tra_DIA_2d,vatmIO,empIO,qsrIO,vatm,emp,qsr,highfreq_table_dia,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH,highfreq_table_dia2d)
+
+      !$acc parallel loop gang vector collapse(4) default(present) async(queue)
       DO jn=1 ,jptra
 
           DO ji=1, jpi
@@ -33,6 +38,7 @@
           END DO
 
       END DO
+      !$acc end parallel loop
 
        
 
@@ -40,15 +46,21 @@
 
       elapsed_time         =     elapsed_time_1
       inv_incremented_time = 1./(elapsed_time_1 + rdt)! ****************** HIGH FREQUENCY
+      !$acc parallel loop gang vector collapse(4) default(present) async(queue)
       DO jn_high=1 ,jptra_high
 
 
 
        
+#ifndef _OPENACC
           jn_on_all = highfreq_table(jn_high)
+#endif
           DO ji=1, jpi
           DO jj=1, jpj
           DO jk=1, jpk
+#ifdef _OPENACC
+               jn_on_all = highfreq_table(jn_high)
+#endif
                IF(tmask(jk,jj,ji) .NE. 0.) THEN
                   traIO_HIGH(jk,jj,ji,jn_high  )= &
      &           (traIO_HIGH(jk,jj,ji,jn_high )*elapsed_time+trn(jk,jj,ji,jn_on_all)*rdt)*inv_incremented_time
@@ -61,6 +73,7 @@
    
 
       END DO
+      !$acc end parallel loop
 
 
 !     *****************  PHYS *****************************************************
@@ -73,6 +86,7 @@
       endif
 
 
+          !$acc parallel loop gang vector collapse(3) default(present) async(queue)
           DO ji=1, jpi
        DO jj=1, jpj
       DO jk=1, jpk
@@ -107,7 +121,9 @@
           END DO
        END DO
       END DO
+      !$acc end parallel loop
 
+      !$acc parallel loop gang vector collapse(2) default(present) async(queue)
       DO jj=1, jpj
         DO ji=1, jpi
            IF (tmask(1,jj,ji) .NE. 0.) THEN
@@ -121,6 +137,7 @@
            ENDIF
         END DO
       END DO
+      !$acc end parallel loop
 
 
 !     *****************  END PHYS *************************************************
@@ -135,6 +152,7 @@
       inv_incremented_time = 1./(elapsed_time_2 + rdt)
 
 
+         !$acc parallel loop gang vector collapse(4) default(present) async(queue)
          DO jn = 1,jptra_dia
          DO ji=1, jpi
          DO jj=1, jpj
@@ -148,10 +166,12 @@
          END DO
          END DO
          ENDDO
+         !$acc end parallel loop
 
 !     *********************  DIAGNOSTICS 2D **********
 
 
+          !$acc parallel loop gang vector collapse(2) default(present) async(queue)
           DO ji=1, jpi
           DO jj=1, jpj
               IF(tmask(1,jj,ji) .NE. 0.) THEN ! Warning ! Tested only for surface
@@ -162,6 +182,7 @@
                   ENDIF
           END DO
           END DO
+          !$acc end parallel loop
 
 
 
@@ -172,11 +193,17 @@
 
 
       if (jptra_dia_high.gt.0) THEN
+         !$acc parallel loop gang vector collapse(4) default(present) async(queue)
          DO jn_high=1, jptra_dia_high
+#ifndef _OPENACC
          jn_on_all = highfreq_table_dia(jn_high )
+#endif
          DO ji=1, jpi
          DO jj=1, jpj
          DO jk=1, jpk
+#ifdef _OPENACC
+         jn_on_all = highfreq_table_dia(jn_high )
+#endif
          IF(tmask(jk,jj,ji) .NE. 0.) THEN
                tra_DIA_IO_HIGH(jk,jj,ji,jn_high )= &
      &         (tra_DIA_IO_HIGH(jk,jj,ji,jn_high )*elapsed_time+tra_DIA(jk,jj,ji,jn_on_all)*rdt)*inv_incremented_time
@@ -187,6 +214,7 @@
          END DO
          END DO
          END DO
+         !$acc end parallel loop
       endif
 
 
@@ -194,23 +222,28 @@
 
 
        if (jptra_dia2d_high.gt.0) THEN
+             !$acc parallel loop gang vector collapse(3) default(present) async(queue)
              DO ji=1, jpi
              DO jj=1, jpj
-                IF(tmask(1,jj,ji) .NE. 0.) THEN
                 DO jn_high=1, jptra_dia2d_high
-                   jn_on_all = highfreq_table_dia2d(jn_high)
-                   tra_DIA_2d_IO_HIGH(jn_high,jj,ji)= &
-     &            (tra_DIA_2d_IO_HIGH(jn_high,jj,ji)*elapsed_time+tra_DIA_2d(jn_on_all,jj,ji)*rdt)*inv_incremented_time
+                  IF(tmask(1,jj,ji) .NE. 0.) THEN
+                     jn_on_all = highfreq_table_dia2d(jn_high)
+                       tra_DIA_2d_IO_HIGH(jn_high,jj,ji)= &
+         &            (tra_DIA_2d_IO_HIGH(jn_high,jj,ji)*elapsed_time+tra_DIA_2d(jn_on_all,jj,ji)*rdt)*inv_incremented_time
+                  ELSE
+                     tra_DIA_2d_IO_HIGH(jn_high,jj,ji)=Miss_val
+                  ENDIF
                 END DO
-                ELSE
-                   tra_DIA_2d_IO_HIGH(:,jj,ji)=Miss_val
-                ENDIF
              END DO
              END DO
+             !$acc end parallel loop
         endif
 
 
       endif ! lfbm
+
+      !$acc wait(queue)
+      !$acc update host(traIO,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH)
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

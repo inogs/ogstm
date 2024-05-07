@@ -291,8 +291,8 @@ MODULE module_step
 !         with IMPLICIT vertical diffusion
 
       ! XXX: to be removed
-      use DIA_mem, only: diaflx
-      use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,tmask,avt
+      use DIA_mem, only: diaflx,flx_ridxt
+      use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,umask,vmask,tmask,avt,ahtt
 
       use simple_timer
        IMPLICIT NONE
@@ -326,7 +326,9 @@ MODULE module_step
 ! -----------------------------
 
       call tstart("trchdf")
+      !$acc update device(umask,vmask,tmask,trb,ahtt,tra,diaflx,flx_ridxt) if(lhdf)
       IF (lhdf) CALL trchdf
+      !$acc update host(diaflx,tra) if(lhdf)
       call tstop("trchdf")
 
 ! tracers: sink and source (must be  parallelized on vertical slab)

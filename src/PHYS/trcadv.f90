@@ -495,14 +495,8 @@ SUBROUTINE trcadv
 
      !  ... Mpp : export boundary values to neighboring processors
 
-#ifndef _OPENACC
-     CALL mpplnk_my(zkx)
-     CALL mpplnk_my(zky)
-#else
-     CALL mpplnk_my_openacc(zkx,gpu=use_gpu)
-     CALL mpplnk_my_openacc(zky,gpu=use_gpu)
-
-#endif
+     CALL mpplnk_my(zkx,gpu=use_gpu)
+     CALL mpplnk_my(zky,gpu=use_gpu)
 
 #else
 
@@ -631,11 +625,7 @@ SUBROUTINE trcadv
         !! ... Lateral boundary conditions on zti
 #ifdef key_mpp
         ! ... Mpp : export boundary values to neighboring processors
-#ifndef _OPENACC
-        CALL mpplnk_my(zti)
-#else
-        CALL mpplnk_my_openacc(zti,gpu=use_gpu)
-#endif
+        CALL mpplnk_my(zti,gpu=use_gpu)
 #else
         ! ... T-point, 3D array, full local array zti is initialised
         CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
@@ -696,15 +686,9 @@ SUBROUTINE trcadv
 #ifdef key_mpp
 
         ! ... Mpp : export boundary values to neighboring processors
-#ifndef _OPENACC
-        CALL mpplnk_my(zx)
-        CALL mpplnk_my(zy)
-        CALL mpplnk_my(zz)
-#else
-        CALL mpplnk_my_openacc(zx,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zy,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zz,gpu=use_gpu)
-#endif
+        CALL mpplnk_my(zx,gpu=use_gpu)
+        CALL mpplnk_my(zy,gpu=use_gpu)
+        CALL mpplnk_my(zz,gpu=use_gpu)
 #else
 
         !  ... T-point, 3D array, full local array z[xyz] are initialised
@@ -830,13 +814,8 @@ SUBROUTINE trcadv
         !... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
         !  ... Mpp : export boundary values to neighboring processors
-#ifndef _OPENACC
-        CALL mpplnk_my(zkx)
-        CALL mpplnk_my(zky)
-#else
-        CALL mpplnk_my_openacc(zkx,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zky,gpu=use_gpu)
-#endif
+        CALL mpplnk_my(zkx,gpu=use_gpu)
+        CALL mpplnk_my(zky,gpu=use_gpu)
 #else
         ! ... T-point, 3D array, full local array zk[xy] are initialised
         CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )

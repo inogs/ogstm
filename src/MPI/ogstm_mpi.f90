@@ -19,6 +19,8 @@ use mpi_str, only: Var3DCommunicator
 use petscvec, only: PETSC_COMM_WORLD, PETSC_NULL_CHARACTER
 #endif
 
+use simple_timer
+
 implicit NONE
 
 
@@ -129,6 +131,8 @@ SUBROUTINE mpplnk_my(ptab,gpu)
       INTEGER jw, packsize
       logical,optional :: gpu
       logical :: use_gpu
+
+      call tstart("mpplnk_my")
 
       use_gpu=.false.
       if(present(gpu)) use_gpu=gpu
@@ -289,6 +293,8 @@ SUBROUTINE mpplnk_my(ptab,gpu)
       ENDIF
 
 #endif
+
+      call tstop("mpplnk_my")
 
 END SUBROUTINE
 

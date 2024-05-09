@@ -7,8 +7,10 @@ from mydtype import *
 import scipy.io.netcdf as NC
 
 import pickle
-import imp
-domdec = imp.load_source('domdec','../preproc/domdec/domdec.py')
+#import imp
+from importlib.machinery import SourceFileLoader
+#domdec = imp.load_source('domdec','../preproc/domdec/domdec.py')
+domdec = SourceFileLoader("domdec", "../preproc/domdec/domdec.py").load_module()
 
 def create_Dom_Dec(test):
 

@@ -542,6 +542,7 @@ subroutine alloc_tot()
      allocate(gdept(jpk,jpj,jpi))
        gdept = huge(gdept(1,1,1))
 #endif
+      !$acc enter data create(gdept)
 
       allocate(gdepw(jpk)) 
         gdepw = huge(gdepw(1))
@@ -567,7 +568,8 @@ subroutine alloc_tot()
         e3w = huge(e3w(1,1,1))
 
       allocate(mbathy(jpj,jpi)) 
-       mbathy = huge(mbathy(1,1))
+      mbathy = huge(mbathy(1,1))
+      !$acc enter data create(mbathy)
 
       allocate(tmask(jpk,jpj,jpi)) 
       tmask = huge(tmask(1,1,1))
@@ -586,6 +588,7 @@ subroutine alloc_tot()
 
       allocate(bfmmask(jpk, jpj, jpi))
       bfmmask = huge(bfmmask(1, 1, 1))
+      !$acc enter data create(bfmmask)
 
        allocate(un(jpk,jpj,jpi))    
       un     = huge(un(1,1,1))
@@ -603,6 +606,7 @@ subroutine alloc_tot()
       rhopn  = huge(rhopn(1,1,1))
        allocate(rho(jpk,jpj,jpi))   
       rho    = huge(rho(1,1,1))
+      !$acc enter data create(rho)
       
       allocate(ahtu(jpk)) 
       ahtu = huge(ahtu(1))
@@ -781,7 +785,8 @@ subroutine alloc_tot()
 #    endif
 
 #ifdef key_trc_bfm
-      allocate(xpar(jpk,jpj,jpi))   
+      allocate(xpar(jpk,jpj,jpi))
+      !$acc enter data create(xpar)
        xpar = huge(xpar(1,1,1))
 
 #endif
@@ -789,6 +794,7 @@ subroutine alloc_tot()
 !!    photoperiod
         allocate(DAY_LENGTH(jpj,jpi))   
        DAY_LENGTH = huge(DAY_LENGTH(1,1))
+       !$acc enter data create(DAY_LENGTH)
        forcing_phys_initialized = .false.
 
        !$acc enter data create(e1t,e2t,e3t,e3w,e3t_back,tra,trb,tmask,umask,&
@@ -869,6 +875,7 @@ subroutine alloc_tot()
             deallocate(ff)
             
             deallocate(gdept)
+            !$acc exit data delete(gdept)
             deallocate(gdepw)
             deallocate(e3t_0)
             deallocate(e3u_0)
@@ -882,6 +889,7 @@ subroutine alloc_tot()
             deallocate(e3w)
             
             deallocate(mbathy)
+            !$acc exit data delete(mbathy)
             
             deallocate(tmask)
             deallocate(h_column)
@@ -893,6 +901,7 @@ subroutine alloc_tot()
             deallocate(vmask)
             
             deallocate(bfmmask)
+            !$acc exit data delete(bfmmask)
             
             deallocate(un)
             deallocate(vn)
@@ -902,6 +911,7 @@ subroutine alloc_tot()
             deallocate(rdn)
             deallocate(rhopn)
             deallocate(rho)
+            !$acc exit data delete(rho)
             
             deallocate(ahtu)
             deallocate(ahtv)
@@ -994,9 +1004,11 @@ subroutine alloc_tot()
 
 #ifdef key_trc_bfm
             deallocate(xpar)
+            !$acc exit data delete(xpar)
 #endif
 
             deallocate(DAY_LENGTH)
+            !$acc exit data delete(DAY_LENGTH)
 
             ! trclec
 

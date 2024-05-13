@@ -113,12 +113,12 @@
                END DO
             END DO
          END DO
-         !$acc enter data create(delta_tra,int_tra)
          !$acc update device(jarr_zdf,jarr_zdf_flx)
 #ifdef _OPENACC
          call myalloc_ZDF_gpu()
 #endif
       ENDIF
+      !$acc enter data create(delta_tra,int_tra)
 
 
 !! passive tracer slab

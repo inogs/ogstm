@@ -305,7 +305,6 @@
 !  ... Mpp : export boundary values to neighboring processors
         CALL mpplnk_my(zlt,gpu=use_gpu)
 #else
-#error
                CALL lbc( zlt(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
 

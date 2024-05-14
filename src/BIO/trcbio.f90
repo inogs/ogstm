@@ -145,7 +145,7 @@ SUBROUTINE trcbio
   !$acc end parallel loop
 
   !$acc wait(queue)
-  !$acc update host(D3STATE,er)
+  !$acc update host(D3STATE)
 
   call BFM1D_Input_EcologyDynamics(mbathy, er) ! here mbathy was bottom
   call BFM1D_reset()

@@ -147,7 +147,7 @@ SUBROUTINE trcbio
   !$acc end parallel loop
 
   !$acc wait(queue)
-  !$acc update host(D3STATE,er)
+  !$acc update host(D3STATE)
 
   call tstop("trcbio_1")
   call tstart("BFM1D_In_EcologyDynamics")

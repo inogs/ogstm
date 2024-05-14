@@ -61,7 +61,8 @@ include_directories(${NETCDFF_INCLUDES_F90})
 set( FOLDERS BIO  General  IO  MPI  namelists  PHYS BC)
   foreach(FOLDER ${FOLDERS})
   file(GLOB TMP src/${FOLDER}/*)
-  list (APPEND FORTRAN_SOURCES ${TMP})
+  list(APPEND FORTRAN_SOURCES ${TMP})
+  list(FILTER FORTRAN_SOURCES EXCLUDE REGEX "test_[a-zA-Z0-9_]*\.[f03]")
 endforeach()
 
 #building

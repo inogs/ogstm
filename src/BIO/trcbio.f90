@@ -145,14 +145,11 @@ SUBROUTINE trcbio
   !$acc end parallel loop
 
   !$acc wait(queue)
-  !$acc update host(D3STATE)
 
   call BFM1D_Input_EcologyDynamics(mbathy, er) ! here mbathy was bottom
   call BFM1D_reset()
   call EcologyDynamics()
   call BFM1D_Output_EcologyDynamics(sediPPY, local_D3DIAGNOS, local_D2DIAGNOS)
-
-  !$acc update device(D3SOURCE,sediPPY,local_D3DIAGNOS,local_D2DIAGNOS)
 
   !$acc parallel loop gang vector collapse(4) default(present) async(queue)
   do jn = 1, max(4, jptra, jptra_dia)

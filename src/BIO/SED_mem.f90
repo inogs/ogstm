@@ -46,7 +46,7 @@
 #endif
        dimen_jvsed=0
 
-       allocate(sed_idx(nsed))  
+       allocate(sed_idx(nsed))
        sed_idx = huge(sed_idx(1))
 
        sed_idx(1)  = ppR6c
@@ -79,10 +79,13 @@
        jarr_sed     = huge(jarr_sed(1,1))
        allocate(jarr_sed_flx(jpk,jpi*jpj)) 
        jarr_sed_flx = huge(jarr_sed_flx(1,1)) 
-       allocate( ztra(nsed,ntids))         
+#ifndef _OPENACC
+       allocate( ztra(nsed,ntids))
        ztra         = huge(ztra(1,1))
        allocate(zwork(jpk,nsed, ntids))   
        zwork        = huge(zwork(1,1,1))
+#endif
+       !$acc enter data create(sed_idx,jarr_sed,jarr_sed_flx)
 
 
 #ifdef Mem_Monitor
@@ -90,11 +93,26 @@
 #endif
 
       END subroutine myalloc_SED
+
+#ifdef _OPENACC
+      subroutine myalloc_SED_gpu()
+
+        allocate(ztra(nsed,dimen_jvsed))
+        allocate(zwork(jpk,nsed,dimen_jvsed))
+        !$acc enter data create(ztra,zwork)
+        !$acc kernels default(present)
+        ztra = huge(ztra(1,1))
+        zwork = huge(zwork(1,1,1))
+        !$acc end kernels
+
+      end subroutine myalloc_SED_gpu
+#endif
       
       
       
       subroutine clean_memory_sed
 
+          !$acc exit data delete(ztra,zwork,sed_idx,jarr_sed,jarr_sed_flx)
           deallocate(sed_idx)
           deallocate(jarr_sed)
           deallocate(jarr_sed_flx)

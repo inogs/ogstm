@@ -23,9 +23,6 @@
        USE myalloc
        USE mpi
 
-       ! XXX: to remove
-       use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
-       USE OPT_mem, only: kef
        IMPLICIT NONE
 
 
@@ -33,15 +30,11 @@
 
        trcsmsparttime = MPI_WTIME() ! cronometer-start
 
-
 !! this first routines are parallelized on vertical slab
 
-       !$acc update device(kef,qsr)
        CALL trcopt ! tracers: optical model
 
-       !$acc update device(mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,e3t,gdept,ogstm_PH,ogstm_co2)
        CALL trcbio ! tracers: biological model
-       !$acc update host(tra,tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH)
 
 !! trcsed no updated for time step advancing
 #if  defined key_trc_sed

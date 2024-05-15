@@ -61,8 +61,8 @@
 #ifdef key_trc_bfm
 
       LOGICAL :: l1,l2,l3
-      INTEGER :: ji,jj,jk,jv,jf,js
-      INTEGER :: bottom
+      INTEGER :: ji,jj,jk,jv,jf,js,ntx
+      INTEGER :: bottom,queue
       double precision :: ze3tr,d2s
 ! omp variables
     
@@ -71,7 +71,7 @@
 !! ===================
 
 
-
+      queue=1
 
       d2s=1./3600./24.  ! speed from (m/day) to  (m/s)
 
@@ -100,107 +100,200 @@
                END DO
             END DO
          END DO
-
+#ifdef _OPENACC
+         call myalloc_SED_gpu()
+#endif
+         !$acc update device(jarr_sed,jarr_sed_flx)
       ENDIF ! End initialization phase (once at the beginning)
 
 
 ! vertical slab
 ! =============
 
+      !      if( mytid + jv <=  dimen_jvsed) then
+      ! 1. sedimentation of detritus  : upstream scheme
+      ! -----------------------------------------------
+      ! 1.1 initialisation needed for bottom and surface value
 
+      !$acc parallel loop gang vector collapse(3) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js = 1, nsed
+            DO  jk = 1,jpk
+#ifdef _OPENACC
+               ntx=jv
+#else
+               ntx=1
+#endif
+               ji = jarr_sed(2,jv)
+               jj = jarr_sed(1,jv)
+               zwork(jk,js,ntx) = 0.
 
-      MAIN_LOOP: DO jv=1,dimen_jvsed
+            END DO
+         END DO
+      END DO
 
-!      if( mytid + jv <=  dimen_jvsed) then
-! 1. sedimentation of detritus  : upstream scheme
-! -----------------------------------------------
-! 1.1 initialisation needed for bottom and surface value
+      ! 1.2 tracer flux at w-point: we use -vsed (downward flux)
+      ! with simplification : no e1*e2
 
-           ji = jarr_sed(2,jv)
-           jj = jarr_sed(1,jv)
+      !                Particulate
+      !$acc parallel loop gang vector collapse(3) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js =1,4
+            DO  jk = 2,jpkm1
+#ifdef _OPENACC
+               ntx=jv
+#else
+               ntx=1
+#endif
+               ji = jarr_sed(2,jv)
+               jj = jarr_sed(1,jv)
+               zwork(jk,js,jv) = -vsed * trn(jk-1,jj,ji, sed_idx(js))
+            END DO
+         END DO
+      END DO
 
+      !                Diatoms
+      !$acc parallel loop gang vector collapse(3) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js =5,9
+            DO  jk = 2,jpkm1
+#ifdef _OPENACC
+               ntx=jv
+#else
+               ntx=1
+#endif
+               ji = jarr_sed(2,jv)
+               jj = jarr_sed(1,jv)
+               zwork(jk,js,ntx) = -ogstm_sedipi(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
+            END DO
+         END DO
+      END DO
 
-                 DO js = 1, nsed
-              DO  jk = 1,jpk
+      !                Flagellates
+      !$acc parallel loop gang vector collapse(3) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js =10,13
+            DO  jk = 2,jpkm1
+#ifdef _OPENACC
+               ntx=jv
+#else
+               ntx=1
+#endif
+               ji = jarr_sed(2,jv)
+               jj = jarr_sed(1,jv)
+               zwork(jk,js,ntx) = -ogstm_sedipi(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
+            END DO
+         END DO
+      END DO
 
-                    zwork(jk,js,1) = 0.
+      !                Picophytoplankton
+      !$acc parallel loop gang vector collapse(3) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js =14,17
+            DO  jk = 2,jpkm1
+#ifdef _OPENACC
+               ntx=jv
+#else
+               ntx=1
+#endif
+               ji = jarr_sed(2,jv)
+               jj = jarr_sed(1,jv)
+               zwork(jk,js,ntx) = -ogstm_sedipi(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
+            END DO
+         END DO
+      END DO
 
-                 END DO
-              END DO
+      !                Dinoflagellates
+      !$acc parallel loop gang vector collapse(3) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js =18,21
+            DO  jk = 2,jpkm1
+#ifdef _OPENACC
+               ntx=jv
+#else
+               ntx=1
+#endif
+               ji = jarr_sed(2,jv)
+               jj = jarr_sed(1,jv)
+               zwork(jk,js,ntx) = -ogstm_sedipi(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
+            END DO
+         END DO
+      END DO
 
-! 1.2 tracer flux at w-point: we use -vsed (downward flux)
-! with simplification : no e1*e2
+      !                Calcite
+      !$acc parallel loop gang vector collapse(3) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js =22,22
+            DO  jk = 2,jpkm1
+#ifdef _OPENACC
+               ntx=jv
+#else
+               ntx=1
+#endif
+               ji = jarr_sed(2,jv)
+               jj = jarr_sed(1,jv)
+               zwork(jk,js,ntx) = - vsedO5c * trn(jk-1,jj,ji, sed_idx(js))
+            END DO
+         END DO
+      END DO
 
-             
+      !$acc parallel loop gang vector collapse(2) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO js = 1,nsed
+#ifdef _OPENACC
+            ntx=jv
+#else
+            ntx=1
+#endif
+            ji = jarr_sed(2,jv)
+            jj = jarr_sed(1,jv)
+            bottom = mbathy(jj,ji) + 1
+            zwork(bottom,js,ntx) = bottom_flux * zwork(bottom,js,ntx) ! bottom_flux = 0 -> no flux in the sea floor
+         END DO
+      END DO
 
-!                Particulate
-              DO js =1,4
-                 DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -vsed * trn(jk-1,jj,ji, sed_idx(js))
-                 END DO
-              END DO
-!                Diatoms
-              DO js =5,9
-                 DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
-                 END DO
-              END DO
-!                Flagellates
-              DO js =10,13
-                 DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
-                 END DO
-              END DO
-!                Picophytoplankton
-              DO js =14,17
-                 DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
-                 END DO
-              END DO
-!                Dinoflagellates
-              DO js =18,21
-                 DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
-                 END DO
-              END DO
+      ! 1.3 tracer flux divergence at t-point added to the general trend
 
-!                Calcite
-              DO js =22,22
-                 DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = - vsedO5c * trn(jk-1,jj,ji, sed_idx(js))
-                 END DO
-              END DO
-               bottom = mbathy(jj,ji) + 1
-               zwork(bottom,:,1) = bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
+      !$acc parallel loop gang vector collapse(2) default(present) async(queue)
+      DO jv=1,dimen_jvsed
+         DO  jk = 1,jpkm1
+#ifdef _OPENACC
+            ntx=jv
+#else
+            ntx=1
+#endif
+            ji = jarr_sed(2,jv)
+            jj = jarr_sed(1,jv)
 
-! 1.3 tracer flux divergence at t-point added to the general trend
+            jf=  jarr_sed_flx(jk,jV)
 
-              DO  jk = 1,jpkm1
-                  jf=  jarr_sed_flx(jk,jV)
+            ze3tr = 1./e3t(jk,jj,ji)
 
-                 ze3tr = 1./e3t(jk,jj,ji)
+            DO js =1,nsed
+               ztra(js,ntx) = -ze3tr * (zwork(jk,js,ntx) - zwork(jk+1,js,ntx))
+               IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
+                  diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,ntx)*rdt
+               ENDIF
 
-                 DO js =1,nsed
-                    ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
-                    IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-                         diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,1)*rdt
-                    ENDIF
-                 END DO
-
-                 DO js =1,nsed
 !!!  d2s convert speed from (m/day) to  (m/s)
-                    tra(jk,jj,ji,sed_idx(js)) = tra(jk,jj,ji,sed_idx(js)) + ztra(js,1)*d2s
-                 END DO
+               tra(jk,jj,ji,sed_idx(js)) = tra(jk,jj,ji,sed_idx(js)) + ztra(js,ntx)*d2s
+            END DO
+         END DO
+      END DO
+      !$acc end parallel loop
+      !$acc wait(queue)
 
 #ifdef key_trc_diabio
-                  trbio(jk,jj,ji,8) = ztra
+      DO jv=1,dimen_jvsed
+         ji = jarr_sed(2,jv)
+         jj = jarr_sed(1,jv)
+         DO  jk = 1,jpkm1
+            trbio(jk,jj,ji,8) = ztra
+         END DO
+      END DO
 #endif
 
-              END DO
-#endif
-
-
-      END DO MAIN_LOOP
+#endif ! key_trc_bfm
 
 !!!$omp    end parallel do
 

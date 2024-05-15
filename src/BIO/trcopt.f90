@@ -34,6 +34,8 @@
 
 ! 1. determination of surface irradiance
       queue=1
+      ! XXX: this can be improved but no way to test as it doesn't seem to
+      ! impact numerical results
       !$acc kernels default(present) async(queue)
       DO ji = 1,jpi
          DO jj = 1,jpj

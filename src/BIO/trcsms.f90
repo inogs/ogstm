@@ -26,6 +26,7 @@
 
        ! XXX: to remove
        use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
+       USE OPT_mem, only: kef
        IMPLICIT NONE
 
 
@@ -38,12 +39,13 @@
 
        call tstart("trcopt")
 
+       !$acc update device(kef,qsr)
        CALL trcopt ! tracers: optical model
 
        call tstop("trcopt")
-       
+
        call tstart("trcbio")
-       !$acc update device(mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,xpar,e3t,gdept,ogstm_PH,ogstm_co2)
+       !$acc update device(mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,e3t,gdept,ogstm_PH,ogstm_co2)
        CALL trcbio ! tracers: biological model
        !$acc update host(tra,tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH)
        call tstop("trcbio")

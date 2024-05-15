@@ -36,7 +36,11 @@
 
 !! this first routines are parallelized on vertical slab
 
+       call tstart("trcopt")
+
        CALL trcopt ! tracers: optical model
+
+       call tstop("trcopt")
        
        call tstart("trcbio")
        !$acc update device(mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,xpar,e3t,gdept,ogstm_PH,ogstm_co2)
@@ -46,7 +50,11 @@
 
 !! trcsed no updated for time step advancing
 #if  defined key_trc_sed
+       call tstart("trcsed")
+
        CALL trcsed ! tracers: sedimentation model
+
+       call tstop("trcsed")
 # endif
 
        trcsmsparttime = MPI_WTIME() - trcsmsparttime ! cronometer-stop

@@ -184,6 +184,7 @@ SUBROUTINE trcadv
      allocate(zbuf(jpk,jpj,jpi))
 
      !$acc enter data create(zy,zx,zz,ztj,zti,zkx,zky,zkz,zbuf)
+     !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,advmask)
 
      call tstop("trcadv_alloc")
 
@@ -201,23 +202,6 @@ SUBROUTINE trcadv
 
   zdt = rdt*ndttrc
   !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
-
-  !$acc update device( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
-  !$acc update device( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
-  !$acc update device( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
-  !$acc update device( zbtr_arr(1:jpk,1:jpj,1:jpi) )
-
-  !$acc update device( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
-  !$acc update device( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
-  !$acc update device( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
-  !$acc update device( e3w(1:jpk,1:jpj,1:jpi) )
-  !$acc update device( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) )
-
-  !$acc update device(tra(1:jpk,1:jpj,1:jpi,1:jptra))
-  !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
-  !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
-  !$acc update device(flx_ridxt(1:Fsize,1:4))
-  !$acc update device( diaflx(1:7, 1:Fsize, 1:jptra))
 
   call tstart("trcadv_1")
 
@@ -944,14 +928,6 @@ SUBROUTINE trcadv
   call tstop("trcadv_tracer")
 
   !$OMP end taskloop
-
-  !$acc update host( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
-  !$acc update host( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
-  !$acc update host( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
-  !$acc update host( zbtr_arr(1:jpk,1:jpj,1:jpi) )
-
-  !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra) )
-  !$acc update host( tra(1:jpk,1:jpj,1:jpi,1:jptra) )
 
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
 

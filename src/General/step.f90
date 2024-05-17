@@ -57,6 +57,14 @@ MODULE module_step
 
 !      trcstp, trcdia  passive tracers interface
 
+       ! XXX: to be removed
+       use DIA_mem, only: diaflx,flx_ridxt
+       use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,umask,vmask,tmask,avt,ahtt
+       use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
+       USE OPT_mem, only: kef
+       USE SED_mem
+       USE ADV_mem
+
        use simple_timer
        IMPLICIT NONE
 
@@ -190,7 +198,25 @@ MODULE module_step
 
 ! Call Passive tracer model between synchronization for small parallelisation
         call tstart("trcstp_all")
+        !$acc update device(tra,tmask)
+        !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,un,vn,wn,trn,advmask,flx_ridxt,diaflx) if(ladv)
+        !$acc update device(atm,e3t) if(latmosph)
+        !$acc update device(umask,vmask,trb,ahtt,diaflx,flx_ridxt) if(lhdf)
+        !$acc update device(e3t,rhopn,emp,trn) if (lsbc)
+        !$acc update device(kef,qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,e3t,gdept,ogstm_PH,ogstm_co2) if(lbfm)
+#if  defined key_trc_sed
+        !$acc update device(sed_idx,diaflx,e3t,ogstm_sedipi,mbathy) if(lbfm)
+#endif
+        !$acc update device(e1t,diaflx,e3t_back,e2t,trb,e3t,avt,e3w) if (lzdf)
         CALL trcstp    ! se commento questo non fa calcoli
+        !$acc update host(trb,trn,tra)
+        !$acc update host(diaflx) if(lhdf)
+        !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx) if(ladv)
+        !$acc update host(tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH) if(lbfm)
+#if  defined key_trc_sed
+        !$acc update host(diaflx,zwork) if(lbfm)
+#endif
+        !$acc update host(diaflx) if (lzdf)
         call tstop("trcstp_all")
         call tstart("trcave")
         call trcave
@@ -290,14 +316,6 @@ MODULE module_step
 !         with surface boundary condition
 !         with IMPLICIT vertical diffusion
 
-      ! XXX: to be removed
-      use DIA_mem, only: diaflx,flx_ridxt
-      use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,umask,vmask,tmask,avt,ahtt
-      use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
-      USE OPT_mem, only: kef
-      USE SED_mem
-      USE ADV_mem
-
       use simple_timer
        IMPLICIT NONE
       integer jn,jk,ji,jj
@@ -305,17 +323,13 @@ MODULE module_step
 
       call tstart("trcadv")
 
-      !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,un,vn,wn,tra,trn,advmask,flx_ridxt,diaflx)
       IF (ladv) CALL trcadv ! tracers advection
-      !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx,tra)
 
       call tstop("trcadv")
 
 #    if defined key_trc_dmp
       call tstart("trcdmp")
-      !$acc update device(tra,atm,e3t) if(latmosph)
       CALL trcdmp ! tracers: damping for passive tracerstrcstp
-      !$acc update host(tra) if(latmosph)
       call tstop("trcdmp")
 
 ! ----------------------------------------------------------------------
@@ -336,44 +350,28 @@ MODULE module_step
 ! -----------------------------
 
       call tstart("trchdf")
-      !$acc update device(umask,vmask,tmask,trb,ahtt,tra,diaflx,flx_ridxt) if(lhdf)
       IF (lhdf) CALL trchdf
-      !$acc update host(diaflx,tra) if(lhdf)
       call tstop("trchdf")
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
       call tstart("trcsbc")
-      !$acc update device(e3t,rhopn,tmask,emp,trn,tra) if (lsbc)
       IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
-      !$acc update host(tra) if (lsbc)
       call tstop("trcsbc")
 
       call tstart("trcsms")
 
-       !$acc update device(kef,qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,e3t,gdept,ogstm_PH,ogstm_co2) if(lbfm)
-#if  defined key_trc_sed
-       !$acc update device(sed_idx,diaflx,e3t,tra,ogstm_sedipi,mbathy) if(lbfm)
-#endif
       IF (lbfm) CALL trcsms
-       !$acc update host(tra,tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH) if(lbfm)
-#if  defined key_trc_sed
-       !$acc update host(diaflx,zwork) if(lbfm)
-#endif
 
       call tstop("trcsms")
 
       call tstart("trczdf")
 
-      !$acc update device(e1t,diaflx,e3t_back,e2t,trb,tmask,e3t,tra,avt,e3w) if (lzdf)
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
-      !$acc update host(diaflx,tra) if (lzdf)
 
       call tstop("trczdf")
 
       call tstart("snutel")
-      !$acc update device(tmask,tra) if(lsnu)
       IF (lsnu) CALL snutel
-      !$acc update host(tra) if(lsnu)
       call tstop("snutel")
 
       call boundaries%apply_dirichlet()
@@ -381,11 +379,9 @@ MODULE module_step
       ! CALL checkValues
 
       call tstart("trcnxt")
-      !$acc update device(tra,tmask)
       CALL trcnxt ! tracers: fields at next time step
-      !$acc update host(trb,trn,tra)
       call tstop("trcnxt")
-      
+
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime
 

@@ -93,7 +93,7 @@ MODULE module_step
       call tstart("step_total")
       DO WHILE (.not.ISOVERTIME(datestring))
 
-
+         call tstart("step")
          call tstart("step_1")
          stpparttime = MPI_WTIME()  ! stop cronomether
          COMMON_DATESTRING = DATEstring
@@ -135,10 +135,12 @@ MODULE module_step
 ! For offline simulation READ DATA or precalculalted dynamics fields
 ! ------------------------------------------------------------------
 
-      call tstart("forcing")
+      call tstart("forcing_phys")
       CALL forcings_PHYS(DATEstring)
+      call tstop("forcing_phys")
+      call tstart("forcing_kext")
       CALL forcings_KEXT(datestring)
-      call tstop("forcing")
+      call tstop("forcing_kext")
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
@@ -152,11 +154,15 @@ MODULE module_step
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call tstart("bc+eos")
+      call tstart("bc_atm")
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
+      call tstop("bc_atm")
+      call tstart("bc_co2")
       CALL bc_co2       (DATEstring)
+      call tstop("bc_co2")
+      call tstart("eos")
       CALL eos          ()               ! Water density
-      call tstop("bc+eos")
+      call tstop("eos")
 
 
 
@@ -208,9 +214,9 @@ MODULE module_step
 
 
 ! Call Passive tracer model between synchronization for small parallelisation
-        call tstart("trcstp_all")
+        call tstart("trcstp")
         CALL trcstp    ! se commento questo non fa calcoli
-        call tstop("trcstp_all")
+        call tstop("trcstp")
         call tstart("trcave")
         call trcave
         call tstop("trcave")
@@ -277,7 +283,8 @@ MODULE module_step
 !+++++++++++++++++++++++++++++c
       datestring = UPDATE_TIMESTRING(datestring, rdt)
       TAU = TAU + 1
-      END DO  
+         call tstop("step")
+      END DO
 
       CONTAINS
 

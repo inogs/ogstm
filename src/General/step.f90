@@ -296,6 +296,7 @@ MODULE module_step
       use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
       USE OPT_mem, only: kef
       USE SED_mem
+      USE ADV_mem
 
       use simple_timer
        IMPLICIT NONE
@@ -303,12 +304,18 @@ MODULE module_step
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
       call tstart("trcadv")
-      IF (ladv) CALL trcadv ! tracers: advection
+
+      !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,un,vn,wn,tra,trn,advmask,flx_ridxt,diaflx)
+      IF (ladv) CALL trcadv ! tracers advection
+      !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx,tra)
+
       call tstop("trcadv")
 
 #    if defined key_trc_dmp
       call tstart("trcdmp")
+      !$acc update device(tra,atm,e3t) if(latmosph)
       CALL trcdmp ! tracers: damping for passive tracerstrcstp
+      !$acc update host(tra) if(latmosph)
       call tstop("trcdmp")
 
 ! ----------------------------------------------------------------------

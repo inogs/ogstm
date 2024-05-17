@@ -194,10 +194,6 @@ MODULE module_step
       call tstop("data_assim")
 #endif
 
-
-
-! Call Passive tracer model between synchronization for small parallelisation
-        call tstart("trcstp_all")
         !$acc update device(tra,tmask)
         !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,un,vn,wn,trn,advmask,flx_ridxt,diaflx) if(ladv)
         !$acc update device(atm,e3t) if(latmosph)
@@ -208,7 +204,17 @@ MODULE module_step
         !$acc update device(sed_idx,diaflx,e3t,ogstm_sedipi,mbathy) if(lbfm)
 #endif
         !$acc update device(e1t,diaflx,e3t_back,e2t,trb,e3t,avt,e3w) if (lzdf)
+        !$acc update device(traIO,trn,umask,vmask,tmask,traIO_HIGH,highfreq_table,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,sn,tn,wn,avt,e3t,un,vn,tra_DIA_IO,tra_DIA,tra_DIA_2d_IO,tra_DIA_2d,vatmIO,empIO,qsrIO,vatm,emp,qsr,highfreq_table_dia,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH,highfreq_table_dia2d)
+
+
+! Call Passive tracer model between synchronization for small parallelisation
+        call tstart("trcstp_all")
         CALL trcstp    ! se commento questo non fa calcoli
+        call tstop("trcstp_all")
+        call tstart("trcave")
+        call trcave
+        call tstop("trcave")
+
         !$acc update host(trb,trn,tra)
         !$acc update host(diaflx) if(lhdf)
         !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx) if(ladv)
@@ -217,10 +223,7 @@ MODULE module_step
         !$acc update host(diaflx,zwork) if(lbfm)
 #endif
         !$acc update host(diaflx) if (lzdf)
-        call tstop("trcstp_all")
-        call tstart("trcave")
-        call trcave
-        call tstop("trcave")
+        !$acc update host(traIO,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH)
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
 

@@ -20,8 +20,6 @@
       elapsed_time         =     elapsed_time_2
       inv_incremented_time = 1./(elapsed_time_2 + rdt)
 
-      !$acc update device(traIO,trn,umask,vmask,tmask,traIO_HIGH,highfreq_table,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,sn,tn,wn,avt,e3t,un,vn,tra_DIA_IO,tra_DIA,tra_DIA_2d_IO,tra_DIA_2d,vatmIO,empIO,qsrIO,vatm,emp,qsr,highfreq_table_dia,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH,highfreq_table_dia2d)
-
       !$acc parallel loop gang vector collapse(4) default(present) async(queue)
       DO jn=1 ,jptra
 
@@ -243,7 +241,6 @@
       endif ! lfbm
 
       !$acc wait(queue)
-      !$acc update host(traIO,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH)
 
       ave_partTime = MPI_WTIME() - ave_partTime
       ave_TotTime = ave_TotTime  + ave_partTime

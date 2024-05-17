@@ -68,13 +68,13 @@
 
 ! ... Mpp : export boundary values to neighboring processors
 
-         CALL mpplnk_my(tra(1,1,1,jn))
+         CALL mpplnk_my(tra(1,1,1,jn), gpu=.true.)
 
 #  else
 
 ! ... T-point, 3D array, full array tra(1,1,1,jn) is initialised
 
-         CALL lbc( tra(1,1,1,jn), 1, 1, 1, 1, jpk, 1 )
+         CALL lbc( tra(1,1,1,jn), 1, 1, 1, 1, jpk, 1, use_gpu=.true.)
 #endif
 
 
@@ -84,18 +84,19 @@
 
 
 
-            DO ji = 1,jpi
-          DO jj = 1,jpj
-        DO jk = 1,jpk
-            
-            !tra(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*e3t_back(jk,jj,ji)/e3t(jk,jj,ji)
-            trb(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )
-            trn(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*tmask(jk,jj,ji)
-            tra(jk,jj,ji,jn  ) = 0.e0
-           ! print *,jk,jj,ji,trb(jk,jj,ji,jn  ),trn(jk,jj,ji,jn  ),e3t_back(jk,jj,ji),e3t(jk,jj,ji)
+         !$acc parallel loop collapse(3) default(present)
+         DO ji = 1,jpi
+            DO jj = 1,jpj
+               DO jk = 1,jpk
+
+                  !tra(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*e3t_back(jk,jj,ji)/e3t(jk,jj,ji)
+                  trb(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )
+                  trn(jk,jj,ji,jn  ) = tra(jk,jj,ji,jn  )*tmask(jk,jj,ji)
+                  tra(jk,jj,ji,jn  ) = 0.e0
+                  ! print *,jk,jj,ji,trb(jk,jj,ji,jn  ),trn(jk,jj,ji,jn  ),e3t_back(jk,jj,ji),e3t(jk,jj,ji)
+               END DO
             END DO
-          END DO
-        END DO
+         END DO
 
 
      
@@ -107,7 +108,7 @@
 
        END DO TRACER_LOOP
 
-      
+
 
        trcnxtparttime = MPI_WTIME() - trcnxtparttime ! cronometer-stop
        trcnxttottime = trcnxttottime + trcnxtparttime

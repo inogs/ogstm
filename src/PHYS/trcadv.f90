@@ -81,9 +81,9 @@ SUBROUTINE trcadv
   double precision :: timer
   double precision,dimension(:), allocatable :: array
   double precision,dimension(:,:), allocatable :: surface
-  double precision, allocatable,dimension(:,:,:) :: zti,ztj
-  double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
-  double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
+  double precision, save,allocatable,dimension(:,:,:) :: zti,ztj
+  double precision, save,allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
+  double precision, save,allocatable,dimension(:,:,:) :: zkx,zky,zkz
   logical :: use_gpu
 
   queue=1
@@ -171,29 +171,29 @@ SUBROUTINE trcadv
 
      write(*,*) 'trcadv: RANK -> ', myrank, ' good_points -> ', goodpoints
 
+     call tstart("trcadv_alloc")
 
+     allocate(zy(jpk,jpj,jpi))
+     allocate(zx(jpk,jpj,jpi))
+     allocate(zz(jpk,jpj,jpi))
+     allocate(ztj(jpk,jpj,jpi))
+     allocate(zti(jpk,jpj,jpi))
+     allocate(zkx(jpk,jpj,jpi))
+     allocate(zky(jpk,jpj,jpi))
+     allocate(zkz(jpk,jpj,jpi))
+     allocate(zbuf(jpk,jpj,jpi))
+
+     !$acc enter data create(zy,zx,zz,ztj,zti,zkx,zky,zkz,zbuf)
+
+     call tstop("trcadv_alloc")
 
      adv_initialized=.true.
 
   endif
 
   call tstop("trcadv_init")
-  call tstart("trcadv_alloc")
 
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
-  allocate(zy(jpk,jpj,jpi))
-  allocate(zx(jpk,jpj,jpi))
-  allocate(zz(jpk,jpj,jpi))
-  allocate(ztj(jpk,jpj,jpi))
-  allocate(zti(jpk,jpj,jpi))
-  allocate(zkx(jpk,jpj,jpi))
-  allocate(zky(jpk,jpj,jpi))
-  allocate(zkz(jpk,jpj,jpi))
-  allocate(zbuf(jpk,jpj,jpi))
-
-  !$acc enter data create(zy,zx,zz,ztj,zti,zkx,zky,zkz,zbuf)
-
-  call tstop("trcadv_alloc")
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end initialization phase
 
@@ -953,22 +953,7 @@ SUBROUTINE trcadv
   !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra) )
   !$acc update host( tra(1:jpk,1:jpj,1:jpi,1:jptra) )
 
-  !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
-  !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
-  !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
-  !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
-
-  !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
-  deallocate(zy )
-  deallocate(zx )
-  deallocate(zz )
-  deallocate(ztj )
-  deallocate(zti )
-  deallocate(zkx )
-  deallocate(zky )
-  deallocate(zkz )
-  deallocate(zbuf )
 
   trcadvparttime = MPI_WTIME() - trcadvparttime
   trcadvtottime = trcadvtottime + trcadvparttime

@@ -336,7 +336,9 @@ MODULE module_step
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
       call tstart("trcsbc")
+      !$acc update device(e3t,rhopn,tmask,emp,trn,tra) if (lsbc)
       IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
+      !$acc update host(tra) if (lsbc)
       call tstop("trcsbc")
 
       call tstart("trcsms")

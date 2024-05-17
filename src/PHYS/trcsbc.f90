@@ -18,19 +18,20 @@
 ! Conc/dilution process
 
 
-                  DO jn=1,jptra
-            DO ji = 1, jpi
-        DO jj = 1, jpj
+      !$acc parallel loop collapse(3) default(present)
+      DO jn=1,jptra
+         DO ji = 1, jpi
+            DO jj = 1, jpj
 
                zse3t = 1. / e3t(1,jj,ji)
 
-                  ztra = 1./ rhopn(1,jj,ji) * zse3t * tmask(1,jj,ji) * emp(jj,ji) * trn(1,jj,ji,jn) ! original emps(jj,ji)
-                  tra(1,jj,ji,jn) = tra(1,jj,ji,jn) + ztra
+               ztra = 1./ rhopn(1,jj,ji) * zse3t * tmask(1,jj,ji) * emp(jj,ji) * trn(1,jj,ji,jn) ! original emps(jj,ji)
+               tra(1,jj,ji,jn) = tra(1,jj,ji,jn) + ztra
 
-          END DO
-        END DO
+            END DO
+         END DO
       ENDDO
 
-         trcsbcparttime = MPI_WTIME()   - trcsbcparttime
-         trcsbctottime  = trcsbctottime + trcsbcparttime
+      trcsbcparttime = MPI_WTIME()   - trcsbcparttime
+      trcsbctottime  = trcsbctottime + trcsbcparttime
       END SUBROUTINE trcsbc

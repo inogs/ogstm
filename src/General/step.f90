@@ -362,7 +362,9 @@ MODULE module_step
       call tstop("trczdf")
 
       call tstart("snutel")
+      !$acc update device(tmask,tra) if(lsnu)
       IF (lsnu) CALL snutel
+      !$acc update host(tra) if(lsnu)
       call tstop("snutel")
 
       call boundaries%apply_dirichlet()
@@ -370,7 +372,9 @@ MODULE module_step
       ! CALL checkValues
 
       call tstart("trcnxt")
+      !$acc update device(tra,tmask)
       CALL trcnxt ! tracers: fields at next time step
+      !$acc update host(trb,trn,tra)
       call tstop("trcnxt")
       
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop

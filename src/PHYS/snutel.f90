@@ -29,13 +29,17 @@
 ! omp variables
 
       INTEGER :: jk,jj,ji,jn,jv! ,jnn,gji,gjj
+      INTEGER :: queue
       double precision :: zfact,zdt
 
 !!----------------------------------------------------------------------
 !! statement functions
 !! ===================
 
+       queue=1
+       !$acc kernels default(present) async(queue)
        TRA_FN = 0.0
+       !$acc end kernels
 !      SMALL =  0.00000000001
 
 !****************     INIT PHASE  *********************
@@ -63,26 +67,28 @@
 !!!$omp&      shared(jn,jpk,jpj,jpi,tra,tmask,tra_FN,SMALL)
 
 
-                  DO ji = 1,jpi
-               DO jj = 1,jpj
-            DO jk = 1,jpk
-
-                     if (tmask(jk,jj,ji).ne.0.0) then
+         !$acc parallel loop collapse(3) default(present) async(queue)
+         DO ji = 1,jpi
+            DO jj = 1,jpj
+               DO jk = 1,jpk
+                  if (tmask(jk,jj,ji).ne.0.0) then
                      if( tra(jk,jj,ji,jn) .GT. 0.  ) then
 
                      else
                         tra_FN(jk,jj,ji,jn) =  - tra(jk,jj,ji,jn) + SMALL
                         tra(   jk,jj,ji,jn) =  SMALL
                      end if
-                     endif
-                  END DO
+                  endif
                END DO
             END DO
+         END DO
 
       
 !!!$omp end parallel
 
       END DO TRACER_LOOP
+
+      !$acc wait(queue)
 
 
 !! Frequency of correction if plus module of kt

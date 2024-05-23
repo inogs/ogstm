@@ -58,7 +58,7 @@ from datetime import datetime
 from commons.layer import Layer
 from commons.Timelist import TimeList
 from commons import timerequestors
-import os
+import os,sys
 import numpy as np
 import scipy.io.netcdf as NC
 from instruments import check

@@ -48,7 +48,7 @@ from datetime import timedelta
 from datetime import datetime
 from commons import timerequestors
 import numpy as np
-import os
+import os,sys
 
 profilesource=os.getenv("PROFILES_SOURCE")
 if profilesource is None:

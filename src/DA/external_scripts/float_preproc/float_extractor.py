@@ -77,9 +77,9 @@ TI_day.end_time = datetime(meantime.year, meantime.month, meantime.day,23,59)
 
 
 Profilelist=bio_float.FloatSelector(FLOATVARS[varmod],TI_3, OGS.med)
-print('...              len Profilelist  ' + np.str(len(Profilelist)))
+print('...              len Profilelist  ' + str(len(Profilelist)))
 TL = TimeList.fromfilenames(TI_day, INPUTDIR,"RSTbefore*13:00*.nc",filtervar=varmod,prefix="RSTbefore.")
-print('...              len TL   ' + np.str(TL.nTimes))
+print('...              len TL   ' + str(TL.nTimes))
 TL.inputFrequency = 'weekly'
 M = Matchup_Manager(Profilelist,TL,BASEDIR)
 print('...              M=Matchup_Manager done')

@@ -51,7 +51,6 @@ args = argument()
 
 from instruments.matchup_manager import Matchup_Manager
 from commons.mask import Mask
-from instruments import superfloat as bio_float
 import basins.OGS as OGS
 from instruments.var_conversions import FLOATVARS
 from commons.utils import addsep
@@ -63,6 +62,17 @@ import os
 import numpy as np
 import scipy.io.netcdf as NC
 from instruments import check
+
+profilesource=os.getenv("PROFILES_SOURCE")
+if profilesource is None:
+    print("Error: Environment variables PROFILES_SOURCE - superfloat or ppcon - must be defined.")
+    sys.exit(1)
+assert profilesource in ["superfloat", "ppcon"]
+if profilesource=="superfloat":
+    from instruments import superfloat as bio_float
+if profilesource=="ppcon":
+    from instruments import float_ppcon as bio_float
+
 
 datestr   = args.time
 BASEDIR  = addsep(args.basedir)

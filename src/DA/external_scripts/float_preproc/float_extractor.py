@@ -42,13 +42,24 @@ from commons.time_interval import TimeInterval
 from commons.Timelist import TimeList
 from instruments.matchup_manager import Matchup_Manager
 import basins.OGS as OGS
-from instruments import superfloat as bio_float
 from instruments.var_conversions import FLOATVARS
 from commons.utils import addsep
 from datetime import timedelta
 from datetime import datetime
 from commons import timerequestors
 import numpy as np
+import os
+
+profilesource=os.getenv("PROFILES_SOURCE")
+if profilesource is None:
+    print("Error: Environment variables PROFILES_SOURCE - superfloat or ppcon - must be defined.")
+    sys.exit(1)
+assert profilesource in ["superfloat", "ppcon"]
+if profilesource=="superfloat":
+    from instruments import superfloat as bio_float
+if profilesource=="ppcon":
+    from instruments import float_ppcon as bio_float
+
 
 meantime=datetime.strptime(args.time,'%Y%m%d')
 

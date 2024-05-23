@@ -67,10 +67,10 @@ else:
     O2omis = [0]
     O2omis0 = []
 
-totobs =  np.int(P_lmis[0]) + np.int(N3nmis[0]) + np.int(O2omis[0])
+totobs =  int(P_lmis[0]) + int(N3nmis[0]) + int(O2omis[0])
 allmis0 = N3nmis0 + P_lmis0 + O2omis0
 
-allmis = [np.str(totobs)] + allmis0
+allmis = [str(totobs)] + allmis0
 
 
 ff = open(args.outfile,'wb')

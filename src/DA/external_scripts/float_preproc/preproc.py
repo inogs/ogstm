@@ -80,7 +80,7 @@ INPUTDIR = addsep(args.inputdir)
 OUTDIR   = addsep(args.outdir)
 varmod   = args.variable
 TheMask = Mask(args.maskfile)
-deplim  = np.int(args.deplim)
+deplim  = int(args.deplim)
 
 nav_lev = TheMask.zlevels
 layer   = Layer(0, deplim)

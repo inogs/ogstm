@@ -86,6 +86,7 @@ nav_lev = TheMask.zlevels
 layer   = Layer(0, deplim)
 
 errbase = 0.24  # (Mignot et al., 2019)
+errbase_ppcon = [0.44, 0.69, 0.61] #0-200 200-400 and 400-600
 erro2obase = 5.  # (Approximation based on QuID V7c evaluation)
 Check_Obj = check.check(OUTDIR,verboselevel=1,threshold_nitrate=2)
 
@@ -99,6 +100,8 @@ TI.end_time = datetime(year, month, day, 23, 59)
 
 errorfloat = [0.0690, 0.0969, 0.0997, 0.0826, 0.0660, 0.0500, 0.0360, 0.0140, 0.0320, 0.0390, 0.0340, 0.0490]
 
+#errorfloat_ppcon = [ 0.12  , 0.14  , 0.14  , 0.84  , 0.67  , 0.14  , 0.08  , 0.07  , 0.08  , 0.06  , 0.06  , 0.07  ] # future dev
+# method: desroziers 2005 [err float + extra uncert. ]
 DICTflag = {'P_l': 0, 'N3n': 1, 'O2o': 2}
 
 Profilelist = bio_float.FloatSelector(FLOATVARS[varmod], TI, OGS.med)
@@ -186,6 +189,14 @@ for wmo in WMOlist:
             testo += "\t%10.5f\t%10.5f" % (0.2, Profile[ilev, 2])
 # errore fisso che aumenta  verso il fondo
             if varmod == 'N3n':
+                if (Qc <0).any():
+                   if   lev <=200: errnut = errbase_ppcon[0]
+                   elif (lev >=400) and (lev <450): errnut = errbase_ppcon[2] # layer 400m-450m no localization
+                   elif (lev >=450) and (lev <600): errnut = errbase_ppcon[2]*(1+(1.5-1.)/(600-450)*(lev-450)) #localization
+                   else:  errnut = errbase_ppcon[1]
+                else:
+                   if lev <= 450: errnut = errbase
+                   if (lev > 450):  errnut = errbase*(1+(1.5-1.)/(600-450)*(lev-450))
                 errnut = errbase
                 testo += "\t%10.5f\t%i\n" % (errnut, Profile[ ilev, 5])
             if varmod == 'O2o':

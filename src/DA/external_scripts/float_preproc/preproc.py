@@ -71,7 +71,10 @@ assert profilesource in ["superfloat", "ppcon"]
 if profilesource=="superfloat":
     from instruments import superfloat as bio_float
 if profilesource=="ppcon":
-    from instruments import float_ppcon as bio_float
+    if args.variable == 'P_l':
+        from instruments import superfloat as bio_float ## ppcon chl not yet tested for DA
+    else:
+        from instruments import float_ppcon as bio_float
 
 
 datestr   = args.time

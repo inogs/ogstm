@@ -272,8 +272,7 @@
 !  ---------------------------------------------------------------------
 
       allocate(boundaries)
-      ! TODO: restore boundaries and fix strange double free error 
-      !boundaries = bc_set("boundaries.nml")
+      call bc_set(boundaries, "boundaries.nml")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

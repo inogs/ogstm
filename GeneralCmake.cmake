@@ -33,7 +33,7 @@ IF (BFMv2)
 ENDIF()
 
 if(CMAKE_Fortran_COMPILER_ID MATCHES "Intel")
-    set(CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
+    set(CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xCORE-AVX2 -qopt-report5 -g -traceback -cpp -align array64byte") #-qopenmp
     set(CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend-source")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
     set(CMAKE_Fortran_FLAGS_RELEASE " -O3 -march=native -fimplicit-none -cpp -ffree-line-length-none ")

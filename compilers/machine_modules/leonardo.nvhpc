@@ -1,12 +1,14 @@
 module load cmake
-module load nvhpc
-module load cuda
+module load nvhpc/23.11
+module load openmpi/4.1.6--nvhpc--23.11
 module load netcdf-fortran/4.6.1--openmpi--4.1.6--nvhpc--23.11
-export PATH=$(echo $PATH | sed -r 's|cuda/samples/bin/x86_64/linux/release/:||')
+module load cuda/12.3
 
 export CC=pgcc
 export NETCDF_CFLAGS=$(nc-config --cflags)
 export NETCDF_CLIBS=$(nc-config --libs)
+export NETCDF_FFLAGS=$(nc-config --fflags)
+export NETCDF_FLIBS=$(nc-config --flibs)
 export NETCDF_LIB=$(nc-config --libdir)
 export NETCDF_INC=$(nc-config --includedir)
 

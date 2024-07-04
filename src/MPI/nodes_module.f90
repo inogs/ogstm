@@ -43,17 +43,22 @@ MODULE NODES_MODULE
         INTEGER :: i, j, p, k
         INTEGER :: IERROR
         CHARACTER*(MPI_MAX_PROCESSOR_NAME) buff_recv
-        
 
-        CHARACTER (len = lengt), dimension(mpi_glcomm_size) :: total_array
+        CHARACTER (len = max_length) ::  local_extended_array
+        CHARACTER (len = max_length), dimension(mpi_glcomm_size) :: total_array
         
 !        write (*,*) 'allocation rank',myrank, lengt, local_array
 
+        do i=1,max_length  ! zeropadding
+          local_extended_array(i:max_length)='0'
+        enddo
+        local_extended_array(1:lengt)=local_array
+
         call mppsync()
 
-        CALL MPI_GATHER( local_array, lengt,MPI_CHAR, total_array,lengt,MPI_CHAR, 0, MPI_COMM_WORLD, IERROR)
+        CALL MPI_GATHER( local_array, max_length ,MPI_CHAR, total_array,max_length,MPI_CHAR, 0, MPI_COMM_WORLD, IERROR)
 
-       
+
         IF (myrank == 0) THEN
                 nodes = 1
                 p=1

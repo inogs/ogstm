@@ -28,7 +28,7 @@ MODULE NODE_NAME
 
         PUBLIC
         
-        INTEGER :: lengt
+        INTEGER :: lengt, max_length
         
         CHARACTER*(MPI_MAX_PROCESSOR_NAME) local_array
 
@@ -40,7 +40,9 @@ MODULE NODE_NAME
         INTEGER :: IERROR
         
         CALL MPI_GET_PROCESSOR_NAME(local_array, lengt, IERROR)
-        
+
+        CALL MPI_ALLReduce(lengt, max_length, 1, MPI_INTEGER, MPI_MAX,  MPI_COMM_WORLD, IERROR)
+
         END SUBROUTINE NODE_NAME_FILL        
 !---------------------------------------------------------------------------------
 END MODULE

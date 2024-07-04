@@ -22,6 +22,7 @@
 
        USE myalloc
        USE mpi
+
        IMPLICIT NONE
 
 
@@ -29,11 +30,10 @@
 
        trcsmsparttime = MPI_WTIME() ! cronometer-start
 
-
 !! this first routines are parallelized on vertical slab
 
        CALL trcopt ! tracers: optical model
-       
+
        CALL trcbio ! tracers: biological model
 
 !! trcsed no updated for time step advancing

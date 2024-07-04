@@ -265,6 +265,13 @@ MODULE module_step
 !         with surface boundary condition
 !         with IMPLICIT vertical diffusion
 
+      ! XXX: to be removed
+      use DIA_mem, only: diaflx,flx_ridxt
+      use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,umask,vmask,tmask,avt,ahtt
+      use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
+      USE OPT_mem, only: kef
+      USE SED_mem
+
        IMPLICIT NONE
       integer jn,jk,ji,jj
       trcstpparttime = MPI_WTIME() ! cronometer-start
@@ -289,14 +296,26 @@ MODULE module_step
 ! tracers: horizontal diffusion IF namelist flags are activated
 ! -----------------------------
 
+      !$acc update device(umask,vmask,tmask,trb,ahtt,tra,diaflx,flx_ridxt) if(lhdf)
       IF (lhdf) CALL trchdf
+      !$acc update host(diaflx,tra) if(lhdf)
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
       IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
 
+       !$acc update device(kef,qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,e3t,gdept,ogstm_PH,ogstm_co2) if(lbfm)
+#if  defined key_trc_sed
+       !$acc update device(sed_idx,diaflx,e3t,tra,ogstm_sedipi,mbathy) if(lbfm)
+#endif
       IF (lbfm) CALL trcsms
+       !$acc update host(tra,tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH) if(lbfm)
+#if  defined key_trc_sed
+       !$acc update host(diaflx,zwork) if(lbfm)
+#endif
 
+      !$acc update device(e1t,diaflx,e3t_back,e2t,trb,tmask,e3t,tra,avt,e3w) if (lzdf)
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
+      !$acc update host(diaflx,tra) if (lzdf)
 
       IF (lsnu) CALL snutel
 

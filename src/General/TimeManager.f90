@@ -799,6 +799,7 @@
 
 
        double precision FUNCTION INSTANT_PAR_from_sec(sec, MEAN_PAR)
+       !$acc routine seq
        IMPLICIT NONE
        double precision, INTENT(IN) :: MEAN_PAR ! daily integral 
        ! LOCAL

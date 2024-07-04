@@ -1,3 +1,8 @@
+#ifdef _OPENACC
+! BUG?: the fsx routine causes additional H2D copies
+#define fsx(pfx1, pfx2, pfu) ((((pfu) + abs(pfu)) * (pfx1) + ((pfu) - abs(pfu)) * (pfx2)) * 0.5)
+#endif
+
 SUBROUTINE trcadv
 !!!---------------------------------------------------------------------
 !!!
@@ -68,7 +73,7 @@ SUBROUTINE trcadv
   !!                               monthly weather review, pp 479-486
   !!
   LOGICAL :: MPI_CHECK,l1,l2,l3
-  INTEGER :: jk,jj,ji,jt,jn,jf,ju
+  INTEGER :: jk,jj,ji,jt,jn,jf,ju,queue
   double precision :: zbtr,zdt
   double precision :: junk, junki, junkj, junkk
   double precision :: timer
@@ -78,10 +83,16 @@ SUBROUTINE trcadv
   double precision, allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
   double precision, allocatable,dimension(:,:,:) :: zkx,zky,zkz
   logical :: use_gpu
+
+  queue=1
   
   trcadvparttime = MPI_WTIME()
 
+#ifdef _OPENACC
   use_gpu=.true.
+#else
+  use_gpu=.false.
+#endif
 
   !-------------------------------------------------------------------
 
@@ -159,7 +170,21 @@ SUBROUTINE trcadv
 
 
      adv_initialized=.true.
+
   endif
+
+  !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
+  allocate(zy(jpk,jpj,jpi))
+  allocate(zx(jpk,jpj,jpi))
+  allocate(zz(jpk,jpj,jpi))
+  allocate(ztj(jpk,jpj,jpi))
+  allocate(zti(jpk,jpj,jpi))
+  allocate(zkx(jpk,jpj,jpi))
+  allocate(zky(jpk,jpj,jpi))
+  allocate(zkz(jpk,jpj,jpi))
+  allocate(zbuf(jpk,jpj,jpi))
+
+  !$acc enter data create(zy,zx,zz,ztj,zti,zkx,zky,zkz,zbuf)
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! end initialization phase
 
@@ -168,30 +193,24 @@ SUBROUTINE trcadv
   zdt = rdt*ndttrc
   !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
 
+  !$acc update device( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
+  !$acc update device( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
+  !$acc update device( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
+  !$acc update device( zbtr_arr(1:jpk,1:jpj,1:jpi) )
 
-  !$acc enter data create( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( zbtr_arr(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
+  !$acc update device( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) )
+  !$acc update device( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) )
+  !$acc update device( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) )
+  !$acc update device( e3w(1:jpk,1:jpj,1:jpi) )
+  !$acc update device( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) )
 
-  !$acc enter data create( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( e3w(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
+  !$acc update device(tra(1:jpk,1:jpj,1:jpi,1:jptra))
+  !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra))
+  !$acc update device(advmask(1:jpk,1:jpj,1:jpi))
+  !$acc update device(flx_ridxt(1:Fsize,1:4))
+  !$acc update device( diaflx(1:7, 1:Fsize, 1:jptra))
 
-  !$acc update device( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update device( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update device( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update device( zbtr_arr(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-
-  !$acc update device( e1t(1:jpj,1:jpi), e2t(1:jpj,1:jpi), e3t(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update device( e1u(1:jpj,1:jpi), e2u(1:jpj,1:jpi), e3u(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update device( e1v(1:jpj,1:jpi), e2v(1:jpj,1:jpi), e3v(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update device( e3w(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update device( un(1:jpk,1:jpj,1:jpi), vn(1:jpk,1:jpj,1:jpi), wn(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -206,7 +225,7 @@ SUBROUTINE trcadv
   !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
   !$OMP shared(zdt,zaa,inv_eu,e1u,e2u,e3u,un,big_fact_zaa)
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -218,7 +237,7 @@ SUBROUTINE trcadv
   !$acc end kernels
 
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -229,7 +248,7 @@ SUBROUTINE trcadv
   END DO
   !$acc end kernels
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -246,7 +265,7 @@ SUBROUTINE trcadv
   !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk)  default(none) &
   !$OMP shared(inv_ev,e1v,e2v,e3v,vn,zdt,zbb,big_fact_zbb)
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -257,7 +276,7 @@ SUBROUTINE trcadv
   END DO
   !$acc end kernels
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -268,7 +287,7 @@ SUBROUTINE trcadv
   END DO
   !$acc end kernels
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -283,7 +302,7 @@ SUBROUTINE trcadv
   !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1,jpi,jpj,jpk) default(none) &
   !$OMP shared(inv_et,e1t,e2t,e3w,wn,zcc,zdt,big_fact_zcc)
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -294,7 +313,7 @@ SUBROUTINE trcadv
   END DO
   !$acc end kernels
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -305,7 +324,7 @@ SUBROUTINE trcadv
   END DO
   !$acc end kernels
 
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
      DO jj = 1,jpj
         !dir$ vector aligned
@@ -319,57 +338,10 @@ SUBROUTINE trcadv
 
   !$OMP TASKWAIT
 
-  !$acc update host( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update host( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update host( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update host( zbtr_arr(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-
-
   !!     tracer loop parallelized (macrotasking)
   !!     =======================================
 
-
-
-  !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
-  allocate(zy(jpk,jpj,jpi))
-  allocate(zx(jpk,jpj,jpi))
-  allocate(zz(jpk,jpj,jpi))
-  allocate(ztj(jpk,jpj,jpi))
-  allocate(zti(jpk,jpj,jpi))
-  allocate(zkx(jpk,jpj,jpi))
-  allocate(zky(jpk,jpj,jpi))
-  allocate(zkz(jpk,jpj,jpi))
-  allocate(zbuf(jpk,jpj,jpi))
-
-  zy(:,:,:) = 0
-  zz(:,:,:) = 0
-  zx(:,:,:) = 0
-  ztj(:,:,:)= 0
-  zti(:,:,:)= 0
-  zbuf(:,:,:) = 0.
-  zkx(:,:,:)=0.
-  zky(:,:,:)=0.
-  zkz(:,:,:)=0.
-
-  !!trn could be allocate earlier
-  !$acc enter data create(trn(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
-  !$acc enter data create(tra(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
-  !$acc enter data create(advmask(1:jpk,1:jpj,1:jpi)) if(use_gpu)
-  !$acc enter data create(flx_ridxt(1:Fsize,1:4)) if(use_gpu)
-  !$acc enter data create( diaflx(1:7, 1:Fsize, 1:jptra)) if(use_gpu)
-
-  !$acc enter data create( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc enter data create( zbuf(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-
-  !$acc update device(tra(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
-  !$acc update device(trn(1:jpk,1:jpj,1:jpi,1:jptra)) if(use_gpu)
-  !$acc update device(advmask(1:jpk,1:jpj,1:jpi)) if(use_gpu)
-  !$acc update device(flx_ridxt(1:Fsize,1:4)) if(use_gpu)
-  !$acc update device( diaflx(1:7, 1:Fsize, 1:jptra)) if(use_gpu)
-
-  !$acc kernels default(present) if(use_gpu)
+  !$acc kernels default(present) async(queue)
   DO ji = 1, jpi
      DO jj = 1, jpj
         DO jk = 1, jpk
@@ -386,6 +358,7 @@ SUBROUTINE trcadv
      ENDDO
   ENDDO
   !$acc end kernels
+  !$acc wait(queue)
 
   !$omp taskloop default(none) private(jf,junk,junki,junkj,junkk,zbtr) &
   !$omp private(zkx,zky,zkz,zti,ztj,zx,zy,zz,zbuf) shared(diaflx,jarrt,tra,zdt) &
@@ -404,8 +377,8 @@ SUBROUTINE trcadv
      !!           and mass fluxes calculated above
      !!       calcul of tracer flux in the i and j direction
 
-     !$acc kernels async default(present) if(use_gpu)
-     !$acc loop independent
+
+     !$acc kernels default(present) async(queue)
      DO ji = 2,jpim1
         !dir$ vector aligned
         DO jj = 2,jpjm1
@@ -414,7 +387,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels async default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO ji = 2,jpim1
         !dir$ vector aligned
         !$acc loop independent
@@ -424,7 +397,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels async default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO ji = 1,jpi
         !dir$ vector aligned
         !$acc loop independent
@@ -434,7 +407,7 @@ SUBROUTINE trcadv
      ENDDO
      !$acc end kernels
 
-     !$acc kernels async default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO ji = 1,jpi
         !dir$ vector aligned
         !$acc loop independent
@@ -444,7 +417,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
      ! loop unfusion
-     !$acc kernels async default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO jj = 2,jpjm1
         !dir$ vector aligned
         !$acc loop independent
@@ -454,7 +427,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels async default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO jj = 2,jpjm1
         !dir$ vector aligned
         !$acc loop independent
@@ -464,7 +437,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels async default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      !$acc loop independent
      DO  ji = 2,jpim1
         DO jj = 2,jpjm1
@@ -476,7 +449,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc kernels async default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO  ji = 2,jpim1
         !$acc loop independent
         DO jj = 2,jpjm1
@@ -488,7 +461,7 @@ SUBROUTINE trcadv
      END DO
      !$acc end kernels
 
-     !$acc parallel loop async collapse(3) gang vector default(present) if(use_gpu)
+     !$acc parallel loop collapse(3) gang vector default(present) async(queue)
      DO  ji = 2,jpim1
         DO jj = 2,jpjm1
            !dir$ vector aligned
@@ -498,21 +471,15 @@ SUBROUTINE trcadv
         END DO
      END DO
      !$acc end parallel loop
-     !$acc wait
+     !$acc wait(queue)
 
      ! ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
 
      !  ... Mpp : export boundary values to neighboring processors
 
-#ifndef _OPENACC
-     CALL mpplnk_my(zkx)
-     CALL mpplnk_my(zky)
-#else
-     CALL mpplnk_my_openacc(zkx,gpu=use_gpu)
-     CALL mpplnk_my_openacc(zky,gpu=use_gpu)
-
-#endif
+     CALL mpplnk_my(zkx,gpu=use_gpu)
+     CALL mpplnk_my(zky,gpu=use_gpu)
 
 #else
 
@@ -526,7 +493,7 @@ SUBROUTINE trcadv
      !! 2. calcul of after field using an upstream advection scheme
      !! -----------------------------------------------------------
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO ji =2,jpim1
         DO jj =2,jpjm1
            DO jk =1,jpkm1
@@ -539,7 +506,7 @@ SUBROUTINE trcadv
      ENDDO
      !$acc end kernels
 
-     !$acc kernels default(present) if(use_gpu)
+     !$acc kernels default(present) async(queue)
      DO jf=1,Fsize
         jk = flx_ridxt(jf,2)
         jj = flx_ridxt(jf,3)
@@ -565,7 +532,7 @@ SUBROUTINE trcadv
         if(jt .EQ. 1) then
 
            if(ncor .EQ. 1) then
-              !$acc kernels default(present) if(use_gpu)
+              !$acc kernels default(present)
               DO ji = 2,jpim1
                  DO jj = 2,jpjm1
                     !dir$ vector aligned
@@ -577,7 +544,7 @@ SUBROUTINE trcadv
               !$acc end kernels
 
            else
-              !$acc kernels default(present) if(use_gpu)
+              !$acc kernels default(present) async(queue)
               DO ji = 2,jpim1
                  DO jj = 2,jpjm1
                     !dir$ vector aligned
@@ -589,7 +556,7 @@ SUBROUTINE trcadv
               END DO
               !$acc end kernels
 
-              !$acc kernels default(present) if(use_gpu)
+              !$acc kernels default(present) async(queue)
               DO ji = 2,jpim1
                  DO jj = 2,jpjm1
                     !dir$ vector aligned
@@ -604,7 +571,7 @@ SUBROUTINE trcadv
            endif
 
         else
-           !$acc kernels default(present) if(use_gpu)
+           !$acc kernels default(present) async(queue)
            DO ji = 2,jpim1
               DO jj = 2,jpjm1
                  !dir$ vector aligned
@@ -615,7 +582,7 @@ SUBROUTINE trcadv
            END DO
            !$acc end kernels
 
-           !$acc kernels default(present) if(use_gpu)
+           !$acc kernels default(present) async(queue)
            DO ji = 2,jpim1
               DO jj = 2,jpjm1
                  !dir$ vector aligned
@@ -627,17 +594,12 @@ SUBROUTINE trcadv
            !$acc end kernels
         endif
 
-
-
+        !$acc wait(queue)
 
         !! ... Lateral boundary conditions on zti
 #ifdef key_mpp
         ! ... Mpp : export boundary values to neighboring processors
-#ifndef _OPENACC
-        CALL mpplnk_my(zti)
-#else
-        CALL mpplnk_my_openacc(zti,gpu=use_gpu)
-#endif
+        CALL mpplnk_my(zti,gpu=use_gpu)
 #else
         ! ... T-point, 3D array, full local array zti is initialised
         CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
@@ -648,7 +610,7 @@ SUBROUTINE trcadv
 
         !jk = 1
         !          DO jk = 1,jpkm1
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO ji = 2,jpim1
            DO jj = 2,jpjm1
               junk  = zti(1,jj,ji )
@@ -661,7 +623,7 @@ SUBROUTINE trcadv
         !$acc end kernels
 
         !DO ju=1, dimen_jarr2
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
@@ -687,20 +649,15 @@ SUBROUTINE trcadv
         !$acc end kernels
         !                 endif
 
+        !$acc wait(queue)
 
         ! ... Lateral boundary conditions on z[xyz]
 #ifdef key_mpp
 
         ! ... Mpp : export boundary values to neighboring processors
-#ifndef _OPENACC
-        CALL mpplnk_my(zx)
-        CALL mpplnk_my(zy)
-        CALL mpplnk_my(zz)
-#else
-        CALL mpplnk_my_openacc(zx,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zy,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zz,gpu=use_gpu)
-#endif
+        CALL mpplnk_my(zx,gpu=use_gpu)
+        CALL mpplnk_my(zy,gpu=use_gpu)
+        CALL mpplnk_my(zz,gpu=use_gpu)
 #else
 
         !  ... T-point, 3D array, full local array z[xyz] are initialised
@@ -713,7 +670,7 @@ SUBROUTINE trcadv
         !!            2.5 calcul of the final field:
         !!                advection by antidiffusive mass fluxes and an upstream scheme
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         !$acc loop independent
         DO ji = 2,jpim1
            !dir$ vector aligned
@@ -723,7 +680,7 @@ SUBROUTINE trcadv
         END DO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO ji = 2,jpim1
            !dir$ vector aligned
            !$acc loop independent
@@ -733,7 +690,7 @@ SUBROUTINE trcadv
         END DO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO ji = 1,jpi
            !dir$ vector aligned
            !$acc loop independent
@@ -743,7 +700,7 @@ SUBROUTINE trcadv
         ENDDO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO ji = 1,jpi
            !dir$ vector aligned
            !$acc loop independent
@@ -753,7 +710,7 @@ SUBROUTINE trcadv
         ENDDO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO jj = 2,jpjm1
            !dir$ vector aligned
            !$acc loop independent
@@ -763,7 +720,7 @@ SUBROUTINE trcadv
         ENDDO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO jj = 2,jpjm1
            !dir$ vector aligned
            !$acc loop independent
@@ -773,7 +730,7 @@ SUBROUTINE trcadv
         END DO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         !$acc loop independent
         DO  ji = 2,jpim1
            DO jj = 2,jpjm1
@@ -787,7 +744,7 @@ SUBROUTINE trcadv
         END DO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO  ji = 2,jpim1
            !$acc loop independent
            DO jj = 2,jpjm1
@@ -801,7 +758,7 @@ SUBROUTINE trcadv
         END DO
         !$acc end kernels
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         DO  ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
@@ -815,17 +772,13 @@ SUBROUTINE trcadv
         END DO
         !$acc end kernels
 
+        !$acc wait(queue)
 
         !... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
         !  ... Mpp : export boundary values to neighboring processors
-#ifndef _OPENACC
-        CALL mpplnk_my(zkx)
-        CALL mpplnk_my(zky)
-#else
-        CALL mpplnk_my_openacc(zkx,gpu=use_gpu)
-        CALL mpplnk_my_openacc(zky,gpu=use_gpu)
-#endif
+        CALL mpplnk_my(zkx,gpu=use_gpu)
+        CALL mpplnk_my(zky,gpu=use_gpu)
 #else
         ! ... T-point, 3D array, full local array zk[xy] are initialised
         CALL lbc( zkx(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
@@ -837,7 +790,7 @@ SUBROUTINE trcadv
 
 
         if(ncor .EQ. 1) then
-           !$acc kernels default(present) if(use_gpu)
+           !$acc kernels default(present) async(queue)
            DO ji =2,jpim1
               DO jj =2,jpjm1
                  DO jk =1,jpkm1
@@ -848,7 +801,7 @@ SUBROUTINE trcadv
            ENDDO
            !$acc end kernels
 
-           !$acc kernels default(present) if(use_gpu)
+           !$acc kernels default(present) async(queue)
            DO jf=1,Fsize
               jk = flx_ridxt(jf,2)
               jj = flx_ridxt(jf,3)
@@ -863,7 +816,7 @@ SUBROUTINE trcadv
 
         else
 
-           !$acc kernels default(present) if(use_gpu)
+           !$acc kernels default(present) async(queue)
            DO ji =2,jpim1
               DO jj =2,jpjm1
                  DO jk =1,jpkm1
@@ -874,7 +827,7 @@ SUBROUTINE trcadv
            ENDDO
            !$acc end kernels
 
-           !$acc kernels default(present) if(use_gpu)
+           !$acc kernels default(present) async(queue)
            DO jf=1,Fsize
               jk = flx_ridxt(jf,2)
               jj = flx_ridxt(jf,3)
@@ -885,7 +838,6 @@ SUBROUTINE trcadv
               diaflx(3,jf, jn) = diaflx(3,jf, jn) + zkz(jk,jj,ji )*rdt
            ENDDO
            !$acc end kernels
-
 
         endif
 
@@ -898,7 +850,7 @@ SUBROUTINE trcadv
 
      if(ncor .EQ. 1) then
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         do ji=1,jpi
            do jj=1,jpj
               do jk=1,jpk
@@ -910,7 +862,7 @@ SUBROUTINE trcadv
 
      else
 
-        !$acc kernels default(present) if(use_gpu)
+        !$acc kernels default(present) async(queue)
         do ji=1,jpi
            do jj=1,jpj
               do jk=1,jpk
@@ -936,21 +888,24 @@ SUBROUTINE trcadv
 
 
   END DO TRACER_LOOP
+  !$acc wait(queue)
+
   !$OMP end taskloop
 
-  !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra) ) if(use_gpu)
-  !$acc update host( tra(1:jpk,1:jpj,1:jpi,1:jptra) ) if(use_gpu)
+  !$acc update host( zaa(1:jpk,1:jpj,1:jpi), zbb(1:jpk,1:jpj,1:jpi), zcc(1:jpk,1:jpj,1:jpi) )
+  !$acc update host( inv_eu(1:jpk,1:jpj,1:jpi), inv_ev(1:jpk,1:jpj,1:jpi), inv_et(1:jpk,1:jpj,1:jpi) )
+  !$acc update host( big_fact_zaa (1:jpk,1:jpj,1:jpi), big_fact_zbb(1:jpk,1:jpj,1:jpi), big_fact_zcc(1:jpk,1:jpj,1:jpi) )
+  !$acc update host( zbtr_arr(1:jpk,1:jpj,1:jpi) )
 
-  !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
-  !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) ) if(use_gpu)
+  !$acc update host( diaflx(1:7, 1:Fsize, 1:jptra) )
+  !$acc update host( tra(1:jpk,1:jpj,1:jpi,1:jptra) )
 
-  !$acc exit data delete( tra) finalize if(use_gpu)
-  !$acc exit data delete( trn, advmask ) finalize if(use_gpu)
-  !$acc exit data delete( flx_ridxt, diaflx ) finalize if(use_gpu)
-  !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize if(use_gpu)
+  !$acc update host( zy(1:jpk,1:jpj,1:jpi), zx(1:jpk,1:jpj,1:jpi), zz(1:jpk,1:jpj,1:jpi) )
+  !$acc update host( ztj(1:jpk,1:jpj,1:jpi), zti(1:jpk,1:jpj,1:jpi) )
+  !$acc update host( zkx(1:jpk,1:jpj,1:jpi), zky(1:jpk,1:jpj,1:jpi), zkz(1:jpk,1:jpj,1:jpi) )
+  !$acc update host( zbuf(1:jpk,1:jpj,1:jpi) )
 
+  !$acc exit data delete( zy, zx, zz, ztj, zti, zkx, zky, zkz, zbuf ) finalize
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
   deallocate(zy )
   deallocate(zx )
@@ -962,24 +917,22 @@ SUBROUTINE trcadv
   deallocate(zkz )
   deallocate(zbuf )
 
-  !$acc exit data delete( zaa, zbb, zcc, inv_eu, inv_ev, inv_et, big_fact_zaa , big_fact_zbb, big_fact_zcc, zbtr_arr ) finalize if(use_gpu)
-  !$acc exit data delete( e1t, e2t, e3t, e1u, e2u, e3u, e1v, e2v, e3v, e3w, un, vn, wn ) finalize if(use_gpu)
-
   trcadvparttime = MPI_WTIME() - trcadvparttime
   trcadvtottime = trcadvtottime + trcadvparttime
 !!!!
 
 contains
 
+#ifndef _OPENACC
   double precision function fsx(pfx1, pfx2, pfu)
     !dir$ attributes vector :: fsx
-    !$acc routine seq
     IMPLICIT NONE
     double precision, INTENT(IN) :: pfx1, pfx2, pfu
     double precision :: abspfu
     abspfu = abs(pfu)
     fsx = ((pfu + abspfu) * pfx1 + (pfu - abspfu) * pfx2) * 0.5
   end function fsx
+#endif
 
 
 END SUBROUTINE trcadv

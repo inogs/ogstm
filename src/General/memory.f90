@@ -516,7 +516,7 @@ subroutine alloc_tot()
       gphiv    = huge(gphiv(1,1))
       allocate(gphif(jpj,jpi))          
       gphif    = huge(gphif(1,1))
-      allocate(e1t(jpj,jpi))            
+      allocate(e1t(jpj,jpi))
       e1t      = huge(e1t(1,1))
       allocate(e1u(jpj,jpi))            
       e1u      = huge(e1u(1,1))
@@ -790,10 +790,17 @@ subroutine alloc_tot()
         allocate(DAY_LENGTH(jpj,jpi))   
        DAY_LENGTH = huge(DAY_LENGTH(1,1))
        forcing_phys_initialized = .false.
+
+       !$acc enter data create(e1t,e2t,e3t,e3w,e3t_back,tra,trb,tmask,umask,&
+       !$acc& vmask,avt,e1u,e2u,e3u,e1v,e2v,e3v,un,vn,wn,trn,ahtt,traIO,traIO_HIGH,&
+       !$acc& snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,sn,tn,&
+       !$acc& tra_DIA,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,&
+       !$acc& vatm,emp,qsr,tra_DIA_2d_IO_HIGH)
+
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
 #endif
-  
+
         END subroutine alloc_tot
 
 
@@ -801,6 +808,8 @@ subroutine alloc_tot()
         subroutine clean_memory()
 
             ! myalloc (memory.f90)
+
+            !$acc exit data delete(e1t,e2t,e3t,e3w,e3t_back,tra,trb,tmask,umask,vmask,avt)
 
 #ifdef key_mpp
 
@@ -953,7 +962,7 @@ subroutine alloc_tot()
             deallocate(tra_DIA_2d_IO_HIGH)
             deallocate(tra_PHYS_2d_IO)
             deallocate(tra_PHYS_2d_IO_HIGH)
-            
+
 
             if(lwp) then
                 deallocate(tottrn)
@@ -991,9 +1000,14 @@ subroutine alloc_tot()
 
             ! trclec
 
+            !$acc exit data delete(highfreq_table,highfreq_table_dia,highfreq_table_dia2d)
             deallocate(highfreq_table)
             deallocate(highfreq_table_dia)
             deallocate(highfreq_table_dia2d)
+
+            !$acc exit data delete(trn, e1u, e2u, e3u, e1v, e2v, e3v, un, vn, wn,&
+            !$acc& ahtt, traio,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,sn,tn,&
+            !$acc& tra_DIA,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,vatm,emp,qsr,tra_DIA_2d_IO_HIGH)
 
         end subroutine clean_memory
 

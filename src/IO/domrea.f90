@@ -152,10 +152,23 @@
       CALL readnc_slice_double(maskfile,'gdept', gdept)
 #endif
        CALL readmask_double_1d(maskfile,'gdepw', gdepw)
+       jpk_eu = 0
+       do kk=1,jpk
+#ifdef gdept1d
+          if (gdept(kk).lt.Euphotic_lev)  jpk_eu=kk
+#else
+          if (gdept(kk,1,1).lt.Euphotic_lev)  jpk_eu=kk
+#endif
 
-       jpk_eu = getDepthIndex(Euphotic_lev)
-       jpk_opt = getDepthIndex(500.0D0)
+       enddo
        if (lwp) write(*,*) 'Euphotic level at k = ', jpk_eu
+       do kk=1,jpk
+#ifdef gdept1d
+          if (gdept(kk).lt.500.0) jpk_opt=kk
+#else
+       if (gdept(kk,1,1).lt.500.0) jpk_opt=kk
+#endif
+       enddo
        if (lwp) write(*,*) 'Optical level at k = ', jpk_opt
 
       CALL readnc_slice_double (maskfile,'e3t_0', e3t_0 )
@@ -270,7 +283,7 @@
 !  ---------------------------------------------------------------------
 
       allocate(boundaries)
-      boundaries = bc_set("boundaries.nml")
+      call bc_set(boundaries, "boundaries.nml")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

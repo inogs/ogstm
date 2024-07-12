@@ -42,8 +42,9 @@ contains
 
 
 
-    type(bc_set) function bc_set_default(bcs_namelist)
+    subroutine bc_set_default(bcs,bcs_namelist)
 
+        type(bc_set), intent(inout) :: bcs
         character(len=14), intent(in) :: bcs_namelist
         integer, parameter :: file_unit = 102 ! 100 for data files, 101 for boundary namelist files, 102 for global namelist
         character(len=47) :: bc_string
@@ -54,20 +55,20 @@ contains
         if (lwp) write(*, *) 'INFO: reading from file ', bcs_namelist
 
         ! get number of boundaries and allocate memory accordingly
-        read(file_unit, *) bc_set_default%m_n_bcs
-        allocate(bc_set_default%m_bcs(bc_set_default%m_n_bcs))
+        read(file_unit, *) bcs%m_n_bcs
+        allocate(bcs%m_bcs(bcs%m_n_bcs))
 
         ! get info for each boundary and initialize boundaries accordingly
-        do i = 1, bc_set_default%m_n_bcs
+        do i = 1, bcs%m_n_bcs
             read(file_unit, *) bc_string
             if (lwp) write(*, *) 'INFO: initializing boundary with bc_string = ', bc_string
-            bc_set_default%m_bcs(i)%content => bc_init(bc_string)
+            bcs%m_bcs(i)%content => bc_init(bc_string)
         enddo
 
         ! close file
         close(unit=file_unit)
 
-    end function bc_set_default
+    end subroutine bc_set_default
 
 
 

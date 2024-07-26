@@ -9,6 +9,7 @@ PROGRAM OGSTM_MAIN
 #ifdef _OPENACC
       use openacc
 #endif
+      use simple_timer
       implicit none
       integer :: info, ierr
 
@@ -34,6 +35,7 @@ PROGRAM OGSTM_MAIN
       !$OMP END MASTER
       !$OMP END PARALLEL
 
+      call tprint()
       CALL mpi_finalize(info)
       
 END PROGRAM OGSTM_MAIN

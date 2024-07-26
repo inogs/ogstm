@@ -15,3 +15,11 @@ export NETCDF_FFLAGS=$(nf-config --fflags)
 export NETCDF_FLIBS=$(nf-config --flibs)
 export NETCDFF_LIB=$(nf-config --prefix)/lib
 export NETCDFF_INC=$(nf-config --includedir)
+
+SIMPLE_TIMER_ROOT=/leonardo_work/OGS23_PRACE_IT_0/llucido0/simple-timer/nvhpc--23.11_cuda--12.3_openmpi--4.1.6
+export SIMPLE_TIMER_INCLUDE_DIR="${SIMPLE_TIMER_ROOT}/include"
+export SIMPLE_TIMER_FLAGS="-I ${SIMPLE_TIMER_INCLUDE_DIR}"
+export SIMPLE_TIMER_LIB_DIR="${SIMPLE_TIMER_ROOT}/lib"
+export SIMPLE_TIMER_LIBS="-L ${SIMPLE_TIMER_LIB_DIR} -lsimple_timer -lsimple_timer_f"
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:${SIMPLE_TIMER_LIB_DIR}"

@@ -516,7 +516,7 @@ subroutine alloc_tot()
       gphiv    = huge(gphiv(1,1))
       allocate(gphif(jpj,jpi))          
       gphif    = huge(gphif(1,1))
-      allocate(e1t(jpj,jpi))            
+      allocate(e1t(jpj,jpi))
       e1t      = huge(e1t(1,1))
       allocate(e1u(jpj,jpi))            
       e1u      = huge(e1u(1,1))
@@ -542,6 +542,7 @@ subroutine alloc_tot()
      allocate(gdept(jpk,jpj,jpi))
        gdept = huge(gdept(1,1,1))
 #endif
+      !$acc enter data create(gdept)
 
       allocate(gdepw(jpk)) 
         gdepw = huge(gdepw(1))
@@ -567,7 +568,8 @@ subroutine alloc_tot()
         e3w = huge(e3w(1,1,1))
 
       allocate(mbathy(jpj,jpi)) 
-       mbathy = huge(mbathy(1,1))
+      mbathy = huge(mbathy(1,1))
+      !$acc enter data create(mbathy)
 
       allocate(tmask(jpk,jpj,jpi)) 
       tmask = huge(tmask(1,1,1))
@@ -586,6 +588,7 @@ subroutine alloc_tot()
 
       allocate(bfmmask(jpk, jpj, jpi))
       bfmmask = huge(bfmmask(1, 1, 1))
+      !$acc enter data create(bfmmask)
 
        allocate(un(jpk,jpj,jpi))    
       un     = huge(un(1,1,1))
@@ -599,10 +602,12 @@ subroutine alloc_tot()
       sn     = huge(sn(1,1,1))
        allocate(rdn(jpk,jpj,jpi))   
       rdn    = huge(rdn(1,1,1))
-       allocate(rhopn(jpk,jpj,jpi)) 
+       allocate(rhopn(jpk,jpj,jpi))
+      !$acc enter data create(rhopn)
       rhopn  = huge(rhopn(1,1,1))
        allocate(rho(jpk,jpj,jpi))   
       rho    = huge(rho(1,1,1))
+      !$acc enter data create(rho)
       
       allocate(ahtu(jpk)) 
       ahtu = huge(ahtu(1))
@@ -781,7 +786,8 @@ subroutine alloc_tot()
 #    endif
 
 #ifdef key_trc_bfm
-      allocate(xpar(jpk,jpj,jpi))   
+      allocate(xpar(jpk,jpj,jpi))
+      !$acc enter data create(xpar)
        xpar = huge(xpar(1,1,1))
 
 #endif
@@ -789,11 +795,19 @@ subroutine alloc_tot()
 !!    photoperiod
         allocate(DAY_LENGTH(jpj,jpi))   
        DAY_LENGTH = huge(DAY_LENGTH(1,1))
+       !$acc enter data create(DAY_LENGTH)
        forcing_phys_initialized = .false.
+
+       !$acc enter data create(e1t,e2t,e3t,e3w,e3t_back,tra,trb,tmask,umask,&
+       !$acc& vmask,avt,e1u,e2u,e3u,e1v,e2v,e3v,un,vn,wn,trn,ahtt,traIO,traIO_HIGH,&
+       !$acc& snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,sn,tn,&
+       !$acc& tra_DIA,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,&
+       !$acc& vatm,emp,qsr,tra_DIA_2d_IO_HIGH)
+
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
 #endif
-  
+
         END subroutine alloc_tot
 
 
@@ -801,6 +815,8 @@ subroutine alloc_tot()
         subroutine clean_memory()
 
             ! myalloc (memory.f90)
+
+            !$acc exit data delete(e1t,e2t,e3t,e3w,e3t_back,tra,trb,tmask,umask,vmask,avt)
 
 #ifdef key_mpp
 
@@ -860,6 +876,7 @@ subroutine alloc_tot()
             deallocate(ff)
             
             deallocate(gdept)
+            !$acc exit data delete(gdept)
             deallocate(gdepw)
             deallocate(e3t_0)
             deallocate(e3u_0)
@@ -873,6 +890,7 @@ subroutine alloc_tot()
             deallocate(e3w)
             
             deallocate(mbathy)
+            !$acc exit data delete(mbathy)
             
             deallocate(tmask)
             deallocate(h_column)
@@ -884,6 +902,7 @@ subroutine alloc_tot()
             deallocate(vmask)
             
             deallocate(bfmmask)
+            !$acc exit data delete(bfmmask)
             
             deallocate(un)
             deallocate(vn)
@@ -892,7 +911,9 @@ subroutine alloc_tot()
             deallocate(sn)
             deallocate(rdn)
             deallocate(rhopn)
+            !$acc exit data delete(rhopn)
             deallocate(rho)
+            !$acc exit data delete(rho)
             
             deallocate(ahtu)
             deallocate(ahtv)
@@ -953,7 +974,7 @@ subroutine alloc_tot()
             deallocate(tra_DIA_2d_IO_HIGH)
             deallocate(tra_PHYS_2d_IO)
             deallocate(tra_PHYS_2d_IO_HIGH)
-            
+
 
             if(lwp) then
                 deallocate(tottrn)
@@ -985,15 +1006,22 @@ subroutine alloc_tot()
 
 #ifdef key_trc_bfm
             deallocate(xpar)
+            !$acc exit data delete(xpar)
 #endif
 
             deallocate(DAY_LENGTH)
+            !$acc exit data delete(DAY_LENGTH)
 
             ! trclec
 
+            !$acc exit data delete(highfreq_table,highfreq_table_dia,highfreq_table_dia2d)
             deallocate(highfreq_table)
             deallocate(highfreq_table_dia)
             deallocate(highfreq_table_dia2d)
+
+            !$acc exit data delete(trn, e1u, e2u, e3u, e1v, e2v, e3v, un, vn, wn,&
+            !$acc& ahtt, traio,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,sn,tn,&
+            !$acc& tra_DIA,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,vatm,emp,qsr,tra_DIA_2d_IO_HIGH)
 
         end subroutine clean_memory
 

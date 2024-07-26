@@ -166,15 +166,17 @@
        ! ENDIF
 
        IF ((lat .NE. 0) .AND. (lon .NE. 0)) THEN
-           allocate(tra_matrix_atm(jn_atm))    
-       tra_matrix_atm = huge(tra_matrix_atm(1))
-           allocate(atm_aux(jpj,jpi))  
+           allocate(tra_matrix_atm(jn_atm))
+           !$acc enter data create(tra_matrix_atm)
+           tra_matrix_atm = huge(tra_matrix_atm(1))
+           allocate(atm_aux(jpj,jpi))
        atm_aux        = huge(atm_aux(1,1))
            allocate(atm_idxtglo(   jpj,jpi))  
        atm_idxtglo    = huge(atm_idxtglo(1,1))
 
           tra_matrix_atm(1) = ppN1p ! phosphates
           tra_matrix_atm(2) = ppN3n ! nitrates
+          !$acc update device(tra_matrix_atm)
        ENDIF
 
 
@@ -270,8 +272,9 @@
 
       allocate(atm_dtatrc(jpj,jpi, 2, jn_atm)) 
        atm_dtatrc = huge(atm_dtatrc(1,1,1,1))
-      allocate(atm       (jpj,jpi,    jn_atm)) 
-       atm        = huge(atm(1,1,1))
+      allocate(atm       (jpj,jpi,    jn_atm))
+      !$acc enter data create(atm)
+      atm        = huge(atm(1,1,1))
 
 
 #ifdef Mem_Monitor
@@ -287,12 +290,14 @@
           deallocate(resto)
 
           if ((lat /= 0) .and. (lon /= 0)) then
+             !$acc exit data delete(tra_matrix_atm)
               deallocate(tra_matrix_atm)
               deallocate(atm_aux)
               deallocate(atm_idxtglo)
           endif
 
           deallocate(atm_dtatrc)
+          !$acc exit data delete(atm)
           deallocate(atm)
 
       end subroutine clean_memory_bc

@@ -92,7 +92,9 @@
 
       USE DIA_mem
       use mpi
-      
+
+      use simple_timer
+
       IMPLICIT NONE
 !!----------------------------------------------------------------------
 !! local declarations
@@ -109,9 +111,19 @@
       INTEGER :: locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
       !INTEGER, allocatable :: jarr_hdf(:,:,:),jarr_hdf_flx(:)
       double precision, allocatable,dimension(:,:,:) :: zlt, ztu, ztv
+      integer :: queue
+      logical :: use_gpu
 !!----------------------------------------------------------------------
 !! statement functions
 !! ===================
+
+      call tstart("trchdf_1")
+
+#ifdef _OPENACC
+      use_gpu=.true.
+#else
+      use_gpu=.false.
+#endif
 
     !  #include "BFM_var_list.h"
        trcbilaphdfparttime = MPI_WTIME()
@@ -132,8 +144,9 @@
              allocate(zeev   (jpk,jpj,jpi      )) 
              zeev         = huge(zeev(1,1,1))
              allocate(zbtr   (jpk,jpj,jpi      )) 
-             zbtr         = huge(zbtr(1,1,1)) 
+             zbtr         = huge(zbtr(1,1,1))
 
+             !$acc enter data create(hdfmask,zeeu,zeev,zbtr)
 
                 DO ji = 1,jpi
              DO jj = 1,jpj
@@ -168,10 +181,20 @@
              END DO
           END DO
 
+        queue=1
+        !$acc update device(hdfmask)
         hdf_initialized=.true.
+
         ENDIF
+
+        allocate(zlt    (jpk,jpj,jpi))
+        allocate(ztu    (jpk,jpj,jpi))
+        allocate(ztv    (jpk,jpj,jpi))
+        !$acc enter data create(zlt,ztu,ztv)
+
 !  Metric arrays calculated out of the initialisation phase(for z- or s-coordinates)
 ! !! ----------------------------------
+                !$acc parallel loop gang vector collapse(3) default(present) async(queue)
                 DO ji = 1, jpi
               DO jj = 1, jpj
            DO jk=1,jpk
@@ -182,15 +205,16 @@
                 END DO
               END DO
            END DO
+           !$acc end parallel loop
 
 
 
      
-             allocate(zlt    (jpk,jpj,jpi)) 
-             allocate(ztu    (jpk,jpj,jpi)) 
-             allocate(ztv    (jpk,jpj,jpi)) 
 !! tracer slab
 !! =============
+
+      call tstop("trchdf_1")
+      call tstart("trchdf_tracer")
 
 ! $omp  taskloop default(none) private(jv,jk,jj,ji) &
 ! $omp  private(jn,ztu,ztv,zlt) firstprivate(jpi,jpj,jpk,trcrat) &
@@ -199,9 +223,11 @@
       TRACER_LOOP: DO  jn = 1, jptra
 
 
+             !$acc kernels default(present) async(queue)
              zlt = 0.
              ztu = 0.
              ztv = 0.
+             !$acc end kernels
             
 !! 1. Laplacian
 !! ------------
@@ -215,6 +241,7 @@
             !  jk = jarr_hdf(1,jv,1a)
             
             ! $OMP TASK default(shared) private(ji,jj,jk)
+                  !$acc parallel loop gang vector collapse(3) default(present) async(queue)
                   DO ji = 1,jpi-1
               DO jj = 1,jpj-1
            DO jk = 1,jpk
@@ -228,8 +255,10 @@
             END DO
           END DO
           ! $OMP END TASK
+          !$acc end parallel loop
 
                 ! $OMP TASK default(shared) private(ji,jj,jk)
+                !$acc parallel loop gang vector collapse(3) default(present) async(queue)
                 DO ji = 1,jpi-1
               DO jj = 1,jpj-1
            DO jk = 1,jpk
@@ -242,6 +271,7 @@
              END DO
             END DO
           END DO
+          !$acc end parallel loop
           ! $OMP END TASK
 
           ! $OMP TASKWAIT
@@ -254,6 +284,7 @@
       !        ji = jarr_hdf(3,jv,2)
       !        jj = jarr_hdf(2,jv,2)
       !        jk = jarr_hdf(1,jv,2)
+                  !$acc parallel loop gang vector collapse(3) default(present) async(queue)
                   DO ji = 2,jpi-1
               DO jj = 2,jpj-1
            DO jk = 1,jpk
@@ -266,6 +297,7 @@
              END DO
             END DO
           END DO
+          !$acc end parallel loop
 
 
 
@@ -274,10 +306,10 @@
 !! ... Lateral boundary conditions on the laplacian (zlt,zls)
 
 
+        !$acc wait(queue)
 #ifdef key_mpp
 !  ... Mpp : export boundary values to neighboring processors
-
-        CALL mpplnk_my(zlt)
+        CALL mpplnk_my(zlt,gpu=use_gpu)
 #else
                CALL lbc( zlt(:,:,:), 1, 1, 1, 1, jpk, 1 )
 #endif
@@ -291,6 +323,7 @@
 !!!&omp&                               dimen_jvhdf3,zta,zbtr,tra,jarr_hdf_flx,diaflx,Fsize)
 
             ! $OMP TASK default(shared) private(ji,jj,jk)
+                  !$acc parallel loop gang vector collapse(3) default(present) async(queue)
                   DO ji = 1,jpi-1
               DO jj = 1,jpj-1
            DO jk = 1,jpk
@@ -301,9 +334,11 @@
               END DO
             END DO
           END DO
+          !$acc end parallel loop
           ! $OMP END TASK
 
           ! $OMP TASK default(shared) private(ji,jj,jk)
+               !$acc parallel loop gang vector collapse(3) default(present) async(queue)
                DO ji = 1,jpi-1
               DO jj = 1,jpj-1
            DO jk = 1,jpk
@@ -315,6 +350,7 @@
               END DO
             END DO
           END DO
+          !$acc end parallel loop
           ! $OMP END TASK
 
 !! ... fourth derivative (divergence) and add to the general tracer trend
@@ -326,7 +362,8 @@
       !        jk = jarr_hdf(1,jv,2)
       !        jf = jarr_hdf_flx(jv)
           
-      ! $OMP TASKWAIT 
+      ! $OMP TASKWAIT
+                  !$acc parallel loop gang vector collapse(3) default(present) async(queue)
                   DO ji = 2,jpim1
               DO jj = 2,jpjm1
            DO jk = 1,jpk
@@ -339,9 +376,10 @@
               !tra(jk,jj,ji,jn ) = tra(jk,jj,ji,jn ) + zta
                END DO
             END DO
-          END DO
+         END DO
+         !$acc end parallel loop
 
-
+         !$acc parallel loop gang vector default(present) async(queue)
          DO jf=1,Fsize
              jk = flx_ridxt(jf,2)
              jj = flx_ridxt(jf,3)
@@ -351,6 +389,7 @@
              diaflx(6,jf, jn) = diaflx(6,jf, jn) - ztv(jk,jj,ji)*rdt
 
           ENDDO
+          !$acc end parallel loop
 
  
       
@@ -359,18 +398,25 @@
 
         END DO TRACER_LOOP
         ! $OMP END TASKLOOP
+        !$acc wait(queue)
+
+      call tstop("trchdf_tracer")
+      call tstart("trchdf_2")
 
         ! deallocate(hdfmask)
         ! deallocate(zeeu)
         ! deallocate(zeev)
         ! deallocate(zbtr)
 
-             deallocate(zlt) 
-             deallocate(ztu) 
-             deallocate(ztv) 
-            
+        !$acc exit data delete(zlt,ztu,ztv)
+        deallocate(zlt)
+        deallocate(ztu)
+        deallocate(ztv)
+
 
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime
+
+      call tstop("trchdf_2")
 
       END SUBROUTINE trchdf

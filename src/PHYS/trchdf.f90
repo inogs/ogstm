@@ -110,7 +110,7 @@
       INTEGER :: myji,myjj
       INTEGER :: locsum,jklef,jjlef,jilef,jkrig,jjrig,jirig
       !INTEGER, allocatable :: jarr_hdf(:,:,:),jarr_hdf_flx(:)
-      double precision, allocatable,dimension(:,:,:) :: zlt, ztu, ztv
+      double precision, allocatable,dimension(:,:,:),save :: zlt, ztu, ztv
       integer :: queue
       logical :: use_gpu
 !!----------------------------------------------------------------------
@@ -185,12 +185,11 @@
         !$acc update device(hdfmask)
         hdf_initialized=.true.
 
-        ENDIF
-
-        allocate(zlt    (jpk,jpj,jpi))
-        allocate(ztu    (jpk,jpj,jpi))
-        allocate(ztv    (jpk,jpj,jpi))
+        allocate(zlt(jpk,jpj,jpi))
+        allocate(ztu(jpk,jpj,jpi))
+        allocate(ztv(jpk,jpj,jpi))
         !$acc enter data create(zlt,ztu,ztv)
+        ENDIF
 
 !  Metric arrays calculated out of the initialisation phase(for z- or s-coordinates)
 ! !! ----------------------------------
@@ -402,17 +401,6 @@
 
       call tstop("trchdf_tracer")
       call tstart("trchdf_2")
-
-        ! deallocate(hdfmask)
-        ! deallocate(zeeu)
-        ! deallocate(zeev)
-        ! deallocate(zbtr)
-
-        !$acc exit data delete(zlt,ztu,ztv)
-        deallocate(zlt)
-        deallocate(ztu)
-        deallocate(ztv)
-
 
        trcbilaphdfparttime = MPI_WTIME() - trcbilaphdfparttime
        trcbilaphdftottime = trcbilaphdftottime + trcbilaphdfparttime

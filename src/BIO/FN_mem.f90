@@ -47,8 +47,11 @@
 
       allocate(jarr_snu(2, jpi*jpj))      
       jarr_snu = huge(jarr_snu(1,1))
-      allocate(tra_FN(jpk,jpj,jpi,jptra)) 
+      allocate(tra_FN(jpk,jpj,jpi,jptra))
+      !$acc enter data create(tra_FN)
+      !$acc kernels default(present)
       tra_FN   = huge(tra_FN(1,1,1,1))
+      !$acc end kernels
 
       !CALL OPA_elements(elements,nelements,idx_element)
 
@@ -66,7 +69,9 @@
       FN_ranking = huge(FN_ranking(1))
 
 
+      !$acc kernels default(present)
       tra_FN=0.
+      !$acc end kernels
      
 !     cor_FN=0.
       FN_ranking=0.
@@ -81,6 +86,7 @@
 
       subroutine clean_memory_fn
 
+          !$acc exit data delete(tra_FN)
           deallocate(jarr_snu)
           deallocate(tra_FN)
           deallocate(TOTcalc)

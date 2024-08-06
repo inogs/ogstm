@@ -141,6 +141,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
           if (ctr_hf(ji).eq.1) jptra_high = jptra_high + 1
       enddo
       allocate(highfreq_table(jptra_HIGH))
+      !$acc enter data create(highfreq_table)
        highfreq_table = huge(highfreq_table(1))
 
       jptra_high = 0
@@ -165,6 +166,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 
       if (lwp) write(*,*) 'High freq diagnostics number :', jptra_dia_HIGH
       allocate(highfreq_table_dia(jptra_dia_HIGH))
+      !$acc enter data create(highfreq_table_dia)
 
       jptra_dia_high = 0
 
@@ -188,6 +190,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 
       if (lwp) write(*,*) 'High freq diagnostics number 2d:', jptra_dia2d_HIGH
       allocate(highfreq_table_dia2d(jptra_dia2d_HIGH))
+      !$acc enter data create(highfreq_table_dia2d)
 
       jptra_dia2d_high = 0
 

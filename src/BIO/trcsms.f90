@@ -22,6 +22,8 @@
 
        USE myalloc
        USE mpi
+       use simple_timer
+
        IMPLICIT NONE
 
 
@@ -29,16 +31,25 @@
 
        trcsmsparttime = MPI_WTIME() ! cronometer-start
 
-
 !! this first routines are parallelized on vertical slab
 
+       call tstart("trcopt")
+
        CALL trcopt ! tracers: optical model
-       
+
+       call tstop("trcopt")
+
+       call tstart("trcbio")
        CALL trcbio ! tracers: biological model
+       call tstop("trcbio")
 
 !! trcsed no updated for time step advancing
 #if  defined key_trc_sed
+       call tstart("trcsed")
+
        CALL trcsed ! tracers: sedimentation model
+
+       call tstop("trcsed")
 # endif
 
        trcsmsparttime = MPI_WTIME() - trcsmsparttime ! cronometer-stop

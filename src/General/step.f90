@@ -57,6 +57,15 @@ MODULE module_step
 
 !      trcstp, trcdia  passive tracers interface
 
+       ! XXX: to be removed
+       use DIA_mem, only: diaflx,flx_ridxt
+       use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,umask,vmask,tmask,avt,ahtt
+       use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
+       USE OPT_mem, only: kef
+       USE SED_mem
+       USE ADV_mem
+
+       use simple_timer
        IMPLICIT NONE
 
 
@@ -81,8 +90,11 @@ MODULE module_step
        if (IsStartBackup_2) datefrom_2 = BKPdatefrom_2
        datestring =  DATESTART
       TAU = 0
+      call tstart("step_total")
       DO WHILE (.not.ISOVERTIME(datestring))
 
+         call tstart("step")
+         call tstart("step_1")
          stpparttime = MPI_WTIME()  ! stop cronomether
          COMMON_DATESTRING = DATEstring
 
@@ -92,7 +104,9 @@ MODULE module_step
 
          if(lwp) write(numout,'(A,I8,A,A)') "step ------------ Starting timestep = ",TAU,' time ',DATEstring
          if(lwp) write(*,'(A,I8,A,A)')      "step ------------ Starting timestep = ",TAU,' time ',DATEstring
+         call tstop("step_1")
 
+         call tstart("restart")
         if (IsaRestart(DATEstring)) then
             CALL trcwri(DATEstring) ! writes the restart files
 
@@ -114,31 +128,45 @@ MODULE module_step
              B = writeTemporization("trcwri____", trcwritottime)
          endif
          endif
+         call tstop("restart")
 
 
 
 ! For offline simulation READ DATA or precalculalted dynamics fields
 ! ------------------------------------------------------------------
 
+      call tstart("forcing_phys")
       CALL forcings_PHYS(DATEstring)
+      call tstop("forcing_phys")
+      call tstart("forcing_kext")
       CALL forcings_KEXT(datestring)
+      call tstop("forcing_kext")
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
+      call tstart("boundaries%update")
       call boundaries%update(datestring)
+      call tstop("boundaries%update")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
+      call tstart("bc_atm")
       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
+      call tstop("bc_atm")
+      call tstart("bc_co2")
       CALL bc_co2       (DATEstring)
+      call tstop("bc_co2")
+      call tstart("eos")
       CALL eos          ()               ! Water density
+      call tstop("eos")
 
 
 
+      call tstart("dump_ave_1")
       if (IsAnAveDump(DATEstring,1)) then
          call MIDDLEDATE(datefrom_1, DATEstring, datemean)
          CALL trcdia(datemean, datefrom_1, datestring,1)
@@ -149,7 +177,9 @@ MODULE module_step
 
         if (lwp)  B = writeTemporization("trcdia____", trcdiatottime)
       endif
+      call tstop("dump_ave_1")
 
+      call tstart("dump_ave_2")
       if (IsAnAveDump(DATEstring,2)) then
          call MIDDLEDATE(datefrom_2, DATEstring, datemean)
          CALL trcdia(datemean, datefrom_2, datestring,2)
@@ -158,20 +188,48 @@ MODULE module_step
          IsStartBackup_2 = .false.
          if (lwp) B = writeTemporization("trcdia____", trcdiatottime)
       endif
+      call tstop("dump_ave_2")
 
 
 #ifdef ExecDA
+      call tstart("data_assim")
       if (IsaDataAssimilation(DATEstring)) then
         CALL mainAssimilation(DATEstring, datefrom_1)
          if (lwp) B = writeTemporization("DATA_ASSIMILATION____", DAparttime)
       endif
+      call tstop("data_assim")
 #endif
 
+        !$acc update device(tra,tmask)
+        !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,un,vn,wn,trn,advmask,flx_ridxt,diaflx) if(ladv)
+        !$acc update device(atm,e3t) if(latmosph)
+        !$acc update device(umask,vmask,trb,ahtt,diaflx,flx_ridxt) if(lhdf)
+        !$acc update device(e3t,rhopn,emp,trn) if (lsbc)
+        !$acc update device(kef,qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,e3t,gdept,ogstm_PH,ogstm_co2) if(lbfm)
+#if  defined key_trc_sed
+        !$acc update device(sed_idx,diaflx,e3t,ogstm_sedipi,mbathy) if(lbfm)
+#endif
+        !$acc update device(e1t,diaflx,e3t_back,e2t,trb,e3t,avt,e3w) if (lzdf)
+        !$acc update device(traIO,trn,umask,vmask,tmask,traIO_HIGH,highfreq_table,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,sn,tn,wn,avt,e3t,un,vn,tra_DIA_IO,tra_DIA,tra_DIA_2d_IO,tra_DIA_2d,vatmIO,empIO,qsrIO,vatm,emp,qsr,highfreq_table_dia,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH,highfreq_table_dia2d)
 
 
 ! Call Passive tracer model between synchronization for small parallelisation
+        call tstart("trcstp")
         CALL trcstp    ! se commento questo non fa calcoli
+        call tstop("trcstp")
+        call tstart("trcave")
         call trcave
+        call tstop("trcave")
+
+        !$acc update host(trb,trn,tra)
+        !$acc update host(diaflx) if(lhdf)
+        !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx) if(ladv)
+        !$acc update host(tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH) if(lbfm)
+#if  defined key_trc_sed
+        !$acc update host(diaflx,zwork) if(lbfm)
+#endif
+        !$acc update host(diaflx) if (lzdf)
+        !$acc update host(traIO,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH)
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
 
@@ -181,6 +239,7 @@ MODULE module_step
 
 
 ! OGSTM TEMPORIZATION
+       call tstart("temporization")
        IF (TAU.GT.0) THEN
         IF( mod( TAU, nwritetrc ).EQ.0) THEN
            if (lwp) then
@@ -216,6 +275,7 @@ MODULE module_step
            call reset_Timers()
        ENDIF
       ENDIF
+       call tstop("temporization")
 
 
 !+++++++++++++++++++++++++++++c
@@ -223,7 +283,8 @@ MODULE module_step
 !+++++++++++++++++++++++++++++c
       datestring = UPDATE_TIMESTRING(datestring, rdt)
       TAU = TAU + 1
-      END DO  
+         call tstop("step")
+      END DO
 
       CONTAINS
 
@@ -265,20 +326,29 @@ MODULE module_step
 !         with surface boundary condition
 !         with IMPLICIT vertical diffusion
 
+      use simple_timer
        IMPLICIT NONE
       integer jn,jk,ji,jj
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
-      IF (ladv) CALL trcadv ! tracers: advection
+      call tstart("trcadv")
+
+      IF (ladv) CALL trcadv ! tracers advection
+
+      call tstop("trcadv")
 
 #    if defined key_trc_dmp
+      call tstart("trcdmp")
       CALL trcdmp ! tracers: damping for passive tracerstrcstp
+      call tstop("trcdmp")
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
+      call tstart("boundaries%apply")
       call boundaries%apply(e3t, trb, tra)
+      call tstop("boundaries%apply")
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -289,23 +359,39 @@ MODULE module_step
 ! tracers: horizontal diffusion IF namelist flags are activated
 ! -----------------------------
 
+      call tstart("trchdf")
       IF (lhdf) CALL trchdf
+      call tstop("trchdf")
 
 ! tracers: sink and source (must be  parallelized on vertical slab)
+      call tstart("trcsbc")
       IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
+      call tstop("trcsbc")
+
+      call tstart("trcsms")
 
       IF (lbfm) CALL trcsms
 
+      call tstop("trcsms")
+
+      call tstart("trczdf")
+
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
 
+      call tstop("trczdf")
+
+      call tstart("snutel")
       IF (lsnu) CALL snutel
+      call tstop("snutel")
 
       call boundaries%apply_dirichlet()
 
       ! CALL checkValues
 
+      call tstart("trcnxt")
       CALL trcnxt ! tracers: fields at next time step
-      
+      call tstop("trcnxt")
+
       trcstpparttime = MPI_WTIME() - trcstpparttime ! cronometer-stop
       trcstptottime = trcstptottime + trcstpparttime
 

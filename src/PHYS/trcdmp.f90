@@ -48,14 +48,15 @@
 
 
        IF ( latmosph ) THEN
-        DO jn=1, jn_atm
-             tra_idx=tra_matrix_atm(jn)
-          DO ji=1,jpi
-        DO jj=1,jpj
-        tra(1,jj,ji,tra_idx) = tra(1,jj,ji,tra_idx) + atm(jj,ji,jn)/e3t(1,jj,ji)
-        ENDDO
-        ENDDO
-        ENDDO
+          !$acc parallel loop collapse(3) default(present)
+          DO jn=1, jn_atm
+             DO ji=1,jpi
+                DO jj=1,jpj
+                   tra_idx=tra_matrix_atm(jn)
+                   tra(1,jj,ji,tra_idx) = tra(1,jj,ji,tra_idx) + atm(jj,ji,jn)/e3t(1,jj,ji)
+                ENDDO
+             ENDDO
+          ENDDO
 
        ENDIF
 

@@ -1,5 +1,5 @@
 # OGSTM transport model
-![ogstm picture](https://github.com/inogs/ogstm/.github/blob/main/PPN_MED_OGSTM_BFM.png)
+![return picture](https://github.com/inogs/ogstm/.github/blob/main/PPN_MED_OGSTM_BFM.png)
 ## What is OGSTM ?
 OGSTM is an offline transport reaction model. It is used to solve temporal evolution of 3D Eulerian advection and diffusion processes. The offline approach implies that ocean currents should be provided to the model as external data, typically precomputed with a ocean general circulation model. The model can be coupled with different biogeochemical reactors and has been intensively tested with the [Biogeochemical Flux Model - BFM](https://bfm-community.github.io/www.bfm-community.eu).
 

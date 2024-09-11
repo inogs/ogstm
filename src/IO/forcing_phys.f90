@@ -132,8 +132,10 @@
       LOGICAL :: B
       integer  :: jk,jj,ji, jstart
       ! LOCAL
-      character(LEN=30) nomefile
+      character(LEN=38) nomefile
       character(LEN=36) DeltaT_name
+      character(LEN=2) yyyy
+      character(LEN=4) mm
       double precision ssh(jpj,jpi)
       double precision diff_e3t(jpk,jpj,jpi)
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
@@ -150,18 +152,20 @@
           jk = minval(imposed_deltaT)
           rdt = real(jk , 8)
       endif
-      nomefile='FORCINGS/U19951206-12:00:00.nc'
+      nomefile='FORCINGS/yyyy/mm/U19951206-12:00:00.nc'
+      yyyy=datestr(1:4)
+      mm=datestr(5:6)
 
 ! Starting I/O
 ! U  *********************************************************
-      nomefile = 'FORCINGS/U'//datestring//'.nc'
+      nomefile = 'FORCINGS/' // yyyy // '/' mm //  '/U'  // datestring //'.nc'
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask
 
 
 ! V *********************************************************
-      nomefile = 'FORCINGS/V'//datestring//'.nc'
+      nomefile = 'FORCINGS/' // yyyy // '/' mm //  '/V'  // datestring //'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
       vdta(:,:,:,2) = buf * vmask
       
@@ -170,7 +174,7 @@
 ! W *********************************************************
 
 
-      nomefile = 'FORCINGS/W'//datestring//'.nc'
+      nomefile = 'FORCINGS/' // yyyy // '/' mm //  '/W'  // datestring //'.nc'
       if (.not.mld_flag) then
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
@@ -178,7 +182,7 @@
 
 
 ! T *********************************************************
-      nomefile = 'FORCINGS/T'//datestring//'.nc'
+      nomefile = 'FORCINGS/' // yyyy // '/' mm //  '/T'  // datestring //'.nc'
       call readnc_slice_float(nomefile,'votemper',buf,ingv_lon_shift)
       tdta(:,:,:,2) = buf*tmask
 

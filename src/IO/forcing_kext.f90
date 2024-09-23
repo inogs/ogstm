@@ -106,19 +106,20 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datestring
 
-      character(LEN=39) nomefile
-      character(LEN=2) yyyy
-      character(LEN=4) mm
+      character(LEN=39) nomefile,fileformat
+      character(LEN=4) yyyy
+      character(LEN=2) mm
       double precision ::  junk(jpj,jpi)
 
       nomefile='OPTICS/yyyy/mm/atm.yyyy0107-00:00:00.nc'
+      fileformat='("OPTICS/",A4,"/",A2,"/atm.",A17,".nc")'
 
 
 !     Starting I/O
 !    **********************************************************
-      yyyy=datestr(1:4)
-      mm=datestr(5:6)
-      nomefile = 'OPTICS/' // yyyy // '/' mm //  '/' 'atm.' // datestring //'.nc'
+      yyyy=datestring(1:4)
+      mm=datestring(5:6)
+      WRITE ( nomefile, fileformat ) yyyy,mm,datestring
 
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", myrank, " starting reading atmospheric fields from ", nomefile
 

@@ -49,15 +49,10 @@
 
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%Before)) ! CALL dynrea(iperm1)
 
-
           iswap = 1
           call swap_PHYS
 
-
         CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After)) !CALL dynrea(iper)
-
-
-
 
       ENDIF
 
@@ -78,11 +73,7 @@
          call swap_PHYS
          iswap = 1
 
-
           CALL LOAD_PHYS(TC_FOR%TimeStrings(TC_FOR%After))
-
-
-
 
           IF(lwp) WRITE (numout,*) ' dynamics DATA READ for Time = ', TC_FOR%TimeStrings(TC_FOR%After)
 
@@ -104,14 +95,10 @@
 
              call ACTUALIZE_PHYS(zweigh)
 
-
-
       END SELECT
-
 
        forcing_phys_partTime = MPI_WTIME() - forcing_phys_partTime
        forcing_phys_TotTime  = forcing_phys_TotTime  + forcing_phys_partTime
-
 
       END SUBROUTINE forcings_PHYS
 
@@ -156,14 +143,13 @@
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask
-
+      !$acc update device(udta(:,:,:,2)) async(1)
 
 ! V *********************************************************
       nomefile = 'FORCINGS/V'//datestring//'.nc'
       call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
       vdta(:,:,:,2) = buf * vmask
-      
-
+      !$acc update device(vdta(:,:,:,2)) async(1)
 
 ! W *********************************************************
 
@@ -172,17 +158,17 @@
 
       call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
-
+      !$acc update device(avtdta(:,:,:,2)) async(1)
 
 ! T *********************************************************
       nomefile = 'FORCINGS/T'//datestring//'.nc'
       call readnc_slice_float(nomefile,'votemper',buf,ingv_lon_shift)
       tdta(:,:,:,2) = buf*tmask
+      !$acc update device(tdta(:,:,:,2)) async(1)
 
       call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
       sdta(:,:,:,2) = buf*tmask
-
-
+      !$acc update device(sdta(:,:,:,2)) async(1)
 
     if (IS_FREE_SURFACE) then
          call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
@@ -250,8 +236,8 @@
          ENDDO
          ENDDO
 
-
-
+         !$acc update device(e3udta(:,:,:,2),e3vdta(:,:,:,2),e3wdta(:,:,:,2)) async(1)
+         !$acc update device(e3tdta(:,:,:,2)) async(1)
 
      endif ! IS_FREE_SURFACE
 
@@ -288,23 +274,24 @@
       else
           CALL COMPUTE_W()               ! vertical velocity
       endif
+      !$acc update device(wdta(:,:,:,2)) async(1)
       
-        udta(:,:,:,2) =   udta(:,:,:,2) * spongeVel
-        vdta(:,:,:,2) =   vdta(:,:,:,2) * spongeVel
-        wdta(:,:,:,2) =   wdta(:,:,:,2) * spongeVel
-      avtdta(:,:,:,2) = avtdta(:,:,:,2) * spongeVel
-
-
 !        could be written for OpenMP
-              DO ji=1,jpi
-            DO jj=1,jpj
-          DO jk=1,jpk
-                tn(jk,jj,ji)=tdta(jk,jj,ji,2)
-                sn(jk,jj,ji)=sdta(jk,jj,ji,2)
-              END DO
+      !$acc parallel loop gang vector default(present) collapse(3) async(1)
+      DO ji=1,jpi
+         DO jj=1,jpj
+            DO jk=1,jpk
+               udta(jk,jj,ji,2) =   udta(jk,jj,ji,2) * spongeVel(jk,jj,ji)
+               vdta(jk,jj,ji,2) =   vdta(jk,jj,ji,2) * spongeVel(jk,jj,ji)
+               wdta(jk,jj,ji,2) =   wdta(jk,jj,ji,2) * spongeVel(jk,jj,ji)
+               avtdta(jk,jj,ji,2) = avtdta(jk,jj,ji,2) * spongeVel(jk,jj,ji)
+               tn(jk,jj,ji)=tdta(jk,jj,ji,2)
+               sn(jk,jj,ji)=sdta(jk,jj,ji,2)
             END DO
-          END DO
-
+         END DO
+      END DO
+      !$acc end parallel
+      !$acc wait(1)
 
       END SUBROUTINE LOAD_PHYS
 
@@ -325,43 +312,82 @@
    
       Umzweigh  = 1.0 - zweigh
 
-         un = Umzweigh* udta(:,:,:,1) + zweigh*  udta(:,:,:,2)
-         vn = Umzweigh* vdta(:,:,:,1) + zweigh*  vdta(:,:,:,2)
-         wn = Umzweigh* wdta(:,:,:,1) + zweigh*  wdta(:,:,:,2)
 
-         tn  = Umzweigh* tdta(:,:,:,1)   + zweigh* tdta(:,:,:,2)
-         sn  = Umzweigh* sdta(:,:,:,1)   + zweigh* sdta(:,:,:,2)
-         avt = Umzweigh* avtdta(:,:,:,1) + zweigh* avtdta(:,:,:,2)
+         !$acc parallel loop gang vector default(present) collapse(3) async(1)
+         DO ji=1,jpi
+            DO jj=1,jpj
+               DO jk=1,jpk
+                  un(jk,jj,ji) = Umzweigh* udta(jk,jj,ji,1) + zweigh*  udta(jk,jj,ji,2)
+                  vn(jk,jj,ji) = Umzweigh* vdta(jk,jj,ji,1) + zweigh*  vdta(jk,jj,ji,2)
+                  wn(jk,jj,ji) = Umzweigh* wdta(jk,jj,ji,1) + zweigh*  wdta(jk,jj,ji,2)
+                  tn(jk,jj,ji)  = Umzweigh* tdta(jk,jj,ji,1)   + zweigh* tdta(jk,jj,ji,2)
+                  sn(jk,jj,ji)  = Umzweigh* sdta(jk,jj,ji,1)   + zweigh* sdta(jk,jj,ji,2)
+                  avt(jk,jj,ji) = Umzweigh* avtdta(jk,jj,ji,1) + zweigh* avtdta(jk,jj,ji,2)
+               ENDDO
+            ENDDO
+         ENDDO
+         !$acc end parallel
 
          IF (IS_FREE_SURFACE) then
-             e3u = Umzweigh* e3udta(:,:,:,1) + zweigh* e3udta(:,:,:,2)
-             e3v = Umzweigh* e3vdta(:,:,:,1) + zweigh* e3vdta(:,:,:,2)
-             e3w = Umzweigh* e3wdta(:,:,:,1) + zweigh* e3wdta(:,:,:,2)
-
-
+            !$acc parallel loop gang vector default(present) collapse(3) async(1)
+            DO ji=1,jpi
+               DO jj=1,jpj
+                  DO jk=1,jpk
+                     e3u(jk,jj,ji) = Umzweigh* e3udta(jk,jj,ji,1) + zweigh* e3udta(jk,jj,ji,2)
+                     e3v(jk,jj,ji) = Umzweigh* e3vdta(jk,jj,ji,1) + zweigh* e3vdta(jk,jj,ji,2)
+                     e3w(jk,jj,ji) = Umzweigh* e3wdta(jk,jj,ji,1) + zweigh* e3wdta(jk,jj,ji,2)
+                  ENDDO
+               ENDDO
+            ENDDO
+            !$acc end parallel
 
             if (forcing_phys_initialized) then
-               e3t_back = e3t
-               e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
+               !$acc update device(e3t) if(forcing_phys_initialized) async(1)
+               !$acc parallel loop gang vector default(present) collapse(3) async(1)
+               DO ji=1,jpi
+                  DO jj=1,jpj
+                     DO jk=1,jpk
+                        e3t_back(jk,jj,ji) = e3t(jk,jj,ji)
+                        e3t(jk,jj,ji) = (Umzweigh*  e3tdta(jk,jj,ji,1) + zweigh*  e3tdta(jk,jj,ji,2))
+                     ENDDO
+                  ENDDO
+               ENDDO
+               !$acc end parallel
             else
-              e3t = (Umzweigh*  e3tdta(:,:,:,1) + zweigh*  e3tdta(:,:,:,2))
-              e3t_back = e3t
-              forcing_phys_initialized = .TRUE.
+               !$acc parallel loop gang vector default(present) collapse(3) async(1)
+               DO ji=1,jpi
+                  DO jj=1,jpj
+                     DO jk=1,jpk
+                        e3t(jk,jj,ji) = (Umzweigh*  e3tdta(jk,jj,ji,1) + zweigh*  e3tdta(jk,jj,ji,2))
+                        e3t_back(jk,jj,ji) = e3t(jk,jj,ji)
+                     ENDDO
+                  ENDDO
+               ENDDO
+               !$acc end parallel
+               forcing_phys_initialized = .TRUE.
             endif
         ENDIF
 
         flx = Umzweigh * flxdta(:,:,:,1) + zweigh * flxdta(:,:,:,2)
 
+        !$acc update device(flx) async(1)
+        !$acc parallel loop gang vector default(present) collapse(2) async(1)
+        DO ji=1,jpi
+           DO uj=1,jpj
+              vatm(uj,ji)   = flx(uj,ji,jpwind)
+              emp(uj,ji)    = flx(uj,ji,jpemp)
+              qsr(uj,ji)    = flx(uj,ji,jpqsr)
+           END DO
+        END DO
+        !$acc end parallel loop
 
+        DO ji=1,jpi
+           DO uj=1,jpj
+              freeze(uj,ji) = flx(uj,ji,jpice)
+           END DO
+        END DO
 
-                  DO ji=1,jpi
-            DO uj=1,jpj
-                  vatm(uj,ji)   = flx(uj,ji,jpwind)
-                  freeze(uj,ji) = flx(uj,ji,jpice)
-                  emp(uj,ji)    = flx(uj,ji,jpemp)
-                  qsr(uj,ji)    = flx(uj,ji,jpqsr)
-            END DO
-       END DO
+        !$acc wait(1)
 
       END SUBROUTINE ACTUALIZE_PHYS
 
@@ -375,23 +401,40 @@
       SUBROUTINE swap_PHYS
          USE myalloc
          IMPLICIT NONE
+         integer :: ji,jj,jk
 
-                    udta(:,:,:,1) =    udta(:,:,:,2)
-                    vdta(:,:,:,1) =    vdta(:,:,:,2)
-                    wdta(:,:,:,1) =    wdta(:,:,:,2)
-                  avtdta(:,:,:,1) =  avtdta(:,:,:,2)
-                    tdta(:,:,:,1) =    tdta(:,:,:,2)
-                    sdta(:,:,:,1) =    sdta(:,:,:,2)
-                  flxdta(:,:,:,1) =  flxdta(:,:,:,2)
+         !$acc parallel loop gang vector default(present) collapse(3)
+         DO ji=1,jpi
+            DO jj=1,jpj
+               DO jk=1,jpk
+                  udta(jk,jj,ji,1) =    udta(jk,jj,ji,2)
+                  vdta(jk,jj,ji,1) =    vdta(jk,jj,ji,2)
+                  wdta(jk,jj,ji,1) =    wdta(jk,jj,ji,2)
+                  avtdta(jk,jj,ji,1) =  avtdta(jk,jj,ji,2)
+                  tdta(jk,jj,ji,1) =    tdta(jk,jj,ji,2)
+                  sdta(jk,jj,ji,1) =    sdta(jk,jj,ji,2)
+               ENDDO
+            ENDDO
+         ENDDO
+         !$acc end parallel
+         flxdta(:,:,:,1) =  flxdta(:,:,:,2)
 
-      IF (IS_FREE_SURFACE) then
-                  e3udta(:,:,:,1) =  e3udta(:,:,:,2)
-                  e3vdta(:,:,:,1) =  e3vdta(:,:,:,2)
-                  e3wdta(:,:,:,1) =  e3wdta(:,:,:,2)
-                  e3tdta(:,:,:,1) =  e3tdta(:,:,:,2)
-      ENDIF
+         IF (IS_FREE_SURFACE) then
+            !$acc parallel loop gang vector default(present) collapse(3)
+            DO ji=1,jpi
+               DO jj=1,jpj
+                  DO jk=1,jpk
+                     e3udta(jk,jj,ji,1) =  e3udta(jk,jj,ji,2)
+                     e3vdta(jk,jj,ji,1) =  e3vdta(jk,jj,ji,2)
+                     e3wdta(jk,jj,ji,1) =  e3wdta(jk,jj,ji,2)
+                     e3tdta(jk,jj,ji,1) =  e3tdta(jk,jj,ji,2)
+                  ENDDO
+               ENDDO
+            ENDDO
+            !$acc end parallel
+         ENDIF
 
-      imposed_deltaT(1) = imposed_deltaT(2)
+         imposed_deltaT(1) = imposed_deltaT(2)
       END SUBROUTINE swap_PHYS
 
 ! ************************************************
@@ -450,6 +493,7 @@
 !  ---------------------------------------------------------------------
 
       call boundaries%apply_phys(glamt, spongeT, spongeVel, internal_sponging)
+      !$acc update device(spongeVel)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION
@@ -494,7 +538,9 @@
 
       hdivn = 0.0
 
+
       IF (IS_FREE_SURFACE) THEN
+
       DO jk = 1, jpkm1
 
 

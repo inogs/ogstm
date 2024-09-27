@@ -20,6 +20,7 @@ module bc_mod
         procedure :: load
         procedure :: swap
         procedure :: actualize
+        procedure :: update_device
         procedure :: apply
         procedure :: apply_dirichlet
         procedure :: apply_nudging
@@ -193,7 +194,10 @@ contains
         write(*, *) 'WARN: base class does not implement this method'
     end subroutine actualize
 
-
+    subroutine update_device(self)
+        class(bc), intent(inout) :: self
+        write(*, *) 'WARN: base class does not implement this method'
+    end subroutine update_device
 
     !> Applies the tracer values at the boundaries to the final tracers matrix.
 

@@ -113,6 +113,7 @@ contains
             case("R") ! rivers
 
                 allocate(m_bc_rivers)
+                !$acc enter data create(m_bc_rivers)
 
                 if (periodic) then
                     m_bc_rivers = rivers(bc_name, namelist_file, filenames_list, DATESTART, DATE__END)
@@ -233,6 +234,7 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+                call m_bc%update_device()
                 call m_bc%actualize(1.0d0) ! weight = 1.0
                 ! write(*, *) 'INFO: successfully called actualize'
             else if (new_data) then
@@ -240,8 +242,10 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+                call m_bc%update_device()
                 call m_bc%actualize(1.0d0) ! weight = 1.0
                 ! write(*, *) 'INFO: successfully called actualize'
+                call m_bc%update_device()
             endif
 
         case(1) ! time interpolation
@@ -257,11 +261,13 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+                call m_bc%update_device()
             else if (new_data) then
                 call m_bc%swap()
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+                call m_bc%update_device()
             endif
 
             call m_bc%actualize(weight)

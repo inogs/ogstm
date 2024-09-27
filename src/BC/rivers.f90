@@ -39,6 +39,7 @@ module rivers_mod
         procedure :: load
         procedure :: swap
         procedure :: actualize
+        procedure :: update_device
         procedure :: apply
         procedure :: apply_nudging
         procedure :: apply_phys
@@ -248,6 +249,15 @@ contains
         class(rivers), intent(inout) :: self
         integer, intent(in) :: idx
         integer :: i, j
+        logical,save :: first = .true.
+
+        if(first) then
+           first=.false.
+           !$acc enter data create(self%m_values_dtatrc)
+           !$acc enter data create(self%m_values)
+           !$acc enter data create(self%m_var_names_idx,self%m_river_points)
+           !$acc update device(self%m_var_names_idx,self%m_river_points)
+        endif
 
         if (self%m_size > 0) then
 
@@ -260,6 +270,7 @@ contains
                         self%m_values(j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
                     enddo
                 enddo
+                !$acc update device(self%m_values)
 
             else
                 
@@ -269,6 +280,7 @@ contains
                         self%m_values_dtatrc(2, j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
                     enddo
                 enddo
+                !$acc update device(self%m_values)
 
             endif
 
@@ -307,18 +319,22 @@ contains
 
         class(rivers), intent(inout) :: self
         double precision, intent(in) :: weight
-        integer :: i, j
+        integer :: i, j, queue
+
+        queue=1
 
         if (self%m_size > 0) then
 
             if (.not.(self%const_data())) then
-                
+
+                !$acc parallel loop gang vector collapse(2) default(present) async(queue)
                 do i = 1, self%m_n_vars
                     do j = 1, self%m_size
                         self%m_values(j, i) = &
                             (1.0 - weight) * self%m_values_dtatrc(1, j, i) + weight * self%m_values_dtatrc(2, j, i)
                     enddo
                 enddo
+                !$acc end parallel loop
 
             endif
 
@@ -326,7 +342,10 @@ contains
 
     end subroutine actualize
 
-
+    subroutine update_device(self)
+      class(rivers), intent(inout) :: self
+      !$acc update device(self%m_values_dtatrc)
+    end subroutine update_device
 
     !> Overridden from bc
     subroutine apply(self, e3t, n_tracers, trb, tra)
@@ -345,18 +364,22 @@ contains
         integer, intent(in) :: n_tracers
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
-        integer :: i, j, idx_tracer, idx_i, idx_j
+        integer :: i, j, idx_tracer, idx_i, idx_j, queue
+
+        queue=1
 
         if (self%m_size > 0) then
+            !$acc parallel loop gang vector collapse(2) default(present) async(queue)
             do i = 1, self%m_n_vars
-                idx_tracer = self%m_var_names_idx(i)
                 do j = 1, self%m_size
+                    idx_tracer = self%m_var_names_idx(i)
                     idx_i = self%m_river_points(1, j)
                     idx_j = self%m_river_points(2, j)
                     tra(1, idx_j, idx_i, idx_tracer) = tra(1, idx_j, idx_i, idx_tracer) + &
                         self%m_values(j, i) / e3t(1, idx_j, idx_i)
                 enddo
             enddo
+            !$acc end parallel loop
         endif
 
     end subroutine apply

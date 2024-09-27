@@ -172,7 +172,7 @@ MODULE module_step
 
       !$acc update device(tra,tmask)
       !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,trn,advmask,flx_ridxt,diaflx) if(ladv)
-      !$acc update device(atm,e3t) if(latmosph)
+      !$acc update device(e3t) if(latmosph)
       !$acc update device(umask,vmask,trb,ahtt,diaflx,flx_ridxt) if(lhdf)
       !$acc update device(e3t,rhopn,emp,trn) if (lsbc)
       !$acc update device(qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,rho,e3t,gdept,ogstm_PH,ogstm_co2) if(lbfm)

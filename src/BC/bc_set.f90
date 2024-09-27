@@ -76,11 +76,13 @@ contains
 
         class(bc_set), intent(inout) :: self
         character(len=17), intent(in) :: current_time_string
-        integer :: i
+        integer :: i,queue
 
+        queue=1
         do i = 1, self%m_n_bcs
             call bc_update(self%m_bcs(i)%content, current_time_string)
         enddo
+        !$acc wait(queue)
 
     end subroutine update
 
@@ -96,11 +98,13 @@ contains
         double precision, dimension(jpk, jpj, jpi), intent(in) :: e3t
         double precision, dimension(jpk, jpj, jpi, jptra), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, jptra), intent(inout) :: tra
-        integer :: i
+        integer :: i,queue
 
+        queue=1
         do i = 1, self%m_n_bcs
             call self%m_bcs(i)%content%apply(e3t, jptra, trb, tra)
         enddo
+        !$acc wait(queue)
 
     end subroutine apply
 

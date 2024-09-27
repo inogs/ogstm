@@ -39,7 +39,8 @@
 
        allocate(ogstm_co2(jpj,jpi))          
        ogstm_co2       = huge(ogstm_co2(1,1))
-       allocate(co2_IO(jpj,jpi,2))    
+       allocate(co2_IO(jpj,jpi,2))
+       !$acc enter data create(co2_IO)
         
        co2_IO    = huge(co2_IO(1,1,1))
        allocate(ogstm_sedipi(jpk,jpj,jpi,4))
@@ -69,6 +70,7 @@
       subroutine clean_memory_bio()
 
             deallocate(ogstm_co2)
+            !$acc exit data delete(co2_IO)
             deallocate(co2_IO)
             deallocate(ogstm_sedipi)
             deallocate(ogstm_ph)

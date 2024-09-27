@@ -175,7 +175,7 @@ MODULE module_step
       !$acc update device(e3t) if(latmosph)
       !$acc update device(umask,vmask,trb,ahtt,diaflx,flx_ridxt) if(lhdf)
       !$acc update device(e3t,rhopn,emp,trn) if (lsbc)
-      !$acc update device(qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,rho,e3t,gdept,ogstm_PH,ogstm_co2) if(lbfm)
+      !$acc update device(qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,rho,e3t,gdept,ogstm_PH) if(lbfm)
 #if  defined key_trc_sed
       !$acc update device(sed_idx,diaflx,e3t,ogstm_sedipi,mbathy) if(lbfm)
 #endif

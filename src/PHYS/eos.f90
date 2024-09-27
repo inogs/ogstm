@@ -101,18 +101,18 @@
 
       density_partTime = MPI_WTIME()
 
-
-     
-
         IF ( neos.EQ.0 ) THEN
 !!!$omp parallel default(none) private(mytid,jj,ji,
 !!!$omp&                 zt, zs, zh, zsr, zr1, zr2, zr3, zr4, zrhop, ze, zbw,
 !!!$omp&                   zb, zd, zc, zaw, za, zb1, za1, zkw, zk0)
 !!!$omp&                   shared(jpk,jpj,jpi,jk,tn,sn,rau0,rhopn,rdn,rho,tmask,gdept)
-        
-          DO ji = 1, jpi
-        DO jj = 1, jpj
-      DO jk = 1, jpkm1
+
+           ! eos 0.214075s
+
+           !$acc parallel loop gang vector collapse(3) default(present)
+           DO ji = 1, jpi
+              DO jj = 1, jpj
+                 DO jk = 1, jpkm1
 
 !!   ... now potential temperature and salinity
             zt = tn(jk,jj,ji)
@@ -165,9 +165,15 @@
           END DO
         END DO
       ENDDO
+      !$acc end parallel loop
 !!!$omp end parallel
+
      ELSEIF( neos.EQ.1 ) THEN
 
+#ifdef _OPENACC
+        print *, "eos: code path not tested on GPU (neos=1)"
+        stop
+#endif
 
 !! 2. First Linear density formulation (function of tempreature only)
 !! -----------------------------------
@@ -186,6 +192,10 @@
 
   ELSEIF( neos.EQ.2 ) THEN
 
+#ifdef _OPENACC
+        print *, "eos: code path not tested on GPU (neos=2)"
+        stop
+#endif
 
 !! 3. Second linear density formulation (function of temp. and salinity)
 !! ------------------------------------

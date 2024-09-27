@@ -167,20 +167,21 @@ MODULE module_step
       CALL bc_co2       (DATEstring)
       call tstop("bc_co2")
       call tstart("eos")
+      !$acc update device(tmask,gdept)
       CALL eos          ()               ! Water density
       call tstop("eos")
 
-      !$acc update device(tra,tmask)
+      !$acc update device(tra)
       !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,trn,advmask,flx_ridxt,diaflx) if(ladv)
       !$acc update device(e3t) if(latmosph)
       !$acc update device(umask,vmask,trb,ahtt,diaflx,flx_ridxt) if(lhdf)
-      !$acc update device(e3t,rhopn,emp,trn) if (lsbc)
-      !$acc update device(qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,rho,e3t,gdept,ogstm_PH) if(lbfm)
+      !$acc update device(e3t,emp,trn) if (lsbc)
+      !$acc update device(qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,e3t,ogstm_PH) if(lbfm)
 #if  defined key_trc_sed
       !$acc update device(sed_idx,diaflx,e3t,ogstm_sedipi,mbathy) if(lbfm)
 #endif
       !$acc update device(e1t,diaflx,e3t_back,e2t,trb,e3t,e3w) if (lzdf)
-      !$acc update device(trn,umask,vmask,tmask,highfreq_table,e3t,tra_DIA,tra_DIA_2d,vatm,emp,qsr,highfreq_table_dia,highfreq_table_dia2d)
+      !$acc update device(trn,umask,vmask,highfreq_table,e3t,tra_DIA,tra_DIA_2d,vatm,emp,qsr,highfreq_table_dia,highfreq_table_dia2d)
 
       call tstart("dump_ave_1")
       !$acc update host(traIO,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH)&

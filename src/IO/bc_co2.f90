@@ -111,7 +111,8 @@ contains
 
          call readnc_slice_float_2d(nomefile,'CO2',buf2,0)
          co2_IO(:,:,2) = buf2*tmask(1,:,:)
-      
+
+         !$acc update device(co2_IO(:,:,2))
 
 
       END SUBROUTINE LOAD_CO2
@@ -131,11 +132,13 @@ contains
         ! local
         INTEGER jj,ji
 
+        !$acc parallel loop gang vector default(present) collapse(2)
         DO ji=1,jpi
           DO jj=1,jpj
              ogstm_co2(jj,ji) = ( (1. - zweigh) * co2_IO(jj,ji,1)+ zweigh     * co2_IO(jj,ji,2) )
           END DO
         END DO
+        !$acc end parallel loop
 
 
       END SUBROUTINE ACTUALIZE_CO2
@@ -151,11 +154,13 @@ contains
 
          INTEGER jj,ji
 
+            !$acc parallel loop gang vector default(present) collapse(2)
             DO ji=1,jpi
               DO jj=1,jpj
                 co2_IO(jj,ji,1) = co2_IO(jj,ji,2)
               END DO
             END DO
+            !$acc end parallel loop
 
 
       END SUBROUTINE swap_CO2

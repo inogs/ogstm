@@ -272,6 +272,7 @@
           call readnc_slice_float(nomefile,'vovecrtz',buf,ingv_lon_shift)
           wdta(:,:,:,2) = buf * tmask
       else
+          !$acc update host(e3t)
           CALL COMPUTE_W()               ! vertical velocity
       endif
       !$acc update device(wdta(:,:,:,2)) async(1)
@@ -342,7 +343,6 @@
             !$acc end parallel
 
             if (forcing_phys_initialized) then
-               !$acc update device(e3t) if(forcing_phys_initialized) async(1)
                !$acc parallel loop gang vector default(present) collapse(3) async(1)
                DO ji=1,jpi
                   DO jj=1,jpj

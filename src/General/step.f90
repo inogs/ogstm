@@ -142,10 +142,6 @@ MODULE module_step
 
       call tstart("forcing_phys")
       CALL forcings_PHYS(DATEstring)
-      !$acc update host(un,vn,wn,tn,sn,avt)
-      !$acc update host(e3u,e3v,e3w) if(IS_FREE_SURFACE)
-      !$acc update host(e3t_back,e3t) if(IS_FREE_SURFACE)
-      !$acc update host(vatm,emp,qsr)
       call tstop("forcing_phys")
       call tstart("forcing_kext")
       CALL forcings_KEXT(datestring)

@@ -122,6 +122,10 @@ contains
            bc_ptr => self%m_bcs(i)%content
            SELECT TYPE(bc_ptr)
                CLASS IS (hard_open)
+#ifdef _OPENACC
+        print *, "apply_dirichlet: code path not tested on GPU"
+        stop
+#endif
                   call self%m_bcs(i)%content%apply_dirichlet()
            END SELECT
         enddo

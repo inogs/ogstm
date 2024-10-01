@@ -92,9 +92,11 @@ MODULE module_step
       TAU = 0
       call tstart("step_total")
 
+      ! XXX: move (or remove) this
       !$acc update device(e3u,e3v,e3w)
       !$acc update device(e3t_back,e3t)
       !$acc update device(vatm,emp,qsr)
+      !$acc update device(tmask,gdept)
 
       DO WHILE (.not.ISOVERTIME(datestring))
 
@@ -167,7 +169,6 @@ MODULE module_step
       CALL bc_co2       (DATEstring)
       call tstop("bc_co2")
       call tstart("eos")
-      !$acc update device(tmask,gdept)
       CALL eos          ()               ! Water density
       call tstop("eos")
 

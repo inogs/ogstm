@@ -270,7 +270,8 @@
        aux_mem = get_mem(err)
 #endif
 
-      allocate(atm_dtatrc(jpj,jpi, 2, jn_atm)) 
+      allocate(atm_dtatrc(jpj,jpi, 2, jn_atm))
+      !$acc enter data create(atm_dtatrc)
        atm_dtatrc = huge(atm_dtatrc(1,1,1,1))
       allocate(atm       (jpj,jpi,    jn_atm))
       !$acc enter data create(atm)
@@ -296,6 +297,7 @@
               deallocate(atm_idxtglo)
           endif
 
+          !$acc exit data delete(atm_dtatrc)
           deallocate(atm_dtatrc)
           !$acc exit data delete(atm)
           deallocate(atm)

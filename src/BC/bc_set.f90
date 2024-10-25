@@ -113,24 +113,22 @@ contains
         use modul_param, only: jpk, jpj, jpi
         use myalloc
         implicit none
-        integer i
+        integer i,queue
 
         class(bc_set), intent(inout) :: self
         class(bc), pointer :: bc_ptr ! auxiliary pointer to guarantee polymorphism
+
+        queue=1
 
         do i = 1,self%m_n_bcs
            bc_ptr => self%m_bcs(i)%content
            SELECT TYPE(bc_ptr)
                CLASS IS (hard_open)
-#ifdef _OPENACC
-        print *, "apply_dirichlet: code path not tested on GPU"
-        stop
-#endif
                   call self%m_bcs(i)%content%apply_dirichlet()
            END SELECT
         enddo
 
-
+        !$acc wait(queue)
 
     end subroutine apply_dirichlet
 
@@ -166,11 +164,13 @@ contains
         implicit none
 
         class(bc_set), intent(inout) :: self
-        integer :: i
+        integer :: i,queue
 
+        queue=1
         do i = 1, self%m_n_bcs
             call self%m_bcs(i)%content%fix_diagnostic_vars()
         enddo
+        !$acc wait(queue)
 
     end subroutine fix_diagnostic_vars
 

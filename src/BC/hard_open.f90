@@ -150,9 +150,11 @@ contains
         ! TO DO: set condition for size = 0
         ! allcoate lookup matrix
         allocate(self%m_hard_open_points(3, self%m_size))
+        !$acc enter data create(self%m_hard_open_points)
         ! copy
         if (self%m_size > 0) then
             self%m_hard_open_points(:, :) = hard_open_points_aux(:, 1:self%m_size)
+            !$acc update device(self%m_hard_open_points)
         endif
 
         deallocate(hard_open_points_aux)
@@ -345,6 +347,19 @@ contains
         class(hard_open), intent(inout) :: self
         integer, intent(in) :: idx
         integer :: i, j
+        logical,save :: first = .true.
+
+        if(first) then
+           first=.false.
+           !$acc enter data create(self%m_values_dtatrc)
+           !$acc enter data create(self%m_values)
+           !$acc enter data create(self%m_var_names_idx,self%m_hard_open_points)
+           !$acc enter data create(self%m_neighbors)
+           !$acc enter data create(self%m_missing_var_names_idx)
+           !$acc update device(self%m_var_names_idx,self%m_hard_open_points)
+           !$acc update device(self%m_neighbors)
+           !$acc update device(self%m_missing_var_names_idx)
+        endif
 
         if (self%m_size > 0) then
 
@@ -361,6 +376,7 @@ contains
                         )
                     enddo
                 enddo
+                !$acc update device(self%m_values)
 
             else
                 
@@ -374,6 +390,7 @@ contains
                         )
                     enddo
                 enddo
+                !$acc update device(self%m_values_dtatrc)
 
             endif
 
@@ -419,13 +436,14 @@ contains
 
             ! if const_data(), do nothing
             if (.not.(self%const_data())) then
-                
+                !$acc parallel loop gang vector collapse(2) default(present)
                 do i = 1, self%m_n_vars
                     do j = 1, self%m_size
                         self%m_values(j, i) = &
                             (1.0 - weight) * self%m_values_dtatrc(j, 1, i) + weight * self%m_values_dtatrc(j, 2, i)
                     enddo
                 enddo
+                !$acc end parallel loop
 
             endif
 
@@ -433,7 +451,10 @@ contains
 
     end subroutine actualize
 
-
+    subroutine update_device(self)
+      class(hard_open), intent(inout) :: self
+      !$acc update device(self%m_values_dtatrc)
+    end subroutine update_device
 
     !> Overridden from bc
 
@@ -458,19 +479,21 @@ contains
         integer, intent(in) :: n_tracers
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
-        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k, idx_i_neigh, idx_j_neigh, idx_k_neigh
+        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k, idx_i_neigh, idx_j_neigh, idx_k_neigh, queue
         double precision :: z_tracer
+
+        queue=1
 
         if (self%m_size > 0) then
 
             ! First loop: provided variables.
             ! Values are taken from the data input and set through a strong nudging with a very small damping factor
             ! (which anyway is set from the boundary namelist)
+            !$acc parallel loop gang vector collapse(2) default(present) async(queue)
             do i = 1, self%m_n_vars
-
-                idx_tracer = self%m_var_names_idx(i)
-
                 do j = 1, self%m_size
+
+                    idx_tracer = self%m_var_names_idx(i)
 
                     idx_i = self%m_hard_open_points(1, j)
                     idx_j = self%m_hard_open_points(2, j)
@@ -483,17 +506,17 @@ contains
                     tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
 
                 enddo
-
             enddo
+            !$acc end parallel loop
 
             ! Second loop: missing variables.
             ! Values are taken from the neighbour cells and set through a strong nudging with a very small damping factor
             ! (which is the same used before)
+            !$acc parallel loop gang vector collapse(2) default(present) async(queue)
             do i = 1, self%m_n_missing_vars
-
-                idx_tracer = self%m_missing_var_names_idx(i)
-
                 do j = 1, self%m_size
+
+                    idx_tracer = self%m_missing_var_names_idx(i)
 
                     idx_i = self%m_hard_open_points(1, j)
                     idx_j = self%m_hard_open_points(2, j)
@@ -510,8 +533,8 @@ contains
                     tra(idx_k, idx_j, idx_i, idx_tracer) = tra(idx_k, idx_j, idx_i, idx_tracer) + z_tracer
 
                 enddo
-
             enddo
+            !$acc end parallel loop
 
         endif
 
@@ -524,36 +547,41 @@ contains
         implicit none
 
         class(hard_open), intent(inout) :: self
-        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k
+        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k, queue
+
+        queue=1
 
         if (self%m_size > 0) then
             ! First loop: provided variables on boundary points
+            !$acc parallel loop gang vector collapse(2) default(present) async(queue)
             do i = 1, self%m_n_vars
-
-                idx_tracer = self%m_var_names_idx(i)
-
                 do j = 1, self%m_size
+                    idx_tracer = self%m_var_names_idx(i)
 
                     idx_i = self%m_hard_open_points(1, j)
                     idx_j = self%m_hard_open_points(2, j)
                     idx_k = self%m_hard_open_points(3, j)
 
                     tra(idx_k, idx_j, idx_i, idx_tracer) = self%m_values(j, i)
-
                 enddo
-             ! 2nd loop: provided variables on neighbors
+            enddo
+            !$acc end parallel loop
+
+            ! 2nd loop: provided variables on neighbors
+            !$acc parallel loop gang vector collapse(2) default(present) async(queue)
+            do i = 1, self%m_n_vars
                 do j = 1, self%m_size
+                    idx_tracer = self%m_var_names_idx(i)
 
                     idx_i = self%m_neighbors(1, i)
                     idx_j = self%m_neighbors(2, j)
                     idx_k = self%m_neighbors(3, j)
 
                     tra(idx_k, idx_j, idx_i, idx_tracer) = self%m_values(j, i)
-
                 enddo
-
             enddo
-           endif
+            !$acc end parallel loop
+         endif
     end subroutine apply_dirichlet
 
 
@@ -623,8 +651,11 @@ contains
 
         class(hard_open), intent(inout) :: self
 
-        integer :: i, jn, idx_i, idx_j, idx_k, idx_i_neigh, idx_j_neigh, idx_k_neigh
+        integer :: i, jn, idx_i, idx_j, idx_k, idx_i_neigh, idx_j_neigh, idx_k_neigh,queue
 
+        queue=1
+
+        !$acc parallel loop gang vector collapse(1) default(present) async(queue)
         do i = 1, self%m_size
 
             idx_i = self%m_hard_open_points(1, i)
@@ -646,6 +677,7 @@ contains
             enddo
 
         enddo
+        !$acc end parallel loop
 
     end subroutine fix_diagnostic_vars
 

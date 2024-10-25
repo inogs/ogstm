@@ -280,7 +280,7 @@ contains
                         self%m_values_dtatrc(2, j, i) = self%m_buffer(self%m_river_points(2, j), self%m_river_points(1, j))
                     enddo
                 enddo
-                !$acc update device(self%m_values)
+                !$acc update device(self%m_values_dtatrc)
 
             endif
 
@@ -319,15 +319,13 @@ contains
 
         class(rivers), intent(inout) :: self
         double precision, intent(in) :: weight
-        integer :: i, j, queue
-
-        queue=1
+        integer :: i, j
 
         if (self%m_size > 0) then
 
             if (.not.(self%const_data())) then
 
-                !$acc parallel loop gang vector collapse(2) default(present) async(queue)
+                !$acc parallel loop gang vector collapse(2) default(present)
                 do i = 1, self%m_n_vars
                     do j = 1, self%m_size
                         self%m_values(j, i) = &

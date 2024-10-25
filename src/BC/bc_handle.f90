@@ -157,6 +157,7 @@ contains
             case("O") ! hard-open
 
                 allocate(m_bc_hard_open)
+                !$acc enter data create(m_bc_hard_open)
 
                 if (periodic) then
                     m_bc_hard_open = hard_open(bc_name, namelist_file, filenames_list, jptra, DATESTART, DATE__END) ! jptra is a global variable

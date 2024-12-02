@@ -256,6 +256,7 @@
 <var name="EPCO2air"   highfreq="false" dump="false" ></var>
 <var name="CO2airflux" highfreq="true" dump="true" ></var>
 <var name="skvo" highfreq="true" dump="true" ></var>
+<var name="Hg0atm" highfreq="true" dump="true" ></var>
 <var name="Area2d"   highfreq="false" dump="false" ></var>
 <var name="ThereIsLight" highfreq="false" dump="false" ></var>
 <var name="SUNQ" highfreq="false" dump="false" ></var>

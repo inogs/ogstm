@@ -21,6 +21,7 @@
       double precision, allocatable :: ogstm_ph(:,:,:) ! GUESS for FOLLOWS algorithm
       double precision, allocatable :: NPPF2(:,:,:)
       double precision, allocatable :: ogstm_co2(:,:), co2_IO(:,:,:)
+      double precision, allocatable :: atm_Hg0(:,:), Hg0_IO(:,:,:)
       double precision:: ice
 
 
@@ -47,8 +48,14 @@
        allocate(ogstm_co2(jpj,jpi))          
        ogstm_co2       = huge(ogstm_co2(1,1))
        allocate(co2_IO(jpj,jpi,2))    
-        
        co2_IO    = huge(co2_IO(1,1,1))
+
+       allocate(atm_Hg0(jpj,jpi))
+       atm_Hg0       = huge(atm_Hg0(1,1))
+       allocate(Hg0_IO(jpj,jpi,2)) 
+       Hg0_IO    = huge(Hg0_IO(1,1,1))
+
+
        allocate(ogstm_sedipi(jpk,jpj,jpi,4)) 
        ogstm_sedipi    = huge(ogstm_sedipi(1,1,1,1))
        allocate(ogstm_ph(jpk,jpj,jpi))       
@@ -74,6 +81,8 @@
             deallocate(surf_mask)
             deallocate(ogstm_co2)
             deallocate(co2_IO)
+            deallocate(atm_Hg0)
+            deallocate(Hg0_IO)
             deallocate(ogstm_sedipi)
             deallocate(ogstm_ph)
             deallocate(NPPF2)

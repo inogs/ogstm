@@ -1,5 +1,5 @@
 import numpy as np
-from commons.utils import file2stringlist
+from bitsea.commons.utils import file2stringlist
 import argparse
 import os
 

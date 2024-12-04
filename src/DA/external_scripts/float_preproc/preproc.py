@@ -49,19 +49,18 @@ def argument():
 
 args = argument()
 
-from instruments.matchup_manager import Matchup_Manager
-from commons.mask import Mask
-import basins.OGS as OGS
-from instruments.var_conversions import FLOATVARS
-from commons.utils import addsep
+from bitsea.instruments.matchup_manager import Matchup_Manager
+from bitsea.commons.mask import Mask
+import bitsea.basins.OGS as OGS
+from bitsea.instruments.var_conversions import FLOATVARS
+from bitsea.commons.utils import addsep
 from datetime import datetime
-from commons.layer import Layer
-from commons.Timelist import TimeList
-from commons import timerequestors
+from bitsea.commons.layer import Layer
+from bitsea.commons.Timelist import TimeList
+from bitsea.commons import timerequestors
 import os,sys
 import numpy as np
-import scipy.io.netcdf as NC
-from instruments import check
+from bitsea.instruments import check
 
 profilesource=os.getenv("PROFILES_SOURCE")
 if profilesource is None:
@@ -69,12 +68,12 @@ if profilesource is None:
     sys.exit(1)
 assert profilesource in ["superfloat", "ppcon"]
 if profilesource=="superfloat":
-    from instruments import superfloat as bio_float
+    from bitsea.instruments import superfloat as bio_float
 if profilesource=="ppcon":
     if args.variable == 'P_l':
-        from instruments import superfloat as bio_float ## ppcon chl not yet tested for DA
+        from bitsea.instruments import superfloat as bio_float ## ppcon chl not yet tested for DA
     else:
-        from instruments import float_ppcon as bio_float
+        from bitsea.instruments import float_ppcon as bio_float
 
 
 datestr   = args.time

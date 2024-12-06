@@ -165,7 +165,7 @@
 
                     enddo
 
-                    if (bottom.gt.phys_bottom) then
+                    if (bottom.lt.phys_bottom) then
 
                        do jk=bottom+1, phys_bottom ! propagation 500m --> phys_bottom of last value
                           Ed(jk,jj,ji,jl) = Ed(bottom, jj,ji, jl)
@@ -179,7 +179,7 @@
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
                     enddo
-                    if (bottom.gt.phys_bottom) then
+                    if (bottom.lt.phys_bottom) then
                         do jk=bottom+1, phys_bottom ! propagation of last value
                           PAR(jk,jj,ji,jl) = PARz(bottom,jl)
                         enddo

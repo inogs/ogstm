@@ -26,9 +26,9 @@
         double precision julian
 
 
-        CHARACTER(LEN=37) filename
+        CHARACTER(LEN=54) filename
 
-        CHARACTER(LEN=3) varname
+        CHARACTER(LEN=20) varname
 
         INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
         INTEGER irange, jrange
@@ -121,7 +121,7 @@
 
                                 filename = 'RESTARTS/RST.'//datestring//'.'//trim(var_to_store)//'.nc'
 
-                                CALL write_restart(filename,var_to_store,julian, deflate_rst, deflate_level_rst)
+                                CALL write_restart(TRIM(filename),TRIM(var_to_store),julian, deflate_rst, deflate_level_rst)
 
                         END IF
                 END IF

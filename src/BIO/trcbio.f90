@@ -36,7 +36,7 @@
 
       USE myalloc
       USE BIO_mem
-      USE OPT_mem, ONLY: PAR, RMU
+      USE OPT_mem, ONLY: PAR, RMU,SWR_RT
       USE BC_mem
       USE mpi
 
@@ -61,7 +61,7 @@
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,16) :: er
+      double precision,dimension(jpk,18) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 
 
@@ -144,11 +144,12 @@
                           er(1:bottom,8)  = PAR(1:bottom,jj,ji,3) ! PAR for pico phytoplankton
                           er(1:bottom,9)  = PAR(1:bottom,jj,ji,4) ! PAR for dinoflagellates
                           er(1:bottom,10) = PAR(1:bottom,jj,ji,5) ! total PAR for CDOM
-                          er(1       ,11)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-                          er(1:bottom,12)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-                          er(1       ,13)  = vatm(jj,ji)                ! wind speed (m/s)
-                          er(1:bottom,14) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
-                          er(1       ,15)  = RMU(jj,ji)                ! avg. cosine direct
+                          er(1:bottom,11) = SWR_RT(1:bottom,jj,ji)                                           
+                          er(1       ,12)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
+                          er(1:bottom,13)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
+                          er(1       ,14)  = vatm(jj,ji)                ! wind speed (m/s)
+                          er(1:bottom,15) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
+                          er(1       ,16)  = RMU(jj,ji)                ! avg. cosine direct
 
 #ifndef gdept1d
                          do jk=1,bottom
@@ -161,9 +162,11 @@
                                  correct_fact= 0.0D0
                              endif
 
-                             er(jk,16) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
+                             er(jk,17) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
                          enddo
 #endif
+
+                            er(1       ,18)  = atm_Hg0(jj,ji)                   ! ATM Hg0
                           call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 
                          call BFM1D_reset()

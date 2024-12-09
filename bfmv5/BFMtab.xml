@@ -2,6 +2,10 @@
 <root>
 <ModelVars>
 <var name="O2o" maxvalue="1000" highfreq="true" dump="false" ></var>
+<var name="Hg0" maxvalue="50." highfreq="true" dump="false" ></var>
+<var name="Hg2" maxvalue="50." highfreq="true" dump="false" ></var>
+<var name="MMHg" maxvalue="50." highfreq="true" dump="false" ></var>
+<var name="DMHg" maxvalue="50." highfreq="true" dump="false" ></var>
 <var name="N1p" maxvalue= "5."  highfreq="true" dump="false" ></var>
 <var name="N3n" maxvalue="500"  highfreq="true" dump="false" ></var>
 <var name="N4n" maxvalue="20"   highfreq="true" dump="false" ></var>
@@ -16,33 +20,42 @@
 <var name="P1p" maxvalue="0.2"  highfreq="false" dump="false" ></var>
 <var name="P1l" maxvalue="2"    highfreq="true" dump="false" ></var>
 <var name="P1s" maxvalue="2.5"  highfreq="false" dump="false" ></var>
+<var name="P1h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="P2c" maxvalue="125"  highfreq="true" dump="false" ></var>
 <var name="P2n" maxvalue="4"    highfreq="false" dump="false" ></var>
 <var name="P2p" maxvalue="0.5"  highfreq="false" dump="false" ></var>
 <var name="P2l" maxvalue="1.5"  highfreq="true" dump="false" ></var>
+<var name="P2h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="P3c" maxvalue="200"  highfreq="true" dump="false" ></var>
 <var name="P3n" maxvalue="6"    highfreq="false" dump="false" ></var>
 <var name="P3p" maxvalue="0.5"  highfreq="false" dump="false" ></var>
 <var name="P3l" maxvalue="4"    highfreq="true" dump="false" ></var>
+<var name="P3h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="P4c" maxvalue="100"  highfreq="true" dump="false" ></var>
 <var name="P4n" maxvalue="0.6"  highfreq="false" dump="false" ></var>
 <var name="P4p" maxvalue="0.1"  highfreq="false" dump="false" ></var>
 <var name="P4l" maxvalue="1.5"  highfreq="true" dump="false" ></var>
+<var name="P4h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="Z3c" maxvalue="18"   highfreq="false" dump="false" ></var>
 <var name="Z3n" maxvalue="0.3"  highfreq="false" dump="false" ></var>
 <var name="Z3p" maxvalue="0.1"  highfreq="false" dump="false" ></var>
+<var name="Z3h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="Z4c" maxvalue="100"  highfreq="false" dump="false" ></var>
 <var name="Z4n" maxvalue="1.5"  highfreq="false" dump="false" ></var>
 <var name="Z4p" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+<var name="Z4h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="Z5c" maxvalue="80"   highfreq="false" dump="false" ></var>
 <var name="Z5n" maxvalue="3"    highfreq="false" dump="false" ></var>
 <var name="Z5p" maxvalue="0.2"  highfreq="false" dump="false" ></var>
+<var name="Z5h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="Z6c" maxvalue="100"  highfreq="false" dump="false" ></var>
 <var name="Z6n" maxvalue="4"    highfreq="false" dump="false" ></var>
 <var name="Z6p" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+<var name="Z6h" maxvalue="2000" highfreq="false" dump="false" ></var>
 <var name="R1c" maxvalue="60"   highfreq="false" dump="false" ></var>
 <var name="R1n" maxvalue="3"    highfreq="false" dump="false" ></var>
 <var name="R1p" maxvalue="0.3"  highfreq="false" dump="false" ></var>
+
 <var name="R1s" maxvalue="0.1"  highfreq="false" dump="false" ></var>
 <var name="R2c" maxvalue="500"  highfreq="false" dump="false" ></var>
 <var name="R6c" maxvalue="200"  highfreq="false" dump="false" ></var>
@@ -70,6 +83,7 @@
 <var name="ESW"          highfreq="false" dump="false" ></var> 
 <var name="ERHO"         highfreq="false" dump="false" ></var> 
 <var name="EIR"          highfreq="false" dump="false" ></var> 
+<var name="SWR_RT"       highfreq="false" dump="true" ></var>
 <var name="ESS"          highfreq="false" dump="false" ></var> 
 <var name="EPR"          highfreq="false" dump="false" ></var> 
 <var name="BAC_ACT_FACT" highfreq="false" dump="false" ></var> 
@@ -78,6 +92,7 @@
 <var name="DIC"          highfreq="true" dump="true" ></var> 
 <var name="Area"         highfreq="false" dump="false" ></var> 
 <var name="CO2"          highfreq="false" dump="false" ></var> 
+<var name="skvo"         highfreq="false" dump="true" ></var> 
 <var name="pCO2"         highfreq="true" dump="true" ></var> 
 <var name="HCO3"         highfreq="false" dump="false" ></var> 
 <var name="CO3"          highfreq="false" dump="false" ></var> 
@@ -164,6 +179,16 @@
 <var name="ELiPPY_iiP4"  highfreq="false" dump="false" ></var> 
 <var name="ruPPYc"       highfreq="true"  dump="true" comment="deve essere true"></var> 
 <var name="resPPYc"      highfreq="true"  dump="true" comment="deve essere true"></var> 
+<var name="remPOC"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="skmet"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="skmet2"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="skdem"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="skdem2"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="skox"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="skred"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="skphdem"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="pR2c"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="pR3c"      highfreq="true"  dump="true" comment="deve essere true"></var>
 <var name="netPPYc"      highfreq="false" dump="false" ></var> 
 <var name="resPBAc"      highfreq="false" dump="false" ></var> 
 <var name="resZOOc"      highfreq="false" dump="false" ></var> 
@@ -197,6 +222,15 @@
 <var name="qccPPY_iiP2"     highfreq="false" dump="false" ></var>
 <var name="qccPPY_iiP3"     highfreq="false" dump="false" ></var>
 <var name="qccPPY_iiP4"     highfreq="false" dump="false" ></var>
+<var name="qhcPPY_iiP1"     highfreq="false" dump="false" ></var>
+<var name="qhcPPY_iiP2"     highfreq="false" dump="false" ></var>
+<var name="qhcPPY_iiP3"     highfreq="false" dump="false" ></var>
+<var name="qhcPPY_iiP4"     highfreq="false" dump="false" ></var>
+<var name="qhcMEZ_iiZ3"     highfreq="false" dump="false" ></var>
+<var name="qhcMEZ_iiZ4"     highfreq="false" dump="false" ></var>
+<var name="qhcMIZ_iiZ5"     highfreq="false" dump="false" ></var>
+<var name="qhcMIZ_iiZ6"     highfreq="false" dump="false" ></var>
+<var name="qhcPBA_iiB1"     highfreq="false" dump="false" ></var>
 <var name="rcalCARc"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_rsp_iiP1"     highfreq="false" dump="false" ></var>
 <var name="BFM1D_rsp_iiP2"     highfreq="false" dump="false" ></var>
@@ -236,6 +270,8 @@
 <Diagnostics_2D>
 <var name="EPCO2air"   highfreq="false" dump="false" ></var>
 <var name="CO2airflux" highfreq="true" dump="true" ></var>
+<var name="skvo" highfreq="true" dump="true" ></var>
+<var name="Hg0atm" highfreq="true" dump="true" ></var>
 <var name="Area2d"   highfreq="false" dump="false" ></var>
 <var name="ThereIsLight" highfreq="false" dump="false" ></var>
 <var name="SUNQ" highfreq="false" dump="false" ></var>

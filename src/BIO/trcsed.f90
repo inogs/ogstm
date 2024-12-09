@@ -146,32 +146,32 @@
                  END DO
               END DO
 !                Diatoms
-              DO js =9,13
+              DO js =9,14
                  DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 !                Flagellates
-              DO js =14,17
+              DO js =15,19
                  DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 !                Picophytoplankton
-              DO js =18,21
+              DO js =20,24
                  DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 !                Dinoflagellates
-              DO js =22,25
+              DO js =25,29
                  DO  jk = 2,jpkm1
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 
 !                Calcite
-              DO js =26,26
+              DO js =30,30
                  DO  jk = 2,jpkm1
                     zwork(jk,js,1) = - vsedO5c * trn(jk-1,jj,ji, sed_idx(js))
                  END DO

@@ -14,6 +14,14 @@
     vars(6) = "O3h"
     vars(7) = "N6r"
 
+    var_names_idx(1) = 1
+    var_names_idx(2) = 2
+    var_names_idx(3) = 3
+    var_names_idx(4) = 6
+    var_names_idx(5) = 49
+    var_names_idx(6) = 50
+    var_names_idx(7) = 7
+
     alpha = 4.0d0
     reduction_value_t = 1.0d-6
     length = -7.5d0
@@ -37,6 +45,14 @@
     vars(5) = "O3c"
     vars(6) = "O3h"
     vars(7) = "N6r"
+
+   var_names_idx(1) = 1
+   var_names_idx(2) = 2
+   var_names_idx(3) = 3
+   var_names_idx(4) = 6
+   var_names_idx(5) = 49
+   var_names_idx(6) = 50
+   var_names_idx(7) = 7
 
     rst_corr(1) = 1.0d0
     rst_corr(2) = 1.0d0

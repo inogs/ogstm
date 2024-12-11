@@ -112,7 +112,7 @@
 !     N3n jn = 3 nitrates         (climatological)
 !     N5s jn = 4 Silicates        (seasonal)
 
-      jn_gib  = 7
+      jn_gib  = 6
       ! jn_riv  = 6
       jn_atm  = 4
 

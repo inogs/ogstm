@@ -80,6 +80,7 @@ contains
         integer :: n_vars
         character(len=11) :: data_file ! 11 chars in order to handle names like 'bounmask.nc'
         character(len=20), allocatable, dimension(:) :: vars
+        integer(4), allocatable, dimension(:) :: var_names_idx   
         double precision, allocatable, dimension(:) :: rst_corr
         integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files
 
@@ -90,7 +91,7 @@ contains
 
         integer :: i
         namelist /nudging_vars_dimension/ n_vars
-        namelist /nudging_core/ data_file, vars, rst_corr
+        namelist /nudging_core/ data_file, vars, var_names_idx, rst_corr
 
         ! pointer to bc_no_nudging association
         self%m_bc_no_nudging => bc_no_nudging
@@ -104,6 +105,7 @@ contains
 
         ! allocate local arrays
         allocate(vars(self%m_n_nudging_vars))
+        allocate(var_names_idx(self%m_n_nudging_vars))
         allocate(rst_corr(self%m_n_nudging_vars))
 
         ! allocate class members
@@ -126,13 +128,15 @@ contains
             self%m_nudging_vars(i) = vars(i)
             self%m_nudging_vars_rst(i) = 're'//trim(self%m_nudging_vars(i))
             call readnc_slice_float(self%m_data_file, trim(self%m_nudging_vars_rst(i)), self%m_rst(:, :, :, i), 0)
-            self%m_nudging_vars_idx(i) = find_index_var(self%m_nudging_vars(i))
+            self%m_nudging_vars_idx(i) = var_names_idx(i)
+            ! find_index_var(self%m_nudging_vars(i))
             self%m_rst_corr(i) = rst_corr(i)
             self%m_rst_tracers(:, :, :, self%m_nudging_vars_idx(i)) = self%m_rst_corr(i) * self%m_rst(:, :, :, i)
         enddo
 
         ! deallocation
         deallocate(vars)
+        deallocate(var_names_idx)
         deallocate(rst_corr)
 
         ! close file

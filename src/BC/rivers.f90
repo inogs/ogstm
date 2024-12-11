@@ -140,10 +140,11 @@ contains
 
         integer :: n_vars
         character(len=20), allocatable, dimension(:) :: vars
+        integer(4), allocatable, dimension(:) :: var_names_idx
         integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files
         integer :: i
         namelist /vars_dimension/ n_vars
-        namelist /core/ vars
+        namelist /core/ vars, var_names_idx
 
         self%m_name = bc_name
 
@@ -156,6 +157,7 @@ contains
 
         ! allocate local arrays
         allocate(vars(self%m_n_vars))
+        allocate(var_names_idx(self%m_n_vars))
 
         ! allocate class members
         allocate(self%m_var_names(self%m_n_vars))
@@ -169,7 +171,7 @@ contains
         do i = 1, self%m_n_vars
             self%m_var_names(i) = vars(i)
             self%m_var_names_data(i) = "riv"//'_'//trim(self%m_var_names(i))
-            self%m_var_names_idx(i) = find_index_var(self%m_var_names(i))
+            self%m_var_names_idx(i) = var_names_idx(i)   !find_index_var(self%m_var_names(i))
             if (lwp) write(*,*) 'RIV ', self%m_var_names(i), self%m_var_names_idx(i)
         enddo
 
@@ -184,6 +186,7 @@ contains
 
         ! deallocation
         deallocate(vars)
+        deallocate(var_names_idx)
 
         ! close file
         close(unit=file_unit)

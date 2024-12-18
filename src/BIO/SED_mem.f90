@@ -90,6 +90,11 @@
 
       subroutine myalloc_SED_ztra_zwork()
 
+        if(dimen_jvsed .eq. 0) then
+           ! some ranks have nothing to do, don't allocate twice
+           if (allocated(ztra)) return
+        endif
+
         allocate(ztra(nsed,dimen_jvsed))
         allocate(zwork(jpk,nsed,dimen_jvsed))
         !$acc enter data create(ztra,zwork)

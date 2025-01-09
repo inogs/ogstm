@@ -20,7 +20,7 @@ jpi=M.dimensions['x']
 jpj=M.dimensions['y']
 jpk=M.dimensions['z']
 
-tmask      = (M.variables['tmask'].data[0,:,:,:]).astype(np.bool).copy()
+tmask      = (M.variables['tmask'].data[0,:,:,:]).astype(bool).copy()
 
 nav_lev    =  np.abs(M.variables['nav_lev'].data.copy())
 e3t        =  np.abs(M.variables['e3t'].data.copy())
@@ -31,7 +31,7 @@ Lat        =  M.variables['nav_lat'].data[:,:].copy()
 tk_m       = getDepthIndex(nav_lev,200.0)
 
 mask200_2D = tmask[tk_m,:,:].copy()
-mask200_3D = np.zeros((jpk,jpj,jpi),dtype=np.bool)
+mask200_3D = np.zeros((jpk,jpj,jpi),dtype=bool)
 
 for i in range(jpk):
     mask200_3D[i,:,:]=mask200_2D
@@ -39,7 +39,7 @@ for i in range(jpk):
 COASTNESS_LIST=['coast','open_sea','everywhere']
 struct=[]
 for coast in COASTNESS_LIST:
-    struct.append((coast,np.bool))
+    struct.append((coast,bool))
     
 COASTNESS = np.ones((jpk,jpj,jpi),dtype=struct)
 COASTNESS['coast']     = ~mask200_3D;
@@ -48,7 +48,7 @@ COASTNESS['open_sea']  =  mask200_3D;
 DEPTHlist      =['shallow','deep']
 struct=[]
 for depth in DEPTHlist:
-    struct.append((depth,np.bool))
+    struct.append((depth,bool))
 
 DEPTH  = np.zeros((jpk,jpj,jpi),dtype=struct)
 tk_1   = getDepthIndex(nav_lev,200.0)+1

@@ -13,9 +13,11 @@ def create_bc_nc(test):
 # Create boundaries namelist
     filename = test['Dir'].decode() + '/boundaries.nml'
     f01 = open(filename,'w')
-    f01.write("1")
+    f01.write("3")
     f01.write("\n")
     f01.write("\"riv, RIV, riv.nml, files_namelist_riv.dat, T, F\"")
+    f01.write("\"riv, SPO, gib.nml, files_namelist_gib.dat, T, F\"")
+    f01.write("\"dar, OPE, dar.nml, files_namelist_dar.dat, T, F\"")
     f01.close()
 # Create riv.nml namelist
     filename = test['Dir'].decode() + '/riv.nml'
@@ -76,6 +78,27 @@ def create_bc_nc(test):
     f01.write("\"BC/TIN_yyyy1115-00:00:00.nc\"")
     f01.write("\n")
     f01.write("\"BC/TIN_yyyy1215-00:00:00.nc\"")
+    f01.close()
+
+    filename = test['Dir'].decode() + '/files_namelist_gib.dat'
+    f01 = open(filename,'w')
+    f01.write("4")
+    f01.write("\n")
+    f01.write("\"BC/GIB_yyyy0215-00:00:00.nc\"")
+    f01.write("\n")
+    f01.write("\"BC/GIB_yyyy0515-00:00:00.nc\"")
+    f01.write("\n")
+    f01.write("\"BC/GIB_yyyy0815-00:00:00.nc\"")
+    f01.write("\n")
+    f01.write("\"BC/GIB_yyyy1115-00:00:00.nc\"")
+    f01.write("\n")
+    f01.close()
+
+    filename = test['Dir'].decode() + '/files_namelist_dar.dat'
+    f01 = open(filename,'w')
+    f01.write("1\n")
+    f01.write("\"BC/OPE_yyyy0630-00:00:00.nc\"")
+    f01.write("\n")
     f01.close()
 
     jpi=test['jpi'];
@@ -345,3 +368,29 @@ def create_bc_nc(test):
         ncvar = ncOUT.createVariable('gib_N6r'     ,'d',('gib_idxt_N6r',) ); ncvar[:] = 0.;
 
         ncOUT.close()
+
+        BOUNDARY_CONCENTRATION={}
+        BOUNDARY_CONCENTRATION['N5s'] = 2.0
+        BOUNDARY_CONCENTRATION['N1p'] = 0.065 # mmol/m3
+        BOUNDARY_CONCENTRATION['N3n']=   1.3 # mol/m3
+        BOUNDARY_CONCENTRATION['O3c']= 28700 # mg/m3
+        BOUNDARY_CONCENTRATION['O3h']=  2800 # mmol/m3
+        OPEN_BOUNDARY=np.zeros((jpk,jpj,jpi),np.float32)
+        I = jpi-1
+        j_min=1
+        j_max=int(jpj/2)
+        for k in range(jpk):
+            OPEN_BOUNDARY[k,j_min:j_max,I] = 0.1
+        outfile = test['Dir'].decode() + '/BC/OPE_yyyy0630-00:00:00.nc'
+        ncOUT   = NC.netcdf_file(outfile,'w')
+        ncOUT.createDimension('lon'    ,jpi);
+        ncOUT.createDimension('lat'    ,jpj);
+        ncOUT.createDimension('z'     ,jpk );
+        for var in OPEN_BOUNDARY.keys():
+            for k in range(jpk):
+                OPEN_BOUNDARY[k,j_min:j_max,I] = BOUNDARY_CONCENTRATION[var]
+            ncvar = ncOUT.createVariable(var,f,('z','lat','lon')  )
+            ncvar[:] = OPEN_BOUNDARY
+
+        ncOUT.close()
+

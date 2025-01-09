@@ -21,7 +21,7 @@ def create_extinction_nc(test):
     mask2D  =  M.variables['tmask'].data[0,0,:,:].copy()
     M.close()
 
-    kextfact=np.ones((jpj,jpi),np.float);
+    kextfact=np.ones((jpj,jpi),float);
 
     os.system("mkdir -p " + test['Dir'].decode() + '/KEXT')
 

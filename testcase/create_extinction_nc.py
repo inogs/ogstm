@@ -14,7 +14,7 @@ def create_extinction_nc(test):
     jpi=test['jpi']
     jpj=test['jpj']
 
-    maskfile=test['Dir'].decode() + '/meshmask.nc'
+    maskfile=test['Dir'] + '/meshmask.nc'
     M=NC.netcdf_file(maskfile,"r")
     Lon     =  M.variables['glamt'].data[0,0,:,:].copy()
     Lat     =  M.variables['gphit'].data[0,0,:,:].copy()
@@ -23,11 +23,11 @@ def create_extinction_nc(test):
 
     kextfact=np.ones((jpj,jpi),float);
 
-    os.system("mkdir -p " + test['Dir'].decode() + '/KEXT')
+    os.system("mkdir -p " + test['Dir'] + '/KEXT')
 
     for dd in indata:
 
-        outfile = test['Dir'].decode() + '/KEXT/KextF_' + dd['date'].decode() + '.nc'
+        outfile = test['Dir'] + '/KEXT/KextF_' + dd['date'] + '.nc'
 #        print 'creating' + outfile
         ncOUT   = NC.netcdf_file(outfile,"w")
 

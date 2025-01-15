@@ -18,7 +18,7 @@ def do_big_ave_dia(test,POSTPROC_DIR):
     jpj=test['jpj'];
     jpk=test['jpk'];
     time = 1
-    maskfile=test['Dir'].decode() + '/meshmask.nc'
+    maskfile=test['Dir'] + '/meshmask.nc'
 
     M=NC.netcdf_file(maskfile,"r")
 
@@ -34,7 +34,7 @@ def do_big_ave_dia(test,POSTPROC_DIR):
     nvars=len(VARS)
     check_bool = 0
     for v,var in enumerate(VARS):
-         DIR_DATA          = test['Dir'].decode() + '/AVE_FREQ_2/'
+         DIR_DATA          = test['Dir'] + '/AVE_FREQ_2/'
          print(DIR_DATA)
 #/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase
 #        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/' + 'AVE_FREQ_1/'

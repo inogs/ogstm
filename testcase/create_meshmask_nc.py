@@ -281,9 +281,9 @@ def create_meshmask_nc(test):
     ##############################################################
     # write meshmask netcdf file !
     ##############################################################
-    os.system("mkdir -p " + test['Dir'].decode())
+    os.system("mkdir -p " + test['Dir'])
 
-    outfile = test['Dir'].decode() + '/meshmask.nc';
+    outfile = test['Dir'] + '/meshmask.nc';
 
     ncOUT=NC.netcdf_file(outfile,"w");
 

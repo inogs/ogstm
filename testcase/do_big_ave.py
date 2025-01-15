@@ -18,7 +18,7 @@ def do_big_ave(test,POSTPROC_DIR):
     jpk=test['jpk'];
     time = 1
     print(test['Dir'])
-    maskfile=test['Dir'].decode() + "/meshmask.nc"
+    maskfile=test['Dir'] + "/meshmask.nc"
 
     M=NC.netcdf_file(maskfile,"r")
 
@@ -30,7 +30,7 @@ def do_big_ave(test,POSTPROC_DIR):
     M.close()
 
 # Retrieving state variables names from model namelist
-    CODEPATH = test['Code'].decode() + "/ogstm/"
+    CODEPATH = test['Code'] + "/ogstm/"
     CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
     filename = CODEPATH +  "ready_for_model_namelists/namelist.passivetrc"
     NAMELIST = file2stringlist(filename)
@@ -45,7 +45,7 @@ def do_big_ave(test,POSTPROC_DIR):
     nvars=len(VARS)
     check_bool = 0
     for v,var in enumerate(VARS):
-         DIR_DATA          = test['Dir'].decode() + '/AVE_FREQ_2/'
+         DIR_DATA          = test['Dir'] + '/AVE_FREQ_2/'
          print(DIR_DATA)
 #/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase
 #        DIR_DATA          = '/pico/scratch/userexternal/plazzari/TILMAN/ogstm/testcase/TEST01/wrkdir/MODEL/' + 'AVE_FREQ_1/'
@@ -56,7 +56,7 @@ def do_big_ave(test,POSTPROC_DIR):
              ntimes=len(SingleVar_filelist)
              matrix=np.zeros((ntimes,jpk))
              #       WRITE NetCDF restart file
-             # outfile = POSTPROC_DIR + '/' + test['BIO-FLOAT'].decode() + '.nc'
+             # outfile = POSTPROC_DIR + '/' + test['BIO-FLOAT'] + '.nc'
              outfile = POSTPROC_DIR + '/' + 'TEST01' + '.nc'
              ncOUT   = NC4.Dataset(outfile,"w");
         

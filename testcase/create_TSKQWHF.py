@@ -16,7 +16,7 @@ def create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F):
     jpj=test['jpj'];
     jpk=test['jpk'];
     time = 1
-    maskfile=test['Dir'].decode() + '/meshmask.nc'
+    maskfile=test['Dir'] + '/meshmask.nc'
 
     M=NC.netcdf_file(maskfile,"r")
 

@@ -33,10 +33,10 @@ def create_Dom_Dec(test):
     ny[0] +=         -1
     ny[-1]+= jpj%nPy -1
 
-    os.system("mkdir -p " + test['Dir'].decode())
+    os.system("mkdir -p " + test['Dir'])
 
-    filename01 = test['Dir'].decode() + '/Dom_Dec_jpi.ascii'
-    filename02 = test['Dir'].decode() + '/Dom_Dec_jpj.ascii'
+    filename01 = test['Dir'] + '/Dom_Dec_jpi.ascii'
+    filename02 = test['Dir'] + '/Dom_Dec_jpj.ascii'
 
     f01 = open(filename01,'w')
     f02 = open(filename02,'w')
@@ -55,5 +55,5 @@ def create_Dom_Dec(test):
     f01.close()
     f02.close()
     tmask = np.ones((jpj,jpi),dtype=bool)
-    domdec.dump_outfile(tmask,nPx*nPy, nPx, nPy, filename=test['Dir'].decode() + '/domdec.txt')
+    domdec.dump_outfile(tmask,nPx*nPy, nPx, nPy, filename=test['Dir'] + '/domdec.txt')
 

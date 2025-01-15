@@ -44,7 +44,7 @@ def create_grid(test):
 def create_gradsal(test):
     jpi=test['jpi']
     jpj=test['jpj']
-    filename=test['Dir'].decode() + "/DA_static_data/3D_VAR/gradsal.nc"
+    filename=test['Dir'] + "/DA_static_data/3D_VAR/gradsal.nc"
     NCout = NC.netcdf_file(filename,"w")
     NCout.createDimension("im", jpi)
     NCout.createDimension("jm", jpj)
@@ -69,7 +69,7 @@ def create_variance_for_misfit(test):
     for ji in range(jpi): lon[ji]=test['lon0']-jpi/2.*dx+dx/2. + dx*ji;
     for jj in range(jpj): lat[jj]=test['lat0']-jpi/2.*dy+dy/2. + dy*jj;
 
-    OUTDIR=test['Dir'].decode() + "/DA_static_data/MISFIT/VAR2D/"
+    OUTDIR=test['Dir'] + "/DA_static_data/MISFIT/VAR2D/"
     os.system("mkdir -p " + OUTDIR)
 
     for month in range(12):
@@ -94,7 +94,7 @@ def create_eofs_for_3dvar(test):
     EVA = 0.08 * (np.random.rand(neof,nreg).astype(np.float32) - 0.5 ) + 0.15
     EVC = 12 * np.random.rand(neof,nlev,nreg).astype(np.float32) -6
 
-    OUTDIR=test['Dir'].decode() + "/DA_static_data/3D_VAR/EOF/"
+    OUTDIR=test['Dir'] + "/DA_static_data/3D_VAR/EOF/"
     os.system("mkdir -p " + OUTDIR)
     for month in range(12):
         filename = OUTDIR +  "eof.%02d.nc"  %(month+1)
@@ -108,7 +108,7 @@ def create_eofs_for_3dvar(test):
         ncvar = NCout.createVariable("evc", 'f', ('neof','nlev','nreg'))
         ncvar[:] = EVC
         NCout.close()
-    OUTDIR=test['Dir'].decode() + "/DA_static_data/3D_VAR/GRID/"
+    OUTDIR=test['Dir'] + "/DA_static_data/3D_VAR/GRID/"
     os.system("mkdir -p " + OUTDIR)
 
 def create_misfit_for_3dvar(test):
@@ -125,7 +125,7 @@ def create_misfit_for_3dvar(test):
 
     MIS = 0.20 * (np.random.rand(jpj,jpi).astype(np.float32) -0.5) + 0.25
     ERR = 0.20 * (np.random.rand(jpj,jpi).astype(np.float32) -0.5) + 0.45
-    NCout = NC.netcdf_file(test['Dir'].decode()+ '/chl_misfit.nc',"w")
+    NCout = NC.netcdf_file(test['Dir']+ '/chl_misfit.nc',"w")
     NCout.createDimension("lon", jpi)
     NCout.createDimension("lat", jpj)
     NCout.createDimension("time",  1)
@@ -156,7 +156,7 @@ def create_misfit_for_3dvar(test):
     NCout.close()
 
 def create_sat_files(test):
-    OUTDIR=test['Dir'].decode() + "/SATELLITE/"
+    OUTDIR=test['Dir'] + "/SATELLITE/"
     
     os.system("mkdir -p " + OUTDIR)
 

@@ -17,7 +17,7 @@ def create_forcings_nc(test):
     jpj=test['jpj'];
     jpk=test['jpk'];
     time = 1
-    maskfile=test['Dir'].decode() + '/meshmask.nc'
+    maskfile=test['Dir'] + '/meshmask.nc'
 
     M=NC.netcdf_file(maskfile,"r")
 
@@ -74,14 +74,14 @@ def create_forcings_nc(test):
 
     filein.close()
 
-    os.system("mkdir -p " + test['Dir'].decode() + '/FORCINGS/')
-    os.system("mkdir -p " + test['Dir'].decode() + '/DELTA_T/')
+    os.system("mkdir -p " + test['Dir'] + '/FORCINGS/')
+    os.system("mkdir -p " + test['Dir'] + '/DELTA_T/')
 
     for date in FORCING_DATE:
         # Create T file
         TSKQWHF.create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F)
-        outfile = test['Dir'].decode() + '/FORCINGS/T' + date + '.nc'
-        DeltaTfile = test['Dir'].decode() + '/DELTA_T/DeltaT_' + date + '.txt'
+        outfile = test['Dir'] + '/FORCINGS/T' + date + '.nc'
+        DeltaTfile = test['Dir'] + '/DELTA_T/DeltaT_' + date + '.txt'
         f01 = open(DeltaTfile,'w')
         f01.write("1800 1800.0 0 0 0")
         f01.write("\n")
@@ -107,7 +107,7 @@ def create_forcings_nc(test):
 
         # Create U file
 
-        outfile = test['Dir'].decode() + '/FORCINGS/U' + date + '.nc'
+        outfile = test['Dir'] + '/FORCINGS/U' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
         ncOUT.createDimension('x'           ,jpi);
@@ -125,7 +125,7 @@ def create_forcings_nc(test):
 
         # Create V file
 
-        outfile = test['Dir'].decode() + '/FORCINGS/V' + date + '.nc'
+        outfile = test['Dir'] + '/FORCINGS/V' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
         ncOUT.createDimension('x'           ,jpi);
@@ -142,7 +142,7 @@ def create_forcings_nc(test):
 
         # Create W file
 
-        outfile = test['Dir'].decode() + '/FORCINGS/W' + date + '.nc'
+        outfile = test['Dir'] + '/FORCINGS/W' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
         ncOUT.createDimension('x'           ,jpi);

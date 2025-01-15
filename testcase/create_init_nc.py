@@ -12,7 +12,7 @@ from interpolation43 import interpolate
 
 
 def create_init_nc(test):
-    CODEPATH = test['Code'].decode() + "/ogstm/"
+    CODEPATH = test['Code'] + "/ogstm/"
     CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
     filename = CODEPATH +  "ready_for_model_namelists/namelist.passivetrc"
     NAMELIST =file2stringlist(filename)
@@ -32,7 +32,7 @@ def create_init_nc(test):
     y_a=1
     z_a=3
 
-    maskfile=test['Dir'].decode() + '/meshmask.nc'
+    maskfile=test['Dir'] + '/meshmask.nc'
 
     M=NC.netcdf_file(maskfile,"r")
 
@@ -44,12 +44,12 @@ def create_init_nc(test):
 
     rst=np.zeros((1,jpk,jpj,jpi),np.double)
 
-    os.system("mkdir -p " + test['Dir'].decode())
-    os.system("mkdir -p " + test['Dir'].decode() + "/RESTARTS/")
-    os.system("mkdir -p " + test['Dir'].decode() + "/AVE_FREQ_1/")
-    os.system("mkdir -p " + test['Dir'].decode() + "/AVE_FREQ_2/")
-    os.system("mkdir -p " + test['Dir'].decode() + "/AVE_PHYS/")
-    os.system("mkdir -p " + test['Dir'].decode() + "/FLUXES/")
+    os.system("mkdir -p " + test['Dir'])
+    os.system("mkdir -p " + test['Dir'] + "/RESTARTS/")
+    os.system("mkdir -p " + test['Dir'] + "/AVE_FREQ_1/")
+    os.system("mkdir -p " + test['Dir'] + "/AVE_FREQ_2/")
+    os.system("mkdir -p " + test['Dir'] + "/AVE_PHYS/")
+    os.system("mkdir -p " + test['Dir'] + "/FLUXES/")
 
     for var in initVARS:
         filename = "KB/INIT_NWM_KB/init." + var
@@ -60,7 +60,7 @@ def create_init_nc(test):
             for jj in range(int(jpj/2)):
                 rst[0,jk,jj,:] = datain[jk]*0.75
 #       WRITE NetCDF restart file
-        outfile = test['Dir'].decode() + '/RESTARTS/RST.' + test['Start'].decode() + '.' + var + '.nc'
+        outfile = test['Dir'] + '/RESTARTS/RST.' + test['Start'] + '.' + var + '.nc'
         ncOUT   = NC.netcdf_file(outfile,"w");
 
         ncOUT.createDimension('x',jpi);

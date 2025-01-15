@@ -6,10 +6,10 @@ test_conf=np.dtype([('jpi'   ,int)  ,('jpj',int)     ,('jpk',int),\
                     ('nprocx',int)  ,('nprocy',int)  ,\
                     ('lon0'  ,float),('lat0',float)  ,\
                     ('dx'    ,float),('dy'    ,float),\
-                    ('Start' ,'S100')  ,('End'   ,'S100')  ,\
-                    ('Dir','S100'),('Code','S100')])
+                    ('Start' ,'U100')  ,('End'   ,'U100')  ,\
+                    ('Dir','U100'),('Code','U100')])
 
-ext_data =np.dtype([('date','S17'),('kext',float)])
+ext_data =np.dtype([('date','U17'),('kext',float)])
 
 
 def file2stringlist(filename):

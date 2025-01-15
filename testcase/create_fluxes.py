@@ -15,7 +15,7 @@ def create_fluxes(test):
     jpi=test['jpi'];
     jpj=test['jpj'];
     jpk=test['jpk'];
-    modeldir=test['Dir'].decode()
+    modeldir=test['Dir']
     
     maskfile=modeldir + '/meshmask.nc'
     bounmask=modeldir + '/bounmask.nc'

@@ -44,7 +44,7 @@ def create_UVW(test,D3U,D3V,D3W,Av,Au):
     jpj=test['jpj'];
     jpk=test['jpk'];
     time = 1
-    maskfile=test['Dir'].decode() + '/meshmask.nc'
+    maskfile=test['Dir'] + '/meshmask.nc'
 
     M=NC.netcdf_file(maskfile,"r")
 

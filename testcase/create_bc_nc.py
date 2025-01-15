@@ -7,7 +7,7 @@ import scipy.io.netcdf as NC
 def create_bc_nc(test):
 
 # Create boundaries namelist
-    filename = test['Dir'].decode() + '/boundaries.nml'
+    filename = test['Dir'] + '/boundaries.nml'
     f01 = open(filename,'w')
     f01.write("3")
     f01.write("\n")
@@ -16,7 +16,7 @@ def create_bc_nc(test):
     f01.write("\"dar, OPE, dar.nml, files_namelist_dar.dat, T, F\"\n")
     f01.close()
 # Create riv.nml namelist
-    filename = test['Dir'].decode() + '/riv.nml'
+    filename = test['Dir'] + '/riv.nml'
     f01 = open(filename,'w')
     f01.write("&VARS_DIMENSION\n\n")
     f01.write("    n_vars = 6\n\n")
@@ -34,7 +34,7 @@ def create_bc_nc(test):
     f01.close()
 
     TIN_DATE=file2stringlist('KB/tin_date')
-    filename = test['Dir'].decode() + '/files_namelist_riv.dat'
+    filename = test['Dir'] + '/files_namelist_riv.dat'
     f01 = open(filename,'w')
     f01.write(f"{len(TIN_DATE)}\n")
     for d in TIN_DATE:
@@ -42,14 +42,14 @@ def create_bc_nc(test):
     f01.close()
 
     GIB_DATE=file2stringlist('KB/gib_date')
-    filename = test['Dir'].decode() + '/files_namelist_gib.dat'
+    filename = test['Dir'] + '/files_namelist_gib.dat'
     f01 = open(filename,'w')
     f01.write(f"{len(GIB_DATE)}\n")
     for d in GIB_DATE:
         f01.write(f"\"BC/GIB_{d}.nc\"\n")
     f01.close()
 
-    filename = test['Dir'].decode() + '/gib.nml'
+    filename = test['Dir'] + '/gib.nml'
     f01 = open(filename,'w')
     f01.write("&VARS_DIMENSION\n")
     f01.write("n_vars = 2\n")
@@ -76,14 +76,14 @@ def create_bc_nc(test):
     f01.close()
     
     
-    filename = test['Dir'].decode() + '/files_namelist_dar.dat'
+    filename = test['Dir'] + '/files_namelist_dar.dat'
     f01 = open(filename,'w')
     f01.write("1\n")
     f01.write("\"BC/OPE_yyyy0630-00:00:00.nc\"")
     f01.write("\n")
     f01.close()
 
-    filename=test['Dir'].decode() + '/dar.nml'
+    filename=test['Dir'] + '/dar.nml'
     f01 = open(filename,'w')
     f01.write("&VARS_DIMENSION\n")
     f01.write("n_vars = 5\n")
@@ -105,7 +105,7 @@ def create_bc_nc(test):
     jpj=test['jpj'];
     jpk=test['jpk'];
     time = 1
-    maskfile=test['Dir'].decode() + '/meshmask.nc'
+    maskfile=test['Dir'] + '/meshmask.nc'
 
     M=NC.netcdf_file(maskfile,"r")
 
@@ -147,7 +147,7 @@ def create_bc_nc(test):
                     index_inv[waterpoints,2] = ji + 1
                     waterpoints += 1
 
-    outfile = test['Dir'].decode() + '/bounmask.nc'
+    outfile = test['Dir'] + '/bounmask.nc'
     ncOUT   = NC.netcdf_file(outfile,'w')
     ncOUT.createDimension('x'          ,jpi );
     ncOUT.createDimension('y'          ,jpj );
@@ -172,13 +172,13 @@ def create_bc_nc(test):
 
     ncOUT.close()
 
-    os.system("mkdir -p " + test['Dir'].decode() + '/BC/')
+    os.system("mkdir -p " + test['Dir'] + '/BC/')
 # Atmosphere NUT
 
     ATM_DATE=file2stringlist('KB/atm_date')
 
     for date in ATM_DATE:
-        outfile = test['Dir'].decode() + '/BC/ATM_' + date + '.nc'
+        outfile = test['Dir'] + '/BC/ATM_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
 
@@ -199,7 +199,7 @@ def create_bc_nc(test):
 
     for date in CO2_DATE:
         # Create CO2 file
-        outfile = test['Dir'].decode() + '/BC/CO2_' + date + '.nc'
+        outfile = test['Dir'] + '/BC/CO2_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
         ncOUT.createDimension('lon',jpi);
@@ -219,7 +219,7 @@ def create_bc_nc(test):
 
     for date in TIN_DATE:
         # Create RIV file
-        outfile = test['Dir'].decode() + '/BC/TIN_' + date + '.nc'
+        outfile = test['Dir'] + '/BC/TIN_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
         ncOUT.createDimension('lon'    ,jpi);
@@ -241,7 +241,7 @@ def create_bc_nc(test):
 
 # GIB
     for date in GIB_DATE:
-        outfile = test['Dir'].decode() + '/BC/GIB_' + date + '.nc'
+        outfile = test['Dir'] + '/BC/GIB_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
         ncOUT.createDimension('lon'    ,jpi)
@@ -268,7 +268,7 @@ def create_bc_nc(test):
         j_max=int(jpj/2)
         for k in range(jpk):
             OPEN_BOUNDARY[k,j_min:j_max,I] = 0.1
-        outfile = test['Dir'].decode() + '/BC/OPE_yyyy0630-00:00:00.nc'
+        outfile = test['Dir'] + '/BC/OPE_yyyy0630-00:00:00.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
         ncOUT.createDimension('lon'    ,jpi);
         ncOUT.createDimension('lat'    ,jpj);

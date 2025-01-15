@@ -1,12 +1,8 @@
 import os,sys
-
 import numpy as np
-
-from mydtype import *
-
+from mydtype import test_conf, ext_data, file2stringlist
 import scipy.io.netcdf as NC
 
-import pickle
 
 def create_bc_nc(test):
 
@@ -15,9 +11,9 @@ def create_bc_nc(test):
     f01 = open(filename,'w')
     f01.write("3")
     f01.write("\n")
-    f01.write("\"riv, RIV, riv.nml, files_namelist_riv.dat, T, F\"")
-    f01.write("\"riv, SPO, gib.nml, files_namelist_gib.dat, T, F\"")
-    f01.write("\"dar, OPE, dar.nml, files_namelist_dar.dat, T, F\"")
+    f01.write("\"riv, RIV, riv.nml, files_namelist_riv.dat, T, F\"\n")
+    f01.write("\"gib, SPO, gib.nml, files_namelist_gib.dat, T, F\"\n")
+    f01.write("\"dar, OPE, dar.nml, files_namelist_dar.dat, T, F\"\n")
     f01.close()
 # Create riv.nml namelist
     filename = test['Dir'].decode() + '/riv.nml'
@@ -80,20 +76,41 @@ def create_bc_nc(test):
     f01.write("\"BC/TIN_yyyy1215-00:00:00.nc\"")
     f01.close()
 
+    GIB_DATE=file2stringlist('KB/gib_date')
     filename = test['Dir'].decode() + '/files_namelist_gib.dat'
     f01 = open(filename,'w')
-    f01.write("4")
-    f01.write("\n")
-    f01.write("\"BC/GIB_yyyy0215-00:00:00.nc\"")
-    f01.write("\n")
-    f01.write("\"BC/GIB_yyyy0515-00:00:00.nc\"")
-    f01.write("\n")
-    f01.write("\"BC/GIB_yyyy0815-00:00:00.nc\"")
-    f01.write("\n")
-    f01.write("\"BC/GIB_yyyy1115-00:00:00.nc\"")
-    f01.write("\n")
+    f01.write(f"{len(GIB_DATE)}\n")
+    for d in GIB_DATE:
+        f01.write(f"\"BC/GIB_{d}.nc\"\n")
     f01.close()
 
+    filename = test['Dir'].decode() + '/gib.nml'
+    f01 = open(filename,'w')
+    f01.write("&VARS_DIMENSION\n")
+    f01.write("n_vars = 2\n")
+    f01.write("/\n")
+    f01.write("\n")
+    f01.write("&CORE\n")
+    f01.write("vars(1) = \"N1p\"\n")
+    f01.write("vars(2) = \"N3n\"\n")
+    f01.write("alpha = 4.0d0\n")
+    f01.write("reduction_value_t = 1.0d-6\n")
+    f01.write("length = -7.5d0\n")
+    f01.write("/\n")
+    f01.write("\n")
+    f01.write("&NUDGING_VARS_DIMENSION\n")
+    f01.write("n_vars = 2\n")
+    f01.write("/\n")
+    f01.write("&NUDGING_CORE\n")
+    f01.write("data_file=\"bounmask.nc\"\n")
+    f01.write("vars(1) = \"N1p\"\n")
+    f01.write("vars(2) = \"N3n\"\n")
+    f01.write("rst_corr(1) = 1.0d0\n")
+    f01.write("rst_corr(2) = 1.0d0\n")
+    f01.write("/\n")
+    f01.close()
+    
+    
     filename = test['Dir'].decode() + '/files_namelist_dar.dat'
     f01 = open(filename,'w')
     f01.write("1\n")
@@ -116,8 +133,10 @@ def create_bc_nc(test):
     tmask   =  M.variables['tmask'].data[0,:,:,:].astype(bool).copy()
     M.close()
 
-    D3=np.ones((1,jpk,jpj,jpi),float)
+    D3=np.zeros((1,jpk,jpj,jpi),float)
     D2=np.ones((1,jpj,jpi),float)
+    first_quarter=int(jpi/4)
+    D3[0,:,:,0:first_quarter]=1.e-05 # resto value
 
 # Creating bounmask.nc
 
@@ -158,13 +177,13 @@ def create_bc_nc(test):
     ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')             ); ncvar[:] = Lat;
     ncvar = ncOUT.createVariable('nav_lev'      ,'f',('z',)                ); ncvar[:] = gdept;
 
-    ncvar = ncOUT.createVariable('reN1p'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
-    ncvar = ncOUT.createVariable('reN3n'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
-    ncvar = ncOUT.createVariable('reO2o'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
-    ncvar = ncOUT.createVariable('reN5s'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
-    ncvar = ncOUT.createVariable('reO3c'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
-    ncvar = ncOUT.createVariable('reO3h'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
-    ncvar = ncOUT.createVariable('reN6r'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
+    ncvar = ncOUT.createVariable('reN1p'        ,'d',('time','z','y','x')  ); ncvar[:] = D3
+    ncvar = ncOUT.createVariable('reN3n'        ,'d',('time','z','y','x')  ); ncvar[:] = D3
+    ncvar = ncOUT.createVariable('reO2o'        ,'d',('time','z','y','x')  ); ncvar[:] = D3
+    ncvar = ncOUT.createVariable('reN5s'        ,'d',('time','z','y','x')  ); ncvar[:] = D3
+    ncvar = ncOUT.createVariable('reO3c'        ,'d',('time','z','y','x')  ); ncvar[:] = D3
+    ncvar = ncOUT.createVariable('reO3h'        ,'d',('time','z','y','x')  ); ncvar[:] = D3;
+    ncvar = ncOUT.createVariable('reN6r'        ,'d',('time','z','y','x')  ); ncvar[:] = D3;
 
     ncvar = ncOUT.createVariable('index'        ,'i',('time','z','y','x')  ); ncvar[:] = index;
     ncvar = ncOUT.createVariable('index_inv'    ,'i',('waterpoints','dim3')); ncvar[:] = index_inv;
@@ -173,14 +192,9 @@ def create_bc_nc(test):
 
     os.system("mkdir -p " + test['Dir'].decode() + '/BC/')
 # Atmosphere NUT
-    ATM_DATE=[]
 
-    filein=open('KB/atm_date')
+    ATM_DATE=file2stringlist('KB/atm_date')
 
-    for var in filein:
-        ATM_DATE.append(var[:-1])
-
-    filein.close()
 
 
     atm_idxt = 0;
@@ -215,14 +229,8 @@ def create_bc_nc(test):
 
 # Atmosphere CO2
 
-    CO2_DATE=[]
+    CO2_DATE=file2stringlist('KB/co2_date')
 
-    filein=open('KB/co2_date')
-
-    for var in filein:
-        CO2_DATE.append(var[:-1])
-
-    filein.close()
 
     D2=np.ones((jpj,jpi),float)
 
@@ -240,39 +248,7 @@ def create_bc_nc(test):
         ncOUT.close()
 
 # TIN
-    TIN_DATE=[]
-
-    filein=open('KB/tin_date')
-
-    for var in filein:
-        TIN_DATE.append(var[:-1])
-
-    filein.close()
-
-
-
-    tin_idxt = 0;
-
-    for wp in range(waterpoints):
-        ji = index_inv[wp,2] -1 ; # index_inv is fortran style
-        jj = index_inv[wp,1] -1 ;
-        jk = index_inv[wp,0] -1 ;
-        if ( (ji==1) | (jj==1) ) | ( (ji==jpi-2) | (jj==jpj-2) ):
-            if (jk ==0 ):
-                tin_idxt += 1
-
-    riv_index=np.ones((tin_idxt),int)
-
-    tin_idxt = 0;
-
-    for wp in range(waterpoints):
-        ji = index_inv[wp,2] -1; # index_inv is fortran style
-        jj = index_inv[wp,1] -1;
-        jk = index_inv[wp,0] -1;
-        if ( (ji==1) | (jj==1) ) | ( (ji==jpi-2) | (jj==jpj-2) ):
-            if (jk ==0 ):
-                riv_index[tin_idxt]=index[jk,jj,ji]
-                tin_idxt += 1
+    TIN_DATE=file2stringlist('KB/tin_date')
 
     riv_N1p=np.zeros((jpj,jpi),dtype=float)-1.0; riv_N1p[0,0]=0.35*10**(-5)
     riv_N3n=np.zeros((jpj,jpi),dtype=float)-1.0; riv_N3n[0,0]=0.2*10**(-3)
@@ -304,14 +280,7 @@ def create_bc_nc(test):
         ncOUT.close()
 
 # GIB
-    GIB_DATE=[]
-
-    filein=open('KB/gib_date')
-
-    for var in filein:
-        GIB_DATE.append(var[:-1])
-
-    filein.close()
+    
 
 
 
@@ -341,32 +310,16 @@ def create_bc_nc(test):
         outfile = test['Dir'].decode() + '/BC/GIB_' + date + '.nc'
         ncOUT   = NC.netcdf_file(outfile,'w')
 
-        ncOUT.createDimension('gib_idxt_N1p'    ,gib_idxt);
-        ncOUT.createDimension('gib_idxt_N3n'    ,gib_idxt);
-        ncOUT.createDimension('gib_idxt_O2o'    ,gib_idxt);
-        ncOUT.createDimension('gib_idxt_N5s'    ,gib_idxt);
-        ncOUT.createDimension('gib_idxt_O3c'    ,gib_idxt);
-        ncOUT.createDimension('gib_idxt_O3h'    ,gib_idxt);
-        ncOUT.createDimension('gib_idxt_N6r'    ,gib_idxt);
+        ncOUT.createDimension('lon'    ,jpi)
+        ncOUT.createDimension('lat'    ,jpj)
+        ncOUT.createDimension('dep'    ,jpk)
 
-
-
-        ncvar = ncOUT.createVariable('gib_idxt_N1p','i',('gib_idxt_N1p',) ); ncvar[:] = gib_index;
-        ncvar = ncOUT.createVariable('gib_idxt_N3n','i',('gib_idxt_N3n',) ); ncvar[:] = gib_index;
-        ncvar = ncOUT.createVariable('gib_idxt_O2o','i',('gib_idxt_O2o',) ); ncvar[:] = gib_index;
-        ncvar = ncOUT.createVariable('gib_idxt_N5s','i',('gib_idxt_N5s',) ); ncvar[:] = gib_index;
-        ncvar = ncOUT.createVariable('gib_idxt_O3c','i',('gib_idxt_O3c',) ); ncvar[:] = gib_index;
-        ncvar = ncOUT.createVariable('gib_idxt_O3h','i',('gib_idxt_O3h',) ); ncvar[:] = gib_index;
-        ncvar = ncOUT.createVariable('gib_idxt_N6r','i',('gib_idxt_N6r',) ); ncvar[:] = gib_index;
-
-        ncvar = ncOUT.createVariable('gib_N1p'     ,'d',('gib_idxt_N1p',) ); ncvar[:] = 0.;
-        ncvar = ncOUT.createVariable('gib_N3n'     ,'d',('gib_idxt_N3n',) ); ncvar[:] = 0.;
-        ncvar = ncOUT.createVariable('gib_O2o'     ,'d',('gib_idxt_O2o',) ); ncvar[:] = 0.;
-        ncvar = ncOUT.createVariable('gib_N5s'     ,'d',('gib_idxt_N5s',) ); ncvar[:] = 0.;
-        ncvar = ncOUT.createVariable('gib_O3c'     ,'d',('gib_idxt_O3c',) ); ncvar[:] = 0.;
-        ncvar = ncOUT.createVariable('gib_O3h'     ,'d',('gib_idxt_O3h',) ); ncvar[:] = 0.;
-        ncvar = ncOUT.createVariable('gib_N6r'     ,'d',('gib_idxt_N6r',) ); ncvar[:] = 0.;
-
+        N1p = np.zeros((jpk,jpj,jpi),np.float32)
+        N3n = np.zeros((jpk,jpj,jpi),np.float32)
+        N1p[:,:,0:first_quarter]=0.14
+        N3n[:,:,0:first_quarter]=1.0
+        ncvar = ncOUT.createVariable('gib_N1p','f',("dep","lat","lon") ); ncvar[:] = N1p
+        ncvar = ncOUT.createVariable('gib_N3n','f',("dep","lat","lon") ); ncvar[:] = N3n
         ncOUT.close()
 
         BOUNDARY_CONCENTRATION={}
@@ -386,10 +339,10 @@ def create_bc_nc(test):
         ncOUT.createDimension('lon'    ,jpi);
         ncOUT.createDimension('lat'    ,jpj);
         ncOUT.createDimension('z'     ,jpk );
-        for var in OPEN_BOUNDARY.keys():
+        for var in BOUNDARY_CONCENTRATION.keys():
             for k in range(jpk):
                 OPEN_BOUNDARY[k,j_min:j_max,I] = BOUNDARY_CONCENTRATION[var]
-            ncvar = ncOUT.createVariable(var,f,('z','lat','lon')  )
+            ncvar = ncOUT.createVariable(var,'f',('z','lat','lon')  )
             ncvar[:] = OPEN_BOUNDARY
 
         ncOUT.close()

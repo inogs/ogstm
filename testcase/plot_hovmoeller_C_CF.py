@@ -18,7 +18,7 @@ def plot_hovmoeller_C_CF(test,DATADIR,plot_mode):
         jpj=test['jpj'];
         jpk=test['jpk'];
         time = 1
-        maskfile=test['Dir'].decode() + '/meshmask.nc'
+        maskfile=test['Dir'] + '/meshmask.nc'
 
         plotDepth=14
 #       plot_mode=1

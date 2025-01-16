@@ -25,9 +25,9 @@ def create_bfmmask_nc(test):
     ##############################################################
     # write bfmmask netcdf file !
     ##############################################################
-    os.system("mkdir -p " + test['Dir'].decode())
+    os.system("mkdir -p " + test['Dir'])
 
-    outfile = test['Dir'].decode() + '/bfmmask.nc';
+    outfile = test['Dir'] + '/bfmmask.nc';
 
     ncOUT=NC.netcdf_file(outfile,"w");
 

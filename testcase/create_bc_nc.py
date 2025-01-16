@@ -257,11 +257,12 @@ def create_bc_nc(test):
         ncOUT.close()
 # Open Boundary
         BOUNDARY_CONCENTRATION={}
-        BOUNDARY_CONCENTRATION['N5s'] = 2.0
-        BOUNDARY_CONCENTRATION['N1p'] = 0.065 # mmol/m3
-        BOUNDARY_CONCENTRATION['N3n']=   1.3 # mol/m3
-        BOUNDARY_CONCENTRATION['O3c']= 28700 # mg/m3
-        BOUNDARY_CONCENTRATION['O3h']=  2800 # mmol/m3
+        alpha=1.e-6
+        BOUNDARY_CONCENTRATION['N5s'] = 2.0*alpha
+        BOUNDARY_CONCENTRATION['N1p'] = 0.065*alpha # mmol/m3
+        BOUNDARY_CONCENTRATION['N3n']=   1.3*alpha # mol/m3
+        BOUNDARY_CONCENTRATION['O3c']= 28700*alpha # mg/m3
+        BOUNDARY_CONCENTRATION['O3h']=  2800*alpha # mmol/m3
         OPEN_BOUNDARY=np.zeros((jpk,jpj,jpi),np.float32)
         I = jpi-2
         j_min=1

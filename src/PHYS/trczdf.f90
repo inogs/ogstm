@@ -69,7 +69,7 @@
 
 
       LOGICAL :: l1,l2,l3
-      INTEGER :: jk,jj,ji, jn, jv, jf, ntx
+      INTEGER :: jk,jj,ji, jn, jv, jf
 ! omp variables
       
 
@@ -78,8 +78,9 @@
 !! only IMPLICIT scheme
 
       double precision :: z2dtt
-      double precision :: delta_tra(jpk),int_tra(jpk)
+      double precision, save, allocatable :: delta_tra(:),int_tra(:)
       double precision :: Aij
+      logical, save :: first = .true.
 
 !!---------------------------------------------------------------------
 !! statement functions
@@ -114,12 +115,14 @@
             END DO
          END DO
          !$acc update device(jarr_zdf,jarr_zdf_flx)
-#ifdef _OPENACC
-         call myalloc_ZDF_gpu()
-#endif
+         call myalloc_ZDF_zw()
       ENDIF
-      !$acc enter data create(delta_tra,int_tra)
 
+      if (first) then
+         allocate(delta_tra(jpk), int_tra(jpk))
+         !$acc enter data create(delta_tra,int_tra)
+         first=.false.
+      endif
 
 !! passive tracer slab
 !! ===================
@@ -133,21 +136,6 @@
         ztavg = 0.e0
 !! vertical slab
 
-        ! NOTE: kernel is too big, should be split by adding a new jv dimension
-        ! on zwi zws zwd zwy zwt zwz zwx
-        !$acc parallel loop gang vector default(present) async vector_length(32)
-        DO jv = 1, dimen_jvzdf
-
-           ji  = jarr_zdf(2,jv)
-           jj  = jarr_zdf(1,jv)
-           Aij = e1t(jj,ji) * e2t(jj,ji)
-
-#ifdef _OPENACC
-           ntx=jv
-#else
-           ntx=1
-#endif
-
 !! I. Vertical trends associated with lateral mixing
 !! -------------------------------------------------
 !!    (excluding the vertical flux proportional to dk[t] )
@@ -160,31 +148,42 @@
 
 !! 0. initialization
       zdt= ndttrc
-
+      z2dtt = zdt * rdt
 
 !! II.0 Matrix construction
 !! Diagonal, inferior, superior
 !! (including the bottom boundary condition via avt masked)
 !!   ... Euler time stepping when starting from rest
-        DO jk = 1, jpkm1
-          z2dtt = zdt * rdt
-          zwi(jk, ntx) = - z2dtt * avt(jk,jj,ji  )/( e3t(jk,jj,ji) * e3w(jk,jj,ji  ) )
-          zws(jk, ntx) = - z2dtt * avt(jk+1,jj,ji)/( e3t(jk,jj,ji) * e3w(jk+1,jj,ji) )
-          zwd(jk, ntx) = 1. - zwi(jk, ntx) - zws(jk, ntx)
-        END DO
-
-!! Surface boundary conditions
-          zwi(1,ntx) = 0.e0
-          zwd(1,ntx) = 1. - zws(1,ntx)
+      !$acc parallel loop gang vector default(present) collapse(2) async
+      DO jv = 1, dimen_jvzdf
+         DO jk = 1, jpkm1
+            ji=jarr_zdf(2,jv)
+            jj=jarr_zdf(1,jv)
+            IF (jk .ne. 1) THEN
+               zwi(jk, jv) = - z2dtt * avt(jk,jj,ji  )/( e3t(jk,jj,ji) * e3w(jk,jj,ji  ) )
+               zws(jk, jv) = - z2dtt * avt(jk+1,jj,ji)/( e3t(jk,jj,ji) * e3w(jk+1,jj,ji) )
+               zwd(jk, jv) = 1. - zwi(jk, jv) - zws(jk, jv)
+            ELSE
+               !! Surface boundary conditions
+               zwi(1,jv) = 0.e0
+               zws(jk, jv) = - z2dtt * avt(jk+1,jj,ji)/( e3t(jk,jj,ji) * e3w(jk+1,jj,ji) )
+               zwd(1,jv) = 1. - zws(1,jv)
+            ENDIF
+         END DO
+      END DO
 
 !! II.1. Vertical diffusion on tr
 !! ------------------------------
 !! Second member construction
 !!   ... Euler time stepping when starting from rest
-        DO jk = 1, jpkm1
-          z2dtt = zdt * rdt
-          zwy(jk,ntx) = trb(jk,jj,ji,jn)*e3t_back(jk,jj,ji)/e3t(jk,jj,ji) + z2dtt * tra(jk,jj,ji,jn)
-        END DO
+      !$acc parallel loop gang vector default(present) collapse(2) async
+      DO jv = 1, dimen_jvzdf
+         DO jk = 1, jpkm1
+            ji=jarr_zdf(2,jv)
+            jj=jarr_zdf(1,jv)
+            zwy(jk,jv) = trb(jk,jj,ji,jn)*e3t_back(jk,jj,ji)/e3t(jk,jj,ji) + z2dtt * tra(jk,jj,ji,jn)
+         END DO
+      END DO
 
 !! Matrix inversion from the first level
         ikst = 1
@@ -221,63 +220,72 @@
         ikstp1=ikst+1
         ikenm2=jpk-2
 
-        zwt(ikst,ntx)=zwd(ikst,ntx)
+        !$acc parallel loop gang vector default(present) vector_length(32) async
+        DO jv = 1, dimen_jvzdf
+           zwt(ikst,jv)=zwd(ikst,jv)
+           DO jk=ikstp1,jpkm1
+              zwt(jk,jv)=zwd(jk,jv)-zwi(jk,jv)*zws(jk-1,jv)/zwt(jk-1,jv)
+           END DO
 
-        DO jk=ikstp1,jpkm1
-            zwt(jk,ntx)=zwd(jk,ntx)-zwi(jk,ntx)*zws(jk-1,ntx)/zwt(jk-1,ntx)
-        END DO
+           zwz(ikst,jv)=zwy(ikst,jv)
+           DO jk=ikstp1,jpkm1
+              zwz(jk,jv)=zwy(jk,jv)-zwi(jk, jv)/zwt(jk-1, jv)*zwz(jk-1, jv)
+           END DO
 
-          zwz(ikst,ntx)=zwy(ikst,ntx)
-
-        DO jk=ikstp1,jpkm1
-            zwz(jk,ntx)=zwy(jk,ntx)-zwi(jk, ntx)/zwt(jk-1, ntx)*zwz(jk-1, ntx)
-        END DO
-
-        zwx(jpkm1, ntx)=zwz(jpkm1, ntx)/zwt(jpkm1, ntx)
-
-        DO jk=ikenm2,ikst,-1
-            zwx(jk, ntx)=( zwz(jk, ntx)-zws(jk, ntx)*zwx(jk+1, ntx) )/zwt(jk, ntx)
+           zwx(jpkm1, jv)=zwz(jpkm1, jv)/zwt(jpkm1, jv)
+           DO jk=ikenm2,ikst,-1
+              zwx(jk, jv)=( zwz(jk, jv)-zws(jk, jv)*zwx(jk+1, jv) )/zwt(jk, jv)
+           END DO
         END DO
 
 ! calculate flux due to vertical diffusion (on top face of the grid cell jk)
 ! the flux is computed as an integral (int_tra) starting from the surface
 
-      DO jk=1,jpkm1
+        !$acc parallel loop gang vector default(present) collapse(2) async
+        DO jv = 1, dimen_jvzdf
+           DO jk=1,jpkm1
+              ji=jarr_zdf(2,jv)
+              jj=jarr_zdf(1,jv)
+              Aij = e1t(jj,ji) * e2t(jj,ji)
+              delta_tra(jk) = ( zwx(jk,jv) - zwy(jk,jv) ) / z2dtt * Aij * e3t(jk,jj,ji)! or trn(jk,jj,ji,jn+mytid)
+           END DO
+        END DO
 
-         z2dtt = zdt * rdt
-         delta_tra(jk) = ( zwx(jk,ntx) - zwy(jk,ntx) ) / z2dtt * Aij * e3t(jk,jj,ji)! or trn(jk,jj,ji,jn+mytid)
+        !$acc parallel loop gang vector default(present) async
+        DO jv = 1, dimen_jvzdf
+           DO jk=1,jpkm1
+              IF (jk .EQ. 1) THEN
+                 int_tra(1)  = 0
+              ELSE
+                 int_tra(jk) = delta_tra(jk) + int_tra(jk-1)
+              ENDIF
+           END DO
+        END DO
 
-         IF (jk .EQ. 1) THEN
-             int_tra(1)  = 0
-         ELSE
-             int_tra(jk) = delta_tra(jk) + int_tra(jk-1)
-         ENDIF
-
-      jf = jarr_zdf_flx(jv,jk)
-
-! jf = 0 are the points not included in the transect they are excluded
-
-         IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-
-                  diaflx(7,jf,jn) = int_tra(jk)*rdt
-
-         ENDIF
-
-      ENDDO
-
-
+        IF (Fsize .GT. 0) then
+           !$acc parallel loop gang vector default(present) collapse(2) async
+           DO jv = 1, dimen_jvzdf
+              DO jk=1,jpkm1
+                 jf = jarr_zdf_flx(jv,jk)
+                 ! jf = 0 are the points not included in the transect they are excluded
+                 IF (jf .GT. 0) THEN
+                    diaflx(7,jf,jn) = int_tra(jk)*rdt
+                 ENDIF
+              END DO
+           END DO
+        END IF
 
 !! Save the masked passive tracer after in tra
 !! (c a u t i o n:  tracer not its trend, Leap-frog scheme done
 !!                  it will not be done in trcnxt)
-         DO jk = 1, jpkm1
-            tra(jk,jj,ji,jn) = zwx(jk,ntx) * tmask(jk,jj,ji)
-         END DO
-
-        END DO ! jv
-        !$acc end parallel loop
-
-!      end if
+        !$acc parallel loop gang vector default(present) collapse(2) async
+        DO jv = 1, dimen_jvzdf
+           DO jk = 1, jpkm1
+              ji=jarr_zdf(2,jv)
+              jj=jarr_zdf(1,jv)
+              tra(jk,jj,ji,jn) = zwx(jk,jv) * tmask(jk,jj,ji)
+           END DO
+        END DO
 
        END DO TRACER_LOOP
 !!!$omp    end parallel do

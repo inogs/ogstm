@@ -246,7 +246,6 @@ contains
                 call m_bc%update_device()
                 call m_bc%actualize(1.0d0) ! weight = 1.0
                 ! write(*, *) 'INFO: successfully called actualize'
-                call m_bc%update_device()
             endif
 
         case(1) ! time interpolation

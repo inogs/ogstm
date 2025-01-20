@@ -167,7 +167,7 @@ contains
     subroutine load(self, idx)
         class(bc), intent(inout) :: self
         integer, intent(in) :: idx
-        write(*, *) 'WARN: base class does not implement this method'
+        write(*, *) 'WARN: base class does not implement method load'
     end subroutine load
 
 
@@ -175,7 +175,7 @@ contains
     !> Swaps in memory the data of two extremes.
     subroutine swap(self)
         class(bc), intent(inout) :: self
-        write(*, *) 'WARN: base class does not implement this method'
+        write(*, *) 'WARN: base class does not implement method swap'
     end subroutine swap
 
 
@@ -191,12 +191,12 @@ contains
     subroutine actualize(self, weight)
         class(bc), intent(inout) :: self
         double precision, intent(in) :: weight
-        write(*, *) 'WARN: base class does not implement this method'
+        write(*, *) 'WARN: base class does not implement method actualize'
     end subroutine actualize
 
     subroutine update_device(self)
         class(bc), intent(inout) :: self
-        write(*, *) 'WARN: base class does not implement this method'
+        write(*, *) 'WARN: base class does not implement method update_device'
     end subroutine update_device
 
     !> Applies the tracer values at the boundaries to the final tracers matrix.
@@ -221,7 +221,7 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
 
-        write(*, *) 'WARN: base class does not implement this method'
+        write(*, *) 'WARN: base class does not implement method apply'
 
     end subroutine apply
 
@@ -236,7 +236,7 @@ contains
 
         class(bc), intent(inout) :: self
 
-        write(*, *) 'WARN bc.f90: base class does not implement this method'
+        write(*, *) 'WARN bc.f90: base class does not implement method apply_dirichlet'
 
     end subroutine apply_dirichlet
 
@@ -259,7 +259,7 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
 
-        write(*, *) 'WARN: base class does not implement this method'
+        write(*, *) 'WARN: base class does not implement method apply_nudging'
 
     end subroutine apply_nudging
 
@@ -294,7 +294,7 @@ contains
         double precision, dimension(jpj, jpi), intent(out) :: sponge_t
         double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
 
-        write(*, *) 'WARN: base class does not implement this method'
+        write(*, *) 'WARN: base class does not implement method apply_phys'
 
     end subroutine apply_phys
 
@@ -315,7 +315,7 @@ contains
 
         class(bc), intent(inout) :: self
 
-        ! write(*, *) 'WARN: base class does not implement this method. Only hard open overrides it'
+        ! write(*, *) 'WARN: base class does not implement method fix_diagnostic_vars. Only hard open overrides it'
 
     end subroutine fix_diagnostic_vars
 

@@ -297,6 +297,8 @@ MODULE module_step
       !$acc update host(zwork) if(lbfm)
       !$acc update host(ogstm_sediPI) if(lbfm)
 
+      call tstop("step_total")
+
       CONTAINS
 
       LOGICAL FUNCTION writeTemporization(string, elapsedtime)
@@ -343,9 +345,7 @@ MODULE module_step
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
       call tstart("trcadv")
-
       IF (ladv) CALL trcadv ! tracers advection
-
       call tstop("trcadv")
 
 #    if defined key_trc_dmp
@@ -380,22 +380,20 @@ MODULE module_step
       call tstop("trcsbc")
 
       call tstart("trcsms")
-
       IF (lbfm) CALL trcsms
-
       call tstop("trcsms")
 
       call tstart("trczdf")
-
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
-
       call tstop("trczdf")
 
       call tstart("snutel")
       IF (lsnu) CALL snutel
       call tstop("snutel")
 
+      call tstart("boundaries%apply_dirichlet")
       call boundaries%apply_dirichlet()
+      call tstop("boundaries%apply_dirichlet")
 
       ! CALL checkValues
 

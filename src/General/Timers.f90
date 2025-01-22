@@ -44,6 +44,7 @@
       forcing_phys_TotTime = 0.0
       forcing_kext_TotTime = 0.0
       bc_Co2_TotTime       = 0.0
+      bc_atm_Hg0_TotTime   = 0.0
       bc_atm_TotTime       = 0.0
       bc_tin_TotTime       = 0.0
       bc_gib_TotTime       = 0.0

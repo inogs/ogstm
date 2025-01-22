@@ -115,7 +115,7 @@
              correct_fact= 0.0D0
          endif
 
-         er(jk,16) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
+         er(jk,11) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
       enddo
 #endif
 
@@ -167,7 +167,8 @@
 
                             er(1:bottom,17) = SWR_RT(1:bottom,jj,ji)  
                             er(1       ,18)  = atm_Hg0(jj,ji)         
-                          call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
+
+                         call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 
                          call BFM1D_reset()
 

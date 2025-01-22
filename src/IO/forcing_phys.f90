@@ -198,7 +198,11 @@
           do jj=1,jpj
           do jk=1,jpk
             if (tmask(jk,jj,ji) .ne. 0.) then
-                avtdta(jk,jj,ji,2) = DvMld * exp(-0.5* ( gdept(jk,jj,ji)/(sigma*buf2(jj,ji)) )  **2)  + DvBackground
+#ifdef gdept1d
+                avtdta(jk,jj,ji,2) = DvMld * exp(-0.5* ( gdept(jk)/(sigma*buf2(jj,ji)) )  **2)  + DvBackground
+#else                
+                avtdta(jk,jj,ji,2) = DvMld * exp(-0.5* ( gdept(jk,jj,ji)/(sigma*buf2(jj,ji)) )  **2)  + DvBackgroun
+#endif                
             endif
           enddo
           enddo

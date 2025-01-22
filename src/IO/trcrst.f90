@@ -22,7 +22,7 @@
 ! local declarations
 ! ==================
       INTEGER jn, jn_high
-      CHARACTER(LEN=54) filename
+      CHARACTER(LEN=37) filename
       CHARACTER(LEN=100) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread
@@ -49,7 +49,7 @@
 
          filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))// & 
                 '.nc'
-         CALL readnc_slice_double(TRIM(filename), 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
+         CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
 
 
 
@@ -67,10 +67,10 @@
 
           if (existFilebkp) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(TRIM(bkpname),TRIM(ctrcnm(jn)), traIO(:,:,:,jn) )
+             CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO(:,:,:,jn) )
              if (.not.bkp2hasbeenread) then
-               call readnc_scalar_double(TRIM(bkpname),'elapsed_time',elapsed_time_2)
-               call get_att_char(TRIM(bkpname),'DateStart'  , BKPdatefrom_2)
+               call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
+               call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                bkp2hasbeenread=.true.
              endif
           else
@@ -82,14 +82,14 @@
          IF (ctr_hf(jn).eq.1)  THEN
            jn_high = jn_high + 1
            bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(ctrcnm(jn))//'.nc.bkp'
-           INQUIRE(FILE=TRIM(bkpname), EXIST=existFilebkp)
+           INQUIRE(FILE=bkpname, EXIST=existFilebkp)
 
            if (existFilebkp) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(TRIM(bkpname),TRIM(ctrcnm(jn)), traIO_HIGH(:,:,:,jn_high) )
+             CALL readnc_slice_double(bkpname,ctrcnm(jn), traIO_HIGH(:,:,:,jn_high) )
                 if (.not.bkp1hasbeenread) then
-                  call readnc_scalar_double(TRIM(bkpname),'elapsed_time',elapsed_time_1)
-                  call get_att_char(TRIM(bkpname),'DateStart'  , BKPdatefrom_1)
+                  call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
+                  call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                   bkp1hasbeenread=.true.
                 endif
            else
@@ -106,14 +106,14 @@
       DO jn=1, jptra_dia
 
           bkpname    = 'AVE_FREQ_2/ave.'//DateStart//'.'//trim(dianm(jn))//'.nc.bkp'
-          INQUIRE(FILE=TRIM(bkpname), EXIST=existFile)
+          INQUIRE(FILE=bkpname, EXIST=existFile)
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(TRIM(bkpname),TRIM(dianm(jn)), tra_DIA_IO(jn,:,:,:) )
+             CALL readnc_slice_double(bkpname,dianm(jn), tra_DIA_IO(jn,:,:,:) )
              if (.not.bkp2hasbeenread) then
-                call readnc_scalar_double(TRIM(bkpname),'elapsed_time',elapsed_time_2)
-                call get_att_char(TRIM(bkpname),'DateStart'  , BKPdatefrom_2)
+                call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
+                call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
           else
@@ -123,13 +123,13 @@
           IF ((diahf(jn).eq.1).and.(diaWR(jn).eq.1))  THEN
            jn_high = jn_high + 1
            bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm(jn))//'.nc.bkp'
-           INQUIRE(FILE=TRIM(bkpname), EXIST=existFile)
+           INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double(TRIM(bkpname),trim(dianm(jn)), tra_DIA_IO_HIGH(jn_high,:,:,:) )
+             CALL readnc_slice_double(bkpname,trim(dianm(jn)), tra_DIA_IO_HIGH(jn_high,:,:,:) )
                     if (.not.bkp1hasbeenread) then
-                      call readnc_scalar_double(TRIM(bkpname),'elapsed_time',elapsed_time_1)
-                      call get_att_char(TRIM(bkpname),'DateStart'  , BKPdatefrom_1)
+                      call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
+                      call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
            else
@@ -146,14 +146,14 @@
       DO jn=1, jptra_dia_2d
 
           bkpname    = 'AVE_FREQ_2/ave.'//DateStart//'.'//trim(dianm_2d(jn))//'.nc.bkp'
-          INQUIRE(FILE=TRIM(bkpname), EXIST=existFile)
+          INQUIRE(FILE=bkpname, EXIST=existFile)
 
           if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double_2d(TRIM(bkpname),dianm_2d(jn), tra_DIA_2d_IO(jn,:,:) )
+             CALL readnc_slice_double_2d(bkpname,dianm_2d(jn), tra_DIA_2d_IO(jn,:,:) )
              if (.not.bkp2hasbeenread) then
-                call readnc_scalar_double(TRIM(bkpname),'elapsed_time',elapsed_time_2)
-                call get_att_char(TRIM(bkpname),'DateStart'  , BKPdatefrom_2)
+                call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_2)
+                call get_att_char(bkpname,'DateStart'  , BKPdatefrom_2)
                 bkp2hasbeenread=.true.
              endif
           else
@@ -163,13 +163,13 @@
           IF ((diahf_2d(jn).eq.1).and.(diaWR_2d(jn).eq.1))  THEN
            jn_high = jn_high + 1
            bkpname= 'AVE_FREQ_1/ave.'//DateStart//'.'//trim(dianm_2d(jn))//'.nc.bkp'
-           INQUIRE(FILE=TRIM(bkpname), EXIST=existFile)
+           INQUIRE(FILE=bkpname, EXIST=existFile)
            if (existFile) then
              if (lwp) write(*,*) 'reading ', bkpname
-             CALL readnc_slice_double_2d(TRIM(bkpname),trim(dianm_2d(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
+             CALL readnc_slice_double_2d(bkpname,trim(dianm_2d(jn)), tra_DIA_2d_IO_HIGH(jn_high,:,:) )
                     if (.not.bkp1hasbeenread) then
-                      call readnc_scalar_double(TRIM(bkpname),'elapsed_time',elapsed_time_1)
-                      call get_att_char(TRIM(bkpname),'DateStart'  , BKPdatefrom_1)
+                      call readnc_scalar_double(bkpname,'elapsed_time',elapsed_time_1)
+                      call get_att_char(bkpname,'DateStart'  , BKPdatefrom_1)
                       bkp1hasbeenread=.true.
                     endif
            else

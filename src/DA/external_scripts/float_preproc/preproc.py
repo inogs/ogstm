@@ -1,4 +1,6 @@
 import argparse
+from bitsea.utilities.argparse_types import existing_dir_path, existing_file_path, generic_path
+from bitsea.utilities.argparse_types import date_from_str
 
 def argument():
     parser = argparse.ArgumentParser(description='''
@@ -8,18 +10,18 @@ def argument():
                                      )
 
     parser.add_argument('--time', '-t',
-                        type=str,
+                        type=date_from_str,
                         required=True,
                         help='Input time in yyyymmdd format')
     parser.add_argument('--inputdir', '-i',
-                        type=str,
+                        type=existing_dir_path,
                         required=True,
                         help='input dir validation')
     parser.add_argument('--maskfile', '-m',
-                        type=str,
+                        type=existing_file_path,
                         required=True)
     parser.add_argument('--basedir', '-b',
-                        type=str,
+                        type=existing_file_path,
                         default=None,
                         required=True,
                         help='''output directory, where aveScan.py will run.
@@ -35,12 +37,12 @@ def argument():
                         required=True,
                         help=''' Depth of assimilation''')
     parser.add_argument('--misfit',
-                        type=str,
+                        type=generic_path,
                         default=None,
                         required=True,
                         help=''' output misfit file ''')
     parser.add_argument('--outdir','-o ',
-                        type=str,
+                        type=existing_dir_path,
                         default=None,
                         required=True,
                         help=''' output directory of check files''')
@@ -53,7 +55,6 @@ from bitsea.instruments.matchup_manager import Matchup_Manager
 from bitsea.commons.mask import Mask
 import bitsea.basins.OGS as OGS
 from bitsea.instruments.var_conversions import FLOATVARS
-from bitsea.commons.utils import addsep
 from datetime import datetime
 from bitsea.commons.layer import Layer
 from bitsea.commons.Timelist import TimeList
@@ -77,9 +78,9 @@ if profilesource=="ppcon":
 
 
 datestr   = args.time
-BASEDIR  = addsep(args.basedir)
-INPUTDIR = addsep(args.inputdir)
-OUTDIR   = addsep(args.outdir)
+BASEDIR  = args.basedir
+INPUTDIR = args.inputdir
+OUTDIR   = args.outdir
 varmod   = args.variable
 TheMask = Mask(args.maskfile)
 deplim  = int(args.deplim)
@@ -208,13 +209,12 @@ for wmo in WMOlist:
                 testo += "\t%10.5f\t%i\n" % (errorfloat[month-1], Profile[ilev, 5])
             MISFIT_LINES.append(testo)
 
-f=open(args.misfit,'w')
-topstr = "%i\n" % len(MISFIT_LINES)
-f.write(topstr)
-f.writelines(MISFIT_LINES)
-f.close()
+with open(args.misfit,'w') as f:
+    topstr = "%i\n" % len(MISFIT_LINES)
+    f.write(topstr)
+    f.writelines(MISFIT_LINES)
 
-checkfile_txt = OUTDIR + datestr + varmod + '_check.txt'
-fid=open(checkfile_txt,'wt')
-fid.writelines(LINES)
-fid.close()
+checkfile_txt = OUTDIR / (datestr + varmod + '_check.txt')
+with open(checkfile_txt,'wt') as fid:
+    fid.writelines(LINES)
+

@@ -26,8 +26,6 @@ SUBROUTINE trcadv
   use omp_lib
   USE ogstm_mpi_module
 
-  use simple_timer
-
   implicit none
 
 !!!                      trcadv.smolar.h
@@ -84,6 +82,7 @@ SUBROUTINE trcadv
   double precision, save,allocatable,dimension(:,:,:) :: zti,ztj
   double precision, save,allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
   double precision, save,allocatable,dimension(:,:,:) :: zkx,zky,zkz
+  double precision :: tmp1,tmp2
   logical :: use_gpu
 
   queue=1
@@ -415,33 +414,8 @@ SUBROUTINE trcadv
      !$acc kernels default(present) async(queue)
      DO jj = 2,jpjm1
         !dir$ vector aligned
-        !$acc loop independent
         DO jk = 2,jpk
            zkz(jk,jj,jpi ) = fsx(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
-        END DO
-     END DO
-     !$acc end kernels
-
-     !$acc kernels default(present) async(queue)
-     !$acc loop independent
-     DO  ji = 2,jpim1
-        DO jj = 2,jpjm1
-           !dir$ vector aligned
-           DO jk = 2,jpk
-              zkx(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk,jj,ji + 1, jn),zaa(jk,jj,ji))*advmask(jk,jj,ji)
-           END DO
-        END DO
-     END DO
-     !$acc end kernels
-
-     !$acc kernels default(present) async(queue)
-     DO  ji = 2,jpim1
-        !$acc loop independent
-        DO jj = 2,jpjm1
-           !dir$ vector aligned
-           DO jk = 2,jpk
-              zky(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
-           END DO
         END DO
      END DO
      !$acc end kernels
@@ -451,11 +425,15 @@ SUBROUTINE trcadv
         DO jj = 2,jpjm1
            !dir$ vector aligned
            DO jk = 2,jpk
-              zkz(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
+              tmp1 = trn(jk,jj,ji, jn)
+              zkx(jk,jj,ji ) = fsx(tmp1,trn(jk,jj,ji + 1, jn),zaa(jk,jj,ji))*advmask(jk,jj,ji)
+              zky(jk,jj,ji ) = fsx(tmp1,trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
+              zkz(jk,jj,ji ) = fsx(tmp1,trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
            END DO
         END DO
      END DO
      !$acc end parallel loop
+
      !$acc wait(queue)
 
      ! ... Lateral boundary conditions on zk[xy]
@@ -477,7 +455,7 @@ SUBROUTINE trcadv
      !! 2. calcul of after field using an upstream advection scheme
      !! -----------------------------------------------------------
 
-     !$acc kernels default(present) async(queue)
+     !$acc parallel loop collapse(3) gang vector default(present) async(queue)
      DO ji =2,jpim1
         DO jj =2,jpjm1
            DO jk =1,jpkm1
@@ -488,7 +466,7 @@ SUBROUTINE trcadv
            ENDDO
         ENDDO
      ENDDO
-     !$acc end kernels
+     !$acc end parallel loop
 
      !$acc kernels default(present) async(queue)
      DO jf=1,Fsize
@@ -607,7 +585,7 @@ SUBROUTINE trcadv
         !$acc end kernels
 
         !DO ju=1, dimen_jarr2
-        !$acc kernels default(present) async(queue)
+        !$acc parallel loop gang vector default(present) collapse(3) async(queue)
         DO ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
@@ -630,7 +608,7 @@ SUBROUTINE trcadv
               END DO
            END DO
         END DO
-        !$acc end kernels
+        !$acc end parallel loop
         !                 endif
 
         !$acc wait(queue)
@@ -694,67 +672,30 @@ SUBROUTINE trcadv
         ENDDO
         !$acc end kernels
 
-        !$acc kernels default(present) async(queue)
+        !$acc parallel loop collapse(2) gang vector default(present) async(queue)
         DO jj = 2,jpjm1
            !dir$ vector aligned
-           !$acc loop independent
            DO jk = 2,jpk
               zkz(jk,jj,1 ) = fsx(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
+              zkz(jk,jj,jpi ) = fsx(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
            ENDDO
         ENDDO
-        !$acc end kernels
+        !$acc end parallel loop
 
-        !$acc kernels default(present) async(queue)
-        DO jj = 2,jpjm1
-           !dir$ vector aligned
-           !$acc loop independent
-           DO jk = 2,jpk
-              zkz(jk,jj,jpi ) = fsx(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
-           END DO
-        END DO
-        !$acc end kernels
-
-        !$acc kernels default(present) async(queue)
-        !$acc loop independent
+        !$acc parallel loop collapse(3) gang vector default(present) async(queue)
         DO  ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
               DO jk = 2,jpk
-                 zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
+                 tmp1=zti(jk,jj,ji)
+                 tmp2=advmask(jk,jj,ji)
+                 zkx(jk,jj,ji ) = fsx(tmp1,zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*tmp2
+                 zky(jk,jj,ji ) = fsx(tmp1,zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*tmp2
+                 zkz(jk,jj,ji ) = fsx(tmp1,zti(jk-1,jj,ji ),zz(jk,jj,ji ))*tmp2
               END DO
            END DO
         END DO
-        !$acc end kernels
-
-        !$acc kernels default(present) async(queue)
-        DO  ji = 2,jpim1
-           !$acc loop independent
-           DO jj = 2,jpjm1
-              !dir$ vector aligned
-              DO jk = 2,jpk
-                 !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
-              END DO
-           END DO
-        END DO
-        !$acc end kernels
-
-        !$acc kernels default(present) async(queue)
-        DO  ji = 2,jpim1
-           DO jj = 2,jpjm1
-              !dir$ vector aligned
-              !$acc loop independent
-              DO jk = 2,jpk
-                 !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
-              END DO
-           END DO
-        END DO
-        !$acc end kernels
+        !$acc end parallel loop
 
         !$acc wait(queue)
 
@@ -772,7 +713,7 @@ SUBROUTINE trcadv
         !!        2.6. calcul of after field using an upstream advection scheme
 
         if(ncor .EQ. 1) then
-           !$acc kernels default(present) async(queue)
+           !$acc parallel loop collapse(3) gang vector default(present) async(queue)
            DO ji =2,jpim1
               DO jj =2,jpjm1
                  DO jk =1,jpkm1
@@ -781,7 +722,7 @@ SUBROUTINE trcadv
                  ENDDO
               ENDDO
            ENDDO
-           !$acc end kernels
+           !$acc end parallel loop
 
            !$acc kernels default(present) async(queue)
            DO jf=1,Fsize

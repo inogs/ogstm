@@ -26,7 +26,7 @@
         double precision julian
 
 
-        CHARACTER(LEN=37) filename
+        CHARACTER(LEN=54) filename
 
         CHARACTER(LEN=3) varname
 
@@ -38,7 +38,7 @@
         CHARACTER(LEN=20)  var_to_store
         INTEGER :: COUNTER_VAR_TRCWRI, n_dumping_cycles, jv, ivar, writing_rank, ind_col 
 
-        filename = 'RST.20111231-15:30:00.N1p.nc'
+        filename = 'RESTARTS/RST.20111231-15:30:00.N1p.nc'
         julian=datestring2sec(datestring)
 
         trcwriparttime = MPI_WTIME() ! cronometer-start

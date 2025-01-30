@@ -22,7 +22,7 @@
 ! local declarations
 ! ==================
       INTEGER jn, jn_high
-      CHARACTER(LEN=37) filename
+      CHARACTER(LEN=54) filename
       CHARACTER(LEN=100) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread

@@ -21,7 +21,7 @@ def argument():
                         type=existing_file_path,
                         required=True)
     parser.add_argument('--basedir', '-b',
-                        type=existing_file_path,
+                        type=existing_dir_path,
                         default=None,
                         required=True,
                         help='''output directory, where aveScan.py will run.
@@ -77,7 +77,7 @@ if profilesource=="ppcon":
         from bitsea.instruments import float_ppcon as bio_float
 
 
-datestr   = args.time
+datestr   = args.time.strftime("%Y%m%d")
 BASEDIR  = args.basedir
 INPUTDIR = args.inputdir
 OUTDIR   = args.outdir
@@ -93,9 +93,9 @@ errbase_ppcon = [0.44, 0.69, 0.61] #0-200 200-400 and 400-600
 erro2obase = 5.  # (Approximation based on QuID V7c evaluation)
 Check_Obj = check.check(OUTDIR,verboselevel=1,threshold_nitrate=2)
 
-year  = int(datestr[0:4])
-month = int(datestr[4:6])
-day   = int(datestr[6:8])
+year  = args.time.year
+month = args.time.month
+day   = Daint(datestr[6:8])
 
 req = timerequestors.Daily_req(year, month, day)
 TI = req.time_interval

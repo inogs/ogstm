@@ -179,7 +179,8 @@
 <var name="ELiPPY_iiP4"  highfreq="false" dump="false" ></var> 
 <var name="ruPPYc"       highfreq="true"  dump="true" comment="deve essere true"></var> 
 <var name="resPPYc"      highfreq="true"  dump="true" comment="deve essere true"></var> 
-<var name="remPOC"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="remPOC6"      highfreq="true"  dump="true" comment="deve essere true"></var>
+<var name="remPOC8"      highfreq="true"  dump="true" comment="deve essere true"></var>
 <var name="skmet"      highfreq="true"  dump="true" comment="deve essere true"></var>
 <var name="skmet2"      highfreq="true"  dump="true" comment="deve essere true"></var>
 <var name="skdem"      highfreq="true"  dump="true" comment="deve essere true"></var>

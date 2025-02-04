@@ -95,7 +95,7 @@ Check_Obj = check.check(OUTDIR,verboselevel=1,threshold_nitrate=2)
 
 year  = args.time.year
 month = args.time.month
-day   = Daint(datestr[6:8])
+day   = args.time.day
 
 req = timerequestors.Daily_req(year, month, day)
 TI = req.time_interval

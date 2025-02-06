@@ -47,7 +47,7 @@ contains
         type(bc_set), intent(inout) :: bcs
         character(len=14), intent(in) :: bcs_namelist
         integer, parameter :: file_unit = 102 ! 100 for data files, 101 for boundary namelist files, 102 for global namelist
-        character(len=47) :: bc_string
+        character(len=54) :: bc_string
         integer :: i
 
         ! open file

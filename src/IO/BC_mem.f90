@@ -67,7 +67,7 @@
       INTEGER  :: err
       double precision  :: aux_mem
 
-      CHARACTER(LEN=50) atmfile, rivfile, gibfile
+      CHARACTER(LEN=54) atmfile, rivfile, gibfile
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
@@ -114,7 +114,7 @@
 
       jn_gib  = 6
       ! jn_riv  = 6
-      jn_atm  = 2
+      jn_atm  = 4
 
        ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
        allocate(resto(jpk,jpj,jpi,jn_gib))
@@ -175,6 +175,8 @@
 
           tra_matrix_atm(1) = ppN1p ! phosphates
           tra_matrix_atm(2) = ppN3n ! nitrates
+          tra_matrix_atm(3) = ppHg2  ! HgII
+          tra_matrix_atm(4) = ppMMHg ! Mono Methyl Mercurio
        ENDIF
 
 

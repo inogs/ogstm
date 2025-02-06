@@ -19,8 +19,8 @@ module rivers_mod
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'riv'
         integer :: m_n_vars ! BC_mem.f90:95
-        character(len=20), allocatable, dimension(:) :: m_var_names
-        character(len=20), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
+        character(len=26), allocatable, dimension(:) :: m_var_names
+        character(len=26), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_riv
         double precision, allocatable, dimension(:, :) :: m_buffer ! replaces m_aux, now it is a 2D matrix
         integer(4) :: m_size
@@ -140,6 +140,7 @@ contains
 
         integer :: n_vars
         character(len=20), allocatable, dimension(:) :: vars
+     !   integer(4), allocatable, dimension(:) :: var_names_idx
         integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files
         integer :: i
         namelist /vars_dimension/ n_vars
@@ -156,6 +157,7 @@ contains
 
         ! allocate local arrays
         allocate(vars(self%m_n_vars))
+     !   allocate(var_names_idx(self%m_n_vars))
 
         ! allocate class members
         allocate(self%m_var_names(self%m_n_vars))
@@ -170,6 +172,7 @@ contains
             self%m_var_names(i) = vars(i)
             self%m_var_names_data(i) = "riv"//'_'//trim(self%m_var_names(i))
             self%m_var_names_idx(i) = find_index_var(self%m_var_names(i))
+           ! self%m_var_names_idx(i) = var_names_idx(i)   !find_index_var(self%m_var_names(i))
             if (lwp) write(*,*) 'RIV ', self%m_var_names(i), self%m_var_names_idx(i)
         enddo
 
@@ -184,6 +187,7 @@ contains
 
         ! deallocation
         deallocate(vars)
+     !   deallocate(var_names_idx)
 
         ! close file
         close(unit=file_unit)

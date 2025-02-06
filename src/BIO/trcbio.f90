@@ -36,7 +36,7 @@
 
       USE myalloc
       USE BIO_mem
-      USE OPT_mem, ONLY: PAR, RMU
+      USE OPT_mem, ONLY: PAR, RMU,SWR_RT
       USE BC_mem
       USE mpi
 
@@ -61,7 +61,7 @@
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
       double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,16) :: er
+      double precision,dimension(jpk,18) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 
 
@@ -164,7 +164,11 @@
                              er(jk,16) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
                          enddo
 #endif
-                          call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
+
+                            er(1:bottom,17) = SWR_RT(1:bottom,jj,ji)  
+                            er(1       ,18)  = atm_Hg0(jj,ji)         
+
+                         call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 
                          call BFM1D_reset()
 

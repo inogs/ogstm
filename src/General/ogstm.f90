@@ -328,6 +328,7 @@ SUBROUTINE time_init
         call TimeExtension(DATESTART,TC_OPTAERO)
         call TimeExtension(DATESTART,TC_OPTCLIM)
         call TimeExtension(DATESTART,TC_CO2)
+        call TimeExtension(DATESTART,TC_Hg0)
 
 
         call TimeInterpolation(sec,TC_FOR, TC_FOR%Before, TC_FOR%After, t_interp)
@@ -337,12 +338,14 @@ SUBROUTINE time_init
         call TimeInterpolation(sec,TC_OPTCLIM, TC_OPTCLIM%Before, TC_OPTCLIM%After, t_interp)
 
         call TimeInterpolation(sec,TC_CO2, TC_CO2%Before, TC_CO2%After, t_interp)
+        call TimeInterpolation(sec,TC_Hg0, TC_Hg0%Before, TC_Hg0%After, t_interp)
 
         if (lwp) then
             write(*,*) 'BeforeForcings', TC_FOR%Before, 'AfterForcing', TC_FOR%After
             write(*,*) 'BeforeAtm',      TC_ATM%Before, 'AfterAtm',     TC_ATM%After
             write(*,*) 'BeforeCo2',      TC_CO2%Before, 'AfterCo2',     TC_CO2%After
             write(*,*) 'BeforeOpt',      TC_OPTATM%Before, 'AfterOpt',     TC_OPTATM%After
+            write(*,*) 'BeforeHg0',      TC_Hg0%Before, 'AfterHg0',     TC_Hg0%After
 
         endif
 END SUBROUTINE time_init

@@ -26,10 +26,10 @@
       INTEGER :: it_actual
       CHARACTER(LEN=20) :: V_POSITION     
       double precision :: solz(jpj,jpi), rmud(jpj,jpi)
-      double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt)
+      double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt),SWRz(jpk)
       double precision, allocatable::  E(:,:,:) !(3,jpk+1,nlt)
 
-      double precision, allocatable  :: PARz(:,:) !(jpk,nchl+1)
+      double precision, allocatable  :: PARz(:,:) !, SWRz(:)   !(jpk,nchl+1)
       double precision :: CHLz(jpk,nchl),PCz(jpk,nchl),CDOMz(jpk,3),POCz(jpk)
       double precision :: Eu_0m(nlt)
       double precision :: zgrid(jpk+1)
@@ -96,6 +96,7 @@
                  Es(1:bottom,jj,ji,:) = 0.0001d0
                  Eu(2:bottom,jj,ji,:) = 1.0E-08
                  PAR(1:bottom,jj,ji,:) = 0.0001d0
+                 SWR_RT(1:bottom,jj,ji) = 0.0001d0
 
              else
              
@@ -116,7 +117,7 @@
                  POCz(1:bottom)   = trn(1:bottom,jj,ji,ppR6c) 
     
                  IF ( (MODE .EQ. 0) .OR. (MODE .EQ. 1)) then
-                     call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,PCz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz)
+                     call edeseu(MODE,V_POSITION,bottom,e3t(:,jj,ji),Ed_0m(:,jj,ji),Es_0m(:,jj,ji),CHLz,PCz,CDOMz,POCz,rmud(jj,ji),Edz,Esz,Euz,Eu_0m,PARz,SWRz)
     
                  Ed(1,jj,ji,:) = Ed_0m(:,jj,ji)
                  Es(1,jj,ji,:) = Es_0m(:,jj,ji)
@@ -141,6 +142,11 @@
 !                       write(*,*) "PAR", jl,jk,"=", PAR(jk,jj,ji,jl)
                     enddo
                  enddo
+
+                do jk =1, bottom
+                    SWR_RT(jk,jj,ji) = SWRz(jk)
+                enddo
+
 
                  ENDIF
 

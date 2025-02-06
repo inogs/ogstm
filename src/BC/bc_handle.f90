@@ -235,7 +235,9 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
                 call m_bc%update_device()
+#endif
                 call m_bc%actualize(1.0d0) ! weight = 1.0
                 ! write(*, *) 'INFO: successfully called actualize'
             else if (new_data) then
@@ -243,7 +245,9 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
                 call m_bc%update_device()
+#endif
                 call m_bc%actualize(1.0d0) ! weight = 1.0
                 ! write(*, *) 'INFO: successfully called actualize'
             endif
@@ -261,13 +265,17 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
                 call m_bc%update_device()
+#endif
             else if (new_data) then
                 call m_bc%swap()
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
                 call m_bc%update_device()
+#endif
             endif
 
             call m_bc%actualize(weight)

@@ -67,7 +67,7 @@
       INTEGER  :: err
       double precision  :: aux_mem
 
-      CHARACTER(LEN=50) atmfile, rivfile, gibfile
+      CHARACTER(LEN=54) atmfile, rivfile, gibfile
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)

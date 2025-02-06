@@ -18,8 +18,8 @@ module sponge_mod
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'gib'
         integer :: m_n_vars ! BC_mem.f90:94
-        character(len=20), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
-        character(len=20), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
+        character(len=29), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
+        character(len=29), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_gib
         double precision, allocatable, dimension(:, :, :) :: m_buffer ! replaces m_aux, now it is a 3D matrix
         integer(4) :: m_size ! BC_mem.f90:21
@@ -183,6 +183,8 @@ contains
             self%m_var_names(i) = vars(i)
             self%m_var_names_data(i) = trim(self%m_var_names(i))
             self%m_var_names_idx(i) = find_index_var(self%m_var_names(i))
+            write(*,*) 'self%m_var_names_data(i)', self%m_var_names_data(i)
+            write(*,*) 'self%m_var_names_idx)', self%m_var_names_idx(i)
         enddo
 
         ! call delegated constructor - related procedures

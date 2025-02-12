@@ -57,7 +57,7 @@ MODULE module_step
 
 !      trcstp, trcdia  passive tracers interface
 
-       ! XXX: to be removed
+       ! XXX: to be removed eventually
        use DIA_mem, only: diaflx,flx_ridxt
        use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,umask,vmask,tmask,avt,ahtt
        use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
@@ -91,6 +91,26 @@ MODULE module_step
        datestring =  DATESTART
       TAU = 0
       call tstart("step_total")
+
+      ! NOTE: These transfers could be either moved close to CPU initialization,
+      ! or the initialization could be made on GPU and the transfers removed.
+
+      !$acc update device(e3u,e3v,e3w)
+      !$acc update device(e3t_back,e3t)
+      !$acc update device(vatm,emp,qsr)
+      !$acc update device(tmask,gdept)
+
+      !$acc update device(tra)
+      !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e1u,e2u,e1v,e2v,trn,advmask,flx_ridxt,diaflx) if(ladv)
+      !$acc update device(umask,vmask,trb,ahtt,diaflx,flx_ridxt) if(lhdf)
+      !$acc update device(trn) if (lsbc)
+      !$acc update device(mbathy,bfmmask,trn,DAY_LENGTH,ogstm_PH) if(lbfm)
+#if  defined key_trc_sed
+      !$acc update device(sed_idx,diaflx,ogstm_sedipi,mbathy) if(lbfm)
+#endif
+      !$acc update device(e1t,diaflx,e2t,trb) if (lzdf)
+      !$acc update device(trn,umask,vmask,highfreq_table,tra_DIA,tra_DIA_2d,highfreq_table_dia,highfreq_table_dia2d)
+
       DO WHILE (.not.ISOVERTIME(datestring))
 
          call tstart("step")
@@ -140,6 +160,7 @@ MODULE module_step
       call tstop("forcing_phys")
       call tstart("forcing_kext")
       CALL forcings_KEXT(datestring)
+      !$acc update device(kef)
       call tstop("forcing_kext")
 
 ! ----------------------------------------------------------------------
@@ -164,9 +185,9 @@ MODULE module_step
       CALL eos          ()               ! Water density
       call tstop("eos")
 
-
-
       call tstart("dump_ave_1")
+      !$acc update host(traIO,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH)&
+      !$acc& if(IsAnAveDump(DATEstring,1) .or. IsAnAveDump(DATEstring,2))
       if (IsAnAveDump(DATEstring,1)) then
          call MIDDLEDATE(datefrom_1, DATEstring, datemean)
          CALL trcdia(datemean, datefrom_1, datestring,1)
@@ -200,19 +221,6 @@ MODULE module_step
       call tstop("data_assim")
 #endif
 
-        !$acc update device(tra,tmask)
-        !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,e1t,e2t,e3t,e1u,e2u,e3u,e1v,e2v,e3v,e3w,un,vn,wn,trn,advmask,flx_ridxt,diaflx) if(ladv)
-        !$acc update device(atm,e3t) if(latmosph)
-        !$acc update device(umask,vmask,trb,ahtt,diaflx,flx_ridxt) if(lhdf)
-        !$acc update device(e3t,rhopn,emp,trn) if (lsbc)
-        !$acc update device(kef,qsr,mbathy,bfmmask,trn,DAY_LENGTH,vatm,tn,sn,rho,e3t,gdept,ogstm_PH,ogstm_co2) if(lbfm)
-#if  defined key_trc_sed
-        !$acc update device(sed_idx,diaflx,e3t,ogstm_sedipi,mbathy) if(lbfm)
-#endif
-        !$acc update device(e1t,diaflx,e3t_back,e2t,trb,e3t,avt,e3w) if (lzdf)
-        !$acc update device(traIO,trn,umask,vmask,tmask,traIO_HIGH,highfreq_table,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,sn,tn,wn,avt,e3t,un,vn,tra_DIA_IO,tra_DIA,tra_DIA_2d_IO,tra_DIA_2d,vatmIO,empIO,qsrIO,vatm,emp,qsr,highfreq_table_dia,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH,highfreq_table_dia2d)
-
-
 ! Call Passive tracer model between synchronization for small parallelisation
         call tstart("trcstp")
         CALL trcstp    ! se commento questo non fa calcoli
@@ -221,15 +229,6 @@ MODULE module_step
         call trcave
         call tstop("trcave")
 
-        !$acc update host(trb,trn,tra)
-        !$acc update host(diaflx) if(lhdf)
-        !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx) if(ladv)
-        !$acc update host(tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH) if(lbfm)
-#if  defined key_trc_sed
-        !$acc update host(diaflx,zwork) if(lbfm)
-#endif
-        !$acc update host(diaflx) if (lzdf)
-        !$acc update host(traIO,traIO_HIGH,snIO,tnIO,wnIO,avtIO,e3tIO,unIO,vnIO,vatmIO,empIO,qsrIO,tra_DIA_IO,tra_DIA_2d_IO,tra_DIA_2d,tra_DIA_IO_HIGH,tra_DIA_2d_IO_HIGH)
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
 
@@ -284,7 +283,25 @@ MODULE module_step
       datestring = UPDATE_TIMESTRING(datestring, rdt)
       TAU = TAU + 1
          call tstop("step")
+
       END DO
+
+      ! NOTE: These transfers could be safely removed if the arrays are no
+      ! longer read on CPU from this point.
+
+      !$acc update host(trb,trn,tra)
+      !$acc update host(diaflx) if(lhdf)
+      !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx) if(ladv)
+      !$acc update host(tra_DIA,tra_DIA_2d,ogstm_sediPI,ogstm_PH) if(lbfm)
+#if  defined key_trc_sed
+      !$acc update host(diaflx,zwork) if(lbfm)
+#endif
+      !$acc update host(diaflx) if (lzdf)
+      !$acc update host(tra_DIA_2d)
+      !$acc update host(zwork) if(lbfm)
+      !$acc update host(ogstm_sediPI) if(lbfm)
+
+      call tstop("step_total")
 
       CONTAINS
 
@@ -332,9 +349,7 @@ MODULE module_step
       trcstpparttime = MPI_WTIME() ! cronometer-start
 
       call tstart("trcadv")
-
       IF (ladv) CALL trcadv ! tracers advection
-
       call tstop("trcadv")
 
 #    if defined key_trc_dmp
@@ -369,22 +384,20 @@ MODULE module_step
       call tstop("trcsbc")
 
       call tstart("trcsms")
-
       IF (lbfm) CALL trcsms
-
       call tstop("trcsms")
 
       call tstart("trczdf")
-
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
-
       call tstop("trczdf")
 
       call tstart("snutel")
       IF (lsnu) CALL snutel
       call tstop("snutel")
 
+      call tstart("boundaries%apply_dirichlet")
       call boundaries%apply_dirichlet()
+      call tstop("boundaries%apply_dirichlet")
 
       ! CALL checkValues
 

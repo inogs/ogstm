@@ -19,7 +19,7 @@
 
       INTEGER, allocatable :: itabe(:),imaske(:,:) 
       ! double precision, allocatable :: zpar(:,:)
-      double precision, allocatable :: xEPS_ogstm(:,:)
+      double precision, allocatable :: xEPS_ogstm(:,:,:)
       ! double precision, allocatable :: zpar0m(:),zpar100(:)
       double precision, allocatable :: kef(:,:)
       double precision, allocatable :: kextIO(:,:,:)
@@ -43,10 +43,10 @@
 !!!$omp parallel default (none) shared(jpk,jpi)
        ! allocate(zpar(jpk,jpi))
        ! zpar    = huge(zpar(1,1))
-       allocate(xEPS_ogstm(jpk,jpi))
+       allocate(xEPS_ogstm(jpk,jpj,jpi))
        !$acc enter data create(xEPS_ogstm)
        !$acc kernels default(present)
-       xEPS_ogstm    = huge(xEPS_ogstm(1,1))
+       xEPS_ogstm    = huge(xEPS_ogstm(1,1,1))
        !$acc end kernels
        ! allocate(zpar0m(jpi))
        ! zpar0m  = huge(zpar0m(1))

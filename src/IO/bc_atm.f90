@@ -120,10 +120,12 @@ contains
                  atm_dtatrc(j,i,2,jn) = M1(j,i)
               ENDDO
             ENDDO
+            !$acc update device(atm_dtatrc(:,:,2,jn)) async(1)
           ENDDO
 
           deallocate(M1)
 
+          !$acc wait(1)
           !call exit
       END SUBROUTINE LOAD_ATM
 
@@ -136,6 +138,7 @@ contains
 !         local
          INTEGER jn, jv,j,i
 
+         !$acc parallel loop gang vector default(present) collapse(3)
          DO jn=1, jn_atm
            DO i=1,jpi
              DO j =1,jpj
@@ -143,6 +146,7 @@ contains
              ENDDO
            ENDDO
          ENDDO
+         !$acc end parallel loop
 
 
       END SUBROUTINE actualize_ATM
@@ -155,6 +159,7 @@ contains
 !         local
           INTEGER jn, jv,j,i
 
+          !$acc parallel loop gang vector default(present) collapse(3)
           DO jn=1, jn_atm
             DO i=1,jpi
               DO j =1,jpj
@@ -162,6 +167,7 @@ contains
               ENDDO
             ENDDO
           ENDDO
+          !$acc end parallel loop
 
       END SUBROUTINE swap_ATM
 

@@ -113,6 +113,7 @@ contains
             case("R") ! rivers
 
                 allocate(m_bc_rivers)
+                !$acc enter data create(m_bc_rivers)
 
                 if (periodic) then
                     m_bc_rivers = rivers(bc_name, namelist_file, filenames_list, DATESTART, DATE__END)
@@ -156,6 +157,7 @@ contains
             case("O") ! hard-open
 
                 allocate(m_bc_hard_open)
+                !$acc enter data create(m_bc_hard_open)
 
                 if (periodic) then
                     m_bc_hard_open = hard_open(bc_name, namelist_file, filenames_list, jptra, DATESTART, DATE__END) ! jptra is a global variable
@@ -233,6 +235,9 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
+                call m_bc%update_device()
+#endif
                 call m_bc%actualize(1.0d0) ! weight = 1.0
                 ! write(*, *) 'INFO: successfully called actualize'
             else if (new_data) then
@@ -240,6 +245,9 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
+                call m_bc%update_device()
+#endif
                 call m_bc%actualize(1.0d0) ! weight = 1.0
                 ! write(*, *) 'INFO: successfully called actualize'
             endif
@@ -257,11 +265,17 @@ contains
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
+                call m_bc%update_device()
+#endif
             else if (new_data) then
                 call m_bc%swap()
                 ! write(*, *) 'INFO: successfully called swap'
                 call m_bc%load(m_bc%get_next_idx())
                 ! write(*, *) 'INFO: successfully called load'
+#ifdef _OPENACC
+                call m_bc%update_device()
+#endif
             endif
 
             call m_bc%actualize(weight)

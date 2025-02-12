@@ -61,6 +61,7 @@
 #ifdef key_trc_bfm
 
       LOGICAL :: l1,l2,l3
+      LOGICAL,save :: first = .true.
       INTEGER :: ji,jj,jk,jv,jf,js,ntx
       INTEGER :: bottom,queue
       double precision :: ze3tr,d2s
@@ -75,7 +76,7 @@
 
       d2s=1./3600./24.  ! speed from (m/day) to  (m/s)
 
-      IF (dimen_jvsed .EQ. 0) THEN ! initialization phase
+      IF (first) THEN ! initialization phase
            DO  ji = 2,jpim1
          DO jj = 2,jpjm1
               IF(tmask(1,jj,ji) .NE. 0) THEN
@@ -102,6 +103,7 @@
          END DO
          call myalloc_SED_ztra_zwork()
          !$acc update device(jarr_sed,jarr_sed_flx)
+         first=.false.
       ENDIF ! End initialization phase (once at the beginning)
 
 

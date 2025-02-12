@@ -26,8 +26,6 @@ SUBROUTINE trcadv
   use omp_lib
   USE ogstm_mpi_module
 
-  use simple_timer
-
   implicit none
 
 !!!                      trcadv.smolar.h
@@ -84,6 +82,7 @@ SUBROUTINE trcadv
   double precision, save,allocatable,dimension(:,:,:) :: zti,ztj
   double precision, save,allocatable,dimension(:,:,:) :: zx,zy,zz,zbuf
   double precision, save,allocatable,dimension(:,:,:) :: zkx,zky,zkz
+  double precision :: tmp1,tmp2
   logical :: use_gpu
 
   queue=1
@@ -99,8 +98,6 @@ SUBROUTINE trcadv
   !-------------------------------------------------------------------
 
   MPI_CHECK = .FALSE.
-
-  call tstart("trcadv_init")
 
   if(.not.adv_initialized ) then  ! INIT phase
 
@@ -171,8 +168,6 @@ SUBROUTINE trcadv
 
      write(*,*) 'trcadv: RANK -> ', myrank, ' good_points -> ', goodpoints
 
-     call tstart("trcadv_alloc")
-
      allocate(zy(jpk,jpj,jpi))
      allocate(zx(jpk,jpj,jpi))
      allocate(zz(jpk,jpj,jpi))
@@ -186,13 +181,9 @@ SUBROUTINE trcadv
      !$acc enter data create(zy,zx,zz,ztj,zti,zkx,zky,zkz,zbuf)
      !$acc update device(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,advmask)
 
-     call tstop("trcadv_alloc")
-
      adv_initialized=.true.
 
   endif
-
-  call tstop("trcadv_init")
 
   !!OpenMP compatibility broken. Possibility to use ifndef OpenMP + rename the file in trcadv.F90 to keep it
 
@@ -202,8 +193,6 @@ SUBROUTINE trcadv
 
   zdt = rdt*ndttrc
   !$OMP TASK private(ji,jj) firstprivate(jpim1,jpjm1) shared(zbtr_arr,e1t,e2t,e3t) default(none)
-
-  call tstart("trcadv_1")
 
   !$acc kernels default(present) async(queue)
   DO ji = 1,jpi
@@ -363,12 +352,7 @@ SUBROUTINE trcadv
   !$omp shared(jpim1,jpjm1,un,vn,wn,e2u,e3u,e3v,e1v,e1t,e2t,e3t,trn,advmask,jarr3,jarr_adv_flx,zbtr_arr) &
   !$omp firstprivate(jpkm1,dimen_jarr3,Fsize,ncor,rtrn,rsc,dimen_jarrt,jpj,jpi,jpk)
 
-  call tstop("trcadv_1")
-  call tstart("trcadv_tracer")
-
   TRACER_LOOP: DO  jn = 1, jptra
-
-     call tstart("trcadv_tracer_1")
 
      !!        1. tracer flux in the 3 directions
      !!        ----------------------------------
@@ -430,33 +414,8 @@ SUBROUTINE trcadv
      !$acc kernels default(present) async(queue)
      DO jj = 2,jpjm1
         !dir$ vector aligned
-        !$acc loop independent
         DO jk = 2,jpk
            zkz(jk,jj,jpi ) = fsx(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
-        END DO
-     END DO
-     !$acc end kernels
-
-     !$acc kernels default(present) async(queue)
-     !$acc loop independent
-     DO  ji = 2,jpim1
-        DO jj = 2,jpjm1
-           !dir$ vector aligned
-           DO jk = 2,jpk
-              zkx(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk,jj,ji + 1, jn),zaa(jk,jj,ji))*advmask(jk,jj,ji)
-           END DO
-        END DO
-     END DO
-     !$acc end kernels
-
-     !$acc kernels default(present) async(queue)
-     DO  ji = 2,jpim1
-        !$acc loop independent
-        DO jj = 2,jpjm1
-           !dir$ vector aligned
-           DO jk = 2,jpk
-              zky(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
-           END DO
         END DO
      END DO
      !$acc end kernels
@@ -466,15 +425,16 @@ SUBROUTINE trcadv
         DO jj = 2,jpjm1
            !dir$ vector aligned
            DO jk = 2,jpk
-              zkz(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
+              tmp1 = trn(jk,jj,ji, jn)
+              zkx(jk,jj,ji ) = fsx(tmp1,trn(jk,jj,ji + 1, jn),zaa(jk,jj,ji))*advmask(jk,jj,ji)
+              zky(jk,jj,ji ) = fsx(tmp1,trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
+              zkz(jk,jj,ji ) = fsx(tmp1,trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
            END DO
         END DO
      END DO
      !$acc end parallel loop
-     !$acc wait(queue)
 
-     call tstop("trcadv_tracer_1")
-     call tstart("trcadv_tracer_1_mpi")
+     !$acc wait(queue)
 
      ! ... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
@@ -492,13 +452,10 @@ SUBROUTINE trcadv
      CALL lbc( zky(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
 
-     call tstop("trcadv_tracer_1_mpi")
-     call tstart("trcadv_tracer_2")
-
      !! 2. calcul of after field using an upstream advection scheme
      !! -----------------------------------------------------------
 
-     !$acc kernels default(present) async(queue)
+     !$acc parallel loop collapse(3) gang vector default(present) async(queue)
      DO ji =2,jpim1
         DO jj =2,jpjm1
            DO jk =1,jpkm1
@@ -509,7 +466,7 @@ SUBROUTINE trcadv
            ENDDO
         ENDDO
      ENDDO
-     !$acc end kernels
+     !$acc end parallel loop
 
      !$acc kernels default(present) async(queue)
      DO jf=1,Fsize
@@ -525,14 +482,9 @@ SUBROUTINE trcadv
 
      !$acc wait(queue)
 
-     call tstop("trcadv_tracer_2")
-     call tstart("trcadv_antidiffcorr")
-
      !! 2.1 start of antidiffusive correction loop
 
      ANTIDIFF_CORR: DO jt = 1,ncor
-
-        call tstart("trcadv_antidiffcorr_1")
 
         !! 2.2 calcul of intermediary field zti
 
@@ -607,9 +559,6 @@ SUBROUTINE trcadv
 
         !$acc wait(queue)
 
-        call tstop("trcadv_antidiffcorr_1")
-        call tstart("trcadv_antidiffcorr_1_mpi")
-
         !! ... Lateral boundary conditions on zti
 #ifdef key_mpp
         ! ... Mpp : export boundary values to neighboring processors
@@ -618,9 +567,6 @@ SUBROUTINE trcadv
         ! ... T-point, 3D array, full local array zti is initialised
         CALL lbc( zti(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
-
-        call tstop("trcadv_antidiffcorr_1_mpi")
-        call tstart("trcadv_antidiffcorr_2")
 
         !! 2.3 calcul of the antidiffusive flux
 
@@ -639,7 +585,7 @@ SUBROUTINE trcadv
         !$acc end kernels
 
         !DO ju=1, dimen_jarr2
-        !$acc kernels default(present) async(queue)
+        !$acc parallel loop gang vector default(present) collapse(3) async(queue)
         DO ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
@@ -662,13 +608,10 @@ SUBROUTINE trcadv
               END DO
            END DO
         END DO
-        !$acc end kernels
+        !$acc end parallel loop
         !                 endif
 
         !$acc wait(queue)
-
-        call tstop("trcadv_antidiffcorr_2")
-        call tstart("trcadv_antidiffcorr_2_mpi")
 
         ! ... Lateral boundary conditions on z[xyz]
 #ifdef key_mpp
@@ -684,9 +627,6 @@ SUBROUTINE trcadv
         CALL lbc( zy(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
         CALL lbc( zz(:,:,:), 1, 1, 1, 1, jpk, 1, gpu=use_gpu )
 #endif
-
-        call tstop("trcadv_antidiffcorr_2_mpi")
-        call tstart("trcadv_antidiffcorr_3")
 
         !! 2.4 reinitialization
         !!            2.5 calcul of the final field:
@@ -732,72 +672,32 @@ SUBROUTINE trcadv
         ENDDO
         !$acc end kernels
 
-        !$acc kernels default(present) async(queue)
+        !$acc parallel loop collapse(2) gang vector default(present) async(queue)
         DO jj = 2,jpjm1
            !dir$ vector aligned
-           !$acc loop independent
            DO jk = 2,jpk
               zkz(jk,jj,1 ) = fsx(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
+              zkz(jk,jj,jpi ) = fsx(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
            ENDDO
         ENDDO
-        !$acc end kernels
+        !$acc end parallel loop
 
-        !$acc kernels default(present) async(queue)
-        DO jj = 2,jpjm1
-           !dir$ vector aligned
-           !$acc loop independent
-           DO jk = 2,jpk
-              zkz(jk,jj,jpi ) = fsx(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
-           END DO
-        END DO
-        !$acc end kernels
-
-        !$acc kernels default(present) async(queue)
-        !$acc loop independent
+        !$acc parallel loop collapse(3) gang vector default(present) async(queue)
         DO  ji = 2,jpim1
            DO jj = 2,jpjm1
               !dir$ vector aligned
               DO jk = 2,jpk
-                 zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
+                 tmp1=zti(jk,jj,ji)
+                 tmp2=advmask(jk,jj,ji)
+                 zkx(jk,jj,ji ) = fsx(tmp1,zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*tmp2
+                 zky(jk,jj,ji ) = fsx(tmp1,zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*tmp2
+                 zkz(jk,jj,ji ) = fsx(tmp1,zti(jk-1,jj,ji ),zz(jk,jj,ji ))*tmp2
               END DO
            END DO
         END DO
-        !$acc end kernels
-
-        !$acc kernels default(present) async(queue)
-        DO  ji = 2,jpim1
-           !$acc loop independent
-           DO jj = 2,jpjm1
-              !dir$ vector aligned
-              DO jk = 2,jpk
-                 !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
-              END DO
-           END DO
-        END DO
-        !$acc end kernels
-
-        !$acc kernels default(present) async(queue)
-        DO  ji = 2,jpim1
-           DO jj = 2,jpjm1
-              !dir$ vector aligned
-              !$acc loop independent
-              DO jk = 2,jpk
-                 !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
-                 !zky(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
-                 zkz(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk-1,jj,ji ),zz(jk,jj,ji ))*advmask(jk,jj,ji)
-              END DO
-           END DO
-        END DO
-        !$acc end kernels
+        !$acc end parallel loop
 
         !$acc wait(queue)
-
-        call tstop("trcadv_antidiffcorr_3")
-        call tstart("trcadv_antidiffcorr_3_mpi")
 
         !... Lateral boundary conditions on zk[xy]
 #ifdef key_mpp
@@ -812,11 +712,8 @@ SUBROUTINE trcadv
 
         !!        2.6. calcul of after field using an upstream advection scheme
 
-        call tstop("trcadv_antidiffcorr_3_mpi")
-        call tstart("trcadv_antidiffcorr_4")
-
         if(ncor .EQ. 1) then
-           !$acc kernels default(present) async(queue)
+           !$acc parallel loop collapse(3) gang vector default(present) async(queue)
            DO ji =2,jpim1
               DO jj =2,jpjm1
                  DO jk =1,jpkm1
@@ -825,7 +722,7 @@ SUBROUTINE trcadv
                  ENDDO
               ENDDO
            ENDDO
-           !$acc end kernels
+           !$acc end parallel loop
 
            !$acc kernels default(present) async(queue)
            DO jf=1,Fsize
@@ -867,13 +764,7 @@ SUBROUTINE trcadv
 
         endif
 
-        call tstop("trcadv_antidiffcorr_4")
-
      ENDDO ANTIDIFF_CORR
-
-     call tstop("trcadv_antidiffcorr")
-     call tstart("trcadv_tracer_3")
-
 
      !!       3. trend due to horizontal and vertical advection of tracer jn
 
@@ -907,8 +798,6 @@ SUBROUTINE trcadv
 
      !$acc wait(queue)
 
-     call tstop("trcadv_tracer_3")
-
 !!$       !!OpenMP compatibility broken. Possibility to use ifdef OpenMP + rename the file in trcadv.F90 to keep it
 !!$        deallocate(zy )
 !!$        deallocate(zx )
@@ -924,8 +813,6 @@ SUBROUTINE trcadv
 
   END DO TRACER_LOOP
   !$acc wait(queue)
-
-  call tstop("trcadv_tracer")
 
   !$OMP end taskloop
 

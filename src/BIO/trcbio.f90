@@ -208,8 +208,9 @@ SUBROUTINE trcbio
   !---------------------------------------------------------------------
   ! BEGIN BC_REFACTORING SECTION
   !---------------------------------------------------------------------
-  ! XXX: when should we care about this ?
+  call tstart("trcbio_fix_diagnostic_vars")
   call boundaries%fix_diagnostic_vars()
+  call tstop("trcbio_fix_diagnostic_vars")
   !----------------------------------------------------------------------
   ! END BC_REFACTORING SECTION
   !---------------------------------------------------------------------

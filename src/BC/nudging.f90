@@ -303,6 +303,13 @@ contains
         integer, intent(in) :: n_tracers
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
+        logical, save :: first = .true.
+
+        if (first) then
+           first=.false.
+           !$acc enter data create(self%m_rst_tracers)
+           !$acc update device(self%m_rst_tracers)
+        endif
 
         call self%m_bc_no_nudging%apply_nudging(e3t, n_tracers, self%m_rst_tracers, trb, tra)
         ! write(*, *) 'INFO: called apply from nudging decorator'

@@ -264,6 +264,15 @@ contains
         class(sponge), intent(inout) :: self
         integer, intent(in) :: idx
         integer :: i, j
+        logical,save :: first = .true.
+
+        if(first) then
+           first=.false.
+           !$acc enter data create(self)
+           !$acc enter data create(self%m_var_names_idx,self%m_sponge_points)
+           !$acc enter data create(self%m_values_dtatrc,self%m_values)
+           !$acc update device(self%m_var_names_idx,self%m_sponge_points)
+        endif
 
         if (self%m_size > 0) then
 
@@ -280,6 +289,7 @@ contains
                         )
                     enddo
                 enddo
+                !$acc update device(self%m_values)
 
             else
                 
@@ -293,6 +303,7 @@ contains
                         )
                     enddo
                 enddo
+                !$acc update device(self%m_values_dtatrc)
 
             endif
 
@@ -336,7 +347,8 @@ contains
         if (self%m_size > 0) then
 
             if (.not.(self%const_data())) then
-                
+
+                !$acc parallel loop gang vector collapse(2) default(present)
                 do i = 1, self%m_n_vars
                     do j = 1, self%m_size
                         self%m_values(j, i) = &
@@ -350,7 +362,10 @@ contains
 
     end subroutine actualize
 
-
+    subroutine update_device(self)
+      class(sponge), intent(inout) :: self
+      !$acc update device(self%m_values_dtatrc)
+    end subroutine update_device
 
     !> Overridden from bc
 
@@ -397,13 +412,16 @@ contains
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: rst_tracers
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(in) :: trb
         double precision, dimension(jpk, jpj, jpi, n_tracers), intent(inout) :: tra
-        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k
+        integer :: i, j, idx_tracer, idx_i, idx_j, idx_k, queue
         double precision :: z_tracer
 
+        queue=1
+
         if (self%m_size > 0) then
+            !$acc parallel loop gang vector collapse(2) default(present) async(queue)
             do i = 1, self%m_n_vars
-                idx_tracer = self%m_var_names_idx(i)
                 do j = 1, self%m_size
+                    idx_tracer = self%m_var_names_idx(i)
                     idx_i = self%m_sponge_points(1, j)
                     idx_j = self%m_sponge_points(2, j)
                     idx_k = self%m_sponge_points(3, j)

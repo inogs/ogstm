@@ -48,22 +48,6 @@
         jarr_zdf_flx = huge(jarr_zdf_flx(1,1))
         !$acc enter data create(jarr_zdf,jarr_zdf_flx)
         !$acc update device(jarr_zdf,jarr_zdf_flx)
-#ifndef _OPENACC
-       allocate(zwd(jpk, ntids))           
-        zwd          = huge(zwd(1,1))
-       allocate(zws(jpk, ntids))           
-        zws          = huge(zws(1,1))
-       allocate(zwi(jpk, ntids))           
-        zwi          = huge(zwi(1,1))
-       allocate(zwx(jpk, ntids))           
-        zwx          = huge(zwx(1,1))
-       allocate(zwy(jpk, ntids))           
-        zwy          = huge(zwy(1,1))
-       allocate(zwz(jpk, ntids))           
-        zwz          = huge(zwz(1,1))
-       allocate(zwt(jpk, ntids))           
-        zwt          = huge(zwt(1,1))
-#endif
 
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
@@ -72,8 +56,8 @@
 
       END subroutine myalloc_ZDF
 
-#ifdef _OPENACC
-      subroutine myalloc_ZDF_gpu()
+      subroutine myalloc_ZDF_zw()
+
         allocate(zwd(jpk, dimen_jvzdf))
         zwd          = huge(zwd(1,1))
         allocate(zws(jpk, dimen_jvzdf))
@@ -91,9 +75,8 @@
 
         !$acc enter data create(zwd,zwi,zwx,zws,zwz,zwy,zwt)
         !$acc update device(zwd,zwi,zwx,zws,zwz,zwy,zwt)
-      END subroutine myalloc_ZDF_gpu
-#endif
-      
+      END subroutine myalloc_ZDF_zw
+
       
       subroutine clean_memory_zdf()
 

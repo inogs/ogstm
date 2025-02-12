@@ -220,6 +220,12 @@
         ikstp1=ikst+1
         ikenm2=jpk-2
 
+        ! NOTE: Ideally we would have parallelized on GPU on both the jv and jk
+        ! loops, but that is not possible because at iteration jk we read in
+        ! (jk-1) to write in (jk). The three following loop nests must also be
+        ! executed serially due to dependencies on zwt and zwz. This explains
+        ! poor GPU performance.
+
         !$acc parallel loop gang vector default(present) vector_length(32) async
         DO jv = 1, dimen_jvzdf
            zwt(ikst,jv)=zwd(ikst,jv)

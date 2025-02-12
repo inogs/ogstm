@@ -57,7 +57,7 @@ MODULE module_step
 
 !      trcstp, trcdia  passive tracers interface
 
-       ! XXX: to be removed
+       ! XXX: to be removed eventually
        use DIA_mem, only: diaflx,flx_ridxt
        use myalloc, only: tra,trb,e1t,e3t_back,e2t,e3t,e3w,umask,vmask,tmask,avt,ahtt
        use BIO_mem, only: ogstm_sediPI,ogstm_PH,ogstm_co2
@@ -92,7 +92,9 @@ MODULE module_step
       TAU = 0
       call tstart("step_total")
 
-      ! XXX: move (or remove) this
+      ! NOTE: These transfers could be either moved close to CPU initialization,
+      ! or the initialization could be made on GPU and the transfers removed.
+
       !$acc update device(e3u,e3v,e3w)
       !$acc update device(e3t_back,e3t)
       !$acc update device(vatm,emp,qsr)
@@ -284,7 +286,9 @@ MODULE module_step
 
       END DO
 
-      ! XXX: remove this
+      ! NOTE: These transfers could be safely removed if the arrays are no
+      ! longer read on CPU from this point.
+
       !$acc update host(trb,trn,tra)
       !$acc update host(diaflx) if(lhdf)
       !$acc update host(zaa,zbb,zcc,inv_eu,inv_ev,inv_et,big_fact_zaa,big_fact_zbb,big_fact_zcc,zbtr_arr,diaflx) if(ladv)

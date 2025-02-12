@@ -58,11 +58,6 @@
 
       subroutine myalloc_ZDF_zw()
 
-        if(dimen_jvzdf .eq. 0) then
-           ! some ranks have nothing to do, don't allocate twice
-           if (allocated(zwd)) return
-        endif
-
         allocate(zwd(jpk, dimen_jvzdf))
         zwd          = huge(zwd(1,1))
         allocate(zws(jpk, dimen_jvzdf))

@@ -89,7 +89,7 @@
 
       trczdfparttime = MPI_WTIME() ! Cronometer start
 
-      IF (dimen_jvzdf .EQ. 0) THEN
+      IF (first) THEN
            DO  ji = 2,jpim1
          DO jj = 2,jpjm1
               IF(tmask(1,jj,ji) .NE. 0) THEN
@@ -116,13 +116,10 @@
          END DO
          !$acc update device(jarr_zdf,jarr_zdf_flx)
          call myalloc_ZDF_zw()
-      ENDIF
-
-      if (first) then
          allocate(delta_tra(jpk), int_tra(jpk))
          !$acc enter data create(delta_tra,int_tra)
          first=.false.
-      endif
+      ENDIF
 
 !! passive tracer slab
 !! ===================

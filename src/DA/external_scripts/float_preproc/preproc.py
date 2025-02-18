@@ -82,7 +82,7 @@ BASEDIR  = args.basedir
 INPUTDIR = args.inputdir
 OUTDIR   = args.outdir
 varmod   = args.variable
-TheMask = Mask(args.maskfile)
+TheMask = Mask.from_file(args.maskfile)
 deplim  = int(args.deplim)
 
 nav_lev = TheMask.zlevels

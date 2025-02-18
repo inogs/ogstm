@@ -9,7 +9,7 @@ from commons.dataextractor import DataExtractor
 from commons.mask import Mask
 import os,glob
 
-TheMask=Mask('/gpfs/work/IscrC_MEDCOAST_0/test_swp/TEST01/wrkdir/MODEL/meshmask.nc')
+TheMask=Mask.from_file('/gpfs/work/IscrC_MEDCOAST_0/test_swp/TEST01/wrkdir/MODEL/meshmask.nc')
 DIR1 = "/gpfs/work/IscrC_MEDCOAST_0/test_swp/test_FSA/ogstm/testcase/TEST01/wrkdir/MODEL/AVE_FREQ_2/"
 DIR2 = "/gpfs/work/IscrC_MEDCOAST_0/test_swp/TEST01/wrkdir/MODEL/AVE_FREQ_2/"
 

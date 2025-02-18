@@ -10,7 +10,7 @@ from commons.mask import Mask
 
 
 def plot_floatvsmodel(modelvarname,idate1,AllProfiles,AllChl, NewPres, Float,wmolist):
-        TheMask=Mask("/pico/home/usera07ogs/a07ogs00/OPA/V2C/etc/static-data/MED1672_cut/MASK/meshmask.nc")
+        TheMask=Mask.from_file("/pico/home/usera07ogs/a07ogs00/OPA/V2C/etc/static-data/MED1672_cut/MASK/meshmask.nc")
         nav_lev = TheMask.zlevels
         dz= TheMask.dz
 

@@ -7,5 +7,5 @@ from commons.mask import Mask
 TheMask=Mask('meshmask.nc',dzvarname="e3t_0")
 
 for sub in OGS.Pred:
-    S=SubMask(sub,maskobject=TheMask)
+    S=SubMask(sub, TheMask)
     S.save_as_netcdf('submask.nc', maskvarname=sub.name)

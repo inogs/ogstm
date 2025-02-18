@@ -74,7 +74,7 @@ VARLIST = ['P_l']      #'N3n','O2o']
 read_adjusted = [True] #,False,False]
 
 # MASK of the domain
-TheMask=Mask("/pico/home/usera07ogs/a07ogs00/OPA/V2C/etc/static-data/MED1672_cut/MASK/meshmask.nc")
+TheMask=Mask.from_file("/pico/home/usera07ogs/a07ogs00/OPA/V2C/etc/static-data/MED1672_cut/MASK/meshmask.nc")
 nav_lev = TheMask.zlevels
 
 layer=Layer(0,200)     #layer of the Float profile???? 

@@ -69,7 +69,7 @@ BASEDIR  = addsep(args.basedir)
 INPUTDIR = addsep(args.inputdir)
 OUTDIR   = addsep(args.outdir)
 varmod   = args.variable
-TheMask = Mask(args.maskfile)
+TheMask = Mask.from_file(args.maskfile)
 deplim  = np.int(args.deplim)
 
 nav_lev = TheMask.zlevels

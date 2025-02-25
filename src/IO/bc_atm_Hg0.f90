@@ -109,7 +109,7 @@ contains
          nomefile(1:31)='BC/atm_Hg0_'//datestring//'.nc'
          if(lwp) write(*,'(A,I4,A,A)') "LOAD_atm_Hg0 --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:31)
 
-         call readnc_slice_float_2d(nomefile,'hgconc',buf2,0)
+         call readnc_slice_float_2d(nomefile,'hg0atm',buf2,0)
          Hg0_IO(:,:,2) = buf2*tmask(1,:,:)
       
 

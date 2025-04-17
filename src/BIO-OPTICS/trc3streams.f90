@@ -165,12 +165,12 @@
 
                     enddo
 
-                    if (bottom.lt.phys_bottom) then
+                    if ((bottom+1).lt.phys_bottom) then
 
                        do jk=bottom+1, phys_bottom ! propagation 500m --> phys_bottom of last value
-                          Ed(jk,jj,ji,jl) = Ed(bottom, jj,ji, jl)
-                          Es(jk,jj,ji,jl) = Es(bottom, jj,ji, jl)
-                          Eu(jk,jj,ji,jl) = Eu(bottom, jj,ji, jl)
+                          Ed(jk,jj,ji,jl) = Ed(bottom+1, jj,ji, jl)
+                          Es(jk,jj,ji,jl) = Es(bottom+1, jj,ji, jl)
+                          Eu(jk,jj,ji,jl) = Eu(bottom+1, jj,ji, jl)
                        enddo
                     endif
                  enddo

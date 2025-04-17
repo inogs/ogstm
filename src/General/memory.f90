@@ -391,7 +391,8 @@
       LOGICAL atlantic_bfm ! atlantic buffer biology activation
 
 #    if defined key_trc_bfm
-      double precision vsed                        ! sedimentation speed (NAMELIST)
+      double precision vsedR6                      ! sedimentation speed of small detritus (NAMELIST)
+      double precision vsedR8                      ! sedimentation speed of large detritus (NAMELIST)
       double precision vsedO5c                     ! sedimentation speed of calcite(NAMELIST)
       double precision bottom_flux                 ! (NAMELIST)
 

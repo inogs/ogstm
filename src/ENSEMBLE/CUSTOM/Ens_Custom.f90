@@ -12,7 +12,7 @@ module Ens_Custom
         only: EnsDebug, EnsRankZero, myrankZero, &
             EnsSize, EnsRank, &
             LocalRange, ForgettingFactor, UseParams, &
-            Ens_restart_ens_prefix, Ens_analysis_ens_prefix
+            Ens_restart_prefix, Ens_analysis_prefix
     use Ens_Utilities, &
         only: Ens_ReduceMean
     use ogstm_mpi_module, &
@@ -41,6 +41,7 @@ module Ens_Custom
     double precision, dimension(:), allocatable :: MaxStd1
     
     double precision, dimension(:,:), pointer :: Inflation
+    integer :: win_Input_Custom
     
 contains
     
@@ -102,8 +103,9 @@ subroutine Ens_Init_DA
     
     if (.not.(UseParams)) then
         allocate(Inflation(jpj, jpi)) 
+        Inflation=1.0d0/sqrt(ForgettingFactor)
     end if
-    !Inflation=1.0d0/sqrt(ForgettingFactor)
+    
     
 end subroutine
 
@@ -300,7 +302,7 @@ subroutine Ens_state2DA(DateString)
     
     if (EnsRank==EnsRankZero) then
         do indext=1,ntra_DAstate
-            call PW_prepare_writing(trim(Ens_restart_ens_prefix), DateString, "STD."//trim(ctrcnm(DAVariablesIndex(indext))), stddev(:, :,:, indext), nk_DAstate)
+            call PW_prepare_writing(trim(Ens_restart_prefix), DateString, "STD."//trim(ctrcnm(DAVariablesIndex(indext))), stddev(:, :,:, indext), nk_DAstate)
         end do
         call PW_write_all
         
@@ -381,7 +383,7 @@ subroutine Ens_DA2state(DateString)
     
     if (EnsRank==EnsRankZero) then
         do indext=1,ntra_DAstate
-            call PW_prepare_writing(trim(Ens_analysis_ens_prefix), DateString, "STD."//trim(ctrcnm(DAVariablesIndex(indext))), stddev(:, :,:, indext), nk_DAstate)
+            call PW_prepare_writing(trim(Ens_analysis_prefix), DateString, "STD."//trim(ctrcnm(DAVariablesIndex(indext))), stddev(:, :,:, indext), nk_DAstate)
         end do
         call PW_write_all
         

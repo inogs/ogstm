@@ -37,8 +37,8 @@ subroutine PW_Init
     PW_add=2
     PW_max=mysize
     
-    allocate(PW_tracer(jpk, jpjglo, jpiglo))
-    PW_tracer=Huge(PW_tracer(1, 1, 1))
+!     allocate(PW_tracer(jpk, jpjglo, jpiglo))
+!     PW_tracer=Huge(PW_tracer(1, 1, 1))
     
     allocate(PW_nldi(mysize))
     allocate(PW_nlei(mysize))
@@ -94,7 +94,7 @@ end subroutine
 
 subroutine PW_Finalize
     
-    deallocate(PW_tracer)    
+!     deallocate(PW_tracer)    
     deallocate(PW_count)
     deallocate(PW_displacement)
     deallocate(PW_count_2D)
@@ -117,11 +117,11 @@ subroutine PW_prepare_writing(prefix, datestring, varname, tracer, n_vertical)
     
     integer ierr, indexi, indexj, indexk
     
-    return
-    
     allocate( PW_tracer_piece(n_vertical,nlej - nldj +1, nlei - nldi +1))
     
     !PW_tracer_piece(:,:,:)=tracer(:,nldj:nlej,nldi:nlei)*tmask(1:n_vertical,nldj:nlej,nldi:nlei) + (1-tmask(1:n_vertical,nldj:nlej,nldi:nlei))*PW_miss_val
+    
+!     write(*,*) "tracer", tracer, "--------------------------------------------------------"
     
     do indexi=1,nlei - nldi +1
         do indexj=1,nlej - nldj +1
@@ -136,6 +136,8 @@ subroutine PW_prepare_writing(prefix, datestring, varname, tracer, n_vertical)
         end do
     end do
     
+!     write(*,*) "PW_tracer_piece", PW_tracer_piece, "--------------------------------------------------------"
+    
     if (myrank==PW_writing_rank) then
     
         PW_filename=trim(prefix)//'.'//trim(datestring)//'.'//trim(varname)//'.nc'
@@ -149,6 +151,8 @@ subroutine PW_prepare_writing(prefix, datestring, varname, tracer, n_vertical)
     PW_displacement=PW_displacement_2D*n_vertical
     CALL MPI_GATHERV(PW_tracer_piece, n_vertical*(nlej - nldj +1)*(nlei - nldi +1), MPI_DOUBLE_PRECISION, &
         PW_tracer_puzzle(1:PW_displacement(mysize+1)), PW_count, PW_displacement(1:mysize), MPI_DOUBLE_PRECISION, PW_writing_rank, mycomm, ierr)
+        
+!     write(*,*) "PW_tracer_puzzle", PW_tracer_puzzle(1:PW_displacement(mysize+1)), "--------------------------------------------------"
     
     deallocate( PW_tracer_piece)
     
@@ -161,7 +165,7 @@ end subroutine
 
 subroutine PW_write_all
 
-    integer indexi
+    integer indexi, indexj, indexk, indexd,c
     
     if ((myrank>=PW_writing_rank).or.(mod(myrank,PW_add)/=0)) then
         PW_writing_rank=0
@@ -171,18 +175,34 @@ subroutine PW_write_all
     PW_count=PW_count_2D*PW_n_vertical
     PW_displacement=PW_displacement_2D*PW_n_vertical
     
+    allocate(PW_tracer(PW_n_vertical, jpjglo, jpiglo))
+    
     PW_tracer=PW_miss_val
     
-    do indexi=1,mysize
-        PW_tracer(1:PW_n_vertical, domdec(indexi,7) + PW_nldj(indexi) -1 : domdec(indexi,7) + PW_nlej(indexi) -1, domdec(indexi,6) + PW_nldi(indexi) -1 : domdec(indexi,6) + PW_nlei(indexi) -1) = &
-            reshape(PW_tracer_puzzle(PW_displacement(indexi)+1:PW_count(indexi)+PW_displacement(indexi)), (/PW_n_vertical,PW_nlej(indexi) - PW_nldj(indexi) +1, PW_nlei(indexi) - PW_nldi(indexi) +1/))
+    do indexd=1,mysize
+!         PW_tracer(:, domdec(indexd,7) + PW_nldj(indexd) -1 : domdec(indexd,7) + PW_nlej(indexd) -1, domdec(indexd,6) + PW_nldi(indexd) -1 : domdec(indexd,6) + PW_nlei(indexd) -1) = &
+!             reshape(PW_tracer_puzzle(PW_displacement(indexd)+1:PW_count(indexd)+PW_displacement(indexd)), (/PW_n_vertical,PW_nlej(indexd) - PW_nldj(indexd) +1, PW_nlei(indexd) - PW_nldi(indexd) +1/))
+        c=PW_displacement(indexd)
+        do indexi=0, PW_nlei(indexd) - PW_nldi(indexd)
+            do indexj=0, PW_nlej(indexd) - PW_nldj(indexd)
+                PW_tracer(:, domdec(indexd,7) + PW_nldj(indexd) -1 + indexj, domdec(indexd,6) + PW_nldi(indexd) -1 +indexi) = &
+                    PW_tracer_puzzle(c+1:c+PW_n_vertical)
+                c=c+PW_n_vertical
+            end do
+        end do
+        
     end do
+    
+!     indexi=1
+!     write(*,*) "PW_tracer( 1: ", PW_n_vertical,", ", domdec(indexi,7) + PW_nldj(indexi) -1 ," : ", domdec(indexi,7) + PW_nlej(indexi) -1,", ", domdec(indexi,6) + PW_nldi(indexi) -1 , " : ", domdec(indexi,6) + PW_nlei(indexi) -1, " )"
+!     write(*,*) PW_tracer(1:PW_n_vertical, domdec(indexi,7) + PW_nldj(indexi) -1 : domdec(indexi,7) + PW_nlej(indexi) -1, domdec(indexi,6) + PW_nldi(indexi) -1 : domdec(indexi,6) + PW_nlei(indexi) -1), "--------------------------------------------"
     
     call PW_write(trim(PW_filename), trim(PW_varname), PW_datestring, deflate_rst, deflate_level_rst, PW_tracer, PW_n_vertical)
     
     if (EnsDebug>1) write(*,*) trim(PW_filename), " written."
     
     PW_writing_rank=0
+    deallocate(PW_tracer)
     
 end subroutine
 

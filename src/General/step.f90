@@ -84,6 +84,14 @@ MODULE module_step
 !         Time  loop           c
 !++++++++++++++++++++++++++++++c
 
+!!!!!!!!
+! This lines (and the lines before temporization) are for managing g100 random slowdowns.
+! De-comment if g100 shows slowdowns:
+!
+! integer intoppo
+! intoppo=0
+!
+!!!!!!!!!!
 
     isFIRST=.true.
 
@@ -210,6 +218,23 @@ MODULE module_step
         !        write(*,*) Ens_Timers
         !    end if
         !end if
+        
+!!!!!!!!
+! This lines (and the lines after variables declaration) are for managing g100 random slowdowns.
+! De-comment if g100 shows slowdowns:
+!
+! if (stpparttime>20) then
+! if (intoppo>2) then
+! write(*,*) "Galileo si e' intoppato"
+! call MPI_abort(glcomm, 1, ierr)
+! else 
+! intoppo =intoppo+1
+! end if
+! else
+! intoppo =0
+! end if
+!
+!!!!!!!!!!!!
 
 ! OGSTM TEMPORIZATION
         IF (TAU.GT.0.and.EnsDebug>0) THEN

@@ -179,8 +179,7 @@ SUBROUTINE ogstm_initialize()
 #endif
 
       narea = myrank+1
-
-
+      
       call parini
 
       !call parlec      ! read namelist.init

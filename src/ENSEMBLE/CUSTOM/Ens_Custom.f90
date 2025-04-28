@@ -26,6 +26,7 @@ module Ens_Custom
     double precision, parameter :: small=10.0d0**(-5)
     double precision, parameter :: logsmall=log(small)
     double precision, parameter :: MaxStd=1.0d0
+    double precision, parameter :: MaxRelativeCorrection=1.0d0
     
     integer :: nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate
     double precision, pointer, contiguous, dimension(:) :: DAstate 
@@ -102,7 +103,7 @@ subroutine Ens_Init_DA
     DAstate_biased=0.0d0
     
     if (.not.(UseParams)) then
-        allocate(Inflation(jpj, jpi)) 
+        allocate(Inflation(nj_DAstate , ni_DAstate)) 
         Inflation=1.0d0/sqrt(ForgettingFactor)
     end if
     
@@ -315,13 +316,35 @@ subroutine Ens_state2DA(DateString)
 end subroutine
 
 subroutine Ens_DA2state(DateString)
+    use Ens_Mem, &
+        only: EnsWeights
     
     ! Transform back, from DA output to trn.
     ! e.g. trn=exp(DAstate_kjit)
     
     character(len=17), intent(in) :: DateString
     integer indexi, indexj, indexk, indext, ierror
-    double precision temp
+    double precision temp, mean, temp2
+    
+!     do indext=1, ntra_DAstate
+!         do indexi=1, ni_DAstate
+!             do indexj=1, nj_DAstate
+!                 do indexk=1, nk_DAstate
+!                     if (DAMask(indexk, indexj, indexi)==0) exit
+!                     
+!                     mean=dot_product(gl_DAstate_kjitn(indexk, indexj, indexi, indext,:), EnsWeights)
+!                     temp=mean-DAstate_avg(indexk, indexj, indexi, indext)
+!                     if (abs(temp)>MaxRelativeCorrection*stddev(indexk, indexj, indexi, indext)) then
+!                         temp=temp-sign(temp)*MaxRelativeCorrection*stddev(indexk, indexj, indexi, indext)
+!                         DAstate_kjitn(indexk, indexj, indexi, indext)=DAstate_kjitn(indexk, indexj, indexi, indext)-temp
+!                         mean=mean-temp
+!                     end if
+!                     
+!                     if 
+!                 end do
+!             end do
+!         end do
+!     end do
     
     !trn(:,nldj:nlej,nldi:nlei,DAVariablesIndex)=exp(DAstate_kjit)
     do indext=1, ntra_DAstate
@@ -337,7 +360,30 @@ subroutine Ens_DA2state(DateString)
     
     call Ens_ReduceMean(win_DAstate, n_DAstate, gl_DAstate)
     
-    DAstate_avg(:,:,:,:)=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1, nk_DAstate
+                    if (DAMask(indexk, indexj, indexi)==0) exit
+                    
+                    mean=gl_DAstate_kjitn(indexk, indexj, indexi, indext,EnsRankZero)
+                    temp=mean-DAstate_avg(indexk, indexj, indexi, indext)
+                    temp2=MaxRelativeCorrection*stddev(indexk, indexj, indexi, indext)
+                    if (abs(temp)>temp2) then
+                        temp=temp-sign(temp2,temp)
+                        trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))= &
+                            exp(log(trn(indexk, nldj-1+indexj, nldi-1+indexi, DAVariablesIndex(indext))) - temp)
+                        DAstate_avg(indexk, indexj, indexi, indext)=mean-temp
+                    else
+                        DAstate_avg(indexk, indexj, indexi, indext)=mean
+                    end if
+                                           
+                end do
+            end do
+        end do
+    end do 
+    
+!     DAstate_avg(:,:,:,:)=gl_DAstate_kjitn(:,:,:,:,EnsRankZero)
     
     CALL MPI_Win_fence(0, win_DAstate, ierror)
     
@@ -369,6 +415,7 @@ subroutine Ens_DA2state(DateString)
                     else
                         stddev(indexk, indexj, indexi, indext)=temp
                     end if
+                    
                 end do
             end do
         end do
@@ -542,12 +589,22 @@ function IsEnsDAVar(name)
 !         end if
 !         if (((name(1:1).eq."O").and.(.not.(name.eq."O2o"))).or.(name.eq."R3c")) then
 
+!     if ((name(1:1).eq."O").and.(.not.(name.eq."O2o"))) then
+!         IsEnsDAVar=.false.
+!     else
+!         IsEnsDAVar=.true.
+!     end if
+        
     if ((name(1:1).eq."O").and.(.not.(name.eq."O2o"))) then
         IsEnsDAVar=.false.
-    else
-        IsEnsDAVar=.true.
+        return
     end if
-        
+    if ((name(1:1).eq."R").and.(.not.(name(1:2).eq."R6"))) then
+        IsEnsDAVar=.false.
+        return
+    end if
+    IsEnsDAVar=.true.
+    
 end function
 
 function IsObserved(name)

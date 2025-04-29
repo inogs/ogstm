@@ -84,14 +84,28 @@ contains
             istart = 1 + (EnsRank*member_size)/EnsSize
             istop = ((EnsRank+1)*member_size)/EnsSize
             
-            !gl_pointer(istart:istop, EnsRankZero) = sum(gl_pointer(istart:istop, :), dim=2)/EnsSize
+            ! This lines substitute the following commented lines due to an intel compiler bug:
+            ! "catastrophic error: **Internal compiler error: internal abort** Please report this error along with 
+            ! the circumstances in which it occurred in a Software Problem Report.  Note: File and 
+            ! line given may not be explicit cause of this error."
             do indexi=istart, istop
-                if (gl_pointer(indexi, EnsRankZero)<Ens_Miss_val) then
-                    gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :)*EnsWeights)
-                    gl_pointer(indexi,0:EnsRankZero-1)=gl_pointer(indexi,0:EnsRankZero-1)-gl_pointer(indexi,EnsRankZero)
-                    gl_pointer(indexi,EnsRankZero+1:EnsSize-1)=gl_pointer(indexi,EnsRankZero+1:EnsSize-1)-gl_pointer(indexi,EnsRankZero)
-                end if
+                if (gl_pointer(indexi, EnsRankZero)<Ens_Miss_val) gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :)*EnsWeights)
             end do
+            do indexi=0, EnsSize-1
+                if (indexi==EnsRankZero) continue
+                
+                gl_pointer(istart: istop, indexi)=gl_pointer(istart: istop, indexi) - gl_pointer(istart: istop, EnsRankZero)
+            end do
+            
+            ! Commented lines due to the bag:
+!             do indexi=istart, istop
+!                 if (gl_pointer(indexi, EnsRankZero)<Ens_Miss_val) then
+!                     gl_pointer(indexi, EnsRankZero)=sum(gl_pointer(indexi, :)*EnsWeights)
+!                     gl_pointer(indexi,0:EnsRankZero-1)=gl_pointer(indexi,0:EnsRankZero-1)-gl_pointer(indexi,EnsRankZero)
+!                     gl_pointer(indexi,EnsRankZero+1:EnsSize-1)=gl_pointer(indexi,EnsRankZero+1:EnsSize-1)-gl_pointer(indexi,EnsRankZero)
+!                 end if
+!             end do
+
             if (EnsDebug>1) write(*,*) 'reduction computed: ', EnsRank, ', myrank: ', myrank
             
         CALL MPI_Win_fence(0, window, ierror)

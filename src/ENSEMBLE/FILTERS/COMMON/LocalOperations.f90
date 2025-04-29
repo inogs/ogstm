@@ -8,7 +8,7 @@ module LocalOperations
             domdec, nono, noso, noea, nowe
     use Ens_Mem, &
         only: EnsSize, &
-            LocalRange
+            Namelist_LocalRange => LocalRange
     use Ens_Custom, &   
         only: nj_DAstate, ni_DAstate, DAMask, &
             LocalWeightFunction
@@ -19,6 +19,7 @@ module LocalOperations
     
     type :: LocalSpace
         integer EnsDim
+        integer LocalRange
         double precision, dimension(:,:,:), allocatable :: LocalPatch, VerticalPatch, HorizontalPatch, DiagonalPatch
     contains
         procedure :: Init => Local_alloc
@@ -71,9 +72,9 @@ subroutine Ens_Init_Local
     end if
     
     LocalMaxRange=minval(domdec(:,4:5))-2
-    if (LocalRange>LocalMaxRange) then
-        if (lwp) write(*,*) 'WARNING! The local range (', LocalRange, ') is bigger than the maximum local range (', LocalMaxRange, '). LocalRange reduced to LocalMaxRange.'
-        LocalRange=LocalMaxRange
+    if (Namelist_LocalRange>LocalMaxRange) then
+        if (lwp) write(*,*) 'WARNING! The local range (', Namelist_LocalRange, ') is bigger than the maximum local range (', LocalMaxRange, '). LocalRange reduced to LocalMaxRange.'
+        Namelist_LocalRange=LocalMaxRange
     end if
     
 end subroutine
@@ -82,12 +83,27 @@ subroutine Ens_Finalize_Local
     
 end subroutine
 
-subroutine Local_alloc(this, EnsDim)
+subroutine Local_alloc(this, EnsDim, Optional_LocalRange)
 
     class(LocalSpace), intent(inout) :: this
     integer, intent(in) :: EnsDim
+    integer, optional, intent(in) :: Optional_LocalRange
+    
+    integer :: LocalRange
     
     this%EnsDim = EnsDim
+    
+    if (present(Optional_LocalRange)) then
+        LocalRange = Optional_LocalRange
+        if (LocalRange>LocalMaxRange) then
+            if (lwp) write(*,*) 'WARNING! The local range (', LocalRange, ') is bigger than the maximum local range (', LocalMaxRange, '). LocalRange reduced to LocalMaxRange.'
+            LocalRange=LocalMaxRange
+        end if
+    else
+        LocalRange = Namelist_LocalRange
+    end if
+    
+    this%LocalRange=LocalRange
     
     if (LocalRange>0) then
     
@@ -110,7 +126,7 @@ end subroutine
 subroutine Local_dealloc(this)
     class(LocalSpace), intent(inout) :: this
     
-    if (LocalRange>0) then
+    if (this%LocalRange>0) then
     
         deallocate(this%LocalPatch)
         deallocate(this%VerticalPatch)
@@ -127,7 +143,7 @@ subroutine LocalComputeAll(this, patch, WeightedObs)
     double precision, dimension(this%EnsDim,nj_DAstate, ni_DAstate), intent(inout) :: patch
     logical, intent(in) :: WeightedObs
     
-    if (LocalRange>0) then
+    if (this%LocalRange>0) then
         
             call this%SendRecive(patch)
     
@@ -141,11 +157,14 @@ subroutine LocalComputeAll(this, patch, WeightedObs)
     
 end subroutine
 
-subroutine LocalSendRecive(this, patch)
+subroutine LocalSendRecive(this, patch, opt_FillValue)
     
     class(LocalSpace), intent(inout) :: this
     double precision, dimension(this%EnsDim,nj_DAstate, ni_DAstate), intent(in) :: patch
-    integer :: ierr
+    double precision, optional, intent(in) :: opt_FillValue
+    
+    integer :: ierr, LocalRange
+    double precision :: FillValue
     
 !               3     4
 !               |     ^
@@ -161,7 +180,15 @@ subroutine LocalSendRecive(this, patch)
 !               |     |
 !               v     |    
     
-    this%LocalPatch=0.0d0
+    if (present(opt_FillValue)) then
+        FillValue=opt_FillValue
+    else
+        FillValue=0.0d0
+    end if
+    
+    LocalRange=this%LocalRange
+    
+    this%LocalPatch=FillValue
     this%LocalPatch(:,1:nj_DAstate,1:ni_DAstate)=patch
 
     if (mod(xRank, 2)==0) then
@@ -290,7 +317,10 @@ subroutine SummingLocalPatch(this, patch)
     
     class(LocalSpace), intent(inout) :: this
     double precision, dimension(this%EnsDim, nj_DAstate, ni_DAstate), intent(out) :: patch
-    integer :: indexi, indexj, indexk, temp
+    
+    integer :: indexi, indexj, indexk, temp, LocalRange
+    
+    LocalRange=this%LocalRange
     
     patch=0.0d0
     do indexi=-LocalRange,LocalRange
@@ -324,7 +354,10 @@ subroutine SummingLocalPatchWeighted(this, patch)
     
     class(LocalSpace), intent(inout) :: this
     double precision, dimension(this%EnsDim, nj_DAstate, ni_DAstate), intent(out) :: patch
-    integer :: indexi, indexj, indexk, indexl, temp
+    
+    integer :: indexi, indexj, indexk, indexl, temp, LocalRange
+    
+    LocalRange=this%LocalRange
     
     patch=0.0d0
     do indexi=1, ni_DAstate

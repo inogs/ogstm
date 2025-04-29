@@ -239,6 +239,40 @@ Subroutine Ens_shared_alloc_base(member_size, member_pointer, global_pointer, wi
     CALL C_F_POINTER(C_pointer, global_pointer, SHAPE = (/member_size, EnsSize-1/))
 end subroutine
 
+Subroutine Ens_shared_alloc_array(member_size, member_pointer, global_pointer, window)
+    !routine completamente da scrivere per allocare un array comune
+    USE, INTRINSIC :: ISO_C_BINDING
+    
+    INTEGER, intent(in) :: member_size
+    double precision, dimension(:), POINTER, contiguous, intent(out) :: member_pointer
+    double precision, dimension(:,:), POINTER, contiguous, intent(out) :: global_pointer
+    INTEGER, intent(out) :: window
+    
+    INTEGER :: ierror
+    INTEGER :: double_size
+    INTEGER(KIND=MPI_ADDRESS_KIND) :: window_buffer_size
+    TYPE(C_PTR) :: C_pointer
+    
+    CALL MPI_Type_size(MPI_real8, double_size, ierror)
+    window_buffer_size = double_size * member_size
+    
+    if (EnsRank==EnsRankZero) then
+        CALL MPI_Win_allocate_shared(0_MPI_ADDRESS_KIND, double_size, MPI_INFO_NULL, EnsComm, C_pointer, window, ierror)
+    else
+        CALL MPI_Win_allocate_shared(window_buffer_size, double_size, MPI_INFO_NULL, EnsComm, C_pointer, window, ierror)
+    end if
+    if (ierror/=0) then
+        WRITE(*, *) 'Error with MPI_Win_allocate_shared. Aborting.'
+        call MPI_abort(glcomm, 1, ierror)
+    end if
+
+    if (EnsRank/=EnsRankZero) CALL C_F_POINTER(C_pointer, member_pointer, SHAPE = (/member_size/))
+
+    call MPI_Win_shared_query(window, MPI_PROC_NULL, window_buffer_size, double_size, C_pointer, ierror)
+    
+    CALL C_F_POINTER(C_pointer, global_pointer, SHAPE = (/member_size, EnsSize-1/))
+end subroutine
+
 LOGICAL FUNCTION IsaForecast(datestring)
     use Time_Manager, &
         only: DATESTART

@@ -3,7 +3,8 @@
 module Ens_Obs
     use Ens_Custom, &   
         only: nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate
-    use ObsSatellite, &
+!     use ObsSatellite, &
+    use ObsSatellite_Likelihood, & 
         only: Sat_Init, Sat_Finalize, Sat_LoadObs, Sat_Misfit, Sat_H, Sat_SqrtR1
     use ObsFloat, &
         only: Float_Init, Float_Finalize, Float_LoadObs, Float_Misfit, Float_H, Float_SqrtR1

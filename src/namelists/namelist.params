@@ -1,29 +1,73 @@
+! Namelist for parameters
+! ParamName(i): The name in restart files associated with i-th parameter
+! UseParam(i): Activate/deactivate the i-th parameter
+! ParamSubset(i): Define subsets of parameters with different behaviour. 0 for biogeochemical parameters, 1 for likelihood parameters
+! SaveParam(i): Writes the i-th parameter map of values after assimilation (if EnsSaveAfterAnalysis is true)
+
 &Params_setup 
     ParamName(1)='PRMS.B1.p_pu_ra'
     UseParam(1)=.true.
+    ParamSubset(1)=0
+    SaveParam(1)=.false.
     
     ParamName(2)='PRMS.Z5.p_sum'
     UseParam(2)=.true.
+    ParamSubset(2)=0
+    SaveParam(2)=.false.
     
     ParamName(3)='PRMS.Z6.p_sum'
     UseParam(3)=.true.
+    ParamSubset(3)=0
+    SaveParam(3)=.false.
     
     ParamName(4)='PRMS.P1.p_qlcPPY'
-    UseParam(4)=.false.
+    UseParam(4)=.true.
+    ParamSubset(4)=0
+    SaveParam(4)=.false.
     
     ParamName(5)='PRMS.P3.p_qlcPPY'
-    UseParam(5)=.false.
+    UseParam(5)=.true.
+    ParamSubset(5)=0
+    SaveParam(5)=.false.
     
     ParamName(6)='PRMS.P3.p_qpcPPY'
     UseParam(6)=.true.
+    ParamSubset(6)=0
+    SaveParam(6)=.false.
     
     ParamName(7)='PRMS.P1.p_qplc'
     UseParam(7)=.true.
+    ParamSubset(7)=0
+    SaveParam(7)=.false.
     
     ParamName(8)='PRMS.P1.p_srs'
     UseParam(8)=.true.
+    ParamSubset(8)=0
+    SaveParam(8)=.false.
     
     ParamName(9)='PRMS.R6.rm'
     UseParam(9)=.true.
+    ParamSubset(9)=0
+    SaveParam(9)=.false.
+    
+    ParamName(10)='PRMS.Infl'
+    UseParam(10)=.true.
+    ParamSubset(10)=1
+    SaveParam(10)=.true.
+    
+    ParamName(11)='PRMS.Sat.Mult'
+    UseParam(11)=.true.
+    ParamSubset(11)=1
+    SaveParam(11)=.true.
+    
+    ParamName(12)='PRMS.Sat.Add'
+    UseParam(12)=.true.
+    ParamSubset(12)=1
+    SaveParam(12)=.true.
+    
+    ParamName(13)='PRMS.Sat.Bias'
+    UseParam(13)=.false.
+    ParamSubset(13)=1
+    SaveParam(13)=.true.
 
 / 

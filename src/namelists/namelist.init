@@ -121,6 +121,7 @@
     satvarname='CHL'
     SatMultError=0.35d0
     SatAddError=0.02d0
+    SatBias=0.0d0
 /
 
 &Obs_Float_setup

@@ -52,11 +52,12 @@ contains
         
     end subroutine
 
-    subroutine SymChangeBase(matrix, ierr, debug_opt)
+    subroutine SymChangeBase(matrix, ierr, debug_opt, LnDet_opt)
     
         double precision, dimension(EnsDim, EnsDim), intent(inout) :: matrix
         integer, intent(in), optional :: debug_opt
         integer, intent(out) :: ierr
+        double precision, intent(out), optional :: LnDet_opt
         integer :: indexi, neigenvalues, debug
         double precision dlamch
         
@@ -95,6 +96,8 @@ contains
             matrix(indexi,:)=eigenvectors(:,indexi)/sqrt(eigenvalues(indexi))
         end do
         matrix=MatMul(eigenvectors,matrix)
+        
+        if (present(LnDet_opt)) LnDet_opt=sum(log(eigenvalues))
 
     end subroutine
 

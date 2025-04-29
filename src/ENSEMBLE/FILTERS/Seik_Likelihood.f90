@@ -1,6 +1,6 @@
 ! developed by Simone Spada (sspada@ogs.it) at OGS
 
-module Seik
+module Seik_Likelihood
     use mpi
     
     use myalloc, &
@@ -10,13 +10,13 @@ module Seik
     use Ens_Mem, &
         only: EnsRankZero, myrankZero, &
             EnsDebug, EnsRank, EnsSize, &
-            UseLocalObsDumping, &
+            UseLocalObsDumping, UseParams, &
             ForgettingFactor, &
             Ens_shared_alloc, Ens_shared_alloc_base
     use Ens_Custom, &   
         only: nk_DAstate, nj_DAstate, ni_DAstate, ntra_DAstate, &
             DAstate_kjit, win_DAstate, n_DAstate, gl_DAstate, gl_DAstate_kjitn, &
-            DAMask
+            DAMask, DAstate_avg, Inflation
     use Ens_Utilities, &
         only: Ens_ReduceMeanAndBase
     use Ens_Obs, &
@@ -27,7 +27,6 @@ module Seik
             Ens_Init_Local, Ens_Finalize_Local
     use Algebra, &
         only: Init_Algebra, Finalize_Algebra, SymChangeBase, OrtMatrix, det
-    
     
     implicit none
     
@@ -169,7 +168,7 @@ subroutine Seik_Analysis
     integer :: indexi, indexj, indexk, indext, indexd, c, rankc
     integer ierror
     
-    ForecastCov1=TTW1T*ForgettingFactor
+    ForecastCov1=TTW1T!*ForgettingFactor
     
     n_Hstate=nj_DAstate*ni_DAstate*nObs
     call Ens_shared_alloc(n_Hstate, member_pointer, global_pointer, win_Hstate)
@@ -182,6 +181,17 @@ subroutine Seik_Analysis
     SqrtR1HLi(1:n_SqrtR1, 1:nj_DAstate, 1:ni_DAstate)=>member_pointer
     gl_SqrtR1HLi(1:n_SqrtR1, 1:nj_DAstate, 1:ni_DAstate, 0:EnsSize-1)=>global_pointer
     SqrtR1HLi  = huge(SqrtR1HLi(1,1,1))
+
+    do indext=1, ntra_DAstate
+        do indexi=1, ni_DAstate
+            do indexj=1, nj_DAstate
+                do indexk=1,nk_DAstate
+                    if (DAMask(indexk, indexj,indexi)==0) exit
+                    DAstate_kjit(indexk,indexj,indexi,indext)=(DAstate_kjit(indexk,indexj,indexi,indext)-DAstate_avg(indexk,indexj,indexi,indext))*Inflation(indexj,indexi)+DAstate_avg(indexk,indexj,indexi,indext)
+                end do
+            end do
+        end do
+    end do
     
     Hstate=H(DAstate_kjit)
     
@@ -320,10 +330,12 @@ subroutine Seik_Analysis
                         
                         if (Mod(rankc, EnsSize)==EnsRank) then
                         
-!write(*,*) "rank: ", EnsRank, ', i: ', indexi, ', j: ', indexj, 'inizio'
+! write(*,*) 'myrank: ', myrank, ', EnsRank: ', EnsRank, ', i: ', indexi, ', j: ', indexj, 'inizio'
                         
                             EnsCov1(:,1:EnsRankZero)=ForecastCov1(:,1:EnsRankZero)+gl_HLTR1HLi_loc(:, indexj, indexi, 0:EnsRankZero-1)
                             EnsCov1(:,EnsRankZero+1:EnsSize-1)=ForecastCov1(:,EnsRankZero+1:EnsSize-1)+gl_HLTR1HLi_loc(:, indexj, indexi, EnsRankZero+1:EnsSize-1)
+                            
+! write(*,*) 'myrank: ', myrank, ', EnsRank: ', EnsRank, ', i: ', indexi, ', j: ', indexj, 'EnsCov1', EnsCov1
                             
 !                                 if (EnsDebug>1.and.indexi==28.and.indexj==14) then
 !                                     write(*,*) ''

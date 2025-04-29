@@ -1,7 +1,8 @@
 ! developed by Simone Spada (sspada@ogs.it) at OGS
 
 module Ens_Filter
-    use Seik, &
+    !use Seik, &
+    use Seik_Likelihood, &
         only: Seik_Init, Seik_Finalize, Seik_Analysis
     
     implicit none

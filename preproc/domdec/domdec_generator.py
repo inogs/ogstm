@@ -38,7 +38,7 @@ max_proc_j = args.max_proc_j
 from domdec import *
 from commons.mask import Mask
 
-TheMask = Mask(args.maskfile, dzvarname="e3t_0")
+TheMask = Mask.from_file(args.maskfile)
 tmask = TheMask.mask_at_level(0)
 jpjglo, jpiglo = tmask.shape
 

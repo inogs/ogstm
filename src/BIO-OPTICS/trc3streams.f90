@@ -19,7 +19,7 @@
 
 #if defined key_trc_nnpzddom || defined key_trc_npzd || key_trc_bfm
 
-      INTEGER :: jk,jj,ji,jl,bottom
+      INTEGER :: jk,jj,ji,jl,bottom, phys_bottom
       INTEGER :: day_of_year
       INTEGER :: MODE ! 0-exact, 1-approx
       INTEGER :: year, month, day, ihr
@@ -66,8 +66,8 @@
              if (bfmmask(1,jj,ji) == 0) CYCLE
          
 
-             bottom = mbathy(jj,ji)
-             bottom = min(bottom,jpk_opt) ! Stop at approx 500 mt
+             phys_bottom = mbathy(jj,ji)
+             bottom = min(phys_bottom,jpk_opt) ! Stop at approx 500 mt
 
              allocate( E(3,bottom+1,nlt))
              allocate( PARz(bottom,nchl+1))
@@ -164,12 +164,27 @@
                         Eu(jk,jj,ji,jl) = E(3,jk,jl)
 
                     enddo
+
+                    if ((bottom+1).lt.phys_bottom) then
+
+                       do jk=bottom+1, phys_bottom ! propagation 500m --> phys_bottom of last value
+                          Ed(jk,jj,ji,jl) = Ed(bottom+1, jj,ji, jl)
+                          Es(jk,jj,ji,jl) = Es(bottom+1, jj,ji, jl)
+                          Eu(jk,jj,ji,jl) = Eu(bottom+1, jj,ji, jl)
+                       enddo
+                    endif
                  enddo
 
                  do jl=1, nchl+1
                     do jk =1, bottom
                         PAR(jk,jj,ji,jl) = PARz(jk,jl)
                     enddo
+                    if (bottom.lt.phys_bottom) then
+                        do jk=bottom+1, phys_bottom ! propagation of last value
+                          PAR(jk,jj,ji,jl) = PARz(bottom,jl)
+                        enddo
+                    endif
+
                  enddo 
 
 

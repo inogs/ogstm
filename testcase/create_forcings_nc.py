@@ -39,31 +39,31 @@ def create_forcings_nc(test):
     e1v_aux = np.tile(e1v,[jpk,1,1])
     e2u_aux = np.tile(e2u,[jpk,1,1])
 
-    Av=np.ones((jpk,jpj,jpi),np.float)
-    Au=np.ones((jpk,jpj,jpi),np.float)
+    Av=np.ones((jpk,jpj,jpi),np.float64)
+    Au=np.ones((jpk,jpj,jpi),np.float64)
 
     for i in range(jpk):
         Av[i,:,:] = e1v_aux[i,:,:] * e3t[i]
         Au[i,:,:] = e2u_aux[i,:,:] * e3t[i]
 
 
-    D3T=np.zeros((1,jpk,jpj,jpi),np.float)
-    D3S=np.zeros((1,jpk,jpj,jpi),np.float)
-    D3K=np.zeros((1,jpk,jpj,jpi),np.float)
+    D3T=np.zeros((1,jpk,jpj,jpi),np.float64)
+    D3S=np.zeros((1,jpk,jpj,jpi),np.float64)
+    D3K=np.zeros((1,jpk,jpj,jpi),np.float64)
 
-    D2Q=np.zeros((1,jpj,jpi),np.float)
-    D2W=np.zeros((1,jpj,jpi),np.float)
-    D2H=np.zeros((1,jpj,jpi),np.float)
-    D2F=np.zeros((1,jpj,jpi),np.float)
+    D2Q=np.zeros((1,jpj,jpi),np.float64)
+    D2W=np.zeros((1,jpj,jpi),np.float64)
+    D2H=np.zeros((1,jpj,jpi),np.float64)
+    D2F=np.zeros((1,jpj,jpi),np.float64)
 
-    D3U=np.zeros((1,jpk,jpj,jpi),np.float)
-    D3V=np.zeros((1,jpk,jpj,jpi),np.float)
-    D3W=np.zeros((1,jpk,jpj,jpi),np.float)
+    D3U=np.zeros((1,jpk,jpj,jpi),np.float64)
+    D3V=np.zeros((1,jpk,jpj,jpi),np.float64)
+    D3W=np.zeros((1,jpk,jpj,jpi),np.float64)
 
     UVW.create_UVW(test,D3U,D3V,D3W,Av,Au)
 
-    D3=np.ones((1,jpk,jpj,jpi),np.float)
-    D2=np.ones((1,jpj,jpi),np.float)
+    D3=np.ones((1,jpk,jpj,jpi),np.float64)
+    D2=np.ones((1,jpj,jpi),np.float64)
 
 
     FORCING_DATE=[]

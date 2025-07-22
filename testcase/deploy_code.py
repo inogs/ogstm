@@ -16,7 +16,7 @@ def deploy_code(test):
 #   ogstm.xx --> executable
     CODEPATH = test['Code'].decode() 
     CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
-    os.system("ln -fs  " + CODEPATH +  "/OGSTM_BUILD/ogstm.xx "+ test['Dir'].decode() + "/" )
+    os.system("ln -fs  " + CODEPATH +  "OGSTM_BUILD_DBG/ogstm.xx "+ test['Dir'].decode() + "/" )
 
     namelists= CODEPATH +  "/ogstm/ready_for_model_namelists/* "
     os.system("cp -pf " + namelists + test['Dir'].decode() + "/")

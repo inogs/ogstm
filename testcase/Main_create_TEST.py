@@ -55,9 +55,9 @@ for test in TEST_LIST:
 
 #   c_bfmmask.create_bfm_nc(test)
 
-    c_for.create_forcings_nc(test)
+#   c_for.create_forcings_nc(test)
 
-    c_opt.create_optics_nc(test)
+#   c_opt.create_optics_nc(test)
 
 #   c_ext.create_extinction_nc(test)
 
@@ -67,6 +67,6 @@ for test in TEST_LIST:
 
 #   c_init.create_init_nc(test)
 
-#   d_code.deploy_code(test)
+    d_code.deploy_code(test)
 
-#   c_events.create_events(test)
+    c_events.create_events(test)

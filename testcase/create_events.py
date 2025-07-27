@@ -1,4 +1,5 @@
 import os,sys
+import subprocess
 
 import numpy as np
 
@@ -35,4 +36,6 @@ def create_events(test):
     f01 = open(filename,'w')
     f01.close()
 
-    os.system("./genInputsDatelists.sh " + test['Dir'].decode())
+#   os.system("./genInputsDatelists.sh " + test['Dir'].decode())
+    subprocess.run("cp genInputsDatelists.sh " + test['Dir'].decode() , shell=True)
+    subprocess.run("./genInputsDatelists.sh", shell=True, cwd=test['Dir'].decode())

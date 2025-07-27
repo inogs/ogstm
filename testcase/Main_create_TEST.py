@@ -47,25 +47,25 @@ for test in TEST_LIST:
 
     print(test['Dir'])
 
-#   DA.create_dataset(test)
+    DA.create_dataset(test)
 
-#   c_dom.create_Dom_Dec(test)
+    c_dom.create_Dom_Dec(test)
 
-#   c_mask.create_meshmask_nc(test)
+    c_mask.create_meshmask_nc(test)
 
-#   c_bfmmask.create_bfm_nc(test)
+    c_bfmmask.create_bfm_nc(test)
 
-#   c_for.create_forcings_nc(test)
+    c_for.create_forcings_nc(test)
 
-#   c_opt.create_optics_nc(test)
+    c_opt.create_optics_nc(test)
 
-#   c_ext.create_extinction_nc(test)
+    c_ext.create_extinction_nc(test)
 
-#   c_bc.create_bc_nc(test)
+    c_bc.create_bc_nc(test)
 
-#   create_fluxes.create_fluxes(test)
+    create_fluxes.create_fluxes(test)
 
-#   c_init.create_init_nc(test)
+    c_init.create_init_nc(test)
 
     d_code.deploy_code(test)
 

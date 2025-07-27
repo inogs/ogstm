@@ -4,7 +4,7 @@ import numpy as np
 
 from mydtype import *
 
-import scipy.io.netcdf as NC
+import  netCDF4 as NC
 
 import pickle
 
@@ -19,19 +19,19 @@ def create_forcings_nc(test):
     time = 1
     maskfile=test['Dir'].decode() + '/meshmask.nc'
 
-    M=NC.netcdf_file(maskfile,"r")
+    M=NC.Dataset(maskfile,"r")
 
-    Lon     =  M.variables['glamt'].data[0,0,:,:].copy()
-    Lat     =  M.variables['gphit'].data[0,0,:,:].copy()
-    gdept   =  M.variables['gdept'].data[0,:,0,0].copy()
-    gdepw   =  M.variables['gdepw'].data[0,:,0,0].copy()
-    e1v     =  M.variables['e1v'  ].data[0,0,:,:].copy()
-    e2u     =  M.variables['e2u'  ].data[0,0,:,:].copy()
+    Lon     =  M.variables['glamt'][0,0,:,:].copy()
+    Lat     =  M.variables['gphit'][0,0,:,:].copy()
+    gdept   =  M.variables['gdept'][0,:,0,0].copy()
+    gdepw   =  M.variables['gdepw'][0,:,0,0].copy()
+    e1v     =  M.variables['e1v'  ][0,0,:,:].copy()
+    e2u     =  M.variables['e2u'  ][0,0,:,:].copy()
 
-    e3v0    =  M.variables['e3v_0'  ].data[0,:,:,:].copy()
-    e3u0    =  M.variables['e3u_0'  ].data[0,:,:,:].copy()
-    e3t0    =  M.variables['e3t_0'  ].data[0,:,:,:].copy()
-    e3w0    =  M.variables['e3w_0'  ].data[0,:,:,:].copy()
+    e3v0    =  M.variables['e3v_0'  ][0,:,:,:].copy()
+    e3u0    =  M.variables['e3u_0'  ][0,:,:,:].copy()
+    e3t0    =  M.variables['e3t_0'  ][0,:,:,:].copy()
+    e3w0    =  M.variables['e3w_0'  ][0,:,:,:].copy()
     
     
     M.close()
@@ -64,6 +64,7 @@ def create_forcings_nc(test):
 
     D3=np.ones((1,jpk,jpj,jpi),np.float64)
     D2=np.ones((1,jpj,jpi),np.float64)
+    SSH=np.zeros((1,jpj,jpi),np.float64)-0.6
 
 
     FORCING_DATE=[]
@@ -75,17 +76,21 @@ def create_forcings_nc(test):
     filein.close()
 
     os.system("mkdir -p " + test['Dir'].decode() + '/FORCINGS/')
+    os.system("mkdir -p " + test['Dir'].decode() + '/FORCINGS/yyyy')
 
     for date in FORCING_DATE:
+        yyyy=date[0:4]
+        mm=date[4:6]
         # Create T file
         TSKQWHF.create_TSKQWHF(test,date,D3T,D3S,D3K,D2Q,D2W,D2H,D2F)
-        outfile = test['Dir'].decode() + '/FORCINGS/T' + date + '.nc'
-        ncOUT   = NC.netcdf_file(outfile,'w')
+        outfile = test['Dir'].decode() + '/FORCINGS/' + yyyy + '/' + mm + '/T' + date + '.nc'
+        os.system("mkdir -p " + test['Dir'].decode() + '/FORCINGS/yyyy/' + mm)
+        ncOUT   = NC.Dataset(outfile,'w')
 
+        ncOUT.createDimension('time_counter',None);
         ncOUT.createDimension('x'           ,jpi);
         ncOUT.createDimension('y'           ,jpj);
         ncOUT.createDimension('deptht'      ,jpk);
-        ncOUT.createDimension('time_counter',time);
 
         ncvar = ncOUT.createVariable('nav_lon'      ,'f',('y','x')                        ); ncvar[:] = Lon;
         ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')                        ); ncvar[:] = Lat;
@@ -95,53 +100,56 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('votemper'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3T;
         ncvar = ncOUT.createVariable('soshfldo'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2Q;
         ncvar = ncOUT.createVariable('sowindsp'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2W;
-        ncvar = ncOUT.createVariable('sossheig'     ,'f',('time_counter','y','x')         ); ncvar[:] = -0.60;
+        ncvar = ncOUT.createVariable('sossheig'     ,'f',('time_counter','y','x')         ); ncvar[:] = SSH;
+         
         ncOUT.close()
 
         # Create U file
 
-        outfile = test['Dir'].decode() + '/FORCINGS/U' + date + '.nc'
-        ncOUT   = NC.netcdf_file(outfile,'w')
+        outfile = test['Dir'].decode() + '/FORCINGS/' + yyyy + '/' + mm + '/U' + date + '.nc'
+        ncOUT   = NC.Dataset(outfile,'w')
 
+        ncOUT.createDimension('time_counter',None);
         ncOUT.createDimension('x'           ,jpi);
         ncOUT.createDimension('y'           ,jpj);
-        ncOUT.createDimension('deptht'      ,jpk);
-        ncOUT.createDimension('time_counter',time);
+        ncOUT.createDimension('depthu'      ,jpk);
 
         ncvar = ncOUT.createVariable('nav_lon'      ,'f',('y','x')                        ); ncvar[:] = Lon;
         ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')                        ); ncvar[:] = Lat;
-        ncvar = ncOUT.createVariable('deptht'       ,'f',('deptht',)                      ); ncvar[:] = gdept;
+        ncvar = ncOUT.createVariable('depthu'       ,'f',('depthu',)                      ); ncvar[:] = gdept;
         ncvar = ncOUT.createVariable('time_counter' ,'d',('time_counter',)                ); ncvar    = 1.;
-        ncvar = ncOUT.createVariable('vozocrtx'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3U;  
+        ncvar = ncOUT.createVariable('vozocrtx'     ,'f',('time_counter','depthu','y','x')); ncvar[:] = D3U;  
+        ncvar = ncOUT.createVariable('sozotaux'     ,'f',('time_counter','y','x')); ncvar[:] = D2;  
 
         ncOUT.close()
 
         # Create V file
 
-        outfile = test['Dir'].decode() + '/FORCINGS/V' + date + '.nc'
-        ncOUT   = NC.netcdf_file(outfile,'w')
+        outfile = test['Dir'].decode() + '/FORCINGS/' + yyyy + '/' + mm + '/V' + date + '.nc'
+        ncOUT   = NC.Dataset(outfile,'w')
 
+        ncOUT.createDimension('time_counter',None);
         ncOUT.createDimension('x'           ,jpi);
         ncOUT.createDimension('y'           ,jpj);
-        ncOUT.createDimension('deptht'      ,jpk);
-        ncOUT.createDimension('time_counter',time);
+        ncOUT.createDimension('depthv'      ,jpk);
 
         ncvar = ncOUT.createVariable('nav_lon'      ,'f',('y','x')                        ); ncvar[:] = Lon;
         ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')                        ); ncvar[:] = Lat;
-        ncvar = ncOUT.createVariable('deptht'       ,'f',('deptht',)                      ); ncvar[:] = gdept;
+        ncvar = ncOUT.createVariable('depthv'       ,'f',('depthv',)                      ); ncvar[:] = gdept;
         ncvar = ncOUT.createVariable('time_counter'  ,'d',('time_counter',)               ); ncvar    = 1.;
-        ncvar = ncOUT.createVariable('vomecrty'     ,'f',('time_counter','deptht','y','x')); ncvar[:] = D3V; 
+        ncvar = ncOUT.createVariable('vomecrty'     ,'f',('time_counter','depthv','y','x')); ncvar[:] = D3V; 
+        ncvar = ncOUT.createVariable('sometauy'     ,'f',('time_counter','y','x')); ncvar[:] = D2;  
         ncOUT.close()
 
         # Create W file
 
-        outfile = test['Dir'].decode() + '/FORCINGS/W' + date + '.nc'
-        ncOUT   = NC.netcdf_file(outfile,'w')
+        outfile = test['Dir'].decode() + '/FORCINGS/' + yyyy + '/' + mm + '/W' + date + '.nc'
+        ncOUT   = NC.Dataset(outfile,'w')
 
+        ncOUT.createDimension('time_counter',None);
         ncOUT.createDimension('x'           ,jpi);
         ncOUT.createDimension('y'           ,jpj);
         ncOUT.createDimension('depthw'      ,jpk);
-        ncOUT.createDimension('time_counter',time);
 
         ncvar = ncOUT.createVariable('nav_lon'      ,'f',('y','x')                        ); ncvar[:] = Lon;
         ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')                        ); ncvar[:] = Lat;

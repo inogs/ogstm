@@ -50,8 +50,10 @@ def create_meshmask_nc(test):
     filein             = 'KB'+'/gdept' + 'KB' + '.dat'
     gdeptTOT           = np.loadtxt(filein, dtype=np.float64);
     gdeptINT           = interpolate(gdeptTOT, jpk)
-    gdept              = np.zeros((time,jpk,y_a,x_a),np.float64);
-    gdept[0,0:jpk,0,0] = gdeptINT[0:jpk];
+    gdept              = np.zeros((time,jpk,jpj,jpi),np.float64);
+    for jj in range(jpj):
+        for ji in range(jpi):
+            gdept[0,0:jpk,jj,ji] = gdeptINT[0:jpk];
 
 #    np.float64 gdepw(time, z, y_a, x_a) ;
     filein             = 'KB' + '/gdepw' + 'KB' + '.dat'
@@ -309,7 +311,7 @@ def create_meshmask_nc(test):
     ncvar    = ncOUT.createVariable('e3w_0' ,'d',('time','z'  , 'y', 'x'))   ; ncvar[:] = e3w 
     ncvar    = ncOUT.createVariable('ff'    ,'d',('time','z_a', 'y', 'x'))   ; ncvar[:] = ff    ;
     ncvar    = ncOUT.createVariable('fmask' ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = fmask ;
-    ncvar    = ncOUT.createVariable('gdept' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = gdept ;
+    ncvar    = ncOUT.createVariable('gdept' ,'d',('time','z', 'y', 'x'))     ; ncvar[:] = gdept ;
     ncvar    = ncOUT.createVariable('gdepw' ,'d',('time','z', 'y_a', 'x_a')) ; ncvar[:] = gdepw ;
     ncvar    = ncOUT.createVariable('glamf'   ,'d',('time','z_a', 'y', 'x')) ; ncvar[:] = glamf ;
     ncvar    = ncOUT.createVariable('glamt'   ,'d',('time','z_a', 'y', 'x')) ; ncvar[:] = glamt ;

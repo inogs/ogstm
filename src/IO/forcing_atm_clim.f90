@@ -116,11 +116,6 @@
 
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", myrank, " starting reading atmospheric fields from ", nomefile
 
-       call readnc_slice_float_2d(nomefile,'tclw',buf2,0)
-       tclwIO(:,:,2) = buf2*tmask(1,:,:)
-
-       call readnc_slice_float_2d(nomefile,'tco3',buf2,0)
-       tco3IO(:,:,2) = buf2*tmask(1,:,:)
 
        call readnc_slice_float_2d(nomefile,'cdrem',buf2,0)
        cdremIO(:,:,2) = buf2*tmask(1,:,:)
@@ -150,8 +145,6 @@
          double precision, INTENT(IN) :: zweigh
 
 
-        call actualize(zweigh,tclwIO,tclw)
-        call actualize(zweigh,tco3IO,tco3)
         call actualize(zweigh,cdremIO,cdrem)
         call actualize(zweigh,cldtcmIO,cldtcm)
 
@@ -174,8 +167,6 @@
          USE OPT_mem
          IMPLICIT NONE
 
-        call swap(tclwIO)
-        call swap(tco3IO)
         call swap(cdremIO)
         call swap(cldtcmIO)
 

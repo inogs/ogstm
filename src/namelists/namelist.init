@@ -26,7 +26,8 @@
             lbfm          = .true.,
             lzdf          = .true.,
             lsnu          = .true.,
-            vsed          = 4.25,
+            vsedR6        = 7.0,
+            vsedR8        = 15.0,
             vsedO5c       = 30.0,
             photop        = .false.
             atlantic_bfm  = .true.

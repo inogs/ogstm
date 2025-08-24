@@ -133,40 +133,46 @@
 
              
 
-!                Particulate
+!              Small Particulate
               DO js =1,4
-                 DO  jk = 2,jpkm1
-                    zwork(jk,js,1) = -vsed * trn(jk-1,jj,ji, sed_idx(js))
+                 DO  jk = 2,jpk
+                    zwork(jk,js,1) = -vsedR6 * trn(jk-1,jj,ji, sed_idx(js))
+                 END DO
+              END DO
+!              Large Particulate
+              DO js =5,8
+                 DO  jk = 2,jpk
+                    zwork(jk,js,1) = -vsedR8 * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 !                Diatoms
-              DO js =5,9
-                 DO  jk = 2,jpkm1
+              DO js =9,13
+                 DO  jk = 2,jpk
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,1) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 !                Flagellates
-              DO js =10,13
-                 DO  jk = 2,jpkm1
+              DO js =14,17
+                 DO  jk = 2,jpk
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,2) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 !                Picophytoplankton
-              DO js =14,17
-                 DO  jk = 2,jpkm1
+              DO js =18,21
+                 DO  jk = 2,jpk
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,3) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 !                Dinoflagellates
-              DO js =18,21
-                 DO  jk = 2,jpkm1
+              DO js =22,25
+                 DO  jk = 2,jpk
                     zwork(jk,js,1) = -ogstm_sedipi(jk-1,jj,ji,4) * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO
 
 !                Calcite
-              DO js =22,22
-                 DO  jk = 2,jpkm1
+              DO js =26,26
+                 DO  jk = 2,jpk
                     zwork(jk,js,1) = - vsedO5c * trn(jk-1,jj,ji, sed_idx(js))
                  END DO
               END DO

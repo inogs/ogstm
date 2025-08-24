@@ -7,8 +7,11 @@ from mydtype import *
 import scipy.io.netcdf as NC
 
 import pickle
-import imp
-domdec = imp.load_source('domdec','../preproc/domdec/domdec.py')
+import importlib.util
+
+spec = importlib.util.spec_from_file_location('domdec', '../preproc/domdec/domdec.py')
+domdec = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(domdec)
 
 def create_Dom_Dec(test):
 
@@ -54,6 +57,6 @@ def create_Dom_Dec(test):
 
     f01.close()
     f02.close()
-    tmask = np.ones((jpj,jpi),dtype=np.bool)
+    tmask = np.ones((jpj,jpi),dtype=bool)
     domdec.dump_outfile(tmask,nPx*nPy, nPx, nPy, filename=test['Dir'].decode() + '/domdec.txt')
 

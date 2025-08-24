@@ -16,7 +16,7 @@
 
 
       INTEGER :: dimen_jvsed
-      INTEGER :: nsed=22
+      INTEGER :: nsed=26
       INTEGER, allocatable :: sed_idx(:)
       INTEGER, allocatable :: jarr_sed(:,:),jarr_sed_flx(:,:)
       double precision, allocatable :: ztra(:,:)
@@ -54,27 +54,32 @@
        sed_idx(3)  = ppR6p
        sed_idx(4)  = ppR6s
 
-       sed_idx(5)  = ppP1c
-       sed_idx(6)  = ppP1n
-       sed_idx(7)  = ppP1p
-       sed_idx(8)  = ppP1s
-       sed_idx(9)  = ppP1l
+       sed_idx(5)  = ppR8c
+       sed_idx(6)  = ppR8n
+       sed_idx(7)  = ppR8p
+       sed_idx(8)  = ppR8s
 
-       sed_idx(10) = ppP2c
-       sed_idx(11) = ppP2n
-       sed_idx(12) = ppP2p
-       sed_idx(13) = ppP2l
+       sed_idx(9)  = ppP1c
+       sed_idx(10)  = ppP1n
+       sed_idx(11)  = ppP1p
+       sed_idx(12)  = ppP1s
+       sed_idx(13)  = ppP1l
 
-       sed_idx(14) = ppP3c
-       sed_idx(15) = ppP3n
-       sed_idx(16) = ppP3p
-       sed_idx(17) = ppP3l
+       sed_idx(14) = ppP2c
+       sed_idx(15) = ppP2n
+       sed_idx(16) = ppP2p
+       sed_idx(17) = ppP2l
 
-       sed_idx(18) = ppP4c
-       sed_idx(19) = ppP4n
-       sed_idx(20) = ppP4p
-       sed_idx(21) = ppP4l
-       sed_idx(22) = ppO5c
+       sed_idx(18) = ppP3c
+       sed_idx(19) = ppP3n
+       sed_idx(20) = ppP3p
+       sed_idx(21) = ppP3l
+
+       sed_idx(22) = ppP4c
+       sed_idx(23) = ppP4n
+       sed_idx(24) = ppP4p
+       sed_idx(25) = ppP4l
+       sed_idx(26) = ppO5c
        allocate(jarr_sed(2, jpi*jpj))        
        jarr_sed     = huge(jarr_sed(1,1))
        allocate(jarr_sed_flx(jpk,jpi*jpj)) 

@@ -1,0 +1,13 @@
+input:
+  atmospheric_data_file: bcs/atmo_nn.dat
+  absorption_data_file: bcs/abso_nn.dat
+  cloud_slingo_file: bcs/slingo_nn.dat
+compute:
+  integration_step_secs: 300.0
+  max_integration_steps: 1000
+  zenith_avg: true
+  local_time: true
+  am: 1.0
+  vi: 25.0
+output:
+  bin_file: bcs/bin_n.dat

@@ -181,11 +181,23 @@
 
 ! 1.3 tracer flux divergence at t-point added to the general trend
 
+!N            DO js =1,nsed
+!N                if ((ji .EQ. 3) .AND. (jj .EQ. 3 )) then
+!N                    write(*,*) ' Check trcsed'
+!N                    write(*,*)'Sedimenting variable',js
+!N                    write(*,*)'e3t',e3t(jpk,jj,ji), e3t(jpk-1,jj,ji), e3t(jpk-2,jj,ji) 
+!N                    write(*,*)'zwork at above above bottom:', zwork(jpk-2,js,1)
+!N                    write(*,*)'zwork at above bottom:', zwork(jpk-1,js,1)
+!N                    write(*,*)'zwork at bottom:', zwork(jpk,js,1)
+!N                    write(*,*) ' ******************* '
+!N                 endif
+!N            ENDDO
+
               DO  jk = 1,jpkm1
                   jf=  jarr_sed_flx(jk,jV)
 
                  ze3tr = 1./e3t(jk,jj,ji)
-
+ 
                  DO js =1,nsed
                     ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
@@ -197,6 +209,10 @@
 !!!  d2s convert speed from (m/day) to  (m/s)
                     tra(jk,jj,ji,sed_idx(js)) = tra(jk,jj,ji,sed_idx(js)) + ztra(js,1)*d2s
                  END DO
+!N             if ((ji .EQ. 3) .AND. (jj .EQ. 3 )) then
+!N                 if (jk .EQ.  jpk-1) write(*,*) 'R6c at bottom:', tra(jk,jj,ji,sed_idx(1))
+!N                 if (jk .EQ.  jpk-1) write(*,*) 'ztra at bottom:', ztra(1,1)
+!N             endif
 
 #ifdef key_trc_diabio
                   trbio(jk,jj,ji,8) = ztra

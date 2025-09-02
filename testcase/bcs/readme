@@ -1,0 +1,9 @@
+total 32
+lrwxrwxrwx 1 plazzari interactive 65 Feb  6 15:16 abso_nn.dat -> /g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/bcs/abso_nn.dat
+lrwxrwxrwx 1 plazzari interactive 69 Feb  6 15:16 abw25_morel.dat -> /g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/bcs/abw25_morel.dat
+lrwxrwxrwx 1 plazzari interactive 99 May 18 17:37 acbc25b.dat -> /g100_work/OGS_devC/V10C/RUNS_SETUP/run3.19/CODE/ogstm/src/namelists/bcs_optimized_V10C/acbc25b.dat
+lrwxrwxrwx 1 plazzari interactive 65 Feb  6 15:16 atmo_nn.dat -> /g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/bcs/atmo_nn.dat
+lrwxrwxrwx 1 plazzari interactive 63 Feb  6 15:16 bin_n.dat -> /g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/bcs/bin_n.dat
+lrwxrwxrwx 1 plazzari interactive 99 May 18 17:37 cdom25b.dat -> /g100_work/OGS_devC/V10C/RUNS_SETUP/run3.19/CODE/ogstm/src/namelists/bcs_optimized_V10C/cdom25b.dat
+lrwxrwxrwx 1 plazzari interactive 98 May 18 17:37 poc25b.dat -> /g100_work/OGS_devC/V10C/RUNS_SETUP/run3.19/CODE/ogstm/src/namelists/bcs_optimized_V10C/poc25b.dat
+lrwxrwxrwx 1 plazzari interactive 67 Feb  6 15:16 slingo_nn.dat -> /g100_work/OGS_devC/V9C/RUNS_SETUP/PREPROC/OPTICS/bcs/slingo_nn.dat

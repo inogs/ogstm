@@ -92,7 +92,7 @@ if args.chlsupdir:
 
 SingleVar_filelist=glob.glob(PATH_NAME)
 SingleVar_filelist.sort()
-TheMask=Mask(args.maskfile)
+TheMask=Mask.from_file(args.maskfile)
 
 for N1pfile in SingleVar_filelist[rank::nranks]:
     dailyAve  = os.path.basename(N1pfile)

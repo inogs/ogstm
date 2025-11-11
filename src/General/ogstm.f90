@@ -40,7 +40,12 @@ MODULE OGSTM
       USE MPI_GATHER_INFO
       USE dtype_procs_string_module
       use module_step
+#ifdef key_trc_bfm
       use api_bfm 
+#endif
+#ifdef key_trc_fabm
+      use fabm
+#endif
       USE TREd_var_MP
       USE oasim, ONLY: oasim_lib, calc_unit
 
@@ -182,13 +187,18 @@ SUBROUTINE ogstm_initialize()
 
       call init_phys
 
-! Initialization of Biogeochemical reactor with 1D approach
-      call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
+! Initiialization of Biogeochemical reactor with 1D approach
       parallel_rank=myrank
+#ifdef key_trc_bfm
+      call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
       call Init_bfm()
       call BFM0D_INIT_IO_CHANNELS()
-
       call Initialize()
+#endif
+
+#ifdef key_trc_fabm
+
+#endif
 
 
       call init_opt

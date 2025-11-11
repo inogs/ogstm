@@ -105,14 +105,14 @@ SUBROUTINE ogstm_launcher()
 ! *************************************************************
 SUBROUTINE ogstm_initialize()
 
+      IMPLICIT NONE
+
 #ifdef key_trc_fabm
       class (type_fabm_model), pointer :: model
 #endif
 
-
 ! local declarations
 ! ==================
-      IMPLICIT NONE
       ! *********************************************
       CHARACTER(LEN=1024) :: YAML_FILE
       INTEGER N_POINTS

@@ -70,4 +70,4 @@ endforeach()
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})
 add_executable (ogstm.xx application/ogstm_main_caller.f90)
-target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES} ${BIOPTIMOD_3STREAM_LIBRARIES}  ${OASIM_ATM_LIBRARIES}  ${FABM_LIBRARIES} )
+target_link_libraries( ogstm.xx ogstm_lib ${NETCDFF_LIBRARIES_F90} ${BFM_LIBRARIES}  ${FABM_LIBRARIES} ${BIOPTIMOD_3STREAM_LIBRARIES}  ${OASIM_ATM_LIBRARIES} )

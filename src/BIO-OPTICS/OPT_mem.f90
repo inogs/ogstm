@@ -207,7 +207,7 @@
        allocate(ea(jpj,jpi,3))
        ea     =huge(ea(1,1,1))
 
-       call lidata()
+       call lidata_ogstm()
 
        allocate(Edaux(nlt))
        allocate(Esaux(nlt))

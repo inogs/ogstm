@@ -32,5 +32,5 @@ def deploy_code(test):
     print("   ingv_lon_shift = 0 ")
     print("   is_free_surface = .false.")
 
-    fabm_yaml=  CODEPATH + "fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml"
+    fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml "
     os.system("cp -pf " + fabm_yaml  + test['Dir'].decode() + "/fabm.yaml")

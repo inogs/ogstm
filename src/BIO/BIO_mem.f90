@@ -4,6 +4,10 @@
        USE myalloc
        USE TIME_MANAGER
 
+#ifdef key_trc_fabm
+       USE fabm
+#endif
+
 #ifdef Mem_Monitor
        USE check_mem
        USE iso_c_binding
@@ -22,6 +26,9 @@
       double precision, allocatable :: NPPF2(:,:,:)
       double precision, allocatable :: ogstm_co2(:,:), co2_IO(:,:,:)
       double precision:: ice
+#ifdef key_trc_fabm
+      class (type_fabm_model), pointer :: model_fabm
+#endif
 
 
 !!!----------------------------------------------------------------------
@@ -30,6 +37,7 @@
       subroutine myalloc_BIO()
 
       INTEGER  :: err
+      INTEGER  :: ivar
       double precision  :: aux_mem
 
 #ifdef Mem_Monitor
@@ -58,6 +66,21 @@
        NPPF2 = 0 ! nut huge, because it will be assigned only in trcBIO in BFMpoints
                  ! and used in hard_tissue_pump.F also in land points
        ice=0
+#ifdef key_trc_fabm
+        ! Provide extents of the spatial domain (number of layers nz for a 1D column)
+        model_fabm => fabm_create_model()
+        call model_fabm%set_domain(jpk,jpj,jpi)
+        ! At this point (after the call to fabm_create_model), memory should be
+        ! allocated to hold the values of all size(model%interior_state_variables) state variables.
+        ! Where this memory resides and how it is laid out is typically host-specific.
+        ! Below, we assume all state variable values are combined in an array interior_state with
+        ! shape nx, ny, nz, size(model%interior_state_variables).
+
+        ! Point FABM to your state variable data
+        do ivar = 1, size(model_fabm%interior_state_variables)
+           call model_fabm%link_interior_state_data(ivar, trn(:,:,:,ivar))
+        end do
+#endif
 
 #ifdef Mem_Monitor
        mem_all=get_mem(err) - aux_mem

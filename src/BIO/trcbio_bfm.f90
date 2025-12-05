@@ -40,9 +40,6 @@
       USE BC_mem
       USE mpi
 
-!!!   FABM IMPLEMENTATION
-      USE fabm
-
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

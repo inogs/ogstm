@@ -107,10 +107,6 @@ SUBROUTINE ogstm_initialize()
 
       IMPLICIT NONE
 
-#ifdef key_trc_fabm
-      class (type_fabm_model), pointer :: model
-#endif
-
 ! local declarations
 ! ==================
       ! *********************************************
@@ -202,7 +198,7 @@ SUBROUTINE ogstm_initialize()
 #endif
 
 #ifdef key_trc_fabm
-      model => fabm_create_model()
+!     model_fabm => fabm_create_model()
 #endif
 
 

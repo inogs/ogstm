@@ -70,6 +70,7 @@
 
 
       integer :: jk,jj,ji,jb,jn
+      integer :: ivar
       integer :: jtr,jtrmax,tra_idx
       integer :: bottom
       double precision :: correct_fact
@@ -85,6 +86,7 @@
 !   | --------------|
 
         BIOparttime = MPI_WTIME()
+
 
           surf_mask(:) = 0.
           surf_mask(1) = 1.
@@ -128,7 +130,6 @@
       DO jj=1,jpj
       if (bfmmask(1,jj,ji) == 0) CYCLE
       bottom = mbathy(jj,ji)
-
 
                           DO jtr=1, jtrmax
 

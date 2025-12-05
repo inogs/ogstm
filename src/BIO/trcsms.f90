@@ -36,7 +36,7 @@
 
        CALL trcopt ! tracers: optical model
        
-       CALL trcbio ! tracers: biological model
+       CALL trcbio_fabm ! tracers: biological model
 
 !! trcsed no updated for time step advancing
 #if  defined key_trc_sed

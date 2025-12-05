@@ -1,5 +1,5 @@
 
-      SUBROUTINE trcbio
+      SUBROUTINE trcbio_fabm
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE trcbio
@@ -212,4 +212,4 @@
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime
                
-      END SUBROUTINE trcbio
+      END SUBROUTINE trcbio_fabm

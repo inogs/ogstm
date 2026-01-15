@@ -53,6 +53,8 @@
       
       IMPLICIT NONE
 
+      #ifdef key_trc_bfm
+
 
 !!!----------------------------------------------------------------------
 !!! local declarations
@@ -209,4 +211,5 @@
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime
                
+      #endif
       END SUBROUTINE trcbio_bfm

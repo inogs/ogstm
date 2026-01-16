@@ -48,6 +48,7 @@
 
        allocate(sed_idx(nsed))  
        sed_idx = huge(sed_idx(1))
+#ifdef key_trc_bfm
 
        sed_idx(1)  = ppR6c
        sed_idx(2)  = ppR6n
@@ -80,6 +81,8 @@
        sed_idx(24) = ppP4p
        sed_idx(25) = ppP4l
        sed_idx(26) = ppO5c
+#endif
+
        allocate(jarr_sed(2, jpi*jpj))        
        jarr_sed     = huge(jarr_sed(1,1))
        allocate(jarr_sed_flx(jpk,jpi*jpj)) 

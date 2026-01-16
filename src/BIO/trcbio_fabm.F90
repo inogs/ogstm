@@ -1,5 +1,6 @@
 
       SUBROUTINE trcbio_fabm
+#ifdef key_trc_fabm
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE trcbio
@@ -212,5 +213,5 @@
 
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime
-               
+#endif         
       END SUBROUTINE trcbio_fabm

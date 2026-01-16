@@ -52,21 +52,23 @@
 
 
 !! Passive tracers parameter
+
 #ifdef key_trc_bfm
 
-      !! WARNING the var below must be become input parameter
-!      INTEGER, parameter :: jptra = 51
-!      INTEGER, parameter :: jptra_dia = 21
-!      INTEGER, parameter :: jptra_dia_2d = 1
-
 #include "BFM_var_list.h"
+
+#elif  key_trc_fabm
+
+#else
+
+#include "DEFAULT_var_list.h"
+
+#endif
 
 !! productive layer depth
 
       INTEGER :: jpkb , & ! : first vertical layers where biology is active
      &           jpkbm1 !  jpkb - 1
-
-#endif
 
 
       END MODULE modul_param

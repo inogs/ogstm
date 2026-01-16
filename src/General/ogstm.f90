@@ -189,17 +189,16 @@ SUBROUTINE ogstm_initialize()
       call init_phys
 
 ! Initiialization of Biogeochemical reactor with 1D approach
-      parallel_rank=myrank
 #ifdef key_trc_bfm
+
+      parallel_rank=myrank
+
       call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
       call Init_bfm()
       call BFM0D_INIT_IO_CHANNELS()
       call Initialize()
 #endif
 
-#ifdef key_trc_fabm
-!     model_fabm => fabm_create_model()
-#endif
 
 
       call init_opt
@@ -386,8 +385,9 @@ SUBROUTINE set_to_zero()
       tn        = 0.0
       sn        = 0.0
 ! Passive tracers arrays set to zero
-
+#    if defined key_trc_bfm
       xpar      = 0.0
+#    endif 
       trn       = 0.0
       tra       = 0.0
 

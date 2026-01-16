@@ -53,7 +53,7 @@
       
       IMPLICIT NONE
 
-      #ifdef key_trc_bfm
+#ifdef key_trc_bfm
 
 
 !!!----------------------------------------------------------------------
@@ -211,5 +211,5 @@
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime
                
-      #endif
+#endif
       END SUBROUTINE trcbio_bfm

@@ -28,11 +28,32 @@
       double precision:: ice
 #ifdef key_trc_fabm
       class (type_fabm_model), pointer :: model_fabm
+      INTEGER :: jptra
+      INTEGER :: jptra_var
+      INTEGER :: jptra_flux
+      INTEGER :: jptra_dia_2d
 #endif
 
 
 !!!----------------------------------------------------------------------
       CONTAINS
+
+#ifdef key_trc_fabm
+      subroutine initialize_FABM()
+        ! Provide extents of the spatial domain (number of layers nz for a 1D column)
+        model_fabm => fabm_create_model()
+        call model_fabm%set_domain(jpk,jpj,jpi)
+        ! At this point (after the call to fabm_create_model), memory should be
+        ! allocated to hold the values of all size(model%interior_state_variables) state variables.
+        ! Where this memory resides and how it is laid out is typically host-specific.
+        ! Below, we assume all state variable values are combined in an array interior_state with
+        ! shape nx, ny, nz, size(model%interior_state_variables).
+        jptra_fabm=size(model_fabm%interior_state_variables)
+      ! jptra_var_fabm
+      ! jptra_flux_fabm
+      ! jptra_dia_2d_fabm
+      END subroutine initialize_FABM
+#endif
 
       subroutine myalloc_BIO()
 
@@ -68,8 +89,7 @@
        ice=0
 #ifdef key_trc_fabm
         ! Provide extents of the spatial domain (number of layers nz for a 1D column)
-        model_fabm => fabm_create_model()
-        call model_fabm%set_domain(jpk,jpj,jpi)
+
         ! At this point (after the call to fabm_create_model), memory should be
         ! allocated to hold the values of all size(model%interior_state_variables) state variables.
         ! Where this memory resides and how it is laid out is typically host-specific.

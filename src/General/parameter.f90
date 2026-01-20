@@ -1,7 +1,5 @@
       MODULE modul_param
 
-      !use mem
-
       IMPLICIT NONE
 
       public
@@ -58,6 +56,8 @@
 #include "BFM_var_list.h"
 
 #elif  key_trc_fabm
+    
+! FABM dimensions are dynamically defined in parini
 
 #else
 

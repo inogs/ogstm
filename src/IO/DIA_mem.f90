@@ -7,6 +7,7 @@
           INTEGER FsizeGlo, Fsize, FsizeMax
           INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP, INDflxDUMPglo, INDflxBuff, INDflxDUMPZERO
           INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
+          INTEGER, ALLOCATABLE, DIMENSION(:)        :: IDS!(jptra)
 
           double precision,    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
           double precision,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
@@ -19,6 +20,7 @@
           SUBROUTINE alloc_dia
           USE NETCDF
             IMPLICIT NONE
+            allocate(IDS(jptra))
 
             INQUIRE(FILE='Fluxes.nc', EXIST=existFileFluxes)
             if (existFileFluxes) then

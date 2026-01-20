@@ -257,16 +257,16 @@
 
 
 !! PASSIVE TRACER MODEL
-          CHARACTER(LEN=20) :: ctrcnm(jptra)
-          CHARACTER(LEN=12) :: ctrcun(jptra)
-          CHARACTER(LEN=20) :: dianm(jptra_dia)
-          CHARACTER(LEN=20) :: diaun(jptra_dia)
-          INTEGER           :: diahf(jptra_dia)
-          INTEGER           :: diaWR(jptra_dia)
-          CHARACTER(LEN=20) :: dianm_2d(jptra_dia_2d)
-          CHARACTER(LEN=20) :: diaun_2d(jptra_dia_2d)
-          INTEGER           :: diahf_2d(jptra_dia_2d)
-          INTEGER           :: diaWR_2d(jptra_dia_2d)
+          CHARACTER(LEN=20), allocatable, dimension(:) :: ctrcnm!(jptra)
+          CHARACTER(LEN=12), allocatable, dimension(:) :: ctrcun!(jptra)
+          CHARACTER(LEN=20), allocatable, dimension(:) :: dianm!(jptra_dia)
+          CHARACTER(LEN=20), allocatable, dimension(:) :: diaun!(jptra_dia)
+          INTEGER          , allocatable, dimension(:) :: diahf!(jptra_dia)
+          INTEGER          , allocatable, dimension(:) :: diaWR!(jptra_dia)
+          CHARACTER(LEN=20), allocatable, dimension(:) :: dianm_2d!(jptra_dia_2d)
+          CHARACTER(LEN=20), allocatable, dimension(:) :: diaun_2d!(jptra_dia_2d)
+          INTEGER          , allocatable, dimension(:) :: diahf_2d!(jptra_dia_2d)
+          INTEGER          , allocatable, dimension(:) :: diaWR_2d!(jptra_dia_2d)
           CHARACTER(LEN=17) :: COMMON_DATESTRING
 !physical tracers
       INTEGER :: jptra_phys, jptra_phys_2d
@@ -280,11 +280,11 @@
 
 
 
-      double precision ::  ctrmax(jptra)
+      double precision, allocatable, dimension(:)  ::  ctrmax!(jptra)
       LOGICAL :: isCheckLOG
       LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
-      INTEGER :: ctr_hf(jptra)
+      INTEGER, allocatable, dimension(:)   :: ctr_hf!(jptra)
 
       INTEGER ave_freq_phys, freq_flux_dump
 
@@ -798,12 +798,29 @@ subroutine alloc_tot()
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
 #endif
+      END subroutine alloc_tot
+
+      subroutine alloc_ctr()
+          allocate(ctrcnm(jptra))
+          allocate(ctrcun(jptra))
   
-        END subroutine alloc_tot
+          allocate(ctrmax(jptra))
+          allocate(ctr_hf(jptra))
+
+          allocate(dianm(jptra_dia))
+          allocate(diaun(jptra_dia))
+          allocate(diahf(jptra_dia))
+
+          allocate(diaWR(jptra_dia))
+          allocate(dianm_2d(jptra_dia_2d))
+          allocate(diaun_2d(jptra_dia_2d))
+          allocate(diahf_2d(jptra_dia_2d))
+          allocate(diaWR_2d(jptra_dia_2d))
+      END subroutine alloc_ctr
 
 
 
-        subroutine clean_memory()
+      subroutine clean_memory()
 
             ! myalloc (memory.f90)
 

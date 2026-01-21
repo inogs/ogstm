@@ -48,10 +48,14 @@
         ! Where this memory resides and how it is laid out is typically host-specific.
         ! Below, we assume all state variable values are combined in an array interior_state with
         ! shape nx, ny, nz, size(model%interior_state_variables).
-        jptra_fabm=size(model_fabm%interior_state_variables)
-      ! jptra_var_fabm
-      ! jptra_flux_fabm
-      ! jptra_dia_2d_fabm
+        jptra=size(model_fabm%interior_state_variables)
+! In FABM interior diagnostics includes already fluxes
+! and they are counted in jptra_var therefore jptra_flux = 0
+! we keep definition of jptra_flux for back compatibility with older BFM
+! code.
+        jptra_var=size(model_fabm%interior_diagnostic_variables)
+        jptra_flux=0                                     
+        jptra_dia_2d=size(model_fabm%horizontal_diagnostic_variables)
       END subroutine initialize_FABM
 #endif
 

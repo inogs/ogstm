@@ -12,7 +12,7 @@
 
        USE myalloc
        USE modul_param
-       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d
+       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d, initialize_fabm
        IMPLICIT NONE
 
 ! local declarations

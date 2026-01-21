@@ -58,6 +58,11 @@
 #elif  key_trc_fabm
     
 ! FABM dimensions are dynamically defined in parini
+      INTEGER :: jptra
+      INTEGER :: jptra_var
+      INTEGER :: jptra_flux
+      INTEGER :: jptra_dia
+      INTEGER :: jptra_dia_2d
 
 #else
 

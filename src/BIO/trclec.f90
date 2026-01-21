@@ -19,23 +19,61 @@
 
 
        USE myalloc
+       USE BIO_mem 
+#ifdef key_trc_fabm
+       USE fabm
+#endif
        IMPLICIT NONE
 
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
 
-      INTEGER ji
+      INTEGER ::i, ji
 
 !----------------------------------------------------------------------
 ! statement functions
 ! ===================
 
 !passive tracers
+#ifdef key_trc_bfm
 
       namelist /NATTRC/           ctrcnm, ctrcun, ctrmax, ctr_hf
       namelist /NATTRC_DIAG/      dianm, diaun, diahf, diaWR
       namelist /NATTRC_DIAG_2d/   dianm_2d, diaun_2d, diahf_2d ,diaWR_2d
+
+#elif  key_trc_fabm
+
+      do i = 1, size(model_fabm%interior_state_variables)
+      ctrcnm(i) = model_fabm%interior_state_variables(i)%name
+      ctrcun(i) = model_fabm%interior_state_variables(i)%units
+      end do
+      do i = 1, size(model_fabm%interior_diagnostic_variables)
+      dianm(i) = model_fabm%interior_diagnostic_variables(i)%name
+      diaun(i) = model_fabm%interior_diagnostic_variables(i)%units
+      end do
+      do i = 1, size(model_fabm%horizontal_diagnostic_variables)
+      dianm_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%name
+      diaun_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%units
+      end do
+      ctrmax(:)   = 100000.0
+      ctr_hf(:)   = 0
+      diahf(:)    = 0
+      diaWR(:)    = 1
+      diahf_2d(:) = 0
+      diaWR_2d(:) = 1
+
+!     namelist /NATTRC/           ctrmax, ctr_hf
+!     namelist /NATTRC_DIAG/      diahf, diaWR
+!     namelist /NATTRC_DIAG_2d/   diahf_2d ,diaWR_2d
+
+#else
+
+      namelist /NATTRC/           ctrcnm, ctrcun, ctrmax, ctr_hf
+      namelist /NATTRC_DIAG/      dianm, diaun, diahf, diaWR
+      namelist /NATTRC_DIAG_2d/   dianm_2d, diaun_2d, diahf_2d ,diaWR_2d
+
+#endif
 
 !physics tracers
 
@@ -72,7 +110,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
       ENDIF
 
 !----------------------- READING PASSIVE TRACERS NAMELIST
-
+#ifndef key_trc_fabm
       OPEN(unit=numnat, file='namelist.passivetrc', status= 'OLD') !'FORMATTED', 'SEQUENTIAL')
 
 !      *****  namelist nattrc STATE VARIABLES:
@@ -94,7 +132,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 !      *****
 
       CLOSE(numnat)
-
+#endif
 !---------------------- READING PHYSICS TRACERS NAMELIST
 
       OPEN(unit=numphys, file='namelist.phys', status= 'OLD') !'FORMATTED', 'SEQUENTIAL')

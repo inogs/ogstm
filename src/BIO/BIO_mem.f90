@@ -28,10 +28,6 @@
       double precision:: ice
 #ifdef key_trc_fabm
       class (type_fabm_model), pointer :: model_fabm
-      INTEGER :: jptra
-      INTEGER :: jptra_var
-      INTEGER :: jptra_flux
-      INTEGER :: jptra_dia_2d
 #endif
 
 
@@ -55,6 +51,7 @@
 ! code.
         jptra_var=size(model_fabm%interior_diagnostic_variables)
         jptra_flux=0                                     
+        jptra_dia=jptra_var+jptra_flux
         jptra_dia_2d=size(model_fabm%horizontal_diagnostic_variables)
       END subroutine initialize_FABM
 #endif

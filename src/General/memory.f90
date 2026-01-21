@@ -674,7 +674,7 @@ subroutine alloc_tot()
        e3wdta  = huge(e3wdta(1,1,1,1))
 
 !!----------------------------------------------------------------------
-
+       
 
        allocate(trn(jpk,jpj,jpi,jptra))                    
        trn    = huge(trn(1,1,1,1))

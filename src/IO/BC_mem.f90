@@ -170,7 +170,7 @@
 
 #elif  key_trc_fabm
 
-          jn_atm  = ?
+          jn_atm  = 2
 
 #else
 

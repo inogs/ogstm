@@ -12,7 +12,13 @@
 
        USE myalloc
        USE modul_param
-       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d, initialize_fabm
+       
+#ifdef key_trc_fabm
+       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d, initialize_FABM
+#else
+       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d
+#endif
+
        IMPLICIT NONE
 
 ! local declarations
@@ -122,14 +128,15 @@
 #elif  key_trc_fabm
 
       call initialize_FABM()
-
+      jptra_dia=jptra_var + jptra_flux
 #else
 
 ! Default dimensions are included within the file DEFAULT_var_list.h
+      jptra_dia=jptra_var + jptra_flux
 
 #endif
 
-      jptra_dia=jptra_var + jptra_flux
+
 
       CONTAINS
 ! **************************************************************

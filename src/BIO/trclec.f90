@@ -110,7 +110,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
       ENDIF
 
 !----------------------- READING PASSIVE TRACERS NAMELIST
-#ifndef key_trc_fabm
+#if !defined(key_trc_fabm)
       OPEN(unit=numnat, file='namelist.passivetrc', status= 'OLD') !'FORMATTED', 'SEQUENTIAL')
 
 !      *****  namelist nattrc STATE VARIABLES:

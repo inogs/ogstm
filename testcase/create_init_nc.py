@@ -12,17 +12,32 @@ from interpolation43 import interpolate
 
 
 def create_init_nc(test):
-    CODEPATH = test['Code'].decode() + "/ogstm/"
-    CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
-    filename = CODEPATH +  "ready_for_model_namelists/namelist.passivetrc"
-    NAMELIST =file2stringlist(filename)
-    initVARS=[]
-    for line in NAMELIST:
-        if line.find("ctrcnm") != -1:
-            quote_1=line.find("\"")
-            quote_2=line.find("\"",quote_1+1)
-            varname=line[quote_1+1:quote_2]
-            initVARS.append(varname)
+    if test['BGC_TYPE'].decode() in ['DEFAULT','Default','default','BFM','bfm']:
+        CODEPATH = test['Code'].decode() + "/ogstm/"
+        CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
+        filename = CODEPATH +  "ready_for_model_namelists/namelist.passivetrc"
+        NAMELIST =file2stringlist(filename)
+        initVARS=[]
+        for line in NAMELIST:
+            if line.find("ctrcnm") != -1:
+                quote_1=line.find("\"")
+                quote_2=line.find("\"",quote_1+1)
+                varname=line[quote_1+1:quote_2]
+                initVARS.append(varname)
+    elif test['BGC_TYPE'].decode() in ['FABM','fabm']:
+        import pyfabm
+        CODEPATH = test['Code'].decode() 
+        CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
+        fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml "
+        model = pyfabm.Model(fabm_yaml)
+        initVARS=[]
+        for variable in model.state_variables:
+            print(f"  {variable.name} = {variable.long_name} ({variable.units})")
+            initVARS.append(variable.name)
+    else:
+
+        print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+        sys.exit()
 
     jpi=test['jpi'];
     jpj=test['jpj'];
@@ -52,7 +67,16 @@ def create_init_nc(test):
     os.system("mkdir -p " + test['Dir'].decode() + "/FLUXES/")
 
     for var in initVARS:
-        filename = "KB/INIT_NWM_KB/init." + var
+        
+        if test['BGC_TYPE'].decode() in ['DEFAULT','Default','default','BFM','bfm']:
+            filename = "KB/INIT_NWM_KB/init." + var
+        elif test['BGC_TYPE'].decode() in ['FABM','fabm']:
+            var=var.replace('/','_')
+            filename = "KB/INIT_NWM_KB_FABM/INIT." + var
+        else:
+            print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+            sys.exit()
+        
         din = np.loadtxt(filename)
         datain = interpolate(din, jpk)
         for jk in range(jpk):

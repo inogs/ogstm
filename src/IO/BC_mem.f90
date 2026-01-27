@@ -191,6 +191,19 @@
 
 #elif  key_trc_fabm
 
+! to be emebedded within FABM directive as external forcing
+! N1/p = phosphorus (mmol P/m^3)
+! N3/n = nitrogen (mmol N/m^3)
+! N4/n = nitrogen (mmol N/m^3)
+! N5/s = silicate (mmol Si/m^3)
+! N6/r = mmol Eq (mmol/Eq/m^3)
+! ...
+! ...
+! ...
+
+          tra_matrix_atm(1) = 1 ! phosphates
+          tra_matrix_atm(2) = 2 ! nitrates
+
 #else
 
           tra_matrix_atm(1) = ppDEFAULT1

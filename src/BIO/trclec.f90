@@ -22,7 +22,9 @@
        USE BIO_mem 
 #ifdef key_trc_fabm
        USE fabm
+       USE ogstm_yaml_reader
 #endif
+
        IMPLICIT NONE
 
 !----------------------------------------------------------------------
@@ -30,6 +32,9 @@
 ! ==================
 
       INTEGER ::i, ji
+#ifdef key_trc_fabm
+      type(ConfigYAML) :: cfg
+#endif
 
 !----------------------------------------------------------------------
 ! statement functions
@@ -66,6 +71,8 @@
 !     namelist /NATTRC/           ctrmax, ctr_hf
 !     namelist /NATTRC_DIAG/      diahf, diaWR
 !     namelist /NATTRC_DIAG_2d/   diahf_2d ,diaWR_2d
+      call read_config_yaml("ogstm.yaml", cfg)
+      call print_config(cfg)
 
 #else
 

@@ -31,7 +31,7 @@
 ! local declarations
 ! ==================
 
-      INTEGER ::i, ji
+      INTEGER ::i,j, ji
 #ifdef key_trc_fabm
       type(ConfigYAML) :: cfg
 #endif
@@ -49,30 +49,62 @@
 
 #elif  key_trc_fabm
 
+      call read_config_yaml("ogstm.yaml", cfg)
+      call print_config(cfg)
+
+! Interior state variables features and dump frequency
+      ctrmax(:)   = 100000.0
+      ctr_hf(:)   = 0
       do i = 1, size(model_fabm%interior_state_variables)
       ctrcnm(i) = model_fabm%interior_state_variables(i)%name
       ctrcun(i) = model_fabm%interior_state_variables(i)%units
+          do j = 1, size(cfg%interior_state)
+              if  ( trim(model_fabm%interior_state_variables(i)%name) .EQ. trim(cfg%interior_state(j)%name)) then
+                  write(*,'(a)') " - "//trim(cfg%interior_state(j)%name)
+                  write(*,'(a,1x,es12.5)') "    ctrmax:", cfg%interior_state(j)%ctrmax
+                  ctrmax(i)=cfg%interior_state(j)%ctrmax
+                  write(*,'(a,1x,i0)')     "    ctrhf: ", cfg%interior_state(j)%ctrhf
+                  ctr_hf(i)=cfg%interior_state(j)%ctrhf
+                  write(*,'(a,1x,i0)')     "    relax: TO BE COMPLETED", cfg%interior_state(j)%relax
+              endif
+          end do
       end do
-      do i = 1, size(model_fabm%interior_diagnostic_variables)
-      dianm(i) = model_fabm%interior_diagnostic_variables(i)%name
-      diaun(i) = model_fabm%interior_diagnostic_variables(i)%units
-      end do
-      do i = 1, size(model_fabm%horizontal_diagnostic_variables)
-      dianm_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%name
-      diaun_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%units
-      end do
-      ctrmax(:)   = 100000.0
-      ctr_hf(:)   = 0
+! Interior diagnostic variables features and dump frequency
       diahf(:)    = 0
       diaWR(:)    = 1
+      do i = 1, size(model_fabm%interior_diagnostic_variables)
+          dianm(i) = model_fabm%interior_diagnostic_variables(i)%name
+          diaun(i) = model_fabm%interior_diagnostic_variables(i)%units
+          do j = 1, size(cfg%interior_diagnostic)
+              if  ( trim(model_fabm%interior_diagnostic_variables(i)%name) .EQ. trim(cfg%interior_diagnostic(j)%name)) then
+                  write(*,'(a)') " - "//trim(cfg%interior_diagnostic(j)%name)
+                  write(*,'(a,1x,i0)') "    diahf:", cfg%interior_diagnostic(j)%diahf
+                  diahf(i)=cfg%interior_diagnostic(j)%diahf
+                  write(*,'(a,1x,i0)') "    diaWR:", cfg%interior_diagnostic(j)%diaWR
+                  diaWR(i)=cfg%interior_diagnostic(j)%diaWR
+              endif
+          end do
+      end do
+! Horizontal diagnostic variables features and dump frequency
       diahf_2d(:) = 0
       diaWR_2d(:) = 1
+      do i = 1, size(model_fabm%horizontal_diagnostic_variables)
+          dianm_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%name
+          diaun_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%units
+          do j = 1, size(cfg%horizontal_diagnostic)
+              if  ( trim(model_fabm%horizontal_diagnostic_variables(i)%name) .EQ. trim(cfg%horizontal_diagnostic(j)%name)) then
+                  write(*,'(a)') " - "//trim(cfg%horizontal_diagnostic(j)%name)
+                  write(*,'(a,1x,i0)') "    diahf_2d:", cfg%horizontal_diagnostic(j)%diahf_2d
+                  diahf_2d(i)=cfg%horizontal_diagnostic(j)%diahf_2d
+                  write(*,'(a,1x,i0)') "    diaWR_2d:", cfg%horizontal_diagnostic(j)%diaWR_2d
+                  diaWR_2d(i)=cfg%horizontal_diagnostic(j)%diaWR_2d
+              endif
+          end do
+      end do
 
 !     namelist /NATTRC/           ctrmax, ctr_hf
 !     namelist /NATTRC_DIAG/      diahf, diaWR
 !     namelist /NATTRC_DIAG_2d/   diahf_2d ,diaWR_2d
-      call read_config_yaml("ogstm.yaml", cfg)
-      call print_config(cfg)
 
 #else
 

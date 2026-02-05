@@ -31,7 +31,8 @@
 ! local declarations
 ! ==================
 
-      INTEGER ::i,j, ji
+      INTEGER :: i,j, ji
+      INTEGER :: nmatch
 #ifdef key_trc_fabm
       type(ConfigYAML) :: cfg
 #endif
@@ -58,8 +59,12 @@
       do i = 1, size(model_fabm%interior_state_variables)
       ctrcnm(i) = model_fabm%interior_state_variables(i)%name
       ctrcun(i) = model_fabm%interior_state_variables(i)%units
-          do j = 1, size(cfg%interior_state)
+      end do
+      do j = 1, size(cfg%interior_state)
+          nmatch = 0
+          do i = 1, size(model_fabm%interior_state_variables)
               if  ( trim(model_fabm%interior_state_variables(i)%name) .EQ. trim(cfg%interior_state(j)%name)) then
+                  nmatch = nmatch + 1
                   write(*,'(a)') " - "//trim(cfg%interior_state(j)%name)
                   write(*,'(a,1x,es12.5)') "    ctrmax:", cfg%interior_state(j)%ctrmax
                   ctrmax(i)=cfg%interior_state(j)%ctrmax
@@ -68,6 +73,15 @@
                   write(*,'(a,1x,i0)')     "    relax: TO BE COMPLETED", cfg%interior_state(j)%relax
               endif
           end do
+          if (nmatch == 0) then
+              write(*,*) "ERROR: variable not found ..." , &
+              trim(cfg%interior_state(j)%name)       
+              stop 1
+          else if (nmatch > 1) then
+              write(*,*) "ERROR: duplicate FABM variable name: ", &
+              trim(cfg%interior_state(j)%name)
+              stop 2
+          end if
       end do
 ! Interior diagnostic variables features and dump frequency
       diahf(:)    = 0
@@ -75,8 +89,12 @@
       do i = 1, size(model_fabm%interior_diagnostic_variables)
           dianm(i) = model_fabm%interior_diagnostic_variables(i)%name
           diaun(i) = model_fabm%interior_diagnostic_variables(i)%units
-          do j = 1, size(cfg%interior_diagnostic)
+      end do
+      do j = 1, size(cfg%interior_diagnostic)
+          nmatch = 0
+          do i = 1, size(model_fabm%interior_diagnostic_variables)
               if  ( trim(model_fabm%interior_diagnostic_variables(i)%name) .EQ. trim(cfg%interior_diagnostic(j)%name)) then
+                  nmatch = nmatch + 1
                   write(*,'(a)') " - "//trim(cfg%interior_diagnostic(j)%name)
                   write(*,'(a,1x,i0)') "    diahf:", cfg%interior_diagnostic(j)%diahf
                   diahf(i)=cfg%interior_diagnostic(j)%diahf
@@ -84,6 +102,15 @@
                   diaWR(i)=cfg%interior_diagnostic(j)%diaWR
               endif
           end do
+          if (nmatch == 0) then
+              write(*,*) "ERROR: variable not found ..." , &
+              trim(cfg%interior_diagnostic(j)%name)       
+              stop 1
+          else if (nmatch > 1) then
+              write(*,*) "ERROR: duplicate FABM variable name: ", &
+              trim(cfg%interior_diagnostic(j)%name)
+              stop 2
+          end if
       end do
 ! Horizontal diagnostic variables features and dump frequency
       diahf_2d(:) = 0
@@ -91,8 +118,12 @@
       do i = 1, size(model_fabm%horizontal_diagnostic_variables)
           dianm_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%name
           diaun_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%units
-          do j = 1, size(cfg%horizontal_diagnostic)
+      end do
+      do j = 1, size(cfg%horizontal_diagnostic)
+          nmatch = 0
+          do i = 1, size(model_fabm%horizontal_diagnostic_variables)
               if  ( trim(model_fabm%horizontal_diagnostic_variables(i)%name) .EQ. trim(cfg%horizontal_diagnostic(j)%name)) then
+                  nmatch = nmatch + 1
                   write(*,'(a)') " - "//trim(cfg%horizontal_diagnostic(j)%name)
                   write(*,'(a,1x,i0)') "    diahf_2d:", cfg%horizontal_diagnostic(j)%diahf_2d
                   diahf_2d(i)=cfg%horizontal_diagnostic(j)%diahf_2d
@@ -100,6 +131,15 @@
                   diaWR_2d(i)=cfg%horizontal_diagnostic(j)%diaWR_2d
               endif
           end do
+          if (nmatch == 0) then
+              write(*,*) "ERROR: variable not found ..." , &
+              trim(cfg%horizontal_diagnostic(j)%name)       
+              stop 1
+          else if (nmatch > 1) then
+              write(*,*) "ERROR: duplicate FABM variable name: ", &
+              trim(cfg%horizontal_diagnostic(j)%name)
+              stop 2
+          end if
       end do
 
 !     namelist /NATTRC/           ctrmax, ctr_hf

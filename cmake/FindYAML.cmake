@@ -4,6 +4,7 @@
 
 message("EnvironmentVariableName = ${EnvironmentVariableName}")
 find_path (YAML_INCLUDES NAMES yaml.mod  yaml_settings.mod  yaml_types.mod HINTS $ENV{YAML_INCLUDE} NO_DEFAULT_PATH)
+add_definitions(-Dkey_yaml )
 message(STATUS "YAML include =  ${YAML_INCLUDES}  ")
 set (FABM_has_interfaces "YES")
 

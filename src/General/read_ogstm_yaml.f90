@@ -5,6 +5,7 @@
 !===========================================================
 
 module ogstm_yaml_reader
+#ifdef key_yaml
   use, intrinsic :: iso_fortran_env, only: wp => real64
   use yaml
   use yaml_types
@@ -306,6 +307,7 @@ contains
     end do
   end subroutine print_config
 
+#endif 
 end module ogstm_yaml_reader
 
 

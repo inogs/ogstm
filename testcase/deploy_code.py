@@ -48,7 +48,11 @@ def deploy_code(test):
 
         fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml "
         os.system("cp -pf " + fabm_yaml  + test['Dir'].decode() + "/fabm.yaml")
-
+        try:
+            os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
+        except Exception as e:
+            print("Missing ogstm.yaml:", e)
+            print("To create a template ogstm.yaml launch python create_ogstm_yaml.py")
     else:
 
         print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")

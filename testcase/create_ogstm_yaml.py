@@ -1,7 +1,7 @@
 import os
 import pyfabm
 
-CODEPATH = '/leonardo_work/OGS_test2528_0/plazzari/OGSTM-FABM/ModelBuild/'
+CODEPATH = '../../'
 CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
 fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml "
 model = pyfabm.Model(fabm_yaml)

@@ -38,7 +38,7 @@
       subroutine initialize_FABM()
         ! Provide extents of the spatial domain (number of layers nz for a 1D column)
         model_fabm => fabm_create_model()
-        call model_fabm%set_domain(jpk,jpj,jpi)
+        call model_fabm%set_domain(jpk,jpj,jpi,1.0d0)
         ! At this point (after the call to fabm_create_model), memory should be
         ! allocated to hold the values of all size(model%interior_state_variables) state variables.
         ! Where this memory resides and how it is laid out is typically host-specific.
@@ -101,6 +101,30 @@
         do ivar = 1, size(model_fabm%interior_state_variables)
            call model_fabm%link_interior_state_data(ivar, trn(:,:,:,ivar))
         end do
+        ! Point FABM to environmental data, here shown for temperature
+        ! Array temp with extents nx,ny,nz is assumed to be allocated.
+        ! Do this for all variables on FABM's standard variable list that the model can provide.
+        ! For this list, visit https://fabm.net/standard_variables
+
+        call model_fabm%link_interior_data(fabm_standard_variables%temperature, tn)
+        call model_fabm%link_interior_data(fabm_standard_variables%practical_salinity, sn)
+
+        ! Complete initialization and check whether FABM has all dependencies fulfilled
+        ! (i.e., whether all required calls to model%link_*_data have been made)
+        write(*,*) 'Finalize initialization and check whether FABM has all dependencies fulfilled ...'
+        call model_fabm%start()
+        write(*,*) 'done'
+
+        ! Initialize the tracers
+        ! This sets the values of arrays sent to model%link_interior_state_data,
+        ! in this case those in interior_state.
+!       do k = 1, nz
+!          do j = 1, ny
+!             call model_fabm%initialize_interior_state(1, nx, j, k)
+!          end do
+!       end do
+
+! At this point, initialization is complete.
 #endif
 
 #ifdef Mem_Monitor

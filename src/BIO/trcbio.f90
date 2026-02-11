@@ -203,7 +203,7 @@
 
                          tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
 
-                          ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
+!                           ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
 
       END DO
       END DO

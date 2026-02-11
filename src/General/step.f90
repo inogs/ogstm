@@ -184,7 +184,7 @@ MODULE module_step
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-        CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
+!         CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
         CALL bc_co2       (DATEstring)
         CALL eos          ()               ! Water density
 
@@ -543,7 +543,7 @@ END SUBROUTINE trcstp
 !  END BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
+!       CALL bc_atm       (DATEstring)     ! CALL dtatrc(istp,2)
       CALL bc_co2       (DATEstring)
       CALL eos          ()               ! Water density
 

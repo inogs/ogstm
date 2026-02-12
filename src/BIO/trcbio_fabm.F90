@@ -65,7 +65,7 @@
       double precision,dimension(jptra,jpk) :: b
       double precision,dimension(jpk,jptra) :: a
       double precision,dimension(4,jpk) :: c
-      double precision,dimension(jptra_dia,jpk) :: d
+!     double precision,dimension(jptra_dia,jpk) :: d
       double precision,dimension(jpk,16) :: er
       double precision,dimension(jptra_dia_2d) :: d2
 

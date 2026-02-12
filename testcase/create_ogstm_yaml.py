@@ -14,10 +14,14 @@ model = pyfabm.Model(fabm_yaml)
 
 with open('ogstm.yaml', 'w') as f:
     f.write('interior_state:\n')
-    for variable in model.state_variables:
+    for i,variable in enumerate(model.state_variables):
         f.write(f"    {variable.name.replace('/','_')}:\n")
         f.write(f"        ctrmax: 1.000000e+03\n")
-        f.write(f"        ctrhf: 0\n")
+        # OGSTM want always at least an high freq output
+        if i == 0:
+            f.write(f"        ctrhf: 1\n")
+        else:
+            f.write(f"        ctrhf: 0\n")
         f.write(f"        relax: 0\n")
 
     f.write('interior_diagnostic:\n')

@@ -49,6 +49,7 @@
 
          filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))// & 
                 '.nc'
+         write(*,*) 'Reading restart  file ', filename, 'and variable TRN', trim(ctrcnm(jn)), ' '
          CALL readnc_slice_double(trim(filename), 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
 
 

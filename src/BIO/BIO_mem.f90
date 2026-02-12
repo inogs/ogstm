@@ -6,6 +6,7 @@
 
 #ifdef key_trc_fabm
        USE fabm
+       USE OPT_mem
 #endif
 
 #ifdef Mem_Monitor
@@ -61,6 +62,11 @@
       INTEGER  :: err
       INTEGER  :: ivar
       double precision  :: aux_mem
+#ifdef key_trc_fabm
+      type (type_fabm_interior_variable_id)   :: interior_id
+      type (type_fabm_horizontal_variable_id) :: horizontal_id
+      type (type_fabm_scalar_variable_id)     :: scalar_id
+#endif
 
 #ifdef Mem_Monitor
        aux_mem = get_mem(err)
@@ -106,11 +112,45 @@
         ! Do this for all variables on FABM's standard variable list that the model can provide.
         ! For this list, visit https://fabm.net/standard_variables
 
-        call model_fabm%link_interior_data(fabm_standard_variables%temperature, tn)
-        call model_fabm%link_interior_data(fabm_standard_variables%practical_salinity, sn)
+        call model_fabm%link_interior_data(fabm_standard_variables%temperature, tn) !  Celsius
+        call model_fabm%link_interior_data(fabm_standard_variables%practical_salinity, sn) ! PSU
+        call model_fabm%link_interior_data(fabm_standard_variables%density, rho) ! kg m-3
+        call model_fabm%link_interior_data(fabm_standard_variables%pressure, gdept) ! dbar
+        call model_fabm%link_horizontal_data(fabm_standard_variables%mole_fraction_of_carbon_dioxide_in_air,  ogstm_co2) ! CO2 Mixing Ratios (ppm)  
+        call model_fabm%link_interior_data(fabm_standard_variables%depth, gdept ) ! m  
+        call model_fabm%link_interior_data(fabm_standard_variables%cell_thickness, e3t ) ! m  
+        call model_fabm%link_horizontal_data(fabm_standard_variables%wind_speed, vatm) ! m/s 
+        call model_fabm%link_horizontal_data(fabm_standard_variables%longitude, glamt) ! degree_east
+        call model_fabm%link_horizontal_data(fabm_standard_variables%latitude, gphit) ! degree_north 
+
+        horizontal_id = model_fabm%get_horizontal_variable_id('cloud_area_fraction')
+        call model_fabm%link_horizontal_data(horizontal_id, tcc/100.d0) ! [0-1] 
+
+
+        horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_cloud_liquid_water')
+        call model_fabm%link_horizontal_data(horizontal_id, tclw) ! [0-1] 
+
+!        horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_water_vapor')
+!        call model_fabm%link_horizontal_data(horizontal_id, 0.1d0) ! kg m^-2
+
+!        horizontal_id = model_fabm%get_horizontal_variable_id('visibility_in_air')
+!        call model_fabm%link_horizontal_data(horizontal_id, 25000.d0) ! m
+
+!        horizontal_id = model_fabm%get_horizontal_variable_id('aerosol_air_mass_type')
+!        call model_fabm%link_horizontal_data(horizontal_id, 10.d0) ! -
+
+!        horizontal_id = model_fabm%get_horizontal_variable_id('surface_specific_humidity')
+!        call model_fabm%link_horizontal_data(horizontal_id, 0.01d0) ! kg kg^-1
+
+        horizontal_id = model_fabm%get_horizontal_variable_id('surface_temperature')
+        call model_fabm%link_horizontal_data(horizontal_id, t2m) ! - degree_Celsius
+
+        horizontal_id = model_fabm%get_horizontal_variable_id('surface_air_pressure')
+        call model_fabm%link_horizontal_data(horizontal_id, sp) ! - Pa
 
         ! Complete initialization and check whether FABM has all dependencies fulfilled
         ! (i.e., whether all required calls to model%link_*_data have been made)
+
         write(*,*) 'Finalize initialization and check whether FABM has all dependencies fulfilled ...'
         call model_fabm%start()
         write(*,*) 'done'

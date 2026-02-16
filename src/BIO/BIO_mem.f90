@@ -65,7 +65,7 @@
 #ifdef key_trc_fabm
       type (type_fabm_interior_variable_id)   :: interior_id
       type (type_fabm_horizontal_variable_id) :: horizontal_id
-      type (type_fabm_scalar_variable_id)     :: scalar_id
+      type (type_fabm_scalar_variable_id)     :: scalar_id,id_yearday 
 #endif
 
 #ifdef Mem_Monitor
@@ -130,23 +130,36 @@
         horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_cloud_liquid_water')
         call model_fabm%link_horizontal_data(horizontal_id, tclw) ! [0-1] 
 
-!        horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_water_vapor')
-!        call model_fabm%link_horizontal_data(horizontal_id, 0.1d0) ! kg m^-2
 
-!        horizontal_id = model_fabm%get_horizontal_variable_id('visibility_in_air')
-!        call model_fabm%link_horizontal_data(horizontal_id, 25000.d0) ! m
+        horizontal_id=model_fabm%get_horizontal_variable_id('surface_downwelling_shortwave_flux')
+        ! to be provided in case monospectral formulation is used
+        call model_fabm%link_horizontal_data(horizontal_id, surface_downwelling_shortwave_flux) ! W m^-2
 
-!        horizontal_id = model_fabm%get_horizontal_variable_id('aerosol_air_mass_type')
-!        call model_fabm%link_horizontal_data(horizontal_id, 10.d0) ! -
+        horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_water_vapor')
+        atmosphere_mass_content_of_water_vapor=0.1d0
+        call model_fabm%link_horizontal_data(horizontal_id, atmosphere_mass_content_of_water_vapor) ! kg m^-2
 
-!        horizontal_id = model_fabm%get_horizontal_variable_id('surface_specific_humidity')
-!        call model_fabm%link_horizontal_data(horizontal_id, 0.01d0) ! kg kg^-1
+         horizontal_id = model_fabm%get_horizontal_variable_id('visibility_in_air')
+         visibility_in_air = 25000.d0
+         call model_fabm%link_horizontal_data(horizontal_id, visibility_in_air) ! m
+
+        horizontal_id = model_fabm%get_horizontal_variable_id('aerosol_air_mass_type')
+        aerosol_air_mass_type = 10.d0
+        call model_fabm%link_horizontal_data(horizontal_id, aerosol_air_mass_type) ! -
+
+         horizontal_id = model_fabm%get_horizontal_variable_id('surface_specific_humidity')
+         surface_specific_humidity = 0.01d0
+        call model_fabm%link_horizontal_data(horizontal_id, surface_specific_humidity) ! kg kg^-1
 
         horizontal_id = model_fabm%get_horizontal_variable_id('surface_temperature')
         call model_fabm%link_horizontal_data(horizontal_id, t2m) ! - degree_Celsius
 
         horizontal_id = model_fabm%get_horizontal_variable_id('surface_air_pressure')
         call model_fabm%link_horizontal_data(horizontal_id, sp) ! - Pa
+
+       id_yearday = model_fabm%get_scalar_variable_id(fabm_standard_variables%number_of_days_since_start_of_the_year)
+       call model_fabm%link_scalar(id_yearday, 1.0d0) ! - days
+
 
         ! Complete initialization and check whether FABM has all dependencies fulfilled
         ! (i.e., whether all required calls to model%link_*_data have been made)

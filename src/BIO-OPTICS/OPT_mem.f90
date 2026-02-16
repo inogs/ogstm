@@ -47,6 +47,13 @@
       double precision, allocatable :: taua(:,:,:)
       double precision, allocatable :: asymp(:,:,:)
       double precision, allocatable :: ssalb(:,:,:)
+!     FABM optical model variables
+      double precision, allocatable :: surface_downwelling_shortwave_flux(:,:)
+      double precision, allocatable :: atmosphere_mass_content_of_water_vapor(:,:)
+      double precision, allocatable :: visibility_in_air(:,:)
+      double precision, allocatable :: aerosol_air_mass_type(:,:)
+      double precision, allocatable :: surface_specific_humidity(:,:)
+
 ! ############
       real, allocatable :: zkef_f (:,:)
       CHARACTER(LEN=7), allocatable,dimension(:) :: Ednm, Esnm, Eunm
@@ -169,6 +176,22 @@
        allocate(taua(33,jpj,jpi)) ;  taua=huge(sp(1,1))
        allocate(asymp(33,jpj,jpi)); asymp=huge(sp(1,1))
        allocate(ssalb(33,jpj,jpi)); ssalb=huge(sp(1,1))
+!     FABM optical model variables
+      allocate(surface_downwelling_shortwave_flux(jpj,jpi))
+      surface_downwelling_shortwave_flux=huge(surface_downwelling_shortwave_flux(1,1))
+
+      allocate(atmosphere_mass_content_of_water_vapor(jpj,jpi))
+      atmosphere_mass_content_of_water_vapor=huge(atmosphere_mass_content_of_water_vapor(1,1))
+
+      allocate(visibility_in_air(jpj,jpi))
+      visibility_in_air=huge(visibility_in_air(1,1))
+
+      allocate(aerosol_air_mass_type(jpj,jpi))
+      aerosol_air_mass_type=huge(surface_specific_humidity(1,1))
+
+      allocate(surface_specific_humidity(jpj,jpi))
+      surface_specific_humidity=huge(surface_specific_humidity(1,1))
+
 
        allocate(spIO (jpj,jpi,2))     ; spIO   =huge(sp(1,1))
        allocate(mslIO(jpj,jpi,2))     ; mslIO  =huge(sp(1,1))

@@ -61,6 +61,7 @@
 
       INTEGER  :: err
       INTEGER  :: ivar
+      INTEGER  :: ji,jj
       double precision  :: aux_mem
 #ifdef key_trc_fabm
       type (type_fabm_interior_variable_id)   :: interior_id
@@ -171,11 +172,11 @@
         ! Initialize the tracers
         ! This sets the values of arrays sent to model%link_interior_state_data,
         ! in this case those in interior_state.
-!       do k = 1, nz
-!          do j = 1, ny
-!             call model_fabm%initialize_interior_state(1, nx, j, k)
-!          end do
-!       end do
+        do ji = 1, jpi
+           do jj = 1, jpj
+              call model_fabm%initialize_interior_state(1, jpk, jj, ji)
+           end do
+        end do
 
 ! At this point, initialization is complete.
 #endif

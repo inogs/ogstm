@@ -62,8 +62,7 @@
 !!! local declarations
 !!! ==================
 
-      double precision,dimension(jptra,jpk) :: b
-      double precision,dimension(jpk,jptra) :: a
+      double precision,dimension(jpk,jptra) :: dy
       double precision,dimension(4,jpk) :: c
 !     double precision,dimension(jptra_dia,jpk) :: d
       double precision,dimension(jpk,16) :: er
@@ -78,17 +77,43 @@
 
 
 !!!----------------------------------------------------------------------
-!!! statement functions
 !!! ===================
 
 
 !   | --------------|
-!   | BFM MODEL CALL|
+!   | FABM MODEL CALL|
 !   | --------------|
 
 !       BIOparttime = MPI_WTIME()
 
 
+! Prepare all fields FABM needs to compute source terms (e.g., light)
+call model_fabm%prepare_inputs()
+
+! In the loops below, dy and w are local to the j,k point being processed.
+! They would therefore need to be processed further within the loop to be included in
+! the host's advection-diffusion-reaction treatment.
+! Alternatively, the could be declared as (4D) global variables that are built up
+! in the loop and processed after.
+
+   DO ji=1,jpi
+     DO jj=1,jpj
+      ! Retrieve tracer source terms (tracer units s-1).
+      ! Array dy(1:nx, 1:size(model%interior_state_variables)) is assumed to be allocated.
+      dy = 0
+      bottom = mbathy(jj,ji)
+      call model_fabm%get_interior_sources(1, jpk, jj, ji, dy)
+      DO jtr=1, jptra
+            tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +dy(1:bottom,jtr) ! increment trend
+      END DO
+      ! Retrieve vertical velocities (sinking, floating, active movement) in m s-1.
+      ! Array w(1:nx,1:size(model%interior_state_variables)) is assumed to be allocated.
+!      call model_fabm%get_vertical_movement(1, jpk, jj, ji, w)
+   end do
+end do
+
+! Compute any remaining diagnostics
+call model_fabm%finalize_outputs()
 !         surf_mask(:) = 0.
 !         surf_mask(1) = 1.
 ! -------------------------------------------------
@@ -109,24 +134,6 @@
 !     er(:,10) = 8.1
 
 
-#ifdef gdept1d
-! er(:,11) is calculated outside the loop on ji,jj
-!     do jk=1, jpk
-!        correct_fact= 1.0D0
-
-!        if ( (gdept(jk) .GT. 1000.0D0 ) .AND.  (gdept(jk) .LT. 2000.0D0 )) then
-!            correct_fact= 0.25D0
-!        endif
-
-!        if (gdept(jk) .GE. 2000.0D0 ) then
-!            correct_fact= 0.0D0
-!        endif
-
-!        er(jk,11) = correct_fact * ( gdept(jpk)-gdept(jk) ) /gdept(jpk)
-!     enddo
-#endif
-
-
 !     DO ji=1,jpi
 !     DO jj=1,jpj
 !     if (bfmmask(1,jj,ji) == 0) CYCLE
@@ -140,36 +147,7 @@
 
 ! Environmental regulating factors (er,:)
 
-!                         er(1:bottom,1)  = tn (1:bottom,jj,ji)! Temperature (Celsius)
-!                         er(1:bottom,2)  = sn (1:bottom,jj,ji)  ! Salinity PSU
-!                         er(1:bottom,3)  = rho(1:bottom,jj,ji)        ! Density Kg/m3
-!                         er(1       ,4)  = ice                  ! from 0 to 1 adimensional
-!                         er(1       ,5)  = ogstm_co2(jj,ji)     ! CO2 Mixing Ratios (ppm)  390
-!                         er(1:bottom,6)  = PAR(1:bottom,jj,ji,1) ! PAR for diatoms
-!                         er(1:bottom,7)  = PAR(1:bottom,jj,ji,2) ! PAR for flagellates
-!                         er(1:bottom,8)  = PAR(1:bottom,jj,ji,3) ! PAR for pico phytoplankton
-!                         er(1:bottom,9)  = PAR(1:bottom,jj,ji,4) ! PAR for dinoflagellates
-!                         er(1:bottom,10) = PAR(1:bottom,jj,ji,5) ! total PAR for CDOM
-!                         er(1       ,11)  = DAY_LENGTH(jj,ji)    ! fotoperiod expressed in hours
-!                         er(1:bottom,12)  = e3t(1:bottom,jj,ji)        ! depth in meters of the given cell
-!                         er(1       ,13)  = vatm(jj,ji)                ! wind speed (m/s)
-!                         er(1:bottom,14) = ogstm_PH(1:bottom,jj,ji)   ! 8.1
-!                         er(1       ,15)  = RMU(jj,ji)                ! avg. cosine direct
 
-#ifndef gdept1d
-!                        do jk=1,bottom
-!                            correct_fact= 1.0D0
-!                            if ( (gdept(jk,jj,ji) .GT. 1000.0D0 ) .AND.  (gdept(jk,jj,ji) .LT. 2000.0D0)) then
-!                                correct_fact= 0.25D0
-!                            endif
-
-!                            if (gdept(jk,jj,ji) .GE. 2000.0D0 ) then
-!                                correct_fact= 0.0D0
-!                            endif
-
-!                            er(jk,16) = correct_fact * ( gdept(jpk,jj,ji)-gdept(jk,jj,ji) ) /gdept(jpk,jj,ji)
-!                        enddo
-#endif
 !                         call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
 
 !                        call BFM1D_reset()

@@ -100,12 +100,9 @@ call model_fabm%prepare_inputs()
      DO jj=1,jpj
       ! Retrieve tracer source terms (tracer units s-1).
       ! Array dy(1:nx, 1:size(model%interior_state_variables)) is assumed to be allocated.
+      if (tmask(1,jj,ji) == 0) CYCLE
       dy = 0
-      bottom = mbathy(jj,ji)
-      call model_fabm%get_interior_sources(1, jpk, jj, ji, dy)
-      DO jtr=1, jptra
-            tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +dy(1:bottom,jtr) ! increment trend
-      END DO
+      call model_fabm%get_interior_sources(1, jk, jj, ji, tra(:,jj,ji,:))
       ! Retrieve vertical velocities (sinking, floating, active movement) in m s-1.
       ! Array w(1:nx,1:size(model%interior_state_variables)) is assumed to be allocated.
 !      call model_fabm%get_vertical_movement(1, jpk, jj, ji, w)

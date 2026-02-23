@@ -46,6 +46,7 @@
         ! Below, we assume all state variable values are combined in an array interior_state with
         ! shape nx, ny, nz, size(model%interior_state_variables).
         jptra=size(model_fabm%interior_state_variables)
+
 ! In FABM interior diagnostics includes already fluxes
 ! and they are counted in jptra_var therefore jptra_flux = 0
 ! we keep definition of jptra_flux for back compatibility with older BFM
@@ -96,7 +97,9 @@
                  ! and used in hard_tissue_pump.F also in land points
        ice=0
 #ifdef key_trc_fabm
-        ! Provide extents of the spatial domain (number of layers nz for a 1D column)
+        ! Provide FABM with the vertical indices of the surface and bottom, and the land-sea mask.
+        call model_fabm%set_bottom_index(mbathy)  ! NB mbkt extents should match dimension lengths provided to model%set_domain
+        call model_fabm%set_mask(tmask,tmask(1,:,:)) ! NB tmask extents should match dimension lengths provided to model%set_domain
 
         ! At this point (after the call to fabm_create_model), memory should be
         ! allocated to hold the values of all size(model%interior_state_variables) state variables.

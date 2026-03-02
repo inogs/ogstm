@@ -22,7 +22,6 @@
 
       integer s, nc,INDid
       integer nid, tid
-      INTEGER IDS(jptra)
       double precision  Realcounter
 
       if (.not.existFileFluxes) RETURN

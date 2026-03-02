@@ -12,6 +12,13 @@
 
        USE myalloc
        USE modul_param
+       
+#ifdef key_trc_fabm
+       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d, initialize_FABM
+#else
+       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d
+#endif
+
        IMPLICIT NONE
 
 ! local declarations
@@ -110,6 +117,27 @@
       deallocate(domdec)
 
       CLOSE(numnam)
+
+!     initialize BGC dimensions
+!! Passive tracers parameter
+
+#ifdef key_trc_bfm
+
+! BFM dimensions are included within the file BFM_var_list.h
+
+#elif  key_trc_fabm
+
+      call initialize_FABM()
+      jptra_dia=jptra_var + jptra_flux
+#else
+
+! Default dimensions are included within the file DEFAULT_var_list.h
+      jptra_dia=jptra_var + jptra_flux
+
+#endif
+
+
+
       CONTAINS
 ! **************************************************************
       SUBROUTINE COUNTLINE(FILENAME,LINES)

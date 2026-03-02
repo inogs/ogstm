@@ -46,6 +46,8 @@ TEST_LIST=np.loadtxt('TEST_LIST.dat', dtype=test_conf,skiprows=1,ndmin=1)
 for test in TEST_LIST:
 
     print(test['Dir'])
+    print('---------BGC Framework Used---------')
+    print(test['BGC_TYPE'])
 
     DA.create_dataset(test)
 

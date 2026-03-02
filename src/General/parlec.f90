@@ -37,8 +37,13 @@
 
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
+#ifdef key_trc_bfm
       namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, latmosph, &
       ahtrb0,trcrat,ahtrc0,vsedR6,vsedR8,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
+#else
+      namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, latmosph, &
+      ahtrb0,trcrat,ahtrc0,photop,atlantic_bfm,Euphotic_lev, IS_FREE_SURFACE
+#endif
       NAMELIST/General_IO/ nwritetrc, freq_ave_phys, freq_flux_dump, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift, &
           mld_flag, DvMLD, sigma, DvBackground
@@ -143,12 +148,16 @@
       ahtrb0      = 0.
       trcrat      = 1.
       ahtrc0      = aht0
+#ifdef key_trc_bfm
       vsedR6      = 7.0
       vsedR8      = 15.0
       vsedO5c     = 30.0
+#endif
       photop      = .FALSE.
       atlantic_bfm= .FALSE.
+#ifdef key_trc_bfm
       bottom_flux = 0.
+#endif
       Euphotic_lev = 200.
       IS_FREE_SURFACE = .true.
 
@@ -177,15 +186,20 @@
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat
           WRITE(numout,*) ' horizontal eddy diffus. for passive tr            = ', ahtrc0
+#ifdef key_trc_bfm
           WRITE(numout,*) ' small detritus sedimentation speed vsedR6         =', vsedR6/86400
           WRITE(numout,*) ' large detritus sedimentation speed vsedR8         =', vsedR8/86400
           WRITE(numout,*) ' calcite sedimentation speed    vsedO5c            =', vsedO5c/86400
+#endif
           WRITE(numout,*) ' photoperiod scaling photop                        =', photop
           WRITE(numout,*) ' activation of bfm in atlantic buffer              =', atlantic_bfm
+#ifdef key_trc_bfm
           WRITE(numout,*) ' bottom flux [0,1], 0 -> no flux, 1 -> total flux  =', bottom_flux
+#endif
           WRITE(numout,*) ' Euphotic level                                    = ', Euphotic_lev
       ENDIF
 
+#ifdef key_trc_bfm
       IF (vsedR6 .LT. 0.) THEN
           write (*,*) 'vsedR6 must be greated than 0 instead it is:', vsedR6/86400
           STOP
@@ -203,6 +217,7 @@
           write (*,*) 'bottom flux must be in [0,1] instead it is:', bottom_flux
           STOP
       ENDIF
+#endif
 
 
 

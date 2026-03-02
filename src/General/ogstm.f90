@@ -40,7 +40,12 @@ MODULE OGSTM
       USE MPI_GATHER_INFO
       USE dtype_procs_string_module
       use module_step
+#ifdef key_trc_bfm
       use api_bfm 
+#endif
+#ifdef key_trc_fabm
+      use fabm
+#endif
       USE TREd_var_MP
       USE oasim, ONLY: oasim_lib, calc_unit
 
@@ -100,9 +105,10 @@ SUBROUTINE ogstm_launcher()
 ! *************************************************************
 SUBROUTINE ogstm_initialize()
 
+      IMPLICIT NONE
+
 ! local declarations
 ! ==================
-      IMPLICIT NONE
       ! *********************************************
       CHARACTER(LEN=1024) :: YAML_FILE
       INTEGER N_POINTS
@@ -137,6 +143,9 @@ SUBROUTINE ogstm_initialize()
 
       call parlec      ! read namelist.init
       call time_init
+
+      call alloc_ctr
+
       call trclec
       call opt_lec
 
@@ -182,13 +191,17 @@ SUBROUTINE ogstm_initialize()
 
       call init_phys
 
-! Initialization of Biogeochemical reactor with 1D approach
-      call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
+! Initiialization of Biogeochemical reactor with 1D approach
+#ifdef key_trc_bfm
+
       parallel_rank=myrank
+
+      call BFM0D_NO_BOXES(jpk,1,1,jpk,1)
       call Init_bfm()
       call BFM0D_INIT_IO_CHANNELS()
-
       call Initialize()
+#endif
+
 
 
       call init_opt
@@ -375,8 +388,9 @@ SUBROUTINE set_to_zero()
       tn        = 0.0
       sn        = 0.0
 ! Passive tracers arrays set to zero
-
+#    if defined key_trc_bfm
       xpar      = 0.0
+#    endif 
       trn       = 0.0
       tra       = 0.0
 

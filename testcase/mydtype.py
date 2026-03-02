@@ -7,7 +7,7 @@ test_conf=np.dtype([('jpi'   ,int)  ,('jpj',int)     ,('jpk',int),\
                     ('lon0'  ,float),('lat0',float)  ,\
                     ('dx'    ,float),('dy'    ,float),\
                     ('Start' ,'S100')  ,('End'   ,'S100')  ,\
-                    ('Dir','S100'),('Code','S100')])
+                    ('Dir','S100'),('Code','S100'), ('BGC_TYPE', 'S100')])
 
 ext_data =np.dtype([('date','S17'),('kext',float)])
 

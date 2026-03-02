@@ -219,10 +219,11 @@
 #endif
 
               END DO
-#endif
 
 
       END DO MAIN_LOOP
+
+#endif
 
 !!!$omp    end parallel do
 

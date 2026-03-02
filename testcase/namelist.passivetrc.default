@@ -1,0 +1,25 @@
+&NATTRC 
+   ctrcnm(1)="N1p"
+   ctrcun(1)="mmol P/m3"
+   ctrmax(1)=1.000000e+0
+   ctr_hf(1)=1
+/
+
+&NATTRC_DIAG
+   dianm(1)="ETW"
+   diaun(1)="C"
+   diahf(1)=0
+   diaWR(1)=0
+
+   dianm(2)="ESW"
+   diaun(2)="PSU"
+   diahf(2)=0
+   diaWR(2)=0
+/ 
+
+&NATTRC_DIAG_2D
+   dianm_2d(1)="COSED"
+   diaun_2d(1)="-"
+   diahf_2d(1)=0
+   diaWR_2d(1)=0
+/

@@ -114,7 +114,6 @@
 
       jn_gib  = 6
       ! jn_riv  = 6
-      jn_atm  = 2
 
        ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
        allocate(resto(jpk,jpj,jpi,jn_gib))
@@ -166,6 +165,18 @@
        ! ENDIF
 
        IF ((lat .NE. 0) .AND. (lon .NE. 0)) THEN
+#ifdef key_trc_bfm
+          jn_atm  = 2
+
+#elif  key_trc_fabm
+
+          jn_atm  = 2
+
+#else
+
+          jn_atm  = 1
+#endif
+
            allocate(tra_matrix_atm(jn_atm))    
        tra_matrix_atm = huge(tra_matrix_atm(1))
            allocate(atm_aux(jpj,jpi))  
@@ -173,8 +184,32 @@
            allocate(atm_idxtglo(   jpj,jpi))  
        atm_idxtglo    = huge(atm_idxtglo(1,1))
 
+#ifdef key_trc_bfm
+
           tra_matrix_atm(1) = ppN1p ! phosphates
           tra_matrix_atm(2) = ppN3n ! nitrates
+
+#elif  key_trc_fabm
+
+! to be emebedded within FABM directive as external forcing
+! N1/p = phosphorus (mmol P/m^3)
+! N3/n = nitrogen (mmol N/m^3)
+! N4/n = nitrogen (mmol N/m^3)
+! N5/s = silicate (mmol Si/m^3)
+! N6/r = mmol Eq (mmol/Eq/m^3)
+! ...
+! ...
+! ...
+
+          tra_matrix_atm(1) = 1 ! phosphates
+          tra_matrix_atm(2) = 2 ! nitrates
+
+#else
+
+          tra_matrix_atm(1) = ppDEFAULT1
+
+#endif
+
        ENDIF
 
 

@@ -49,8 +49,8 @@
       character(len=10) bfmmask_file
 
       CHARACTER(LEN=50) filename
-      CHARACTER(LEN=3), DIMENSION(7) :: var_nc
-      CHARACTER(LEN=5) nomevar01
+      CHARACTER(LEN=100), DIMENSION(7) :: var_nc
+      CHARACTER(LEN=100) nomevar01
       LOGICAL B
 
 ! -------------------
@@ -199,18 +199,34 @@
 !       Restoration Mask ****************
 
       ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
+#ifdef key_trc_bfm
       var_nc(1) = 'O2o'
       var_nc(2) = 'N1p'
       var_nc(3) = 'N3n'
       var_nc(4) = 'N5s'
       var_nc(5) = 'O3c'
       var_nc(6) = 'O3h'
+#elif  key_trc_fabm
+      var_nc(1) = 'O2_o'
+      var_nc(2) = 'N1_p'
+      var_nc(3) = 'N3_n'
+      var_nc(4) = 'N5_s'
+      var_nc(5) = 'O3_c'
+      var_nc(6) = 'O3h_h'
+
+#else
+
+! Default dimensions are included within the file DEFAULT_var_list.h
+      var_nc(1) = 'O2o'
+
+#endif
+
 
       IF (NWATERPOINTS.GT.0) THEN
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
-         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn),0)
+         call readnc_slice_float('bounmask.nc',trim(nomevar01),resto(:,:,:,jn),0)
 
       enddo
       ELSE

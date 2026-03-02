@@ -1,5 +1,4 @@
-      subroutine lidata()
-!     subroutine lidata(lam,aw,bw,ac,bc)
+      subroutine lidata_ogstm()
 
       USE OPT_mem, ONLY: nlt, nchl, lam,aw,bw,ac,ac_ps,bc,bbc,apoc,bpoc,bbpoc,acdom
       USE myalloc, only: lwp,numout

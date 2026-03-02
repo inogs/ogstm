@@ -19,23 +19,140 @@
 
 
        USE myalloc
+       USE BIO_mem 
+#ifdef key_trc_fabm
+       USE fabm
+       USE ogstm_yaml_reader
+#endif
+
        IMPLICIT NONE
 
 !----------------------------------------------------------------------
 ! local declarations
 ! ==================
 
-      INTEGER ji
+      INTEGER :: i,j, ji
+      INTEGER :: nmatch
+#ifdef key_trc_fabm
+      type(ConfigYAML) :: cfg
+#endif
 
 !----------------------------------------------------------------------
 ! statement functions
 ! ===================
 
 !passive tracers
+#ifdef key_trc_bfm
 
       namelist /NATTRC/           ctrcnm, ctrcun, ctrmax, ctr_hf
       namelist /NATTRC_DIAG/      dianm, diaun, diahf, diaWR
       namelist /NATTRC_DIAG_2d/   dianm_2d, diaun_2d, diahf_2d ,diaWR_2d
+
+#elif  key_trc_fabm
+
+      call read_config_yaml("ogstm.yaml", cfg)
+      call print_config(cfg)
+
+! Interior state variables features and dump frequency
+      ctrmax(:)   = 100000.0
+      ctr_hf(:)   = 0
+      do i = 1, size(model_fabm%interior_state_variables)
+      ctrcnm(i) = model_fabm%interior_state_variables(i)%name
+      ctrcun(i) = model_fabm%interior_state_variables(i)%units
+      end do
+      do j = 1, size(cfg%interior_state)
+          nmatch = 0
+          do i = 1, size(model_fabm%interior_state_variables)
+              if  ( trim(model_fabm%interior_state_variables(i)%name) .EQ. trim(cfg%interior_state(j)%name)) then
+                  nmatch = nmatch + 1
+                  write(*,'(a)') " - "//trim(cfg%interior_state(j)%name)
+                  write(*,'(a,1x,es12.5)') "    ctrmax:", cfg%interior_state(j)%ctrmax
+                  ctrmax(i)=cfg%interior_state(j)%ctrmax
+                  write(*,'(a,1x,i0)')     "    ctrhf: ", cfg%interior_state(j)%ctrhf
+                  ctr_hf(i)=cfg%interior_state(j)%ctrhf
+                  write(*,'(a,1x,i0)')     "    relax: TO BE COMPLETED", cfg%interior_state(j)%relax
+              endif
+          end do
+          if (nmatch == 0) then
+              write(*,*) "ERROR: variable not found ..." , &
+              trim(cfg%interior_state(j)%name)       
+              stop 1
+          else if (nmatch > 1) then
+              write(*,*) "ERROR: duplicate FABM variable name: ", &
+              trim(cfg%interior_state(j)%name)
+              stop 2
+          end if
+      end do
+! Interior diagnostic variables features and dump frequency
+      diahf(:)    = 0
+      diaWR(:)    = 1
+      do i = 1, size(model_fabm%interior_diagnostic_variables)
+          dianm(i) = model_fabm%interior_diagnostic_variables(i)%name
+          diaun(i) = model_fabm%interior_diagnostic_variables(i)%units
+      end do
+      do j = 1, size(cfg%interior_diagnostic)
+          nmatch = 0
+          do i = 1, size(model_fabm%interior_diagnostic_variables)
+              if  ( trim(model_fabm%interior_diagnostic_variables(i)%name) .EQ. trim(cfg%interior_diagnostic(j)%name)) then
+                  nmatch = nmatch + 1
+                  write(*,'(a)') " - "//trim(cfg%interior_diagnostic(j)%name)
+                  write(*,'(a,1x,i0)') "    diahf:", cfg%interior_diagnostic(j)%diahf
+                  diahf(i)=cfg%interior_diagnostic(j)%diahf
+                  write(*,'(a,1x,i0)') "    diaWR:", cfg%interior_diagnostic(j)%diaWR
+                  diaWR(i)=cfg%interior_diagnostic(j)%diaWR
+              endif
+          end do
+          if (nmatch == 0) then
+              write(*,*) "ERROR: variable not found ..." , &
+              trim(cfg%interior_diagnostic(j)%name)       
+              stop 1
+          else if (nmatch > 1) then
+              write(*,*) "ERROR: duplicate FABM variable name: ", &
+              trim(cfg%interior_diagnostic(j)%name)
+              stop 2
+          end if
+      end do
+! Horizontal diagnostic variables features and dump frequency
+      diahf_2d(:) = 0
+      diaWR_2d(:) = 1
+      do i = 1, size(model_fabm%horizontal_diagnostic_variables)
+          dianm_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%name
+          diaun_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%units
+      end do
+      do j = 1, size(cfg%horizontal_diagnostic)
+          nmatch = 0
+          do i = 1, size(model_fabm%horizontal_diagnostic_variables)
+              if  ( trim(model_fabm%horizontal_diagnostic_variables(i)%name) .EQ. trim(cfg%horizontal_diagnostic(j)%name)) then
+                  nmatch = nmatch + 1
+                  write(*,'(a)') " - "//trim(cfg%horizontal_diagnostic(j)%name)
+                  write(*,'(a,1x,i0)') "    diahf_2d:", cfg%horizontal_diagnostic(j)%diahf_2d
+                  diahf_2d(i)=cfg%horizontal_diagnostic(j)%diahf_2d
+                  write(*,'(a,1x,i0)') "    diaWR_2d:", cfg%horizontal_diagnostic(j)%diaWR_2d
+                  diaWR_2d(i)=cfg%horizontal_diagnostic(j)%diaWR_2d
+              endif
+          end do
+          if (nmatch == 0) then
+              write(*,*) "ERROR: variable not found ..." , &
+              trim(cfg%horizontal_diagnostic(j)%name)       
+              stop 1
+          else if (nmatch > 1) then
+              write(*,*) "ERROR: duplicate FABM variable name: ", &
+              trim(cfg%horizontal_diagnostic(j)%name)
+              stop 2
+          end if
+      end do
+
+!     namelist /NATTRC/           ctrmax, ctr_hf
+!     namelist /NATTRC_DIAG/      diahf, diaWR
+!     namelist /NATTRC_DIAG_2d/   diahf_2d ,diaWR_2d
+
+#else
+
+      namelist /NATTRC/           ctrcnm, ctrcun, ctrmax, ctr_hf
+      namelist /NATTRC_DIAG/      dianm, diaun, diahf, diaWR
+      namelist /NATTRC_DIAG_2d/   dianm_2d, diaun_2d, diahf_2d ,diaWR_2d
+
+#endif
 
 !physics tracers
 
@@ -72,7 +189,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
       ENDIF
 
 !----------------------- READING PASSIVE TRACERS NAMELIST
-
+#if !defined(key_trc_fabm)
       OPEN(unit=numnat, file='namelist.passivetrc', status= 'OLD') !'FORMATTED', 'SEQUENTIAL')
 
 !      *****  namelist nattrc STATE VARIABLES:
@@ -94,7 +211,7 @@ namelist /PHYS_num/   jptra_phys, jptra_phys_2d
 !      *****
 
       CLOSE(numnat)
-
+#endif
 !---------------------- READING PHYSICS TRACERS NAMELIST
 
       OPEN(unit=numphys, file='namelist.phys', status= 'OLD') !'FORMATTED', 'SEQUENTIAL')

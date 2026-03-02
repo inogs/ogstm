@@ -22,7 +22,7 @@
 ! local declarations
 ! ==================
       INTEGER jn, jn_high
-      CHARACTER(LEN=37) filename
+      CHARACTER(LEN=100) filename
       CHARACTER(LEN=100) bkpname
       logical existFile
       logical bkp1hasbeenread,bkp2hasbeenread
@@ -49,7 +49,8 @@
 
          filename = 'RESTARTS/RST.'//DateStart//'.'//trim(ctrcnm(jn))// & 
                 '.nc'
-         CALL readnc_slice_double(filename, 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
+         write(*,*) 'Reading restart  file ', filename, 'and variable TRN', trim(ctrcnm(jn)), ' '
+         CALL readnc_slice_double(trim(filename), 'TRN'//trim(ctrcnm(jn)), trn(:,:,:,jn) )
 
 
 

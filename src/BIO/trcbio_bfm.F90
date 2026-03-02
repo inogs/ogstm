@@ -1,8 +1,8 @@
 
-      SUBROUTINE trcbio
+      SUBROUTINE trcbio_bfm
 !!!---------------------------------------------------------------------
 !!!
-!!!                       ROUTINE trcbio
+!!!                       ROUTINE trcbio_bfm
 !!!                     *******************
 !!!
 !!!  PURPOSE :
@@ -40,6 +40,7 @@
       USE BC_mem
       USE mpi
 
+
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
@@ -51,6 +52,8 @@
 !  ---------------------------------------------------------------------
       
       IMPLICIT NONE
+
+#ifdef key_trc_bfm
 
 
 !!!----------------------------------------------------------------------
@@ -208,4 +211,5 @@
                 BIOparttime =  MPI_WTIME() -BIOparttime
                 BIOtottime  = BIOtottime  + BIOparttime
                
-      END SUBROUTINE trcbio
+#endif
+      END SUBROUTINE trcbio_bfm

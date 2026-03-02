@@ -1,5 +1,4 @@
-
-      SUBROUTINE trcbio_fabm
+SUBROUTINE trcbio_fabm
 #ifdef key_trc_fabm
 !!!---------------------------------------------------------------------
 !!!
@@ -96,8 +95,8 @@ call model_fabm%prepare_inputs()
 ! Alternatively, the could be declared as (4D) global variables that are built up
 ! in the loop and processed after.
 
-   DO ji=1,jpi
-     DO jj=1,jpj
+DO ji=1,jpi
+   DO jj=1,jpj
       ! Retrieve tracer source terms (tracer units s-1).
       ! Array dy(1:nx, 1:size(model%interior_state_variables)) is assumed to be allocated.
       if (tmask(1,jj,ji) == 0) CYCLE
@@ -106,8 +105,8 @@ call model_fabm%prepare_inputs()
       ! Retrieve vertical velocities (sinking, floating, active movement) in m s-1.
       ! Array w(1:nx,1:size(model%interior_state_variables)) is assumed to be allocated.
 !      call model_fabm%get_vertical_movement(1, jpk, jj, ji, w)
-   end do
-end do
+   END DO
+END DO
 
 ! Compute any remaining diagnostics
 call model_fabm%finalize_outputs()
@@ -121,59 +120,30 @@ call model_fabm%finalize_outputs()
 ! ---------------- Fuori dai punti BFM
 
 !     ogstm_sediPI=0.
-      tra_DIA    = 0.
-      tra_DIA_2d = 0. ! da sistemare
+write(*,*) 'Shape of interior_diagnostic_variables:', shape(model_fabm%get_interior_diagnostic_data(1))
+! Add these lines to get details about the pointed object:
 
+DO  jn=1,size(model_fabm%interior_diagnostic_variables)
+      IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
+!      write(*,*) 'jn=', jn
+!      write(*,*) 'Shape of get_interior_diagnostic_data(jn):', shape(model_fabm%get_interior_diagnostic_data(jn))
+!      write(*,*) 'Shape of tra_DIA(jn,:,:,:):', shape(tra_DIA(jn,:,:,:))
+         tra_DIA(jn, : , : ,:) = model_fabm%get_interior_diagnostic_data(jn)
+      ELSE
+         tra_DIA(jn, : , :, :) = 0.
+      END IF
+END DO
 
-!    Initialization
-!     a        = 1.0
-!     er       = 1.0
-!     er(:,10) = 8.1
+write(*,*) 'Shape of horizontal_diagnostic_variables:', shape(model_fabm%get_horizontal_diagnostic_data(1))
 
+DO jn=1,size(model_fabm%horizontal_diagnostic_variables)
+      IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN
+         tra_DIA_2d(jn, :, :) = model_fabm%get_horizontal_diagnostic_data(jn)
+      ELSE
+         tra_DIA_2d(jn, :, :) = 0.
+      END IF
+END DO
 
-!     DO ji=1,jpi
-!     DO jj=1,jpj
-!     if (bfmmask(1,jj,ji) == 0) CYCLE
-!     bottom = mbathy(jj,ji)
-
-!                         DO jtr=1, jtrmax
-
-!                            a(1:bottom, jtr) = trn(1:bottom,jj,ji,jtr) ! current biogeochemical concentrations
-
-!                         END DO
-
-! Environmental regulating factors (er,:)
-
-
-!                         call BFM1D_Input_EcologyDynamics(bottom,a,jtrmax,er)
-
-!                        call BFM1D_reset()
-
-!                        call EcologyDynamics()
-
-!                        call BFM1D_Output_EcologyDynamics(b, c, d, d2)
-
-!                         DO jtr=1, jtrmax
-!                            tra(1:bottom,jj,ji,jtr) =tra(1:bottom,jj,ji,jtr) +b(jtr,1:bottom) ! trend
-!                         END DO
-
-!                         DO jtr=1,4
-!                            ogstm_sediPI(1:bottom,jj,ji,jtr) = c(jtr,1:bottom)      ! BFM output of sedimentation speed (m/d)
-!                         END DO
-
-
-!                         DO jk = 1,bottom
-!                         DO jtr=1,jptra_dia
-!                            tra_DIA(jtr, jk ,jj,ji) = d(jtr,jk) ! diagnostic
-!                         END DO
-!                         ENDDO
-
-!                        tra_DIA_2d(:,jj,ji) = d2(:) ! diagnostic
-
-!                        ogstm_PH(1:bottom,jj,ji) = d(pppH,1:bottom) ! Follows solver guess, put 8.0 if pppH is not defined
-
-!     END DO
-!     END DO
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

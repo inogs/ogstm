@@ -137,6 +137,7 @@
 
         horizontal_id=model_fabm%get_horizontal_variable_id('surface_downwelling_shortwave_flux')
         ! to be provided in case monospectral formulation is used
+        surface_downwelling_shortwave_flux=1.0d0
         call model_fabm%link_horizontal_data(horizontal_id, surface_downwelling_shortwave_flux) ! W m^-2
 
         horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_water_vapor')

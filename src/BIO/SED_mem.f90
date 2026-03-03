@@ -16,7 +16,7 @@
 
 
       INTEGER :: dimen_jvsed
-      INTEGER :: nsed=26
+      INTEGER :: nsed
       INTEGER, allocatable :: sed_idx(:)
       INTEGER, allocatable :: jarr_sed(:,:),jarr_sed_flx(:,:)
       double precision, allocatable :: ztra(:,:)
@@ -46,10 +46,11 @@
 #endif
        dimen_jvsed=0
 
+
+#ifdef key_trc_bfm
+      nsed=26
        allocate(sed_idx(nsed))  
        sed_idx = huge(sed_idx(1))
-#ifdef key_trc_bfm
-
        sed_idx(1)  = ppR6c
        sed_idx(2)  = ppR6n
        sed_idx(3)  = ppR6p
@@ -82,6 +83,9 @@
        sed_idx(25) = ppP4l
        sed_idx(26) = ppO5c
 #endif
+#ifdef key_trc_fabm
+      nsed=jptra
+#endif
 
        allocate(jarr_sed(2, jpi*jpj))        
        jarr_sed     = huge(jarr_sed(1,1))
@@ -102,8 +106,9 @@
       
       
       subroutine clean_memory_sed
-
+#ifdef key_trc_bfm
           deallocate(sed_idx)
+#endif
           deallocate(jarr_sed)
           deallocate(jarr_sed_flx)
           deallocate(ztra)

@@ -60,30 +60,17 @@ SUBROUTINE trcbio_fabm
 !!!----------------------------------------------------------------------
 !!! local declarations
 !!! ==================
-
+      integer :: jk,jj,ji,jn
       double precision,dimension(jpk,jptra) :: dy
-      double precision,dimension(4,jpk) :: c
-!     double precision,dimension(jptra_dia,jpk) :: d
-      double precision,dimension(jpk,16) :: er
-      double precision,dimension(jptra_dia_2d) :: d2
-
-
-      integer :: jk,jj,ji,jb,jn
-      integer :: ivar
-      integer :: jtr,jtrmax,tra_idx
-      integer :: bottom
-      double precision :: correct_fact
-
-
 !!!----------------------------------------------------------------------
-!!! ===================
 
 
-!   | --------------|
-!   | FABM MODEL CALL|
-!   | --------------|
 
-!       BIOparttime = MPI_WTIME()
+!   | --------------- |
+!   | FABM MODEL CALL |
+!   | --------------- |
+
+       BIOparttime = MPI_WTIME()
 
 
 ! Prepare all fields FABM needs to compute source terms (e.g., light)
@@ -104,24 +91,13 @@ DO ji=1,jpi
       call model_fabm%get_interior_sources(1, jpk, jj, ji, tra(:,jj,ji,:))
       ! Retrieve vertical velocities (sinking, floating, active movement) in m s-1.
       ! Array w(1:nx,1:size(model%interior_state_variables)) is assumed to be allocated.
-!      call model_fabm%get_vertical_movement(1, jpk, jj, ji, w)
+       call model_fabm%get_vertical_movement(1, jpk, jj, ji, ogstm_sedipi(:,jj,ji,:))
    END DO
 END DO
 
 ! Compute any remaining diagnostics
 call model_fabm%finalize_outputs()
-!         surf_mask(:) = 0.
-!         surf_mask(1) = 1.
-! -------------------------------------------------
 
-          ! tra_idx = tra_matrix_gib(1)
-!         jtrmax=jptra
-
-! ---------------- Fuori dai punti BFM
-
-!     ogstm_sediPI=0.
-write(*,*) 'Shape of interior_diagnostic_variables:', shape(model_fabm%get_interior_diagnostic_data(1))
-! Add these lines to get details about the pointed object:
 
 DO  jn=1,size(model_fabm%interior_diagnostic_variables)
       IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
@@ -134,7 +110,6 @@ DO  jn=1,size(model_fabm%interior_diagnostic_variables)
       END IF
 END DO
 
-write(*,*) 'Shape of horizontal_diagnostic_variables:', shape(model_fabm%get_horizontal_diagnostic_data(1))
 
 DO jn=1,size(model_fabm%horizontal_diagnostic_variables)
       IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN

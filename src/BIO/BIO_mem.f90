@@ -87,7 +87,15 @@
        allocate(co2_IO(jpj,jpi,2))    
         
        co2_IO    = huge(co2_IO(1,1,1))
-       allocate(ogstm_sedipi(jpk,jpj,jpi,4)) 
+
+#ifdef key_trc_bfm
+       allocate(ogstm_sedipi(jpk,jpj,jpi,4))
+#endif
+       
+#ifdef key_trc_fabm
+       allocate(ogstm_sedipi(jpk,jpj,jpi,jptra))
+#endif 
+       
        ogstm_sedipi    = huge(ogstm_sedipi(1,1,1,1))
        allocate(ogstm_ph(jpk,jpj,jpi))       
        ogstm_ph        = huge(ogstm_ph(1,1,1))

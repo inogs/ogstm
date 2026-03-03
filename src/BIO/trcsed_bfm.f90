@@ -1,4 +1,4 @@
-      SUBROUTINE trcsed
+      SUBROUTINE trcsed_bfm
 !!!---------------------------------------------------------------------
 !!!
 !!!                       ROUTINE trcsed
@@ -218,4 +218,4 @@
 
 !#endif
 
-      END SUBROUTINE trcsed
+      END SUBROUTINE trcsed_bfm

@@ -46,8 +46,13 @@
 
 !! trcsed no updated for time step advancing
 #if  defined key_trc_sed
-       CALL trcsed ! tracers: sedimentation model
-# endif
+#if defined key_trc_bfm
+       CALL trcsed_bfm ! tracers: sedimentation model
+#endif
+#if defined key_trc_fabm
+       CALL trcsed_fabm ! tracers: sedimentation model
+#endif
+#endif
 
        trcsmsparttime = MPI_WTIME() - trcsmsparttime ! cronometer-stop
        trcsmstottime = trcsmstottime + trcsmsparttime

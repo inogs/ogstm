@@ -390,11 +390,11 @@
       LOGICAL photop       ! Photoperiod formulation if false daylength is 24 h
       LOGICAL atlantic_bfm ! atlantic buffer biology activation
 
+      double precision bottom_flux                 ! (NAMELIST)
 #    if defined key_trc_bfm
       double precision vsedR6                      ! sedimentation speed of small detritus (NAMELIST)
       double precision vsedR8                      ! sedimentation speed of large detritus (NAMELIST)
       double precision vsedO5c                     ! sedimentation speed of calcite(NAMELIST)
-      double precision bottom_flux                 ! (NAMELIST)
 
 !!     optical parameters
       double precision, allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)

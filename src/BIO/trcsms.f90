@@ -37,11 +37,11 @@
        CALL trcopt ! tracers: optical model
        
 #if defined key_trc_fabm
-       CALL trcbio_fabm ! tracers: biological model
+       CALL trcbio_fabm(datestring) ! tracers: biological model
 # endif
        
 #if defined key_trc_bfm
-       CALL trcbio_bfm ! tracers: biological model
+       CALL trcbio_bfm() ! tracers: biological model
 # endif
 
 !! trcsed no updated for time step advancing

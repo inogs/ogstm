@@ -1,4 +1,4 @@
-SUBROUTINE trcbio_fabm
+SUBROUTINE trcbio_fabm(datestring)
 #ifdef key_trc_fabm
 !!!---------------------------------------------------------------------
 !!!
@@ -38,6 +38,7 @@ SUBROUTINE trcbio_fabm
       USE BIO_mem
       USE OPT_mem, ONLY: PAR, RMU
       USE BC_mem
+      USE calendar
       USE mpi
 
 !!!   FABM IMPLEMENTATION
@@ -56,25 +57,28 @@ SUBROUTINE trcbio_fabm
       
       IMPLICIT NONE
 
-
+      character(LEN=17), INTENT(IN) ::  datestring
 !!!----------------------------------------------------------------------
 !!! local declarations
 !!! ==================
       integer :: jk,jj,ji,jn
-      double precision,dimension(jpk,jptra) :: dy
+      INTEGER  :: year, month, day
+      double precision :: sec
+      double precision :: time
 !!!----------------------------------------------------------------------
 
+
+call read_date_string(datestring, year, month, day, sec)
 
 
 !   | --------------- |
 !   | FABM MODEL CALL |
 !   | --------------- |
 
-       BIOparttime = MPI_WTIME()
-
+BIOparttime = MPI_WTIME()
 
 ! Prepare all fields FABM needs to compute source terms (e.g., light)
-call model_fabm%prepare_inputs(rdt)
+call model_fabm%prepare_inputs(SEC_FROM_START(datestring),year,month,day,sec)
 
 ! In the loops below, dy and w are local to the j,k point being processed.
 ! They would therefore need to be processed further within the loop to be included in
@@ -87,11 +91,10 @@ DO ji=1,jpi
       ! Retrieve tracer source terms (tracer units s-1).
       ! Array dy(1:nx, 1:size(model%interior_state_variables)) is assumed to be allocated.
       if (tmask(1,jj,ji) == 0) CYCLE
-      dy = 0
       call model_fabm%get_interior_sources(1, jpk, jj, ji, tra(:,jj,ji,:))
       ! Retrieve vertical velocities (sinking, floating, active movement) in m s-1.
       ! Array w(1:nx,1:size(model%interior_state_variables)) is assumed to be allocated.
-       call model_fabm%get_vertical_movement(1, jpk, jj, ji, ogstm_sedipi(:,jj,ji,:))
+      call model_fabm%get_vertical_movement(1, jpk, jj, ji, ogstm_sedipi(:,jj,ji,:))
    END DO
 END DO
 

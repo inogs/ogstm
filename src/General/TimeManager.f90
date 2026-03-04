@@ -814,5 +814,20 @@
        INSTANT_PAR=MAX(1.0d-3, PI*POSITIVE_VALUE*MEAN_PAR )
        END FUNCTION INSTANT_PAR
 
+       double precision FUNCTION SEC_FROM_START(datestring)
+       IMPLICIT NONE
+       CHARACTER(LEN=17), INTENT(IN) :: datestring
+       integer year, year0
+       integer month, month0
+       integer day, day0
+       double precision sec, sec0, sec_diff
+
+       call read_date_string(DATESTART, year0, month0, day0, sec0)
+       call read_date_string(datestring , year, month, day, sec)
+       call time_diff(year0, month0, day0, sec0, year, month,day,sec, SEC_FROM_START)
+
+
+       END FUNCTION SEC_FROM_START
+
 
       END MODULE TIME_MANAGER

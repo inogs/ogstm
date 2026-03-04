@@ -74,7 +74,7 @@ SUBROUTINE trcbio_fabm
 
 
 ! Prepare all fields FABM needs to compute source terms (e.g., light)
-call model_fabm%prepare_inputs()
+call model_fabm%prepare_inputs(rdt)
 
 ! In the loops below, dy and w are local to the j,k point being processed.
 ! They would therefore need to be processed further within the loop to be included in

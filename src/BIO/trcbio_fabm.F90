@@ -64,7 +64,7 @@ SUBROUTINE trcbio_fabm(datestring)
       integer :: jk,jj,ji,jn
       INTEGER  :: year, month, day
       double precision :: sec
-      double precision :: time
+      double precision :: yearday
 !!!----------------------------------------------------------------------
 
 
@@ -78,7 +78,13 @@ call read_date_string(datestring, year, month, day, sec)
 BIOparttime = MPI_WTIME()
 
 ! Prepare all fields FABM needs to compute source terms (e.g., light)
+yearday = DAY_OF_THE_YEAR(datestring)
+call model_fabm%link_scalar(fabm_standard_variables%number_of_days_since_start_of_the_year, yearday)
 call model_fabm%prepare_inputs(SEC_FROM_START(datestring),year,month,day,sec)
+
+write(*,*) 'yearday: ', yearday
+write(*,*) 'SEC_FROM_START: ', SEC_FROM_START(datestring)
+write(*,*) 'year, month, day, sec: ', year, month, day, sec
 
 ! In the loops below, dy and w are local to the j,k point being processed.
 ! They would therefore need to be processed further within the loop to be included in
@@ -104,22 +110,31 @@ call model_fabm%finalize_outputs()
 
 DO  jn=1,size(model_fabm%interior_diagnostic_variables)
       IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
-!      write(*,*) 'jn=', jn
-!      write(*,*) 'Shape of get_interior_diagnostic_data(jn):', shape(model_fabm%get_interior_diagnostic_data(jn))
-!      write(*,*) 'Shape of tra_DIA(jn,:,:,:):', shape(tra_DIA(jn,:,:,:))
+      write(*,*) 'jn=', jn
+      write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%interior_diagnostic_variables(jn)%name)
+      write(*,*) 'Shape of get_interior_diagnostic_data(jn):', shape(model_fabm%get_interior_diagnostic_data(jn))
+      write(*,*) 'Shape of tra_DIA(jn,:,:,:):', shape(tra_DIA(jn,:,:,:))
+     
          tra_DIA(jn, : , : ,:) = model_fabm%get_interior_diagnostic_data(jn)
       ELSE
          tra_DIA(jn, : , :, :) = 0.
       END IF
+       write(*,*) 'Value of tra_DIA(jn,:,:,:):', tra_DIA(jn,1,5,5)
 END DO
 
 
 DO jn=1,size(model_fabm%horizontal_diagnostic_variables)
       IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN
+            write(*,*) 'jn=', jn
+            write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%horizontal_diagnostic_variables(jn)%name)
+      write(*,*) 'Shape of get_horizontal_diagnostic_data(jn):', shape(model_fabm%get_horizontal_diagnostic_data(jn))
+      write(*,*) 'Shape of tra_DIA_2d(jn,:,:):', shape(tra_DIA_2d(jn,:,:))
+      
          tra_DIA_2d(jn, :, :) = model_fabm%get_horizontal_diagnostic_data(jn)
       ELSE
          tra_DIA_2d(jn, :, :) = 0.
       END IF
+      write(*,*) 'Value of tra_DIA_2d(jn,:,:):', tra_DIA_2d(jn,5,5)
 END DO
 
 

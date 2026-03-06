@@ -59,10 +59,13 @@
 #endif
 
       subroutine myalloc_BIO()
+      USE calendar
 
       INTEGER  :: err
       INTEGER  :: ivar
       INTEGER  :: ji,jj
+      INTEGER  :: year, month, day
+      double precision :: sec
       double precision  :: aux_mem
 #ifdef key_trc_fabm
       type (type_fabm_interior_variable_id)   :: interior_id
@@ -145,7 +148,7 @@
 
         horizontal_id=model_fabm%get_horizontal_variable_id('surface_downwelling_shortwave_flux')
         ! to be provided in case monospectral formulation is used
-        surface_downwelling_shortwave_flux=1.0d0
+        surface_downwelling_shortwave_flux=500.0d0
         call model_fabm%link_horizontal_data(horizontal_id, surface_downwelling_shortwave_flux) ! W m^-2
 
         horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_water_vapor')
@@ -171,7 +174,7 @@
         call model_fabm%link_horizontal_data(horizontal_id, sp) ! - Pa
 
        id_yearday = model_fabm%get_scalar_variable_id(fabm_standard_variables%number_of_days_since_start_of_the_year)
-       call model_fabm%link_scalar(id_yearday, 1.0d0) ! - days
+       call model_fabm%link_scalar(id_yearday, 1.5d0) ! - days
 
 
         ! Complete initialization and check whether FABM has all dependencies fulfilled

@@ -99,7 +99,7 @@
 !!        ff             : coriolis factor
 
 
-      double precision, allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf , glamt
+      double precision, allocatable, target, dimension(:,:) :: totglamt, glamu, glamv,glamf , glamt
       double precision, allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
       double precision, allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
       double precision, allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
@@ -122,7 +122,7 @@
       double precision, allocatable :: gdept(:,:,:), gdepw(:)
 #endif
 
-      double precision, allocatable,dimension(:,:,:), save :: e3t, e3t_back, e3u, e3v, e3w
+      double precision, allocatable,dimension(:,:,:),target, save :: e3t, e3t_back, e3u, e3v, e3w
       double precision, allocatable,dimension(:,:,:), save :: e3t_0, e3u_0, e3v_0, e3w_0
       double precision, allocatable :: spongeT(:,:) , spongeVel(:,:,:)
 
@@ -166,8 +166,8 @@
 !!        rhopn          : potential volumic mass (kg m-3)
 !!      bn2n           : brunt-vaisala frequency (s-2)
 !!
-      double precision, allocatable, dimension(:,:,:) :: un, vn, wn
-      double precision, allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho
+      double precision, allocatable, target, dimension(:,:,:) :: un, vn, wn
+      double precision, allocatable, target, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho
 
 
 
@@ -291,10 +291,10 @@
 
 
       INTEGER flagSMS_Dyn                    ! Flag time advance SMS or Dyn
-      double precision, allocatable ::  trn(:,:,:,:)
-      double precision, allocatable ::  tra(:,:,:,:)
-      double precision, allocatable ::  tra_DIA(:,:,:,:)
-      double precision, allocatable ::  tra_DIA_2d(:,:,:)
+      double precision, allocatable, target ::  trn(:,:,:,:)
+      double precision, allocatable, target ::  tra(:,:,:,:)
+      double precision, allocatable, target ::  tra_DIA(:,:,:,:)
+      double precision, allocatable, target ::  tra_DIA_2d(:,:,:)
       double precision, allocatable ::  traIO(:,:,:,:)
       double precision, allocatable ::  traIO_HIGH(:,:,:,:)
       double precision, allocatable ::  snIO(:,:,:) 
@@ -382,7 +382,7 @@
 #    endif
 
       LOGICAL IS_FREE_SURFACE
-      LOGICAL lbfm      ! activates bfm model
+      LOGICAL lbgc      ! activates bfm model
       LOGICAL latmosph  ! activates atmospheric deposition
 
 

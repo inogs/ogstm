@@ -85,7 +85,7 @@
       end do
 ! Interior diagnostic variables features and dump frequency
       diahf(:)    = 0
-      diaWR(:)    = 1
+      diaWR(:)    = 0
       do i = 1, size(model_fabm%interior_diagnostic_variables)
           dianm(i) = model_fabm%interior_diagnostic_variables(i)%name
           diaun(i) = model_fabm%interior_diagnostic_variables(i)%units
@@ -114,7 +114,7 @@
       end do
 ! Horizontal diagnostic variables features and dump frequency
       diahf_2d(:) = 0
-      diaWR_2d(:) = 1
+      diaWR_2d(:) = 0
       do i = 1, size(model_fabm%horizontal_diagnostic_variables)
           dianm_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%name
           diaun_2d(i) = model_fabm%horizontal_diagnostic_variables(i)%units

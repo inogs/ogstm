@@ -829,5 +829,21 @@
 
        END FUNCTION SEC_FROM_START
 
+       double precision FUNCTION DAY_OF_THE_YEAR(datestring)
+       IMPLICIT NONE
+       CHARACTER(LEN=17), INTENT(IN) :: datestring
+       integer year, month, day
+       INTEGER, PARAMETER :: mon_len(12)=(/31,28,31,30,31,30,31,31,30,31,30,31/)
+       double precision sec
+
+       call read_date_string(datestring, year, month, day, sec)
+       if (month ==1) then
+           DAY_OF_THE_YEAR = REAL(day-1, 8) + sec/86400.0
+       else
+           DAY_OF_THE_YEAR = REAL(mon_len(month-1),8) + REAL(day-1, 8) + sec/86400.0
+       endif
+
+       END FUNCTION DAY_OF_THE_YEAR
+
 
       END MODULE TIME_MANAGER

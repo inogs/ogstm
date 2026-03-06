@@ -296,7 +296,7 @@ MODULE module_step
 ! tracers: sink and source (must be  parallelized on vertical slab)
       IF (lsbc) CALL trcsbc ! surface cell processes, default lsbc = False
 
-      IF (lbfm) CALL trcsms(datestring)
+      IF (lbgc) CALL trcsms(datestring)
 
       IF (lzdf) CALL trczdf ! tracers: vertical diffusion
 

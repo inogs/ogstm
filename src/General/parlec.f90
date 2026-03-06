@@ -38,10 +38,10 @@
       NAMELIST/namhdf/ aht0
       NAMELIST/nameos/ neos, rau0, ralpha, rbeta
 #ifdef key_trc_bfm
-      namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, latmosph, &
+      namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbgc, lzdf, lsnu, latmosph, &
       ahtrb0,trcrat,ahtrc0,vsedR6,vsedR8,vsedO5c, photop,atlantic_bfm,bottom_flux,Euphotic_lev, IS_FREE_SURFACE
 #else
-      namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbfm, lzdf, lsnu, latmosph, &
+      namelist /natnum/ rdt,variable_rdt, rsc,rtrn,ncor,ndttrc,ladv, lhdf, lsbc, lbgc, lzdf, lsnu, latmosph, &
       ahtrb0,trcrat,ahtrc0,photop,atlantic_bfm,Euphotic_lev, IS_FREE_SURFACE
 #endif
       NAMELIST/General_IO/ nwritetrc, freq_ave_phys, freq_flux_dump, save_bkp_group2, deflate_ave, deflate_level_ave, deflate_rst, &
@@ -144,7 +144,7 @@
       ladv        = .TRUE.
       lzdf        = .TRUE.
       lsnu        = .TRUE.
-      lbfm        = .TRUE.
+      lbgc        = .TRUE.
       ahtrb0      = 0.
       trcrat      = 1.
       ahtrc0      = aht0
@@ -182,7 +182,7 @@
           WRITE(numout,*) ' lsnu  calls or not snutel                         = ', lsnu
           WRITE(numout,*) ' lsbc  calls or not trcsbc                         = ', lsbc
           WRITE(numout,*) ' activation atmospheric deposition                 = ', latmosph
-          WRITE(numout,*) ' activation of bfm                                 = ', lbfm
+          WRITE(numout,*) ' activation of bfm                                 = ', lbgc
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat
           WRITE(numout,*) ' horizontal eddy diffus. for passive tr            = ', ahtrc0

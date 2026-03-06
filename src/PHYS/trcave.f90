@@ -133,7 +133,7 @@
 
 !     *****************  DIAGNOSTICS **********************************************
 
-      if (lbfm) THEN
+      if (lbgc) THEN
 !     FIRST, LOW FREQUENCY
 
       elapsed_time         =     elapsed_time_2

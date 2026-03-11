@@ -110,31 +110,31 @@ call model_fabm%finalize_outputs()
 
 DO  jn=1,size(model_fabm%interior_diagnostic_variables)
       IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
-      write(*,*) 'jn=', jn
-      write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%interior_diagnostic_variables(jn)%name)
-      write(*,*) 'Shape of get_interior_diagnostic_data(jn):', shape(model_fabm%get_interior_diagnostic_data(jn))
-      write(*,*) 'Shape of tra_DIA(jn,:,:,:):', shape(tra_DIA(jn,:,:,:))
+       write(*,*) 'jn=', jn
+       write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%interior_diagnostic_variables(jn)%name)
+       write(*,*) 'Shape of get_interior_diagnostic_data(jn):', shape(model_fabm%get_interior_diagnostic_data(jn))
+       write(*,*) 'Shape of tra_DIA(jn,:,:,:):', shape(tra_DIA(jn,:,:,:))
+       write(*,*) 'Value of tra_DIA(jn,:,:,:):', tra_DIA(jn,1,5,5)
      
          tra_DIA(jn, : , : ,:) = model_fabm%get_interior_diagnostic_data(jn)
       ELSE
          tra_DIA(jn, : , :, :) = 0.
       END IF
-       write(*,*) 'Value of tra_DIA(jn,:,:,:):', tra_DIA(jn,1,5,5)
 END DO
 
 
 DO jn=1,size(model_fabm%horizontal_diagnostic_variables)
       IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN
-            write(*,*) 'jn=', jn
-            write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%horizontal_diagnostic_variables(jn)%name)
-      write(*,*) 'Shape of get_horizontal_diagnostic_data(jn):', shape(model_fabm%get_horizontal_diagnostic_data(jn))
-      write(*,*) 'Shape of tra_DIA_2d(jn,:,:):', shape(tra_DIA_2d(jn,:,:))
+       write(*,*) 'jn=', jn
+       write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%horizontal_diagnostic_variables(jn)%name)
+       write(*,*) 'Shape of get_horizontal_diagnostic_data(jn):', shape(model_fabm%get_horizontal_diagnostic_data(jn))
+       write(*,*) 'Shape of tra_DIA_2d(jn,:,:):', shape(tra_DIA_2d(jn,:,:))
       
          tra_DIA_2d(jn, :, :) = model_fabm%get_horizontal_diagnostic_data(jn)
+         write(*,*) 'Value of tra_DIA_2d(jn,:,:):', tra_DIA_2d(jn,5,5)
       ELSE
          tra_DIA_2d(jn, :, :) = 0.
       END IF
-      write(*,*) 'Value of tra_DIA_2d(jn,:,:):', tra_DIA_2d(jn,5,5)
 END DO
 
 
@@ -142,7 +142,7 @@ END DO
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-      call boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
+       call boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

@@ -95,11 +95,14 @@
           do i = 1, size(model_fabm%interior_diagnostic_variables)
               if  ( trim(model_fabm%interior_diagnostic_variables(i)%name) .EQ. trim(cfg%interior_diagnostic(j)%name)) then
                   nmatch = nmatch + 1
-                  write(*,'(a)') " - "//trim(cfg%interior_diagnostic(j)%name)
-                  write(*,'(a,1x,i0)') "    diahf:", cfg%interior_diagnostic(j)%diahf
                   diahf(i)=cfg%interior_diagnostic(j)%diahf
-                  write(*,'(a,1x,i0)') "    diaWR:", cfg%interior_diagnostic(j)%diaWR
                   diaWR(i)=cfg%interior_diagnostic(j)%diaWR
+                  IF (diaWR(i)>0) THEN
+                    write(*,'(a)') " - "//trim(cfg%interior_diagnostic(j)%name)
+                    write(*,'(a,1x,i0)') "    diahf:", cfg%interior_diagnostic(j)%diahf
+                    write(*,'(a,1x,i0)') "    diaWR:", cfg%interior_diagnostic(j)%diaWR
+                  END IF
+                      
               endif
           end do
           if (nmatch == 0) then
@@ -124,11 +127,13 @@
           do i = 1, size(model_fabm%horizontal_diagnostic_variables)
               if  ( trim(model_fabm%horizontal_diagnostic_variables(i)%name) .EQ. trim(cfg%horizontal_diagnostic(j)%name)) then
                   nmatch = nmatch + 1
-                  write(*,'(a)') " - "//trim(cfg%horizontal_diagnostic(j)%name)
-                  write(*,'(a,1x,i0)') "    diahf_2d:", cfg%horizontal_diagnostic(j)%diahf_2d
                   diahf_2d(i)=cfg%horizontal_diagnostic(j)%diahf_2d
-                  write(*,'(a,1x,i0)') "    diaWR_2d:", cfg%horizontal_diagnostic(j)%diaWR_2d
                   diaWR_2d(i)=cfg%horizontal_diagnostic(j)%diaWR_2d
+                  if (diaWR_2d(i)>0) then
+                      write(*,'(a)') " - "//trim(cfg%horizontal_diagnostic(j)%name)
+                      write(*,'(a,1x,i0)') "    diahf_2d:", cfg%horizontal_diagnostic(j)%diahf_2d
+                      write(*,'(a,1x,i0)') "    diaWR_2d:", cfg%horizontal_diagnostic(j)%diaWR_2d
+                  end if
               endif
           end do
           if (nmatch == 0) then

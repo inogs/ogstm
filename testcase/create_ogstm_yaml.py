@@ -26,12 +26,14 @@ with open('ogstm.yaml', 'w') as f:
 
     f.write('interior_diagnostic:\n')
     for variable in model.interior_diagnostic_variables:
-        f.write(f"    {variable.name.replace('/','_')}:\n")
-        f.write(f"        diahf: 0\n")
-        f.write(f"        diaWR: 0\n")
+        if variable.output:
+            f.write(f"    {variable.name.replace('/','_')}:\n")
+            f.write(f"        diahf: 0\n")
+            f.write(f"        diaWR: 0\n")
 
     f.write('horizontal_diagnostic:\n')
     for variable in model.horizontal_diagnostic_variables:
-        f.write(f"    {variable.name.replace('/','_')}:\n")
-        f.write(f"        diahf_2d: 0\n")
-        f.write(f"        diaWR_2d: 0\n")
+        if variable.output:
+            f.write(f"    {variable.name.replace('/','_')}:\n")
+            f.write(f"        diahf_2d: 0\n")
+            f.write(f"        diaWR_2d: 0\n")

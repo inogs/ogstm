@@ -11,13 +11,14 @@
       USE MATRIX_VARS
       USE NODES_MODULE
       USE DTYPE_PROCS_STRING_MODULE
+      USE BIO_mem
 
       IMPLICIT NONE
 
 
       CHARACTER(LEN=17), INTENT(IN) :: datemean, dateFrom, dateTo
       INTEGER, INTENT(IN) :: FREQ_GROUP
-      INTEGER jk,jj,ji
+      INTEGER jk,jj,ji,jn
       INTEGER ind, i_contribution, j_contribution
       CHARACTER(10) newfile
       CHARACTER(LEN=42) forcing_file
@@ -92,7 +93,12 @@
                                                 i_contribution = jpj * (ji-1)
                                                 do jj =1 , jpj
                                                         ind = jj + i_contribution
+#ifdef key_trc_bfm
                                                         buffDIA2d (ind)= tra_DIA_2d_IO(var_to_send_2D,jj,ji)
+#endif
+#ifdef key_trc_fabm
+                                                        buffDIA2d (ind)= tra_DIA_2d_IO(var_to_send_2D)%data(jj,ji)
+#endif
                                                 enddo
                                         enddo
                                 else
@@ -100,7 +106,12 @@
                                                 i_contribution = jpj * (ji-1)
                                                 do jj = 1 , jpj
                                                         ind = jj + i_contribution
+#ifdef key_trc_bfm
                                                         buffDIA2d (ind)= tra_DIA_2d_IO_high(COUNTER_VAR_HIGH_2d,jj,ji)
+#endif
+#ifdef key_trc_fabm
+                                                        buffDIA2d (ind)= tra_DIA_2d_IO_high(COUNTER_VAR_HIGH_2d)%data(jj,ji)
+#endif
                                                 enddo
                                         enddo
                                 endif
@@ -168,6 +179,7 @@
                 END IF
         END DO DUMPING_LOOP_2d
 
+#ifdef key_trc_bfm
         if (.not.IsBackup) then
                 if (FREQ_GROUP.eq.2) then
                         tra_DIA_2d_IO(:,:,:) = 0.
@@ -175,7 +187,22 @@
                         tra_DIA_2d_IO_HIGH(:,:,:) = 0.
                 endif
         endif
-
+#endif
+#ifdef key_trc_fabm
+        if (.not.IsBackup) then
+                if (FREQ_GROUP.eq.2) then
+                   DO jn=1 ,jptra_dia_2d
+                       IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN
+                            tra_DIA_2d_IO(jn)%data(:,:)=0.
+                        ENDIF
+                    END DO
+                else
+                    DO jn=1, jptra_dia2d_high
+                        tra_DIA_2d_IO_HIGH(jn)%data(:,:)=  0.
+                    enddo
+                endif
+        endif
+#endif
 !------------------------------------------------------------------------------------------------
 
         if (WRITING_RANK_WR) tottrnIO = Miss_val
@@ -222,7 +249,12 @@
                                                         j_contribution=jpk*(jj-1)
                                                         do jk =1 , jpk
                                                                 ind = jk + j_contribution + i_contribution
+#ifdef key_trc_bfm
                                                                 buffDIA(ind) = tra_DIA_IO(var_to_send, jk,jj,ji)
+#endif
+#ifdef key_trc_fabm
+                                                                buffDIA(ind) = tra_DIA_IO(var_to_send)%data(jk,jj,ji)
+#endif
                                                         enddo
                                                 enddo
                                         enddo
@@ -233,7 +265,14 @@
                                                         j_contribution=jpk*(jj-1)
                                                         do jk =1 , jpk
                                                                 ind = jk + j_contribution + i_contribution
+#ifdef key_trc_bfm
                                                                 buffDIA(ind) = tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH, jk,jj,ji)
+#endif
+#ifdef key_trc_fabm
+                                                                write(*,*) 'CHECK_h_before', COUNTER_VAR_diag_HIGH
+                                                                write(*,*) 'CHECK_h_before var_to_send', tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH)%data(jk,jj,ji)
+                                                                buffDIA(ind) = tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH)%data(jk,jj,ji)
+#endif
                                                         enddo
                                                 enddo
                                         enddo
@@ -304,7 +343,7 @@
                         END IF
                 END IF
         END DO DUMPING_LOOP_3d
-
+#ifdef key_trc_bfm
         if (.not.IsBackup) then
                 if (FREQ_GROUP.eq.2) then
                         tra_DIA_IO(:,:,:,:) = 0.
@@ -312,6 +351,22 @@
                         tra_DIA_IO_HIGH(:,:,:,:) = 0.
                 endif
         endif
+#endif
+#ifdef key_trc_fabm
+        if (.not.IsBackup) then
+                if (FREQ_GROUP.eq.2) then
+                   DO jn=1 ,jptra_dia
+                        IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
+                            tra_DIA_IO(jn)%data(:,:,:)=0.
+                        ENDIF
+                    END DO
+                else
+                    DO jn=1, jptra_dia_high
+                        tra_DIA_IO_HIGH(jn)%data(:,:,:)= 0.
+                    enddo
+                endif
+        endif
+#endif
 !-------------------------------------------------
         ! ****************** PHYSC OUTPUT   2D *******************
         

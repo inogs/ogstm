@@ -64,7 +64,7 @@ SUBROUTINE trcbio_fabm(datestring)
       integer :: jk,jj,ji,jn
       INTEGER  :: year, month, day
       double precision :: sec
-      double precision :: yearday
+!     double precision :: yearday
 !!!----------------------------------------------------------------------
 
 
@@ -79,12 +79,29 @@ BIOparttime = MPI_WTIME()
 
 ! Prepare all fields FABM needs to compute source terms (e.g., light)
 yearday = DAY_OF_THE_YEAR(datestring)
-call model_fabm%link_scalar(fabm_standard_variables%number_of_days_since_start_of_the_year, yearday)
+!call model_fabm%link_scalar(fabm_standard_variables%number_of_days_since_start_of_the_year, yearday)
 call model_fabm%prepare_inputs(SEC_FROM_START(datestring),year,month,day,sec)
 
 write(*,*) 'yearday: ', yearday
 write(*,*) 'SEC_FROM_START: ', SEC_FROM_START(datestring)
 write(*,*) 'year, month, day, sec: ', year, month, day, sec
+
+write(*,*) 'tn',tn(1,:,:)
+write(*,*) 'sn',sn(1,:,:)
+write(*,*) 'rho',rho(1,:,:)
+write(*,*) 'gdept',gdept(1,:,:)
+write(*,*) 'mole_fraction_of_carbon_dioxide_in_air',ogstm_co2(:,:)
+write(*,*) 'e3t',e3t(1,:,:)
+write(*,*) 'vatm',vatm(:,:)
+write(*,*) 'glamt',glamt(:,:)
+write(*,*) 'tcc',tcc(:,:)
+write(*,*) 'tclw',tclw(:,:)
+write(*,*) 'atmosphere_mass_content_of_water_vapor',atmosphere_mass_content_of_water_vapor(:,:)
+write(*,*) 'visibility_in_air',visibility_in_air(:,:)
+write(*,*) 'aerosol_air_mass_type',aerosol_air_mass_type(:,:)
+write(*,*) 'surface_specific_humidity',surface_specific_humidity(:,:)
+write(*,*) 't2m',t2m(:,:)
+write(*,*) 'sp',sp(:,:)
 
 ! In the loops below, dy and w are local to the j,k point being processed.
 ! They would therefore need to be processed further within the loop to be included in
@@ -110,30 +127,37 @@ call model_fabm%finalize_outputs()
 
 DO  jn=1,size(model_fabm%interior_diagnostic_variables)
       IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
-       write(*,*) 'jn=', jn
-       write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%interior_diagnostic_variables(jn)%name)
-       write(*,*) 'Shape of get_interior_diagnostic_data(jn):', shape(model_fabm%get_interior_diagnostic_data(jn))
-       write(*,*) 'Shape of tra_DIA(jn,:,:,:):', shape(tra_DIA(jn,:,:,:))
-       write(*,*) 'Value of tra_DIA(jn,:,:,:):', tra_DIA(jn,1,5,5)
-     
-         tra_DIA(jn, : , : ,:) = model_fabm%get_interior_diagnostic_data(jn)
-      ELSE
-         tra_DIA(jn, : , :, :) = 0.
+
+         tra_DIA(jn)%data = model_fabm%get_interior_diagnostic_data(jn)
+
+            if (jn==11) THEN
+                  write(*,*) 'jn=', jn
+                  write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%interior_diagnostic_variables(jn)%name)
+                  write(*,*) 'Shape of get_interior_diagnostic_data(jn):', shape(model_fabm%get_interior_diagnostic_data(jn))
+                  write(*,*) 'Shape of tra_DIA(jn,:,:,:):', shape(tra_DIA(jn)%data(:,:,:))
+                  do jk=1, jpk
+                        write(*,*) 'Value of tra_DIA(jn,:,:,:):', tra_DIA(jn)%data(jk,:,:)
+                  enddo
+            endif
+
       END IF
 END DO
 
 
 DO jn=1,size(model_fabm%horizontal_diagnostic_variables)
       IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN
-       write(*,*) 'jn=', jn
-       write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%horizontal_diagnostic_variables(jn)%name)
-       write(*,*) 'Shape of get_horizontal_diagnostic_data(jn):', shape(model_fabm%get_horizontal_diagnostic_data(jn))
-       write(*,*) 'Shape of tra_DIA_2d(jn,:,:):', shape(tra_DIA_2d(jn,:,:))
-      
-         tra_DIA_2d(jn, :, :) = model_fabm%get_horizontal_diagnostic_data(jn)
-         write(*,*) 'Value of tra_DIA_2d(jn,:,:):', tra_DIA_2d(jn,5,5)
-      ELSE
-         tra_DIA_2d(jn, :, :) = 0.
+!       write(*,*) 'jn=', jn
+!       write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%horizontal_diagnostic_variables(jn)%name)
+!       write(*,*) 'Shape of get_horizontal_diagnostic_data(jn):', shape(model_fabm%get_horizontal_diagnostic_data(jn))
+!       write(*,*) 'Shape of tra_DIA_2d(jn,:,:):', shape(tra_DIA_2d(jn)%data(:,:))
+
+         tra_DIA_2d(jn)%data = model_fabm%get_horizontal_diagnostic_data(jn)
+ !        write(*,*) 'Value of tra_DIA_2d(jn,:,:):', tra_DIA_2d(jn)%data(5,5)
+                  write(*,*) 'jn=', jn
+                  write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%horizontal_diagnostic_variables(jn)%name)
+                  write(*,*) 'Shape of get_horizontal_diagnostic_data(jn):', shape(model_fabm%get_horizontal_diagnostic_data(jn))
+                  write(*,*) 'Shape of tra_DIA_2d(jn,:,:):', shape(tra_DIA_2d(jn)%data(:,:))
+                  write(*,*) 'Value of tra_DIA_2d(jn,:,:):', tra_DIA_2d(jn)%data(:,:)
       END IF
 END DO
 
@@ -142,7 +166,7 @@ END DO
 !  BEGIN BC_REFACTORING SECTION
 !  ---------------------------------------------------------------------
 
-       call boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
+!       call boundaries%fix_diagnostic_vars(tra_DIA, tra_DIA_2d)
 
 ! ----------------------------------------------------------------------
 !  END BC_REFACTORING SECTION

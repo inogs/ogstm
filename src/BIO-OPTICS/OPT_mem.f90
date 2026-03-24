@@ -48,6 +48,7 @@
       double precision, allocatable,target :: asymp(:,:,:)
       double precision, allocatable,target :: ssalb(:,:,:)
 !     FABM optical model variables
+      double precision, target :: yearday
       double precision, allocatable, target :: surface_downwelling_shortwave_flux(:,:)
       double precision, allocatable, target :: atmosphere_mass_content_of_water_vapor(:,:)
       double precision, allocatable, target :: visibility_in_air(:,:)

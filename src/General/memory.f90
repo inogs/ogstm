@@ -1,4 +1,4 @@
-       MODULE myalloc
+MODULE myalloc
 
        USE modul_param
        USE timers
@@ -9,9 +9,26 @@
        USE iso_c_binding
 #endif
 
+#ifdef key_trc_fabm
+      USE fabm
+#endif
+
        IMPLICIT NONE
 
        public
+
+#ifdef key_trc_fabm
+type type_interior_variable_data
+
+   double precision, allocatable :: data(:,:,:)
+
+end type
+type type_horizontal_variable_data
+
+   double precision, allocatable :: data(:,:)
+
+end type
+#endif
 
 !!----------------------------------------------------------------------
 !!            domain parameters
@@ -293,8 +310,14 @@
       INTEGER flagSMS_Dyn                    ! Flag time advance SMS or Dyn
       double precision, allocatable, target ::  trn(:,:,:,:)
       double precision, allocatable, target ::  tra(:,:,:,:)
+#if key_trc_bfm
       double precision, allocatable, target ::  tra_DIA(:,:,:,:)
       double precision, allocatable, target ::  tra_DIA_2d(:,:,:)
+#endif
+#if key_trc_fabm
+      type(type_interior_variable_data), allocatable :: tra_DIA(:)
+      type(type_horizontal_variable_data), allocatable :: tra_DIA_2d(:)
+#endif
       double precision, allocatable ::  traIO(:,:,:,:)
       double precision, allocatable ::  traIO_HIGH(:,:,:,:)
       double precision, allocatable ::  snIO(:,:,:) 
@@ -306,11 +329,19 @@
       double precision, allocatable ::  vnIO(:,:,:) 
       double precision, allocatable ::  wnIO(:,:,:) 
       double precision, allocatable ::  avtIO(:,:,:) 
-      double precision, allocatable ::  e3tIO(:,:,:) 
+      double precision, allocatable ::  e3tIO(:,:,:)
+#ifdef key_trc_bfm 
       double precision, allocatable ::  tra_DIA_IO(:,:,:,:)
       double precision, allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_DIA_2d_IO(:,:,:)
       double precision, allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
+#endif
+#ifdef key_trc_fabm 
+       type(type_interior_variable_data), allocatable :: tra_DIA_IO(:)
+       type(type_interior_variable_data), allocatable :: tra_DIA_IO_HIGH(:)
+       type(type_horizontal_variable_data), allocatable :: tra_DIA_2d_IO(:)
+       type(type_horizontal_variable_data), allocatable :: tra_DIA_2d_IO_HIGH(:)
+#endif
       double precision, allocatable ::  tra_PHYS_IO(:,:,:,:)
       double precision, allocatable ::  tra_PHYS_IO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_PHYS_2d_IO(:,:,:)
@@ -468,6 +499,8 @@ end subroutine myalloc_BFM
 
 subroutine alloc_tot()
 
+
+      INTEGER  ::  jn
       INTEGER  :: err
       double precision  :: aux_mem
 
@@ -679,11 +712,18 @@ subroutine alloc_tot()
        allocate(trn(jpk,jpj,jpi,jptra))                    
        trn    = huge(trn(1,1,1,1))
        allocate(tra(jpk,jpj,jpi,jptra))                    
-       tra    = huge(trn(1,1,1,1))
+       tra    = huge(tra(1,1,1,1))
+
+#ifdef key_trc_bfm
        allocate(tra_DIA(jptra_dia,jpk,jpj,jpi))            
        tra_DIA= huge(tra_DIA(1,1,1,1))
        allocate(tra_DIA_2d(jptra_dia_2d,jpj,jpi))
        tra_DIA_2d= huge(tra_DIA_2d(1,1,1))
+#endif
+
+#ifdef key_trc_fabm
+       ! allocation of tra_DIA and tra_DIA_2d is done moved to BIO_mem
+#endif
        allocate(traIO(jpk,jpj,jpi,jptra))                  
        traIO  = huge(traIO(1,1,1,1)) 
        allocate(snIO(jpk,jpj,jpi))                         
@@ -710,18 +750,23 @@ subroutine alloc_tot()
        buf           = huge(buf(1,1,1))
        allocate(buf2   (jpj,jpi))                          
        buf2          = huge(buf2(1,1))
-       allocate(tra_DIA_IO(jptra_dia,jpk,jpj,jpi))         
-       tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
        allocate(traIO_HIGH(   jpk,jpj,jpi,jptra_HIGH))     
        traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
+
+#ifdef key_trc_bfm
+       allocate(tra_DIA_IO(jptra_dia,jpk,jpj,jpi))         
+       tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
        allocate(tra_DIA_IO_HIGH(jptra_dia_HIGH,jpk,jpj,jpi))
        tra_DIA_IO_HIGH = huge(tra_DIA_IO_HIGH(1,1,1,1))
-
        allocate(tra_DIA_2d_IO(jptra_dia_2d, jpj,jpi))
        tra_DIA_2d_IO    = huge(tra_DIA_2d_IO(1,1,1))
        allocate(tra_DIA_2d_IO_HIGH(jptra_dia2d_HIGH,jpj,jpi))
        tra_DIA_2d_IO_HIGH = huge(tra_DIA_2d_IO_HIGH(1,1,1))
-       
+#endif
+
+#ifdef key_trc_fabm
+            ! allocation of tra_DIA_IO and tra_DIA_IO_HIGH is done moved to BIO_mem
+#endif
        allocate(tra_PHYS_IO(jptra_phys,jpk,jpj,jpi))
        tra_PHYS_IO    = huge(tra_PHYS_IO(1,1,1,1))
        allocate(tra_PHYS_IO_HIGH(jptra_phys,jpk,jpj,jpi))

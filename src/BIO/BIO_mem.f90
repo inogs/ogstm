@@ -63,7 +63,7 @@
 
       INTEGER  :: err
       INTEGER  :: ivar
-      INTEGER  :: ji,jj
+      INTEGER  :: ji,jj,jn
       INTEGER  :: year, month, day
       double precision :: sec
       double precision  :: aux_mem
@@ -128,7 +128,9 @@
         ! For this list, visit https://fabm.net/standard_variables
 
         call model_fabm%link_interior_data(fabm_standard_variables%temperature, tn) !  Celsius
+        write(*,*) 'tn', tn
         call model_fabm%link_interior_data(fabm_standard_variables%practical_salinity, sn) ! PSU
+        write(*,*) 'sn', sn
         call model_fabm%link_interior_data(fabm_standard_variables%density, rho) ! kg m-3
         call model_fabm%link_interior_data(fabm_standard_variables%pressure, gdept) ! dbar
         call model_fabm%link_horizontal_data(fabm_standard_variables%mole_fraction_of_carbon_dioxide_in_air,  ogstm_co2) ! CO2 Mixing Ratios (ppm)  
@@ -139,7 +141,7 @@
         call model_fabm%link_horizontal_data(fabm_standard_variables%latitude, gphit) ! degree_north 
 
         horizontal_id = model_fabm%get_horizontal_variable_id('cloud_area_fraction')
-        call model_fabm%link_horizontal_data(horizontal_id, tcc/100.d0) ! [0-1] 
+        call model_fabm%link_horizontal_data(horizontal_id, tcc) ! [0-1] 
 
 
         horizontal_id = model_fabm%get_horizontal_variable_id('atmosphere_mass_content_of_cloud_liquid_water')
@@ -174,13 +176,33 @@
         call model_fabm%link_horizontal_data(horizontal_id, sp) ! - Pa
 
        id_yearday = model_fabm%get_scalar_variable_id(fabm_standard_variables%number_of_days_since_start_of_the_year)
-       call model_fabm%link_scalar(id_yearday, 1.5d0) ! - days
+       yearday = 1.5d0
+       call model_fabm%link_scalar(id_yearday, yearday) ! - days
 
 
         ! Complete initialization and check whether FABM has all dependencies fulfilled
         ! (i.e., whether all required calls to model%link_*_data have been made)
 
         write(*,*) 'Finalize initialization and check whether FABM has all dependencies fulfilled ...'
+
+! reduce diagnostis
+
+        do jn = 1, size(model_fabm%interior_diagnostic_variables)
+            if (diaWR(jn) .EQ. 1) then
+                    model_fabm%interior_diagnostic_variables(jn)%save = .TRUE.
+            else
+                    model_fabm%interior_diagnostic_variables(jn)%save = .FALSE.
+            endif
+        enddo
+ 
+        do jn = 1, size(model_fabm%horizontal_diagnostic_variables)
+            if (diaWR_2d(jn) .EQ. 1) then
+                    model_fabm%horizontal_diagnostic_variables(jn)%save = .TRUE.
+            else
+                    model_fabm%horizontal_diagnostic_variables(jn)%save = .FALSE.
+            endif
+        enddo
+
         call model_fabm%start()
         write(*,*) 'done'
 
@@ -192,7 +214,52 @@
               call model_fabm%initialize_interior_state(1, jpk, jj, ji)
            end do
         end do
+#ifdef key_trc_fabm
+       allocate(tra_DIA(jptra_dia))
+       do jn=1,size(model_fabm%interior_diagnostic_variables)
+            if (model_fabm%interior_diagnostic_variables(jn)%save) then
+                  allocate(tra_DIA(jn)%data(jpk,jpj,jpi))
+                  tra_DIA(jn)%data(:,:,:) = huge(tra_DIA(jn)%data(1,1,1))
+            endif
+       end do
+      allocate(tra_DIA_2d(jptra_dia_2d))
+      do jn=1,size(model_fabm%horizontal_diagnostic_variables)
+            if (model_fabm%horizontal_diagnostic_variables(jn)%save) then
+                  allocate(tra_DIA_2d(jn)%data(jpj,jpi))
+                  tra_DIA_2d(jn)%data(:,:) = huge(tra_DIA_2d(jn)%data(1,1))
+            endif
+      end do
+             allocate(tra_DIA_IO(jptra_dia))
+       do jn=1,size(model_fabm%interior_diagnostic_variables)
+            if (model_fabm%interior_diagnostic_variables(jn)%save) then
+                  allocate(tra_DIA_IO(jn)%data(jpk,jpj,jpi))
+                  tra_DIA_IO(jn)%data(:,:,:) = huge(tra_DIA_IO(jn)%data(1,1,1))
+            endif
+      end do
 
+       allocate(tra_DIA_IO_HIGH(jptra_dia_high))
+       do jn=1, jptra_dia_high
+            if (model_fabm%interior_diagnostic_variables(highfreq_table_dia(jn))%save) then
+                  allocate(tra_DIA_IO_HIGH(jn)%data(jpk,jpj,jpi))
+                  tra_DIA_IO_HIGH(jn)%data(:,:,:) = huge(tra_DIA_IO_HIGH(jn)%data(1,1,1))
+            endif
+      end do
+
+      allocate(tra_DIA_2d_IO(jptra_dia_2d))
+      do jn=1,size(model_fabm%horizontal_diagnostic_variables)
+            if (model_fabm%horizontal_diagnostic_variables(jn)%save) then
+                  allocate(tra_DIA_2d_IO(jn)%data(jpj,jpi))
+                  tra_DIA_2d_IO(jn)%data(:,:) = huge(tra_DIA_2d_IO(jn)%data(1,1))
+            endif
+      end do
+      allocate(tra_DIA_2d_IO_HIGH(jptra_dia2d_high))
+      do jn=1,jptra_dia2d_high
+            if (model_fabm%horizontal_diagnostic_variables(highfreq_table_dia2d(jn))%save) then
+                  allocate(tra_DIA_2d_IO_HIGH(jn)%data(jpj,jpi))
+                  tra_DIA_2d_IO_HIGH(jn)%data(:,:) = huge(tra_DIA_2d_IO_HIGH(jn)%data(1,1))
+            endif
+      end do
+#endif
 ! At this point, initialization is complete.
 #endif
 

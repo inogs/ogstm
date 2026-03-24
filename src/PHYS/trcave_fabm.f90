@@ -1,11 +1,12 @@
-      SUBROUTINE trcave(datestring)
-#ifndef key_trc_fabm
+      SUBROUTINE trcave_fabm(datestring)
+#ifdef key_trc_fabm
       USE myalloc
       USE IO_mem
       USE FN_mem
       USE OPT_mem
       USE TIME_MANAGER
       use mpi
+      use BIO_mem
 
       implicit none
       character(LEN=17), INTENT(IN) ::  datestring
@@ -141,33 +142,38 @@
       inv_incremented_time = 1./(elapsed_time_2 + rdt)
 
 
-
-         DO ji=1, jpi
-         DO jj=1, jpj
-         DO jk=1, jpk
-           IF(tmask(jk,jj,ji) .NE. 0.) THEN
-           tra_DIA_IO(:,jk,jj,ji)=(tra_DIA_IO(:,jk,jj,ji)*elapsed_time+tra_DIA(:,jk,jj,ji)*rdt)*inv_incremented_time
-           ELSE
-                tra_DIA_IO(:,jk,jj,ji )=Miss_val
-           ENDIF
-         END DO
-         END DO
+         DO jn=1 ,jptra_dia
+            IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
+                DO ji=1, jpi
+                DO jj=1, jpj
+                DO jk=1, jpk
+                     IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                        tra_DIA_IO(jn)%data(jk,jj,ji)=(tra_DIA_IO(jn)%data(jk,jj,ji)*elapsed_time+tra_DIA(jn)%data(jk,jj,ji)*rdt)*inv_incremented_time
+                     ELSE
+                         tra_DIA_IO(jn)%data(jk,jj,ji)=Miss_val
+                     ENDIF
+               END DO
+               END DO
+               END DO
+            ENDIF
          END DO
 
 !     *********************  DIAGNOSTICS 2D **********
 
-
-          DO ji=1, jpi
-          DO jj=1, jpj
-              IF(tmask(1,jj,ji) .NE. 0.) THEN ! Warning ! Tested only for surface
-                    tra_DIA_2d_IO(:,jj,ji)=(tra_DIA_2d_IO(:,jj,ji)*elapsed_time+ &
-     &              tra_DIA_2d(:,jj,ji)*rdt)*inv_incremented_time
-                  ELSE
-                    tra_DIA_2d_IO(:,jj,ji)=Miss_val
-                  ENDIF
-          END DO
-          END DO
-
+          DO jn=1 ,jptra_dia_2d
+              IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN
+                  DO ji=1, jpi
+                  DO jj=1, jpj
+                     IF(tmask(1,jj,ji) .NE. 0.) THEN ! Warning ! Tested only for surface
+                         tra_DIA_2d_IO(jn)%data(jj,ji)=(tra_DIA_2d_IO(jn)%data(jj,ji)*elapsed_time+ &
+                   tra_DIA_2d(jn)%data(jj,ji)*rdt)*inv_incremented_time
+                     ELSE
+                         tra_DIA_2d_IO(jn)%data(jj,ji)=Miss_val
+                     ENDIF
+                  END DO
+                  END DO
+               ENDIF
+         END DO
 
 
 
@@ -177,42 +183,51 @@
 
 
       if (jptra_dia_high.gt.0) THEN
-         DO ji=1, jpi
-         DO jj=1, jpj
-         DO jk=1, jpk
-         IF(tmask(jk,jj,ji) .NE. 0.) THEN
-            DO jn_high=1, jptra_dia_high
-               jn_on_all = highfreq_table_dia(jn_high )
-               tra_DIA_IO_HIGH(jn_high, jk,jj,ji )= &
-     &         (tra_DIA_IO_HIGH(jn_high, jk,jj,ji )*elapsed_time+tra_DIA(jn_on_all,jk,jj,ji)*rdt)*inv_incremented_time
+            DO ji=1, jpi
+            DO jj=1, jpj
+            DO jk=1, jpk
+                  DO jn_high=1, jptra_dia_high
+                     jn_on_all = highfreq_table_dia(jn_high )
+                     write(*,*) 'jn_on_all', jn_on_all
+                     write(*,*) 'jn_high', jn_high
+
+                     IF (model_fabm%interior_diagnostic_variables(jn_on_all)%save) THEN
+                          IF(tmask(jk,jj,ji) .NE. 0.) THEN
+                            tra_DIA_IO_HIGH(jn_high)%data(jk,jj,ji)= &
+     &                      (tra_DIA_IO_HIGH(jn_high)%data(jk,jj,ji)*elapsed_time+tra_DIA(jn_on_all)%data(jk,jj,ji)*rdt)*inv_incremented_time
+                          ELSE
+                             tra_DIA_IO_HIGH(jn_high)%data(jk,jj,ji)=Miss_val
+                          ENDIF
+                     ENDIF
+                     write(*,*) 'tra_DIA_IO_HIGH', tra_DIA_IO_HIGH(jn_high)%data(jk,jj,ji)
+                     write(*,*) 'tra_DIA', tra_DIA(jn_on_all)%data(jk,jj,ji)
+                  END DO
             END DO
-         ELSE
-            tra_DIA_IO_HIGH(:, jk,jj,ji )=Miss_val
-         ENDIF
-         END DO
-         END DO
-         END DO
+            END DO
+            END DO
       endif
 
 
 !     *********************  DIAGNOSTICS 2D **********
 
 
-       if (jptra_dia2d_high.gt.0) THEN
-             DO ji=1, jpi
-             DO jj=1, jpj
-                IF(tmask(1,jj,ji) .NE. 0.) THEN
-                DO jn_high=1, jptra_dia2d_high
-                   jn_on_all = highfreq_table_dia2d(jn_high)
-                   tra_DIA_2d_IO_HIGH(jn_high,jj,ji)= &
-     &            (tra_DIA_2d_IO_HIGH(jn_high,jj,ji)*elapsed_time+tra_DIA_2d(jn_on_all,jj,ji)*rdt)*inv_incremented_time
-                END DO
-                ELSE
-                   tra_DIA_2d_IO_HIGH(:,jj,ji)=Miss_val
-                ENDIF
-             END DO
-             END DO
-        endif
+      if (jptra_dia2d_high.gt.0) THEN
+            DO ji=1, jpi
+            DO jj=1, jpj
+            IF(tmask(1,jj,ji) .NE. 0.) THEN
+                  DO jn_high=1, jptra_dia2d_high
+                      jn_on_all = highfreq_table_dia2d(jn_high)
+                     tra_DIA_2d_IO_HIGH(jn_high)%data(jj,ji)= &
+     &            (tra_DIA_2d_IO_HIGH(jn_high)%data(jj,ji)*elapsed_time+tra_DIA_2d(jn_on_all)%data(jj,ji)*rdt)*inv_incremented_time
+                   enddo
+             ELSE
+                  DO jn_high=1, jptra_dia2d_high
+                      tra_DIA_2d_IO_HIGH(jn_high)%data(jj,ji)=Miss_val
+                  END DO
+            ENDIF
+            END DO
+            END DO
+      endif
 
 
       endif ! lfbm
@@ -280,6 +295,6 @@
 
         elapsed_time_3 = elapsed_time_3 + rdt ! increased here instead of in step.f90
      endif
-#endif ! key_trc_fabm
-      END SUBROUTINE trcave
+#endif
+      END SUBROUTINE trcave_fabm
 

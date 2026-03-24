@@ -172,7 +172,14 @@ MODULE module_step
 
 ! Call Passive tracer model between synchronization for small parallelisation
         CALL trcstp(DATEstring)    ! se commento questo non fa calcoli
+
+#ifndef key_trc_bfm
         call trcave(DATEstring)
+#endif
+
+#ifdef key_trc_fabm
+        call trcave_fabm(DATEstring)
+#endif
         elapsed_time_1 = elapsed_time_1 + rdt
         elapsed_time_2 = elapsed_time_2 + rdt
 

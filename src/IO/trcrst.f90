@@ -15,6 +15,7 @@
        USE myalloc
        USE TIME_MANAGER
        USE IO_MEM , ONLY : elapsed_time_1, elapsed_time_2, existFilebkp
+       USE BIO_mem
 
        IMPLICIT NONE
 
@@ -103,6 +104,7 @@
 
 
 ! ******************** 3D DIAGNOSTICS  ***********************************
+#ifdef key_trc_bfm
       jn_high=0
       DO jn=1, jptra_dia
 
@@ -139,10 +141,10 @@
 
           ENDIF
       END DO
-
+#endif
 
 ! ******************** 2D DIAGNOSTICS  ***********************************
-
+#ifdef key_trc_bfm
       jn_high=0
       DO jn=1, jptra_dia_2d
 
@@ -183,7 +185,7 @@
 
       END DO
 
-
+#endif
 
 
       if(freq_ave_phys .eq. 1) then

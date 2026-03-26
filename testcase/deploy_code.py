@@ -47,7 +47,7 @@ def deploy_code(test):
         os.system("cp -pf " + namelist_phys +  test['Dir'].decode() + "/")
 
         fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml "
-        os.system("cp -pf " + fabm_yaml  + test['Dir'].decode() + "/fabm.yaml")
+        os.system("cp -pf " + fabm_yaml + " " + test['Dir'].decode() + "/fabm.yaml")
         
         ret = os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
         if ret != 0:

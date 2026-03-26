@@ -23,7 +23,7 @@
             lhdf          = .true.,
             latmosph      = .true.,
             lsbc          = .true.,
-            lbfm          = .true.,
+            lbgc          = .true.,
             lzdf          = .true.,
             lsnu          = .true.,
             vsedR6        = 7.0,

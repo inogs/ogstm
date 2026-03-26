@@ -23,7 +23,7 @@
             lhdf          = .true.,
             latmosph      = .true.,
             lsbc          = .false.,
-            lbfm          = .false.,
+            lbgc          = .false.,
             lzdf          = .true.,
             lsnu          = .true.,
 !           vsedR6        = 7.0,

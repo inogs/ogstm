@@ -63,17 +63,13 @@
       LOGICAL :: l1,l2,l3
       INTEGER :: ji,jj,jk,jv,jf,jn
       INTEGER :: bottom
-      double precision :: ze3tr,d2s
+      double precision :: ze3tr
 ! omp variables
     
 !!----------------------------------------------------------------------
 !! statement functions
 !! ===================
 
-
-
-
-      d2s=1./3600./24.  ! speed from (m/day) to  (m/s)
 
       IF (dimen_jvsed .EQ. 0) THEN ! initialization phase
            DO  ji = 2,jpim1
@@ -128,18 +124,20 @@
                  END DO
               END DO
 
-! 1.2 tracer flux at w-point: we use -vsed (downward flux)
+! 1.2 tracer flux at w-point: we use  ogstm_sedipi already in m/s from
+! FABM(downward flux)
 ! with simplification : no e1*e2
 
              
               DO jn =1,nsed
                  DO  jk = 2,jpk
-                    zwork(jk,jn,1) = -ogstm_sedipi(jk-1,jj,ji,jn) * trn(jk-1,jj,ji,jn)
+                    zwork(jk,jn,1) = ogstm_sedipi(jk-1,jj,ji,jn) * trn(jk-1,jj,ji,jn)
                  END DO
               END DO
 
                bottom = mbathy(jj,ji) + 1
-               zwork(bottom,:,1) = bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
+!check!
+               zwork(bottom,:,1) = 0.0d0!bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
 
 ! 1.3 tracer flux divergence at t-point added to the general trend
 
@@ -156,8 +154,7 @@
                  END DO
 
                  DO jn =1,nsed
-!!!  d2s convert speed from (m/day) to  (m/s)
-                    tra(jk,jj,ji,jn) = tra(jk,jj,ji,jn) + ztra(jn,1)*d2s
+                    tra(jk,jj,ji,jn) = tra(jk,jj,ji,jn) + ztra(jn,1)
                  END DO
 
 #ifdef key_trc_diabio

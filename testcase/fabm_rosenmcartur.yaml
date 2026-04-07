@@ -1,0 +1,26 @@
+check_conservation: false
+require_initialization: true
+instances:
+  P1:
+    long_name: prey 
+    model: rosenmcartur/prey
+    parameters:
+      r: 0.5 
+      K: 2.6 
+    initialization:
+      DW: 1.0
+    coupling:
+  Z1: 
+    long_name: predator
+    model: rosenmcartur/predator
+    parameters:
+    # r: 0.5
+      m: 0.15
+      e: 0.6
+      g: 0.6
+      H: 0.6
+    # K: 2.6
+    initialization:
+      DWz: 0.1
+    coupling:
+      DW: P1/DW

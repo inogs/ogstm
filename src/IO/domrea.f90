@@ -207,6 +207,10 @@
       var_nc(5) = 'O3c'
       var_nc(6) = 'O3h'
 #elif  key_trc_fabm
+!!! For RosenMacartur decomment  the two below lines and comment the other 6 lines
+!      var_nc(1) = 'P1_DW'
+!      var_nc(2) = 'Z1_DWz'
+!!! For BFM decomment the 6 lines below and comment the two above lines
       var_nc(1) = 'O2_o'
       var_nc(2) = 'N1_p'
       var_nc(3) = 'N3_n'

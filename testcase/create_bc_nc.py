@@ -75,7 +75,7 @@ def create_bc_nc(test):
         ncvar = ncOUT.createVariable('reO3c'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reO3h'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reN6r'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
-    elif test['BGC_TYPE'].decode() in ['FABM','fabm']:
+    elif test['BGC_TYPE'].decode() in ['FABM-BFM','fabm-bfm']:
         ncvar = ncOUT.createVariable('reN1_p'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reN3_n'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reO2_o'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
@@ -83,6 +83,9 @@ def create_bc_nc(test):
         ncvar = ncOUT.createVariable('reO3_c'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reO3h_h'       ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reN6_r'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
+    elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
+        ncvar = ncOUT.createVariable('reP1_DW'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
+        ncvar = ncOUT.createVariable('reZ1_DWz'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
     else:
         print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
         sys.exit()
@@ -132,9 +135,12 @@ def create_bc_nc(test):
         if test['BGC_TYPE'].decode() in ['DEFAULT','Default','default','BFM','bfm']:
             ncvar = ncOUT.createVariable('atm_N1p'      ,'f',('lat','lon')                   ); ncvar[:] = 3.75866672509673e-09;
             ncvar = ncOUT.createVariable('atm_N3n'      ,'f',('lat','lon')                   ); ncvar[:] = 2.24183651189621e-07;
-        elif test['BGC_TYPE'].decode() in ['FABM','fabm']:
+        elif test['BGC_TYPE'].decode() in ['FABM-BFM','fabm-bfm']:
             ncvar = ncOUT.createVariable('atm_N1_p'      ,'f',('lat','lon')                   ); ncvar[:] = 3.75866672509673e-09;
             ncvar = ncOUT.createVariable('atm_N3_n'      ,'f',('lat','lon')                   ); ncvar[:] = 2.24183651189621e-07;
+        elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
+            ncvar = ncOUT.createVariable('atm_P1_DW'      ,'f',('lat','lon')                   ); ncvar[:] = 0.0;
+            ncvar = ncOUT.createVariable('atm_Z1_DWz'      ,'f',('lat','lon')                   ); ncvar[:] = 0.0;
         else:
             print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
             sys.exit()
@@ -225,13 +231,16 @@ def create_bc_nc(test):
             ncvar = ncOUT.createVariable('riv_O3c'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3c;
             ncvar = ncOUT.createVariable('riv_O3h'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3h;
             ncvar = ncOUT.createVariable('riv_O2o'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O2o;
-        elif test['BGC_TYPE'].decode() in ['FABM','fabm']:
+        elif test['BGC_TYPE'].decode() in ['FABM-BFM','fabm-bfm']:
             ncvar = ncOUT.createVariable('riv_N1_p'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N1p;
             ncvar = ncOUT.createVariable('riv_N3_n'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N3n;
             ncvar = ncOUT.createVariable('riv_N5_s'      ,'d',('riv_idxt',) ); ncvar[:] = riv_N5s;
             ncvar = ncOUT.createVariable('riv_O3_c'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3c;
             ncvar = ncOUT.createVariable('riv_O3h_h'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O3h;
             ncvar = ncOUT.createVariable('riv_O2_o'      ,'d',('riv_idxt',) ); ncvar[:] = riv_O2o;
+        elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
+            ncvar = ncOUT.createVariable('riv_P1_DW'      ,'d',('riv_idxt',) ); ncvar[:] = 0.0;
+            ncvar = ncOUT.createVariable('riv_Z1_DWz'      ,'d',('riv_idxt',) ); ncvar[:] = 0.0;
         else:
             print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
             sys.exit()

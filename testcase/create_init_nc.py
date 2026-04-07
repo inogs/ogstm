@@ -24,11 +24,21 @@ def create_init_nc(test):
                 quote_2=line.find("\"",quote_1+1)
                 varname=line[quote_1+1:quote_2]
                 initVARS.append(varname)
-    elif test['BGC_TYPE'].decode() in ['FABM','fabm']:
+    elif test['BGC_TYPE'].decode() in ['FABM-BFM','fabm-bfm']:
         import pyfabm
         CODEPATH = test['Code'].decode() 
         CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
         fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml "
+        model = pyfabm.Model(fabm_yaml)
+        initVARS=[]
+        for variable in model.state_variables:
+            print(f"  {variable.name} = {variable.long_name} ({variable.units})")
+            initVARS.append(variable.name)
+    elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
+        import pyfabm
+        CODEPATH = test['Code'].decode() 
+        CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
+        fabm_yaml=  "fabm_rosenmcartur.yaml "
         model = pyfabm.Model(fabm_yaml)
         initVARS=[]
         for variable in model.state_variables:
@@ -70,9 +80,12 @@ def create_init_nc(test):
         
         if test['BGC_TYPE'].decode() in ['DEFAULT','Default','default','BFM','bfm']:
             filename = "KB/INIT_NWM_KB/init." + var
-        elif test['BGC_TYPE'].decode() in ['FABM','fabm']:
+        elif test['BGC_TYPE'].decode() in ['FABM-BFM','fabm-bfm']:
             var=var.replace('/','_')
             filename = "KB/INIT_NWM_KB_FABM/INIT." + var
+        elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
+            var=var.replace('/','_')
+            filename = "KB/INIT_NWM_KB_FABM_ROSENMCARTUR/INIT." + var
         else:
             print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
             sys.exit()

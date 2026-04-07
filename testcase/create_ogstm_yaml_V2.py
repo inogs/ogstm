@@ -5,8 +5,8 @@ from tkinter import ttk, messagebox
 
 CODEPATH = '../../'
 CODEPATH = CODEPATH.replace("~", os.getenv("HOME"))
-fabm_yaml = CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml"
-
+#fabm_yaml = CODEPATH + "/fabm/extern/ogs/fabm_multispectral_2xDetritus.yaml"
+fabm_yaml = "fabm_rosenmcartur.yaml"
 class OGSTMYAMLGenerator:
     def __init__(self, root):
         self.root = root

@@ -125,7 +125,8 @@
       USE calendar
       USE myalloc
       USE TIME_MANAGER
-
+      USE gsw_mod_toolbox, only : gsw_pt_from_t, gsw_p_from_z
+      
       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) :: datestring
@@ -139,6 +140,7 @@
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
       double precision kz_threshold, Kz_background, Kmin
+      double precision z, lat, pfz
       integer  Ind_50m, Ind_150m, Ind_bottom
 
       if (variable_rdt) then
@@ -184,6 +186,20 @@
 
       call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
       sdta(:,:,:,2) = buf*tmask
+
+      do ji = 1, jpi
+      do jj = 1, jpj
+      do jk = 1, jpk
+            if (tmask(jk,jj,ji) .ne. 0.) then
+                  z = -gdept(jk,jj,ji) ! get depth for a Tracer point
+                  lat = gphit(jj,ji) ! get latitude for a Tracer point
+                  pfz = gsw_p_from_z(z, lat) ! compute pressure at depth z and latitude lat
+                  tdta(jk,jj,ji,2) = gsw_pt_from_t(sdta(jk,jj,ji,2), tdta(jk,jj,ji,2), 0.0d0, pfz)
+            endif
+      end do
+      end do
+      end do
+
 
       if (mld_flag) then
           call readnc_slice_float_2d(nomefile,'somxl010',buf2,ingv_lon_shift)

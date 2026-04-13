@@ -70,9 +70,8 @@ MODULE MPI_GATHER_INFO
         double precision, allocatable ::  tottrnIO(:,:,:)
 
 
-        CHARACTER(len=2) :: n_ranks_per_node_char
         INTEGER :: n_ranks_per_node
-        !WRITING_RANK = .FALSE.
+        CHARACTER(len=4) :: n_ranks_per_node_char
 
         CONTAINS
 

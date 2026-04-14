@@ -27,12 +27,12 @@ def h_vort1(jpi,jpj,jpk,D3U,D3V,Av,Au):
 
         for jk in range(jpk):
         # Velocities along jpj side Ly
-            Ly = np.arange(1+n,jpj-2-n , dtype=np.int)
+            Ly = np.arange(1+n,jpj-2-n , dtype=int)
             for jj in Ly:
                 D3V[0,jk,jj,1+n    ] =  flux/Av[jk,jj,1+n    ]     # one side
                 D3V[0,jk,jj,jpi-2-n] = -flux/Av[jk,jj,jpi-2-n]
             # Velocities along jpi side Lx
-            Lx = np.arange(1+n,jpi-2-n , dtype=np.int)
+            Lx = np.arange(1+n,jpi-2-n , dtype=int)
             for ji in Lx:
                 D3U[0,jk,1+n,ji]     = -flux/Au[jk,1+n,ji]     # one side
                 D3U[0,jk,jpj-2-n,ji] =  flux/Au[jk,jpj-2-n,ji]

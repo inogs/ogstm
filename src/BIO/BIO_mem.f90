@@ -128,9 +128,7 @@
         ! For this list, visit https://fabm.net/standard_variables
 
         call model_fabm%link_interior_data(fabm_standard_variables%temperature, tn) !  Celsius
-        write(*,*) 'tn', tn
         call model_fabm%link_interior_data(fabm_standard_variables%practical_salinity, sn) ! PSU
-        write(*,*) 'sn', sn
         call model_fabm%link_interior_data(fabm_standard_variables%density, rho) ! kg m-3
         call model_fabm%link_interior_data(fabm_standard_variables%pressure, gdept) ! dbar
         call model_fabm%link_horizontal_data(fabm_standard_variables%mole_fraction_of_carbon_dioxide_in_air,  ogstm_co2) ! CO2 Mixing Ratios (ppm)  
@@ -162,7 +160,7 @@
          call model_fabm%link_horizontal_data(horizontal_id, visibility_in_air) ! m
 
         horizontal_id = model_fabm%get_horizontal_variable_id('aerosol_air_mass_type')
-        aerosol_air_mass_type = 10.d0
+        aerosol_air_mass_type = 1.d0
         call model_fabm%link_horizontal_data(horizontal_id, aerosol_air_mass_type) ! -
 
          horizontal_id = model_fabm%get_horizontal_variable_id('surface_specific_humidity')

@@ -217,12 +217,9 @@
       var_nc(4) = 'N5_s'
       var_nc(5) = 'O3_c'
       var_nc(6) = 'O3h_h'
-
 #else
-
 ! Default dimensions are included within the file DEFAULT_var_list.h
       var_nc(1) = 'O2o'
-
 #endif
 
 

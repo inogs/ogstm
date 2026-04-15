@@ -295,24 +295,22 @@
 
 
 
+      write(nomefile,fileformat) yyyy,mm,"T",datestring
+      call existvar(nomefile,'sowindsp',B)
+      if (B) then
+           call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
+      else
 
-      if (ingv_files_direct_reading) then
-           write(nomefile,fileformat) yyyy,mm,"U",datestring
            call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
-           taux = buf2*tmask(1,:,:)*umask(1,:,:)
+           taux = buf2*tmask(1,:,:)
 
-           write(nomefile,fileformat) yyyy,mm,"V",datestring
            call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
-           tauy = buf2*tmask(1,:,:)*vmask(1,:,:)
+           tauy = buf2*tmask(1,:,:)
 
            call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
-      else
-          write(nomefile,fileformat) yyyy,mm,"T",datestring
-          call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
       endif
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
-      write(nomefile,fileformat) yyyy,mm,"T",datestring
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
       flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.

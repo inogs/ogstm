@@ -138,7 +138,7 @@
        call readnc_slice_float_2d(nomefile,'tcc',buf2,0)
        tccIO(:,:,2) = buf2*tmask(1,:,:)
 
-       call readnc_slice_float_2d(nomefile,'w10',buf2,0)
+       call readnc_slice_float_2d(nomefile,'wsp10',buf2,0)
        w10IO(:,:,2) = buf2*tmask(1,:,:)
 
        call readnc_slice_float_2d(nomefile,'tclw',buf2,0)

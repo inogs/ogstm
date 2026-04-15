@@ -58,7 +58,7 @@ SUBROUTINE trcwriDA(datestring)
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
         INTEGER :: jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da,ind_col
-        CHARACTER(LEN=20)  var_to_store
+        CHARACTER(LEN=200)  var_to_store
 
         julian=datestring2sec(datestring)
 
@@ -210,7 +210,7 @@ SUBROUTINE CHL_subroutine(datestring)
         INTEGER ind1, i_contribution, j_contribution
         INTEGER SysErr, system
         INTEGER ::jv,n_dumping_cycles,writing_rank,counter_var_DA,ivar,jn_da,ind_col
-        CHARACTER(LEN=20)  var_to_store
+        CHARACTER(LEN=200)  var_to_store
 
         julian=datestring2sec(datestring)
         buf     = Miss_val

@@ -657,7 +657,7 @@
        IMPLICIT NONE
 
        CHARACTER*(*),intent(in) :: fileNetCDF
-       character(LEN=20),intent(in) :: VAR
+       character(LEN=200),intent(in) :: VAR
        character(LEN=17),intent(in) :: datefrom, dateTo
        double precision, dimension(jpk, jpjglo, jpiglo),intent(in) :: M
        integer, intent(in) :: deflate, deflate_level
@@ -775,7 +775,7 @@
        character(LEN=17),intent(in) :: datefrom, dateTo
        real,intent(in),dimension(jpjglo, jpiglo) :: M
 
-       character(LEN=20) :: VAR
+       character(LEN=200) :: VAR
        integer :: istart,iend
 
        integer :: s, nc, counter
@@ -843,7 +843,7 @@
        IMPLICIT NONE
 
        CHARACTER*(*),intent(in) :: fileNetCDF
-       character(LEN=20), intent(in):: VAR
+       character(LEN=200), intent(in):: VAR
        character(LEN=17),intent(in) :: datefrom, dateTo
        double precision,dimension(jpk, jpjglo, jpiglo),intent(in) :: M
        double precision,intent(in) :: elapsed_time
@@ -936,7 +936,7 @@
        double precision,intent(in) :: elapsed_time
 
        !local
-       character(LEN=20) VAR
+       character(LEN=200) VAR
        integer istart,iend
 
        integer s, nc, counter

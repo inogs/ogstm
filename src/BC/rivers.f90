@@ -19,8 +19,8 @@ module rivers_mod
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'riv'
         integer :: m_n_vars ! BC_mem.f90:95
-        character(len=20), allocatable, dimension(:) :: m_var_names
-        character(len=20), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
+        character(len=200), allocatable, dimension(:) :: m_var_names
+        character(len=200), allocatable, dimension(:) :: m_var_names_data ! bc_tin.f90:116
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_riv
         double precision, allocatable, dimension(:, :) :: m_buffer ! replaces m_aux, now it is a 2D matrix
         integer(4) :: m_size
@@ -139,7 +139,7 @@ contains
         character(len=7), intent(in) :: namelist_file
 
         integer :: n_vars
-        character(len=20), allocatable, dimension(:) :: vars
+        character(len=200), allocatable, dimension(:) :: vars
         integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files
         integer :: i
         namelist /vars_dimension/ n_vars

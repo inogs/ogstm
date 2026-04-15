@@ -28,14 +28,14 @@
 
         CHARACTER(LEN=100) filename
 
-        CHARACTER(LEN=20) varname
+        CHARACTER(LEN=200) varname
 
         INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
         INTEGER irange, jrange
         INTEGER totistart, totiend, relistart, reliend
         INTEGER totjstart, totjend, reljstart, reljend
         INTEGER ind1, i_contribution, j_contribution
-        CHARACTER(LEN=20)  var_to_store
+        CHARACTER(LEN=200)  var_to_store
         INTEGER :: COUNTER_VAR_TRCWRI, n_dumping_cycles, jv, ivar, writing_rank, ind_col 
 
         filename = 'RST.20111231-15:30:00.N1p.nc'

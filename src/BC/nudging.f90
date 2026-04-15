@@ -23,8 +23,8 @@ module nudging_mod
         class(bc), pointer :: m_bc_no_nudging => null()
         character(len=11) :: m_data_file ! 11 chars in order to handle names like 'bounmask.nc'
         integer :: m_n_nudging_vars
-        character(len=20), allocatable, dimension(:) :: m_nudging_vars
-        character(len=20), allocatable, dimension(:) :: m_nudging_vars_rst
+        character(len=200), allocatable, dimension(:) :: m_nudging_vars
+        character(len=200), allocatable, dimension(:) :: m_nudging_vars_rst
         integer(4), allocatable, dimension(:) :: m_nudging_vars_idx ! tra_matrix_gib
         double precision, allocatable, dimension(:, :, :, :) :: m_rst ! resto
         double precision, allocatable, dimension(:) :: m_rst_corr ! restocorr
@@ -79,7 +79,7 @@ contains
 
         integer :: n_vars
         character(len=11) :: data_file ! 11 chars in order to handle names like 'bounmask.nc'
-        character(len=20), allocatable, dimension(:) :: vars
+        character(len=200), allocatable, dimension(:) :: vars
         double precision, allocatable, dimension(:) :: rst_corr
         integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files
 

@@ -28,9 +28,9 @@
       double precision :: elapsed_time
 
 
-      CHARACTER(LEN=56) dia_file_nc
-      CHARACTER(LEN=56) phys_file_nc
-      CHARACTER(LEN=20)  var
+      CHARACTER(LEN=300) dia_file_nc
+      CHARACTER(LEN=300) phys_file_nc
+      CHARACTER(LEN=200)  var
 
       INTEGER idrank, ierr, istart, jstart, iPe, iPd, jPe, jPd, status(MPI_STATUS_SIZE)
       INTEGER irange, jrange
@@ -39,8 +39,8 @@
       double precision ::  Miss_val =1.e20
       INTEGER :: nVars, counter_var_2d, counter_var_high_2d,counter_var_diag, counter_var_diag_high
       INTEGER :: counter_var_phys_2d,counter_var_phys_high_2d,counter_var_phys, counter_var_phys_high
-      CHARACTER(LEN=20) ::  var_to_store_diag_2d, var_to_store_diag
-      CHARACTER(LEN=20) ::  var_to_store_phys_2d, var_to_store_phys
+      CHARACTER(LEN=200) ::  var_to_store_diag_2d, var_to_store_diag
+      CHARACTER(LEN=200) ::  var_to_store_phys_2d, var_to_store_phys
       INTEGER :: n_dumping_cycles, jv, ivar, writing_rank, ind_col
       INTEGER :: var_to_send_2D, var_high_to_send_2D
       INTEGER :: var_to_send, var_high_to_send
@@ -70,7 +70,6 @@
         COUNTER_VAR_2d = 1
         COUNTER_VAR_HIGH_2d = 1
 
-
         DUMPING_LOOP_2d: DO jv = 1, n_dumping_cycles
 
                 DO ivar = 1 , nodes
@@ -78,9 +77,9 @@
                         writing_rank = writing_procs(ivar)
 
                         
-                        IF (COUNTER_VAR_2d > JPTRA_dia_2d_wri)then
+                        IF ( (COUNTER_VAR_2d > JPTRA_dia_2d_wri) .AND. (FREQ_GROUP==2) ) then
                                 EXIT
-                        else if (COUNTER_VAR_HIGH_2d > JPTRA_dia_2d_HIGH_wri)then
+                        else if ( (COUNTER_VAR_HIGH_2d > JPTRA_dia_2d_HIGH_wri) .AND. (FREQ_GROUP==1) ) then
                                 EXIT
                         ELSE
 
@@ -161,8 +160,7 @@
                                                 enddo
                                          enddo
                                 enddo
-                                !if (FREQ_GROUP.eq.2)write(*,*) 'CHECK ', var_to_store_diag_2d,var_to_send_2d
-                                !if (FREQ_GROUP.eq.1) write(*,*)'CHECK_h', var_to_store_diag_2d, COUNTER_VAR_HIGH_2d
+
                                 bkpname     = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc.bkp'
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag_2d)//'.nc'
 
@@ -178,6 +176,8 @@
                         end if
                 END IF
         END DO DUMPING_LOOP_2d
+        flush(UNIT=6)
+!        STOP
 
 #ifdef key_trc_bfm
         if (.not.IsBackup) then
@@ -234,9 +234,9 @@
                         writing_rank = writing_procs(ivar)
 
 
-                        IF (COUNTER_VAR_diag > JPTRA_dia_wri)then
+                        IF ( (COUNTER_VAR_diag > JPTRA_dia_wri) .AND. (FREQ_GROUP==2) ) then
                                 EXIT
-                        else if (COUNTER_VAR_diag_HIGH > JPTRA_dia_HIGH_wri)then
+                        else if ( (COUNTER_VAR_diag_HIGH > JPTRA_dia_HIGH_wri) .AND. (FREQ_GROUP==1) ) then
                                 EXIT
                         ELSE
                                 var_to_send = lowfreq_table_dia_wri(counter_var_diag)
@@ -269,15 +269,13 @@
                                                                 buffDIA(ind) = tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH, jk,jj,ji)
 #endif
 #ifdef key_trc_fabm
-                                                                write(*,*) 'CHECK_h_before', COUNTER_VAR_diag_HIGH
-                                                                write(*,*) 'CHECK_h_before var_to_send', tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH)%data(jk,jj,ji)
+            
                                                                 buffDIA(ind) = tra_DIA_IO_HIGH(COUNTER_VAR_diag_HIGH)%data(jk,jj,ji)
 #endif
                                                         enddo
                                                 enddo
                                         enddo
                                 end if
-                                !if (FREQ_GROUP.eq.1)write(*,*)'CHECK_h_before', COUNTER_VAR_diag_HIGH
                                 counter_var_diag = counter_var_diag + 1
                                 if (FREQ_GROUP.eq.1) counter_var_diag_high = counter_var_diag_high + 1
 
@@ -326,8 +324,7 @@
                                                 enddo
                                         enddo
                                 enddo
-                                !if (FREQ_GROUP.eq.2)write(*,*) 'CHECK ', var_to_store_diag, var_to_send
-                                !if (FREQ_GROUP.eq.1)write(*,*) 'CHECK_h', var_to_store_diag, COUNTER_VAR_diag_HIGH
+
                                 bkpname     = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag)//'.nc.bkp'
                                 dia_file_nc = DIR//'ave.'//datemean//'.'//trim(var_to_store_diag)//'.nc'
               
@@ -379,12 +376,10 @@
         tra_PHYS_2d_IO(1,:,:) = vatmIO
         tra_PHYS_2d_IO(2,:,:) = empIO
         tra_PHYS_2d_IO(3,:,:) = qsrIO
-
         tra_PHYS_2d_IO_high(1,:,:) = vatmIO
         tra_PHYS_2d_IO_high(2,:,:) = empIO
-        !write(*,*) 'copy is',tra_PHYS_2d_IO_high(2,5,5)
         tra_PHYS_2d_IO_high(3,:,:) = qsrIO
-        !write(*,*) 'copy is',tra_PHYS_2d_IO_high(3,5,5)
+
 
 
         IF (freq_ave_phys==1)then
@@ -410,7 +405,6 @@
 
                         writing_rank = writing_procs(ivar)
 
-                        !write(*,*)'phys 2d wri number' ,JPTRA_phys_2d_HIGH_wri
                         IF (freq_ave_phys==2 .and. COUNTER_VAR_phys_2d > JPTRA_phys_2d_wri)then
                                 EXIT
                         else if (freq_ave_phys==1 .and. COUNTER_VAR_phys_HIGH_2d > JPTRA_phys_2d_HIGH_wri)then
@@ -420,7 +414,6 @@
                                         var_to_send_2D = lowfreq_table_phys_2d_wri(counter_var_phys_2d)
                                 else
                                         var_to_send_2D = highfreq_table_phys_2d_wri(counter_var_phys_high_2d)
-                                        !write(*,*) 'var to send 2d is', var_to_send_2D
                                 end if
 
                                 if (freq_ave_phys.eq.2) then
@@ -439,9 +432,6 @@
                                                         buffPHYS2d (ind)=tra_PHYS_2d_IO_high(var_to_send_2D,jj,ji)
                                                 enddo
                                         enddo
-                                        !write(*,*) 'valeu in buffer is', tra_PHYS_2d_IO_high(var_to_send_2D,5,5)
-                                        !write(*,*) &
-                                     !'valeu in buffer is,second print',tra_PHYS_2d_IO_high(3,5,5)
                                 endif
                                 counter_var_phys_2d = counter_var_phys_2d + 1
                                 if (freq_ave_phys.eq.1) counter_var_phys_high_2d = counter_var_phys_high_2d + 1

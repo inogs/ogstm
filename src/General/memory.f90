@@ -274,21 +274,21 @@ end type
 
 
 !! PASSIVE TRACER MODEL
-          CHARACTER(LEN=20), allocatable, dimension(:) :: ctrcnm!(jptra)
+          CHARACTER(LEN=200), allocatable, dimension(:) :: ctrcnm!(jptra)
           CHARACTER(LEN=12), allocatable, dimension(:) :: ctrcun!(jptra)
-          CHARACTER(LEN=20), allocatable, dimension(:) :: dianm!(jptra_dia)
-          CHARACTER(LEN=20), allocatable, dimension(:) :: diaun!(jptra_dia)
+          CHARACTER(LEN=200), allocatable, dimension(:) :: dianm!(jptra_dia)
+          CHARACTER(LEN=200), allocatable, dimension(:) :: diaun!(jptra_dia)
           INTEGER          , allocatable, dimension(:) :: diahf!(jptra_dia)
           INTEGER          , allocatable, dimension(:) :: diaWR!(jptra_dia)
-          CHARACTER(LEN=20), allocatable, dimension(:) :: dianm_2d!(jptra_dia_2d)
-          CHARACTER(LEN=20), allocatable, dimension(:) :: diaun_2d!(jptra_dia_2d)
+          CHARACTER(LEN=200), allocatable, dimension(:) :: dianm_2d!(jptra_dia_2d)
+          CHARACTER(LEN=200), allocatable, dimension(:) :: diaun_2d!(jptra_dia_2d)
           INTEGER          , allocatable, dimension(:) :: diahf_2d!(jptra_dia_2d)
           INTEGER          , allocatable, dimension(:) :: diaWR_2d!(jptra_dia_2d)
           CHARACTER(LEN=17) :: COMMON_DATESTRING
 !physical tracers
       INTEGER :: jptra_phys, jptra_phys_2d
       INTEGER :: freq_ave_phys
-      CHARACTER(LEN=20), allocatable, dimension(:) :: physnm, physun, physnm_2d, physun_2d
+      CHARACTER(LEN=200), allocatable, dimension(:) :: physnm, physun, physnm_2d, physun_2d
       INTEGER, allocatable, dimension(:) :: physWR,physWR_2d
 
 
@@ -1109,7 +1109,7 @@ subroutine alloc_tot()
     ! finds string in statevars
     !
     IMPLICIT NONE
-    character(LEN=20), INTENT(IN) :: string
+    character(LEN=200), INTENT(IN) :: string
     integer jn
 
     find_index_var=0

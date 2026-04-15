@@ -18,8 +18,8 @@ module sponge_mod
         ! TO DO: review names
         character(len=3) :: m_name ! ex: 'gib'
         integer :: m_n_vars ! BC_mem.f90:94
-        character(len=20), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
-        character(len=20), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
+        character(len=200), allocatable, dimension(:) :: m_var_names ! domrea.f90:161-167
+        character(len=200), allocatable, dimension(:) :: m_var_names_data ! bc_gib.f90:113
         integer(4), allocatable, dimension(:) :: m_var_names_idx ! tra_matrix_gib
         double precision, allocatable, dimension(:, :, :) :: m_buffer ! replaces m_aux, now it is a 3D matrix
         integer(4) :: m_size ! BC_mem.f90:21
@@ -149,7 +149,7 @@ contains
         character(len=7), intent(in) :: namelist_file
 
         integer :: n_vars
-        character(len=20), allocatable, dimension(:) :: vars
+        character(len=200), allocatable, dimension(:) :: vars
         double precision :: alpha
         double precision :: reduction_value_t
         double precision :: length

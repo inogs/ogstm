@@ -40,15 +40,15 @@ SUBROUTINE trcdit(datemean,datefrom,dateTo,FREQ_GROUP)
         !new declarations
         INTEGER counter_var, counter_var_high, new_counter_var, new_counter_var_high, nVARS, jv, ivar, n_dumping_cycles
         INTEGER col_var, row_var, writing_rank
-        CHARACTER(len=20), DIMENSION(nodes) :: matrix_row_to_write
+        CHARACTER(len=200), DIMENSION(nodes) :: matrix_row_to_write
 
-        CHARACTER(LEN=56) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
-        CHARACTER(LEN=20) var
+        CHARACTER(LEN=300) output_file_nc  ! AVE_FREQ_1/ave.20091231-12:00:00.P1n.nc
+        CHARACTER(LEN=200) var
         CHARACTER(LEN=60) bkpname
         CHARACTER(LEN=11) DIR
         logical IsBackup
 
-        CHARACTER(LEN=20)  var_to_store
+        CHARACTER(LEN=200)  var_to_store
 
         INTEGER :: ind_col
         DOUBLE PRECISION :: start_time_trcdit_info,finish_time_trcdit_info, proctime_time_trcdit_info, max_time_trcdit_info

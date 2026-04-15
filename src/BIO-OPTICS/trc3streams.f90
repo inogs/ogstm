@@ -24,7 +24,7 @@
       INTEGER :: MODE ! 0-exact, 1-approx
       INTEGER :: year, month, day, ihr
       INTEGER :: it_actual
-      CHARACTER(LEN=20) :: V_POSITION     
+      CHARACTER(LEN=200) :: V_POSITION     
       double precision :: solz(jpj,jpi), rmud(jpj,jpi)
       double precision :: Edz(jpk,nlt),Esz(jpk,nlt),Euz(jpk,nlt)
       double precision, allocatable::  E(:,:,:) !(3,jpk+1,nlt)

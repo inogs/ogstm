@@ -13,8 +13,8 @@ module hard_open_mod
 
         character(len=3) :: m_name ! ex: 'ope'
         integer :: m_n_vars
-        character(len=20), allocatable, dimension(:) :: m_var_names
-        character(len=20), allocatable, dimension(:) :: m_var_names_data
+        character(len=200), allocatable, dimension(:) :: m_var_names
+        character(len=200), allocatable, dimension(:) :: m_var_names_data
         integer(4), allocatable, dimension(:) :: m_var_names_idx
         integer :: m_n_missing_vars
         integer(4), allocatable, dimension(:) :: m_missing_var_names_idx
@@ -228,7 +228,7 @@ contains
         integer, intent(in) :: n_tracers
 
         integer :: n_vars
-        character(len=20), allocatable, dimension(:) :: vars
+        character(len=200), allocatable, dimension(:) :: vars
         integer(4) :: geometry
         double precision :: damping_coeff
         integer, parameter :: file_unit = 101 ! 100 for data files, 101 for boundary namelist files

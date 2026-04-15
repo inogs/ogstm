@@ -832,16 +832,32 @@
        double precision FUNCTION DAY_OF_THE_YEAR(datestring)
        IMPLICIT NONE
        CHARACTER(LEN=17), INTENT(IN) :: datestring
-       integer year, month, day
+       integer year, month, day, i
        INTEGER, PARAMETER :: mon_len(12)=(/31,28,31,30,31,30,31,31,30,31,30,31/)
        double precision sec
+       integer days_before, feb_days
 
        call read_date_string(datestring, year, month, day, sec)
-       if (month ==1) then
-           DAY_OF_THE_YEAR = REAL(day-1, 8) + sec/86400.0
-       else
-           DAY_OF_THE_YEAR = REAL(mon_len(month-1),8) + REAL(day-1, 8) + sec/86400.0
+
+       ! Check if it's a leap year and adjust February days
+       feb_days = mon_len(2)  ! 28
+       if (mod(year,4) == 0) then
+           if (mod(year,100) /= 0 .or. mod(year,400) == 0) then
+               feb_days = 29
+           endif
        endif
+
+       ! Sum all days from months before the current month
+       days_before = 0
+       do i = 1, month-1
+           if (i == 2) then
+               days_before = days_before + feb_days
+           else
+               days_before = days_before + mon_len(i)
+           endif
+       end do
+
+       DAY_OF_THE_YEAR = REAL(days_before, 8) + REAL(day-1, 8) + sec/86400.0
 
        END FUNCTION DAY_OF_THE_YEAR
 

@@ -172,6 +172,7 @@
                      ENDIF
                   END DO
                   END DO
+
                ENDIF
          END DO
 
@@ -188,8 +189,6 @@
             DO jk=1, jpk
                   DO jn_high=1, jptra_dia_high
                      jn_on_all = highfreq_table_dia(jn_high )
-                     write(*,*) 'jn_on_all', jn_on_all
-                     write(*,*) 'jn_high', jn_high
 
                      IF (model_fabm%interior_diagnostic_variables(jn_on_all)%save) THEN
                           IF(tmask(jk,jj,ji) .NE. 0.) THEN
@@ -199,8 +198,7 @@
                              tra_DIA_IO_HIGH(jn_high)%data(jk,jj,ji)=Miss_val
                           ENDIF
                      ENDIF
-                     write(*,*) 'tra_DIA_IO_HIGH', tra_DIA_IO_HIGH(jn_high)%data(jk,jj,ji)
-                     write(*,*) 'tra_DIA', tra_DIA(jn_on_all)%data(jk,jj,ji)
+
                   END DO
             END DO
             END DO

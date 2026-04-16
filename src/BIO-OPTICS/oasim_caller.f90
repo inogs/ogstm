@@ -2,6 +2,7 @@ subroutine OASIM_CALLER(datestring)
 
 use myalloc
 use OPT_mem
+use BIO_mem
 use TIME_MANAGER
 use mpi
 use oasim, only: calc_unit, oasim_lib
@@ -38,6 +39,8 @@ trcoptparttime = MPI_WTIME() ! cronometer-start
 CALL forcings_KEXT(datestring)
 CALL forcings_atm_clim(datestring)
 CALL forcings_atm_aero(datestring)
+
+if (.NOT. is_FABM_instance(model_fabm,'light_atm')) then
 
 counter=1
 do ji=1,jpi
@@ -87,6 +90,7 @@ call unflatten_33(Esout, Es_0m)
 
 call trc3streams(datestring) ! 3-stream radiative model
 
+end if ! is_FABM_istance(model_fabm,'light_atm')
 
 trcoptparttime = MPI_WTIME() - trcoptparttime ! cronometer-stop
 trcopttottime = trcopttottime + trcoptparttime

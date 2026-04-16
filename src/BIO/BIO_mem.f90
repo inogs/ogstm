@@ -6,6 +6,7 @@
 
 #ifdef key_trc_fabm
        USE fabm
+       USE fabm_types
        USE OPT_mem
 #endif
 
@@ -267,7 +268,30 @@
 
       END subroutine myalloc_BIO
 
+#ifdef key_trc_fabm
 
+ logical function is_FABM_instance(model,instance_name)
+        class (type_fabm_model), pointer, intent(in) :: model
+        character(len=*), intent(in) :: instance_name
+        type (type_model_list_node), pointer :: instance
+   
+        instance => model%root%children%first
+        
+      do while (associated(instance))
+         if (instance%model%user_created) then
+            if (trim(instance%model%name) == trim(instance_name)) then
+                  is_FABM_instance = .true.
+                  return
+            endif
+        end if
+        instance => instance%next
+      end do
+
+      is_FABM_instance = .false.
+      return
+
+      end function is_FABM_instance
+#endif
 
       subroutine clean_memory_bio()
 

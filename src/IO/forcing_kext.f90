@@ -5,6 +5,7 @@
        USE myalloc
        ! epascolo USE myalloc_mpp
        USE OPT_mem
+       USE BIO_mem
        USE TIME_MANAGER
        USE mpi
        IMPLICIT NONE
@@ -99,6 +100,7 @@
       USE myalloc
       ! epascolo USE myalloc_mpp
       USE OPT_mem
+      USE BIO_mem
       USE TIME_MANAGER
       USE BC_mem
 
@@ -130,15 +132,22 @@
        mslIO(:,:,2) = buf2*tmask(1,:,:)
 
        call readnc_slice_float_2d(nomefile,'t2m',buf2,0)
-       t2mIO(:,:,2) = buf2*tmask(1,:,:)
+       if (is_FABM_instance(model_fabm,'light_atm')) then
+          t2mIO(:,:,2) = buf2*tmask(1,:,:)-273.15d0
+       else
+          t2mIO(:,:,2) = buf2*tmask(1,:,:)
+       endif
 
        call readnc_slice_float_2d(nomefile,'d2m',buf2,0)
        d2mIO(:,:,2) = buf2*tmask(1,:,:)
 
        call readnc_slice_float_2d(nomefile,'tcc',buf2,0)
-       tccIO(:,:,2) = buf2*tmask(1,:,:)
 
-
+       if (is_FABM_instance(model_fabm,'light_atm')) then
+          tccIO(:,:,2) = buf2*tmask(1,:,:)/100.0D0
+       else
+          tccIO(:,:,2) = buf2*tmask(1,:,:)
+       endif
 
        call readnc_slice_float_2d(nomefile,'u10',buf2,0)
        call readnc_slice_float_2d(nomefile,'v10',junk,0)

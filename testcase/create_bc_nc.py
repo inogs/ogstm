@@ -87,7 +87,7 @@ def create_bc_nc(test):
         ncvar = ncOUT.createVariable('reP1_DW'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reZ1_DWz'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
     else:
-        print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
         sys.exit()
 
     ncvar = ncOUT.createVariable('index'        ,'i',('time','z','y','x')  ); ncvar[:] = index;
@@ -141,8 +141,8 @@ def create_bc_nc(test):
         elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
             ncvar = ncOUT.createVariable('atm_P1_DW'      ,'f',('lat','lon')                   ); ncvar[:] = 0.0;
             ncvar = ncOUT.createVariable('atm_Z1_DWz'      ,'f',('lat','lon')                   ); ncvar[:] = 0.0;
-        else:
-            print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+        else:    
+            print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
             sys.exit()
 
         ncOUT.close()
@@ -242,7 +242,7 @@ def create_bc_nc(test):
             ncvar = ncOUT.createVariable('riv_P1_DW'      ,'d',('riv_idxt',) ); ncvar[:] = 0.0;
             ncvar = ncOUT.createVariable('riv_Z1_DWz'      ,'d',('riv_idxt',) ); ncvar[:] = 0.0;
         else:
-            print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+            print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
             sys.exit()
 
         ncOUT.close()

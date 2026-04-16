@@ -45,8 +45,7 @@ def create_init_nc(test):
             print(f"  {variable.name} = {variable.long_name} ({variable.units})")
             initVARS.append(variable.name)
     else:
-
-        print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
         sys.exit()
 
     jpi=test['jpi'];
@@ -87,7 +86,7 @@ def create_init_nc(test):
             var=var.replace('/','_')
             filename = "KB/INIT_NWM_KB_FABM_ROSENMCARTUR/INIT." + var
         else:
-            print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+            print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
             sys.exit()
         
         din = np.loadtxt(filename)

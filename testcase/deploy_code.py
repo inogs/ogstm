@@ -74,6 +74,6 @@ def deploy_code(test):
             os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
     else:
 
-        print("BGC_TYPE " + test['BGC_TYPE'].decode() + "wrong/undefined choose within [DEFAULT[Default,default], BFM[bfm], FABM[fabm]]")
+        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
         sys.exit()
 

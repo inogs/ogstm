@@ -12,7 +12,7 @@
 
        public
 
-
+      LOGICAL :: oasim_bioptimod=.FALSE., oasim_fabm=.FALSE.
       INTEGER, allocatable :: itabe(:),imaske(:,:) 
       double precision, allocatable :: zpar(:,:),xEPS_ogstm(:,:)
       double precision, allocatable :: zpar0m(:),zpar100(:) 
@@ -71,11 +71,17 @@
       integer, parameter            :: nlt=33                     
       integer                       :: lam(33)
       double precision              :: WtoQ(33)
+! Wavelength strings with 4-digit zero padding      
+      CHARACTER(LEN=4), parameter   :: lam_strings(33) = (/ &
+           '0250', '0325', '0350', '0375', '0400', '0425', '0450', '0475', '0500', '0525', &
+           '0550', '0575', '0600', '0625', '0650', '0675', '0700', '0725', '0775', '0850', &
+           '0950', '1050', '1150', '1250', '1350', '1450', '1550', '1650', '1750', '1900', &
+           '2200', '2900', '3700'   /)
 ! Radiative transfer model parameter OASIM Native coordinates
       double precision              :: Ed_0m_COARSE(33,12,18,48), Es_0m_COARSE(33,12,18,48) ! lon, lat, day period, wave length
       double precision              :: OASIM_lon(18,48), OASIM_lat(18,48)  
 ! Radiative transfer model parameter OGSTM coordinates    
-      double precision,allocatable  :: Ed_0m(:,:,:), Es_0m(:,:,:) ! wav, lat, lon
+      double precision,target,allocatable  :: Ed_0m(:,:,:), Es_0m(:,:,:) ! wav, lat, lon
       
       INTEGER                       :: day_RTcheck
 ! in-water model
@@ -163,7 +169,10 @@
 !       kef     = huge(kef(1,1))
 !       allocate(kextIO(jpj,jpi,2))
 !       kextIO  = huge(kextIO(1,1,1))
-
+#ifdef key_trc_bfm
+      oasim_bioptimod=.TRUE.
+      write(numout,*) 'OASIM optical model will be used'
+#endif
        allocate(sp (jpj,jpi))     ;   sp =huge(sp(1,1))
        allocate(msl(jpj,jpi))     ;   msl=huge(sp(1,1))
        allocate(t2m(jpj,jpi))     ;   t2m=huge(sp(1,1))

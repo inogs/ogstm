@@ -56,6 +56,17 @@
         jptra_flux=0                                     
         jptra_dia=jptra_var+jptra_flux
         jptra_dia_2d=size(model_fabm%horizontal_diagnostic_variables)
+! optical modules
+      if (is_FABM_instance(model_fabm,'light_atm')) then
+         oasim_fabm=.TRUE.
+         oasim_bioptimod=.FALSE.
+         write(numout,*) 'FABM-OASIM optical model will be used in OGSTM'
+      end if
+      if (is_FABM_instance(model_fabm,'lightspectral')) then
+         oasim_fabm=.FALSE.
+         oasim_bioptimod=.TRUE.
+         write(numout,*) 'BIOPTIMOD OASIM optical model will be used in OGSTM'
+      end if
       END subroutine initialize_FABM
 #endif
 
@@ -64,10 +75,11 @@
 
       INTEGER  :: err
       INTEGER  :: ivar
-      INTEGER  :: ji,jj,jn
+      INTEGER  :: ji,jj,jn,jl
       INTEGER  :: year, month, day
       double precision :: sec
       double precision  :: aux_mem
+      character(LEN=256) :: varname
 #ifdef key_trc_fabm
       type (type_fabm_interior_variable_id)   :: interior_id
       type (type_fabm_horizontal_variable_id) :: horizontal_id
@@ -178,7 +190,19 @@
        yearday = 1.5d0
        call model_fabm%link_scalar(id_yearday, yearday) ! - days
 
+      if (oasim_bioptimod) then
+            do jl=1,nlt
+                  
+                  varname = 'surf_direct_downward_irradiance_' // lam_strings(jl) // '_nm'
+                  horizontal_id = model_fabm%get_horizontal_variable_id(TRIM(varname))
+                  call model_fabm%link_horizontal_data(horizontal_id, Ed_0m(jl,:,:)) ! W m^-2
 
+                  varname = 'surf_diffuse_downward_irradiance_' // lam_strings(jl) // '_nm'
+                  horizontal_id = model_fabm%get_horizontal_variable_id(TRIM(varname))
+                  call model_fabm%link_horizontal_data(horizontal_id, Es_0m(jl,:,:)) ! W m^-2
+
+            end do
+      end if
         ! Complete initialization and check whether FABM has all dependencies fulfilled
         ! (i.e., whether all required calls to model%link_*_data have been made)
 

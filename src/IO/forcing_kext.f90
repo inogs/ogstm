@@ -132,7 +132,7 @@
        mslIO(:,:,2) = buf2*tmask(1,:,:)
 
        call readnc_slice_float_2d(nomefile,'t2m',buf2,0)
-       if (is_FABM_instance(model_fabm,'light_atm')) then
+       if (oasim_fabm) then
           t2mIO(:,:,2) = buf2*tmask(1,:,:)-273.15d0
        else
           t2mIO(:,:,2) = buf2*tmask(1,:,:)
@@ -143,7 +143,7 @@
 
        call readnc_slice_float_2d(nomefile,'tcc',buf2,0)
 
-       if (is_FABM_instance(model_fabm,'light_atm')) then
+       if (oasim_fabm) then
           tccIO(:,:,2) = buf2*tmask(1,:,:)/100.0D0
        else
           tccIO(:,:,2) = buf2*tmask(1,:,:)

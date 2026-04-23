@@ -102,6 +102,7 @@ write(*,*) 'aerosol_air_mass_type',aerosol_air_mass_type(:,:)
 write(*,*) 'surface_specific_humidity',surface_specific_humidity(:,:)
 write(*,*) 't2m',t2m(:,:)
 write(*,*) 'sp',sp(:,:)
+write(*,*) 'surface_downwelling_shortwave_flux',surface_downwelling_shortwave_flux(:,:)
 
 ! In the loops below, dy and w are local to the j,k point being processed.
 ! They would therefore need to be processed further within the loop to be included in
@@ -123,6 +124,13 @@ END DO
 
 ! Compute any remaining diagnostics
 call model_fabm%finalize_outputs()
+
+DO  jn=1,size(model_fabm%interior_state_variables)
+    write(*,*) 'jn=', jn
+    write(*,*) 'Name of diagnostic variable:', TRIM(model_fabm%interior_state_variables(jn)%name)
+    write(*,*) 'Value of ogstm_sedipi(3,5,5,jn): ', ogstm_sedipi(3,5,5,jn)
+
+ENDDO
 
 
 DO  jn=1,size(model_fabm%interior_diagnostic_variables)
@@ -160,7 +168,6 @@ DO jn=1,size(model_fabm%horizontal_diagnostic_variables)
                   write(*,*) 'Value of tra_DIA_2d(jn,:,:):', tra_DIA_2d(jn)%data(:,:)
       END IF
 END DO
-
 
 ! ----------------------------------------------------------------------
 !  BEGIN BC_REFACTORING SECTION

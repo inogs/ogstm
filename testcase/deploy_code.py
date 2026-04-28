@@ -55,6 +55,24 @@ def deploy_code(test):
             os.system("python create_ogstm_yaml.py")
             os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
 
+    elif test['BGC_TYPE'].decode() in ['FABM-BFM98','fabm-bfm98']:
+        os.system("cp -pf namelist.init.fabm  " +  test['Dir'].decode() + "/namelist.init")
+
+        namelist_optics = CODEPATH +  "/ogstm/ready_for_model_namelists/namelist.optics "
+        os.system("cp -pf " + namelist_optics +  test['Dir'].decode() + "/")
+
+        namelist_phys   = CODEPATH +  "/ogstm/ready_for_model_namelists/namelist.phys "
+        os.system("cp -pf " + namelist_phys +  test['Dir'].decode() + "/")
+
+        fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_diatoms_60PFTs_no-repr.yaml "
+        os.system("cp -pf " + fabm_yaml + test['Dir'].decode() + "/fabm.yaml")
+        
+        ret = os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
+        if ret != 0:
+            print("ogstm.yaml not found, creating template...")
+            os.system("python create_ogstm_yaml.py")
+            os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
+
     elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
         os.system("cp -pf namelist.init.fabm  " +  test['Dir'].decode() + "/namelist.init")
 
@@ -74,6 +92,6 @@ def deploy_code(test):
             os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
     else:
 
-        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
+        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm], 'FABM-BFM98'['fabm-bfm98']]")
         sys.exit()
 

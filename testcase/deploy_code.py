@@ -4,6 +4,8 @@ import numpy as np
 
 from mydtype import *
 
+from bgc_error import raise_bgc_error
+
 import scipy.io.netcdf as NC
 
 import pickle
@@ -91,7 +93,4 @@ def deploy_code(test):
             os.system("python create_ogstm_yaml.py")
             os.system("cp -pf ogstm.yaml " + test['Dir'].decode() + "/ogstm.yaml")
     else:
-
-        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm], 'FABM-BFM98'['fabm-bfm98']]")
-        sys.exit()
-
+        raise_bgc_error(test['BGC_TYPE'].decode())

@@ -4,6 +4,8 @@ import numpy as np
 
 from mydtype import *
 
+from bgc_error import raise_bgc_error
+
 import scipy.io.netcdf as NC
 
 import pickle
@@ -56,8 +58,7 @@ def create_init_nc(test):
             print(f"  {variable.name} = {variable.long_name} ({variable.units})")
             initVARS.append(variable.name)
     else:
-        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm], 'FABM-BFM98'['fabm-bfm98']]")
-        sys.exit()
+        raise_bgc_error(test['BGC_TYPE'].decode())
 
     jpi=test['jpi'];
     jpj=test['jpj'];
@@ -100,8 +101,7 @@ def create_init_nc(test):
             var=var.replace('/','_')
             filename = "KB/INIT_NWM_KB_FABM_ROSENMCARTUR/INIT." + var
         else:
-            print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm], 'FABM-BFM98'['fabm-bfm98']]")
-            sys.exit()
+            raise_bgc_error(test['BGC_TYPE'].decode())
         
         din = np.loadtxt(filename)
         datain = interpolate(din, jpk)

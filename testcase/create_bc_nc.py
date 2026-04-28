@@ -4,6 +4,8 @@ import numpy as np
 
 from mydtype import *
 
+from bgc_error import raise_bgc_error
+
 import scipy.io.netcdf as NC
 
 import pickle
@@ -87,8 +89,7 @@ def create_bc_nc(test):
         ncvar = ncOUT.createVariable('reP1_DW'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
         ncvar = ncOUT.createVariable('reZ1_DWz'        ,'d',('time','z','y','x')  ); ncvar[:] = D3*0.;
     else:
-        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
-        sys.exit()
+        raise_bgc_error(test['BGC_TYPE'].decode())
 
     ncvar = ncOUT.createVariable('index'        ,'i',('time','z','y','x')  ); ncvar[:] = index;
     ncvar = ncOUT.createVariable('index_inv'    ,'i',('waterpoints','dim3')); ncvar[:] = index_inv;
@@ -142,9 +143,8 @@ def create_bc_nc(test):
             ncvar = ncOUT.createVariable('atm_P1_DW'      ,'f',('lat','lon')                   ); ncvar[:] = 0.0;
             ncvar = ncOUT.createVariable('atm_Z1_DWz'      ,'f',('lat','lon')                   ); ncvar[:] = 0.0;
         else:    
-            print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
-            sys.exit()
-
+            raise_bgc_error(test['BGC_TYPE'].decode())
+            
         ncOUT.close()
 
 # Atmosphere CO2
@@ -242,8 +242,7 @@ def create_bc_nc(test):
             ncvar = ncOUT.createVariable('riv_P1_DW'      ,'d',('riv_idxt',) ); ncvar[:] = 0.0;
             ncvar = ncOUT.createVariable('riv_Z1_DWz'      ,'d',('riv_idxt',) ); ncvar[:] = 0.0;
         else:
-            print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
-            sys.exit()
+            raise_bgc_error(test['BGC_TYPE'].decode())
 
         ncOUT.close()
 

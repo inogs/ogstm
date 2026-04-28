@@ -4,6 +4,8 @@ import numpy as np
 
 from mydtype import *
 
+from bgc_error import raise_bgc_error
+
 import scipy.io.netcdf as NC
 
 import pickle
@@ -34,6 +36,17 @@ def create_init_nc(test):
         for variable in model.state_variables:
             print(f"  {variable.name} = {variable.long_name} ({variable.units})")
             initVARS.append(variable.name)
+    elif test['BGC_TYPE'].decode() in ['FABM-BFM98','fabm-bfm98']:
+        import pyfabm
+        CODEPATH = test['Code'].decode() 
+        CODEPATH = CODEPATH.replace("~",os.getenv("HOME"))
+        fabm_yaml=  CODEPATH + "/fabm/extern/ogs/fabm_diatoms_60PFTs_no_repr.yaml "
+        fabm_yaml ="/g100_work/OGS23_PRACE_IT/plazzari/ModelBuild/ogstm/testcase/TEST02/wrkdir/MODEL/fabm.yaml"
+        model = pyfabm.Model(fabm_yaml)
+        initVARS=[]
+        for variable in model.state_variables:
+            print(f"  {variable.name} = {variable.long_name} ({variable.units})")
+            initVARS.append(variable.name)
     elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
         import pyfabm
         CODEPATH = test['Code'].decode() 
@@ -45,8 +58,7 @@ def create_init_nc(test):
             print(f"  {variable.name} = {variable.long_name} ({variable.units})")
             initVARS.append(variable.name)
     else:
-        print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
-        sys.exit()
+        raise_bgc_error(test['BGC_TYPE'].decode())
 
     jpi=test['jpi'];
     jpj=test['jpj'];
@@ -82,12 +94,14 @@ def create_init_nc(test):
         elif test['BGC_TYPE'].decode() in ['FABM-BFM','fabm-bfm']:
             var=var.replace('/','_')
             filename = "KB/INIT_NWM_KB_FABM/INIT." + var
+        elif test['BGC_TYPE'].decode() in ['FABM-BFM98','fabm-bfm98']:
+            var=var.replace('/','_')
+            filename = "KB/INIT_NWM_KB_FABM98/INIT." + var
         elif test['BGC_TYPE'].decode() in ['FABM-ROSENMCARTUR','fabm-rosenmcartur']:
             var=var.replace('/','_')
             filename = "KB/INIT_NWM_KB_FABM_ROSENMCARTUR/INIT." + var
         else:
-            print("[ERROR] BGC_TYPE='" + test['BGC_TYPE'].decode() + "' is wrong/undefined. Expected one of: [DEFAULT[Default,default], BFM[bfm], FABM-BFM[fabm-bfm]]")
-            sys.exit()
+            raise_bgc_error(test['BGC_TYPE'].decode())
         
         din = np.loadtxt(filename)
         datain = interpolate(din, jpk)

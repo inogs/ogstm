@@ -163,7 +163,7 @@
 ! Starting I/O
 ! U  *********************************************************
       write(nomefile,fileformat) yyyy,mm,"U",datestring
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
+      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask
 

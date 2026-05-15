@@ -1,8 +1,6 @@
 import os
 import pyfabm
 
-CODEPATH = '../../'
-CODEPATH = CODEPATH.replace("~", os.getenv("HOME"))
 fabm_yaml = "/leonardo_work/OGS_test2528_0/plazzari/OGSTM-FABM/ModelBuild/ogstm/testcase/TEST02/wrkdir/MODEL/fabm.yaml"
 
 
@@ -18,11 +16,14 @@ def generate_atl_nml(fabm_yaml_path, output_file="atl.nml"):
         f.write("/\n")
         f.write("\n")
         f.write("&CORE\n")
+
         f.write("\n")
         for i, name in enumerate(state_vars, start=1):
             f.write(f'    vars({i}) = "{name}"\n')
+        f.write("\n")
+        f.write("    geometry = 3\n")
+        f.write("    damping_coeff = 3000.0d0\n")
         f.write("/\n")
-
     print(f"Generated {output_file} with {n_vars} state variables.")
 
 

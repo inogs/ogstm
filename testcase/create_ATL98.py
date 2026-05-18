@@ -91,7 +91,7 @@ def main():
                         new_var = dst.createVariable(t_name, variable.datatype, variable.dimensions)
                         new_var.setncatts(variable.__dict__)
                         
-                        # dividi i valori per il numero di file di uscita
+                        # dividi i nomi per il numero di valori
                         new_var[:] = src[name][:] / n_val
                 
                 else:

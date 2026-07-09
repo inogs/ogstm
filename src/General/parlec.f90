@@ -43,6 +43,7 @@
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift, &
           mld_flag, DvMLD, sigma, DvBackground
 
+      NAMELIST/Wind_speed_IO/ optics_windspeed_on_file, forcings_windspeed_on_fileT
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 #ifdef ExecDA
@@ -249,7 +250,16 @@
           endif
       endif
 
-
+! ************* namelist WIND_SPEED_IO  *****************
+      REWIND( numnam )
+      READ  ( numnam, Wind_speed_IO )
+      IF(lwp) THEN
+      WRITE(numout,*) 'Wind_speed_IO'
+      WRITE(numout,*) ' '
+      WRITE(numout,*) ' forcings_windspeed_on_fileT = ', forcings_windspeed_on_fileT
+      WRITE(numout,*) ' optics_windspeed_on_file  = ', optics_windspeed_on_file
+      WRITE(numout,*) ' '
+      ENDIF
 
 
 ! ... namelist.init: Domain_Characteristic

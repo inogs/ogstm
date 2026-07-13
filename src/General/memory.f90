@@ -222,7 +222,7 @@ end type
 !! ============================
 !!  surface wind stress at givem time_step
 !!    taux, tauy()   : wind stress components in (i,j) referential
-      double precision, allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
+      double precision, allocatable, target, dimension(:,:) :: taux, tauy, vatm, freeze
 
 !!----------------------------------------------------------------------
 !!     surface fluxes

@@ -28,8 +28,11 @@
       double precision, allocatable :: NPPF2(:,:,:)
       double precision, allocatable :: ogstm_co2(:,:), co2_IO(:,:,:)
       double precision:: ice
+
 #ifdef key_trc_fabm
       class (type_fabm_model), pointer :: model_fabm
+      double precision, allocatable :: flux_sf(:), sms_sf(:)
+
 #endif
 
 
@@ -282,6 +285,9 @@
                   tra_DIA_2d_IO_HIGH(jn)%data(:,:) = huge(tra_DIA_2d_IO_HIGH(jn)%data(1,1))
             endif
       end do
+      allocate(flux_sf(size(model_fabm%interior_state_variables)))
+      allocate(sms_sf(size(model_fabm%surface_state_variables)))
+
 #endif
 ! At this point, initialization is complete.
 #endif

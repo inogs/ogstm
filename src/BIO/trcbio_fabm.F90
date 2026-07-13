@@ -101,6 +101,17 @@ DO ji=1,jpi
    END DO
 END DO
 
+!  Fluxes and source terms at the water surface
+do ji=1,jpi
+   DO jj=1,jpj
+       flux_sf = 0
+       sms_sf = 0
+       call model_fabm%get_surface_sources(jj, ji, flux_sf, sms_sf)
+   ! Here you would use or store the returned surface fluxes and source terms
+       tra(1,jj,ji,:) = tra(1,jj,ji,:) + flux_sf(:) / e3t(1,jj,ji)
+   end do  
+end do
+
 ! Compute any remaining diagnostics
 call model_fabm%finalize_outputs()
 
@@ -109,7 +120,6 @@ DO  jn=1,size(model_fabm%interior_diagnostic_variables)
       IF (model_fabm%interior_diagnostic_variables(jn)%save) THEN
 
          tra_DIA(jn)%data = model_fabm%get_interior_diagnostic_data(jn)
-
       END IF
 END DO
 
@@ -118,7 +128,6 @@ DO jn=1,size(model_fabm%horizontal_diagnostic_variables)
       IF (model_fabm%horizontal_diagnostic_variables(jn)%save) THEN
 
          tra_DIA_2d(jn)%data = model_fabm%get_horizontal_diagnostic_data(jn)
-
       END IF
 END DO
 

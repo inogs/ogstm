@@ -98,19 +98,14 @@ DO ji=1,jpi
       ! Retrieve vertical velocities (sinking, floating, active movement) in m s-1.
       ! Array w(1:nx,1:size(model%interior_state_variables)) is assumed to be allocated.
       call model_fabm%get_vertical_movement(1, jpk, jj, ji, ogstm_sedipi(:,jj,ji,:))
+!  Fluxes and source terms at the water surface
+      flux_sf = 0.0D0
+      sms_sf  = 0.0D0
+      call model_fabm%get_surface_sources(jj, ji, flux_sf, sms_sf)
+
+      tra(1,jj,ji,:) = tra(1,jj,ji,:) + flux_sf(:) / e3t(1,jj,ji) ! from flux to change in concentration (/ e3t)
    END DO
 END DO
-
-!  Fluxes and source terms at the water surface
-do ji=1,jpi
-   DO jj=1,jpj
-       flux_sf = 0
-       sms_sf = 0
-       call model_fabm%get_surface_sources(jj, ji, flux_sf, sms_sf)
-   ! Here you would use or store the returned surface fluxes and source terms
-       tra(1,jj,ji,:) = tra(1,jj,ji,:) + flux_sf(:) / e3t(1,jj,ji)
-   end do  
-end do
 
 ! Compute any remaining diagnostics
 call model_fabm%finalize_outputs()

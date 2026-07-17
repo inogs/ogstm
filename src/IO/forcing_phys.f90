@@ -294,17 +294,24 @@
 
 
       
-      
-      if (forcings_windspeed_on_fileT) then
-           call readnc_slice_float_2d(fileT,'sowindsp',buf2,ingv_lon_shift)
-      else
-           call readnc_slice_float_2d(fileU,'sozotaux',buf2,ingv_lon_shift)
-           taux = buf2*umask(1,:,:)
-           call readnc_slice_float_2d(fileV,'sometauy',buf2,ingv_lon_shift)
-           tauy = buf2*vmask(1,:,:)
+      if (read_sowindsp_from_file) then
+          call readnc_slice_float_2d(fileT,'sowindsp',buf2,ingv_lon_shift)
 
-           call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
+      else
+            if (forcings_windspeed_on_fileT) then
+                  call readnc_slice_float_2d(fileT,'sozotaux',buf2,ingv_lon_shift)
+                  taux=buf2*tmask(1,:,:)
+                  call readnc_slice_float_2d(fileT,'sometauy',buf2,ingv_lon_shift)
+                  tauy = buf2*tmask(1,:,:)
+            else
+                  call readnc_slice_float_2d(fileU,'sozotaux',buf2,ingv_lon_shift)
+                  taux = buf2*umask(1,:,:)
+                  call readnc_slice_float_2d(fileV,'sometauy',buf2,ingv_lon_shift)
+                  tauy = buf2*vmask(1,:,:)
+            endif
+            call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
       endif
+
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
       call readnc_slice_float_2d(fileT,'soshfldo',buf2,ingv_lon_shift)

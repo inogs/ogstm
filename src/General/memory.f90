@@ -72,6 +72,7 @@
       LOGICAL forcing_phys_initialized
       LOGICAL read_W_from_file, internal_sponging, ingv_files_direct_reading
       LOGICAL optics_windspeed_on_file, forcings_windspeed_on_fileT
+      LOGICAL read_sowindsp_from_file
       INTEGER ingv_lon_shift
       LOGICAL mld_flag
       double precision DvMLD, sigma, DvBackground

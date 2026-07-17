@@ -43,7 +43,7 @@
           deflate_level_rst, isCheckLOG, read_W_from_file, internal_sponging, ingv_files_direct_reading, ingv_lon_shift, &
           mld_flag, DvMLD, sigma, DvBackground
 
-      NAMELIST/Wind_speed_IO/ optics_windspeed_on_file, forcings_windspeed_on_fileT
+      NAMELIST/Wind_speed_IO/ optics_windspeed_on_file, forcings_windspeed_on_fileT, read_sowindsp_from_file
       NAMELIST/Domain_Characteristic/  jperio
       NAMELIST/Number_Fluxes/ jpflx, jpwind, jpemp,jpkef, jpice, jpqsr
 #ifdef ExecDA
@@ -258,6 +258,7 @@
       WRITE(numout,*) ' '
       WRITE(numout,*) ' forcings_windspeed_on_fileT = ', forcings_windspeed_on_fileT
       WRITE(numout,*) ' optics_windspeed_on_file  = ', optics_windspeed_on_file
+      WRITE(numout,*) ' read_sowindsp_from_file  = ', read_sowindsp_from_file
       WRITE(numout,*) ' '
       ENDIF
 

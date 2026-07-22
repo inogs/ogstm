@@ -31,7 +31,7 @@
 !           vsedO5c       = 30.0,
             photop        = .false.
             atlantic_bfm  = .true.
-!           bottom_flux   = 1.
+            bottom_flux   = 1.
             Euphotic_lev  = 200.
           is_free_surface = .false.
 /

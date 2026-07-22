@@ -137,7 +137,7 @@
 
                bottom = mbathy(jj,ji) + 1
 !check!
-               zwork(bottom,:,1) = 0.0d0!bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
+               zwork(bottom,:,1) = bottom_flux * zwork(bottom,:,1) ! bottom_flux = 0 -> no flux in the sea floor
 
 ! 1.3 tracer flux divergence at t-point added to the general trend
 

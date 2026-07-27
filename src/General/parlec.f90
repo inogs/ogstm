@@ -191,13 +191,13 @@
 #endif
           WRITE(numout,*) ' photoperiod scaling photop                        =', photop
           WRITE(numout,*) ' activation of bfm in atlantic buffer              =', atlantic_bfm
-#ifdef key_trc_bfm
+#if defined key_trc_bfm || defined key_trc_fabm
           WRITE(numout,*) ' bottom flux [0,1], 0 -> no flux, 1 -> total flux  =', bottom_flux
 #endif
           WRITE(numout,*) ' Euphotic level                                    = ', Euphotic_lev
       ENDIF
 
-#ifdef key_trc_bfm
+#if defined key_trc_bfm || defined key_trc_fabm
       IF (vsedR6 .LT. 0.) THEN
           write (*,*) 'vsedR6 must be greated than 0 instead it is:', vsedR6/86400
           STOP

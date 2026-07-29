@@ -422,7 +422,7 @@ end type
       LOGICAL atlantic_bfm ! atlantic buffer biology activation
 
       double precision bottom_flux                 ! (NAMELIST)
-#    if defined key_trc_bfm
+#    if defined key_trc_bfm || defined key_trc_fabm
       double precision vsedR6                      ! sedimentation speed of small detritus (NAMELIST)
       double precision vsedR8                      ! sedimentation speed of large detritus (NAMELIST)
       double precision vsedO5c                     ! sedimentation speed of calcite(NAMELIST)

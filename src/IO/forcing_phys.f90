@@ -125,7 +125,8 @@
       USE calendar
       USE myalloc
       USE TIME_MANAGER
-
+      USE gsw_mod_toolbox, only : gsw_pt_from_t, gsw_p_from_z
+      
       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) :: datestring
@@ -142,6 +143,7 @@
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
       double precision kz_threshold, Kz_background, Kmin
+      double precision z, lat, pfz
       integer  Ind_50m, Ind_150m, Ind_bottom
 
       if (variable_rdt) then
@@ -154,14 +156,14 @@
           rdt = real(jk , 8)
       endif
       fileformat='("FORCINGS/",A4,"/",A2,"/",A1,A17,".nc")'
-      nomefile='FORCINGS/yyyy/mm/U19951206-12:00:00.nc'
+      nomefile='FORCINGS/1995/12/U19951206-12:00:00.nc'
       yyyy=datestring(1:4)
       mm=datestring(5:6)
 
 ! Starting I/O
 ! U  *********************************************************
       write(nomefile,fileformat) yyyy,mm,"U",datestring
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
+      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile
       call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask
 
@@ -190,6 +192,20 @@
 
       call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
       sdta(:,:,:,2) = buf*tmask
+
+      do ji = 1, jpi
+      do jj = 1, jpj
+      do jk = 1, jpk
+            if (tmask(jk,jj,ji) .ne. 0.) then
+                  z = -gdept(jk,jj,ji) ! get depth for a Tracer point
+                  lat = gphit(jj,ji) ! get latitude for a Tracer point
+                  pfz = gsw_p_from_z(z, lat) ! compute pressure at depth z and latitude lat
+                  tdta(jk,jj,ji,2) = gsw_pt_from_t(sdta(jk,jj,ji,2), tdta(jk,jj,ji,2), 0.0d0, pfz)
+            endif
+      end do
+      end do
+      end do
+
 
       if (mld_flag) then
           call readnc_slice_float_2d(nomefile,'somxl010',buf2,ingv_lon_shift)
@@ -279,24 +295,22 @@
 
 
 
+      write(nomefile,fileformat) yyyy,mm,"T",datestring
+      call existvar(nomefile,'sowindsp',B)
+      if (B) then
+           call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
+      else
 
-      if (ingv_files_direct_reading) then
-           write(nomefile,fileformat) yyyy,mm,"U",datestring
            call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
-           taux = buf2*tmask(1,:,:)*umask(1,:,:)
+           taux = buf2*tmask(1,:,:)
 
-           write(nomefile,fileformat) yyyy,mm,"V",datestring
            call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
-           tauy = buf2*tmask(1,:,:)*vmask(1,:,:)
+           tauy = buf2*tmask(1,:,:)
 
            call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
-      else
-          nomefile = 'FORCINGS/T'//datestring//'.nc'
-          call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
       endif
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
-      write(nomefile,fileformat) yyyy,mm,"T",datestring
       call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
       flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.

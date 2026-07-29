@@ -155,7 +155,7 @@
 #endif
       photop      = .FALSE.
       atlantic_bfm= .FALSE.
-
+      bottom_flux = 0.
       Euphotic_lev = 200.
       IS_FREE_SURFACE = .true.
 
@@ -180,7 +180,7 @@
           WRITE(numout,*) ' lsnu  calls or not snutel                         = ', lsnu
           WRITE(numout,*) ' lsbc  calls or not trcsbc                         = ', lsbc
           WRITE(numout,*) ' activation atmospheric deposition                 = ', latmosph
-          WRITE(numout,*) ' activation of bfm                                 = ', lbgc
+          WRITE(numout,*) ' activation of bgc                                 = ', lbgc
           WRITE(numout,*) ' background diffusivity for passive tr             = ', ahtrb0
           WRITE(numout,*) ' ratio betweeen passive and active tr diffusion coeff= ', trcrat
           WRITE(numout,*) ' horizontal eddy diffus. for passive tr            = ', ahtrc0
@@ -190,10 +190,8 @@
           WRITE(numout,*) ' calcite sedimentation speed    vsedO5c            =', vsedO5c/86400
 #endif
           WRITE(numout,*) ' photoperiod scaling photop                        =', photop
-          WRITE(numout,*) ' activation of bfm in atlantic buffer              =', atlantic_bfm
-#ifdef key_trc_bfm
+          WRITE(numout,*) ' activation of bgc in atlantic buffer              =', atlantic_bfm
           WRITE(numout,*) ' bottom flux [0,1], 0 -> no flux, 1 -> total flux  =', bottom_flux
-#endif
           WRITE(numout,*) ' Euphotic level                                    = ', Euphotic_lev
       ENDIF
 

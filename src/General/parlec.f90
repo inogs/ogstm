@@ -194,6 +194,7 @@
           WRITE(numout,*) ' bottom flux [0,1], 0 -> no flux, 1 -> total flux  =', bottom_flux
 #if defined key_trc_bfm 
           WRITE(numout,*) ' Euphotic level                                    = ', Euphotic_lev
+#endif
       ENDIF
 
 #if defined key_trc_bfm 

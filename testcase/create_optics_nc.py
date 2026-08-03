@@ -88,8 +88,11 @@ def create_optics_nc(test):
         ncvar = ncOUT.createVariable('lat'      ,'f',('lat',)                            ); ncvar[:] = Lat[:,0];
         ncvar = ncOUT.createVariable('sp'      ,'f',('lat','lon')                         ); ncvar[:] = 100000;
         ncvar = ncOUT.createVariable('msl'     ,'f',('lat','lon')                         ); ncvar[:] = 100000;
+        
         ncvar = ncOUT.createVariable('u10'     ,'f',('lat','lon')          ); ncvar[:] = 5.0/np.sqrt(2.);
         ncvar = ncOUT.createVariable('v10'     ,'f',('lat','lon')          ); ncvar[:] = 5.0/np.sqrt(2.);
+        ncvar = ncOUT.createVariable('wsp10','f',('lat','lon')); ncvar[:] = np.sqrt( (5.0/np.sqrt(2.))**2 + (5.0/np.sqrt(2.))**2 );
+        
 #       ncvar = ncOUT.createVariable('u10'     ,'f',('lat','lon')          ); ncvar[:] = D2W/np.sqrt(2.);
 #       ncvar = ncOUT.createVariable('v10'     ,'f',('lat','lon')          ); ncvar[:] = D2W/np.sqrt(2.);
         ncvar = ncOUT.createVariable('tclw'     ,'f',('lat','lon')          ); ncvar[:] = 0.001;

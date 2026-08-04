@@ -544,7 +544,7 @@ contains
              ! 2nd loop: provided variables on neighbors
                 do j = 1, self%m_size
 
-                    idx_i = self%m_neighbors(1, i)
+                    idx_i = self%m_neighbors(1, j)
                     idx_j = self%m_neighbors(2, j)
                     idx_k = self%m_neighbors(3, j)
 

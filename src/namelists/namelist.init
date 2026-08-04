@@ -57,6 +57,11 @@
    DvBackground = 1.e-07
 /
 
+&Wind_speed_IO
+    forcings_windspeed_on_fileT = .true.
+    read_sowindsp_from_file = .false.
+    optics_windspeed_on_file = .true.
+/
 
 
 &Domain_Characteristic

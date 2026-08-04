@@ -38,15 +38,15 @@ def argument():
 
 args = argument()
 
-from commons.time_interval import TimeInterval
-from commons.Timelist import TimeList
-from instruments.matchup_manager import Matchup_Manager
-import basins.OGS as OGS
-from instruments.var_conversions import FLOATVARS
-from commons.utils import addsep
+from bitsea.commons.time_interval import TimeInterval
+from bitsea.commons.Timelist import TimeList
+from bitsea.instruments.matchup_manager import Matchup_Manager
+import bitsea.basins.OGS as OGS
+from bitsea.instruments.var_conversions import FLOATVARS
+from bitsea.commons.utils import addsep
 from datetime import timedelta
 from datetime import datetime
-from commons import timerequestors
+from bitsea.commons import timerequestors
 import numpy as np
 import os,sys
 
@@ -56,9 +56,9 @@ if profilesource is None:
     sys.exit(1)
 assert profilesource in ["superfloat", "ppcon"]
 if profilesource=="superfloat":
-    from instruments import superfloat as bio_float
+    from bitsea.instruments import superfloat as bio_float
 if profilesource=="ppcon":
-    from instruments import float_ppcon as bio_float
+    from bitsea.instruments import float_ppcon as bio_float
 
 
 meantime=datetime.strptime(args.time,'%Y%m%d')

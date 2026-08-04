@@ -101,7 +101,6 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('soshfldo'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2Q;
         ncvar = ncOUT.createVariable('sowindsp'     ,'f',('time_counter','y','x')         ); ncvar[:] = D2W;
         ncvar = ncOUT.createVariable('sossheig'     ,'f',('time_counter','y','x')         ); ncvar[:] = SSH;
-         
         ncOUT.close()
 
         # Create U file
@@ -118,8 +117,8 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')                        ); ncvar[:] = Lat;
         ncvar = ncOUT.createVariable('depthu'       ,'f',('depthu',)                      ); ncvar[:] = gdept;
         ncvar = ncOUT.createVariable('time_counter' ,'d',('time_counter',)                ); ncvar    = 1.;
-        ncvar = ncOUT.createVariable('vozocrtx'     ,'f',('time_counter','depthu','y','x')); ncvar[:] = D3U;  
-        ncvar = ncOUT.createVariable('sozotaux'     ,'f',('time_counter','y','x')); ncvar[:] = D2;  
+        ncvar = ncOUT.createVariable('vozocrtx'     ,'f',('time_counter','depthu','y','x')); ncvar[:] = D3U;
+        ncvar = ncOUT.createVariable('sozotaux'     ,'f',('time_counter','y','x')); ncvar[:] = D2;
 
         ncOUT.close()
 
@@ -137,8 +136,8 @@ def create_forcings_nc(test):
         ncvar = ncOUT.createVariable('nav_lat'      ,'f',('y','x')                        ); ncvar[:] = Lat;
         ncvar = ncOUT.createVariable('depthv'       ,'f',('depthv',)                      ); ncvar[:] = gdept;
         ncvar = ncOUT.createVariable('time_counter'  ,'d',('time_counter',)               ); ncvar    = 1.;
-        ncvar = ncOUT.createVariable('vomecrty'     ,'f',('time_counter','depthv','y','x')); ncvar[:] = D3V; 
-        ncvar = ncOUT.createVariable('sometauy'     ,'f',('time_counter','y','x')); ncvar[:] = D2;  
+        ncvar = ncOUT.createVariable('vomecrty'     ,'f',('time_counter','depthv','y','x')); ncvar[:] = D3V;
+        ncvar = ncOUT.createVariable('sometauy'     ,'f',('time_counter','y','x')); ncvar[:] = D2;
         ncOUT.close()
 
         # Create W file

@@ -1,5 +1,8 @@
 import numpy as np
-#import pylab as pl
+try:
+    import pylab as pl
+except ImportError:
+    pl = None
 
 def riparto(lenglo,nprocs):
     ''' Uniform decomposition of a 1d array of size lenglo in nprocs subdomains
@@ -212,51 +215,55 @@ def neighbors(M,nproc,nproci,nprocj):
     
 
 
-#def plot_decomposition(tmask, nproci, nprocj):
-#    '''
-#    Plots the domain decomposition scheme
-#
-#    Arguments :
-#    * tmask  * a 2d logical array, the surface tmask
-#    * nproci * integer, number of longitudinal subdivisions
-#    * nprocj * integer, number of latitudinal subdivisions
-#
-#    Returns:
-#    fig, ax : matplotlib handles
-#    '''
-#    jpjglo, jpiglo = tmask.shape
-#    M,C = get_wp_matrix(tmask, nprocj, nproci)
-#    J,I = M.nonzero()
-#    nproc = len(I)
-#
-#    JPI = riparto(jpiglo,nproci)
-#    Start_I = get_startpoints(JPI)
-#    End_I = Start_I + JPI -1
-#     
-#    JPJ = riparto(jpjglo,nprocj)
-#    Start_J = get_startpoints(JPJ)
-#    End_J = Start_J + JPJ -1
-#    
-#    fig,ax = pl.subplots()
-#    ax.imshow(tmask)
-#    for i in range(1,nproci):
-#        x=Start_I[i]
-#        ax.plot([x,x],[0,jpjglo],'w')
-#    
-#    for j in range(1,nprocj):
-#        y=Start_J[j]
-#        ax.plot([0,jpiglo],[y,y],'w')
-#    
-#    for rank in range(nproc):
-#        j = J[rank]
-#        i = I[rank]
-#        x = Start_I[i] + JPI[0]/2
-#        y = Start_J[j] + JPJ[0]/2
-#        ax.text(x,y,str(rank), color='w', ha='center', va='center', fontsize=8)
-#    
-#    
-#    ax.invert_yaxis()
-#    return fig, ax
+def plot_decomposition(tmask, nproci, nprocj):
+    '''
+    Plots the domain decomposition scheme
+
+    Arguments :
+    * tmask  * a 2d logical array, the surface tmask
+    * nproci * integer, number of longitudinal subdivisions
+    * nprocj * integer, number of latitudinal subdivisions
+
+    Returns:
+    fig, ax : matplotlib handles (None, None if matplotlib is not available)
+    '''
+    if pl is None:
+        print("matplotlib is not available: skipping plot_decomposition().")
+        return None, None
+
+    jpjglo, jpiglo = tmask.shape
+    M,C = get_wp_matrix(tmask, nprocj, nproci)
+    J,I = M.nonzero()
+    nproc = len(I)
+
+    JPI = riparto(jpiglo,nproci)
+    Start_I = get_startpoints(JPI)
+    End_I = Start_I + JPI -1
+     
+    JPJ = riparto(jpjglo,nprocj)
+    Start_J = get_startpoints(JPJ)
+    End_J = Start_J + JPJ -1
+    
+    fig,ax = pl.subplots()
+    ax.imshow(tmask)
+    for i in range(1,nproci):
+        x=Start_I[i]
+        ax.plot([x,x],[0,jpjglo],'w')
+    
+    for j in range(1,nprocj):
+        y=Start_J[j]
+        ax.plot([0,jpiglo],[y,y],'w')
+    
+    for rank in range(nproc):
+        j = J[rank]
+        i = I[rank]
+        x = Start_I[i] + JPI[0]/2
+        y = Start_J[j] + JPJ[0]/2
+        ax.text(x,y,str(rank), color='w', ha='center', va='center', fontsize=8)
+    
+    
+    ax.invert_yaxis()
+    return fig, ax
 
 
 

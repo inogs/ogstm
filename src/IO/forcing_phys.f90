@@ -125,14 +125,14 @@
       USE calendar
       USE myalloc
       USE TIME_MANAGER
-
+      USE gsw_mod_toolbox, only : gsw_pt_from_t, gsw_p_from_z
+      
       IMPLICIT NONE
 
       character(LEN=17), INTENT(IN) :: datestring
-      LOGICAL :: B
       integer  :: jk,jj,ji, jstart
       ! LOCAL
-      character(LEN=38) nomefile
+      character(LEN=38) fileU, fileV, fileW, fileT
       character(LEN=36) DeltaT_name
       character(LEN=4) yyyy
       character(LEN=2) mm
@@ -142,6 +142,7 @@
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
       double precision correction_e3t, s0,s1,s2
       double precision kz_threshold, Kz_background, Kmin
+      double precision z, lat, pfz
       integer  Ind_50m, Ind_150m, Ind_bottom
 
       if (variable_rdt) then
@@ -154,45 +155,58 @@
           rdt = real(jk , 8)
       endif
       fileformat='("FORCINGS/",A4,"/",A2,"/",A1,A17,".nc")'
-      nomefile='FORCINGS/yyyy/mm/U19951206-12:00:00.nc'
+      fileU='FORCINGS/1995/12/U19951206-12:00:00.nc'
       yyyy=datestring(1:4)
       mm=datestring(5:6)
+      write(fileU,fileformat) yyyy,mm,"U",datestring
+      write(fileV,fileformat) yyyy,mm,"V",datestring
+      write(fileW,fileformat) yyyy,mm,"W",datestring
+      write(fileT,fileformat) yyyy,mm,"T",datestring
 
 ! Starting I/O
 ! U  *********************************************************
-      write(nomefile,fileformat) yyyy,mm,"U",datestring
-      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", nomefile(1:30)
-      call readnc_slice_float(nomefile,'vozocrtx',buf,ingv_lon_shift)
+      
+      if(lwp) write(*,'(A,I4,A,A)') "LOAD_PHYS --> I am ", myrank, " starting reading forcing fields from ", fileU
+      call readnc_slice_float(fileU,'vozocrtx',buf,ingv_lon_shift)
       udta(:,:,:,2) = buf * umask
 
-
 ! V *********************************************************
-      write(nomefile,fileformat) yyyy,mm,"V",datestring
-      call readnc_slice_float(nomefile,'vomecrty',buf,ingv_lon_shift)
+      
+      call readnc_slice_float(fileV,'vomecrty',buf,ingv_lon_shift)
       vdta(:,:,:,2) = buf * vmask
       
-
-
 ! W *********************************************************
 
-
-      write(nomefile,fileformat) yyyy,mm,"W",datestring
       if (.not.mld_flag) then
-      call readnc_slice_float(nomefile,'votkeavt',buf,ingv_lon_shift)
+      call readnc_slice_float(fileW,'votkeavt',buf,ingv_lon_shift)
       avtdta(:,:,:,2) = buf*tmask
       endif
 
 
 ! T *********************************************************
-      write(nomefile,fileformat) yyyy,mm,"T",datestring
-      call readnc_slice_float(nomefile,'votemper',buf,ingv_lon_shift)
+
+      call readnc_slice_float(fileT,'votemper',buf,ingv_lon_shift)
       tdta(:,:,:,2) = buf*tmask
 
-      call readnc_slice_float(nomefile,'vosaline',buf,ingv_lon_shift)
+      call readnc_slice_float(fileT,'vosaline',buf,ingv_lon_shift)
       sdta(:,:,:,2) = buf*tmask
 
+      do ji = 1, jpi
+      do jj = 1, jpj
+      do jk = 1, jpk
+            if (tmask(jk,jj,ji) .ne. 0.) then
+                  z = -gdept(jk,jj,ji) ! get depth for a Tracer point
+                  lat = gphit(jj,ji) ! get latitude for a Tracer point
+                  pfz = gsw_p_from_z(z, lat) ! compute pressure at depth z and latitude lat
+                  tdta(jk,jj,ji,2) = gsw_pt_from_t(sdta(jk,jj,ji,2), tdta(jk,jj,ji,2), 0.0d0, pfz)
+            endif
+      end do
+      end do
+      end do
+
+
       if (mld_flag) then
-          call readnc_slice_float_2d(nomefile,'somxl010',buf2,ingv_lon_shift)
+          call readnc_slice_float_2d(fileT,'somxl010',buf2,ingv_lon_shift)
           avtdta(:,:,:,2)=0.0
           do ji=1,jpi
           do jj=1,jpj
@@ -207,7 +221,7 @@
 
 
     if (IS_FREE_SURFACE) then
-         call readnc_slice_float_2d(nomefile,'sossheig',buf2,ingv_lon_shift)
+         call readnc_slice_float_2d(fileT,'sossheig',buf2,ingv_lon_shift)
          ssh = buf2*tmask(1,:,:)
 
           e3tdta(:,:,:,2) = e3t_0
@@ -279,33 +293,35 @@
 
 
 
+      
+      if (read_sowindsp_from_file) then
+          call readnc_slice_float_2d(fileT,'sowindsp',buf2,ingv_lon_shift)
 
-      if (ingv_files_direct_reading) then
-           write(nomefile,fileformat) yyyy,mm,"U",datestring
-           call readnc_slice_float_2d(nomefile,'sozotaux',buf2,ingv_lon_shift)
-           taux = buf2*tmask(1,:,:)*umask(1,:,:)
-
-           write(nomefile,fileformat) yyyy,mm,"V",datestring
-           call readnc_slice_float_2d(nomefile,'sometauy',buf2,ingv_lon_shift)
-           tauy = buf2*tmask(1,:,:)*vmask(1,:,:)
-
-           call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
       else
-          nomefile = 'FORCINGS/T'//datestring//'.nc'
-          call readnc_slice_float_2d(nomefile,'sowindsp',buf2,ingv_lon_shift)
+            if (forcings_windspeed_on_fileT) then
+                  call readnc_slice_float_2d(fileT,'sozotaux',buf2,ingv_lon_shift)
+                  taux=buf2*tmask(1,:,:)
+                  call readnc_slice_float_2d(fileT,'sometauy',buf2,ingv_lon_shift)
+                  tauy = buf2*tmask(1,:,:)
+            else
+                  call readnc_slice_float_2d(fileU,'sozotaux',buf2,ingv_lon_shift)
+                  taux = buf2*umask(1,:,:)
+                  call readnc_slice_float_2d(fileV,'sometauy',buf2,ingv_lon_shift)
+                  tauy = buf2*vmask(1,:,:)
+            endif
+            call PURE_WIND_SPEED(taux,tauy,jpi,jpj, buf2)
       endif
+
       flxdta(:,:,jpwind,2) = buf2*tmask(1,:,:) * spongeT
 
-      write(nomefile,fileformat) yyyy,mm,"T",datestring
-      call readnc_slice_float_2d(nomefile,'soshfldo',buf2,ingv_lon_shift)
+      call readnc_slice_float_2d(fileT,'soshfldo',buf2,ingv_lon_shift)
       flxdta(:,:,jpqsr ,2) = buf2*tmask(1,:,:) * spongeT
       flxdta(:,:,jpice ,2) = 0.
       flxdta(:,:,jpemp ,2) = 0.
 
 
       if (read_W_from_file) then
-          write(nomefile,fileformat) yyyy,mm,"W",datestring
-          call readnc_slice_float(nomefile,'vovecrtz',buf,ingv_lon_shift)
+          call readnc_slice_float(fileW,'vovecrtz',buf,ingv_lon_shift)
           wdta(:,:,:,2) = buf * tmask
       else
           CALL COMPUTE_W()               ! vertical velocity

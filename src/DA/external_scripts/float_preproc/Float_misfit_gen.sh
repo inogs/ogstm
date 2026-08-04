@@ -25,7 +25,7 @@ echo "Float_misfit_gen.sh start "
 source ${OPA_SCRDIR}/opa_profile.inc
 #opa_prex "module unload numpy"
 opa_prex "source $OPA_VENV_1/bin/activate"
-export PYTHONPATH=${PYTHONPATH}:$OPA_BITSEA
+export PYTHONPATH=$OPA_BITSEA:${PYTHONPATH}
 
 while [ True ] ; do
   while [ True ] ; do

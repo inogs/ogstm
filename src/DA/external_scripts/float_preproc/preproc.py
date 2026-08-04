@@ -1,4 +1,6 @@
 import argparse
+from bitsea.utilities.argparse_types import existing_dir_path, existing_file_path, generic_path
+from bitsea.utilities.argparse_types import date_from_str
 
 def argument():
     parser = argparse.ArgumentParser(description='''
@@ -8,18 +10,18 @@ def argument():
                                      )
 
     parser.add_argument('--time', '-t',
-                        type=str,
+                        type=date_from_str,
                         required=True,
                         help='Input time in yyyymmdd format')
     parser.add_argument('--inputdir', '-i',
-                        type=str,
+                        type=existing_dir_path,
                         required=True,
                         help='input dir validation')
     parser.add_argument('--maskfile', '-m',
-                        type=str,
+                        type=existing_file_path,
                         required=True)
     parser.add_argument('--basedir', '-b',
-                        type=str,
+                        type=existing_dir_path,
                         default=None,
                         required=True,
                         help='''output directory, where aveScan.py will run.
@@ -35,12 +37,12 @@ def argument():
                         required=True,
                         help=''' Depth of assimilation''')
     parser.add_argument('--misfit',
-                        type=str,
+                        type=generic_path,
                         default=None,
                         required=True,
                         help=''' output misfit file ''')
     parser.add_argument('--outdir','-o ',
-                        type=str,
+                        type=existing_dir_path,
                         default=None,
                         required=True,
                         help=''' output directory of check files''')
@@ -49,19 +51,17 @@ def argument():
 
 args = argument()
 
-from instruments.matchup_manager import Matchup_Manager
-from commons.mask import Mask
-import basins.OGS as OGS
-from instruments.var_conversions import FLOATVARS
-from commons.utils import addsep
+from bitsea.instruments.matchup_manager import Matchup_Manager
+from bitsea.commons.mask import Mask
+import bitsea.basins.OGS as OGS
+from bitsea.instruments.var_conversions import FLOATVARS
 from datetime import datetime
-from commons.layer import Layer
-from commons.Timelist import TimeList
-from commons import timerequestors
+from bitsea.commons.layer import Layer
+from bitsea.commons.Timelist import TimeList
+from bitsea.commons import timerequestors
 import os,sys
 import numpy as np
-import scipy.io.netcdf as NC
-from instruments import check
+from bitsea.instruments import check
 
 profilesource=os.getenv("PROFILES_SOURCE")
 if profilesource is None:
@@ -69,20 +69,20 @@ if profilesource is None:
     sys.exit(1)
 assert profilesource in ["superfloat", "ppcon"]
 if profilesource=="superfloat":
-    from instruments import superfloat as bio_float
+    from bitsea.instruments import superfloat as bio_float
 if profilesource=="ppcon":
     if args.variable == 'P_l':
-        from instruments import superfloat as bio_float ## ppcon chl not yet tested for DA
+        from bitsea.instruments import superfloat as bio_float ## ppcon chl not yet tested for DA
     else:
-        from instruments import float_ppcon as bio_float
+        from bitsea.instruments import float_ppcon as bio_float
 
 
-datestr   = args.time
-BASEDIR  = addsep(args.basedir)
-INPUTDIR = addsep(args.inputdir)
-OUTDIR   = addsep(args.outdir)
+datestr   = args.time.strftime("%Y%m%d")
+BASEDIR  = args.basedir
+INPUTDIR = args.inputdir
+OUTDIR   = args.outdir
 varmod   = args.variable
-TheMask = Mask(args.maskfile)
+TheMask = Mask.from_file(args.maskfile)
 deplim  = int(args.deplim)
 
 nav_lev = TheMask.zlevels
@@ -93,9 +93,9 @@ errbase_ppcon = [0.44, 0.69, 0.61] #0-200 200-400 and 400-600
 erro2obase = 5.  # (Approximation based on QuID V7c evaluation)
 Check_Obj = check.check(OUTDIR,verboselevel=1,threshold_nitrate=2)
 
-year  = int(datestr[0:4])
-month = int(datestr[4:6])
-day   = int(datestr[6:8])
+year  = args.time.year
+month = args.time.month
+day   = args.time.day
 
 req = timerequestors.Daily_req(year, month, day)
 TI = req.time_interval
@@ -209,13 +209,12 @@ for wmo in WMOlist:
                 testo += "\t%10.5f\t%i\n" % (errorfloat[month-1], Profile[ilev, 5])
             MISFIT_LINES.append(testo)
 
-f=open(args.misfit,'w')
-topstr = "%i\n" % len(MISFIT_LINES)
-f.write(topstr)
-f.writelines(MISFIT_LINES)
-f.close()
+with open(args.misfit,'w') as f:
+    topstr = "%i\n" % len(MISFIT_LINES)
+    f.write(topstr)
+    f.writelines(MISFIT_LINES)
 
-checkfile_txt = OUTDIR + datestr + varmod + '_check.txt'
-fid=open(checkfile_txt,'wt')
-fid.writelines(LINES)
-fid.close()
+checkfile_txt = OUTDIR / (datestr + varmod + '_check.txt')
+with open(checkfile_txt,'wt') as fid:
+    fid.writelines(LINES)
+

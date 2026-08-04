@@ -106,20 +106,21 @@
 
       CHARACTER(LEN=17), INTENT(IN) :: datestring
 
-      character(LEN=39) nomefile,fileformat
+      character(LEN=39) nomefile, fileformat
       character(LEN=4) yyyy
       character(LEN=2) mm
       double precision ::  junk(jpj,jpi)
 
-      nomefile='OPTICS/yyyy/mm/atm.yyyy0107-00:00:00.nc'
+     
+      nomefile='OPTICS/2019/12/atm.20191207-03:00:00.nc'
       fileformat='("OPTICS/",A4,"/",A2,"/atm.",A17,".nc")'
 
 
 !     Starting I/O
 !    **********************************************************
-      yyyy=datestring(1:4)
-      mm=datestring(5:6)
-      WRITE ( nomefile, fileformat ) yyyy,mm,datestring
+      yyyy = datestring(1:4)
+      mm = datestring(5:6)
+      write(nomefile,fileformat) yyyy,mm,datestring
 
       if(lwp) write(*,'(A,I4,A,A)') "LOAD_KEXT --> I am ", myrank, " starting reading atmospheric fields from ", nomefile
 
@@ -137,19 +138,20 @@
 
        call readnc_slice_float_2d(nomefile,'tcc',buf2,0)
        tccIO(:,:,2) = buf2*tmask(1,:,:)
-
-
-
-       call readnc_slice_float_2d(nomefile,'u10',buf2,0)
-       call readnc_slice_float_2d(nomefile,'v10',junk,0)
-       buf2 = sqrt(buf2*buf2 + junk*junk)
-       w10IO(:,:,2) = buf2*tmask(1,:,:)
+      
+      if (optics_windspeed_on_file) then
+           call readnc_slice_float_2d(nomefile,'wsp10',buf2,0)
+      else
+             call readnc_slice_float_2d(nomefile,'u10',buf2,0)
+             call readnc_slice_float_2d(nomefile,'v10',junk,0)
+             buf2 = sqrt(buf2*buf2 + junk*junk)
+      endif
+      w10IO(:,:,2) = buf2*tmask(1,:,:)
 
        call readnc_slice_float_2d(nomefile,'tclw',buf2,0)
        tclwIO(:,:,2) = buf2*tmask(1,:,:)
        call readnc_slice_float_2d(nomefile,'tco3',buf2,0)
        tco3IO(:,:,2) = buf2*tmask(1,:,:)
-
 
 
       
@@ -246,7 +248,6 @@
         call swap(w10IO)
         call swap(tclwIO)
         call swap(tco3IO)
-
 
       END SUBROUTINE swap_KEXT
 

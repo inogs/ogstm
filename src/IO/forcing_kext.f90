@@ -109,6 +109,7 @@
       character(LEN=39) nomefile, fileformat
       character(LEN=4) yyyy
       character(LEN=2) mm
+      double precision ::  junk(jpj,jpi)
 
      
       nomefile='OPTICS/2019/12/atm.20191207-03:00:00.nc'
@@ -137,9 +138,15 @@
 
        call readnc_slice_float_2d(nomefile,'tcc',buf2,0)
        tccIO(:,:,2) = buf2*tmask(1,:,:)
-
-       call readnc_slice_float_2d(nomefile,'w10',buf2,0)
-       w10IO(:,:,2) = buf2*tmask(1,:,:)
+      
+      if (optics_windspeed_on_file) then
+           call readnc_slice_float_2d(nomefile,'wsp10',buf2,0)
+      else
+             call readnc_slice_float_2d(nomefile,'u10',buf2,0)
+             call readnc_slice_float_2d(nomefile,'v10',junk,0)
+             buf2 = sqrt(buf2*buf2 + junk*junk)
+      endif
+      w10IO(:,:,2) = buf2*tmask(1,:,:)
 
        call readnc_slice_float_2d(nomefile,'tclw',buf2,0)
        tclwIO(:,:,2) = buf2*tmask(1,:,:)

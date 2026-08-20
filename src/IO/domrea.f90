@@ -49,8 +49,8 @@
       character(len=10) bfmmask_file
 
       CHARACTER(LEN=50) filename
-      CHARACTER(LEN=100), DIMENSION(7) :: var_nc
-      CHARACTER(LEN=100) nomevar01
+      CHARACTER(LEN=3), DIMENSION(7) :: var_nc
+      CHARACTER(LEN=5) nomevar01
       LOGICAL B
 
 ! -------------------
@@ -199,35 +199,18 @@
 !       Restoration Mask ****************
 
       ! resto is kept just to provide compliance with bfmv2, but should be removed with bfmv5
-#ifdef key_trc_bfm
       var_nc(1) = 'O2o'
       var_nc(2) = 'N1p'
       var_nc(3) = 'N3n'
       var_nc(4) = 'N5s'
       var_nc(5) = 'O3c'
       var_nc(6) = 'O3h'
-#elif  key_trc_fabm
-!!! For RosenMacartur decomment  the two below lines and comment the other 6 lines
-!      var_nc(1) = 'P1_DW'
-!      var_nc(2) = 'Z1_DWz'
-!!! For BFM decomment the 6 lines below and comment the two above lines
-      var_nc(1) = 'O2_o'
-      var_nc(2) = 'N1_p'
-      var_nc(3) = 'N3_n'
-      var_nc(4) = 'N5_s'
-      var_nc(5) = 'O3_c'
-      var_nc(6) = 'O3h_h'
-#else
-! Default dimensions are included within the file DEFAULT_var_list.h
-      var_nc(1) = 'O2o'
-#endif
-
 
       IF (NWATERPOINTS.GT.0) THEN
       do jn=1,jn_gib
 
          nomevar01='re'//var_nc(jn)
-         call readnc_slice_float('bounmask.nc',trim(nomevar01),resto(:,:,:,jn),0)
+         call readnc_slice_float('bounmask.nc',nomevar01,resto(:,:,:,jn),0)
 
       enddo
       ELSE
@@ -728,8 +711,8 @@
            do kk =1, jpk-1
                if (tmask(kk,jj,2).EQ.1 ) then
                   counter = counter + 1
-                  WESTpoints_send(1,counter) = jj
-                  WESTpoints_send(2,counter) = kk
+                  WEST_points_send(1,counter) = jj
+                  WEST_points_send(2,counter) = kk
               endif
            enddo
         enddo
@@ -740,8 +723,8 @@
            do kk =1, jpk-1
                if (tmask(kk,jj,1).EQ.1 ) then
                    counter = counter + 1
-                   WESTpoints_recv(1,counter) = jj
-                   WESTpoints_recv(2,counter) = kk
+                   WEST_points_recv(1,counter) = jj
+                   WEST_points_recv(2,counter) = kk
                endif
            enddo
          enddo
@@ -753,8 +736,8 @@
            do kk =1, jpk-1
                if (tmask(kk,jj,jpi-1).EQ.1 ) then
                    counter = counter + 1
-                   EASTpoints_send(1,counter) = jj
-                   EASTpoints_send(2,counter) = kk
+                   EAST_points_send(1,counter) = jj
+                   EAST_points_send(2,counter) = kk
                endif
            enddo
          enddo
@@ -764,8 +747,8 @@
            do kk =1, jpk-1
                if (tmask(kk,jj,jpi).EQ.1 ) then
                    counter = counter + 1
-                   EASTpoints_recv(1,counter) = jj
-                   EASTpoints_recv(2,counter) = kk
+                   EAST_points_recv(1,counter) = jj
+                   EAST_points_recv(2,counter) = kk
                endif
            enddo
          enddo
@@ -777,8 +760,8 @@
            do kk =1, jpk-1
                if (tmask(kk,2,ii).EQ.1 ) then
                    counter = counter + 1
-                   SOUTHpoints_send(1,counter) = ii
-                   SOUTHpoints_send(2,counter) = kk
+                   SOUTH_points_send(1,counter) = ii
+                   SOUTH_points_send(2,counter) = kk
                endif
            enddo
          enddo
@@ -788,36 +771,62 @@
            do kk =1, jpk-1
                if (tmask(kk,1,ii).EQ.1 ) then
                    counter = counter + 1
-                   SOUTHpoints_recv(1,counter) = ii
-                   SOUTHpoints_recv(2,counter) = kk
+                   SOUTH_points_recv(1,counter) = ii
+                   SOUTH_points_recv(2,counter) = kk
                endif
            enddo
          enddo
       SOUTH_count_recv = counter
 
+      
+      if north_bnd.eq.0 then
+         counter=0
+            do ii =1, jpi
+               do kk =1, jpk-1
+                  if (tmask(kk,jpj-1,ii).EQ.1 ) then
+                     counter = counter + 1
+                     NORTH_points_send(1,counter) = ii
+                     NORTH_points_send(2,counter) = kk
+                  endif
+            enddo
+            enddo
+         NORTH_count_send = counter
+         counter=0
+            do ii =1, jpi
+               do kk =1, jpk-1
+                  if (tmask(kk,jpj,ii).EQ.1 ) then
+                     counter = counter + 1
+                     NORTH_points_recv(1,counter) = ii
+                     NORTH_points_recv(2,counter) = kk
+                  endif
+            enddo
+            enddo
+         NORTH_count_recv = counter
+      else if north_bnd.eq.1 then
+         counter=0
+            do ii = 2, jpi
+               do kk =1, jpk-1
+                  if (tmask(kk,jpj-2,ii).EQ.1 ) then
+                     counter = counter + 1
+                     NORTHBND_points_send(1,counter) = ii
+                     NORTHBND_points_send(2,counter) = kk
+                  endif
+            enddo
+            enddo
+         NORTHBND_count_send = counter
+         counter=0
+            do ii = 2, jpi
+               do kk =1, jpk-1
+                  if (tmask(kk,jpj,ii).EQ.1 ) then
+                     counter = counter + 1
+                     NORTHBND_points_recv(1,counter) = ii
+                     NORTHBND_points_recv(2,counter) = kk
+                  endif
+            enddo
+            enddo
+         NORTHBND_count_recv = counter
+      endif
 
-      counter=0
-         do ii =1, jpi
-            do kk =1, jpk-1
-               if (tmask(kk,jpj-1,ii).EQ.1 ) then
-                   counter = counter + 1
-                   NORTHpoints_send(1,counter) = ii
-                   NORTHpoints_send(2,counter) = kk
-               endif
-           enddo
-         enddo
-      NORTH_count_send = counter
-      counter=0
-         do ii =1, jpi
-            do kk =1, jpk-1
-               if (tmask(kk,jpj,ii).EQ.1 ) then
-                   counter = counter + 1
-                   NORTHpoints_recv(1,counter) = ii
-                   NORTHpoints_recv(2,counter) = kk
-               endif
-           enddo
-         enddo
-      NORTH_count_recv = counter
 
 
 

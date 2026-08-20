@@ -12,13 +12,6 @@
 
        USE myalloc
        USE modul_param
-       
-#ifdef key_trc_fabm
-       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d, initialize_FABM
-#else
-       USE BIO_mem, ONLY: jptra, jptra_var, jptra_flux, jptra_dia_2d
-#endif
-
        IMPLICIT NONE
 
 ! local declarations
@@ -34,10 +27,10 @@
       endif
 
         narea = myrank+1
-        allocate(domdec(mpi_glcomm_size,13))
+        allocate(domdec(mpi_glcomm_size,14))
 
         open(3333,file='domdec.txt', form='formatted')
-        read(3333,*) ((domdec(ji,jj), jj=1,13),ji=1,mpi_glcomm_size)
+        read(3333,*) ((domdec(ji,jj), jj=1,14),ji=1,mpi_glcomm_size)
         close(3333)
 
         if (domdec(narea,1).ne.myrank) write(*,*) 'ERROR'
@@ -61,6 +54,7 @@
         noea   = domdec(narea,11)
         nono   = domdec(narea,12)
         noso   = domdec(narea,13)
+        north_bnd = domdec(narea,14)
 
       jpreci = 1
       jprecj = 1
@@ -117,27 +111,6 @@
       deallocate(domdec)
 
       CLOSE(numnam)
-
-!     initialize BGC dimensions
-!! Passive tracers parameter
-
-#ifdef key_trc_bfm
-
-! BFM dimensions are included within the file BFM_var_list.h
-
-#elif  key_trc_fabm
-
-      call initialize_FABM()
-      jptra_dia=jptra_var + jptra_flux
-#else
-
-! Default dimensions are included within the file DEFAULT_var_list.h
-      jptra_dia=jptra_var + jptra_flux
-
-#endif
-
-
-
       CONTAINS
 ! **************************************************************
       SUBROUTINE COUNTLINE(FILENAME,LINES)

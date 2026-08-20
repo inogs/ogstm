@@ -1,4 +1,4 @@
-MODULE myalloc
+       MODULE myalloc
 
        USE modul_param
        USE timers
@@ -9,26 +9,9 @@ MODULE myalloc
        USE iso_c_binding
 #endif
 
-#ifdef key_trc_fabm
-      USE fabm
-#endif
-
        IMPLICIT NONE
 
        public
-
-#ifdef key_trc_fabm
-type type_interior_variable_data
-
-   double precision, allocatable :: data(:,:,:)
-
-end type
-type type_horizontal_variable_data
-
-   double precision, allocatable :: data(:,:)
-
-end type
-#endif
 
 !!----------------------------------------------------------------------
 !!            domain parameters
@@ -45,6 +28,7 @@ end type
 !!      nldj, nlej   
 !!      noea, nowe,      : index of the local neighboring processors in
 !!      noso, nono         east, west, south and north directions
+!!      north_bnd         : mark of north boundary (0=not, 1=boundary)
 !!      nimppt,njmppt(): i-, j-indexes for each processor
 !!      nlcit, nlcjt() : dimensions of every subdomain
 !!      nldit, nldjt() : first, last indoor index for each i-domain
@@ -55,7 +39,7 @@ end type
       INTEGER :: mpi_glcomm_size,myrank
       INTEGER nimpp,njmpp
       INTEGER nperio, narea, nlci, nlcj
-      INTEGER nbondi, nbondj, nproc, noea, nowe, noso, nono
+      INTEGER nbondi, nbondj, nproc, noea, nowe, noso, nono, north_bnd
       INTEGER nreci, nrecj, nldi, nlei, nldj, nlej
       INTEGER, allocatable :: ilcit(:,:), ilcjt(:,:)
       INTEGER, allocatable :: mindi(:), mindj(:)
@@ -88,6 +72,8 @@ end type
       INTEGER jpk_opt
       LOGICAL forcing_phys_initialized
       LOGICAL read_W_from_file, internal_sponging, ingv_files_direct_reading
+      LOGICAL optics_windspeed_on_file, forcings_windspeed_on_fileT
+      LOGICAL read_sowindsp_from_file
       INTEGER ingv_lon_shift
       LOGICAL mld_flag
       double precision DvMLD, sigma, DvBackground
@@ -116,7 +102,7 @@ end type
 !!        ff             : coriolis factor
 
 
-      double precision, allocatable, target, dimension(:,:) :: totglamt, glamu, glamv,glamf , glamt
+      double precision, allocatable, dimension(:,:) :: totglamt, glamu, glamv,glamf , glamt
       double precision, allocatable, dimension(:,:) :: totgphit, gphiu, gphiv,gphif , gphit
       double precision, allocatable, dimension(:,:) :: e1t, e1u, e1v, e1f
       double precision, allocatable, dimension(:,:) :: e2t, e2u, e2v, e2f, ff
@@ -139,7 +125,7 @@ end type
       double precision, allocatable :: gdept(:,:,:), gdepw(:)
 #endif
 
-      double precision, allocatable,dimension(:,:,:),target, save :: e3t, e3t_back, e3u, e3v, e3w
+      double precision, allocatable,dimension(:,:,:), save :: e3t, e3t_back, e3u, e3v, e3w
       double precision, allocatable,dimension(:,:,:), save :: e3t_0, e3u_0, e3v_0, e3w_0
       double precision, allocatable :: spongeT(:,:) , spongeVel(:,:,:)
 
@@ -183,8 +169,8 @@ end type
 !!        rhopn          : potential volumic mass (kg m-3)
 !!      bn2n           : brunt-vaisala frequency (s-2)
 !!
-      double precision, allocatable, target, dimension(:,:,:) :: un, vn, wn
-      double precision, allocatable, target, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho
+      double precision, allocatable, dimension(:,:,:) :: un, vn, wn
+      double precision, allocatable, dimension(:,:,:) :: tn, sn,rdn,rhopn,rho
 
 
 
@@ -222,7 +208,7 @@ end type
 !! ============================
 !!  surface wind stress at givem time_step
 !!    taux, tauy()   : wind stress components in (i,j) referential
-      double precision, allocatable, target, dimension(:,:) :: taux, tauy, vatm, freeze
+      double precision, allocatable, dimension(:,:) :: taux, tauy, vatm, freeze
 
 !!----------------------------------------------------------------------
 !!     surface fluxes
@@ -263,32 +249,32 @@ end type
       INTEGER, PARAMETER :: numphys=3   ! the number for physycs tracers NAMELIST_PHYS
 
 #if defined key_mpp
-      INTEGER :: EAST_count_send, WEST_count_send, SOUTH_count_send, NORTH_COUNT_send
-      INTEGER :: EAST_count_recv, WEST_count_recv, SOUTH_count_recv, NORTH_COUNT_recv
+      INTEGER :: EAST_count_send, WEST_count_send, SOUTH_count_send, NORTH_count_send, NORTHBND_count_send
+      INTEGER :: EAST_count_recv, WEST_count_recv, SOUTH_count_recv, NORTH_count_recv, NORTHBND_count_recv
       double precision, allocatable, dimension(:) :: te_send, tw_send, tn_send, ts_send
       double precision, allocatable, dimension(:) :: te_recv, tw_recv, tn_recv, ts_recv
-      INTEGER, allocatable, dimension(:,:) :: EASTpoints_send, WESTpoints_send,NORTHpoints_send, SOUTHpoints_send
-      INTEGER, allocatable, dimension(:,:) :: EASTpoints_recv, WESTpoints_recv,NORTHpoints_recv, SOUTHpoints_recv
+      INTEGER, allocatable, dimension(:,:) :: EAST_points_send, WEST_points_send,NORTH_points_send, SOUTH_points_send, NORTHBND_points_send
+      INTEGER, allocatable, dimension(:,:) :: EAST_points_recv, WEST_points_recv,NORTH_points_recv, SOUTH_points_recv, NORTHBND_points_recv
 #endif
 
 
 
 !! PASSIVE TRACER MODEL
-          CHARACTER(LEN=200), allocatable, dimension(:) :: ctrcnm!(jptra)
-          CHARACTER(LEN=12), allocatable, dimension(:) :: ctrcun!(jptra)
-          CHARACTER(LEN=200), allocatable, dimension(:) :: dianm!(jptra_dia)
-          CHARACTER(LEN=200), allocatable, dimension(:) :: diaun!(jptra_dia)
-          INTEGER          , allocatable, dimension(:) :: diahf!(jptra_dia)
-          INTEGER          , allocatable, dimension(:) :: diaWR!(jptra_dia)
-          CHARACTER(LEN=200), allocatable, dimension(:) :: dianm_2d!(jptra_dia_2d)
-          CHARACTER(LEN=200), allocatable, dimension(:) :: diaun_2d!(jptra_dia_2d)
-          INTEGER          , allocatable, dimension(:) :: diahf_2d!(jptra_dia_2d)
-          INTEGER          , allocatable, dimension(:) :: diaWR_2d!(jptra_dia_2d)
+          CHARACTER(LEN=20) :: ctrcnm(jptra)
+          CHARACTER(LEN=12) :: ctrcun(jptra)
+          CHARACTER(LEN=20) :: dianm(jptra_dia)
+          CHARACTER(LEN=20) :: diaun(jptra_dia)
+          INTEGER           :: diahf(jptra_dia)
+          INTEGER           :: diaWR(jptra_dia)
+          CHARACTER(LEN=20) :: dianm_2d(jptra_dia_2d)
+          CHARACTER(LEN=20) :: diaun_2d(jptra_dia_2d)
+          INTEGER           :: diahf_2d(jptra_dia_2d)
+          INTEGER           :: diaWR_2d(jptra_dia_2d)
           CHARACTER(LEN=17) :: COMMON_DATESTRING
 !physical tracers
       INTEGER :: jptra_phys, jptra_phys_2d
       INTEGER :: freq_ave_phys
-      CHARACTER(LEN=200), allocatable, dimension(:) :: physnm, physun, physnm_2d, physun_2d
+      CHARACTER(LEN=20), allocatable, dimension(:) :: physnm, physun, physnm_2d, physun_2d
       INTEGER, allocatable, dimension(:) :: physWR,physWR_2d
 
 
@@ -297,27 +283,21 @@ end type
 
 
 
-      double precision, allocatable, dimension(:)  ::  ctrmax!(jptra)
+      double precision ::  ctrmax(jptra)
       LOGICAL :: isCheckLOG
       LOGICAL :: save_bkp_group2 ! we can avoid to dump bkp of a lot of variables
       INTEGER :: jptra_high, jptra_dia_high, jptra_dia2d_high
-      INTEGER, allocatable, dimension(:)   :: ctr_hf!(jptra)
+      INTEGER :: ctr_hf(jptra)
 
       INTEGER ave_freq_phys, freq_flux_dump
 
 
 
       INTEGER flagSMS_Dyn                    ! Flag time advance SMS or Dyn
-      double precision, allocatable, target ::  trn(:,:,:,:)
-      double precision, allocatable, target ::  tra(:,:,:,:)
-#if key_trc_bfm
-      double precision, allocatable, target ::  tra_DIA(:,:,:,:)
-      double precision, allocatable, target ::  tra_DIA_2d(:,:,:)
-#endif
-#if key_trc_fabm
-      type(type_interior_variable_data), allocatable :: tra_DIA(:)
-      type(type_horizontal_variable_data), allocatable :: tra_DIA_2d(:)
-#endif
+      double precision, allocatable ::  trn(:,:,:,:)
+      double precision, allocatable ::  tra(:,:,:,:)
+      double precision, allocatable ::  tra_DIA(:,:,:,:)
+      double precision, allocatable ::  tra_DIA_2d(:,:,:)
       double precision, allocatable ::  traIO(:,:,:,:)
       double precision, allocatable ::  traIO_HIGH(:,:,:,:)
       double precision, allocatable ::  snIO(:,:,:) 
@@ -329,19 +309,11 @@ end type
       double precision, allocatable ::  vnIO(:,:,:) 
       double precision, allocatable ::  wnIO(:,:,:) 
       double precision, allocatable ::  avtIO(:,:,:) 
-      double precision, allocatable ::  e3tIO(:,:,:)
-#ifdef key_trc_bfm 
+      double precision, allocatable ::  e3tIO(:,:,:) 
       double precision, allocatable ::  tra_DIA_IO(:,:,:,:)
       double precision, allocatable ::  tra_DIA_IO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_DIA_2d_IO(:,:,:)
       double precision, allocatable ::  tra_DIA_2d_IO_HIGH(:,:,:)
-#endif
-#ifdef key_trc_fabm 
-       type(type_interior_variable_data), allocatable :: tra_DIA_IO(:)
-       type(type_interior_variable_data), allocatable :: tra_DIA_IO_HIGH(:)
-       type(type_horizontal_variable_data), allocatable :: tra_DIA_2d_IO(:)
-       type(type_horizontal_variable_data), allocatable :: tra_DIA_2d_IO_HIGH(:)
-#endif
       double precision, allocatable ::  tra_PHYS_IO(:,:,:,:)
       double precision, allocatable ::  tra_PHYS_IO_HIGH(:,:,:,:)
       double precision, allocatable ::  tra_PHYS_2d_IO(:,:,:)
@@ -413,7 +385,7 @@ end type
 #    endif
 
       LOGICAL IS_FREE_SURFACE
-      LOGICAL lbgc      ! activates bfm model
+      LOGICAL lbfm      ! activates bfm model
       LOGICAL latmosph  ! activates atmospheric deposition
 
 
@@ -421,11 +393,11 @@ end type
       LOGICAL photop       ! Photoperiod formulation if false daylength is 24 h
       LOGICAL atlantic_bfm ! atlantic buffer biology activation
 
-      double precision bottom_flux                 ! (NAMELIST)
 #    if defined key_trc_bfm
       double precision vsedR6                      ! sedimentation speed of small detritus (NAMELIST)
       double precision vsedR8                      ! sedimentation speed of large detritus (NAMELIST)
       double precision vsedO5c                     ! sedimentation speed of calcite(NAMELIST)
+      double precision bottom_flux                 ! (NAMELIST)
 
 !!     optical parameters
       double precision, allocatable :: xpar(:,:,:) !par (photosynthetic available radiation)
@@ -451,15 +423,23 @@ end type
        aux_mem = get_mem(err)
 #endif
 
-       allocate(EASTpoints_send( 2,EAST_count_send )) ; EASTpoints_send  = huge(EASTpoints_send( 1,1))
-       allocate(WESTpoints_send( 2,WEST_count_send )) ; WESTpoints_send  = huge(WESTpoints_send( 1,1))
-       allocate(NORTHpoints_send(2,NORTH_count_send)) ; NORTHpoints_send = huge(NORTHpoints_send(1,1))
-       allocate(SOUTHpoints_send(2,SOUTH_count_send)) ; SOUTHpoints_send = huge(SOUTHpoints_send(1,1))
+       allocate(EAST_points_send( 2,EAST_count_send )) ; EAST_points_send  = huge(EAST_points_send( 1,1))
+       allocate(WEST_points_send( 2,WEST_count_send )) ; WEST_points_send  = huge(WEST_points_send( 1,1))
+       if north_bnd.eq.0 then
+          allocate(NORTH_points_send(2,NORTH_count_send)) ; NORTH_points_send = huge(NORTH_points_send(1,1))
+       else if north_bnd.eq.1 then
+          allocate(NORTHBND_points_send(2,NORTHBND_count_send)) ; NORTHBND_points_send = huge(NORTHBND_points_send(1,1))
+       end if
+       allocate(SOUTH_points_send(2,SOUTH_count_send)) ; SOUTH_points_send = huge(SOUTH_points_send(1,1))
 
-       allocate(EASTpoints_recv( 2,EAST_count_recv )) ; EASTpoints_recv  = huge(EASTpoints_recv( 1,1))
-       allocate(WESTpoints_recv( 2,WEST_count_recv )) ; WESTpoints_recv  = huge(WESTpoints_recv( 1,1))
-       allocate(NORTHpoints_recv(2,NORTH_count_recv)) ; NORTHpoints_recv = huge(NORTHpoints_recv(1,1))
-       allocate(SOUTHpoints_recv(2,SOUTH_count_recv)) ; SOUTHpoints_recv = huge(SOUTHpoints_recv(1,1))
+       allocate(EAST_points_recv( 2,EAST_count_recv )) ; EAST_points_recv  = huge(EAST_points_recv( 1,1))
+       allocate(WEST_points_recv( 2,WEST_count_recv )) ; WEST_points_recv  = huge(WEST_points_recv( 1,1))
+       if north_bnd.eq.0 then
+          allocate(NORTH_points_recv(2,NORTH_count_recv)) ; NORTH_points_recv = huge(NORTH_points_recv(1,1))
+       else if north_bnd.eq.1 then
+          allocate(NORTHBND_points_recv(2,NORTHBND_count_recv)) ; NORTHBND_points_recv = huge(NORTHBND_points_recv(1,1))
+       end if
+       allocate(SOUTH_points_recv(2,SOUTH_count_recv)) ; SOUTH_points_recv = huge(SOUTH_points_recv(1,1))
 
        allocate(te_send(EAST_count_send )) ; te_send = huge(te_send(1))
        allocate(tw_send(WEST_count_send )) ; tw_send = huge(tw_send(1))
@@ -499,8 +479,6 @@ end subroutine myalloc_BFM
 
 subroutine alloc_tot()
 
-
-      INTEGER  ::  jn
       INTEGER  :: err
       double precision  :: aux_mem
 
@@ -707,23 +685,16 @@ subroutine alloc_tot()
        e3wdta  = huge(e3wdta(1,1,1,1))
 
 !!----------------------------------------------------------------------
-       
+
 
        allocate(trn(jpk,jpj,jpi,jptra))                    
        trn    = huge(trn(1,1,1,1))
        allocate(tra(jpk,jpj,jpi,jptra))                    
-       tra    = huge(tra(1,1,1,1))
-
-#ifdef key_trc_bfm
+       tra    = huge(trn(1,1,1,1))
        allocate(tra_DIA(jptra_dia,jpk,jpj,jpi))            
        tra_DIA= huge(tra_DIA(1,1,1,1))
        allocate(tra_DIA_2d(jptra_dia_2d,jpj,jpi))
        tra_DIA_2d= huge(tra_DIA_2d(1,1,1))
-#endif
-
-#ifdef key_trc_fabm
-       ! allocation of tra_DIA and tra_DIA_2d is done moved to BIO_mem
-#endif
        allocate(traIO(jpk,jpj,jpi,jptra))                  
        traIO  = huge(traIO(1,1,1,1)) 
        allocate(snIO(jpk,jpj,jpi))                         
@@ -750,23 +721,18 @@ subroutine alloc_tot()
        buf           = huge(buf(1,1,1))
        allocate(buf2   (jpj,jpi))                          
        buf2          = huge(buf2(1,1))
-       allocate(traIO_HIGH(   jpk,jpj,jpi,jptra_HIGH))     
-       traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
-
-#ifdef key_trc_bfm
        allocate(tra_DIA_IO(jptra_dia,jpk,jpj,jpi))         
        tra_DIA_IO    = huge(tra_DIA_IO(1,1,1,1))
+       allocate(traIO_HIGH(   jpk,jpj,jpi,jptra_HIGH))     
+       traIO_HIGH    = huge(traIO_HIGH(1,1,1,1))
        allocate(tra_DIA_IO_HIGH(jptra_dia_HIGH,jpk,jpj,jpi))
        tra_DIA_IO_HIGH = huge(tra_DIA_IO_HIGH(1,1,1,1))
+
        allocate(tra_DIA_2d_IO(jptra_dia_2d, jpj,jpi))
        tra_DIA_2d_IO    = huge(tra_DIA_2d_IO(1,1,1))
        allocate(tra_DIA_2d_IO_HIGH(jptra_dia2d_HIGH,jpj,jpi))
        tra_DIA_2d_IO_HIGH = huge(tra_DIA_2d_IO_HIGH(1,1,1))
-#endif
-
-#ifdef key_trc_fabm
-            ! allocation of tra_DIA_IO and tra_DIA_IO_HIGH is done moved to BIO_mem
-#endif
+       
        allocate(tra_PHYS_IO(jptra_phys,jpk,jpj,jpi))
        tra_PHYS_IO    = huge(tra_PHYS_IO(1,1,1,1))
        allocate(tra_PHYS_IO_HIGH(jptra_phys,jpk,jpj,jpi))
@@ -843,41 +809,24 @@ subroutine alloc_tot()
 #ifdef Mem_Monitor
       mem_all=get_mem(err) - aux_mem
 #endif
-      END subroutine alloc_tot
-
-      subroutine alloc_ctr()
-          allocate(ctrcnm(jptra))
-          allocate(ctrcun(jptra))
   
-          allocate(ctrmax(jptra))
-          allocate(ctr_hf(jptra))
-
-          allocate(dianm(jptra_dia))
-          allocate(diaun(jptra_dia))
-          allocate(diahf(jptra_dia))
-
-          allocate(diaWR(jptra_dia))
-          allocate(dianm_2d(jptra_dia_2d))
-          allocate(diaun_2d(jptra_dia_2d))
-          allocate(diahf_2d(jptra_dia_2d))
-          allocate(diaWR_2d(jptra_dia_2d))
-      END subroutine alloc_ctr
+        END subroutine alloc_tot
 
 
 
-      subroutine clean_memory()
+        subroutine clean_memory()
 
             ! myalloc (memory.f90)
 
 #ifdef key_mpp
-            deallocate(EASTpoints_send)
-            deallocate(WESTpoints_send)
-            deallocate(NORTHpoints_send)
-            deallocate(SOUTHpoints_send)
-            deallocate(EASTpoints_recv)
-            deallocate(WESTpoints_recv)
-            deallocate(NORTHpoints_recv)
-            deallocate(SOUTHpoints_recv)
+            deallocate(EAST_points_send)
+            deallocate(WEST_points_send)
+            deallocate(NORTH_points_send)
+            deallocate(SOUTH_points_send)
+            deallocate(EAST_points_recv)
+            deallocate(WEST_points_recv)
+            deallocate(NORTH_points_recv)
+            deallocate(SOUTH_points_recv)
             deallocate(te_send)
             deallocate(tw_send)
             deallocate(tn_send)
@@ -1109,7 +1058,7 @@ subroutine alloc_tot()
     ! finds string in statevars
     !
     IMPLICIT NONE
-    character(LEN=200), INTENT(IN) :: string
+    character(LEN=20), INTENT(IN) :: string
     integer jn
 
     find_index_var=0

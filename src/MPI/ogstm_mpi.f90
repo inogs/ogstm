@@ -170,6 +170,11 @@ END SUBROUTINE
           CALL mpprecv(1,ptab(:,:,jpi),packsize,reqr1)
           CALL mpprecv(2,ptab(:,:,  1),packsize,reqr2)
 
+          CALL mppwait(reqs2)
+          CALL mppwait(reqs1)
+          CALL mppwait(reqr1)
+          CALL mppwait(reqr2)
+
       ELSE IF(nbondi.eq.1) THEN ! We are at the east side of the domain
 
           CALL mppsend(1,ptab(:,:,2), packsize, nowe,0, reqs1)
@@ -190,15 +195,15 @@ END SUBROUTINE
 
       IF(nbondj.eq.0.or.nbondj.eq.-1) THEN
          DO jw=1,NORTH_count_send
-              ji = NORTHpoints_send(1,jw)
-              jk = NORTHpoints_send(2,jw)
+              ji = NORTH_points_send(1,jw)
+              jk = NORTH_points_send(2,jw)
               tn_send(jw) = ptab(jk,jpj-1,ji)
          ENDDO
      ENDIF
      IF(nbondj.eq.0.or.nbondj.eq.1) THEN
          DO jw=1,SOUTH_count_send
-             ji = SOUTHpoints_send(1,jw)
-             jk = SOUTHpoints_send(2,jw)
+             ji = SOUTH_points_send(1,jw)
+             jk = SOUTH_points_send(2,jw)
              ts_send(jw) = ptab(jk,2,ji)
          ENDDO
 
@@ -242,8 +247,8 @@ END SUBROUTINE
       IF(nbondj.eq.0.or.nbondj.eq.1) THEN ! All but south boundary, we received from south
 
          DO jw=1,SOUTH_count_recv
-              ji = SOUTHpoints_recv(1,jw)
-              jk = SOUTHpoints_recv(2,jw)
+              ji = SOUTH_points_recv(1,jw)
+              jk = SOUTH_points_recv(2,jw)
               ptab(jk,1,ji)= ts_recv(jw)
          ENDDO
 
@@ -252,8 +257,8 @@ END SUBROUTINE
       IF(nbondj.eq.-1.or.nbondj.eq.0) THEN ! All but north boundary, we received from north
 
         DO jw=1,NORTH_count_recv
-              ji = NORTHpoints_recv(1,jw)
-              jk = NORTHpoints_recv(2,jw)
+              ji = NORTH_points_recv(1,jw)
+              jk = NORTH_points_recv(2,jw)
              ptab(jk,jpj,ji)= tn_recv(jw)
         ENDDO
 

@@ -63,7 +63,7 @@
       LOGICAL :: l1,l2,l3
       INTEGER :: ji,jj,jk,jv,jf,js
       INTEGER :: bottom
-      double precision :: ze3tr,d2s
+      double precision :: ze3tr,d2s,Aij
 ! omp variables
     
 !!----------------------------------------------------------------------
@@ -118,6 +118,7 @@
 
            ji = jarr_sed(2,jv)
            jj = jarr_sed(1,jv)
+           Aij = e1t(jj,ji) * e2t(jj,ji)
 
 
                  DO js = 1, nsed
@@ -189,10 +190,11 @@
                  DO js =1,nsed
                     ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
-                         diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,1)*rdt
+! Diagnostic fluxes are mass per second through the cell horizontal area: zwork (conc*m/day) * d2s * Aij
+                         diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,1)*d2s*Aij*rdt
 ! Type 8: flux leaving the deepest wet cell into the sea floor (post bottom_flux scaling), only at jk = bottom-1
                          IF (jk .EQ. bottom-1) THEN
-                            diaflx(8,jf,sed_idx(js)) = diaflx(8,jf,sed_idx(js)) + zwork(jk+1,js,1)*rdt
+                            diaflx(8,jf,sed_idx(js)) = diaflx(8,jf,sed_idx(js)) + zwork(jk+1,js,1)*d2s*Aij*rdt
                          ENDIF
                     ENDIF
                  END DO

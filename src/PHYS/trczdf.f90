@@ -227,7 +227,9 @@
         END DO
 
 ! calculate flux due to vertical diffusion (on top face of the grid cell jk)
-! the flux is computed as an integral (int_tra) starting from the surface
+! delta_tra(jk) is the mass tendency of cell jk (mass/s) due to vertical diffusion.
+! The flux through the top face of cell jk is the sum of the tendencies of all the cells
+! above it (zero flux at the surface). The sign is positive upward, as for zkz in trcadv
 
       DO jk=1,jpkm1
 
@@ -237,7 +239,7 @@
          IF (jk .EQ. 1) THEN
              int_tra(1)  = 0
          ELSE
-             int_tra(jk) = delta_tra(jk) + int_tra(jk-1)
+             int_tra(jk) = delta_tra(jk-1) + int_tra(jk-1)
          ENDIF
 
       jf = jarr_zdf_flx(jv,jk)
@@ -246,7 +248,7 @@
 
          IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
 
-                  diaflx(7,jf,jn) = int_tra(jk)*rdt
+                  diaflx(7,jf,jn) = diaflx(7,jf,jn) + int_tra(jk)*rdt
 
          ENDIF
 

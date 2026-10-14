@@ -26,8 +26,10 @@ def argument():
                                 default = None,
                                 required = True,
                                 help = ''' Path of maskfile''')
- 
- 
+    parser.add_argument(   '--skipplot', "-s",
+                                action = 'store_true',
+                                help = 'Skip plotting')
+
     return parser.parse_args()
  
 args = argument()
@@ -35,7 +37,7 @@ nproc = args.mpiprocs
 max_proc_i = args.max_proc_i
 max_proc_j = args.max_proc_j
 
-from domdec import *
+from domdec import candidate_decompositions, get_best_decomposition, dump_outfile, plot_decomposition
 from bitsea.commons.mask import Mask
 
 TheMask = Mask.from_file(args.maskfile, e3t_var_name="e3t_0")
@@ -49,7 +51,9 @@ choosen_procs, nproci, nprocj =  get_best_decomposition(USED_PROCS, COMMUNICATIO
 
 dump_outfile(tmask, choosen_procs,nproci, nprocj)
 
-fig, ax = plot_decomposition(tmask, nproci, nprocj)
-fig.set_dpi(150)
-outfile='domdec_' + str(choosen_procs) + ".png"
-fig.savefig(outfile)
+if not args.skipplot:
+    fig, ax = plot_decomposition(tmask, nproci, nprocj)
+    if fig is not None:
+        fig.set_dpi(150)
+        outfile='domdec_' + str(choosen_procs) + ".png"
+        fig.savefig(outfile)

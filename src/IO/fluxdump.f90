@@ -52,7 +52,7 @@
 
 
           s= nf90_def_dim(nc,'n'           , FsizeGlo,  nid)
-          s= nf90_def_dim(nc,'Type'        ,        7,  tid)
+          s= nf90_def_dim(nc,'Type'        ,        8,  tid)
 
           ! ******************   var definition
           s = nf90_def_var(nc,'index' ,   nf90_int, (/nid/),   IndID)
@@ -97,7 +97,7 @@
                if (Fsize .GT. 0) THEN
                    do jf=1,Fsize
                        if (INDflxDUMPZERO(jf) .NE. 0) then
-                           do js=1,7
+                           do js=1,8
                                MflxDumpGlo(js,counterV) = diaflx(js,jf,jn)
                            end do
                            counterV = counterV +1
@@ -106,10 +106,10 @@
                endif
                DO idrank = 1,mpi_glcomm_size-1
                    call MPI_RECV(INDflxBuff    , FsizeMax,    mpi_integer, idrank, 2,mpi_comm_world, status, ierr)
-                   call MPI_RECV(diaflxBuff    , FsizeMax*7,  mpi_real8,   idrank, 3,mpi_comm_world, status, ierr)
+                   call MPI_RECV(diaflxBuff    , FsizeMax*8,  mpi_real8,   idrank, 3,mpi_comm_world, status, ierr)
                    DO jf=1,FsizeMax
                        if (INDflxBuff(jf) .NE. 0) then
-                           DO js=1,7
+                           DO js=1,8
                                MflxDumpGlo(js,counterV) = diaflxBuff(jf,js)
                            END DO
                            counterV = counterV +1
@@ -149,14 +149,14 @@
                IF (Fsize .GT. 0) THEN
                    DO jf=1,Fsize
                        if (INDflxBuff(jf) .NE. 0) then
-                           do js=1,7
+                           do js=1,8
                                diaflxBuff(jf,js) = diaflx(js,jf,jn)
                            end do
                        endif
                    ENDDO
                ENDIF
                call MPI_SEND(INDflxBuff, FsizeMax, mpi_integer, 0, 2, mpi_comm_world, ierr)
-               call MPI_SEND(diaflxBuff, FsizeMax*7, mpi_real8, 0, 3, mpi_comm_world, ierr)
+               call MPI_SEND(diaflxBuff, FsizeMax*8, mpi_real8, 0, 3, mpi_comm_world, ierr)
            END DO ! loop on myrank for each tracers
 
 

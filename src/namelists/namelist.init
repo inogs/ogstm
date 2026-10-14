@@ -26,8 +26,8 @@
             lbfm          = .true.,
             lzdf          = .true.,
             lsnu          = .true.,
-            vsedR6      = 7.0,
-            vsedR8      = 15.0,
+            vsedR6        = 7.0,
+            vsedR8        = 15.0,
             vsedO5c       = 30.0,
             photop        = .false.
             atlantic_bfm  = .true.
@@ -57,6 +57,11 @@
    DvBackground = 1.e-07
 /
 
+&Wind_speed_IO
+    forcings_windspeed_on_fileT = .true.
+    read_sowindsp_from_file = .false.
+    optics_windspeed_on_file = .true.
+/
 
 
 &Domain_Characteristic

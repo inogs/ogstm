@@ -190,6 +190,10 @@
                     ztra(js,1) = -ze3tr * (zwork(jk,js,1) - zwork(jk+1,js,1))
                     IF ((Fsize .GT. 0) .AND. (jf .GT. 0)) THEN
                          diaflx(4,jf,sed_idx(js)) = diaflx(4, jf,sed_idx(js)) + zwork(jk,js,1)*rdt
+! Type 8: flux leaving the deepest wet cell into the sea floor (post bottom_flux scaling), only at jk = bottom-1
+                         IF (jk .EQ. bottom-1) THEN
+                            diaflx(8,jf,sed_idx(js)) = diaflx(8,jf,sed_idx(js)) + zwork(jk+1,js,1)*rdt
+                         ENDIF
                     ENDIF
                  END DO
 

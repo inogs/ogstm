@@ -287,8 +287,8 @@ contains
 
         class(bc), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lon
-        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
-        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+        double precision, dimension(jpj, jpi), intent(inout) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(inout) :: sponge_vel
 
         write(*, *) 'WARN: base class does not implement this method'
 

@@ -544,7 +544,7 @@ contains
              ! 2nd loop: provided variables on neighbors
                 do j = 1, self%m_size
 
-                    idx_i = self%m_neighbors(1, i)
+                    idx_i = self%m_neighbors(1, j)
                     idx_j = self%m_neighbors(2, j)
                     idx_k = self%m_neighbors(3, j)
 
@@ -599,8 +599,8 @@ contains
 
         class(hard_open), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lon
-        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
-        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+        double precision, dimension(jpj, jpi), intent(inout) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(inout) :: sponge_vel
 
         if (lwp) write(*, *) 'WARN: sponge_t and sponge_val are left untouched by hard_open class'
 

@@ -409,8 +409,8 @@ contains
 
         class(rivers), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lon
-        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
-        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+        double precision, dimension(jpj, jpi), intent(inout) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(inout) :: sponge_vel
 
         if (lwp) write(*, *) 'WARN: sponge_t and sponge_val are left untouched by rivers class'
 

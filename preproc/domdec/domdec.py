@@ -1,5 +1,8 @@
 import numpy as np
-import pylab as pl
+try:
+    import pylab as pl
+except ImportError:
+    pl = None
 
 def riparto(lenglo,nprocs):
     ''' Uniform decomposition of a 1d array of size lenglo in nprocs subdomains
@@ -222,8 +225,12 @@ def plot_decomposition(tmask, nproci, nprocj):
     * nprocj * integer, number of latitudinal subdivisions
 
     Returns:
-    fig, ax : matplotlib handles
+    fig, ax : matplotlib handles (None, None if matplotlib is not available)
     '''
+    if pl is None:
+        print("matplotlib is not available: skipping plot_decomposition().")
+        return None, None
+
     jpjglo, jpiglo = tmask.shape
     M,C = get_wp_matrix(tmask, nprocj, nproci)
     J,I = M.nonzero()

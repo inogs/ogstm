@@ -1,6 +1,6 @@
 #! /bin/ksh
 
-MPIRUN="mpirun -np 1"
+MPIRUN=""   # the python scripts are serial: no MPI launcher (it is not needed inside the misfit job step)
 
 usage() {
 echo "Generates misfit files for argo floats "
@@ -23,13 +23,18 @@ echo ""
 echo "Float_misfit_gen.sh start "
 
 source ${OPA_SCRDIR}/opa_profile.inc
-#opa_prex "module unload numpy"
-opa_prex "source $OPA_VENV_1/bin/activate"
-export PYTHONPATH=$OPA_BITSEA:${PYTHONPATH}
+
 
 while [ True ] ; do
   while [ True ] ; do
     echo "waiting for start.txt"
+    # done.txt is written by the chain when the model has finished: exit,
+    # removing it, so that the next run does not exit immediately
+    if [ -f done.txt ] ; then
+      echo "done.txt found: Float_misfit_gen.sh exits"
+      rm -f done.txt
+      exit 0
+    fi
     # wait of start
     if [ -f start.txt  ] ; then
       break
@@ -40,7 +45,7 @@ while [ True ] ; do
 
   DATE=`cat start.txt`
 
-  echo "done"
+  echo "start.txt found: generating the misfit for $DATE"
 
 
 BASEDIR=$DA_DIR/PROFILATORE

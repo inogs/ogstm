@@ -59,7 +59,8 @@
 
 &Wind_speed_IO
     forcings_windspeed_on_fileT = .true.
-    read_sowindsp_from_file = .false.
+    read_sowindsp_from_file = .true.
+    read_sowindps_from_optics = .true.
     optics_windspeed_on_file = .true.
 /
 

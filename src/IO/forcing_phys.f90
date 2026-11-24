@@ -137,6 +137,7 @@
       character(LEN=4) yyyy
       character(LEN=2) mm
       character(LEN=40) fileformat
+      character(LEN=39) nomefile_opt, fileformat_opt
       double precision ssh(jpj,jpi)
       double precision diff_e3t(jpk,jpj,jpi)
       double precision, dimension(jpj,jpi)   :: e1u_x_e2u, e1v_x_e2v, e1t_x_e2t
@@ -144,6 +145,7 @@
       double precision kz_threshold, Kz_background, Kmin
       double precision z, lat, pfz
       integer  Ind_50m, Ind_150m, Ind_bottom
+      double precision ::  junk(jpj,jpi)
 
       if (variable_rdt) then
           DeltaT_name="DELTA_T/DeltaT_"//datestring//".txt"
@@ -295,7 +297,20 @@
 
       
       if (read_sowindsp_from_file) then
-          call readnc_slice_float_2d(fileT,'sowindsp',buf2,ingv_lon_shift)
+            if (read_sowindsp_from_optics) then
+                  fileformat_opt='("OPTICS/",A4,"/",A2,"/atm.",A17,".nc")'
+                  write(nomefile_opt,fileformat_opt) yyyy,mm,datestring
+                  if (optics_windspeed_on_file) then
+                      call readnc_slice_float_2d(nomefile_opt,'wsp10',buf2,0)
+                  else
+                      call readnc_slice_float_2d(nomefile_opt,'u10',buf2,0)
+                      call readnc_slice_float_2d(nomefile_opt,'v10',junk,0)
+                      buf2 = sqrt(buf2*buf2 + junk*junk)
+                  endif
+            else
+                call readnc_slice_float_2d(fileT,'sowindsp',buf2,ingv_lon_shift)
+            endif
+
 
       else
             if (forcings_windspeed_on_fileT) then

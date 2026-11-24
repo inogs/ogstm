@@ -8,6 +8,9 @@
           INTEGER(4), ALLOCATABLE, DIMENSION(:)     :: INDFluxGlo, INDflxDUMP, INDflxDUMPglo, INDflxBuff, INDflxDUMPZERO
           INTEGER(4), allocatable, DIMENSION(:,:)   :: flx_ridxt
 
+! diaflx Type index: 1=X advection, 2=Y advection, 3=Z advection, 4=settling (inflow at each level),
+!                    5=X diffusion, 6=Y diffusion, 7=Z diffusion,
+!                    8=settling flux leaving the deepest wet cell into the sea floor (seafloor deposition)
           double precision,    ALLOCATABLE, DIMENSION(:,:,:) :: diaflx
           double precision,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo, diaflxBuff
           real,    ALLOCATABLE, DIMENSION(:,:)   :: MflxDumpGlo_Float
@@ -48,7 +51,7 @@
        flx_ridxt  = huge(flx_ridxt(1,1))
        allocate(INDflxDUMP    (Fsize             ))  
        INDflxDUMP = huge(INDflxDUMP(1))
-       allocate(diaflx        (7, Fsize, jptra   ))
+       allocate(diaflx        (8, Fsize, jptra   ))
        diaflx = 0
       END SUBROUTINE alloc_DIA_local_flx
 
@@ -57,9 +60,9 @@
       SUBROUTINE alloc_DIA_GLOBAL_flx()
       allocate(INDflxDUMPZERO(   Fsize             )) 
       INDflxDUMPZERO    = huge(INDflxDUMPZERO(1))
-      allocate(MflxDumpGlo      (7, FsizeGlo       ))  
+      allocate(MflxDumpGlo      (8, FsizeGlo       ))  
       MflxDumpGlo       = huge(MflxDumpGlo(1,1))
-      allocate(MflxDumpGlo_FLOAT(7, FsizeGlo       ))  
+      allocate(MflxDumpGlo_FLOAT(8, FsizeGlo       ))  
       MflxDumpGlo_FLOAT = huge(MflxDumpGlo_FLOAT(1,1))
       allocate(INDflxDUMPglo    (FsizeGlo          )) 
       INDflxDUMPglo     = huge(INDflxDUMPglo(1))
@@ -70,7 +73,7 @@
       SUBROUTINE alloc_DIA_MPI_flx()
        allocate(INDflxBuff    (FsizeMax          )) 
        INDflxBuff = huge(INDflxBuff(1))
-       allocate(diaflxBuff    (FsizeMax, 7))        
+       allocate(diaflxBuff    (FsizeMax, 8))        
        diaflxBuff = huge(diaflxBuff(1,1))
       END SUBROUTINE alloc_DIA_MPI_flx
 

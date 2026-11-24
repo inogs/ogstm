@@ -165,7 +165,6 @@
 
          DO ji = 1,jpi
          DO jj = 1,jpj
-            !dir$ vector aligned
          DO jk = 1,jpkm1
                   zbtr_arr(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3t(jk,jj,ji))
          END DO
@@ -178,7 +177,6 @@
 
          DO ji = 1,jpi
          DO jj = 1,jpj
-            !dir$ vector aligned
          DO jk = 1,jpkm1
                   inv_eu(jk,jj,ji) = 1./(e1u(jj,ji)*e2u(jj,ji)*e3u(jk,jj,ji) )
          END DO
@@ -190,7 +188,6 @@
 
              DO ji = 1,jpi
              DO jj = 1,jpj
-             !dir$ vector aligned
              DO jk = 1,jpk
                  zaa(jk,jj,ji) = e2u(jj,ji)*e3u(jk,jj,ji) * un(jk,jj,ji)
              END DO
@@ -199,7 +196,6 @@
 
             DO ji = 1,jpi
             DO jj = 1,jpj
-            !dir$ vector aligned
             DO jk = 1,jpk
              big_fact_zaa(jk,jj,ji) = ( abs(zaa(jk,jj,ji)) - zdt*zaa(jk,jj,ji)**2*inv_eu(jk,jj,ji) )
              !/(e1u(jj,ji)*e2u(jj,ji)*e3t(jk,jj,ji) ) )
@@ -214,7 +210,6 @@
 
          DO ji = 1,jpi
          DO jj = 1,jpj
-            !dir$ vector aligned
          DO jk = 1,jpkm1
                   inv_ev(jk,jj,ji) = 1./(e1v(jj,ji)*e2v(jj,ji)*e3v(jk,jj,ji) )
          END DO
@@ -224,7 +219,6 @@
 
                  DO ji = 1,jpi
                  DO jj = 1,jpj
-                  !dir$ vector aligned
                  DO jk = 1,jpk
                   zbb(jk,jj,ji) = e1v(jj,ji)*e3v(jk,jj,ji) * vn(jk,jj,ji)
                 END DO
@@ -233,7 +227,6 @@
       
                 DO ji = 1,jpi
                 DO jj = 1,jpj
-                !dir$ vector aligned
                 DO jk = 1,jpk
                  big_fact_zbb(jk,jj,ji) = ( abs(zbb(jk,jj,ji)) - zdt*zbb(jk,jj,ji)**2*inv_ev(jk,jj,ji) )
                 END DO
@@ -246,7 +239,6 @@
 
          DO ji = 1,jpi
          DO jj = 1,jpj
-            !dir$ vector aligned
          DO jk = 1,jpkm1
                   inv_et(jk,jj,ji) = 1./(e1t(jj,ji)*e2t(jj,ji)*e3w(jk,jj,ji) )
          END DO
@@ -256,7 +248,6 @@
 
                DO ji = 1,jpi
                DO jj = 1,jpj
-               !dir$ vector aligned
                DO jk = 1,jpk
                 zcc(jk,jj,ji) = e1t(jj,ji)*e2t(jj,ji)* wn(jk,jj,ji)
                END DO
@@ -265,7 +256,6 @@
 
                DO ji = 1,jpi
                DO jj = 1,jpj
-               !dir$ vector aligned 
                DO jk = 1,jpk
                 big_fact_zcc(jk,jj,ji) = ( abs(zcc(jk,jj,ji)) - zdt*zcc(jk,jj,ji)**2*inv_et(jk,jj,ji) )
                END DO
@@ -328,7 +318,6 @@
 ! ! loop unfusion
 
         DO ji = 2,jpim1
-           !dir$ vector aligned
            DO jj = 2,jpjm1
                  zkx(1,jj,ji ) = fsx(trn(1,jj,ji, jn),trn(1,jj,ji + 1, jn),zaa(1,jj,ji))
            END DO
@@ -336,35 +325,30 @@
         
 
         DO ji = 2,jpim1
-          !dir$ vector aligned
            DO jj = 2,jpjm1
                 zky(1,jj,ji ) = fsy(trn(1,jj,ji, jn),trn(1,jj+1,ji, jn),zbb(1,jj,ji))
            END DO
         END DO
 
        DO ji = 1,jpi
-           !dir$ vector aligned
            DO jk = 2,jpk
             zkz(jk,1,ji ) = fsz(trn(jk,1,ji, jn),trn(jk-1,1,ji, jn),zcc(jk,1,ji))
             ENDDO
        ENDDO
       
        DO ji = 1,jpi
-            !dir$ vector aligned
             DO jk = 2,jpk
             zkz(jk,jpj,ji ) = fsz(trn(jk,jpj,ji, jn),trn(jk-1,jpj,ji, jn),zcc(jk,jpj,ji))
             END DO
        END DO
 ! loop unfusion
       DO jj = 2,jpjm1
-            !dir$ vector aligned
             DO jk = 2,jpk
             zkz(jk,jj,1 ) = fsz(trn(jk,jj,1, jn),trn(jk-1,jj,1, jn),zcc(jk,jj,1))
             END DO
       END DO
 
       DO jj = 2,jpjm1
-            !dir$ vector aligned
             DO jk = 2,jpk
             zkz(jk,jj,jpi ) = fsz(trn(jk,jj,jpi, jn),trn(jk-1,jj,jpi, jn),zcc(jk,jj,jpi))
             END DO
@@ -372,7 +356,6 @@
 
       DO  ji = 2,jpim1
         DO jj = 2,jpjm1
-            !dir$ vector aligned
             DO jk = 2,jpk
               zkx(jk,jj,ji ) = fsx(trn(jk,jj,ji, jn),trn(jk,jj,ji + 1, jn),zaa(jk,jj,ji))*advmask(jk,jj,ji)
             END DO
@@ -381,7 +364,6 @@
 
       DO  ji = 2,jpim1
         DO jj = 2,jpjm1
-            !dir$ vector aligned
             DO jk = 2,jpk
               zky(jk,jj,ji ) = fsy(trn(jk,jj,ji, jn),trn(jk,jj + 1,ji, jn),zbb(jk,jj,ji))*advmask(jk,jj,ji)
               END DO
@@ -390,7 +372,6 @@
 
             DO  ji = 2,jpim1
         DO jj = 2,jpjm1
-            !dir$ vector aligned
             DO jk = 2,jpk
               zkz(jk,jj,ji ) = fsz(trn(jk,jj,ji, jn),trn(jk-1,jj,ji, jn),zcc(jk,jj,ji))*advmask(jk,jj,ji)
             END DO
@@ -456,7 +437,6 @@
 
                          DO ji = 2,jpim1
                       DO jj = 2,jpjm1
-                      !dir$ vector aligned
                    DO jk = 1,jpkm1
                             zti(jk,jj,ji ) = trn(jk,jj,ji, jn) + zdt*ztj(jk,jj,ji )
                         END DO
@@ -466,7 +446,6 @@
                 else
                          DO ji = 2,jpim1
                       DO jj = 2,jpjm1
-                      !dir$ vector aligned
                     DO jk = 1,jpkm1
                             zti(jk,jj,ji ) = trn(jk,jj,ji, jn) + zdt*ztj(jk,jj,ji )
                           !  zbuf(jk,jj,ji ) = ztj(jk,jj,ji )
@@ -476,7 +455,6 @@
 
                         DO ji = 2,jpim1
                       DO jj = 2,jpjm1
-                      !dir$ vector aligned
                     DO jk = 1,jpkm1
                          !   zti(jk,jj,ji ) = trn(jk,jj,ji, jn) + zdt*ztj(jk,jj,ji )
                             zbuf(jk,jj,ji ) = ztj(jk,jj,ji )
@@ -491,7 +469,6 @@
 
                       DO ji = 2,jpim1
                    DO jj = 2,jpjm1
-                   !dir$ vector aligned
                 DO jk = 1,jpkm1
                          zti(jk,jj,ji ) =  zti(jk,jj,ji ) + zdt*ztj(jk,jj,ji )
                       END DO
@@ -500,7 +477,6 @@
 
                       DO ji = 2,jpim1
                    DO jj = 2,jpjm1
-                   !dir$ vector aligned
                 DO jk = 1,jpkm1
                          zbuf(jk,jj,ji ) = zbuf(jk,jj,ji ) + ztj(jk,jj,ji )
                       END DO
@@ -538,7 +514,6 @@
       !DO ju=1, dimen_jarr2
          DO ji = 2,jpim1
             DO jj = 2,jpjm1
-            !dir$ vector aligned
               DO jk = 2,jpkm1
 
             !    ji = jarr2(3, ju)
@@ -583,42 +558,36 @@
 !!                advection by antidiffusive mass fluxes and an upstream scheme
            
                  DO ji = 2,jpim1
-                 !dir$ vector aligned
              DO jj = 2,jpjm1
                    zkx(1,jj,ji ) = fsx(zti(1,jj,ji ),zti(1,jj,ji+1 ),zx(1,jj,ji ))
                  END DO
              END DO
 
                  DO ji = 2,jpim1
-                 !dir$ vector aligned
              DO jj = 2,jpjm1 
                    zky(1,jj,ji ) = fsy(zti(1,jj,ji ),zti(1,jj+ 1,ji ),zy(1,jj,ji ))
                  END DO
               END DO
 
             DO ji = 1,jpi 
-            !dir$ vector aligned
                    DO jk = 2,jpk   
                         zkz(jk,1,ji ) = fsz(zti(jk,1,ji ),zti(jk-1,1,ji ),zz(jk,1,ji ))
                   ENDDO
             ENDDO
                
             DO ji = 1,jpi
-            !dir$ vector aligned
                   DO jk = 2,jpk 
                         zkz(jk,jpj,ji ) = fsz(zti(jk,jpj,ji ),zti(jk-1,jpj,ji ),zz(jk,jpj,ji ))
                   ENDDO
             ENDDO
 
              DO jj = 2,jpjm1
-             !dir$ vector aligned
                   DO jk = 2,jpk
                         zkz(jk,jj,1 ) = fsz(zti(jk,jj,1 ),zti(jk-1,jj,1 ),zz(jk,jj,1 ))
                   ENDDO
             ENDDO   
 
              DO jj = 2,jpjm1
-             !dir$ vector aligned
                   DO jk = 2,jpk
                         zkz(jk,jj,jpi ) = fsz(zti(jk,jj,jpi ),zti(jk-1,jj,jpi ),zz(jk,jj,jpi ))
                   END DO
@@ -626,7 +595,6 @@
 
                DO  ji = 2,jpim1
             DO jj = 2,jpjm1
-            !dir$ vector aligned
          DO jk = 2,jpk    
                 zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
                 !zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
@@ -637,7 +605,6 @@
 
         DO  ji = 2,jpim1
             DO jj = 2,jpjm1
-            !dir$ vector aligned
          DO jk = 2,jpk    
                 !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
                 zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)
@@ -648,7 +615,6 @@
 
         DO  ji = 2,jpim1
             DO jj = 2,jpjm1
-            !dir$ vector aligned
          DO jk = 2,jpk    
                 !zkx(jk,jj,ji ) = fsx(zti(jk,jj,ji ),zti(jk,jj,ji + 1 ),zx(jk,jj,ji ))*advmask(jk,jj,ji)
                 !zky(jk,jj,ji ) = fsy(zti(jk,jj,ji ),zti(jk,jj+ 1,ji ),zy(jk,jj,ji ))*advmask(jk,jj,ji)

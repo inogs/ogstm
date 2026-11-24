@@ -439,8 +439,8 @@ contains
 
         class(sponge), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lon ! glamt
-        double precision, dimension(jpj, jpi), intent(out) :: sponge_t ! spongeT
-        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel ! spongeVel
+        double precision, dimension(jpj, jpi), intent(inout) :: sponge_t ! spongeT
+        double precision, dimension(jpk, jpj, jpi), intent(inout) :: sponge_vel ! spongeVel
 
         integer :: i, j
         double precision :: reduction_value_vel ! reduction_value (only for sponge_vel)

@@ -29,6 +29,9 @@ MODULE TREd_var_MP
         use DA_mem
         use mpi_str, only: Var3DCommunicator
         use petscvec, only: PETSC_COMM_WORLD, PETSC_NULL_CHARACTER
+#if PETSC_VERSION_GE(3,17,0)
+        use petscsys, only: PetscInitialize
+#endif
 #endif
 
         USE calendar

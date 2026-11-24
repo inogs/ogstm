@@ -134,8 +134,8 @@ contains
 
         class(bc_set), intent(inout) :: self
         double precision, dimension(jpj, jpi), intent(in) :: lon
-        double precision, dimension(jpj, jpi), intent(out) :: sponge_t
-        double precision, dimension(jpk, jpj, jpi), intent(out) :: sponge_vel
+        double precision, dimension(jpj, jpi), intent(inout) :: sponge_t
+        double precision, dimension(jpk, jpj, jpi), intent(inout) :: sponge_vel
         logical, intent(in) :: internal_sponging ! internal_sponging is set from global namelist file
         integer :: i
 

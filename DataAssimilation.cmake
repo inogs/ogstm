@@ -44,6 +44,11 @@ if (MPI_Fortran_COMPILER MATCHES "mpiifort.*")
   # mpiifort
   set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report5 -g -cpp -align array64byte") #-qopenmp
   set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -fp-stack-check -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend-source")
+elseif (MPI_Fortran_COMPILER MATCHES "mpiifx.*")
+  # mpiifx (Intel oneAPI ifx): -qopt-report accepts at most level 3 and
+  # -fp-stack-check is not supported
+  set (CMAKE_Fortran_FLAGS_RELEASE " -fno-math-errno -O2 -xAVX -qopt-report=3 -g -cpp -align array64byte") #-qopenmp
+  set (CMAKE_Fortran_FLAGS_DEBUG   " -O0 -g -cpp -CB -check all -traceback -gen-interfaces -warn interfaces -fpe0 -extend-source")
 elseif (MPI_Fortran_COMPILER MATCHES "mpif90.*")
   # mpif90
   set (CMAKE_Fortran_FLAGS_RELEASE " -O2  -fimplicit-none -cpp  -ffixed-line-length-0")
@@ -73,6 +78,10 @@ set( FOLDERS BIO BIO-OPTICS DA  General  IO  MPI  namelists  PHYS BC)
   file(GLOB TMP src/${FOLDER}/*)
   list (APPEND FORTRAN_SOURCES ${TMP})
 endforeach()
+# The *.f03 files (in src/BC) are standalone test programs, not part of the
+# model: recent CMake versions take them as Fortran sources, but they must not
+# be compiled in the library
+list (FILTER FORTRAN_SOURCES EXCLUDE REGEX "\\.f03$")
 
 #building
 add_library( ogstm_lib ${FORTRAN_SOURCES})

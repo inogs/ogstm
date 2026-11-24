@@ -306,6 +306,7 @@
                       call readnc_slice_float_2d(nomefile_opt,'u10',buf2,0)
                       call readnc_slice_float_2d(nomefile_opt,'v10',junk,0)
                       buf2 = sqrt(buf2*buf2 + junk*junk)
+                  endif
             else
                 call readnc_slice_float_2d(fileT,'sowindsp',buf2,ingv_lon_shift)
             endif
